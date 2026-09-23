@@ -44,6 +44,7 @@ Sidrena tehnički podržava evidenciju, prikaz i objavu podataka prema službeni
 = Novo u 1.6.1 =
 
 * Radi s WooCommerceom ili kao samostalni WordPress katalog proizvoda.
+* Uz WooCommerce postoji i zaseban ekran Dodatne stavke za ručne artikle koji ulaze u javni cjenik te imaju vlastiti [sidrena_cijena id="s123"] shortcode.
 * Samostalni katalog podržava CSV/XML uvoz po šifri.
 * WooCommerce standardni CSV Import/Export dobiva Sidrena polja.
 * Javni pretraživi HTML cjenik: /sidrena-cjenik/ i [sidrena_cjenik] / [sidrena-cjenik].
