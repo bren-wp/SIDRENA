@@ -1,0 +1,81 @@
+name: Bootstrap Sidrena develop source
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bootstrap-develop.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout development branch
+        uses: actions/checkout@v4
+        with:
+          ref: develop/1.5.0
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Decode verified Sidrena 1.5.0 build
+        shell: bash
+        run: |
+          set -euo pipefail
+          for n in 01 02 03 04 05 06 07; do
+            test -s ".source-payload/sidrena-1.5.0.zip.b64.part${n}"
+          done
+          cat .source-payload/sidrena-1.5.0.zip.b64.part* | base64 --decode > /tmp/sidrena-1.5.0.zip
+          echo '3263df056a798425c865b8d4a88d21b2b62b0f8a26a35e0a0f270d909b767455  /tmp/sidrena-1.5.0.zip' | sha256sum -c -
+          rm -rf /tmp/sidrena-import
+          mkdir -p /tmp/sidrena-import
+          unzip -q /tmp/sidrena-1.5.0.zip -d /tmp/sidrena-import
+          test -f /tmp/sidrena-import/sidrena/sidrena.php
+
+      - name: Synchronize exact plugin source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.gitignore' \
+            --exclude='README.md' \
+            --exclude='SECURITY.md' \
+            --exclude='CONTRIBUTING.md' \
+            --exclude='.source-payload/' \
+            /tmp/sidrena-import/sidrena/ ./
+          rm -rf .source-payload
+
+      - name: Validate synchronized source
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+          node --check admin/js/admin.js
+          grep -q 'Version: 1.5.0' sidrena.php
+          grep -q 'Stable tag: 1.5.0' readme.txt
+          grep -q 'Author: Brendigo' sidrena.php
+          grep -q 'https://sidrena-cijena.com.hr/' sidrena.php
+          test -f assets/images/logo-mark.svg
+
+      - name: Commit to development branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'chore: sync Sidrena 1.5.0 plugin source [skip ci]'
+          git push origin HEAD:develop/1.5.0
