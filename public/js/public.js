@@ -15,6 +15,7 @@
 		var input = root.querySelector("[data-sidrena-search]");
 		var rows = Array.prototype.slice.call(root.querySelectorAll("[data-sidrena-row]"));
 		var empty = root.querySelector("[data-sidrena-empty]");
+		var visibleCount = root.querySelector("[data-sidrena-visible-count]");
 
 		if (!input || !rows.length) {
 			return;
@@ -35,6 +36,9 @@
 
 			if (empty) {
 				empty.hidden = visible !== 0;
+			}
+			if (visibleCount) {
+				visibleCount.textContent = String(visible);
 			}
 		}
 
