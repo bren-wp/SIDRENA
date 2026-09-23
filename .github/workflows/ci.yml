@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.3']
+        php: ['7.4', '8.3', '8.4']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,6 +35,9 @@ jobs:
         run: |
           set -euo pipefail
           find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Utility encoding/security smoke tests
+        run: php .github/tests/utility-smoke.php
 
       - name: Set up Node
         if: matrix.php == '8.3'
@@ -161,5 +164,17 @@ jobs:
             --include='*.php' --include='*.js' --include='*.css' --include='readme.txt' . \
             --exclude-dir=.git; then
             echo 'Development/placeholder content detected in production files.' >&2
+            exit 1
+          fi
+
+      - name: Debug and unfinished-code guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE 'var_dump[[:space:]]*\(|print_r[[:space:]]*\(|console\.log[[:space:]]*\(|\bTODO\b|\bFIXME\b' \
+            --include='*.php' --include='*.js' --include='*.css' --include='readme.txt' . \
+            --exclude-dir=.git --exclude-dir=.github; then
+            echo 'Debug or unfinished-code marker detected in production files.' >&2
             exit 1
           fi

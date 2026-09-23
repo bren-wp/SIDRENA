@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Sidrena_Public {
 	private static $instance;
+	private $last_snapshot_available = false;
 
 	public static function instance() {
 		if ( ! self::$instance ) {
@@ -79,7 +80,7 @@ final class Sidrena_Public {
 		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( wp_unslash( $_GET['lokacija'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'cjenik' === $route ) {
 			$content = $this->pricelist_shortcode( array( 'lokacija' => $location ) );
-			if ( false === $this->snapshot_available( $location ) ) {
+			if ( ! $this->last_snapshot_available ) {
 				status_header( 503 );
 				header( 'Retry-After: 60' );
 			} else {
@@ -133,12 +134,14 @@ final class Sidrena_Public {
 			return '<div class="sidrena-public-message sidrena-public-message--warning">' . esc_html__( 'Nema aktivne Sidrena lokacije.', 'sidrena' ) . '</div>';
 		}
 
+		$this->last_snapshot_available = false;
 		$snapshot = $this->read_snapshot( $location['id'] );
 		if ( ! $snapshot ) {
 			$this->queue_snapshot_rebuild( $location['id'] );
 			return '<div class="sidrena-public-message sidrena-public-message--preparing"><strong>' . esc_html__( 'Cjenik se priprema.', 'sidrena' ) . '</strong><span>' . esc_html__( 'Sidrena je zakazala izradu javnog cjenika. Pokušajte ponovno za nekoliko trenutaka.', 'sidrena' ) . '</span></div>';
 		}
 
+		$this->last_snapshot_available = true;
 		$this->enqueue_assets();
 		$rows = isset( $snapshot['rows'] ) && is_array( $snapshot['rows'] ) ? $snapshot['rows'] : array();
 		$generated = isset( $snapshot['generated_at'] ) ? (string) $snapshot['generated_at'] : '';
@@ -284,20 +287,25 @@ final class Sidrena_Public {
 			return array();
 		}
 		$data = json_decode( $raw, true );
-		return is_array( $data ) ? $data : array();
+		if ( ! is_array( $data ) || 1 !== absint( $data['schema'] ?? 0 ) || ! isset( $data['rows'] ) || ! is_array( $data['rows'] ) || ! isset( $data['location'] ) || ! is_array( $data['location'] ) ) {
+			return array();
+		}
+		$expected_id = Sidrena_Utils::sanitize_location_id( $location_id );
+		$snapshot_id = Sidrena_Utils::sanitize_location_id( $data['location']['id'] ?? '' );
+		if ( $expected_id !== $snapshot_id || empty( $data['generated_at'] ) ) {
+			return array();
+		}
+		return $data;
 	}
 
-	private function snapshot_available( $requested = '' ) {
-		$location = $this->resolve_location( $requested );
-		return $location && is_file( Sidrena_Utils::public_snapshot_path( $location['id'] ) );
-	}
 
 	private function queue_snapshot_rebuild( $location_id ) {
 		$key = 'sidrena_snapshot_rebuild_' . md5( Sidrena_Utils::sanitize_location_id( $location_id ) );
 		if ( get_transient( $key ) ) {
 			return;
 		}
-		set_transient( $key, 1, 15 * MINUTE_IN_SECONDS );
-		Sidrena_Pricelist::queue_regeneration();
+		if ( Sidrena_Pricelist::queue_regeneration() ) {
+			set_transient( $key, 1, 15 * MINUTE_IN_SECONDS );
+		}
 	}
 }

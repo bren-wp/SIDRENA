@@ -154,6 +154,9 @@ WP-CLI:
 - wp sidrena generate
 - wp sidrena status
 - wp sidrena audit
+- wp sidrena fill --dry-run
+- wp sidrena fill
+- wp sidrena fill --today
 
 ## Službeni propisi koje projekt tehnički prati
 

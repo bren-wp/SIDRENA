@@ -104,7 +104,7 @@ Nema telemetrije ni automatskog kontakta s vanjskim servisom. Administracijske r
 == Installation ==
 
 1. Otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-2. Prenesite sidrena-1.6.0.zip, instalirajte i aktivirajte.
+2. Prenesite aktualni sidrena-x.y.z.zip, instalirajte i aktivirajte.
 3. Otvorite glavni izbornik **Sidrena**.
 4. Odaberite proizvode, usluge ili mješoviti način rada.
 5. Dodajte svaku fizičku lokaciju i zaseban webshop ako postoji.
@@ -125,7 +125,7 @@ Da. U Sidrena panelu postoji diskretna poveznica za dobrovoljnu donaciju. Donaci
 
 = Radi li bez WooCommercea? =
 
-Da, za katalog i cjenike usluga. WooCommerce je potreban za proizvode.
+Da. Sidrena ima vlastiti katalog proizvoda i usluga; WooCommerce je potreban samo kada želite povezati Sidrena podatke s WooCommerce proizvodima i varijacijama.
 
 = Čuva li svaku uspješnu objavu najmanje 30 dana? =
 

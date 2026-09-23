@@ -160,13 +160,7 @@ final class Sidrena_REST {
 		if ( ! $product || ! $product->exists() ) {
 			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
 		}
-
-		$post_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
-		$post    = $post_id ? get_post( $post_id ) : null;
-		if ( ! $post || 'publish' !== $post->post_status || post_password_required( $post ) ) {
-			return new WP_Error( 'product_not_public', __( 'Proizvod nije javno dostupan.', 'sidrena' ), array( 'status' => 404 ) );
-		}
-		if ( function_exists( 'is_post_publicly_viewable' ) && ! is_post_publicly_viewable( $post ) ) {
+		if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
 			return new WP_Error( 'product_not_public', __( 'Proizvod nije javno dostupan.', 'sidrena' ), array( 'status' => 404 ) );
 		}
 
@@ -214,13 +208,16 @@ final class Sidrena_REST {
 
 		$items = array();
 		foreach ( is_object( $result ) && isset( $result->products ) ? $result->products : array() as $product ) {
+			if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
+				continue;
+			}
 			if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
 				continue;
 			}
 			if ( $product->is_type( 'variable' ) ) {
 				foreach ( $product->get_children() as $variation_id ) {
 					$variation = wc_get_product( $variation_id );
-					if ( $variation && $variation->exists() ) {
+					if ( $variation && $variation->exists() && Sidrena_Utils::is_public_wc_product( $variation ) ) {
 						$items[] = $this->product_item( $variation, $location );
 					}
 				}

@@ -251,12 +251,14 @@ final class Sidrena_Utils {
 		}
 
 		$value = (string) $value;
-		if ( '' === $value || is_numeric( str_replace( ',', '.', $value ) ) ) {
+		if ( '' === $value || is_numeric( str_replace( array( ' ', ',' ), array( '', '.' ), $value ) ) ) {
 			return $value;
 		}
 
-		$first = substr( $value, 0, 1 );
-		if ( in_array( $first, array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+		// Spreadsheet applications may interpret text as a formula even when a
+		// dangerous prefix is preceded by whitespace. Prefix such text with an
+		// apostrophe while leaving genuine numeric values untouched.
+		if ( preg_match( '/^[\\x00-\\x20]*[=+\\-@]/', $value ) || preg_match( '/^[\\t\\r\\n]/', $value ) ) {
 			return "'" . $value;
 		}
 		return $value;
@@ -274,7 +276,18 @@ final class Sidrena_Utils {
 			return $contents;
 		}
 
-		foreach ( array( 'Windows-1250', 'ISO-8859-2' ) as $encoding ) {
+		$encodings = array( 'Windows-1250', 'ISO-8859-2' );
+		// Croatian Š/Ž/š/ž occupy the C1 range in Windows-1250 and
+		// A9/AE/B9/BE in ISO-8859-2. Prefer the matching decoder when those
+		// distinguishing bytes are present; otherwise the shared Croatian
+		// letters (Č/Ć/Đ/č/ć/đ) decode identically in both encodings.
+		if ( preg_match( '/[\\xA9\\xAE\\xB9\\xBE]/', $contents ) ) {
+			$encodings = array( 'ISO-8859-2', 'Windows-1250' );
+		} elseif ( preg_match( '/[\\x80-\\x9F]/', $contents ) ) {
+			$encodings = array( 'Windows-1250', 'ISO-8859-2' );
+		}
+
+		foreach ( $encodings as $encoding ) {
 			if ( function_exists( 'mb_convert_encoding' ) ) {
 				$converted = @mb_convert_encoding( $contents, 'UTF-8', $encoding ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			} elseif ( function_exists( 'iconv' ) ) {
@@ -321,6 +334,34 @@ final class Sidrena_Utils {
 
 	public static function is_woocommerce_active() {
 		return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
+	}
+
+	public static function is_public_wc_product( $product ) {
+		if ( ! is_object( $product ) || ! is_callable( array( $product, 'get_id' ) ) || ! is_callable( array( $product, 'is_type' ) ) ) {
+			return false;
+		}
+
+		$product_id = absint( $product->get_id() );
+		$post_id    = $product->is_type( 'variation' ) && is_callable( array( $product, 'get_parent_id' ) )
+			? absint( $product->get_parent_id() )
+			: $product_id;
+		$post       = $post_id ? get_post( $post_id ) : null;
+
+		if ( ! $post || 'publish' !== $post->post_status || '' !== (string) $post->post_password ) {
+			return false;
+		}
+		if ( function_exists( 'is_post_publicly_viewable' ) && ! is_post_publicly_viewable( $post ) ) {
+			return false;
+		}
+
+		if ( $product->is_type( 'variation' ) ) {
+			$variation_post = $product_id ? get_post( $product_id ) : null;
+			if ( ! $variation_post || 'publish' !== $variation_post->post_status ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static function product_anchor_price( $product_id ) {
