@@ -23,12 +23,15 @@ final class Sidrena_Compatibility {
 		add_filter( 'do_shortcode_tag', array( $this, 'filter_shortcode' ), 25, 4 );
 		add_filter( 'et_module_shortcode_output', array( $this, 'filter_divi' ), 25, 2 );
 		add_filter( 'fusion_element_woo_price_content', array( $this, 'filter_generic_price_output' ), 25, 1 );
+		add_filter( 'fl_builder_render_module_content', array( $this, 'filter_beaver' ), 25, 2 );
+		add_filter( 'bricks/element/render', array( $this, 'filter_bricks' ), 25, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_script' ), 30 );
 	}
 
 	public function filter_block( $content, $block ) {
 		$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
-		if ( false === strpos( $name, 'woocommerce/product-price' ) && false === strpos( $name, 'woocommerce/product-price-' ) ) {
+		$block_match = false !== strpos( $name, 'woocommerce/product-price' ) || false !== strpos( $name, 'product-price' ) || false !== strpos( $name, 'wc-product-price' );
+		if ( ! $block_match ) {
 			return $content;
 		}
 
@@ -50,6 +53,9 @@ final class Sidrena_Compatibility {
 			'jet-single-price',
 			'shopengine-product-price',
 			'archive-products',
+			'ae-woo-price',
+			'jet-woo-builder-archive-product-price',
+			'woocommerce-price',
 		);
 		$match = false;
 		foreach ( $allowed as $needle ) {
@@ -64,7 +70,7 @@ final class Sidrena_Compatibility {
 	public function filter_shortcode( $output, $tag, $attr, $m ) {
 		unset( $attr, $m );
 		$tag = strtolower( (string) $tag );
-		if ( ! in_array( $tag, array( 'product_price', 'woocommerce_product_price' ), true ) ) {
+		if ( ! in_array( $tag, array( 'product_price', 'woocommerce_product_price', 'woodmart_product_price' ), true ) ) {
 			return $output;
 		}
 		return $this->append_if_needed( $output );
@@ -79,6 +85,30 @@ final class Sidrena_Compatibility {
 
 	public function filter_generic_price_output( $output ) {
 		return $this->append_if_needed( $output );
+	}
+
+
+	public function filter_beaver( $content, $module ) {
+		$slug = is_object( $module ) && isset( $module->slug ) ? strtolower( (string) $module->slug ) : '';
+		if ( false === strpos( $slug, 'woo' ) || false === strpos( $slug, 'price' ) ) {
+			return $content;
+		}
+		return $this->append_if_needed( $content );
+	}
+
+	public function filter_bricks( $content, $element ) {
+		$name = '';
+		if ( is_object( $element ) ) {
+			if ( isset( $element->name ) ) {
+				$name = strtolower( (string) $element->name );
+			} elseif ( is_callable( array( $element, 'get_name' ) ) ) {
+				$name = strtolower( (string) $element->get_name() );
+			}
+		}
+		if ( false === strpos( $name, 'product-price' ) && false === strpos( $name, 'woocommerce' ) ) {
+			return $content;
+		}
+		return $this->append_if_needed( $content );
 	}
 
 	private function append_if_needed( $content, $product = null ) {
@@ -121,16 +151,35 @@ final class Sidrena_Compatibility {
 				'selectors' => array(
 					'.woocommerce-variation-price .price',
 					'.summary .price',
+					'.entry-summary .price',
+					'.single-product-summary .price',
 					'.elementor-widget-woocommerce-product-price .price',
 					'.elementor-widget-woocommerce-product-price',
-					'.oxy-product-price .price',
-					'.et_pb_wc_price .price',
-					'.brxe-product-price .price',
+					'.elementor-widget-jet-single-price .price',
+					'.jet-woo-product-price .price',
+					'.jet-single-price .price',
 					'.shopengine-product-price .price',
-					'.jet-woo-product-price',
-					'.wd-single-price',
+					'.oxy-product-price .price',
+					'.oxy-woo-element .price',
+					'.et_pb_wc_price .price',
+					'.et_pb_module.et_pb_wc_price p.price',
+					'.brxe-product-price .price',
+					'.brxe-woocommerce-product-price .price',
+					'.fl-module-woocommerce-product-price .price',
+					'.fl-woo-price .price',
+					'.bde-woocommerce-product-price .price',
+					'.breakdance-woocommerce-product-price .price',
+					'.brz-woo-price .price',
+					'.fusion-tb-woo-price .price',
+					'.fusion-woo-price-tb .price',
+					'.wd-single-price .price',
+					'.wd-product-price .price',
 					'.product-page-price',
-					'.fusion-woo-price',
+					'.product-info .price-wrapper .price',
+					'.wpb_wrapper > p.price',
+					'.vc_woo_product_price .price',
+					'.wc-block-components-product-price',
+					'.wp-block-woocommerce-product-price .price',
 				),
 			)
 		);
