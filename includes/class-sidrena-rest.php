@@ -59,6 +59,25 @@ final class Sidrena_REST {
 				),
 			)
 		);
+
+		register_rest_route(
+			'sidrena/v1',
+			'/display/(?P<id>\d+)',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'display' ),
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'id' => array(
+						'required'          => true,
+						'sanitize_callback' => 'absint',
+						'validate_callback' => static function ( $value ) {
+							return absint( $value ) > 0;
+						},
+					),
+				),
+			)
+		);
 	}
 
 	private function realtime_enabled() {
@@ -130,6 +149,35 @@ final class Sidrena_REST {
 		return $this->no_cache_response( $data );
 	}
 
+
+	public function display( WP_REST_Request $request ) {
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			return new WP_Error( 'woocommerce_required', __( 'WooCommerce nije aktivan.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+
+		$id      = absint( $request->get_param( 'id' ) );
+		$product = $id ? wc_get_product( $id ) : false;
+		if ( ! $product || ! $product->exists() ) {
+			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+
+		$post_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+		$post    = $post_id ? get_post( $post_id ) : null;
+		if ( ! $post || 'publish' !== $post->post_status || post_password_required( $post ) ) {
+			return new WP_Error( 'product_not_public', __( 'Proizvod nije javno dostupan.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+		if ( function_exists( 'is_post_publicly_viewable' ) && ! is_post_publicly_viewable( $post ) ) {
+			return new WP_Error( 'product_not_public', __( 'Proizvod nije javno dostupan.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+
+		return $this->no_cache_response(
+			array(
+				'id'   => $product->get_id(),
+				'html' => Sidrena_Products::instance()->shortcode( array( 'id' => $product->get_id() ) ),
+			)
+		);
+	}
+
 	private function resolve_location( $requested ) {
 		$locations = Sidrena_Utils::locations();
 		if ( $requested ) {
@@ -166,6 +214,9 @@ final class Sidrena_REST {
 
 		$items = array();
 		foreach ( is_object( $result ) && isset( $result->products ) ? $result->products : array() as $product ) {
+			if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
+				continue;
+			}
 			if ( $product->is_type( 'variable' ) ) {
 				foreach ( $product->get_children() as $variation_id ) {
 					$variation = wc_get_product( $variation_id );

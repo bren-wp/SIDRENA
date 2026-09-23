@@ -1,0 +1,245 @@
+
+.sidrena-public-page {
+	background: #f4f8fc;
+	min-height: 60vh;
+	padding: 42px 20px 64px;
+}
+
+.sidrena-public-shell {
+	width: min(1180px, 100%);
+	margin: 0 auto;
+}
+
+.sidrena-public-head {
+	margin-bottom: 20px;
+}
+
+.sidrena-public-kicker {
+	display: inline-block;
+	margin-bottom: 8px;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: .15em;
+	text-transform: uppercase;
+	color: #1677ff;
+}
+
+.sidrena-public-head h1,
+.sidrena-pricelist h2,
+.sidrena-public-archive h2 {
+	margin: 0;
+	color: #082642;
+}
+
+.sidrena-pricelist,
+.sidrena-public-archive {
+	background: #fff;
+	border: 1px solid #dce8f3;
+	border-radius: 18px;
+	box-shadow: 0 14px 34px rgba(15, 53, 87, .08);
+	overflow: hidden;
+}
+
+.sidrena-pricelist__toolbar,
+.sidrena-public-archive__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding: 22px 24px;
+	border-bottom: 1px solid #e5edf5;
+	background: linear-gradient(145deg, #fff, #f7fbff);
+}
+
+.sidrena-pricelist__toolbar p,
+.sidrena-public-archive__head p {
+	margin: 6px 0 0;
+	color: #647a91;
+	font-size: 13px;
+}
+
+.sidrena-pricelist__search {
+	width: min(360px, 100%);
+}
+
+.sidrena-pricelist__search input {
+	width: 100%;
+	min-height: 42px;
+	padding: 8px 13px;
+	border: 1px solid #cfddea;
+	border-radius: 10px;
+	background: #fff;
+	color: #082642;
+}
+
+.sidrena-pricelist__search input:focus {
+	border-color: #1677ff;
+	box-shadow: 0 0 0 3px rgba(22, 119, 255, .12);
+	outline: 0;
+}
+
+.sidrena-pricelist__table-wrap {
+	overflow-x: auto;
+}
+
+.sidrena-pricelist__table {
+	width: 100%;
+	min-width: 980px;
+	border-collapse: collapse;
+	margin: 0;
+}
+
+.sidrena-pricelist__table th,
+.sidrena-pricelist__table td {
+	padding: 13px 14px;
+	border-bottom: 1px solid #edf2f6;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.sidrena-pricelist__table th {
+	background: #f4f8fc;
+	color: #405d78;
+	font-size: 12px;
+	font-weight: 800;
+}
+
+.sidrena-pricelist__table td {
+	color: #28465f;
+	font-size: 13px;
+}
+
+.sidrena-pricelist__table td strong {
+	color: #082642;
+}
+
+.sidrena-pricelist__table td small {
+	display: block;
+	margin-top: 3px;
+	color: #6b8196;
+}
+
+.sidrena-pricelist__table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.sidrena-availability {
+	display: inline-flex;
+	align-items: center;
+	padding: 5px 9px;
+	border-radius: 999px;
+	background: #edf4fa;
+	color: #4c657b;
+	font-size: 11px;
+	font-weight: 750;
+}
+
+.sidrena-availability--dostupno {
+	background: #e2f8ed;
+	color: #087a55;
+}
+
+.sidrena-availability--nedostupno {
+	background: #fdeaea;
+	color: #a83838;
+}
+
+.sidrena-pricelist__empty,
+.sidrena-public-message {
+	margin: 0;
+	padding: 24px;
+	color: #62798e;
+	text-align: center;
+}
+
+.sidrena-public-message {
+	border: 1px solid #dce8f3;
+	border-radius: 14px;
+	background: #fff;
+}
+
+.sidrena-public-message strong,
+.sidrena-public-message span {
+	display: block;
+}
+
+.sidrena-public-message strong {
+	margin-bottom: 5px;
+	color: #082642;
+}
+
+.sidrena-public-message--preparing {
+	background: #eef6ff;
+	border-color: #d7e7f8;
+}
+
+.sidrena-public-message--warning {
+	background: #fff7e9;
+	border-color: #f2dfc3;
+	color: #9b6018;
+}
+
+.sidrena-public-archive__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sidrena-public-archive__list li {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	gap: 18px;
+	align-items: center;
+	padding: 14px 24px;
+	border-bottom: 1px solid #edf2f6;
+}
+
+.sidrena-public-archive__list li:last-child {
+	border-bottom: 0;
+}
+
+.sidrena-public-archive__list a {
+	overflow-wrap: anywhere;
+	font-weight: 750;
+	color: #1267cc;
+	text-decoration: none;
+}
+
+.sidrena-public-archive__list span {
+	font-size: 12px;
+	color: #6d8296;
+	white-space: nowrap;
+}
+
+.sidrena-public-archive__list code {
+	font-size: 11px;
+	color: #50697f;
+	background: #f4f8fc;
+	padding: 4px 7px;
+	border-radius: 6px;
+}
+
+@media (max-width: 760px) {
+	.sidrena-public-page {
+		padding: 24px 12px 42px;
+	}
+
+	.sidrena-pricelist__toolbar,
+	.sidrena-public-archive__head {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.sidrena-pricelist__search {
+		width: 100%;
+	}
+
+	.sidrena-public-archive__list li {
+		grid-template-columns: 1fr;
+		gap: 6px;
+	}
+
+	.sidrena-public-archive__list span {
+		white-space: normal;
+	}
+}

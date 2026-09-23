@@ -19,10 +19,16 @@ final class Sidrena_Activator {
 
 		$paths = Sidrena_Utils::upload_paths();
 		wp_mkdir_p( $paths['archive_dir'] );
+		wp_mkdir_p( $paths['snapshot_dir'] );
 		self::protect_upload_directory( $paths['base_dir'] );
 		self::protect_upload_directory( $paths['archive_dir'] );
+		self::protect_upload_directory( $paths['snapshot_dir'] );
 
 		self::ensure_schedules();
+		if ( class_exists( 'Sidrena_Public' ) ) {
+			Sidrena_Public::instance()->register_rewrites();
+			flush_rewrite_rules( false );
+		}
 
 		update_option( 'sidrena_db_version', self::DB_VERSION, false );
 	}
@@ -44,6 +50,7 @@ final class Sidrena_Activator {
 		wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
+		flush_rewrite_rules( false );
 	}
 
 	private static function ensure_schedules() {

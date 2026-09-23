@@ -623,10 +623,15 @@ final class Sidrena_Products {
 		$display_price = apply_filters( 'sidrena_anchor_price_to_display', $display_price, $product, $anchor );
 		$date          = Sidrena_Utils::current_reference_date( $id );
 		$label         = Sidrena_Utils::anchor_label( $date );
+		$tooltip       = Sidrena_Utils::anchor_tooltip();
+		$tooltip_html  = $tooltip ? '<span class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
 		$line          = sprintf(
-			'<span class="sidrena-anchor"><span class="sidrena-anchor__label">%1$s:</span> <span class="sidrena-anchor__value">%2$s</span></span>',
+			'<span class="sidrena-anchor%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
+			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
+			$tooltip ? ' tabindex="0"' : '',
 			esc_html( $label ),
-			wp_kses_post( wc_price( $display_price ) )
+			wp_kses_post( wc_price( $display_price ) ),
+			$tooltip_html
 		);
 
 		return apply_filters( 'sidrena_anchor_html', $line, $product, $anchor, $date );
@@ -655,16 +660,21 @@ final class Sidrena_Products {
 			return '';
 		}
 
-		$min   = min( $values );
-		$max   = max( $values );
-		$date  = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::settings()['default_ref_date'];
-		$label = Sidrena_Utils::anchor_label( $date );
-		$amount = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+		$min     = min( $values );
+		$max     = max( $values );
+		$date    = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::settings()['default_ref_date'];
+		$label   = Sidrena_Utils::anchor_label( $date );
+		$amount  = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+		$tooltip = Sidrena_Utils::anchor_tooltip();
+		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
 
 		$line = sprintf(
-			'<span class="sidrena-anchor sidrena-anchor--variable"><span class="sidrena-anchor__label">%1$s:</span> <span class="sidrena-anchor__value">%2$s</span></span>',
+			'<span class="sidrena-anchor sidrena-anchor--variable%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
+			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
+			$tooltip ? ' tabindex="0"' : '',
 			esc_html( $label ),
-			wp_kses_post( $amount )
+			wp_kses_post( $amount ),
+			$tooltip_html
 		);
 		return apply_filters( 'sidrena_anchor_html', $line, $product, array( $min, $max ), $date );
 	}
