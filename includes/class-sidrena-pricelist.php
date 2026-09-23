@@ -310,21 +310,9 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
-		$rows = array();
-		foreach ( array_unique( $catalogs ) as $catalog ) {
-			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
-			foreach ( $source as $row ) {
-				foreach ( array_keys( $row ) as $key ) {
-					if ( 0 === strpos( $key, '_sidrena_' ) ) {
-						unset( $row[ $key ] );
-					}
-				}
-				$row['type'] = 'products' === $catalog ? 'product' : 'service';
-				$rows[] = $row;
-			}
-		}
-
-		$data = array(
+		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$temp = $path . '.tmp';
+		$meta = array(
 			'schema'       => 1,
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
 			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
@@ -334,23 +322,65 @@ final class Sidrena_Pricelist {
 				'kind'    => sanitize_text_field( $location['kind'] ?? '' ),
 				'address' => sanitize_text_field( $location['address'] ?? '' ),
 			),
-			'rows' => $rows,
 		);
-		$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( false === $json ) {
+		$header = wp_json_encode( $meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		if ( false === $header ) {
 			return new WP_Error( 'snapshot_encode', __( 'Nije moguće pripremiti javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
-		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$temp = $path . '.tmp';
-		if ( false === file_put_contents( $temp, $json . "\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $handle ) {
+			return new WP_Error( 'snapshot_write', __( 'Nije moguće otvoriti javni HTML snapshot za zapis.', 'sidrena' ) );
+		}
+
+		$prefix = substr( $header, 0, -1 ) . ',"rows":[';
+		if ( false === fwrite( $handle, $prefix ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
+
+		$count = 0;
+		$first = true;
+		foreach ( array_unique( $catalogs ) as $catalog ) {
+			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
+			foreach ( $source as $row ) {
+				foreach ( array_keys( $row ) as $key ) {
+					if ( 0 === strpos( $key, '_sidrena_' ) ) {
+						unset( $row[ $key ] );
+					}
+				}
+				$row['type'] = 'products' === $catalog ? 'product' : 'service';
+				$encoded = wp_json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				if ( false === $encoded ) {
+					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+					return new WP_Error( 'snapshot_row_encode', __( 'Jedan redak javnog HTML snapshota nije moguće JSON kodirati.', 'sidrena' ) );
+				}
+				$chunk = ( $first ? '' : ',' ) . $encoded;
+				if ( false === fwrite( $handle, $chunk ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+					return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
+				}
+				$first = false;
+				++$count;
+			}
+		}
+
+		if ( false === fwrite( $handle, "]}\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+			return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
+		}
+		fflush( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fflush
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
 		if ( ! rename( $temp, $path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
 			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
 			return new WP_Error( 'snapshot_commit', __( 'Nije moguće dovršiti javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
-		return count( $rows );
+		return $count;
 	}
 
 	private function cleanup_public_snapshots( $locations ) {
