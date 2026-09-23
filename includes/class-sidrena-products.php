@@ -365,7 +365,7 @@ final class Sidrena_Products {
 			'_sidrena_anchor_price'             => 'decimal',
 			'_sidrena_anchor_date'              => 'date',
 			'_sidrena_reference_group'          => 'key',
-			'_sidrena_unit_price_status'        => 'unit_status',
+			'_sidrena_unit_price_status'        => 'unit_status_inherit',
 			'_sidrena_unit'                     => 'text',
 			'_sidrena_unit_price'               => 'decimal',
 			'_sidrena_sale_name'                => 'text',
@@ -404,6 +404,9 @@ final class Sidrena_Products {
 			case 'unit_status':
 				$value = sanitize_key( $value );
 				return in_array( $value, array( 'review', 'required', 'not_required', 'exception' ), true ) ? $value : 'review';
+			case 'unit_status_inherit':
+				$value = sanitize_key( $value );
+				return '' === $value || in_array( $value, array( 'review', 'required', 'not_required', 'exception' ), true ) ? $value : '';
 			default:
 				return sanitize_text_field( $value );
 		}
