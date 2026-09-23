@@ -64,7 +64,7 @@ jobs:
           grep -q 'Version: 1.5.0' sidrena.php
           grep -q 'Stable tag: 1.5.0' readme.txt
           grep -q 'Author: Brendigo' sidrena.php
-          grep -q 'https://sidrena-cijena.com.hr/' sidrena.php
+          grep -q 'https://sidrene-cijene.com.hr/' sidrena.php
           test -f assets/images/logo-mark.svg
 
       - name: Commit to development branch
