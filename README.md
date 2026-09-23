@@ -1,232 +1,161 @@
 <div align="center">
-  <img src="assets/images/logo-mark.svg" width="92" height="92" alt="Sidrena logo">
-  <h1>Sidrena</h1>
-  <p><strong>Besplatan WordPress i WooCommerce plugin za sidrene cijene, javne cjenike, povijest cijena i arhivu 30+ dana.</strong></p>
+  <img src="assets/images/logo-horizontal.svg" width="520" alt="Sidrena">
+  <p><strong>Sidrene cijene, povijest cijena, javni CSV/XML cjenici i arhiva 30+ dana za WordPress i WooCommerce.</strong></p>
   <p>
-    <a href="https://sidrena-cijena.com.hr/">Web</a> ·
+    <a href="https://sidrena-cijena.com.hr/">sidrena-cijena.com.hr</a> ·
     <a href="https://brendigo.com/">Brendigo</a> ·
-    <a href="#instalacija">Instalacija</a> ·
-    <a href="#što-sidrena-radi">Mogućnosti</a> ·
-    <a href="#razvoj">Razvoj</a>
+    <a href="https://sidrena-cijena.com.hr/#donirajte">Podržite razvoj</a>
   </p>
 </div>
 
+<img src=".wordpress-org/source/banner.svg" width="100%" alt="Sidrena — besplatan WordPress i WooCommerce dodatak za sidrene cijene">
+
+## Sidrene cijene pod kontrolom
+
+**Sidrena 1.6** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+
+**Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
+
+| WordPress | WooCommerce | PHP | Licenca | Privatnost |
+| --- | --- | --- | --- | --- |
+| 6.6+ | 8.0+ za proizvode | 7.4+ | GPLv2+ | Bez telemetrije |
+
+> Sidrena automatizira tehničku evidenciju, prikaz i objavu podataka. Ne predstavlja pravno mišljenje niti automatsko jamstvo usklađenosti pojedinog poslovnog subjekta.
+
+## Novo produkcijsko sučelje
+
+<img src=".wordpress-org/source/screenshot-1.svg" width="100%" alt="Sidrena 1.6 pregled">
+
+Sidrena je samostalni **top-level WordPress izbornik**. Pregled prikazuje stvarne podatke iz WordPressa: broj popunjenih sidrenih cijena, aktualne digitalne cjenike, lokalnu povijest, javnu arhivu, tehnička upozorenja, kretanje cijene i najnovije zabilježene promjene.
+
+Sučelje koristi zasebne stranice **Pregled, Usklađenost, Katalog, Cjenici, Arhiva 30+ dana, Lokacije, Postavke, Alati, Dnevnik i Propisi** — bez duplih horizontalnih menija i bez skrivenih postavki unutar WooCommercea.
+
+## Arhiva 30+ dana i dobrovoljna podrška
+
+<img src=".wordpress-org/source/screenshot-2.svg" width="100%" alt="Sidrena arhiva i tehnička spremnost">
+
+Svaka uspješna CSV/XML objava pohranjuje se kao zasebna javna datoteka. Programska postavka čuvanja ne može biti kraća od 30 dana; zadana vrijednost je 45 dana. Arhivski zapis može sadržavati vrijeme objave, rok čuvanja, broj redaka, veličinu i SHA-256 sažetak.
+
+U samom Sidrena panelu postoji diskretan **“Podržite razvoj Sidrene”** blok. Donacija je potpuno dobrovoljna i ne otključava nikakvu funkciju — dodatak ostaje besplatan.
+
+## Ključne mogućnosti
+
+- **WooCommerce proizvodi i varijacije** — sidrena cijena, referentni datum, marka, šifra, jedinična cijena, posebni oblik prodaje i povijest.
+- **Katalog usluga bez WooCommercea** — aktualna i sidrena cijena, vrsta, opseg, pripadajući troškovi te ugradbena/zamjenska roba kada je primjenjivo.
+- **CSV/XML po lokaciji** — svaka fizička poslovnica i webshop mogu imati zasebnu datoteku.
+- **Stvarna raspoloživost po lokaciji** — dostupno / nedostupno uz lokalne cijene.
+- **Javna arhiva 30+ dana** — prethodne uspješne objave ne prepisuju se.
+- **Povijest cijena** — odvojena od javne arhive i koristi se kao tehnička podloga za 30-dnevnu referencu kod sniženja.
+- **Automatska dnevna objava** — zadano 06:30 prema WordPress vremenskoj zoni.
+- **REST dohvat** — javni indeks cjenika i aktualne cijene u strojno čitljivom obliku.
+- **SHA-256 integritet** — provjera arhiviranih datoteka.
+- **Bulk katalog, Site Health, audit dnevnik i WP-CLI** — alati za ozbiljnije produkcijske instalacije.
+- **Sve lokalno** — nema udaljene aktivacije, telemetrije ni vanjskog runtime koda.
+
+## Jedinična cijena — NN 105/2026
+
+Sidrena 1.6 dodaje eksplicitnu provjeru primjenjivosti cijene za jedinicu mjere. Administrator može označiti da je jedinična cijena obvezna, nije primjenjiva, obuhvaćena propisanom iznimkom ili još zahtijeva provjeru.
+
+Ako je označena kao obvezna, tehnička provjera upozorava kada nedostaje jedinica mjere ili iznos. Plugin namjerno ne zaključuje automatski pravni status proizvoda samo na temelju WooCommerce kategorije.
+
+## Usluge
+
+Za usluge se mogu evidentirati naziv, vrsta i opseg, cijena, sidrena cijena, posebni oblik prodaje, pripadajući troškovi i — kada je roba sastavni dio usluge — podatak o ugradbenoj ili zamjenskoj robi i njezinoj cijeni.
+
+<img src=".wordpress-org/source/screenshot-3.svg" width="100%" alt="Sidrena digitalni cjenici">
+
+## Galerija sučelja
+
+### Katalog i masovno uređivanje
+
+<img src=".wordpress-org/source/screenshot-4.svg" width="100%" alt="Sidrena katalog i masovno uređivanje">
+
+Katalog je namijenjen radu nad većim brojem WooCommerce stavki. Na jednom mjestu možete pregledati i uređivati šifru, marku, barkod, sidrenu cijenu, referentni datum, referentnu skupinu te status i vrijednost jedinične cijene.
+
+### Poslovnice i webshop
+
+<img src=".wordpress-org/source/screenshot-5.svg" width="100%" alt="Sidrena lokacije i webshop">
+
+Fizičke poslovnice i webshop vode se odvojeno kako bi javni cjenici, lokalne cijene i raspoloživost odgovarali stvarnom prodajnom mjestu.
+
+### Produkcijski alati
+
+<img src=".wordpress-org/source/screenshot-6.svg" width="100%" alt="Sidrena alati za uvoz i izvoz">
+
+Uvoz i izvoz namijenjeni su provjerenim poslovnim podacima. Sidrena ne popunjava povijest izmišljenim vrijednostima i ne pokušava rekonstruirati razdoblje prije instalacije bez vjerodostojnog izvora.
+
+## Vizualni identitet
+
 <p align="center">
-  <img alt="Version 1.5.1" src="https://img.shields.io/badge/version-1.5.1-2B6DF7">
-  <img alt="WordPress 6.6+" src="https://img.shields.io/badge/WordPress-6.6%2B-21759B">
-  <img alt="WooCommerce 8+" src="https://img.shields.io/badge/WooCommerce-8%2B-96588A">
-  <img alt="PHP 7.4+" src="https://img.shields.io/badge/PHP-7.4%2B-777BB4">
-  <img alt="GPLv2+" src="https://img.shields.io/badge/license-GPLv2%2B-2BC7B8">
-  <img alt="Free forever" src="https://img.shields.io/badge/price-100%25%20free-16A085">
-  <img alt="No telemetry" src="https://img.shields.io/badge/telemetry-none-0A2038">
+  <img src="assets/images/logo-horizontal.svg" width="520" alt="Sidrena horizontalni logo">
 </p>
 
-<img src="docs/media/readme-hero.svg" width="100%" alt="Sidrena — sidrene cijene, cjenici i arhiva">
+<p align="center">
+  <img src="assets/images/logo-mark.svg" width="150" height="150" alt="Sidrena ikona">
+</p>
 
-## Sidrene cijene bez ručnog kaosa
+Sidrena koristi vlastiti lokalni vizualni sustav: tamnoplavu bazu, Sidrena plavu i jadransku tirkiznu, originalni znak slova **S** sa sidrom te vlastite lokalne administracijske i WordPress.org vizuale. Plugin u radu ne učitava branding s vanjskog CDN-a.
 
-**Sidrena** je open-source WordPress plugin autora **Brendigo** napravljen za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga kojima treba uredna evidencija cijena i javni digitalni cjenik.
+## Javni REST i shortcodeovi
 
-Umjesto kombiniranja tablica, ručnih exporta i više nepovezanih alata, Sidrena objedinjavanjem WooCommerce podataka, usluga, lokacija, povijesti cijena i javne objave stvara jedan kontrolni centar unutar WordPressa.
+REST:
+- /wp-json/sidrena/v1/cjenici
+- /wp-json/sidrena/v1/cijene
 
-**Nema Pro verzije. Nema licence. Nema pretplate. Nema telemetrije. Nema obaveznog vanjskog računa.**
+Shortcodeovi:
+- [sidrena_cjenici]
+- [sidrena_usluge]
+- [sidrena_cijena]
 
-> Sidrena je tehnički alat za evidenciju, prikaz i objavu podataka. Ne predstavlja pravno mišljenje niti automatsko jamstvo usklađenosti pojedinog poslovnog subjekta.
+WP-CLI:
+- wp sidrena generate
+- wp sidrena status
+- wp sidrena audit
 
-## Što Sidrena radi
+## Službeni propisi koje projekt tehnički prati
 
-<img src="docs/media/readme-features.svg" width="100%" alt="Sidrena ključne mogućnosti">
+- **NN 101/2026, 1212** — dodatna/sidrena cijena; primjena od 1. listopada 2026.
+- **NN 101/2026, 1213** — javni CSV/XML cjenici, rokovi ažuriranja, 30-dnevna javna dostupnost i strojni dohvat; primjena od 1. listopada 2026.
+- **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja primjene dodatne cijene i objave cjenika.
+- **NN 59/2026** — relevantne izmjene Zakona o zaštiti potrošača, uključujući 30-dnevnu referencu kod sniženja.
+- **NN 105/2026** — način isticanja maloprodajne/jedinične cijene i pravila za cjenike usluga; objavljen 18.09.2026., stupa na snagu osmoga dana od objave.
 
-| Područje | Što dobivate |
-| --- | --- |
-| **WooCommerce** | Sidrena cijena i referentni datum za proizvode i varijacije, SKU fallback, povijest promjena i bulk katalog. |
-| **Usluge** | Vlastiti katalog usluga bez obaveznog WooCommercea, s aktualnom i sidrenom cijenom. |
-| **Digitalni cjenici** | Javni CSV i XML, zasebno po fizičkoj lokaciji i webshopu. |
-| **Arhiva 30+ dana** | Svaka uspješna objava ostaje zasebna datoteka; zadano čuvanje je 45 dana, programski minimum 30. |
-| **Povijest cijena** | Lokalna evidencija proizvoda, varijacija, usluga i lokacijskih vrijednosti, s odvojenim 30-dnevnim referencama za sniženja. |
-| **Lokacije** | Cijene, sidrene cijene i raspoloživost po poslovnici; webshop se vodi kao zaseban objekt. |
-| **Integritet** | SHA-256 zapis objavljenih datoteka i provjera arhive. |
-| **Automatizacija** | Dnevno generiranje, WP-Cron dijagnostika i podrška za pouzdani server cron. |
-| **REST** | Javni indeks cjenika i dohvat aktualnih cijena u strojno čitljivom obliku. |
-| **Administracija** | Samostalni top-level **Sidrena** meni, moderni tabovi, katalog, audit log, Site Health i WP-CLI. |
-| **Privatnost** | Bez telemetrije, udaljene aktivacije, obaveznog clouda ili skrivenog paywalla. |
-
-## Moderan WordPress panel
-
-<img src="docs/media/readme-dashboard.svg" width="100%" alt="Sidrena moderni administracijski panel">
-
-Sidrena nije skrivena u podmeniju WooCommercea. Ima vlastiti glavni WordPress izbornik i jasno odvojena područja za svakodnevni rad:
-
-**Pregled · Usklađenost · Katalog · Cjenici · Arhiva 30+ dana · Lokacije · Postavke · Alati · Dnevnik · Propisi**
-
-Panel je napravljen tako da korisnik prvo vidi što je spremno, što nedostaje i koju radnju treba napraviti — bez otvaranja više različitih WordPress ekrana.
-
-## Kako radi
-
-<img src="docs/media/readme-flow.svg" width="100%" alt="Tok rada Sidrena plugina">
-
-1. **Učitajte podatke** iz WooCommerce proizvoda i/ili Sidrena kataloga usluga.
-2. **Vodite sidrene i aktualne cijene**, referentne datume, povijest te lokacijske vrijednosti.
-3. **Generirajte i objavite** CSV/XML cjenike, javnu WordPress stranicu i REST podatke.
-4. **Sačuvajte povijest objava** najmanje 30 dana i provjeravajte integritet arhive.
-
-## Arhiva koja ne prepisuje povijest
-
-Sidrena svaku uspješnu generaciju sprema kao novu javnu datoteku. Prethodni cjenici ne nestaju kada nastane novi.
-
-Svaki arhivski zapis može sadržavati vrijeme objave, lokaciju, vrstu kataloga, format, broj redaka, veličinu datoteke, rok čuvanja i SHA-256 sažetak. Trenutačno važeća datoteka dodatno se štiti od automatskog uklanjanja samo zato što je starija od arhivskog prozora.
-
-**Javna arhiva cjenika i interna povijest za izračun najniže cijene prije sniženja dvije su različite evidencije. Sidrena ih vodi odvojeno.**
-
-## WooCommerce bez ručnog uređivanja svakog artikla
-
-Sidrena radi s običnim i varijabilnim WooCommerce proizvodima. Za katalog može voditi:
-
-- aktualnu cijenu
-- sidrenu cijenu i referentni datum
-- marku i šifru artikla
-- barkod kada je dostupan
-- posebni oblik prodaje
-- lokacijsku cijenu i raspoloživost
-- povijest promjena
-- 30-dnevnu referencu za sniženja kada postoji dovoljno provjerljivih podataka
-
-Bulk katalog omogućuje obradu većeg broja proizvoda bez otvaranja svakog proizvoda zasebno.
-
-## Usluge rade i bez WooCommercea
-
-Za poslovanja koja ne trebaju webshop Sidrena ima vlastiti katalog usluga. Usluga može imati aktualnu i sidrenu cijenu, referentni datum, opis vrste/opsega te dodatne podatke potrebne za javni prikaz i cjenik.
-
-Shortcode `[sidrena_usluge]` omogućuje objavu cjenika usluga na WordPress stranici.
-
-## Više poslovnica + webshop
-
-Svaka fizička poslovnica može imati vlastitu cijenu, sidrenu cijenu i raspoloživost artikla. Webshop se može voditi kao zaseban objekt.
-
-Lokacijski import podržava mapiranje prema `product_id` ili `sku`, a prazna lokacijska cijena može naslijediti osnovnu WooCommerce cijenu.
-
-## Javni API i shortcodeovi
-
-### REST endpointi
-
-```text
-/wp-json/sidrena/v1/cjenici
-/wp-json/sidrena/v1/cijene
-```
-
-Endpoint aktualnih cijena podržava filtriranje prema vrsti i lokaciji te paginaciju. Odgovori za aktualne cijene koriste no-cache/no-store zaglavlja kako bi dohvat bio što bliži trenutačnom stanju WordPressa.
-
-### Shortcodeovi
-
-```text
-[sidrena_cjenici]
-[sidrena_usluge]
-[sidrena_cijena]
-```
-
-### WP-CLI
-
-```bash
-wp sidrena generate
-wp sidrena status
-wp sidrena audit
-```
-
-## Privatnost i sigurnost
-
-Sidrena je napravljena kao lokalni WordPress plugin. Runtime ne zahtijeva vanjski račun ili cloud servis.
-
-- WordPress capability i nonce provjere za administracijske radnje
-- sanitizacija i ograničenja CSV uvoza
-- privremeni zapis prije zamjene konačne CSV/XML datoteke
-- SHA-256 evidencija arhive
-- bez telemetrije
-- bez udaljene licence
-- bez Pro paywalla
-- bez obaveznog vanjskog API-ja
-
-## Tehnička podrška za hrvatska pravila cijena
-
-Projekt je razvijen kao tehnička podrška za rad s pravilima koja Sidrena dokumentacija prati, uključujući **NN 101/2026** i službena pojašnjenja nadležnog ministarstva iz rujna 2026.
-
-Referentni datumi, iznimke i primjenjivost pojedinih pravila ovise o vrsti poslovanja i konkretnom proizvodu/usluzi. Zato plugin namjerno ne izmišlja povijesne vrijednosti koje WordPress nije zabilježio.
-
-Detaljnije bilješke: [docs/legal-and-technical-notes.md](docs/legal-and-technical-notes.md)
-
-Službeni izvori koje projekt koristi u dokumentaciji:
-
-- Narodne novine — NN 101/2026
-- Ministarstvo gospodarstva — pojašnjenja za dodatnu cijenu i objavu cjenika
-- relevantne odredbe Zakona o zaštiti potrošača
+Službeni linkovi i informativni sažeci nalaze se u **Sidrena → Propisi**.
 
 ## Instalacija
 
-1. Preuzmite aktualni `sidrena-x.y.z.zip`.
-2. U WordPressu otvorite **Dodaci → Dodaj novi → Prenesi dodatak**.
-3. Instalirajte i aktivirajte Sidrena plugin.
-4. Otvorite glavni **Sidrena** izbornik.
-5. Odaberite način rada: proizvodi, usluge ili kombinirano.
-6. Dodajte poslovnice i zaseban webshop ako ga koristite.
-7. Provjerite sidrene cijene i referentne datume.
-8. Generirajte prvi cjenik i provjerite kartice **Cjenici** i **Arhiva 30+ dana**.
-9. Za poslovno kritično izvršavanje u točno određeno vrijeme koristite pouzdani server cron koji pokreće WordPress cron.
+1. U WordPressu otvorite **Dodaci → Dodaj novi → Prenesi dodatak**.
+2. Instalirajte aktualni sidrena-x.y.z.zip.
+3. Aktivirajte dodatak i otvorite glavni izbornik **Sidrena**.
+4. Odaberite način rada: proizvodi, usluge ili kombinirano.
+5. Dodajte poslovnice i zaseban webshop.
+6. Provjerite sidrene cijene, referentne datume, marke i primjenjivost jedinične cijene.
+7. Za fizičke poslovnice unesite ili uvezite stvarnu raspoloživost.
+8. Generirajte prvi cjenik i provjerite **Cjenici**, **Arhiva 30+ dana** i **Usklađenost**.
+9. Za poslovno kritičan termin koristite pouzdani server cron koji redovito pokreće WordPress cron ili odgovarajuću WP-CLI naredbu.
 
-## Zahtjevi
+## Sigurnost i privatnost
 
-| Komponenta | Zahtjev |
-| --- | --- |
-| WordPress | 6.6+ |
-| PHP | 7.4+ |
-| WooCommerce | 8.0+ samo ako koristite proizvode |
-| Licenca | GPLv2 ili novija |
-| Telemetrija | Nema |
-| Pretplata | Nema |
+Administracijske radnje koriste WordPress ovlasti i nonce provjere. Uvozi se sanitiziraju, a CSV/XML se zapisuju preko privremene datoteke prije konačne zamjene. Sidrena ne šalje telemetriju i ne zahtijeva korisnički račun, licencni server ili vanjski SaaS.
 
-## Struktura projekta
+## Podržite Sidrenu
 
-```text
-sidrena/
-├── admin/                  # admin CSS i JS
-├── assets/images/          # Sidrena brand/logo
-├── docs/                   # pravne, tehničke i marketing bilješke
-├── includes/               # plugin klase i poslovna logika
-├── languages/              # prijevodi / POT
-├── public/                 # frontend stilovi
-├── sidrena.php             # plugin bootstrap
-├── readme.txt              # WordPress.org readme
-└── uninstall.php           # uninstall cleanup
-```
+Ako vam Sidrena štedi vrijeme, možete dobrovoljno podržati održavanje, testiranje i daljnji razvoj:
 
-## Razvoj
+**https://sidrena-cijena.com.hr/#donirajte**
 
-Aktivni razvoj vodi se na GitHubu uz CI provjere za PHP i JavaScript, metapodatke WordPress.org paketa, stari branding i inline script/style blokove.
+Donacija nije uvjet za korištenje i ne otključava dodatne funkcije.
 
-GitHub release workflow može iz taga izgraditi instalacijski ZIP i SHA-256 checksum.
+## Autor
 
-Za prijave problema koristite GitHub Issues, a za promjene Pull Request workflow.
-
-## Zašto je Sidrena besplatna
-
-Cilj projekta je ponuditi kvalitetan, transparentan i provjerljiv WordPress alat bez zaključavanja osnovne funkcionalnosti iza pretplate.
-
-Sidrena zato nema “lite” izdanje koje služi samo kao reklama za Pro. Kod je open source, funkcionalnost ostaje lokalna, a razvoj se javno prati na GitHubu.
-
-## Autor i projekt
-
-**Sidrena** razvija [Brendigo](https://brendigo.com/).
-
-Službena stranica plugina: **https://sidrena-cijena.com.hr/**
-
-Repozitorij: **https://github.com/bren-wp/SIDRENA**
+**Brendigo** — https://brendigo.com/  
+**Sidrena** — https://sidrena-cijena.com.hr/
 
 ## Licenca
 
-Sidrena je objavljena pod **GPLv2 or later** licencom. Pogledajte [LICENSE](LICENSE).
-
----
+GPLv2 or later. Pogledajte [LICENSE](LICENSE).
 
 <div align="center">
-  <img src="assets/images/logo-mark.svg" width="48" height="48" alt="Sidrena">
-  <p><strong>Sidrena — cijene pod kontrolom.</strong></p>
-  <p>WordPress · WooCommerce · CSV/XML · REST · 30+ dana arhive</p>
+  <img src="assets/images/logo-mark.svg" width="72" height="72" alt="Sidrena">
+  <p><strong>Sidrena — sidrene cijene. Više kontrole.</strong></p>
 </div>

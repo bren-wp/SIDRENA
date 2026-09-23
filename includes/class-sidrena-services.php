@@ -85,6 +85,7 @@ final class Sidrena_Services {
 			'service_type'  => get_post_meta( $post->ID, '_sidrena_service_type', true ),
 			'service_scope' => get_post_meta( $post->ID, '_sidrena_service_scope', true ),
 			'service_costs' => get_post_meta( $post->ID, '_sidrena_service_costs', true ),
+			'service_goods' => get_post_meta( $post->ID, '_sidrena_service_goods', true ),
 		);
 		if ( ! $fields['anchor_date'] ) {
 			$fields['anchor_date'] = Sidrena_Utils::settings()['default_ref_date'];
@@ -133,6 +134,7 @@ final class Sidrena_Services {
 				<p><label for="sidrena_service_type"><strong><?php esc_html_e( 'Vrsta usluge', 'sidrena' ); ?></strong></label><br><input class="regular-text" type="text" id="sidrena_service_type" name="sidrena_service_type" value="<?php echo esc_attr( $fields['service_type'] ); ?>" placeholder="<?php esc_attr_e( 'npr. servisna usluga', 'sidrena' ); ?>"></p>
 				<p><label for="sidrena_service_scope"><strong><?php esc_html_e( 'Opseg usluge', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_scope" name="sidrena_service_scope" placeholder="<?php esc_attr_e( 'Što točno usluga uključuje', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_scope'] ); ?></textarea></p>
 				<p><label for="sidrena_service_costs"><strong><?php esc_html_e( 'Pripadajući troškovi / napomena o cijeni', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_costs" name="sidrena_service_costs" placeholder="<?php esc_attr_e( 'Navedite što je uključeno u cijenu i relevantne troškove', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_costs'] ); ?></textarea></p>
+				<p><label for="sidrena_service_goods"><strong><?php esc_html_e( 'Ugradbena / zamjenska roba i cijena', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_goods" name="sidrena_service_goods" placeholder="<?php esc_attr_e( 'Ako je roba sastavni dio usluge, navedite robu i njezinu cijenu uz uslugu', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_goods'] ); ?></textarea><small><?php esc_html_e( 'NN 105/2026 čl. 11. traži isticanje cijene ugradbene ili zamjenske robe uz pripadajuću uslugu kada je roba sastavni dio usluge.', 'sidrena' ); ?></small></p>
 			</div>
 		</div>
 		<?php
@@ -197,7 +199,7 @@ final class Sidrena_Services {
 			}
 		}
 
-		foreach ( array( 'sidrena_service_scope' => '_sidrena_service_scope', 'sidrena_service_costs' => '_sidrena_service_costs' ) as $field => $meta ) {
+		foreach ( array( 'sidrena_service_scope' => '_sidrena_service_scope', 'sidrena_service_costs' => '_sidrena_service_costs', 'sidrena_service_goods' => '_sidrena_service_goods' ) as $field => $meta ) {
 			$value = isset( $_POST[ $field ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ) : '';
 			if ( '' === $value ) {
 				delete_post_meta( $post_id, $meta );
@@ -334,6 +336,7 @@ final class Sidrena_Services {
 			$type  = trim( (string) get_post_meta( $service->ID, '_sidrena_service_type', true ) );
 			$scope = trim( (string) get_post_meta( $service->ID, '_sidrena_service_scope', true ) );
 			$costs = trim( (string) get_post_meta( $service->ID, '_sidrena_service_costs', true ) );
+			$goods = trim( (string) get_post_meta( $service->ID, '_sidrena_service_goods', true ) );
 			$out .= '<th scope="row"><span class="sidrena-service-name">' . esc_html( get_the_title( $service ) ) . '</span>';
 			if ( $type ) {
 				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Vrsta:', 'sidrena' ) . '</strong> ' . esc_html( $type ) . '</small>';
@@ -343,6 +346,9 @@ final class Sidrena_Services {
 			}
 			if ( $costs ) {
 				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Troškovi:', 'sidrena' ) . '</strong> ' . nl2br( esc_html( $costs ) ) . '</small>';
+			}
+			if ( $goods ) {
+				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Ugradbena/zamjenska roba:', 'sidrena' ) . '</strong> ' . nl2br( esc_html( $goods ) ) . '</small>';
 			}
 			$out .= '</th>';
 			$current_text = '' === $current ? '—' : Sidrena_Utils::money( $current ) . ' €';

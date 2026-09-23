@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" role="img" aria-labelledby="title desc">
+<title id="title">Sidrena</title>
+<desc id="desc">Horizontalni Sidrena logotip.</desc>
+<defs>
+	<linearGradient id="r" x1="25" y1="20" x2="185" y2="190" gradientUnits="userSpaceOnUse">
+		<stop stop-color="#2de7df"/>
+		<stop offset=".25" stop-color="#1ba9ee"/>
+		<stop offset=".58" stop-color="#176ff3"/>
+		<stop offset=".82" stop-color="#0750a5"/>
+		<stop offset="1" stop-color="#1bd0c6"/>
+	</linearGradient>
+	<linearGradient id="word" x1="230" y1="70" x2="735" y2="155" gradientUnits="userSpaceOnUse">
+		<stop stop-color="#092f55"/>
+		<stop offset="1" stop-color="#061d36"/>
+	</linearGradient>
+</defs>
+<g>
+	<path d="M155 42c-17-12-37-17-58-14-24 3-41 14-48 31-7 17-1 35 16 44 11 6 25 7 40 9 21 2 33 5 37 13 4 7-1 15-11 21-13 7-30 7-46 0-11-5-20-12-28-20" fill="none" stroke="url(#r)" stroke-width="31" stroke-linecap="round" stroke-linejoin="round"/>
+	<path d="M63 163c16 16 37 24 59 21 21-2 38-12 47-28" fill="none" stroke="#19c9c1" stroke-width="21" stroke-linecap="round"/>
+	<g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+		<circle cx="109" cy="61" r="12" stroke-width="8"/>
+		<path d="M109 73v65" stroke-width="9"/>
+		<path d="M89 94h40" stroke-width="9"/>
+		<path d="M69 127c7 25 21 38 40 38s33-13 40-38" stroke-width="9"/>
+		<path d="m69 127-14 7 12 13m82-20 14 7-12 13" stroke-width="9"/>
+	</g>
+</g>
+<text x="205" y="140" fill="url(#word)" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="104" font-weight="800" letter-spacing="-5">Sidrena</text>
+</svg>

@@ -1,0 +1,40 @@
+name: Build WordPress.org assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SVG renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
+
+      - name: Render assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/wporg-assets
+          rsvg-convert -w 772 -h 250 .wordpress-org/source/banner.svg > dist/wporg-assets/banner-772x250.png
+          rsvg-convert -w 1544 -h 500 .wordpress-org/source/banner.svg > dist/wporg-assets/banner-1544x500.png
+          rsvg-convert -w 128 -h 128 assets/images/logo-mark.svg > dist/wporg-assets/icon-128x128.png
+          rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > dist/wporg-assets/icon-256x256.png
+          cp assets/images/logo-mark.svg dist/wporg-assets/icon.svg
+          for N in 1 2 3 4 5 6; do
+            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-${N}.svg" > "dist/wporg-assets/screenshot-${N}.png"
+          done
+
+      - name: Upload WordPress.org assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidrena-wordpress-org-assets
+          path: dist/wporg-assets/
+          if-no-files-found: error

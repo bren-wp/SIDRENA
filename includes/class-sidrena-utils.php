@@ -36,6 +36,12 @@ final class Sidrena_Utils {
 		return $settings;
 	}
 
+
+	public static function donation_url() {
+		$url = apply_filters( 'sidrena_donation_url', 'https://sidrena-cijena.com.hr/#donirajte' );
+		return is_string( $url ) ? esc_url_raw( $url ) : '';
+	}
+
 	public static function locations() {
 		$locations = get_option( 'sidrena_locations', array() );
 		if ( ! is_array( $locations ) || empty( $locations ) ) {
@@ -304,12 +310,18 @@ final class Sidrena_Utils {
 			return '';
 		}
 		if ( is_callable( array( $product, 'get_global_unique_id' ) ) ) {
-			$value = $product->get_global_unique_id();
-			if ( $value ) {
+			$value = trim( (string) $product->get_global_unique_id() );
+			if ( '' !== $value ) {
 				return $value;
 			}
 		}
-		return (string) get_post_meta( $product->get_id(), '_global_unique_id', true );
+
+		$value = trim( (string) get_post_meta( $product->get_id(), '_global_unique_id', true ) );
+		if ( '' !== $value ) {
+			return $value;
+		}
+
+		return trim( (string) get_post_meta( $product->get_id(), '_sidrena_barcode', true ) );
 	}
 
 	public static function public_index() {

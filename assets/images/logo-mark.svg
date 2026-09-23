@@ -1,10 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sidrena">
-<defs><linearGradient id="g" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#2B6DF7"/><stop offset="1" stop-color="#2BC7B8"/></linearGradient></defs>
-<rect x="3" y="3" width="58" height="58" rx="17" fill="#07182D"/>
-<circle cx="32" cy="32" r="21" fill="url(#g)"/>
-<circle cx="32" cy="17" r="5" fill="none" stroke="#fff" stroke-width="3"/>
-<path d="M32 22v23M21 27h22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-<path d="M15.5 36.5c2.8 10.2 9 15.3 16.5 15.3s13.7-5.1 16.5-15.3" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-<path d="m15 35-5 2.5 4.2 4.5m34.8-7 5 2.5-4.2 4.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M29 31c5-2.8 9 1.6 5.1 4.7-3.9 3.1-8.2 1.6-6.8 6.3" fill="none" stroke="#2BC7B8" stroke-width="2.3" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">Sidrena</title>
+<desc id="desc">Sidrena simbol sa slovom S i sidrom.</desc>
+<defs>
+	<linearGradient id="bg" x1="28" y1="20" x2="226" y2="238" gradientUnits="userSpaceOnUse">
+		<stop stop-color="#0f6fe8"/>
+		<stop offset=".45" stop-color="#073b75"/>
+		<stop offset="1" stop-color="#061e38"/>
+	</linearGradient>
+	<linearGradient id="ribbon" x1="40" y1="32" x2="214" y2="224" gradientUnits="userSpaceOnUse">
+		<stop stop-color="#2ce8df"/>
+		<stop offset=".23" stop-color="#1ba9ee"/>
+		<stop offset=".55" stop-color="#176ff3"/>
+		<stop offset=".78" stop-color="#0750a5"/>
+		<stop offset="1" stop-color="#19c9c1"/>
+	</linearGradient>
+	<filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+		<feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#00152b" flood-opacity=".34"/>
+	</filter>
+</defs>
+<rect x="12" y="12" width="232" height="232" rx="55" fill="url(#bg)"/>
+<rect x="14" y="14" width="228" height="228" rx="53" fill="none" stroke="#42d9f5" stroke-opacity=".35" stroke-width="3"/>
+<g filter="url(#shadow)">
+	<path d="M177 51c-18-14-40-21-66-18-28 3-49 16-58 37-9 20-2 43 18 54 13 7 28 9 47 11 23 2 37 5 42 14 4 8-1 17-13 24-14 8-35 8-54-1-12-5-22-13-31-23" fill="none" stroke="url(#ribbon)" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/>
+	<path d="M73 192c18 18 42 27 69 24 24-3 45-15 55-34" fill="none" stroke="#20d5ca" stroke-width="24" stroke-linecap="round" opacity=".9"/>
+</g>
+<g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+	<circle cx="128" cy="75" r="14" stroke-width="10"/>
+	<path d="M128 89v78" stroke-width="11"/>
+	<path d="M104 113h48" stroke-width="11"/>
+	<path d="M79 153c8 31 26 47 49 47s41-16 49-47" stroke-width="11"/>
+	<path d="m79 153-18 9 15 16m101-25 18 9-15 16" stroke-width="11"/>
+</g>
 </svg>

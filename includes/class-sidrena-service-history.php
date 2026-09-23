@@ -222,6 +222,125 @@ final class Sidrena_Service_History {
 		);
 	}
 
+
+	public static function recent_changes( $limit = 5 ) {
+		global $wpdb;
+		$table = $wpdb->prefix . 'sidrena_service_price_history';
+		$limit = min( 20, max( 1, absint( $limit ) ) );
+		$scan  = max( 120, $limit * 30 );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, service_id, price, recorded_at
+				FROM {$table}
+				WHERE price IS NOT NULL
+				ORDER BY id DESC
+				LIMIT %d",
+				$scan
+			),
+			ARRAY_A
+		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+
+		$newest  = array();
+		$changes = array();
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$service_id = absint( $row['service_id'] );
+			if ( ! $service_id ) {
+				continue;
+			}
+
+			if ( ! isset( $newest[ $service_id ] ) ) {
+				$newest[ $service_id ] = $row;
+				continue;
+			}
+
+			$new = $newest[ $service_id ];
+			if ( abs( (float) $new['price'] - (float) $row['price'] ) < 0.000001 ) {
+				$newest[ $service_id ] = $row;
+				continue;
+			}
+
+			$old = (float) $row['price'];
+			$now = (float) $new['price'];
+			$changes[] = array(
+				'item_id'     => $service_id,
+				'name'        => wp_strip_all_tags( get_the_title( $service_id ) ),
+				'old_price'   => $old,
+				'new_price'   => $now,
+				'recorded_at' => sanitize_text_field( $new['recorded_at'] ),
+				'change_pct'  => 0.0 !== $old ? ( ( $now - $old ) / $old ) * 100 : 0,
+				'kind'        => 'service',
+			);
+			unset( $newest[ $service_id ] );
+
+			if ( count( $changes ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $changes;
+	}
+
+	public static function latest_series( $days = 30 ) {
+		global $wpdb;
+		$table = $wpdb->prefix . 'sidrena_service_price_history';
+		$days  = min( 90, max( 7, absint( $days ) ) );
+
+		$latest = $wpdb->get_row(
+			"SELECT service_id, price, recorded_at
+			FROM {$table}
+			WHERE price IS NOT NULL
+			ORDER BY id DESC LIMIT 1",
+			ARRAY_A
+		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+
+		if ( ! $latest ) {
+			return array();
+		}
+
+		$service_id = absint( $latest['service_id'] );
+		$cutoff_dt  = new DateTimeImmutable( '-' . $days . ' days', wp_timezone() );
+		$cutoff     = $cutoff_dt->format( 'Y-m-d H:i:s' );
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT price, recorded_at FROM {$table}
+				WHERE service_id = %d AND price IS NOT NULL AND recorded_at >= %s
+				ORDER BY recorded_at ASC, id ASC",
+				$service_id,
+				$cutoff
+			),
+			ARRAY_A
+		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+
+		if ( empty( $rows ) ) {
+			$rows = array( $latest );
+		}
+
+		$points = array();
+		foreach ( $rows as $row ) {
+			$points[] = array(
+				'price'       => (float) $row['price'],
+				'recorded_at' => sanitize_text_field( $row['recorded_at'] ),
+			);
+		}
+
+		$prices  = wp_list_pluck( $points, 'price' );
+		$first   = reset( $prices );
+		$current = end( $prices );
+
+		return array(
+			'item_id'    => $service_id,
+			'name'       => wp_strip_all_tags( get_the_title( $service_id ) ),
+			'current'    => (float) $current,
+			'minimum'    => (float) min( $prices ),
+			'maximum'    => (float) max( $prices ),
+			'change_pct' => 0.0 !== (float) $first ? ( ( (float) $current - (float) $first ) / (float) $first ) * 100 : 0,
+			'points'     => $points,
+			'days'       => $days,
+			'kind'       => 'service',
+		);
+	}
+
 	public static function count_rows() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
