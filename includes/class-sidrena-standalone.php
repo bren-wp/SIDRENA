@@ -18,6 +18,7 @@ final class Sidrena_Standalone {
 	public function hooks() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'admin_post_sidrena_standalone_save', array( $this, 'save' ) );
+		add_action( 'admin_post_sidrena_standalone_import', array( $this, 'import' ) );
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
 			add_shortcode( 'sidrena_cijena', array( $this, 'price_shortcode' ) );
 			add_shortcode( 'sidrena-cijena', array( $this, 'price_shortcode' ) );
@@ -153,6 +154,18 @@ final class Sidrena_Standalone {
 				<p><?php esc_html_e( 'Za običan WordPress unesite proizvode izravno u Sidreni. Isti podaci koriste se za javni HTML cjenik, CSV/XML, arhivu i tehničku provjeru.', 'sidrena' ); ?></p>
 			</div>
 		</div>
+		<form class="sid-card sid-form sid-standalone-import" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="sidrena_standalone_import">
+			<?php wp_nonce_field( 'sidrena_standalone_import' ); ?>
+			<div class="sid-section-head">
+				<div><span class="sid-kicker"><?php esc_html_e( 'Masovni uvoz', 'sidrena' ); ?></span><h2><?php esc_html_e( 'CSV/XML katalog', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Podržani su hrvatski i tehnički nazivi stupaca/čvorova. Postojeće stavke povezuju se po šifri; nove zahtijevaju naziv, cijenu i sidrenu cijenu.', 'sidrena' ); ?></p></div>
+			</div>
+			<div class="sid-form-actions">
+				<input class="sid-file-input" type="file" name="standalone_file" accept=".csv,.xml,text/csv,text/xml,application/xml" required>
+				<button type="submit" class="button sid-secondary"><?php esc_html_e( 'Uvezi katalog', 'sidrena' ); ?></button>
+			</div>
+		</form>
+
 		<form class="sid-card sid-form sid-standalone-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="sidrena_standalone_save">
 			<?php wp_nonce_field( 'sidrena_standalone_save' ); ?>
@@ -281,6 +294,262 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log( 'standalone_catalog_save', 'success', __( 'Samostalni Sidrena katalog je spremljen.', 'sidrena' ) );
 		Sidrena_Pricelist::queue_regeneration();
 		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=bulk_saved' ) );
+		exit;
+	}
+
+
+	public function import() {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_standalone_import' ) ) {
+			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
+		}
+		if ( empty( $_FILES['standalone_file'] ) || ! is_array( $_FILES['standalone_file'] ) ) {
+			$this->redirect_import( 'import_failed' );
+		}
+
+		$file = $_FILES['standalone_file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated before use.
+		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
+			$this->redirect_import( 'import_failed' );
+		}
+		if ( (int) ( $file['size'] ?? 0 ) > 5 * MB_IN_BYTES ) {
+			$this->redirect_import( 'import_failed' );
+		}
+
+		$filename = sanitize_file_name( wp_unslash( $file['name'] ?? '' ) );
+		$ext      = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+		if ( ! in_array( $ext, array( 'csv', 'xml' ), true ) ) {
+			$this->redirect_import( 'import_failed' );
+		}
+
+		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( false === $contents || '' === $contents ) {
+			$this->redirect_import( 'import_failed' );
+		}
+		$contents = Sidrena_Utils::normalize_text_encoding( $contents );
+
+		$rows = 'xml' === $ext ? $this->parse_xml_rows( $contents ) : $this->parse_csv_rows( $contents );
+		if ( is_wp_error( $rows ) || empty( $rows ) ) {
+			$this->redirect_import( 'import_failed' );
+		}
+
+		$created = 0;
+		$updated = 0;
+		$skipped = 0;
+		foreach ( $rows as $raw ) {
+			$row = $this->canonical_import_row( $raw );
+			$code = sanitize_text_field( $row['code'] ?? '' );
+			$id   = $code ? $this->find_by_code( $code ) : 0;
+
+			if ( ! $id ) {
+				$name    = sanitize_text_field( $row['name'] ?? '' );
+				$current = Sidrena_Utils::decimal( $row['current'] ?? '' );
+				$anchor  = Sidrena_Utils::decimal( $row['anchor'] ?? '' );
+				if ( '' === $name || '' === $current || '' === $anchor ) {
+					++$skipped;
+					continue;
+				}
+				$id = wp_insert_post(
+					array(
+						'post_type'   => self::POST_TYPE,
+						'post_status' => 'publish',
+						'post_title'  => $name,
+					),
+					true
+				);
+				if ( is_wp_error( $id ) || ! $id ) {
+					++$skipped;
+					continue;
+				}
+				++$created;
+			} else {
+				++$updated;
+				if ( ! empty( $row['name'] ) ) {
+					wp_update_post( array( 'ID' => $id, 'post_title' => sanitize_text_field( $row['name'] ) ) );
+				}
+			}
+
+			$this->import_field( $id, '_sidrena_standalone_code', $row, 'code', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_brand', $row, 'brand', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_anchor_date', $row, 'anchor_date', 'date' );
+			$this->import_field( $id, '_sidrena_standalone_barcode', $row, 'barcode', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_unit', $row, 'unit', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_unit_price', $row, 'unit_price', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_sale_name', $row, 'sale_name', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_lowest_30', $row, 'lowest_30', 'decimal' );
+
+			if ( array_key_exists( 'unit_status', $row ) && '' !== trim( (string) $row['unit_status'] ) ) {
+				$status = sanitize_key( $row['unit_status'] );
+				if ( in_array( $status, array( 'review', 'required', 'not_required', 'exception' ), true ) ) {
+					update_post_meta( $id, '_sidrena_standalone_unit_status', $status );
+				}
+			}
+			if ( array_key_exists( 'availability', $row ) && '' !== trim( (string) $row['availability'] ) ) {
+				$availability = sanitize_key( remove_accents( (string) $row['availability'] ) );
+				if ( in_array( $availability, array( 'dostupno', 'nedostupno' ), true ) ) {
+					update_post_meta( $id, '_sidrena_standalone_availability', $availability );
+				}
+			}
+		}
+
+		Sidrena_Audit::log(
+			'standalone_catalog_import',
+			'success',
+			sprintf( __( 'Uvoz samostalnog kataloga dovršen: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
+			array( 'created' => $created, 'updated' => $updated, 'skipped' => $skipped )
+		);
+		Sidrena_Pricelist::queue_regeneration();
+		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=imported' ) );
+		exit;
+	}
+
+	private function parse_csv_rows( $contents ) {
+		$resource = fopen( 'php://temp', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $resource ) {
+			return new WP_Error( 'csv_open' );
+		}
+		fwrite( $resource, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		rewind( $resource );
+		$first = fgets( $resource );
+		if ( false === $first ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'csv_empty' );
+		}
+		$delimiter = ';';
+		$best = -1;
+		foreach ( array( ';', ',', "\t" ) as $candidate ) {
+			$count = substr_count( $first, $candidate );
+			if ( $count > $best ) {
+				$delimiter = $candidate;
+				$best = $count;
+			}
+		}
+		rewind( $resource );
+		$head = fgetcsv( $resource, 0, $delimiter );
+		if ( ! is_array( $head ) ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'csv_header' );
+		}
+		$head[0] = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
+		$head = array_map( 'sanitize_key', $head );
+		$rows = array();
+		while ( ( $values = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+			$row = array();
+			foreach ( $head as $index => $key ) {
+				if ( '' !== $key ) {
+					$row[ $key ] = isset( $values[ $index ] ) ? $values[ $index ] : '';
+				}
+			}
+			if ( ! empty( array_filter( $row, static function ( $value ) { return '' !== trim( (string) $value ); } ) ) ) {
+				$rows[] = $row;
+			}
+		}
+		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		return $rows;
+	}
+
+	private function parse_xml_rows( $contents ) {
+		if ( ! function_exists( 'simplexml_load_string' ) ) {
+			return new WP_Error( 'xml_unavailable' );
+		}
+		libxml_use_internal_errors( true );
+		$xml = simplexml_load_string( $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+		libxml_clear_errors();
+		if ( false === $xml ) {
+			return new WP_Error( 'xml_invalid' );
+		}
+
+		$nodes = $xml->children();
+		if ( 1 === count( $nodes ) ) {
+			$first = $nodes[0];
+			if ( $first && count( $first->children() ) > 1 ) {
+				$nodes = $first->children();
+			}
+		}
+		$rows = array();
+		foreach ( $nodes as $node ) {
+			if ( 0 === count( $node->children() ) ) {
+				continue;
+			}
+			$row = array();
+			foreach ( $node->children() as $key => $value ) {
+				$row[ sanitize_key( (string) $key ) ] = (string) $value;
+			}
+			if ( ! empty( $row ) ) {
+				$rows[] = $row;
+			}
+		}
+		return $rows;
+	}
+
+	private function canonical_import_row( $row ) {
+		$aliases = array(
+			'name'         => array( 'name', 'naziv', 'naziv_proizvoda' ),
+			'code'         => array( 'code', 'sku', 'sifra', 'šifra' ),
+			'brand'        => array( 'brand', 'marka' ),
+			'current'      => array( 'current', 'price', 'cijena', 'maloprodajna_cijena' ),
+			'anchor'       => array( 'anchor', 'anchor_price', 'sidrena_cijena', 'dodatna_cijena' ),
+			'anchor_date'  => array( 'anchor_date', 'datum_sidrene_cijene', 'referentni_datum' ),
+			'barcode'      => array( 'barcode', 'barkod', 'ean', 'gtin' ),
+			'unit_status'  => array( 'unit_status', 'jedinicna_status', 'jedinicna_cijena_status' ),
+			'unit'         => array( 'unit', 'jedinica', 'jedinica_mjere' ),
+			'unit_price'   => array( 'unit_price', 'cijena_jedinice_mjere', 'cijena_za_jedinicu_mjere' ),
+			'availability' => array( 'availability', 'dostupnost', 'raspolozivost' ),
+			'sale_name'    => array( 'sale_name', 'naziv_posebnog_oblika', 'naziv_posebnog_oblika_prodaje' ),
+			'lowest_30'    => array( 'lowest_30', 'naj_niza_30', 'najniza_cijena_30_dana' ),
+		);
+		$out = array();
+		foreach ( $aliases as $canonical => $names ) {
+			foreach ( $names as $name ) {
+				$key = sanitize_key( $name );
+				if ( array_key_exists( $key, $row ) ) {
+					$out[ $canonical ] = $row[ $key ];
+					break;
+				}
+			}
+		}
+		return $out;
+	}
+
+	private function find_by_code( $code ) {
+		$query = new WP_Query(
+			array(
+				'post_type'      => self::POST_TYPE,
+				'post_status'    => array( 'publish', 'draft' ),
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_query'     => array(
+					array(
+						'key'     => '_sidrena_standalone_code',
+						'value'   => $code,
+						'compare' => '=',
+					),
+				),
+			)
+		);
+		return ! empty( $query->posts ) ? absint( $query->posts[0] ) : 0;
+	}
+
+	private function import_field( $id, $meta_key, $row, $column, $type ) {
+		if ( ! array_key_exists( $column, $row ) || '' === trim( (string) $row[ $column ] ) ) {
+			return;
+		}
+		$value = $row[ $column ];
+		if ( 'decimal' === $type ) {
+			$value = Sidrena_Utils::decimal( $value );
+		} elseif ( 'date' === $type ) {
+			$value = Sidrena_Utils::sanitize_date( $value );
+		} else {
+			$value = sanitize_text_field( $value );
+		}
+		if ( '' !== $value ) {
+			update_post_meta( $id, $meta_key, $value );
+		}
+	}
+
+	private function redirect_import( $notice ) {
+		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=' . sanitize_key( $notice ) ) );
 		exit;
 	}
 
