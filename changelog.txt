@@ -1,3 +1,20 @@
+= 1.6.1 =
+* Added standalone WordPress product catalog when WooCommerce is unavailable.
+* Added standalone CSV/XML import by product code with Croatian column aliases.
+* Added native WooCommerce product CSV Import/Export mappings for Sidrena fields.
+* Added cached public HTML pricelist and archive routes plus underscore/hyphen shortcode aliases.
+* Added background rebuild behavior with 503 response when public snapshot is unavailable.
+* Added strict publication preflight so incomplete output cannot replace the last valid public cjenik.
+* Added physical-location availability validation.
+* Added cron freshness warnings and server-cron guidance.
+* Added UTF-8/Windows-1250/ISO-8859-2 import normalization.
+* Added CSV formula-injection neutralization for public cjenici.
+* Added Elementor, Woo Blocks, WPBakery, Oxygen, Divi, Bricks, Beaver Builder and common theme price fallbacks.
+* Added variation-aware dynamic compatibility endpoint without exposing non-public products.
+* Added configurable, accessible anchor-price tooltip and WPML/Polylang string registration.
+* Excluded catalog-hidden WooCommerce products from public cjenici and realtime API.
+* Preserved cached decimal formatting in the public HTML cjenik.
+
 = 1.6.0 =
 * Rebuilt the Sidrena admin interface around the production reference design with separate WordPress submenu screens.
 * Added real price-history dashboard series and recent-change tables from local WooCommerce history.
