@@ -362,10 +362,6 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_products( $filepath, $format, $location ) {
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			return new WP_Error( 'no_woo', __( 'WooCommerce nije aktivan; cjenik proizvoda nije generiran.', 'sidrena' ) );
-		}
-
 		$headers = array(
 			'naziv',
 			'sifra',
@@ -408,6 +404,13 @@ final class Sidrena_Pricelist {
 	}
 
 	private function product_rows( $location ) {
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			foreach ( Sidrena_Standalone::rows( $location ) as $row ) {
+				yield $row;
+			}
+			return;
+		}
+
 		$page = 1;
 		do {
 			$query = new WC_Product_Query(
@@ -439,6 +442,10 @@ final class Sidrena_Pricelist {
 			}
 			++$page;
 		} while ( count( $products ) === 100 );
+
+		foreach ( Sidrena_Standalone::rows( $location ) as $row ) {
+			yield $row;
+		}
 	}
 
 	private function product_row( $product, $location ) {
@@ -744,7 +751,7 @@ final class Sidrena_Pricelist {
 		$data  = array(
 			'schema'       => 3,
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
-			'plugin_url'   => 'https://sidrena-cijena.com.hr/',
+			'plugin_url'   => 'https://sidrene-cijene.com.hr/',
 			'ruleset'      => SIDRENA_RULESET,
 			'realtime_url'  => rest_url( 'sidrena/v1/cijene' ),
 			'generated_at' => current_time( DATE_ATOM ),

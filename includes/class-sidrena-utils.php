@@ -41,8 +41,14 @@ final class Sidrena_Utils {
 	}
 
 
+	public static function admin_capability() {
+		$capability = apply_filters( 'sidrena_admin_capability', 'manage_sidrena' );
+		$capability = is_string( $capability ) ? sanitize_key( $capability ) : 'manage_sidrena';
+		return $capability ? $capability : 'manage_sidrena';
+	}
+
 	public static function donation_url() {
-		$url = apply_filters( 'sidrena_donation_url', 'https://sidrena-cijena.com.hr/#donirajte' );
+		$url = apply_filters( 'sidrena_donation_url', 'https://sidrene-cijene.com.hr/#donirajte' );
 		return is_string( $url ) ? esc_url_raw( $url ) : '';
 	}
 

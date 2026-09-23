@@ -16,6 +16,13 @@ wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 wp_clear_scheduled_hook( 'sidrena_history_seed' );
 
+foreach ( array( 'administrator', 'shop_manager' ) as $role_name ) {
+	$role = get_role( $role_name );
+	if ( $role ) {
+		$role->remove_cap( 'manage_sidrena' );
+	}
+}
+
 global $wpdb;
 $tables = array(
 	$wpdb->prefix . 'sidrena_price_history',

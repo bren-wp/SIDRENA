@@ -30,20 +30,23 @@ final class Sidrena_Admin {
 	}
 
 	public function menu() {
+		$capability = Sidrena_Utils::admin_capability();
+
 		add_menu_page(
 			'Sidrena',
 			'Sidrena',
-			'manage_options',
+			$capability,
 			'sidrena',
 			array( $this, 'page' ),
 			SIDRENA_URL . 'assets/images/logo-mark.svg',
-			81
+			58
 		);
 
 		$items = array(
 			array( 'sidrena', __( 'Pregled', 'sidrena' ), __( 'Pregled', 'sidrena' ) ),
 			array( 'sidrena-compliance', __( 'Tehnička spremnost', 'sidrena' ), __( 'Usklađenost', 'sidrena' ) ),
 			array( 'sidrena-catalog', __( 'Katalog', 'sidrena' ), __( 'Katalog', 'sidrena' ) ),
+			array( 'sidrena-extra', __( 'Dodatne stavke', 'sidrena' ), __( 'Dodatne stavke', 'sidrena' ) ),
 			array( 'sidrena-files', __( 'Digitalni cjenici', 'sidrena' ), __( 'Cjenici', 'sidrena' ) ),
 			array( 'sidrena-archive', __( 'Arhiva 30+ dana', 'sidrena' ), __( 'Arhiva 30+ dana', 'sidrena' ) ),
 			array( 'sidrena-locations', __( 'Lokacije', 'sidrena' ), __( 'Lokacije', 'sidrena' ) ),
@@ -53,12 +56,24 @@ final class Sidrena_Admin {
 			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
 		);
 
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			$items = array_values(
+				array_filter(
+					$items,
+					static function ( $item ) {
+						return isset( $item[0] ) && 'sidrena-extra' !== $item[0];
+					}
+				)
+			);
+		}
+
 		foreach ( $items as $item ) {
 			add_submenu_page(
 				'sidrena',
 				$item[1],
 				$item[2],
-				'manage_options',
+				$capability,
 				$item[0],
 				array( $this, 'page' )
 			);
@@ -83,6 +98,10 @@ final class Sidrena_Admin {
 	}
 
 	public function action_links( $links ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
+			return $links;
+		}
+
 		array_unshift(
 			$links,
 			'<a href="' . esc_url( admin_url( 'admin.php?page=sidrena' ) ) . '">' . esc_html__( 'Otvori Sidrenu', 'sidrena' ) . '</a>'
@@ -91,7 +110,7 @@ final class Sidrena_Admin {
 	}
 
 	public function page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
 			return;
 		}
 
@@ -100,6 +119,7 @@ final class Sidrena_Admin {
 			'sidrena'            => 'dashboard',
 			'sidrena-compliance' => 'compliance',
 			'sidrena-catalog'    => 'catalog',
+			'sidrena-extra'      => 'extra',
 			'sidrena-files'      => 'files',
 			'sidrena-archive'    => 'archive',
 			'sidrena-locations'  => 'locations',
@@ -110,7 +130,7 @@ final class Sidrena_Admin {
 		);
 		$tab = isset( $page_map[ $page ] ) ? $page_map[ $page ] : 'dashboard';
 
-		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules' );
+		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'extra', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules' );
 		if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$legacy_tab = sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( in_array( $legacy_tab, $legacy_tabs, true ) ) {
@@ -138,7 +158,7 @@ final class Sidrena_Admin {
 					<span class="sid-toolbar__rule"><?php echo esc_html( SIDRENA_RULESET ); ?></span>
 				</div>
 				<div class="sid-toolbar__actions">
-					<a class="sid-link-button" href="https://sidrena-cijena.com.hr/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Web plugina', 'sidrena' ); ?></a>
+					<a class="sid-link-button" href="https://sidrene-cijene.com.hr/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Web plugina', 'sidrena' ); ?></a>
 					<?php if ( $donation_url ) : ?>
 						<a class="sid-link-button sid-donate-link" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Podržite razvoj', 'sidrena' ); ?></a>
 					<?php endif; ?>
@@ -155,6 +175,9 @@ final class Sidrena_Admin {
 						break;
 					case 'catalog':
 						Sidrena_Bulk::instance()->render();
+						break;
+					case 'extra':
+						Sidrena_Standalone::instance()->render();
 						break;
 					case 'files':
 						$this->files_tab();
@@ -592,7 +615,7 @@ final class Sidrena_Admin {
 		$before_eight   = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
 		$cron_scheduled = (bool) wp_next_scheduled( 'sidrena_daily_generation' );
 		$checks = array(
-			array( ! $needs_products || Sidrena_Utils::is_woocommerce_active(), __( 'WooCommerce je dostupan za način rada s proizvodima', 'sidrena' ), __( 'Aktivirajte WooCommerce ili promijenite način rada.', 'sidrena' ) ),
+			array( ! $needs_products || Sidrena_Utils::is_woocommerce_active() || class_exists( 'Sidrena_Standalone' ), __( 'Katalog proizvoda je dostupan', 'sidrena' ), __( 'Aktivirajte WooCommerce ili koristite samostalni Sidrena katalog.', 'sidrena' ) ),
 			array( ! $missing_address, __( 'Sve aktivne lokacije imaju adresu za naziv datoteke', 'sidrena' ), __( 'Dopunite adresu u kartici Lokacije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_anchor'], __( 'WooCommerce stavke imaju sidrenu cijenu', 'sidrena' ), __( 'Izvezite popis nedostajućih i dopunite povijesne vrijednosti.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_brand'], __( 'WooCommerce stavke imaju podatak o marki za digitalni cjenik', 'sidrena' ), __( 'Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka.', 'sidrena' ) ),
@@ -1046,7 +1069,7 @@ final class Sidrena_Admin {
 	}
 
 	public function generate() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_generate' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_generate' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		$success = Sidrena_Pricelist::instance()->generate_all();
@@ -1054,7 +1077,7 @@ final class Sidrena_Admin {
 	}
 
 	public function create_public_page() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_create_public_page' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_create_public_page' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1272,7 +1295,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_missing() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_export_missing' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_missing' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		nocache_headers();
@@ -1292,7 +1315,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_price_history() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_export_price_history' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_price_history' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1431,7 +1454,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_archive_index() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_export_archive_index' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_archive_index' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1469,7 +1492,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_location_template() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		nocache_headers();
@@ -1536,6 +1559,29 @@ final class Sidrena_Admin {
 			}
 		}
 
+
+		$standalone = Sidrena_Standalone::audit_stats();
+		if ( Sidrena_Utils::is_woocommerce_active() ) {
+			$products          += $standalone['products'];
+			$missing           += $standalone['missing_anchor'];
+			$missing_brand     += $standalone['missing_brand'];
+			$missing_barcode   += $standalone['missing_barcode'];
+			$unit_price_review += $standalone['unit_price_review'];
+			$unit_price_missing += $standalone['unit_price_missing'];
+			$active_sales      += $standalone['active_sales'];
+			$sale_incomplete   += $standalone['sale_incomplete'];
+		} else {
+			$products                  = $standalone['products'];
+			$missing                   = $standalone['missing_anchor'];
+			$missing_brand             = $standalone['missing_brand'];
+			$missing_barcode           = $standalone['missing_barcode'];
+			$unit_price_review         = $standalone['unit_price_review'];
+			$unit_price_missing        = $standalone['unit_price_missing'];
+			$active_sales              = $standalone['active_sales'];
+			$sale_incomplete           = $standalone['sale_incomplete'];
+			$perishable_expiry_missing = 0;
+		}
+
 		$service_query = new WP_Query( array( 'post_type' => 'sidrena_service', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true ) );
 		$services                 = count( $service_query->posts );
 		$missing_service_anchor  = 0;
@@ -1557,7 +1603,7 @@ final class Sidrena_Admin {
 		}
 		$settings = Sidrena_Utils::settings();
 		$issues   = $missing + $missing_brand + $missing_barcode + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
-		if ( ( in_array( $settings['business_mode'], array( 'products', 'mixed' ), true ) && ! Sidrena_Utils::is_woocommerce_active() ) || ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) ) {
+		if ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) {
 			++$issues;
 		}
 		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) || ! isset( $settings['generation_time'] ) || strcmp( (string) $settings['generation_time'], '08:00' ) >= 0 ) {
@@ -1625,7 +1671,7 @@ final class Sidrena_Admin {
 	}
 
 	private function guard_post( $action ) {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( $action ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( $action ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 	}
@@ -1639,6 +1685,7 @@ final class Sidrena_Admin {
 			'dashboard'  => 'sidrena',
 			'compliance' => 'sidrena-compliance',
 			'catalog'    => 'sidrena-catalog',
+			'extra'      => 'sidrena-extra',
 			'files'      => 'sidrena-files',
 			'archive'    => 'sidrena-archive',
 			'locations'  => 'sidrena-locations',

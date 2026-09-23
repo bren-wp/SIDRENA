@@ -2,9 +2,9 @@
   <img src="assets/images/logo-horizontal.svg" width="520" alt="Sidrena">
   <p><strong>Sidrene cijene, povijest cijena, javni CSV/XML cjenici i arhiva 30+ dana za WordPress i WooCommerce.</strong></p>
   <p>
-    <a href="https://sidrena-cijena.com.hr/">sidrena-cijena.com.hr</a> ·
+    <a href="https://sidrene-cijene.com.hr/">sidrene-cijene.com.hr</a> ·
     <a href="https://brendigo.com/">Brendigo</a> ·
-    <a href="https://sidrena-cijena.com.hr/#donirajte">Podržite razvoj</a>
+    <a href="https://sidrene-cijene.com.hr/#donirajte">Podržite razvoj</a>
   </p>
 </div>
 
@@ -116,6 +116,29 @@ Uvoz i izvoz namijenjeni su provjerenim poslovnim podacima. Sidrena ne popunjava
 
 Sidrena koristi vlastiti lokalni vizualni sustav: tamnoplavu bazu, Sidrena plavu i jadransku tirkiznu, originalni znak slova **S** sa sidrom te vlastite lokalne administracijske i WordPress.org vizuale. Plugin u radu ne učitava branding s vanjskog CDN-a.
 
+## Produkcijske mogućnosti uvedene u 1.6.1
+
+Sidrena 1.6.1 proširuje sustav iz administracijskog dodatka u kompletan produkcijski cjenik:
+
+- **WooCommerce ili obični WordPress** — kada WooCommerce nije aktivan, Sidrena ima vlastiti katalog proizvoda s nazivom, šifrom, markom, cijenom, sidrenom cijenom, barkodom, jediničnom cijenom, raspoloživošću i podacima o posebnom obliku prodaje.
+- **Dodatne stavke uz WooCommerce** — ručno vođeni proizvodi/usluge koje nisu Woo artikli mogu se voditi u Sidreni, ulaze na kraj javnog cjenika i imaju vlastiti shortcode oblika `[sidrena_cijena id="s123"]`.
+- **CSV/XML uvoz samostalnog kataloga** — postojeće stavke povezuju se po šifri, a validne nove stavke mogu se dodati iz datoteke.
+- **WooCommerce native Import/Export** — Sidrena polja pojavljuju se u standardnom WooCommerce CSV uvozu i izvozu.
+- **Javni HTML cjenik** — /sidrena-cjenik/ i shortcodeovi [sidrena_cjenik] / [sidrena-cjenik].
+- **Javna arhiva** — /arhiva-sidrene-cijene/ i [sidrena_arhiva] / [sidrena-arhiva].
+- **Cache/snapshot model** — javna HTML tablica čita spremljeni snapshot iz zadnjeg uspješnog generiranja i ne prolazi cijeli katalog pri svakom javnom zahtjevu.
+- **503 + pozadinska obnova** — ako snapshot ne postoji, javna ruta ne pokušava graditi kompletan katalog u zahtjevu nego zakazuje jednu obnovu s cooldownom.
+- **Stroga provjera prije objave** — nepotpun novi cjenik ne zamjenjuje zadnju valjanu objavu.
+- **Za fizičke poslovnice** stroga provjera zahtijeva eksplicitno unesenu lokacijsku raspoloživost, umjesto oslanjanja samo na globalni WooCommerce stock.
+- **Cron health** — admin upozorava kada je zadnji uspješni cjenik stariji od 26 sati i objašnjava kada je potreban pravi server cron.
+- **UTF-8 normalizacija** — CSV uvoz čuva hrvatske znakove i pokušava pretvoriti Windows-1250 / ISO-8859-2.
+- **CSV formula-injection zaštita** — javni CSV neutralizira opasne spreadsheet prefikse u tekstualnim vrijednostima.
+- **Builder kompatibilnost** — WooCommerce Blocks, Elementor, WPBakery, Oxygen, Divi, Bricks, Beaver Builder i česti Woo builder/theme price wrapperi imaju fallback prikaz Sidrena referentnih cijena.
+- **Varijacije** — fallback prati trenutno odabranu WooCommerce varijaciju i ne vraća roditeljsku vrijednost nakon dinamičkog DOM osvježavanja.
+- **WPML/Polylang** — korisnički tekst oznake i tooltipa registrira se za prijevod; standardne Sidrena poruke ostaju gettext prevodive.
+- **Pristupačan tooltip** — opcionalno objašnjenje sidrene cijene radi na hover i keyboard focus, uz prefers-reduced-motion.
+- **Privatnost** — sve ostaje lokalno; nema telemetrije, licencnog poslužitelja, obaveznog clouda ni Pro paywalla.
+
 ## Javni REST i shortcodeovi
 
 REST:
@@ -162,14 +185,14 @@ Administracijske radnje koriste WordPress ovlasti i nonce provjere. Uvozi se san
 
 Ako vam Sidrena štedi vrijeme, možete dobrovoljno podržati održavanje, testiranje i daljnji razvoj:
 
-**https://sidrena-cijena.com.hr/#donirajte**
+**https://sidrene-cijene.com.hr/#donirajte**
 
 Donacija nije uvjet za korištenje i ne otključava dodatne funkcije.
 
 ## Autor
 
 **Brendigo** — https://brendigo.com/  
-**Sidrena** — https://sidrena-cijena.com.hr/
+**Sidrena** — https://sidrene-cijene.com.hr/
 
 ## Licenca
 

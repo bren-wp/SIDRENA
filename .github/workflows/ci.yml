@@ -44,7 +44,12 @@ jobs:
 
       - name: JavaScript syntax
         if: matrix.php == '8.3'
-        run: node --check admin/js/admin.js
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' FILE; do
+            node --check "$FILE"
+          done < <(find admin public -type f -name '*.js' -print0)
 
       - name: Plugin metadata and WordPress.org checks
         if: matrix.php == '8.3'
@@ -59,15 +64,33 @@ jobs:
           test "$HEADER_VERSION" = "$STABLE_TAG"
           grep -q 'Author: Brendigo' sidrena.php
           grep -q 'Author URI: https://brendigo.com/' sidrena.php
-          grep -q 'Plugin URI: https://sidrena-cijena.com.hr/' sidrena.php
+          grep -q 'Plugin URI: https://sidrene-cijene.com.hr/' sidrena.php
           grep -q 'License: GPLv2 or later' sidrena.php
-          grep -q '^Donate link: https://sidrena-cijena.com.hr/#donirajte$' readme.txt
+          grep -q '^Donate link: https://sidrene-cijene.com.hr/#donirajte$' readme.txt
           test -f assets/images/logo-mark.svg
           test -f assets/images/logo-horizontal.svg
           test -f assets/images/admin-hero.svg
           test -f admin/css/admin-160.css
+          test -f public/css/public.css
+          test -f public/js/public.js
+          test -f public/js/compat.js
+          test -f includes/class-sidrena-public.php
+          test -f includes/class-sidrena-compatibility.php
+          test -f includes/class-sidrena-standalone.php
+          test -f includes/class-sidrena-woo-import-export.php
           test -f languages/sidrena.pot
           test -f docs/legal-and-technical-notes.md
+          grep -Fq 'manage_sidrena' includes/class-sidrena-activator.php
+          grep -Fq 'Sidrena_Utils::admin_capability()' includes/class-sidrena-admin.php
+          OLD_DOMAIN='sidrena-cijena'
+          if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
+            echo 'Retired Sidrena website domain detected.' >&2
+            exit 1
+          fi
+          if grep -RInE 'remove_(menu|submenu)_page[[:space:]]*\(' --include='*.php' . --exclude-dir=.git; then
+            echo 'Sidrena must not remove WordPress core admin menus.' >&2
+            exit 1
+          fi
           test -f .wordpress-org/source/banner.svg
           for N in 1 2 3 4 5 6; do test -f ".wordpress-org/source/screenshot-${N}.svg"; done
 
@@ -96,6 +119,13 @@ jobs:
           test -f "$STAGE/sidrena.php"
           test -f "$STAGE/readme.txt"
           test -f "$STAGE/admin/css/admin-160.css"
+          test -f "$STAGE/public/css/public.css"
+          test -f "$STAGE/public/js/public.js"
+          test -f "$STAGE/public/js/compat.js"
+          test -f "$STAGE/includes/class-sidrena-public.php"
+          test -f "$STAGE/includes/class-sidrena-compatibility.php"
+          test -f "$STAGE/includes/class-sidrena-standalone.php"
+          test -f "$STAGE/includes/class-sidrena-woo-import-export.php"
           test -f "$STAGE/assets/images/logo-mark.svg"
           test -f "$STAGE/assets/images/logo-horizontal.svg"
           test -f "$STAGE/assets/images/admin-hero.svg"

@@ -459,8 +459,13 @@ final class Sidrena_Products {
 		}
 
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'sidrena_cijena' );
+		$raw_id = trim( (string) $atts['id'] );
+		if ( preg_match( '/^s(\d+)$/i', $raw_id, $match ) ) {
+			return Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . absint( $match[1] ) ) );
+		}
+
 		global $product;
-		$target = absint( $atts['id'] ) ? wc_get_product( absint( $atts['id'] ) ) : ( $product instanceof WC_Product ? $product : null );
+		$target = absint( $raw_id ) ? wc_get_product( absint( $raw_id ) ) : ( $product instanceof WC_Product ? $product : null );
 		if ( ! $target ) {
 			return '';
 		}
@@ -622,6 +627,7 @@ final class Sidrena_Products {
 			$display_price = wc_get_price_to_display( $product, array( 'price' => (float) $anchor ) );
 		}
 		$display_price = apply_filters( 'sidrena_anchor_price_to_display', $display_price, $product, $anchor );
+		$display_price = apply_filters( 'sidrena_cijena_price_to_display', $display_price, $product, $anchor );
 		$date          = Sidrena_Utils::current_reference_date( $id );
 		$label         = Sidrena_Utils::anchor_label( $date );
 		$tooltip       = Sidrena_Utils::anchor_tooltip();
@@ -653,7 +659,9 @@ final class Sidrena_Products {
 			$display = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$values[] = (float) apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}
 

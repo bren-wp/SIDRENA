@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Sidrena
- * Plugin URI: https://sidrena-cijena.com.hr/
+ * Plugin URI: https://sidrene-cijene.com.hr/
  * Description: Sidrene cijene, WooCommerce i usluge s javnim CSV/XML cjenicima, arhivom 30+ dana i poviješću cijena.
  * Version: 1.6.2
  * Requires at least: 6.6
@@ -37,6 +37,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-service-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-location-data.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-location-history.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-standalone.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-woo-import-export.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-compatibility.php';
@@ -46,7 +47,6 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-rest.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-public.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-admin.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-plugin.php';
-
 
 if ( ! function_exists( 'sidrena_cijena' ) ) {
 	/**
