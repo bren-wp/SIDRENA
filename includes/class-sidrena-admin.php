@@ -1212,10 +1212,20 @@ final class Sidrena_Admin {
 		if ( 'csv' !== strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {
 			return new WP_Error( 'upload_extension' );
 		}
-		$resource = fopen( $file['tmp_name'], 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( false === $contents || '' === $contents ) {
+			return new WP_Error( 'upload_empty' );
+		}
+		$contents = Sidrena_Utils::normalize_text_encoding( $contents );
+		if ( '' === $contents ) {
+			return new WP_Error( 'upload_encoding' );
+		}
+		$resource = fopen( 'php://temp', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $resource ) {
 			return new WP_Error( 'upload_open' );
 		}
+		fwrite( $resource, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		rewind( $resource );
 		$first_line = fgets( $resource );
 		if ( false === $first_line ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
