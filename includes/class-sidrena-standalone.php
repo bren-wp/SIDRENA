@@ -390,6 +390,15 @@ final class Sidrena_Standalone {
 					update_post_meta( $id, '_sidrena_standalone_availability', $availability );
 				}
 			}
+
+			$final_name    = trim( (string) get_the_title( $id ) );
+			$final_current = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_current_price', true ) );
+			wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => $final_name && '' !== $final_current ? 'publish' : 'draft',
+				)
+			);
 		}
 
 		Sidrena_Audit::log(
@@ -460,12 +469,6 @@ final class Sidrena_Standalone {
 		}
 
 		$nodes = $xml->children();
-		if ( 1 === count( $nodes ) ) {
-			$first = $nodes[0];
-			if ( $first && count( $first->children() ) > 1 ) {
-				$nodes = $first->children();
-			}
-		}
 		$rows = array();
 		foreach ( $nodes as $node ) {
 			if ( 0 === count( $node->children() ) ) {
