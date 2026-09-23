@@ -867,7 +867,7 @@ final class Sidrena_Admin {
 
 			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-tag"></span><div><h2><?php esc_html_e( 'Referentne cijene na webu', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Dodatna cijena prikazuje se uz WooCommerce cijenu. Tijekom akcije može se prikazati i provjerena najniža cijena iz prethodnih 30 dana.', 'sidrena' ); ?></p></div></div>
 				<div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="display_anchor" value="yes" <?php checked( $settings['display_anchor'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prikaži sidrenu cijenu', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Uz aktualnu WooCommerce cijenu.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="display_lowest_30" value="yes" <?php checked( $settings['display_lowest_30'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prikaži najnižu cijenu 30 dana', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Samo kod aktivnog sniženja i kada je podatak provjerljiv.', 'sidrena' ); ?></small></span></label></div>
-				<div class="sid-fields"><label><span><?php esc_html_e( 'Standardni referentni datum', 'sidrena' ); ?></span><input type="date" name="default_ref_date" value="<?php echo esc_attr( $settings['default_ref_date'] ); ?>"></label><label><span><?php esc_html_e( 'FMCG referentni datum', 'sidrena' ); ?></span><input type="date" name="fmcg_ref_date" value="<?php echo esc_attr( $settings['fmcg_ref_date'] ); ?>"></label></div>
+				<div class="sid-fields"><label><span><?php esc_html_e( 'Standardni referentni datum', 'sidrena' ); ?></span><input type="date" name="default_ref_date" value="<?php echo esc_attr( $settings['default_ref_date'] ); ?>"></label><label><span><?php esc_html_e( 'FMCG referentni datum', 'sidrena' ); ?></span><input type="date" name="fmcg_ref_date" value="<?php echo esc_attr( $settings['fmcg_ref_date'] ); ?>"></label><label><span><?php esc_html_e( 'Format oznake', 'sidrena' ); ?></span><select name="label_mode"><option value="date_only" <?php selected( $settings['label_mode'], 'date_only' ); ?>><?php esc_html_e( 'Cijena na 10.09.2026.', 'sidrena' ); ?></option><option value="custom" <?php selected( $settings['label_mode'], 'custom' ); ?>><?php esc_html_e( 'Vlastiti tekst', 'sidrena' ); ?></option></select></label><label><span><?php esc_html_e( 'Vlastita oznaka', 'sidrena' ); ?></span><input type="text" name="label_custom" value="<?php echo esc_attr( $settings['label_custom'] ); ?>" placeholder="Sidrena cijena (%s)"><small><?php esc_html_e( 'Koristite %s na mjestu datuma.', 'sidrena' ); ?></small></label></div><div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="anchor_tooltip_enabled" value="yes" <?php checked( $settings['anchor_tooltip_enabled'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Objašnjenje na hover/fokus', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Pristupačan tooltip uz sidrenu cijenu.', 'sidrena' ); ?></small></span></label></div><div class="sid-fields"><label class="sid-wide"><span><?php esc_html_e( 'Tekst objašnjenja', 'sidrena' ); ?></span><textarea name="anchor_tooltip_text" rows="3"><?php echo esc_textarea( $settings['anchor_tooltip_text'] ); ?></textarea><small><?php esc_html_e( 'Može se prevoditi kroz Polylang/WPML registrirane stringove.', 'sidrena' ); ?></small></label></div>
 			</section>
 
 			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-media-spreadsheet"></span><div><h2><?php esc_html_e( 'Digitalni cjenici i arhiva', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Datoteke se objavljuju u uploads/sidrena/arhiva i ostaju javno dostupne najmanje 30 dana.', 'sidrena' ); ?></p></div></div>
@@ -961,12 +961,24 @@ final class Sidrena_Admin {
 			$generation_time = '06:30';
 		}
 
+		$label_mode = sanitize_key( $this->post_value( 'label_mode', 'date_only' ) );
+		if ( ! in_array( $label_mode, array( 'date_only', 'custom' ), true ) ) {
+			$label_mode = 'date_only';
+		}
+		$label_custom = sanitize_text_field( $this->post_value( 'label_custom', 'Cijena na %s' ) );
+		if ( '' === trim( $label_custom ) ) {
+			$label_custom = 'Cijena na %s';
+		}
+		$tooltip_text = sanitize_textarea_field( $this->post_value( 'anchor_tooltip_text', $old['anchor_tooltip_text'] ?? '' ) );
+
 		$new = array(
 			'business_mode'       => $business_mode,
 			'display_anchor'      => isset( $_POST['display_anchor'] ) ? 'yes' : 'no',
 			'display_lowest_30'   => isset( $_POST['display_lowest_30'] ) ? 'yes' : 'no',
-			'label_mode'          => 'date_only',
-			'label_custom'        => $old['label_custom'],
+			'label_mode'          => $label_mode,
+			'label_custom'        => $label_custom,
+			'anchor_tooltip_enabled' => isset( $_POST['anchor_tooltip_enabled'] ) ? 'yes' : 'no',
+			'anchor_tooltip_text' => $tooltip_text,
 			'default_ref_date'    => $this->date( $this->post_value( 'default_ref_date', '2026-09-10' ), '2026-09-10' ),
 			'fmcg_ref_date'       => $this->date( $this->post_value( 'fmcg_ref_date', '2025-05-02' ), '2025-05-02' ),
 			'generate_csv'        => isset( $_POST['generate_csv'] ) ? 'yes' : 'no',
