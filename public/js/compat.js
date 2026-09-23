@@ -9,6 +9,7 @@
 	var cache = {};
 	var pending = {};
 	var observerTimer = 0;
+	var activeId = productId;
 
 	if (!productId || !endpoint || !selectors.length) {
 		return;
@@ -108,11 +109,13 @@
 				var id = variation && parseInt(variation.variation_id || 0, 10);
 				var root = event.currentTarget.closest(".product") || document;
 				if (id) {
+					activeId = id;
 					hydrate(id, root, true);
 				}
 			});
 			$(document).on("reset_data hide_variation", ".variations_form", function (event) {
 				var root = event.currentTarget.closest(".product") || document;
+				activeId = productId;
 				hydrate(productId, root, false);
 			});
 		}
@@ -123,7 +126,7 @@
 				var observer = new MutationObserver(function () {
 					window.clearTimeout(observerTimer);
 					observerTimer = window.setTimeout(function () {
-						hydrate(productId, root, false);
+						hydrate(activeId, root, activeId !== productId);
 					}, 120);
 				});
 				observer.observe(root, { childList: true, subtree: true });
