@@ -12,7 +12,7 @@
 
 ## Sidrene cijene pod kontrolom
 
-**Sidrena 1.6** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+**Sidrena 1.6.1** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
 
 **Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
 
@@ -95,6 +95,28 @@ Uvoz i izvoz namijenjeni su provjerenim poslovnim podacima. Sidrena ne popunjava
 </p>
 
 Sidrena koristi vlastiti lokalni vizualni sustav: tamnoplavu bazu, Sidrena plavu i jadransku tirkiznu, originalni znak slova **S** sa sidrom te vlastite lokalne administracijske i WordPress.org vizuale. Plugin u radu ne učitava branding s vanjskog CDN-a.
+
+## Produkcijske mogućnosti 1.6.1
+
+Sidrena 1.6.1 proširuje sustav iz administracijskog dodatka u kompletan produkcijski cjenik:
+
+- **WooCommerce ili obični WordPress** — kada WooCommerce nije aktivan, Sidrena ima vlastiti katalog proizvoda s nazivom, šifrom, markom, cijenom, sidrenom cijenom, barkodom, jediničnom cijenom, raspoloživošću i podacima o posebnom obliku prodaje.
+- **CSV/XML uvoz samostalnog kataloga** — postojeće stavke povezuju se po šifri, a validne nove stavke mogu se dodati iz datoteke.
+- **WooCommerce native Import/Export** — Sidrena polja pojavljuju se u standardnom WooCommerce CSV uvozu i izvozu.
+- **Javni HTML cjenik** — /sidrena-cjenik/ i shortcodeovi [sidrena_cjenik] / [sidrena-cjenik].
+- **Javna arhiva** — /arhiva-sidrene-cijene/ i [sidrena_arhiva] / [sidrena-arhiva].
+- **Cache/snapshot model** — javna HTML tablica čita spremljeni snapshot iz zadnjeg uspješnog generiranja i ne prolazi cijeli katalog pri svakom javnom zahtjevu.
+- **503 + pozadinska obnova** — ako snapshot ne postoji, javna ruta ne pokušava graditi kompletan katalog u zahtjevu nego zakazuje jednu obnovu s cooldownom.
+- **Stroga provjera prije objave** — nepotpun novi cjenik ne zamjenjuje zadnju valjanu objavu.
+- **Za fizičke poslovnice** stroga provjera zahtijeva eksplicitno unesenu lokacijsku raspoloživost, umjesto oslanjanja samo na globalni WooCommerce stock.
+- **Cron health** — admin upozorava kada je zadnji uspješni cjenik stariji od 26 sati i objašnjava kada je potreban pravi server cron.
+- **UTF-8 normalizacija** — CSV uvoz čuva hrvatske znakove i pokušava pretvoriti Windows-1250 / ISO-8859-2.
+- **CSV formula-injection zaštita** — javni CSV neutralizira opasne spreadsheet prefikse u tekstualnim vrijednostima.
+- **Builder kompatibilnost** — WooCommerce Blocks, Elementor, WPBakery, Oxygen, Divi, Bricks, Beaver Builder i česti Woo builder/theme price wrapperi imaju fallback prikaz Sidrena referentnih cijena.
+- **Varijacije** — fallback prati trenutno odabranu WooCommerce varijaciju i ne vraća roditeljsku vrijednost nakon dinamičkog DOM osvježavanja.
+- **WPML/Polylang** — korisnički tekst oznake i tooltipa registrira se za prijevod; standardne Sidrena poruke ostaju gettext prevodive.
+- **Pristupačan tooltip** — opcionalno objašnjenje sidrene cijene radi na hover i keyboard focus, uz prefers-reduced-motion.
+- **Privatnost** — sve ostaje lokalno; nema telemetrije, licencnog poslužitelja, obaveznog clouda ni Pro paywalla.
 
 ## Javni REST i shortcodeovi
 
