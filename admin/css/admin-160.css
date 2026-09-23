@@ -903,3 +903,78 @@ body[class*="sidrena_page_sidrena-"] {
 	color: #b32d2e;
 	white-space: nowrap;
 }
+
+
+/* 1.6.4 interaction/accessibility hardening. */
+.sid-location {
+	transition: opacity .16s ease, border-color .16s ease, background .16s ease;
+}
+.sid-location.is-inactive {
+	opacity: .72;
+	background: #f7f9fc;
+}
+.sid-location.is-inactive .sid-fields {
+	filter: saturate(.72);
+}
+.sid-form.is-submitting,
+.sid-bulk-card.is-submitting {
+	cursor: progress;
+}
+.sid-form.is-submitting button[type="submit"],
+.sid-bulk-card.is-submitting button[type="submit"] {
+	opacity: .68;
+}
+.sidrena-160 :where(a, button, input, select, textarea):focus-visible {
+	outline: 3px solid rgba(22,119,255,.34);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+@media (max-width: 782px) {
+	.sidrena-160 .button,
+	.sidrena-160 button,
+	.sidrena-160 input:not([type="checkbox"]):not([type="radio"]),
+	.sidrena-160 select {
+		min-height: 44px;
+	}
+	.sid-form-actions,
+	.sid-head-inline-actions,
+	.sid-pagination {
+		align-items: stretch;
+	}
+	.sid-form-actions .button,
+	.sid-head-inline-actions .button,
+	.sid-pagination .button {
+		justify-content: center;
+	}
+}
+
+
+/* 1.6.4 final state and motion accessibility. */
+.sid-code-row.is-disabled {
+	opacity: .62;
+	background: #f7f9fc;
+}
+
+.sid-code-row > span small {
+	display: block;
+	margin-top: 3px;
+	font-size: 10px;
+	font-weight: 650;
+	color: var(--sid160-muted);
+}
+
+.sid-table-wrap {
+	overscroll-behavior-inline: contain;
+	scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidrena-160 *,
+	.sidrena-160 *::before,
+	.sidrena-160 *::after {
+		scroll-behavior: auto !important;
+		transition-duration: .01ms !important;
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}

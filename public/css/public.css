@@ -243,3 +243,26 @@
 		white-space: normal;
 	}
 }
+
+
+.sidrena-pricelist__summary {
+	margin: 10px 24px 12px;
+	font-size: 13px;
+	color: #64748b;
+}
+.sidrena-pricelist__summary strong {
+	color: #0f2f53;
+}
+.sidrena-pricelist__search input:focus-visible,
+.sidrena-public-archive__list a:focus-visible {
+	outline: 3px solid rgba(22, 119, 255, .28);
+	outline-offset: 2px;
+}
+@media (max-width: 760px) {
+	.sidrena-pricelist__search input {
+		min-height: 44px;
+	}
+	.sidrena-pricelist__summary {
+		margin-inline: 16px;
+	}
+}

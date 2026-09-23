@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sidrena_History {
 	private static $instance;
+	private static $pending_meta_products = array();
 
 	public static function instance() {
 		if ( ! self::$instance ) {
@@ -26,6 +27,42 @@ final class Sidrena_History {
 		add_action( 'sidrena_history_seed', array( $this, 'seed_history' ) );
 		add_action( 'wc_product_start_scheduled_sale', array( $this, 'capture_scheduled_sale_start' ), 20 );
 		add_action( 'wc_product_end_scheduled_sale', array( $this, 'capture_scheduled_sale_end' ), 20 );
+		add_action( 'added_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
+		add_action( 'updated_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
+		add_action( 'deleted_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
+		add_action( 'shutdown', array( $this, 'flush_price_meta_changes' ), 5 );
+	}
+
+
+	public function capture_price_meta_change( $meta_id, $object_id, $meta_key, $meta_value ) {
+		unset( $meta_id, $meta_value );
+		if ( 'yes' !== Sidrena_Utils::settings()['track_price_history'] || ! Sidrena_Utils::is_woocommerce_active() ) {
+			return;
+		}
+
+		$tracked = array( '_regular_price', '_sale_price', '_price', '_sale_price_dates_from', '_sale_price_dates_to', '_tax_class', '_tax_status' );
+		if ( ! in_array( $meta_key, $tracked, true ) ) {
+			return;
+		}
+
+		$object_id = absint( $object_id );
+		if ( ! $object_id || ! in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ), true ) ) {
+			return;
+		}
+		self::$pending_meta_products[ $object_id ] = true;
+	}
+
+	public function flush_price_meta_changes() {
+		if ( empty( self::$pending_meta_products ) || ! Sidrena_Utils::is_woocommerce_active() ) {
+			return;
+		}
+
+		$ids = array_keys( self::$pending_meta_products );
+		self::$pending_meta_products = array();
+		foreach ( $ids as $product_id ) {
+			$this->capture_product( absint( $product_id ), 'price-meta-change' );
+		}
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 

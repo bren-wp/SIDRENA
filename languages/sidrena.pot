@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.6.3\n"
+"Project-Id-Version: Sidrena 1.6.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 00:30+0200\n"
+"POT-Creation-Date: 2026-09-24 01:55+0200\\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1278,4 +1278,76 @@ msgstr ""
 
 #: includes/class-sidrena-pricelist.php:863
 msgid "Nije moguće atomski objaviti JSON manifest cjenika."
+msgstr ""
+
+#: 1.6.4
+msgid "Količina pakiranja"
+msgstr ""
+
+#: 1.6.4
+msgid "Jedinica pakiranja"
+msgstr ""
+
+#: 1.6.4
+msgid "Pune upute na GitHubu"
+msgstr ""
+
+#: 1.6.4
+msgid "CSV sadrži duplicirana zaglavlja nakon normalizacije."
+msgstr ""
+
+#: 1.6.4
+msgid "CSV ima više od dopuštenih 50.000 redaka."
+msgstr ""
+
+#: 1.6.4
+msgid "XML s DOCTYPE ili ENTITY deklaracijama nije dopušten."
+msgstr ""
+
+#: 1.6.4
+msgid "Uvoz sidrenih cijena: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno."
+msgstr ""
+
+#: 1.6.4
+msgid "Uvoz lokacijskih podataka: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno."
+msgstr ""
+
+#: 1.6.4
+msgid "WordPress WP-Cron je isključen"
+msgstr ""
+
+#: 1.6.4
+msgid "Dnevno generiranje nije zakazano"
+msgstr ""
+
+#: 1.6.4
+msgid "Automatsko generiranje je zakazano"
+msgstr ""
+
+#: 1.6.4
+msgid "HTML prikaz je isključen"
+msgstr ""
+
+#: 1.6.4
+msgid "Isključeno u Postavkama"
+msgstr ""
+
+#: 1.6.4
+msgid "URL nedostaje"
+msgstr ""
+
+#: 1.6.4
+msgid "Prikazano"
+msgstr ""
+
+#: 1.6.4
+msgid "od %d stavki"
+msgstr ""
+
+#: 1.6.4
+msgid "Aktualni Sidrena cjenik"
+msgstr ""
+
+#: 1.6.4
+msgid "Cjenik je objavljen, ali trenutačno nema stavki za prikaz."
 msgstr ""

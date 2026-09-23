@@ -74,8 +74,29 @@ final class Sidrena_Utils {
 			return '';
 		}
 
-		$value = str_replace( array( ' ', ',' ), array( '', '.' ), (string) $value );
+		$value = trim( str_replace( array( "\xC2\xA0", ' ' ), '', (string) $value ) );
+		if ( '' === $value ) {
+			return '';
+		}
+
+		$comma = strrpos( $value, ',' );
+		$dot   = strrpos( $value, '.' );
+		if ( false !== $comma && false !== $dot ) {
+			if ( $comma > $dot ) {
+				$value = str_replace( '.', '', $value );
+				$value = str_replace( ',', '.', $value );
+			} else {
+				$value = str_replace( ',', '', $value );
+			}
+		} elseif ( false !== $comma ) {
+			$value = str_replace( ',', '.', $value );
+		}
+
 		if ( ! is_numeric( $value ) ) {
+			return '';
+		}
+		$number = (float) $value;
+		if ( ! is_finite( $number ) || abs( $number ) > 99999999999999.0 ) {
 			return '';
 		}
 
@@ -83,7 +104,7 @@ final class Sidrena_Utils {
 			return wc_format_decimal( $value );
 		}
 
-		return rtrim( rtrim( number_format( (float) $value, 6, '.', '' ), '0' ), '.' );
+		return rtrim( rtrim( number_format( $number, 6, '.', '' ), '0' ), '.' );
 	}
 
 	public static function money( $value, $decimals = 2 ) {
@@ -263,6 +284,113 @@ final class Sidrena_Utils {
 		}
 		return $value;
 	}
+
+	public static function import_header_key( $header ) {
+		$header = trim( (string) $header );
+		if ( '' === $header ) {
+			return '';
+		}
+		if ( function_exists( 'remove_accents' ) ) {
+			$header = remove_accents( $header );
+		} else {
+			$header = strtr(
+				$header,
+				array(
+					'č' => 'c', 'ć' => 'c', 'đ' => 'd', 'š' => 's', 'ž' => 'z',
+					'Č' => 'C', 'Ć' => 'C', 'Đ' => 'D', 'Š' => 'S', 'Ž' => 'Z',
+				)
+			);
+		}
+		$header = function_exists( 'mb_strtolower' ) ? mb_strtolower( $header, 'UTF-8' ) : strtolower( $header );
+		$header = preg_replace( '/[^a-z0-9]+/', '_', $header );
+		return trim( (string) $header, '_' );
+	}
+
+	public static function normalize_unit( $unit ) {
+		$unit = trim( (string) $unit );
+		$unit = function_exists( 'mb_strtolower' ) ? mb_strtolower( $unit, 'UTF-8' ) : strtolower( $unit );
+		$unit = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $unit );
+		$aliases = array(
+			'miligram' => 'mg', 'miligrami' => 'mg',
+			'gram' => 'g', 'grama' => 'g', 'grami' => 'g',
+			'dekagram' => 'dag', 'dekagrama' => 'dag',
+			'kilogram' => 'kg', 'kilograma' => 'kg',
+			'mililitar' => 'ml', 'mililitara' => 'ml',
+			'centilitar' => 'cl', 'centilitara' => 'cl',
+			'decilitar' => 'dl', 'decilitara' => 'dl',
+			'lit' => 'l', 'litra' => 'l', 'litre' => 'l', 'litara' => 'l', 'liter' => 'l',
+			'metar' => 'm', 'metra' => 'm', 'metara' => 'm',
+			'komad' => 'kom', 'komada' => 'kom', 'ko' => 'kom', 'pcs' => 'kom', 'pc' => 'kom',
+		);
+		return isset( $aliases[ $unit ] ) ? $aliases[ $unit ] : $unit;
+	}
+
+	public static function parse_quantity_with_unit( $value ) {
+		$value = trim( str_replace( "\xC2\xA0", ' ', (string) $value ) );
+		if ( '' === $value || ! preg_match( '/^([0-9][0-9\\s.,]*)\\s*([^0-9\\s.,].*)?$/u', $value, $matches ) ) {
+			return array();
+		}
+
+		$number = self::decimal( $matches[1] );
+		if ( '' === $number || (float) $number <= 0 ) {
+			return array();
+		}
+
+		$unit = isset( $matches[2] ) ? self::normalize_unit( $matches[2] ) : '';
+		return array(
+			'quantity' => $number,
+			'unit'     => $unit,
+		);
+	}
+
+	public static function calculate_unit_price( $retail_price, $quantity, $quantity_unit ) {
+		$retail_price = self::decimal( $retail_price );
+		$quantity     = self::decimal( $quantity );
+		$unit_key     = self::normalize_unit( $quantity_unit );
+		if ( '' === $retail_price || '' === $quantity || (float) $quantity <= 0 ) {
+			return array();
+		}
+
+		$units = array(
+			'mg'  => array( 'base' => 'kg', 'multiplier' => 0.000001 ),
+			'g'   => array( 'base' => 'kg', 'multiplier' => 0.001 ),
+			'dag' => array( 'base' => 'kg', 'multiplier' => 0.01 ),
+			'kg'  => array( 'base' => 'kg', 'multiplier' => 1.0 ),
+			'ml'  => array( 'base' => 'l', 'multiplier' => 0.001 ),
+			'cl'  => array( 'base' => 'l', 'multiplier' => 0.01 ),
+			'dl'  => array( 'base' => 'l', 'multiplier' => 0.1 ),
+			'l'   => array( 'base' => 'l', 'multiplier' => 1.0 ),
+			'mm'  => array( 'base' => 'm', 'multiplier' => 0.001 ),
+			'cm'  => array( 'base' => 'm', 'multiplier' => 0.01 ),
+			'dm'  => array( 'base' => 'm', 'multiplier' => 0.1 ),
+			'm'   => array( 'base' => 'm', 'multiplier' => 1.0 ),
+			'mm2' => array( 'base' => 'm²', 'multiplier' => 0.000001 ),
+			'cm2' => array( 'base' => 'm²', 'multiplier' => 0.0001 ),
+			'dm2' => array( 'base' => 'm²', 'multiplier' => 0.01 ),
+			'm2'  => array( 'base' => 'm²', 'multiplier' => 1.0 ),
+			'cm3' => array( 'base' => 'm³', 'multiplier' => 0.000001 ),
+			'dm3' => array( 'base' => 'm³', 'multiplier' => 0.001 ),
+			'm3'  => array( 'base' => 'm³', 'multiplier' => 1.0 ),
+			'kom' => array( 'base' => 'kom', 'multiplier' => 1.0 ),
+		);
+		if ( ! isset( $units[ $unit_key ] ) ) {
+			return array();
+		}
+
+		$base_amount = (float) $quantity * (float) $units[ $unit_key ]['multiplier'];
+		if ( $base_amount <= 0 ) {
+			return array();
+		}
+		$price = (float) $retail_price / $base_amount;
+		if ( ! is_finite( $price ) || $price < 0 || $price > 99999999999999.0 ) {
+			return array();
+		}
+		return array(
+			'unit'       => $units[ $unit_key ]['base'],
+			'unit_price' => self::decimal( number_format( $price, 4, '.', '' ) ),
+		);
+	}
+
 
 	public static function normalize_text_encoding( $contents ) {
 		$contents = (string) $contents;

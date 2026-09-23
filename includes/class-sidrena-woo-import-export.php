@@ -38,6 +38,8 @@ final class Sidrena_Woo_Import_Export {
 			'sidrena_marka'                   => __( 'Sidrena marka', 'sidrena' ),
 			'sidrena_barkod'                  => __( 'Sidrena barkod', 'sidrena' ),
 			'sidrena_jedinicna_status'        => __( 'Sidrena jedinična cijena status', 'sidrena' ),
+			'sidrena_kolicina_pakiranja'       => __( 'Sidrena količina pakiranja', 'sidrena' ),
+			'sidrena_jedinica_pakiranja'       => __( 'Sidrena jedinica pakiranja', 'sidrena' ),
 			'sidrena_jedinica_mjere'          => __( 'Sidrena jedinica mjere', 'sidrena' ),
 			'sidrena_cijena_jedinice_mjere'   => __( 'Sidrena cijena za jedinicu mjere', 'sidrena' ),
 			'sidrena_naziv_posebnog_oblika'   => __( 'Sidrena naziv posebnog oblika prodaje', 'sidrena' ),
@@ -74,6 +76,10 @@ final class Sidrena_Woo_Import_Export {
 				return Sidrena_Utils::get_barcode( $product );
 			case 'sidrena_jedinicna_status':
 				return Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price_status', 'review' );
+			case 'sidrena_kolicina_pakiranja':
+				return Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_quantity' );
+			case 'sidrena_jedinica_pakiranja':
+				return Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_quantity_unit' );
 			case 'sidrena_jedinica_mjere':
 				return Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit' );
 			case 'sidrena_cijena_jedinice_mjere':
@@ -101,6 +107,11 @@ final class Sidrena_Woo_Import_Export {
 			'Sidrena marka'                          => 'sidrena_marka',
 			'Sidrena barkod'                         => 'sidrena_barkod',
 			'Sidrena jedinična cijena status'        => 'sidrena_jedinicna_status',
+			'Sidrena količina pakiranja'              => 'sidrena_kolicina_pakiranja',
+			'Količina pakiranja'                      => 'sidrena_kolicina_pakiranja',
+			'Neto količina'                           => 'sidrena_kolicina_pakiranja',
+			'Sidrena jedinica pakiranja'              => 'sidrena_jedinica_pakiranja',
+			'Jedinica pakiranja'                      => 'sidrena_jedinica_pakiranja',
 			'Sidrena jedinica mjere'                 => 'sidrena_jedinica_mjere',
 			'Jedinica mjere'                         => 'sidrena_jedinica_mjere',
 			'Sidrena cijena za jedinicu mjere'       => 'sidrena_cijena_jedinice_mjere',
@@ -125,12 +136,60 @@ final class Sidrena_Woo_Import_Export {
 		$this->set_text( $product, '_sidrena_brand', $data, 'sidrena_marka' );
 		$this->set_text( $product, '_sidrena_barcode', $data, 'sidrena_barkod' );
 		$this->set_allowed_key( $product, '_sidrena_unit_price_status', $data, 'sidrena_jedinicna_status', array( 'review', 'required', 'not_required', 'exception' ), 'review' );
+		$this->set_quantity( $product, $data );
 		$this->set_text( $product, '_sidrena_unit', $data, 'sidrena_jedinica_mjere' );
 		$this->set_decimal( $product, '_sidrena_unit_price', $data, 'sidrena_cijena_jedinice_mjere' );
 		$this->set_text( $product, '_sidrena_sale_name', $data, 'sidrena_naziv_posebnog_oblika' );
+		$this->maybe_calculate_unit_price( $product );
 
 		Sidrena_Pricelist::queue_regeneration();
 		return $product;
+	}
+
+
+	private function set_quantity( $product, $data ) {
+		if ( array_key_exists( 'sidrena_kolicina_pakiranja', $data ) ) {
+			$raw    = trim( (string) $data['sidrena_kolicina_pakiranja'] );
+			$parsed = Sidrena_Utils::parse_quantity_with_unit( $raw );
+			if ( $parsed ) {
+				$product->update_meta_data( '_sidrena_quantity', $parsed['quantity'] );
+				if ( ! empty( $parsed['unit'] ) ) {
+					$product->update_meta_data( '_sidrena_quantity_unit', $parsed['unit'] );
+				}
+			} else {
+				$quantity = Sidrena_Utils::decimal( $raw );
+				if ( '' === $quantity ) {
+					$product->delete_meta_data( '_sidrena_quantity' );
+				} else {
+					$product->update_meta_data( '_sidrena_quantity', $quantity );
+				}
+			}
+		}
+		if ( array_key_exists( 'sidrena_jedinica_pakiranja', $data ) && '' !== trim( (string) $data['sidrena_jedinica_pakiranja'] ) ) {
+			$product->update_meta_data( '_sidrena_quantity_unit', Sidrena_Utils::normalize_unit( $data['sidrena_jedinica_pakiranja'] ) );
+		}
+	}
+
+	private function maybe_calculate_unit_price( $product ) {
+		$status = sanitize_key( (string) $product->get_meta( '_sidrena_unit_price_status', true ) );
+		if ( 'required' !== $status || '' !== Sidrena_Utils::decimal( $product->get_meta( '_sidrena_unit_price', true ) ) ) {
+			return;
+		}
+		$quantity = Sidrena_Utils::decimal( $product->get_meta( '_sidrena_quantity', true ) );
+		$unit     = Sidrena_Utils::normalize_unit( $product->get_meta( '_sidrena_quantity_unit', true ) );
+		$raw      = $product->get_price( 'edit' );
+		if ( '' === $quantity || '' === $unit || '' === $raw ) {
+			return;
+		}
+		$retail = (float) $raw;
+		if ( function_exists( 'wc_get_price_including_tax' ) ) {
+			$retail = wc_get_price_including_tax( $product, array( 'price' => (float) $raw ) );
+		}
+		$calculated = Sidrena_Utils::calculate_unit_price( $retail, $quantity, $unit );
+		if ( $calculated ) {
+			$product->update_meta_data( '_sidrena_unit', $calculated['unit'] );
+			$product->update_meta_data( '_sidrena_unit_price', $calculated['unit_price'] );
+		}
 	}
 
 	private function set_text( $product, $meta_key, $data, $column ) {

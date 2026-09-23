@@ -119,6 +119,9 @@ final class Sidrena_Public {
 	}
 
 	public function pricelist_shortcode( $atts ) {
+		if ( 'yes' !== Sidrena_Utils::settings()['enable_public_html'] ) {
+			return '';
+		}
 		$atts = shortcode_atts(
 			array(
 				'lokacija' => '',
@@ -161,8 +164,13 @@ final class Sidrena_Public {
 				</label>
 			</div>
 
+			<?php if ( empty( $rows ) ) : ?>
+				<div class="sidrena-public-message"><?php esc_html_e( 'Cjenik je objavljen, ali trenutačno nema stavki za prikaz.', 'sidrena' ); ?></div>
+			<?php else : ?>
+			<p class="sidrena-pricelist__summary" aria-live="polite"><span><?php esc_html_e( 'Prikazano', 'sidrena' ); ?></span> <strong data-sidrena-visible-count><?php echo esc_html( count( $rows ) ); ?></strong> <span><?php echo esc_html( sprintf( __( 'od %d stavki', 'sidrena' ), count( $rows ) ) ); ?></span></p>
 			<div class="sidrena-pricelist__table-wrap">
 				<table class="sidrena-pricelist__table">
+					<caption class="screen-reader-text"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
@@ -205,12 +213,16 @@ final class Sidrena_Public {
 				</table>
 			</div>
 			<p class="sidrena-pricelist__empty" data-sidrena-empty hidden><?php esc_html_e( 'Nema stavki koje odgovaraju pretrazi.', 'sidrena' ); ?></p>
+			<?php endif; ?>
 		</section>
 		<?php
 		return (string) ob_get_clean();
 	}
 
 	public function archive_shortcode( $atts ) {
+		if ( 'yes' !== Sidrena_Utils::settings()['enable_public_html'] ) {
+			return '';
+		}
 		$atts = shortcode_atts(
 			array(
 				'lokacija' => '',

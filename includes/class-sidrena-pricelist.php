@@ -579,15 +579,22 @@ final class Sidrena_Pricelist {
 		}
 
 		$brand_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
+		$unit_status   = sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price_status', 'review' ) );
+		$unit          = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit' );
+		$unit_price    = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price' );
+		if ( in_array( $unit_status, array( 'not_required', 'exception' ), true ) ) {
+			$unit       = '';
+			$unit_price = '';
+		}
 		return array(
 			'_sidrena_item_id'          => $product->get_id(),
-			'_sidrena_unit_status'      => sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price_status', 'review' ) ),
+			'_sidrena_unit_status'      => $unit_status,
 			'_sidrena_location_explicit' => $has_location_availability ? 'yes' : 'no',
 			'naziv'                         => $name,
 			'sifra'                         => Sidrena_Utils::get_product_code( $product ),
 			'marka'                         => Sidrena_Utils::get_brand( $brand_product ),
-			'jedinica_mjere'                => Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit' ),
-			'cijena_za_jedinicu_mjere'      => Sidrena_Utils::money( Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price' ), 4 ),
+			'jedinica_mjere'                => $unit,
+			'cijena_za_jedinicu_mjere'      => Sidrena_Utils::money( $unit_price, 4 ),
 			'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
 			'posebni_oblik_prodaje'         => $product->is_on_sale() ? 'da' : 'ne',
 			'naziv_posebnog_oblika_prodaje' => $product->is_on_sale() ? $sale_name : '',
