@@ -65,6 +65,8 @@ jobs:
           test -n "$HEADER_VERSION"
           test "$HEADER_VERSION" = "$CONSTANT_VERSION"
           test "$HEADER_VERSION" = "$STABLE_TAG"
+          test -s docs/UPUTE.md
+          grep -q "release/\\*" .github/workflows/release.yml
           grep -Fq "\"Project-Id-Version: Sidrena ${HEADER_VERSION}\\n\"" languages/sidrena.pot
           grep -q 'Author: Brendigo' sidrena.php
           grep -q 'Author URI: https://brendigo.com/' sidrena.php

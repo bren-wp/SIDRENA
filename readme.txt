@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -166,6 +166,17 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 
 == Changelog ==
 
+= 1.6.4 =
+* Pouzdaniji rad lokacija: jedinstveni dinamički ključevi, validacija aktivnih lokacija i čišćenje obrisanih lokacijskih podataka.
+* Samostalni katalog je paginiran i jasnije prijavljuje djelomične greške spremanja/uvoza.
+* Hrvatski CSV/XML uvoz sada bolje prepoznaje zaglavlja, Windows-1250/ISO-8859-2, decimalni zarez i datirana Sidrena zaglavlja.
+* Dodani količina i jedinica pakiranja te automatski izračun jedinične cijene u standalone, WooCommerce, bulk i Woo CSV načinu.
+* Direktne WooCommerce promjene price meta podataka ulaze u povijest i zakazuju regeneraciju.
+* Javni HTML/REST prikaz bolje poštuje postavke, prikazuje broj rezultata i ne objavljuje zastarjele unit-price podatke kada nisu primjenjivi.
+* Poboljšani cron status, provjera javne dostupnosti, fokus, potvrde destruktivnih radnji, mobilni touch targeti i reduced-motion podrška.
+* Dodane potpune hrvatske Upute za instalaciju i korištenje u docs/UPUTE.md.
+* Prošireni CI testovi za hrvatske decimale, zaglavlja i količine.
+
 = 1.6.3 =
 * Dodan non-blocking lock koji sprječava paralelna generiranja i race conditione nad javnim datotekama.
 * JSON manifest i javni HTML snapshot sada se objavljuju atomskim privremeni-zapis → rename postupkom.
@@ -208,6 +219,10 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.4 =
+
+Preporučena nadogradnja: pouzdaniji katalog/lokacije, bolji hrvatski uvoz, automatske jedinične cijene, WooCommerce tracking, UI/UX i ugrađene korisničke upute.
 
 = 1.6.3 =
 

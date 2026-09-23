@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - 'release/*'
 
 permissions:
   contents: write
@@ -14,16 +16,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Validate tag and plugin version
+      - name: Resolve and validate release version
         shell: bash
         run: |
           set -euo pipefail
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="${GITHUB_REF_NAME#release/}"
+          fi
           HEADER_VERSION="$(sed -n 's/^ \* Version: //p' sidrena.php | head -n1)"
           STABLE_TAG="$(sed -n 's/^Stable tag: //p' readme.txt | head -n1)"
-          test "$TAG_VERSION" = "$HEADER_VERSION"
-          test "$TAG_VERSION" = "$STABLE_TAG"
+          test "$VERSION" = "$HEADER_VERSION"
+          test "$VERSION" = "$STABLE_TAG"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
+
+      - name: Create release tag from release branch
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG_NAME" "$GITHUB_SHA" -m "Sidrena $VERSION"
+            git push origin "$TAG_NAME"
+          fi
 
       - name: Build installable plugin archive
         shell: bash
@@ -37,7 +61,6 @@ jobs:
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='.wordpress-org/' \
-            --exclude='docs/' \
             --exclude='.gitignore' \
             --exclude='README.md'
           cd "$RUNNER_TEMP"
@@ -68,6 +91,9 @@ jobs:
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.TAG_NAME }}
+          target_commitish: ${{ github.sha }}
+          name: Sidrena ${{ env.VERSION }}
           generate_release_notes: true
           files: |
             ${{ runner.temp }}/sidrena-*.zip

@@ -1,3 +1,14 @@
+= 1.6.4 =
+* Fixed dynamic location add/remove collisions, active-location validation and cleanup of removed location data.
+* Paginated the standalone catalog and improved partial save/import reporting.
+* Added shared Croatian import-header normalization, legacy encoding handling and locale-aware decimal parsing.
+* Added package quantity/unit metadata and automatic base-unit pricing across standalone, WooCommerce product/variation, Sidrena bulk editor and native Woo CSV Import/Export.
+* Added direct WooCommerce price-meta tracking with shutdown deduplication and regeneration scheduling.
+* Hardened public HTML/REST state behavior and suppressed stale unit-price values when applicability changes.
+* Improved cron diagnostics, public HTTP checks, destructive-action confirmations, keyboard focus, mobile touch targets and reduced-motion behavior.
+* Added a complete Croatian installation and usage guide in docs/UPUTE.md.
+* Expanded deterministic tests for Croatian headers, quantity parsing and decimal formats.
+
 = 1.6.3 =
 * Added non-blocking generation locking to prevent overlapping cron, WP-CLI and manual publication jobs.
 * Made JSON manifest publication atomic and preserved the last valid public index when no output format is enabled.
