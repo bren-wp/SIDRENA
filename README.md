@@ -64,6 +64,38 @@ Za usluge se mogu evidentirati naziv, vrsta i opseg, cijena, sidrena cijena, pos
 
 <img src=".wordpress-org/source/screenshot-3.svg" width="100%" alt="Sidrena digitalni cjenici">
 
+## Galerija sučelja
+
+### Katalog i masovno uređivanje
+
+<img src=".wordpress-org/source/screenshot-4.svg" width="100%" alt="Sidrena katalog i masovno uređivanje">
+
+Katalog je namijenjen radu nad većim brojem WooCommerce stavki. Na jednom mjestu možete pregledati i uređivati šifru, marku, barkod, sidrenu cijenu, referentni datum, referentnu skupinu te status i vrijednost jedinične cijene.
+
+### Poslovnice i webshop
+
+<img src=".wordpress-org/source/screenshot-5.svg" width="100%" alt="Sidrena lokacije i webshop">
+
+Fizičke poslovnice i webshop vode se odvojeno kako bi javni cjenici, lokalne cijene i raspoloživost odgovarali stvarnom prodajnom mjestu.
+
+### Produkcijski alati
+
+<img src=".wordpress-org/source/screenshot-6.svg" width="100%" alt="Sidrena alati za uvoz i izvoz">
+
+Uvoz i izvoz namijenjeni su provjerenim poslovnim podacima. Sidrena ne popunjava povijest izmišljenim vrijednostima i ne pokušava rekonstruirati razdoblje prije instalacije bez vjerodostojnog izvora.
+
+## Vizualni identitet
+
+<p align="center">
+  <img src="assets/images/logo-horizontal.svg" width="520" alt="Sidrena horizontalni logo">
+</p>
+
+<p align="center">
+  <img src="assets/images/logo-mark.svg" width="150" height="150" alt="Sidrena ikona">
+</p>
+
+Sidrena koristi vlastiti lokalni vizualni sustav: tamnoplavu bazu, Sidrena plavu i jadransku tirkiznu, originalni znak slova **S** sa sidrom te vlastite lokalne administracijske i WordPress.org vizuale. Plugin u radu ne učitava branding s vanjskog CDN-a.
+
 ## Javni REST i shortcodeovi
 
 REST:
