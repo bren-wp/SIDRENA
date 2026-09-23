@@ -1571,7 +1571,7 @@ final class Sidrena_Admin {
 		}
 		$settings = Sidrena_Utils::settings();
 		$issues   = $missing + $missing_brand + $missing_barcode + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
-		if ( ( in_array( $settings['business_mode'], array( 'products', 'mixed' ), true ) && ! Sidrena_Utils::is_woocommerce_active() ) || ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) ) {
+		if ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) {
 			++$issues;
 		}
 		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) || ! isset( $settings['generation_time'] ) || strcmp( (string) $settings['generation_time'], '08:00' ) >= 0 ) {
