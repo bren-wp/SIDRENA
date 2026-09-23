@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TAG_VERSION="\${GITHUB_REF_NAME#v}"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
           HEADER_VERSION="$(sed -n 's/^ \* Version: //p' sidrena.php | head -n1)"
           STABLE_TAG="$(sed -n 's/^Stable tag: //p' readme.txt | head -n1)"
           test "$TAG_VERSION" = "$HEADER_VERSION"
@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VERSION="\${GITHUB_REF_NAME#v}"
+          VERSION="${GITHUB_REF_NAME#v}"
           STAGE="$RUNNER_TEMP/sidrena"
           rm -rf "$STAGE"
           mkdir -p "$STAGE"
@@ -41,8 +41,8 @@ jobs:
             --exclude='.gitignore' \
             --exclude='README.md'
           cd "$RUNNER_TEMP"
-          zip -qr "sidrena-\${VERSION}.zip" sidrena
-          sha256sum "sidrena-\${VERSION}.zip" > "sidrena-\${VERSION}.zip.sha256"
+          zip -qr "sidrena-${VERSION}.zip" sidrena
+          sha256sum "sidrena-${VERSION}.zip" > "sidrena-${VERSION}.zip.sha256"
 
       - name: Build WordPress.org visual assets
         shell: bash
@@ -50,7 +50,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq librsvg2-bin
-          VERSION="\${GITHUB_REF_NAME#v}"
+          VERSION="${GITHUB_REF_NAME#v}"
           OUT="$RUNNER_TEMP/wporg-assets"
           mkdir -p "$OUT"
           rsvg-convert -w 772 -h 250 .wordpress-org/source/banner.svg > "$OUT/banner-772x250.png"
@@ -59,16 +59,16 @@ jobs:
           rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > "$OUT/icon-256x256.png"
           cp assets/images/logo-mark.svg "$OUT/icon.svg"
           for N in 1 2 3 4 5 6; do
-            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-\${N}.svg" > "$OUT/screenshot-\${N}.png"
+            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-${N}.svg" > "$OUT/screenshot-${N}.png"
           done
           cd "$RUNNER_TEMP"
-          zip -qr "sidrena-wporg-assets-\${VERSION}.zip" wporg-assets
-          sha256sum "sidrena-wporg-assets-\${VERSION}.zip" > "sidrena-wporg-assets-\${VERSION}.zip.sha256"
+          zip -qr "sidrena-wporg-assets-${VERSION}.zip" wporg-assets
+          sha256sum "sidrena-wporg-assets-${VERSION}.zip" > "sidrena-wporg-assets-${VERSION}.zip.sha256"
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: |
-            \${{ runner.temp }}/sidrena-*.zip
-            \${{ runner.temp }}/sidrena-*.zip.sha256
+            ${{ runner.temp }}/sidrena-*.zip
+            ${{ runner.temp }}/sidrena-*.zip.sha256
