@@ -310,12 +310,18 @@ final class Sidrena_Utils {
 			return '';
 		}
 		if ( is_callable( array( $product, 'get_global_unique_id' ) ) ) {
-			$value = $product->get_global_unique_id();
-			if ( $value ) {
+			$value = trim( (string) $product->get_global_unique_id() );
+			if ( '' !== $value ) {
 				return $value;
 			}
 		}
-		return (string) get_post_meta( $product->get_id(), '_global_unique_id', true );
+
+		$value = trim( (string) get_post_meta( $product->get_id(), '_global_unique_id', true ) );
+		if ( '' !== $value ) {
+			return $value;
+		}
+
+		return trim( (string) get_post_meta( $product->get_id(), '_sidrena_barcode', true ) );
 	}
 
 	public static function public_index() {
