@@ -14,6 +14,7 @@ final class Sidrena_Plugin {
 	}
 
 	public function run() {
+		add_action( 'init', array( 'Sidrena_Utils', 'register_translation_strings' ), 20 );
 		Sidrena_Audit::instance()->hooks();
 		Sidrena_History::instance()->hooks();
 		Sidrena_Service_History::instance()->hooks();
