@@ -54,6 +54,18 @@ final class Sidrena_Admin {
 			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
 		);
 
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			$items = array_values(
+				array_filter(
+					$items,
+					static function ( $item ) {
+						return isset( $item[0] ) && 'sidrena-extra' !== $item[0];
+					}
+				)
+			);
+		}
+
 		foreach ( $items as $item ) {
 			add_submenu_page(
 				'sidrena',
