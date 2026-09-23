@@ -244,6 +244,20 @@ final class Sidrena_Utils {
 		return wp_check_invalid_utf8( $contents, true );
 	}
 
+
+	public static function format_iso_datetime( $value ) {
+		$value = trim( (string) $value );
+		if ( '' === $value ) {
+			return '';
+		}
+		try {
+			$dt = new DateTimeImmutable( $value );
+			return wp_date( 'd.m.Y. H:i', $dt->getTimestamp() );
+		} catch ( Exception $e ) {
+			return sanitize_text_field( $value );
+		}
+	}
+
 	public static function schedule_timestamp( $time_string = '' ) {
 		$settings    = self::settings();
 		$time_string = $time_string ? $time_string : $settings['generation_time'];
