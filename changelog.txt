@@ -1,0 +1,42 @@
+= 1.5.0 =
+* Added WooCommerce bulk catalog editor for Sidrena fields.
+* Added local audit log with 400-day technical retention.
+* Added WordPress Site Health diagnostics for schedule and archive writability.
+* Added optional WP-CLI commands: `wp sidrena generate`, `wp sidrena status`, and `wp sidrena audit`.
+* Added audit events for pricelist generation, settings, locations, public page creation, and CSV imports.
+* Improved admin UI with Catalog and Log tabs.
+
+=== Sidrena — full changelog ===
+
+= 1.4.0 =
+* Added a dedicated technical readiness / compliance center.
+* Added per-location history of prices, anchor prices and availability, retained internally for 400 days.
+* Added unified CSV export for WooCommerce, service and location price history.
+* Added one-click creation of a public Cjenici page with current files and the public archive.
+* Added stable product-code fallback: WooCommerce SKU, Sidrena code, then WP-ID.
+* Expanded real-time REST fields for products, services and locations.
+* Added WooCommerce scheduled-sale start/end history hooks and price-list regeneration.
+* Improved the premium admin UI and archive diagnostics.
+* Kept Sidrena fully free, local and telemetry-free.
+
+= 1.3.0 =
+* Added public real-time prices endpoint `/wp-json/sidrena/v1/cijene` with no-cache headers.
+* Added products, variations, services and location-aware prices/availability to real-time retrieval.
+* Expanded the Propisi tab with the Ministry clarification dated 22.09.2026.
+* Clarified the distinction between the public 30+ day price-list archive and internal 30-day reduction history.
+
+= 1.2.0 =
+* Added service type, scope and associated-cost fields for the public service price list.
+* Added daily WP-Cron schedule diagnostics and schedule recovery.
+* Added archive-register export with SHA-256, publication time and retention deadline.
+* Added the premium top-level Sidrena admin panel.
+* Enforced at least 30 days of public archive retention; default remains 45 days.
+* Added per-file retain-until metadata, integrity verification and archive calendar.
+* Added support for perishable / fast-expiry reduction metadata.
+* Improved WooCommerce variations, location prices, anchor prices and admin checks.
+
+= 1.1.0 =
+* Expanded anchor-price, 30-day history, services, locations, CSV/XML and public archive support.
+
+= 1.0.0 =
+* First public Sidrena release.

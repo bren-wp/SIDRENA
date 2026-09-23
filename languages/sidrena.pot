@@ -1,0 +1,1241 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Sidrena 1.5.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-23 20:54+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: sidrena\n"
+
+#: includes/class-sidrena-rest.php:122
+msgid "%1$s · %2$s · %3$s · %4$s"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:192
+msgid "%d dana s objavama"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:358
+msgid "+%d dana rezerve"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:457
+msgid "Adresa nije upisana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:464
+msgid "Adresa objekta"
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:275
+msgid "Akcija"
+msgstr ""
+
+#: includes/class-sidrena-services.php:147
+msgid "Ako ova usluga ima različitu cijenu po poslovnici ili webshopu, ovdje unesite lokalnu maloprodajnu cijenu. Prazno polje koristi osnovnu cijenu usluge."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:238
+msgid "Ako WordPress/WooCommerce nema vjerodostojnu povijest za referentni datum ili punih 30 dana prije početka sniženja, dodatak označava podatak kao nepotpun. Povijesnu vrijednost tada provjerite u vlastitoj evidenciji i unesite ručno ili CSV uvozom."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:278
+msgid "Aktivirajte WooCommerce ili promijenite način rada."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:458
+msgid "Aktivna"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:283
+msgid "Aktivna sniženja proizvoda imaju provjerljivu 30-dnevnu referencu ili evidentirano izuzeće"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:285
+msgid "Aktivna sniženja usluga imaju provjerljivu 30-dnevnu referencu ili evidentiranu primjenjivu iznimku"
+msgstr ""
+
+#: includes/class-sidrena-services.php:279 includes/class-sidrena-services.php:318 includes/class-sidrena-services.php:350
+msgid "Aktualna cijena"
+msgstr ""
+
+#: includes/class-sidrena-services.php:95
+msgid "Aktualna maloprodajna cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php:153
+msgid "Aktualna — koristi osnovnu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:322
+msgid "Aktualne objave"
+msgstr ""
+
+#: includes/class-sidrena-rest.php:80
+msgid "Aktualni cjenici"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:327
+msgid "Aktualnih datoteka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:224
+msgid "Aktualno: %1$d · arhiva: %2$d · nedostaje: %3$d · hash odstupanja: %4$d"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:505 includes/class-sidrena-admin.php:78
+msgid "Alati"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:75
+msgid "Arhiva 30+ dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:535
+msgid "Arhiva cjenika i najniža cijena prije sniženja nisu ista stvar. Sidrena vodi oboje odvojeno: javne CSV/XML objave čuva najmanje 30 dana, a internu povijest proizvoda i usluga koristi kao tehničku podlogu za 30-dnevnu referencu prije sniženja."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:354
+msgid "Arhiva cjenika najmanje 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:290
+msgid "Arhiva je postavljena na najmanje 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-rest.php:100
+msgid "Arhiva prethodnih cjenika"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:223
+msgid "Arhiva traži tehničku provjeru"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:192
+msgid "Arhivirane datoteke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:363
+msgid "Arhivirane objave"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:206
+msgid "Automatska objava"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:288
+msgid "Automatsko dnevno generiranje postavljeno je prije 08:00"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:533
+msgid "Bazna cijena u Zakonu od 17.11.2026."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:191
+msgid "Bez sidrene cijene"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:200
+msgid "Bez tehničkih upozorenja"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:232
+msgid "Bez telemetrije, licenci i obaveznih vanjskih servisa."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:90
+msgid "Brendigo · WordPress / WooCommerce"
+msgstr ""
+
+#: includes/class-sidrena-products.php:245
+msgid "Brzo istječe rok"
+msgstr ""
+
+#: includes/class-sidrena-utils.php:134
+msgid "Cijena na %s"
+msgstr ""
+
+#: includes/class-sidrena-products.php:79
+msgid "Cijena na mjerodavni referentni datum, bez posebnog oblika prodaje. Za postojeći artikl provjerite vlastitu evidenciju."
+msgstr ""
+
+#: includes/class-sidrena-services.php:146
+msgid "Cijena po lokaciji"
+msgstr ""
+
+#: includes/class-sidrena-products.php:163
+msgid "Cijena za jedinicu mjere"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:74
+msgid "Cjenici"
+msgstr ""
+
+#: includes/class-sidrena-rest.php:74
+msgid "Cjenik još nije generiran."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:207
+msgid "Cjenik prije 08:00 + arhiva najmanje 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:342 includes/class-sidrena-services.php:315
+msgid "Cjenik usluga"
+msgstr ""
+
+#: includes/class-sidrena-services.php:311
+msgid "Cjenik usluga još nema objavljenih stavki."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:42
+msgid "CSV i XML izlaz su isključeni. Uključite barem jedan format."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:158
+msgid "CSV lokacija nije moguće uvesti. Provjerite location_id, product_id/SKU i stupac availability."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:157
+msgid "CSV nije moguće uvesti. Provjerite format, veličinu, zaglavlja i podatke."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:493
+msgid "CSV razdjelnik"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:513
+msgid "CSV stupci: location_id, product_id ili sku, price, anchor_price, availability. Availability: dostupno ili nedostupno. Prazna price ili anchor_price koristi osnovnu WooCommerce vrijednost."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:509
+msgid "CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:529
+msgid "CSV/XML cjenik i 30-dnevna arhiva"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:357
+msgid "Dani s objavama"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:356
+msgid "Datoteke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:359
+msgid "datoteke + SHA-256"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:333
+msgid "Datoteke dostupne javnosti"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:491
+msgid "Datoteke se objavljuju u uploads/sidrena/arhiva i ostaju javno dostupne najmanje 30 dana."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:530
+msgid "Detaljna pojašnjenja Ministarstva"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:491
+msgid "Digitalni cjenici i arhiva"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:289
+msgid "Dnevni WP-Cron događaj za generiranje cjenika je zakazan"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:444
+msgid "Dodaj lokaciju"
+msgstr ""
+
+#: includes/class-sidrena-services.php:33
+msgid "Dodaj uslugu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:528 includes/class-sidrena-products.php:77
+msgid "Dodatna / sidrena cijena"
+msgstr ""
+
+#: includes/class-sidrena-services.php:99
+msgid "Dodatna / sidrena cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php:323 includes/class-sidrena-services.php:356
+msgid "Dodatna cijena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:486
+msgid "Dodatna cijena prikazuje se uz WooCommerce cijenu. Tijekom akcije može se prikazati i provjerena najniža cijena iz prethodnih 30 dana."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:279
+msgid "Dopunite adresu u kartici Lokacije."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:284
+msgid "Dopunite krajnji rok uporabe na aktivnim sniženjima označenim tim izuzećem."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:281
+msgid "Dopunite usluge kojima nedostaje referentna cijena."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:282
+msgid "Dopunite vrstu i opseg usluge kako bi javni cjenik sadržavao podatke iz NN 105/2026."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:535
+msgid "Dvije različite “30 dana” obveze"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:286
+msgid "Fizičke lokacije imaju podatke o raspoloživosti po stavci"
+msgstr ""
+
+#: includes/class-sidrena-products.php:210
+msgid "FMCG"
+msgstr ""
+
+#: includes/class-sidrena-products.php:92
+msgid "FMCG (%s)"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:231
+msgid "FMCG datum"
+msgstr ""
+
+#: includes/class-sidrena-products.php:88
+msgid "FMCG koji je već bio obuhvaćen mjerom zadržava 02.05.2025.; za novobuhvaćene proizvode mjerodavan je 10.09.2026.; novouvedeni proizvod koristi datum prvog uvrštenja."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:488
+msgid "FMCG referentni datum"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Format"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:184
+msgid "Generiraj cjenike"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:323
+msgid "Generiraj sada"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:291
+msgid "Generirajte prvi cjenik."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:154
+msgid "Generiranje je završeno s upozorenjima. Posljednje ispravne datoteke zadržane su kao aktualne tamo gdje nova datoteka nije mogla nastati."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:461
+msgid "ID lokacije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:492
+msgid "Indeks aktualnih i arhivskih datoteka s hashom."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:292
+msgid "Indeksirane arhivske datoteke postoje i provjereni SHA-256 zapisi se podudaraju"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:357
+msgid "informativno; usluge se objavljuju i pri promjeni"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:359
+msgid "Integritet"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:222
+msgid "Integritet javne arhive"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:329
+msgid "Isključen"
+msgstr ""
+
+#: includes/class-sidrena-services.php:119
+msgid "Iznimka za 30-dnevnu referencu usluge"
+msgstr ""
+
+#: includes/class-sidrena-products.php:240
+msgid "Izuzeće 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-products.php:122
+msgid "Izuzeće 30-dnevne referentne cijene"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:354
+msgid "Izvezi evidenciju arhive"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:280
+msgid "Izvezite popis nedostajućih i dopunite povijesne vrijednosti."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:517
+msgid "Izvezite WooCommerce stavke bez upisane sidrene cijene, dopunite ih iz vjerodostojne evidencije i vratite CSV u gornji uvoz."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:341
+msgid "Javna lista"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:354
+msgid "Javna povijest"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:322
+msgid "Javni cjenici"
+msgstr ""
+
+#: includes/class-sidrena-rest.php:38
+msgid "Javni indeks cjenika je isključen."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:492
+msgid "Javni indeks za automatizirani dohvat."
+msgstr ""
+
+#: includes/class-sidrena-products.php:157
+msgid "Jedinica mjere"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:180
+msgid "Jedno mjesto za sidrene cijene i digitalne cjenike"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:413
+msgid "Još nema generiranih datoteka."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:393
+msgid "Kalendar arhive"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:389
+msgid "Kalendar generiranih objava"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:531
+msgid "Kod posebnih oblika prodaje robe referentna je najniža cijena primjenjivana za isti proizvod tijekom 30 dana prije početka sniženja. Za lako pokvarljivu robu i robu kojoj brzo istječe rok vrijede posebna pravila; pri takvom sniženju mora biti istaknut i krajnji rok uporabe."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:477
+msgid "Konfiguracija"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:199
+msgid "Kontrola prije objave"
+msgstr ""
+
+#: includes/class-sidrena-products.php:150
+msgid "Koristi se ako marka nije dostupna kroz WooCommerce Brands ili atribut pa_brand."
+msgstr ""
+
+#: includes/class-sidrena-services.php:126
+msgid "Koristite samo kada ste provjerili da se iznimka iz čl. 19. st. 8. Zakona o zaštiti potrošača stvarno primjenjuje na konkretan slučaj."
+msgstr ""
+
+#: includes/class-sidrena-products.php:135 includes/class-sidrena-products.php:254 includes/class-sidrena-products.php:466 includes/class-sidrena-products.php:500
+msgid "Krajnji rok uporabe"
+msgstr ""
+
+#: includes/class-sidrena-products.php:244
+msgid "Lako pokvarljiva"
+msgstr ""
+
+#: includes/class-sidrena-products.php:127
+msgid "Lako pokvarljiva roba"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:284
+msgid "Lako pokvarljiva roba i roba kojoj brzo istječe rok ima evidentiran krajnji rok uporabe"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Lokacija"
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:54
+msgid "Lokacija \"%s\" nema upisanu adresu potrebnu za naziv datoteke cjenika."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:76
+msgid "Lokacije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:437
+msgid "Lokacije cjenika"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:468
+msgid "Lokacijska raspoloživost"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:496
+msgid "Lokalna povijest služi za izračun najniže cijene u 30 dana prije početka sniženja. Čuva se dulje od 30 dana kako bi početak svakog budućeg prozora imao poznato stanje cijene."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:532
+msgid "Maloprodajna, jedinična i cijena usluge"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:329
+msgid "Manifest"
+msgstr ""
+
+#: includes/class-sidrena-products.php:149
+msgid "Marka za cjenik"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:505
+msgid "Masovno dopunite povijesne sidrene cijene i lokacijsku raspoloživost bez ručnog otvaranja svakog proizvoda."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:530
+msgid "Ministarstvo gospodarstva · 22.09.2026."
+msgstr ""
+
+#: includes/class-sidrena-products.php:229
+msgid "Najniža cijena 30 dana — ručno"
+msgstr ""
+
+#: includes/class-sidrena-products.php:112
+msgid "Najniža cijena prije sniženja — ručna provjera"
+msgstr ""
+
+#: includes/class-sidrena-services.php:114
+msgid "Najniža cijena prije sniženja — ručna vrijednost (€)"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:531 includes/class-sidrena-products.php:405 includes/class-sidrena-products.php:440 includes/class-sidrena-services.php:321 includes/class-sidrena-services.php:354
+msgid "Najniža cijena u prethodnih 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:363
+msgid "Najnovije su prikazane prve. Brisanje se provodi tek kada datoteka prijeđe postavljeno razdoblje čuvanja."
+msgstr ""
+
+#: includes/class-sidrena-services.php:135
+msgid "Navedite što je uključeno u cijenu i relevantne troškove"
+msgstr ""
+
+#: includes/class-sidrena-products.php:220
+msgid "Naziv posebne prodaje"
+msgstr ""
+
+#: includes/class-sidrena-products.php:171 includes/class-sidrena-services.php:110
+msgid "Naziv posebnog oblika prodaje"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:482
+msgid "Način rada"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:1001 includes/class-sidrena-admin.php:632 includes/class-sidrena-admin.php:812 includes/class-sidrena-admin.php:832 includes/class-sidrena-admin.php:870
+msgid "Nedopušten zahtjev."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:359
+msgid "nedostaje datoteka ili hash odstupa"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:517
+msgid "Nedostajuće sidrene cijene"
+msgstr ""
+
+#: includes/class-sidrena-rest.php:112
+msgid "Nema dostupnih datoteka."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:402
+msgid "nema generirane objave"
+msgstr ""
+
+#: includes/class-sidrena-products.php:126 includes/class-sidrena-products.php:243
+msgid "Nema izuzeća"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:520
+msgid "Nema telemetrije, cloud računa, licencnog servera niti automatskog slanja poslovnih podataka Brendigu ili trećim stranama. Javno se izlažu samo cjenici koje administrator generira."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:193
+msgid "nema upozorenja"
+msgstr ""
+
+#: includes/class-sidrena-products.php:114
+msgid "Neobavezno. Koristite ako automatska 30-dnevna povijest nije potpuna ili ste vrijednost provjerili iz druge vjerodostojne evidencije. Tijekom aktivne akcije ručni unos ima prednost."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:383 includes/class-sidrena-pricelist.php:410
+msgid "Nije moguće dovršiti zapis datoteke: %s"
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:366 includes/class-sidrena-pricelist.php:392
+msgid "Nije moguće otvoriti datoteku za pisanje: %s"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:840
+msgid "Nije moguće otvoriti izlaznu datoteku."
+msgstr ""
+
+#: includes/class-sidrena-services.php:121
+msgid "Nije označena iznimka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:457
+msgid "Nova lokacija"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:153
+msgid "Novi cjenici su generirani i dodani u javnu arhivu."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:230
+msgid "novobuhvaćeni proizvodi i usluge"
+msgstr ""
+
+#: includes/class-sidrena-products.php:172 includes/class-sidrena-services.php:111
+msgid "npr. Akcija"
+msgstr ""
+
+#: includes/class-sidrena-services.php:133
+msgid "npr. servisna usluga"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:402
+msgid "objava postoji"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:281
+msgid "Objavljene usluge imaju sidrenu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:282
+msgid "Objavljene usluge imaju vrstu i opseg za javni cjenik"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Objavljeno"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:462
+msgid "Oblik / vrsta objekta"
+msgstr ""
+
+#: includes/class-sidrena-products.php:124
+msgid "Odaberite samo ako je proizvod stvarno obuhvaćen odgovarajućom zakonskom iznimkom."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:482
+msgid "Odredite objavljuje li subjekt proizvode, usluge ili oboje."
+msgstr ""
+
+#: includes/class-sidrena-services.php:122
+msgid "Oglašavanje usluge"
+msgstr ""
+
+#: includes/class-sidrena-services.php:134
+msgid "Opseg usluge"
+msgstr ""
+
+#: includes/class-sidrena-services.php:342
+msgid "Opseg:"
+msgstr ""
+
+#: includes/class-sidrena-services.php:116
+msgid "Ostavite prazno za automatski izračun kada postoji potpuna 30-dnevna povijest."
+msgstr ""
+
+#: includes/class-sidrena-products.php:102
+msgid "Ostavite prazno za datum iz odabrane referentne skupine."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:423
+msgid "Otvori"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:61
+msgid "Otvori Sidrenu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:533 includes/class-sidrena-admin.php:540
+msgid "Otvori službeni izvor"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:292
+msgid "Otvorite Arhiva 30+ dana i provjerite nedostajuće ili promijenjene datoteke."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:239
+msgid "Ovo je tehnički alat za provedbu i evidenciju. Ne predstavlja pravno mišljenje niti jamstvo usklađenosti konkretnog poslovnog subjekta."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:463
+msgid "Oznaka objekta"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:493
+msgid "Plugin ne dopušta manje od 30 dana."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:520
+msgid "Podaci ostaju na vašem WordPressu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:156
+msgid "Podaci po lokacijama su uvezeni. Cjenici će koristiti unesenu raspoloživost i, gdje postoji, cijenu po lokaciji."
+msgstr ""
+
+#: includes/class-sidrena-services.php:130
+msgid "Podaci za javni cjenik usluga"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:530
+msgid "Pojašnjenja pokrivaju webshopove, zasebne datoteke po poslovnici, stvarnu raspoloživost po lokaciji, novouvedene proizvode, akcije, tri cijene tijekom sniženja te strukturu naziva datoteka."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:358
+msgid "Politika čuvanja"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:289
+msgid "Ponovno spremite postavke ili reaktivirajte dodatak. Za strogo vrijeme izvršenja koristite pravi poslužiteljski cron koji pokreće WP-Cron."
+msgstr ""
+
+#: includes/class-sidrena-services.php:107
+msgid "Posebni oblik prodaje / sniženje je aktivno"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:483
+msgid "Poslovni model"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:437
+msgid "Poslovnice i webshop"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:288
+msgid "Postavite vrijeme prije 08:00; preporuka Sidrene je 06:30 radi operativne rezerve."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:477 includes/class-sidrena-admin.php:77
+msgid "Postavke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:210
+msgid "Postavljeno vrijeme"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:231
+msgid "postojeće obuhvaćene kategorije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:291
+msgid "Postoji barem jedan aktualni javni cjenik"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:191
+msgid "potrebna provjera"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:290
+msgid "Povećajte razdoblje čuvanja."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:496
+msgid "Povijest cijena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:496
+msgid "Prati cijene proizvoda i usluga"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:526
+msgid "Pravila koja Sidrena tehnički podržava"
+msgstr ""
+
+#: includes/class-sidrena-services.php:131
+msgid "Pravilnik NN 105/2026 traži da uz cijenu usluge budu navedeni naziv, vrsta i opseg usluge te da cijena obuhvati pripadajuće troškove. Ovdje evidentirajte te podatke za javni prikaz."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:532
+msgid "Pravilnik uređuje jasan prikaz maloprodajne i jedinične cijene te iznimke. Za usluge traži lako dostupan cjenik, naziv, vrstu i opseg usluge te uključivanje pripadajućih troškova u cijenu; cijena ugradbene ili zamjenske robe prikazuje se uz pripadajuću uslugu."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:533
+msgid "Praćenje promjena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:518
+msgid "Predložak lokacija"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:73
+msgid "Pregled"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:388
+msgid "Pregled zadnjih 35 dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:293
+msgid "Pregledajte upozorenja zadnjeg generiranja."
+msgstr ""
+
+#: includes/class-sidrena-products.php:496
+msgid "prema odabranoj varijaciji"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:493
+msgid "Preporuka: dovoljno prije 08:00."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:354
+msgid "Prethodno važeće datoteke ostaju u javnoj arhivi do isteka postavljenog razdoblja čuvanja. Zadano je 45 dana kako bi postojala operativna rezerva iznad minimuma."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:517
+msgid "Preuzmi CSV za dopunu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:518
+msgid "Preuzmi predložak"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:518
+msgid "Preuzmite sve aktivne lokacije i WooCommerce stavke u jednom CSV-u, dopunite raspoloživost i po potrebi cijenu, pa ga uvezite."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:487
+msgid "Prikaži najnižu cijenu 30 dana"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:487
+msgid "Prikaži sidrenu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-services.php:135
+msgid "Pripadajući troškovi / napomena o cijeni"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:232
+msgid "Privatnost"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:417 includes/class-sidrena-rest.php:118
+msgid "Proizvodi"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:483
+msgid "Proizvodi / trgovina"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:483
+msgid "Proizvodi i usluge"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:190
+msgid "proizvodi i varijacije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:193
+msgid "proizvodi/usluge za provjeru"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:496
+msgid "Promjene + dnevni snapshot za WooCommerce i Sidrena usluge."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:152
+msgid "Promjene su spremljene."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:79
+msgid "Propisi"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:359
+msgid "Provjera"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:226
+msgid "Provjeri arhivu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:513
+msgid "Raspoloživost i cijena po lokaciji"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Redaka"
+msgstr ""
+
+#: includes/class-sidrena-products.php:206 includes/class-sidrena-products.php:87
+msgid "Referentna skupina"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:486
+msgid "Referentne cijene na webu"
+msgstr ""
+
+#: includes/class-sidrena-products.php:196 includes/class-sidrena-services.php:103
+msgid "Referentni datum"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:212
+msgid "Rezerva iznad minimuma"
+msgstr ""
+
+#: includes/class-sidrena-products.php:128
+msgid "Roba kojoj brzo istječe rok uporabe"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:487
+msgid "Samo kod aktivnog sniženja i kada je podatak provjerljiv."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:526
+msgid "Sažetak je informativan. Za konačnu primjenu uvijek provjerite službeni tekst propisa i pojašnjenja nadležnih tijela."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:333
+msgid "SHA-256 omogućuje naknadnu provjeru da sadržaj arhivirane datoteke nije promijenjen."
+msgstr ""
+
+#: includes/class-sidrena-products.php:185 includes/class-sidrena-services.php:280
+msgid "Sidrena cijena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:139
+msgid "Sidrena je besplatan open-source dodatak."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:101
+msgid "Sidrena navigacija"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:237
+msgid "Sidrena ne izmišlja povijesne cijene"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:181
+msgid "Sidrena vodi referentne cijene uz WooCommerce proizvode, prati povijest cijena za posebne oblike prodaje te generira strojno čitljive cjenike i javnu arhivu prethodnih objava."
+msgstr ""
+
+#: includes/class-sidrena-services.php:67
+msgid "Sidrena — cijene usluge"
+msgstr ""
+
+#: includes/class-sidrena-services.php:154
+msgid "Sidrena — koristi osnovnu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:92
+msgid "Sidrene cijene, 30-dnevna povijest i javni CSV/XML cjenici za Hrvatsku"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:230
+msgid "Sidreni datum"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:465
+msgid "Sljedeći broj pohrane"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:213
+msgid "Sljedeći WP-Cron"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:526
+msgid "Službeni izvori"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:193
+msgid "Sniženja bez pune 30-dnevne baze"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:444
+msgid "Spremi lokacije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:498
+msgid "Spremi postavke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:488
+msgid "Standardni referentni datum"
+msgstr ""
+
+#: includes/class-sidrena-products.php:209
+msgid "Standardno"
+msgstr ""
+
+#: includes/class-sidrena-products.php:91
+msgid "Standardno (%s)"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:338
+msgid "Strojni pristup"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:492
+msgid "Strojno čitljiv cjenik."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:322
+msgid "Svaka aktivna lokacija dobiva zasebnu CSV/XML datoteku. U slučaju greške zadnja uspješno generirana datoteka ostaje aktualna."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:390
+msgid "Svaki označeni dan znači da je najmanje jedan CSV/XML cjenik spremljen u arhivu. Ovo nije pravni “score”: uslužni cjenik se prema odluci mora obnoviti pri promjeni cijene, dok trgovac cjenik proizvoda ažurira radnim danom."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:279
+msgid "Sve aktivne lokacije imaju adresu za naziv datoteke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:223
+msgid "Sve indeksirane datoteke postoje i SHA-256 zapisi se podudaraju"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:191
+msgid "sve popunjeno"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:199
+msgid "Tehnička provjera spremnosti"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:529
+msgid "Trgovci s web-stranicom ažuriraju cjenik radnim danom najkasnije do 08:00; pružatelji usluga pri promjeni cijene. Prethodne objave moraju ostati javno dostupne najmanje 30 dana."
+msgstr ""
+
+#: includes/class-sidrena-services.php:345
+msgid "Troškovi:"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:356
+msgid "u arhivskom indeksu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:359
+msgid "U redu"
+msgstr ""
+
+#: includes/class-sidrena-services.php:124
+msgid "Ugovor izvan poslovnih prostorija"
+msgstr ""
+
+#: includes/class-sidrena-services.php:123
+msgid "Ugovor na daljinu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:329
+msgid "Uključen"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:287
+msgid "Uključen je barem jedan strojno čitljiv format"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:287
+msgid "Uključite CSV i/ili XML."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:458
+msgid "Ukloni"
+msgstr ""
+
+#: includes/class-sidrena-services.php:34
+msgid "Uredi uslugu"
+msgstr ""
+
+#: includes/class-sidrena-services.php:317 includes/class-sidrena-services.php:32
+msgid "Usluga"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:417 includes/class-sidrena-admin.php:483 includes/class-sidrena-rest.php:119 includes/class-sidrena-services.php:31
+msgid "Usluge"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:513
+msgid "Uvezi lokacijske podatke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:509
+msgid "Uvezi sidrene cijene"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:286
+msgid "Uvezite lokacijsku raspoloživost; globalno Woo stanje možda nije dovoljno za fizičku poslovnicu."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:505
+msgid "Uvoz i provjera"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:185
+msgid "Uvoz podataka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:509
+msgid "Uvoz sidrenih cijena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:155
+msgid "Uvoz sidrenih cijena je dovršen."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:487
+msgid "Uz aktualnu WooCommerce cijenu."
+msgstr ""
+
+#: includes/class-sidrena-products.php:211
+msgid "Vlastiti datum"
+msgstr ""
+
+#: includes/class-sidrena-products.php:93
+msgid "Vlastiti datum / novouvedeni proizvod"
+msgstr ""
+
+#: includes/class-sidrena-products.php:100
+msgid "Vlastiti referentni datum"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:493
+msgid "Vrijeme dnevnog generiranja"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Vrsta"
+msgstr ""
+
+#: includes/class-sidrena-services.php:133
+msgid "Vrsta usluge"
+msgstr ""
+
+#: includes/class-sidrena-services.php:339
+msgid "Vrsta:"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:96
+msgid "Web plugina"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:278
+msgid "WooCommerce je dostupan za način rada s proizvodima"
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:169
+msgid "WooCommerce nije aktivan; cjenik proizvoda nije generiran."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:190
+msgid "WooCommerce stavke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:280
+msgid "WooCommerce stavke imaju sidrenu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:283
+msgid "Za nepotpunu povijest proizvoda unesite provjerenu ručnu vrijednost."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:285
+msgid "Za nepotpunu povijest usluge unesite provjerenu ručnu vrijednost ili, ako je stvarno primjenjivo, označite iznimku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:528
+msgid "Za novobuhvaćene proizvode i usluge referentna je redovna cijena na 10.09.2026.; ranije obuhvaćeni FMCG zadržava 02.05.2025. Ako je stavka na referentni dan bila na akciji, uzima se prethodna redovna cijena. Novouvedena stavka nakon referentnog dana koristi cijenu prvog uvrštenja i taj datum."
+msgstr ""
+
+#: includes/class-sidrena-products.php:138
+msgid "Za robu na posebnom obliku prodaje jer je lako pokvarljiva ili joj brzo istječe rok uporabe. Sidrena prikazuje datum uz cijenu kada je označeno odgovarajuće izuzeće."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:437
+msgid "Za svaku fizičku lokaciju generira se zasebna datoteka. Webshop se također vodi kao zaseban objekt. Kod fizičkih lokacija raspoloživost mora odgovarati stvarnom stanju upravo te poslovnice."
+msgstr ""
+
+#: includes/class-sidrena-services.php:159
+msgid "Za usluge prvi put uvedene nakon referentnog datuma koristite cijenu i datum prvog dana ponude. Povijest cijena i javna 30+ dnevna arhiva cjenika vode se odvojeno."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:477
+msgid "Zadane vrijednosti prate trenutno objavljena pravila, ali ih administrator može prilagoditi stvarnom poslovnom modelu."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:208
+msgid "Zadano generiranje je u 06:30 kako bi ostala sigurnosna rezerva prije roka 08:00. WordPress WP-Cron ovisi o posjetima stranici; za poslovno kritičan termin preporučuje se pouzdan server cron koji redovito pokreće wp-cron.php."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:307
+msgid "Zadnja upozorenja"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:328
+msgid "Zadnje generiranje"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:293
+msgid "Zadnje generiranje je završilo bez grešaka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:215
+msgid "Zadnje generiranje:"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:533
+msgid "Članak 7. stavci 1. do 9. izmijenjenog Zakona počinju se primjenjivati 17.11.2026. i uvode obvezu isticanja bazne cijene te objave važećih cjenika proizvoda na mrežnim stranicama. Način isticanja i objave uređuje se pravilnicima, pa Sidrena te kasnije obveze prikazuje odvojeno od mjera iz NN 101/2026."
+msgstr ""
+
+#: includes/class-sidrena-admin.php:211
+msgid "Čuvanje arhive"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:493
+msgid "Čuvanje arhive (dana)"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:411
+msgid "Čuvati do"
+msgstr ""
+
+#: includes/class-sidrena-services.php:134
+msgid "Što točno usluga uključuje"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:396
+msgid "%d datoteka"
+msgid_plural "%d datoteka"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-sidrena-admin.php:200
+msgid "%d upozorenje"
+msgid_plural "%d upozorenja"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-sidrena-admin.php:434
+msgid "WooCommerce stavke imaju podatak o marki za digitalni cjenik"
+msgstr ""
+
+#: includes/class-sidrena-admin.php:434
+msgid "Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka."
+msgstr ""
