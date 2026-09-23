@@ -94,6 +94,16 @@ final class Sidrena_Admin {
 		wp_enqueue_style( 'sidrena-admin-160', SIDRENA_URL . 'admin/css/admin-160.css', array( 'sidrena-admin' ), SIDRENA_VERSION );
 		if ( $is_plugin_page ) {
 			wp_enqueue_script( 'sidrena-admin', SIDRENA_URL . 'admin/js/admin.js', array(), SIDRENA_VERSION, true );
+			wp_localize_script(
+				'sidrena-admin',
+				'SidrenaAdmin',
+				array(
+					'removeLocation'       => __( 'Ukloniti ovu lokaciju iz konfiguracije?', 'sidrena' ),
+					'keepOneLocation'      => __( 'Mora ostati barem jedna lokacija. Možete je isključiti ako je trenutačno ne želite objavljivati.', 'sidrena' ),
+					'removeUnsavedProduct' => __( 'Ukloniti ovaj nespremljeni proizvod?', 'sidrena' ),
+					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
+				)
+			);
 		}
 	}
 
@@ -230,7 +240,13 @@ final class Sidrena_Admin {
 			'public_page_created'      => array( 'success', __( 'Javna stranica Cjenici je izrađena i objavljena.', 'sidrena' ) ),
 			'public_page_exists'       => array( 'success', __( 'Javna stranica Cjenici već postoji.', 'sidrena' ) ),
 			'public_page_failed'       => array( 'error', __( 'Javnu stranicu nije bilo moguće izraditi. Provjerite ovlasti i WordPress zapisnik.', 'sidrena' ) ),
-			'bulk_saved'               => array( 'success', __( 'Katalog je spremljen, a ponovno generiranje cjenika stavljeno je u red.', 'sidrena' ) ),
+			'bulk_saved'                  => array( 'success', __( 'Katalog je spremljen, a ponovno generiranje cjenika stavljeno je u red.', 'sidrena' ) ),
+			'locations_required'           => array( 'error', __( 'Mora postojati barem jedna lokacija. Ako je trenutačno ne želite objavljivati, ostavite je spremljenu i isključite opciju Aktivna.', 'sidrena' ) ),
+			'locations_invalid'            => array( 'error', __( 'Lokacije nisu spremljene. Aktivna lokacija mora imati jedinstveni ID, vrstu objekta, oznaku i adresu.', 'sidrena' ) ),
+			'settings_saved_cron_warning'  => array( 'warning', __( 'Postavke su spremljene, ali WordPress nije uspio ponovno zakazati dnevno generiranje. Provjerite WP-Cron ili konfigurirajte server cron.', 'sidrena' ) ),
+			'standalone_imported'          => array( 'success', __( 'Uvoz samostalnog kataloga je dovršen.', 'sidrena' ) ),
+			'standalone_import_failed'     => array( 'error', __( 'Samostalni katalog nije moguće uvesti. Provjerite CSV/XML format, veličinu, zaglavlja i obvezne podatke.', 'sidrena' ) ),
+			'standalone_saved_with_errors' => array( 'warning', __( 'Katalog je djelomično spremljen. Neke stavke nije bilo moguće zapisati; provjerite Dnevnik i pokušajte ponovno.', 'sidrena' ) ),
 		);
 		if ( ! isset( $messages[ $notice ] ) ) {
 			return;
@@ -860,13 +876,13 @@ final class Sidrena_Admin {
 		<div class="sid-location">
 			<div class="sid-location-head">
 				<div><span class="sid-location-icon dashicons <?php echo 'webshop' === sanitize_key( $kind ) ? 'dashicons-store' : 'dashicons-location'; ?>"></span><strong><?php echo esc_html( $location['code'] ?: __( 'Nova lokacija', 'sidrena' ) ); ?></strong><small><?php echo esc_html( $location['address'] ?: __( 'Adresa nije upisana', 'sidrena' ) ); ?></small></div>
-				<div class="sid-location-actions"><label class="sid-switch"><input type="checkbox" name="locations[<?php echo esc_attr( $index ); ?>][enabled]" value="yes" <?php checked( $location['enabled'] ?? '', 'yes' ); ?>><span><?php esc_html_e( 'Aktivna', 'sidrena' ); ?></span></label><button type="button" class="button-link-delete sid-remove-location"><?php esc_html_e( 'Ukloni', 'sidrena' ); ?></button></div>
+				<div class="sid-location-actions"><label class="sid-switch"><input class="sid-location-enabled" type="checkbox" name="locations[<?php echo esc_attr( $index ); ?>][enabled]" value="yes" <?php checked( $location['enabled'] ?? '', 'yes' ); ?>><span><?php esc_html_e( 'Aktivna', 'sidrena' ); ?></span></label><button type="button" class="button-link-delete sid-remove-location"><?php esc_html_e( 'Ukloni', 'sidrena' ); ?></button></div>
 			</div>
 			<div class="sid-fields sid-fields-location">
-				<label><span><?php esc_html_e( 'ID lokacije', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][id]" value="<?php echo esc_attr( $location['id'] ?? '' ); ?>" placeholder="zagreb-centar" required></label>
-				<label><span><?php esc_html_e( 'Oblik / vrsta objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][kind]" value="<?php echo esc_attr( $kind ); ?>" placeholder="prodavaonica / servis / webshop" required></label>
-				<label><span><?php esc_html_e( 'Oznaka objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][code]" value="<?php echo esc_attr( $location['code'] ?? '' ); ?>" placeholder="P-01" required></label>
-				<label class="sid-wide"><span><?php esc_html_e( 'Adresa objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][address]" value="<?php echo esc_attr( $location['address'] ?? '' ); ?>" placeholder="Ilica 150, Zagreb" required></label>
+				<label><span><?php esc_html_e( 'ID lokacije', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][id]" value="<?php echo esc_attr( $location['id'] ?? '' ); ?>" placeholder="zagreb-centar" data-required-when-active <?php echo 'yes' === ( $location['enabled'] ?? '' ) ? 'required aria-required="true"' : 'aria-required="false"'; ?>></label>
+				<label><span><?php esc_html_e( 'Oblik / vrsta objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][kind]" value="<?php echo esc_attr( $kind ); ?>" placeholder="prodavaonica / servis / webshop" data-required-when-active <?php echo 'yes' === ( $location['enabled'] ?? '' ) ? 'required aria-required="true"' : 'aria-required="false"'; ?>></label>
+				<label><span><?php esc_html_e( 'Oznaka objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][code]" value="<?php echo esc_attr( $location['code'] ?? '' ); ?>" placeholder="P-01" data-required-when-active <?php echo 'yes' === ( $location['enabled'] ?? '' ) ? 'required aria-required="true"' : 'aria-required="false"'; ?>></label>
+				<label class="sid-wide"><span><?php esc_html_e( 'Adresa objekta', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][address]" value="<?php echo esc_attr( $location['address'] ?? '' ); ?>" placeholder="Ilica 150, Zagreb" data-required-when-active <?php echo 'yes' === ( $location['enabled'] ?? '' ) ? 'required aria-required="true"' : 'aria-required="false"'; ?>></label>
 				<label><span><?php esc_html_e( 'Sljedeći broj pohrane', 'sidrena' ); ?></span><input type="number" min="1" name="locations[<?php echo esc_attr( $index ); ?>][sequence]" value="<?php echo esc_attr( max( 1, absint( $location['sequence'] ?? 1 ) ) ); ?>"></label>
 			</div>
 			<?php if ( ! $template && 'webshop' !== sanitize_key( $kind ) && $product_count > 0 ) : ?>
@@ -1018,16 +1034,26 @@ final class Sidrena_Admin {
 
 		update_option( 'sidrena_settings', $new, false );
 		wp_clear_scheduled_hook( 'sidrena_daily_generation' );
-		wp_schedule_event( Sidrena_Utils::schedule_timestamp( $new['generation_time'] ), 'daily', 'sidrena_daily_generation' );
-		Sidrena_Audit::log( 'settings_save', 'success', __( 'Sidrena postavke su spremljene.', 'sidrena' ), array( 'generation_time' => $new['generation_time'], 'retention_days' => $new['retention_days'] ) );
-		$this->redirect( 'settings', 'saved' );
+		$scheduled = wp_schedule_event( Sidrena_Utils::schedule_timestamp( $new['generation_time'] ), 'daily', 'sidrena_daily_generation' );
+		Sidrena_Pricelist::queue_regeneration();
+		Sidrena_Audit::log(
+			'settings_save',
+			false === $scheduled || is_wp_error( $scheduled ) ? 'warning' : 'success',
+			false === $scheduled || is_wp_error( $scheduled ) ? __( 'Sidrena postavke su spremljene, ali dnevno generiranje nije ponovno zakazano.', 'sidrena' ) : __( 'Sidrena postavke su spremljene.', 'sidrena' ),
+			array( 'generation_time' => $new['generation_time'], 'retention_days' => $new['retention_days'] )
+		);
+		$this->redirect( 'settings', false === $scheduled || is_wp_error( $scheduled ) ? 'settings_saved_cron_warning' : 'saved' );
 	}
 
 	public function save_locations() {
 		$this->guard_post( 'sidrena_save_locations' );
 		$input = isset( $_POST['locations'] ) && is_array( $_POST['locations'] ) ? wp_unslash( $_POST['locations'] ) : array();
-		$out   = array();
-		$used  = array();
+		if ( empty( $input ) ) {
+			$this->redirect( 'locations', 'locations_required' );
+		}
+
+		$out     = array();
+		$used    = array();
 		$old_ids = array();
 		foreach ( Sidrena_Utils::locations() as $old_location ) {
 			if ( ! empty( $old_location['id'] ) ) {
@@ -1035,39 +1061,50 @@ final class Sidrena_Admin {
 			}
 		}
 
-		foreach ( $input as $index => $location ) {
-			$raw_id = sanitize_text_field( $location['id'] ?? '' );
-			$id     = $raw_id ? Sidrena_Utils::sanitize_location_id( $raw_id ) : 'lokacija-' . ( absint( $index ) + 1 );
-			$base   = $id;
-			$suffix = 2;
-			while ( isset( $used[ $id ] ) ) {
-				$id = $base . '-' . $suffix;
-				++$suffix;
+		foreach ( $input as $location ) {
+			if ( ! is_array( $location ) ) {
+				continue;
+		}
+
+			$enabled = isset( $location['enabled'] ) ? 'yes' : 'no';
+			$raw_id  = trim( sanitize_text_field( $location['id'] ?? '' ) );
+			$kind    = trim( sanitize_text_field( $location['kind'] ?? '' ) );
+			$address = trim( sanitize_text_field( $location['address'] ?? '' ) );
+			$code    = trim( sanitize_text_field( $location['code'] ?? '' ) );
+
+			if ( 'yes' === $enabled && ( '' === $raw_id || '' === $kind || '' === $address || '' === $code ) ) {
+				$this->redirect( 'locations', 'locations_invalid' );
+			}
+
+			$id = $raw_id ? Sidrena_Utils::sanitize_location_id( $raw_id ) : 'lokacija-' . ( count( $out ) + 1 );
+			if ( isset( $used[ $id ] ) ) {
+				$this->redirect( 'locations', 'locations_invalid' );
 			}
 			$used[ $id ] = true;
 
 			$out[] = array(
 				'id'       => $id,
-				'enabled'  => isset( $location['enabled'] ) ? 'yes' : 'no',
-				'kind'     => sanitize_text_field( $location['kind'] ?? 'objekt' ),
-				'address'  => sanitize_text_field( $location['address'] ?? '' ),
-				'code'     => sanitize_text_field( $location['code'] ?? '01' ),
+				'enabled'  => $enabled,
+				'kind'     => $kind ?: 'objekt',
+				'address'  => $address,
+				'code'     => $code ?: '01',
 				'sequence' => max( 1, absint( $location['sequence'] ?? 1 ) ),
 			);
 		}
 
 		if ( empty( $out ) ) {
-			$out = Sidrena_Utils::locations();
+			$this->redirect( 'locations', 'locations_required' );
 		}
+
 		$new_ids = wp_list_pluck( $out, 'id' );
 		foreach ( array_diff( $old_ids, $new_ids ) as $deleted_id ) {
 			Sidrena_Location_Data::delete_location( $deleted_id );
 		}
 		update_option( 'sidrena_locations', $out, false );
+		Sidrena_Pricelist::queue_regeneration();
 		Sidrena_Audit::log( 'locations_save', 'success', sprintf( __( 'Spremljeno lokacija: %d.', 'sidrena' ), count( $out ) ), array( 'count' => count( $out ) ) );
 		$this->redirect( 'locations', 'saved' );
 	}
-
 	public function generate() {
 		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_generate' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
