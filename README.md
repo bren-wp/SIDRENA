@@ -2,9 +2,9 @@
   <img src="assets/images/logo-horizontal.svg" width="520" alt="Sidrena">
   <p><strong>Sidrene cijene, povijest cijena, javni CSV/XML cjenici i arhiva 30+ dana za WordPress i WooCommerce.</strong></p>
   <p>
-    <a href="https://sidrena-cijena.com.hr/">sidrena-cijena.com.hr</a> ·
+    <a href="https://sidrene-cijene.com.hr/">sidrene-cijene.com.hr</a> ·
     <a href="https://brendigo.com/">Brendigo</a> ·
-    <a href="https://sidrena-cijena.com.hr/#donirajte">Podržite razvoj</a>
+    <a href="https://sidrene-cijene.com.hr/#donirajte">Podržite razvoj</a>
   </p>
 </div>
 
@@ -185,14 +185,14 @@ Administracijske radnje koriste WordPress ovlasti i nonce provjere. Uvozi se san
 
 Ako vam Sidrena štedi vrijeme, možete dobrovoljno podržati održavanje, testiranje i daljnji razvoj:
 
-**https://sidrena-cijena.com.hr/#donirajte**
+**https://sidrene-cijene.com.hr/#donirajte**
 
 Donacija nije uvjet za korištenje i ne otključava dodatne funkcije.
 
 ## Autor
 
 **Brendigo** — https://brendigo.com/  
-**Sidrena** — https://sidrena-cijena.com.hr/
+**Sidrena** — https://sidrene-cijene.com.hr/
 
 ## Licenca
 

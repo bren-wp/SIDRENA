@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Sidrena
- * Plugin URI: https://sidrena-cijena.com.hr/
+ * Plugin URI: https://sidrene-cijene.com.hr/
  * Description: Sidrene cijene, WooCommerce i usluge s javnim CSV/XML cjenicima, arhivom 30+ dana i poviješću cijena.
  * Version: 1.6.2
  * Requires at least: 6.6

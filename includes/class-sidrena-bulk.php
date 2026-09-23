@@ -21,7 +21,7 @@ final class Sidrena_Bulk {
 	}
 
 	public function render() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
 			return;
 		}
 
@@ -81,7 +81,7 @@ final class Sidrena_Bulk {
 	}
 
 	public function save() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
 			wp_die( esc_html__( 'Nemate dopuštenje za ovu radnju.', 'sidrena' ) );
 		}
 		check_admin_referer( 'sidrena_bulk_save' );

@@ -5,7 +5,7 @@ Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
 Stable tag: 1.6.2
-Donate link: https://sidrena-cijena.com.hr/#donirajte
+Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ Besplatan WordPress/WooCommerce dodatak za sidrene cijene, povijest cijena, javn
 
 Nema Pro izdanja, licencnog ključa, pretplate, telemetrije ni obaveznog vanjskog računa.
 
-Plugin web: https://sidrena-cijena.com.hr/
+Plugin web: https://sidrene-cijene.com.hr/
 Autor: https://brendigo.com/
 
 Sidrena tehnički podržava evidenciju, prikaz i objavu podataka prema službenim pravilima i pojašnjenjima koja projekt prati. Dodatak je tehnički alat i ne predstavlja pravno mišljenje niti automatsko jamstvo usklađenosti konkretnog poslovnog subjekta.

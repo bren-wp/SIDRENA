@@ -105,7 +105,7 @@ final class Sidrena_REST {
 			array(
 				'schema'          => 3,
 				'generator'       => 'Sidrena ' . SIDRENA_VERSION,
-				'plugin_url'      => 'https://sidrena-cijena.com.hr/',
+				'plugin_url'      => 'https://sidrene-cijene.com.hr/',
 				'ruleset'         => SIDRENA_RULESET,
 				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
 				'generated_at'    => isset( $last['generated_at'] ) ? $last['generated_at'] : null,

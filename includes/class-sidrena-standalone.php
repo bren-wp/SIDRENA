@@ -135,7 +135,7 @@ final class Sidrena_Standalone {
 	}
 
 	public function render() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
 			return;
 		}
 		$items = get_posts(
@@ -229,7 +229,7 @@ final class Sidrena_Standalone {
 	}
 
 	public function save() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_standalone_save' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_standalone_save' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		$items = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? wp_unslash( $_POST['items'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -299,7 +299,7 @@ final class Sidrena_Standalone {
 
 
 	public function import() {
-		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'sidrena_standalone_import' ) ) {
+		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_standalone_import' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		if ( empty( $_FILES['standalone_file'] ) || ! is_array( $_FILES['standalone_file'] ) ) {

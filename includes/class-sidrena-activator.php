@@ -9,6 +9,7 @@ final class Sidrena_Activator {
 	public static function activate() {
 		self::install_schema();
 		self::migrate_options();
+		self::ensure_capabilities();
 
 		if ( false === get_option( 'sidrena_settings', false ) ) {
 			add_option( 'sidrena_settings', Sidrena_Utils::defaults(), '', false );
@@ -35,6 +36,7 @@ final class Sidrena_Activator {
 
 	public static function maybe_upgrade() {
 		$current = (string) get_option( 'sidrena_db_version', '' );
+		self::ensure_capabilities();
 		if ( self::DB_VERSION === $current ) {
 			self::migrate_options();
 			self::ensure_schedules();
@@ -51,6 +53,15 @@ final class Sidrena_Activator {
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
 		flush_rewrite_rules( false );
+	}
+
+	private static function ensure_capabilities() {
+		foreach ( array( 'administrator', 'shop_manager' ) as $role_name ) {
+			$role = get_role( $role_name );
+			if ( $role && ! $role->has_cap( 'manage_sidrena' ) ) {
+				$role->add_cap( 'manage_sidrena' );
+			}
+		}
 	}
 
 	private static function ensure_schedules() {
