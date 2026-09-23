@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   validate:
-    name: PHP ${{ matrix.php }} validation
+    name: PHP \${{ matrix.php }} validation
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: \${{ matrix.php }}
           coverage: none
 
       - name: PHP syntax
@@ -61,9 +61,15 @@ jobs:
           grep -q 'Author URI: https://brendigo.com/' sidrena.php
           grep -q 'Plugin URI: https://sidrena-cijena.com.hr/' sidrena.php
           grep -q 'License: GPLv2 or later' sidrena.php
+          grep -q '^Donate link: https://sidrena-cijena.com.hr/#donirajte$' readme.txt
           test -f assets/images/logo-mark.svg
+          test -f assets/images/logo-horizontal.svg
+          test -f assets/images/admin-hero.svg
+          test -f admin/css/admin-160.css
           test -f languages/sidrena.pot
           test -f docs/legal-and-technical-notes.md
+          test -f .wordpress-org/source/banner.svg
+          for N in 1 2 3 4 5 6; do test -f ".wordpress-org/source/screenshot-\${N}.svg"; done
 
       - name: Guard against inline PHP script/style blocks
         if: matrix.php == '8.3'
@@ -84,5 +90,17 @@ jobs:
             --exclude-dir=.git \
             --exclude-dir=.github; then
             echo 'Retired branding detected.' >&2
+            exit 1
+          fi
+
+      - name: Production-content guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIniE 'lorem ipsum|dev only|development placeholder|sample data only' \
+            --include='*.php' --include='*.js' --include='*.css' --include='readme.txt' . \
+            --exclude-dir=.git; then
+            echo 'Development/placeholder content detected in production files.' >&2
             exit 1
           fi
