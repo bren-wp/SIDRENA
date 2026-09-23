@@ -20,6 +20,8 @@ final class Sidrena_Utils {
 			'retention_days'       => 45,
 			'enable_rest_index'    => 'yes',
 			'publish_manifest'     => 'yes',
+			'enable_public_html'   => 'yes',
+			'strict_publication'   => 'yes',
 			'track_price_history'  => 'yes',
 		);
 	}
@@ -172,8 +174,10 @@ final class Sidrena_Utils {
 			'archive_dir'  => $base . 'arhiva/',
 			'base_url'     => $url,
 			'archive_url'  => $url . 'arhiva/',
-			'manifest'     => $base . 'manifest.json',
-			'manifest_url' => $url . 'manifest.json',
+			'manifest'      => $base . 'manifest.json',
+			'manifest_url'  => $url . 'manifest.json',
+			'snapshot_dir'  => $base . 'public/',
+			'snapshot_url'  => $url . 'public/',
 		);
 	}
 
@@ -183,9 +187,61 @@ final class Sidrena_Utils {
 	}
 
 	public static function filename_part( $value ) {
-		$value = remove_accents( wp_strip_all_tags( (string) $value ) );
-		$value = preg_replace( '/[^A-Za-z0-9]+/', '-', $value );
-		return trim( (string) $value, '-' );
+		$value = wp_strip_all_tags( (string) $value );
+		$value = preg_replace( '/[\x00-\x1F\x7F\/\\\\:*?"<>|]+/u', ' ', $value );
+		$value = preg_replace( '/\s+/u', ' ', $value );
+		$value = trim( (string) $value, " .\t\n\r\0\x0B_-" );
+		return $value ? $value : 'objekt';
+	}
+
+	public static function public_snapshot_path( $location_id ) {
+		$paths = self::upload_paths();
+		$id    = self::sanitize_location_id( $location_id );
+		return $paths['snapshot_dir'] . 'cjenik-' . $id . '.json';
+	}
+
+	public static function csv_safe_cell( $value ) {
+		if ( ! is_string( $value ) ) {
+			return $value;
+		}
+
+		$value = (string) $value;
+		if ( '' === $value || is_numeric( str_replace( ',', '.', $value ) ) ) {
+			return $value;
+		}
+
+		$first = substr( $value, 0, 1 );
+		if ( in_array( $first, array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+		return $value;
+	}
+
+	public static function normalize_text_encoding( $contents ) {
+		$contents = (string) $contents;
+		if ( '' === $contents ) {
+			return '';
+		}
+		if ( 0 === strncmp( $contents, "\xEF\xBB\xBF", 3 ) ) {
+			$contents = substr( $contents, 3 );
+		}
+		if ( 1 === preg_match( '//u', $contents ) ) {
+			return $contents;
+		}
+
+		foreach ( array( 'Windows-1250', 'ISO-8859-2' ) as $encoding ) {
+			if ( function_exists( 'mb_convert_encoding' ) ) {
+				$converted = @mb_convert_encoding( $contents, 'UTF-8', $encoding ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			} elseif ( function_exists( 'iconv' ) ) {
+				$converted = @iconv( $encoding, 'UTF-8//IGNORE', $contents ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			} else {
+				$converted = false;
+			}
+			if ( is_string( $converted ) && 1 === preg_match( '//u', $converted ) ) {
+				return $converted;
+			}
+		}
+		return wp_check_invalid_utf8( $contents, true );
 	}
 
 	public static function schedule_timestamp( $time_string = '' ) {
