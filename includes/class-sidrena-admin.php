@@ -231,7 +231,17 @@ final class Sidrena_Admin {
 		$history_total   = $product_history + $service_history + $location_history;
 		$anchor_ready    = max( 0, ( $stats['products'] + $stats['services'] ) - $stats['missing_total'] );
 		$series          = Sidrena_History::latest_series( 30 );
-		$changes         = Sidrena_History::recent_changes( 5 );
+		if ( empty( $series ) ) {
+			$series = Sidrena_Service_History::latest_series( 30 );
+		}
+		$changes = array_merge( Sidrena_History::recent_changes( 5 ), Sidrena_Service_History::recent_changes( 5 ) );
+		usort(
+			$changes,
+			static function ( $a, $b ) {
+				return strcmp( (string) $b['recorded_at'], (string) $a['recorded_at'] );
+			}
+		);
+		$changes = array_slice( $changes, 0, 5 );
 		$is_ready        = 0 === $stats['issues'] && $integrity['ok'];
 		?>
 		<div class="sid-dashboard-metrics">
