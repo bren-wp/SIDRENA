@@ -29,7 +29,7 @@ jobs:
           rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > dist/wporg-assets/icon-256x256.png
           cp assets/images/logo-mark.svg dist/wporg-assets/icon.svg
           for N in 1 2 3 4 5 6; do
-            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-\${N}.svg" > "dist/wporg-assets/screenshot-\${N}.png"
+            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-${N}.svg" > "dist/wporg-assets/screenshot-${N}.png"
           done
 
       - name: Upload WordPress.org assets
