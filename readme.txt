@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -104,7 +104,7 @@ Nema telemetrije ni automatskog kontakta s vanjskim servisom. Administracijske r
 == Installation ==
 
 1. Otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-2. Prenesite sidrena-1.6.0.zip, instalirajte i aktivirajte.
+2. Prenesite aktualni sidrena-x.y.z.zip, instalirajte i aktivirajte.
 3. Otvorite glavni izbornik **Sidrena**.
 4. Odaberite proizvode, usluge ili mješoviti način rada.
 5. Dodajte svaku fizičku lokaciju i zaseban webshop ako postoji.
@@ -125,7 +125,7 @@ Da. U Sidrena panelu postoji diskretna poveznica za dobrovoljnu donaciju. Donaci
 
 = Radi li bez WooCommercea? =
 
-Da, za katalog i cjenike usluga. WooCommerce je potreban za proizvode.
+Da. Sidrena ima vlastiti katalog proizvoda i usluga; WooCommerce je potreban samo kada želite povezati Sidrena podatke s WooCommerce proizvodima i varijacijama.
 
 = Čuva li svaku uspješnu objavu najmanje 30 dana? =
 
@@ -166,6 +166,16 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 
 == Changelog ==
 
+= 1.6.3 =
+* Dodan non-blocking lock koji sprječava paralelna generiranja i race conditione nad javnim datotekama.
+* JSON manifest i javni HTML snapshot sada se objavljuju atomskim privremeni-zapis → rename postupkom.
+* Snapshot se generira streaming zapisom, bez držanja cijelog kataloga u jednom dodatnom PHP polju.
+* Oštećen ili nevaljan javni snapshot više se ne tretira kao valjan: ruta vraća pripremni odgovor/503 i zakazuje obnovu.
+* Dodatno je zatvoren REST/public izlaz za nejavne, password-protected i nejavne varijacijske proizvode.
+* Poboljšana je Windows-1250 i ISO-8859-2 normalizacija na PHP 7.4–8.4 te CSV formula-injection zaštita.
+* CI sada provjerava PHP 7.4, 8.3 i 8.4, hrvatske znakove u nazivima datoteka, legacy encoding, CSV injection i debug ostatke.
+* Ispravljena je dokumentacija samostalnog kataloga i instalacijskog paketa.
+
 = 1.6.2 =
 * Proširena kompatibilnost s builderima i dinamičkim WooCommerce price widgetima.
 * Dodan sigurni WP-CLI wp sidrena fill s --dry-run i --today; postojeće Sidrena cijene se nikada ne prepisuju.
@@ -198,6 +208,10 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.3 =
+
+Preporučena nadogradnja: sigurnije generiranje i javna objava, bolja zaštita REST izlaza, streaming snapshoti te PHP 8.4/legacy-encoding provjere.
 
 = 1.6.2 =
 

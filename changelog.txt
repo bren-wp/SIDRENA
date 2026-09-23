@@ -1,3 +1,14 @@
+= 1.6.3 =
+* Added non-blocking generation locking to prevent overlapping cron, WP-CLI and manual publication jobs.
+* Made JSON manifest publication atomic and preserved the last valid public index when no output format is enabled.
+* Streamed public HTML snapshot generation to reduce peak memory use on large catalogs while keeping atomic publication.
+* Treats missing, corrupt or structurally invalid public snapshots as unavailable and returns the existing 503 preparation flow.
+* Hardened public WooCommerce visibility checks for password-protected products and non-public variations in REST and generated output.
+* Hardened spreadsheet formula-injection handling for text values with leading whitespace.
+* Improved Windows-1250 and ISO-8859-2 normalization across PHP 7.4, 8.3 and 8.4, including safe mbstring fallback behavior.
+* Expanded CI to PHP 8.4 and added deterministic Croatian filename, encoding, CSV-injection and unfinished-code smoke checks.
+* Corrected standalone-catalog and installation documentation.
+
 = 1.6.2 =
 * Expanded compatibility coverage for WooCommerce Blocks and popular dynamic page-builder price elements.
 * Added safe WP-CLI `wp sidrena fill` with `--dry-run` and `--today`; existing Sidrena values are never overwritten.

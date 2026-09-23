@@ -19,9 +19,10 @@ final class Sidrena_Pricelist {
 	}
 
 	public static function queue_regeneration() {
-		if ( ! wp_next_scheduled( 'sidrena_queued_generation' ) ) {
-			wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
+		if ( wp_next_scheduled( 'sidrena_queued_generation' ) ) {
+			return true;
 		}
+		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
 	}
 
 	public function generate_all() {
@@ -35,127 +36,179 @@ final class Sidrena_Pricelist {
 
 		wp_mkdir_p( $paths['archive_dir'] );
 		wp_mkdir_p( $paths['snapshot_dir'] );
-		$timestamp = time();
-		$stamp     = wp_date( 'd.m.Y_H-i', $timestamp );
-		$formats   = $this->formats( $settings );
-
-		if ( empty( $formats ) ) {
-			$errors[] = __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format.', 'sidrena' );
+		$lock = $this->acquire_generation_lock( $paths );
+		if ( is_wp_error( $lock ) ) {
+			Sidrena_Audit::log(
+				'pricelist_generation',
+				'warning',
+				$lock->get_error_message(),
+				array( 'code' => $lock->get_error_code() )
+			);
+			return false;
 		}
 
-		foreach ( $locations as $location_index => &$location ) {
-			if ( empty( $location['enabled'] ) || 'yes' !== $location['enabled'] ) {
-				continue;
-			}
+		try {
+			$timestamp = time();
+			$stamp     = wp_date( 'd.m.Y_H-i', $timestamp );
+			$formats   = $this->formats( $settings );
 
-			$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
-			if ( '' === $address ) {
-				$errors[] = sprintf(
-					__( 'Lokacija "%s" nema upisanu adresu potrebnu za naziv datoteke cjenika.', 'sidrena' ),
-					isset( $location['code'] ) ? $location['code'] : ( $location_index + 1 )
+			if ( empty( $formats ) ) {
+				$errors[] = __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format.', 'sidrena' );
+				Sidrena_Audit::log(
+					'pricelist_generation',
+					'warning',
+					__( 'Generiranje cjenika nije pokrenuto jer su CSV i XML izlaz isključeni.', 'sidrena' ),
+					array( 'errors' => $errors )
 				);
-				continue;
+				return false;
 			}
 
-			$sequence          = max( 1, isset( $location['sequence'] ) ? absint( $location['sequence'] ) : 1 );
-			$snapshot_catalogs = array();
-
-			foreach ( $this->catalog_types( $settings['business_mode'] ) as $catalog_type ) {
-				foreach ( $formats as $format ) {
-					$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
+			foreach ( $locations as $location_index => &$location ) {
+				if ( empty( $location['enabled'] ) || 'yes' !== $location['enabled'] ) {
+					continue;
 				}
 
-				if ( 'yes' === $settings['strict_publication'] ) {
-					$preflight = $this->preflight_catalog( $catalog_type, $location );
-					if ( is_wp_error( $preflight ) ) {
-						$errors[] = $preflight->get_error_message();
-						continue;
-					}
-				}
-
-				$catalog_generated = false;
-				foreach ( $formats as $format ) {
-					$filename = $this->build_filename( $location, $sequence, $stamp, $format );
-					$filepath = $paths['archive_dir'] . $filename;
-					$result   = 'products' === $catalog_type
-						? $this->write_products( $filepath, $format, $location )
-						: $this->write_services( $filepath, $format, $location );
-
-					if ( is_wp_error( $result ) ) {
-						$errors[] = $result->get_error_message();
-						++$sequence;
-						continue;
-					}
-
-					$catalog_generated = true;
-					$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-					$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
-					++$generated;
-					$index[] = array(
-						'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
-						'location_code'   => sanitize_text_field( isset( $location['code'] ) ? $location['code'] : '' ),
-						'kind'            => sanitize_key( isset( $location['kind'] ) ? $location['kind'] : 'objekt' ),
-						'catalog'         => $catalog_type,
-						'format'          => $format,
-						'url'             => $paths['archive_url'] . rawurlencode( $filename ),
-						'filename'        => $filename,
-						'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
-						'generated_ts'    => $timestamp,
-						'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
-						'retain_until_ts' => $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ),
-						'sequence'        => $sequence,
-						'rows'            => (int) $result,
-						'bytes'           => (int) $bytes,
-						'sha256'          => $hash ? sanitize_text_field( $hash ) : '',
+				$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
+				if ( '' === $address ) {
+					$errors[] = sprintf(
+						__( 'Lokacija "%s" nema upisanu adresu potrebnu za naziv datoteke cjenika.', 'sidrena' ),
+						isset( $location['code'] ) ? $location['code'] : ( $location_index + 1 )
 					);
-					++$sequence;
+					continue;
 				}
 
-				if ( $catalog_generated ) {
-					$snapshot_catalogs[] = $catalog_type;
+				$sequence          = max( 1, isset( $location['sequence'] ) ? absint( $location['sequence'] ) : 1 );
+				$snapshot_catalogs = array();
+
+				foreach ( $this->catalog_types( $settings['business_mode'] ) as $catalog_type ) {
+					foreach ( $formats as $format ) {
+						$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
+					}
+
+					if ( 'yes' === $settings['strict_publication'] ) {
+						$preflight = $this->preflight_catalog( $catalog_type, $location );
+						if ( is_wp_error( $preflight ) ) {
+							$errors[] = $preflight->get_error_message();
+							continue;
+						}
+					}
+
+					$catalog_generated = false;
+					foreach ( $formats as $format ) {
+						$filename = $this->build_filename( $location, $sequence, $stamp, $format );
+						$filepath = $paths['archive_dir'] . $filename;
+						$result   = 'products' === $catalog_type
+							? $this->write_products( $filepath, $format, $location )
+							: $this->write_services( $filepath, $format, $location );
+
+						if ( is_wp_error( $result ) ) {
+							$errors[] = $result->get_error_message();
+							++$sequence;
+							continue;
+						}
+
+						$catalog_generated = true;
+						$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						++$generated;
+						$index[] = array(
+							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
+							'location_code'   => sanitize_text_field( isset( $location['code'] ) ? $location['code'] : '' ),
+							'kind'            => sanitize_key( isset( $location['kind'] ) ? $location['kind'] : 'objekt' ),
+							'catalog'         => $catalog_type,
+							'format'          => $format,
+							'url'             => $paths['archive_url'] . rawurlencode( $filename ),
+							'filename'        => $filename,
+							'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
+							'generated_ts'    => $timestamp,
+							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
+							'retain_until_ts' => $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ),
+							'sequence'        => $sequence,
+							'rows'            => (int) $result,
+							'bytes'           => (int) $bytes,
+							'sha256'          => $hash ? sanitize_text_field( $hash ) : '',
+						);
+						++$sequence;
+					}
+
+					if ( $catalog_generated ) {
+						$snapshot_catalogs[] = $catalog_type;
+					}
 				}
+
+				if ( ! empty( $snapshot_catalogs ) ) {
+					$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
+					if ( is_wp_error( $snapshot ) ) {
+						$errors[] = $snapshot->get_error_message();
+					}
+				}
+
+				$location['sequence'] = $sequence;
 			}
+			unset( $location );
 
-			if ( ! empty( $snapshot_catalogs ) ) {
-				$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
-				if ( is_wp_error( $snapshot ) ) {
-					$errors[] = $snapshot->get_error_message();
-				}
+			update_option( 'sidrena_locations', $locations, false );
+			if ( ! empty( $index ) ) {
+				$this->merge_archive_index( $index );
 			}
+			$this->merge_current_index( $index, $expected );
+			$this->cleanup_public_snapshots( $locations );
 
-			$location['sequence'] = $sequence;
+			$this->cleanup_archives();
+			$manifest = $this->write_manifest();
+			if ( is_wp_error( $manifest ) ) {
+				$errors[] = $manifest->get_error_message();
+			}
+			update_option(
+				'sidrena_last_run',
+				array(
+					'generated_at' => wp_date( DATE_ATOM, $timestamp ),
+					'files'        => $generated,
+					'errors'       => $errors,
+				),
+				false
+			);
+
+			Sidrena_Audit::log(
+				'pricelist_generation',
+				empty( $errors ) ? 'success' : 'warning',
+				empty( $errors ) ? __( 'Generiranje cjenika dovršeno.', 'sidrena' ) : __( 'Generiranje cjenika dovršeno s upozorenjima.', 'sidrena' ),
+				array(
+					'files'  => $generated,
+					'errors' => $errors,
+				)
+			);
+			return empty( $errors );
+		} finally {
+			$this->release_generation_lock( $lock );
 		}
-		unset( $location );
+	}
 
-		update_option( 'sidrena_locations', $locations, false );
-		if ( ! empty( $index ) ) {
-			$this->merge_archive_index( $index );
+
+	private function acquire_generation_lock( $paths ) {
+		$lock_path = trailingslashit( $paths['base_dir'] ) . 'generation.lock';
+		$handle    = @fopen( $lock_path, 'c+' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen,WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( ! $handle ) {
+			return new WP_Error( 'generation_lock_unavailable', __( 'Nije moguće otvoriti sigurnosni lock za generiranje cjenika.', 'sidrena' ) );
 		}
-		$this->merge_current_index( $index, $expected );
-		$this->cleanup_public_snapshots( $locations );
+		if ( ! flock( $handle, LOCK_EX | LOCK_NB ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_flock
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'generation_locked', __( 'Generiranje cjenika je već u tijeku. Novi paralelni proces nije pokrenut.', 'sidrena' ) );
+		}
 
-		update_option(
-			'sidrena_last_run',
-			array(
-				'generated_at' => wp_date( DATE_ATOM, $timestamp ),
-				'files'        => $generated,
-				'errors'       => $errors,
-			),
-			false
-		);
+		ftruncate( $handle, 0 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_ftruncate
+		rewind( $handle );
+		fwrite( $handle, wp_json_encode( array( 'started_at' => time(), 'version' => SIDRENA_VERSION ) ) . "\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		fflush( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fflush
+		return $handle;
+	}
 
-		$this->cleanup_archives();
-		$this->write_manifest();
-		Sidrena_Audit::log(
-			'pricelist_generation',
-			empty( $errors ) ? 'success' : 'warning',
-			empty( $errors ) ? __( 'Generiranje cjenika dovršeno.', 'sidrena' ) : __( 'Generiranje cjenika dovršeno s upozorenjima.', 'sidrena' ),
-			array(
-				'files'  => $generated,
-				'errors' => $errors,
-			)
-		);
-		return empty( $errors );
+	private function release_generation_lock( $handle ) {
+		if ( ! is_resource( $handle ) ) {
+			return;
+		}
+		flock( $handle, LOCK_UN ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_flock
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 
 
@@ -257,21 +310,9 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
-		$rows = array();
-		foreach ( array_unique( $catalogs ) as $catalog ) {
-			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
-			foreach ( $source as $row ) {
-				foreach ( array_keys( $row ) as $key ) {
-					if ( 0 === strpos( $key, '_sidrena_' ) ) {
-						unset( $row[ $key ] );
-					}
-				}
-				$row['type'] = 'products' === $catalog ? 'product' : 'service';
-				$rows[] = $row;
-			}
-		}
-
-		$data = array(
+		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$temp = $path . '.tmp';
+		$meta = array(
 			'schema'       => 1,
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
 			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
@@ -281,23 +322,65 @@ final class Sidrena_Pricelist {
 				'kind'    => sanitize_text_field( $location['kind'] ?? '' ),
 				'address' => sanitize_text_field( $location['address'] ?? '' ),
 			),
-			'rows' => $rows,
 		);
-		$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( false === $json ) {
+		$header = wp_json_encode( $meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		if ( false === $header ) {
 			return new WP_Error( 'snapshot_encode', __( 'Nije moguće pripremiti javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
-		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$temp = $path . '.tmp';
-		if ( false === file_put_contents( $temp, $json . "\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $handle ) {
+			return new WP_Error( 'snapshot_write', __( 'Nije moguće otvoriti javni HTML snapshot za zapis.', 'sidrena' ) );
+		}
+
+		$prefix = substr( $header, 0, -1 ) . ',"rows":[';
+		if ( false === fwrite( $handle, $prefix ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
+
+		$count = 0;
+		$first = true;
+		foreach ( array_unique( $catalogs ) as $catalog ) {
+			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
+			foreach ( $source as $row ) {
+				foreach ( array_keys( $row ) as $key ) {
+					if ( 0 === strpos( $key, '_sidrena_' ) ) {
+						unset( $row[ $key ] );
+					}
+				}
+				$row['type'] = 'products' === $catalog ? 'product' : 'service';
+				$encoded = wp_json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				if ( false === $encoded ) {
+					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+					return new WP_Error( 'snapshot_row_encode', __( 'Jedan redak javnog HTML snapshota nije moguće JSON kodirati.', 'sidrena' ) );
+				}
+				$chunk = ( $first ? '' : ',' ) . $encoded;
+				if ( false === fwrite( $handle, $chunk ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+					return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
+				}
+				$first = false;
+				++$count;
+			}
+		}
+
+		if ( false === fwrite( $handle, "]}\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+			return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
+		}
+		fflush( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fflush
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
 		if ( ! rename( $temp, $path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
 			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
 			return new WP_Error( 'snapshot_commit', __( 'Nije moguće dovršiti javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
-		return count( $rows );
+		return $count;
 	}
 
 	private function cleanup_public_snapshots( $locations ) {
@@ -426,13 +509,16 @@ final class Sidrena_Pricelist {
 			$products = $query->get_products();
 
 			foreach ( $products as $product ) {
+				if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
+					continue;
+				}
 				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
 					continue;
 				}
 				if ( $product->is_type( 'variable' ) ) {
 					foreach ( $product->get_children() as $variation_id ) {
 						$variation = wc_get_product( $variation_id );
-						if ( $variation && 'publish' === get_post_status( $variation->get_parent_id() ) ) {
+						if ( $variation && Sidrena_Utils::is_public_wc_product( $variation ) ) {
 							yield $this->product_row( $variation, $location );
 						}
 					}
@@ -743,25 +829,39 @@ final class Sidrena_Pricelist {
 		$settings = Sidrena_Utils::settings();
 		$paths    = Sidrena_Utils::upload_paths();
 		if ( 'yes' !== $settings['publish_manifest'] ) {
-			if ( is_file( $paths['manifest'] ) ) {
-				unlink( $paths['manifest'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			if ( is_file( $paths['manifest'] ) && ! unlink( $paths['manifest'] ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+				return new WP_Error( 'manifest_remove', __( 'Nije moguće ukloniti isključeni JSON manifest.', 'sidrena' ) );
 			}
-			return;
+			return true;
 		}
-		$data  = array(
-			'schema'       => 3,
-			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
-			'plugin_url'   => 'https://sidrene-cijene.com.hr/',
-			'ruleset'      => SIDRENA_RULESET,
-			'realtime_url'  => rest_url( 'sidrena/v1/cijene' ),
-			'generated_at' => current_time( DATE_ATOM ),
+
+		$data = array(
+			'schema'         => 3,
+			'generator'      => 'Sidrena ' . SIDRENA_VERSION,
+			'plugin_url'     => 'https://sidrene-cijene.com.hr/',
+			'ruleset'        => SIDRENA_RULESET,
+			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
+			'generated_at'   => current_time( DATE_ATOM ),
 			'retention_days' => max( 30, absint( $settings['retention_days'] ) ),
-			'current'      => Sidrena_Utils::public_index(),
-			'archive'      => Sidrena_Utils::archive_index(),
+			'current'        => Sidrena_Utils::public_index(),
+			'archive'        => Sidrena_Utils::archive_index(),
 		);
 		$json = wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		if ( false !== $json ) {
-			file_put_contents( $paths['manifest'], $json . "\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( false === $json ) {
+			return new WP_Error( 'manifest_encode', __( 'Nije moguće pripremiti JSON manifest cjenika.', 'sidrena' ) );
 		}
+
+		$payload = $json . "\n";
+		$temp    = $paths['manifest'] . '.tmp';
+		$written = file_put_contents( $temp, $payload ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( false === $written || strlen( $payload ) !== $written ) {
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+			return new WP_Error( 'manifest_write', __( 'Nije moguće zapisati JSON manifest cjenika.', 'sidrena' ) );
+		}
+		if ( ! rename( $temp, $paths['manifest'] ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+			return new WP_Error( 'manifest_commit', __( 'Nije moguće atomski objaviti JSON manifest cjenika.', 'sidrena' ) );
+		}
+		return true;
 	}
 }

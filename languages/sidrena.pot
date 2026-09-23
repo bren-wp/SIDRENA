@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.6.2\n"
+"Project-Id-Version: Sidrena 1.6.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 00:30+0200\n"
 "MIME-Version: 1.0\n"
@@ -1238,4 +1238,44 @@ msgstr ""
 
 #: includes/class-sidrena-admin.php:434
 msgid "Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:60
+msgid "Generiranje cjenika nije pokrenuto jer su CSV i XML izlaz isključeni."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:192
+msgid "Nije moguće otvoriti sigurnosni lock za generiranje cjenika."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:196
+msgid "Generiranje cjenika je već u tijeku. Novi paralelni proces nije pokrenut."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:333
+msgid "Nije moguće otvoriti javni HTML snapshot za zapis."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:358
+msgid "Jedan redak javnog HTML snapshota nije moguće JSON kodirati."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:364
+msgid "Nije moguće dovršiti zapis javnog HTML snapshota cjenika."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:833
+msgid "Nije moguće ukloniti isključeni JSON manifest."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:851
+msgid "Nije moguće pripremiti JSON manifest cjenika."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:859
+msgid "Nije moguće zapisati JSON manifest cjenika."
+msgstr ""
+
+#: includes/class-sidrena-pricelist.php:863
+msgid "Nije moguće atomski objaviti JSON manifest cjenika."
 msgstr ""
