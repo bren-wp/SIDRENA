@@ -644,6 +644,11 @@ final class Sidrena_Admin {
 			$public_page_id = 0;
 			$public_page    = null;
 		}
+		$public_html_url = Sidrena_Public::route_url( 'cjenik' );
+		$archive_html_url = Sidrena_Public::route_url( 'arhiva' );
+		$last_ts = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		$is_stale = $last_ts && ( time() - $last_ts ) > ( 26 * HOUR_IN_SECONDS );
+		$wp_cron_disabled = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
 		?>
 		<div class="sid-page-head">
 			<div><span class="sid-kicker"><?php esc_html_e( 'Aktualne objave', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Javni cjenici', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Svaka aktivna lokacija dobiva zasebnu CSV/XML datoteku. U slučaju greške zadnja uspješno generirana datoteka ostaje aktualna.', 'sidrena' ); ?></p></div>
@@ -662,6 +667,15 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-mini-stat"><span><?php esc_html_e( 'Zadnje generiranje', 'sidrena' ); ?></span><strong class="sid-mini-date"><?php echo ! empty( $last['generated_at'] ) ? esc_html( $last['generated_at'] ) : '—'; ?></strong></section>
 			<section class="sid-card sid-mini-stat"><span><?php esc_html_e( 'Manifest', 'sidrena' ); ?></span><strong><?php echo 'yes' === $settings['publish_manifest'] ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></strong></section>
 		</div>
+
+		<?php if ( $is_stale || ! $wp_cron_disabled ) : ?>
+			<section class="sid-card sid-note <?php echo $is_stale ? 'sid-note-warning' : ''; ?>">
+				<div class="sid-note-icon"><span class="dashicons <?php echo $is_stale ? 'dashicons-warning' : 'dashicons-clock'; ?>"></span></div>
+				<div>
+					<?php if ( $is_stale ) : ?><h2><?php esc_html_e( 'Zadnji uspješni cjenik stariji je od 26 sati', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Provjerite WP-Cron, server cron i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p><?php else : ?><h2><?php esc_html_e( 'WP-Cron ovisi o posjetima stranici', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Za poslovno kritičnu objavu prije 08:00 preporučuje se system cron koji redovito poziva wp-cron.php. Sam WordPress cron može kasniti na webu s malo prometa ili agresivnim cacheom.', 'sidrena' ); ?></p><?php endif; ?>
+				</div>
+			</section>
+		<?php endif; ?>
 
 		<section class="sid-card">
 			<div class="sid-section-head"><div><h2><?php esc_html_e( 'Datoteke dostupne javnosti', 'sidrena' ); ?></h2><p><?php esc_html_e( 'SHA-256 omogućuje naknadnu provjeru da sadržaj arhivirane datoteke nije promijenjen.', 'sidrena' ); ?></p></div></div>
@@ -688,7 +702,11 @@ final class Sidrena_Admin {
 			<h2><?php esc_html_e( 'Strojni pristup', 'sidrena' ); ?></h2>
 			<div class="sid-code-row"><span><?php esc_html_e( 'REST indeks cjenika', 'sidrena' ); ?></span><code><?php echo esc_html( rest_url( 'sidrena/v1/cjenici' ) ); ?></code></div><div class="sid-code-row"><span><?php esc_html_e( 'Cijene u realnom vremenu', 'sidrena' ); ?></span><code><?php echo esc_html( rest_url( 'sidrena/v1/cijene' ) ); ?></code></div>
 			<?php if ( 'yes' === $settings['publish_manifest'] ) : ?><div class="sid-code-row"><span>JSON manifest</span><code><?php echo esc_html( $paths['manifest_url'] ); ?></code></div><?php endif; ?>
-			<div class="sid-code-row"><span><?php esc_html_e( 'Javna lista', 'sidrena' ); ?></span><code>[sidrena_cjenici]</code></div>
+			<div class="sid-code-row"><span><?php esc_html_e( 'Javni HTML cjenik', 'sidrena' ); ?></span><code><?php echo esc_html( $public_html_url ); ?></code></div>
+			<div class="sid-code-row"><span><?php esc_html_e( 'Javna HTML arhiva', 'sidrena' ); ?></span><code><?php echo esc_html( $archive_html_url ); ?></code></div>
+			<div class="sid-code-row"><span><?php esc_html_e( 'Pretraživi cjenik', 'sidrena' ); ?></span><code>[sidrena_cjenik]</code></div>
+			<div class="sid-code-row"><span><?php esc_html_e( 'Arhiva', 'sidrena' ); ?></span><code>[sidrena_arhiva]</code></div>
+			<div class="sid-code-row"><span><?php esc_html_e( 'Javna lista datoteka', 'sidrena' ); ?></span><code>[sidrena_cjenici]</code></div>
 			<div class="sid-code-row"><span><?php esc_html_e( 'Cjenik usluga', 'sidrena' ); ?></span><code>[sidrena_usluge]</code></div>
 		</section>
 		<?php
@@ -853,7 +871,7 @@ final class Sidrena_Admin {
 			</section>
 
 			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-media-spreadsheet"></span><div><h2><?php esc_html_e( 'Digitalni cjenici i arhiva', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Datoteke se objavljuju u uploads/sidrena/arhiva i ostaju javno dostupne najmanje 30 dana.', 'sidrena' ); ?></p></div></div>
-				<div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="generate_csv" value="yes" <?php checked( $settings['generate_csv'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>CSV</strong><small><?php esc_html_e( 'Strojno čitljiv cjenik.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="generate_xml" value="yes" <?php checked( $settings['generate_xml'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>XML</strong><small><?php esc_html_e( 'Strojno čitljiv cjenik.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="publish_manifest" value="yes" <?php checked( $settings['publish_manifest'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>JSON manifest</strong><small><?php esc_html_e( 'Indeks aktualnih i arhivskih datoteka s hashom.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="enable_rest_index" value="yes" <?php checked( $settings['enable_rest_index'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>REST API</strong><small><?php esc_html_e( 'Javni indeks i aktualne maloprodajne cijene za automatizirani dohvat u realnom vremenu.', 'sidrena' ); ?></small></span></label></div>
+				<div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="generate_csv" value="yes" <?php checked( $settings['generate_csv'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>CSV</strong><small><?php esc_html_e( 'Strojno čitljiv cjenik.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="generate_xml" value="yes" <?php checked( $settings['generate_xml'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>XML</strong><small><?php esc_html_e( 'Strojno čitljiv cjenik.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="publish_manifest" value="yes" <?php checked( $settings['publish_manifest'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>JSON manifest</strong><small><?php esc_html_e( 'Indeks aktualnih i arhivskih datoteka s hashom.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="enable_rest_index" value="yes" <?php checked( $settings['enable_rest_index'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong>REST API</strong><small><?php esc_html_e( 'Javni indeks i aktualne maloprodajne cijene za automatizirani dohvat u realnom vremenu.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="enable_public_html" value="yes" <?php checked( $settings['enable_public_html'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Javni HTML cjenik', 'sidrena' ); ?></strong><small><?php esc_html_e( '/sidrena-cjenik i /arhiva-sidrene-cijene koriste spremljeni snapshot, bez čitanja cijelog kataloga na svakom posjetu.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="strict_publication" value="yes" <?php checked( $settings['strict_publication'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Stroga provjera prije objave', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Ne zamjenjuje zadnji valjani cjenik ako obvezni podaci nisu potpuni.', 'sidrena' ); ?></small></span></label></div>
 				<div class="sid-fields"><label><span><?php esc_html_e( 'Vrijeme dnevnog generiranja', 'sidrena' ); ?></span><input type="time" name="generation_time" value="<?php echo esc_attr( $settings['generation_time'] ); ?>"><small><?php esc_html_e( 'Preporuka: dovoljno prije 08:00.', 'sidrena' ); ?></small></label><label><span><?php esc_html_e( 'Čuvanje arhive (dana)', 'sidrena' ); ?></span><input type="number" min="30" max="3650" name="retention_days" value="<?php echo esc_attr( $settings['retention_days'] ); ?>"><small><?php esc_html_e( 'Plugin ne dopušta manje od 30 dana.', 'sidrena' ); ?></small></label><label><span><?php esc_html_e( 'CSV razdjelnik', 'sidrena' ); ?></span><select name="csv_delimiter"><option value=";" <?php selected( $settings['csv_delimiter'], ';' ); ?>>;</option><option value="," <?php selected( $settings['csv_delimiter'], ',' ); ?>>,</option><option value="\t" <?php selected( $settings['csv_delimiter'], '\t' ); ?>>TAB</option></select></label></div>
 			</section>
 
@@ -958,6 +976,8 @@ final class Sidrena_Admin {
 			'retention_days'      => max( 30, min( 3650, absint( $this->post_value( 'retention_days', 45 ) ) ) ),
 			'enable_rest_index'   => isset( $_POST['enable_rest_index'] ) ? 'yes' : 'no',
 			'publish_manifest'    => isset( $_POST['publish_manifest'] ) ? 'yes' : 'no',
+			'enable_public_html'   => isset( $_POST['enable_public_html'] ) ? 'yes' : 'no',
+			'strict_publication'   => isset( $_POST['strict_publication'] ) ? 'yes' : 'no',
 			'track_price_history' => isset( $_POST['track_price_history'] ) ? 'yes' : 'no',
 		);
 
@@ -1040,7 +1060,7 @@ final class Sidrena_Admin {
 				'post_status'    => 'publish',
 				'post_title'     => __( 'Cjenici', 'sidrena' ),
 				'post_name'      => 'cjenici',
-				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici archive="yes"]<!-- /wp:shortcode -->',
+				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenik]\n[sidrena_arhiva]<!-- /wp:shortcode -->',
 				'comment_status' => 'closed',
 			),
 			true
