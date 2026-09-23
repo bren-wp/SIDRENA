@@ -36,6 +36,12 @@ final class Sidrena_Utils {
 		return $settings;
 	}
 
+
+	public static function donation_url() {
+		$url = apply_filters( 'sidrena_donation_url', 'https://sidrena-cijena.com.hr/#donirajte' );
+		return is_string( $url ) ? esc_url_raw( $url ) : '';
+	}
+
 	public static function locations() {
 		$locations = get_option( 'sidrena_locations', array() );
 		if ( ! is_array( $locations ) || empty( $locations ) ) {
