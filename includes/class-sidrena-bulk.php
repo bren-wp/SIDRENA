@@ -55,9 +55,9 @@ final class Sidrena_Bulk {
 			<div class="sid-table-wrap">
 			<table class="widefat striped sid-bulk-table">
 				<caption class="screen-reader-text"><?php esc_html_e( 'WooCommerce Sidrena katalog', 'sidrena' ); ?></caption>
-				<thead><tr><th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Marka', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Datum', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Grupa', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinična cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></th></tr></thead>
+				<thead><tr><th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Marka', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Datum', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Grupa', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinična cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Količina', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></th></tr></thead>
 				<tbody>
-				<?php if ( empty( $items ) ) : ?><tr><td colspan="10"><?php esc_html_e( 'Na ovoj stranici nema WooCommerce proizvoda.', 'sidrena' ); ?></td></tr><?php endif; ?>
+				<?php if ( empty( $items ) ) : ?><tr><td colspan="12"><?php esc_html_e( 'Na ovoj stranici nema WooCommerce proizvoda.', 'sidrena' ); ?></td></tr><?php endif; ?>
 				<?php foreach ( $items as $product ) : $id = $product->get_id(); ?>
 				<tr>
 					<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product->get_type() ); ?></span></td>
@@ -65,7 +65,7 @@ final class Sidrena_Bulk {
 					<td><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>"></td><td><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>"></td>
 					<td><input type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_anchor_price', true ) ); ?>"></td>
 					<td><input type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_anchor_date', true ) ); ?>"></td>
-					<td><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></td><td><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><?php $unit_status = get_post_meta( $id, '_sidrena_unit_price_status', true ) ?: 'review'; ?><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></td><td><input type="text" name="items[<?php echo esc_attr( $id ); ?>][unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit', true ) ); ?>" placeholder="kg / l / m"></td><td><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][unit_price]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit_price', true ) ); ?>"></td>
+					<td><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( get_post_meta( $id, '_sidrena_reference_group', true ), 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></td><td><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><?php $unit_status = get_post_meta( $id, '_sidrena_unit_price_status', true ) ?: 'review'; ?><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></td><td><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>" placeholder="750"></td><td><input type="text" name="items[<?php echo esc_attr( $id ); ?>][quantity_unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity_unit', true ) ); ?>" placeholder="g / kg / ml / l"></td><td><input type="text" name="items[<?php echo esc_attr( $id ); ?>][unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit', true ) ); ?>" placeholder="kg / l / m"></td><td><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][unit_price]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit_price', true ) ); ?>" placeholder="<?php esc_attr_e( 'auto', 'sidrena' ); ?>"></td>
 				</tr>
 				<?php endforeach; ?>
 				</tbody>
@@ -125,9 +125,35 @@ final class Sidrena_Bulk {
 				$unit_status = 'review';
 			}
 			update_post_meta( $id, '_sidrena_unit_price_status', $unit_status );
+			$quantity = Sidrena_Utils::decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
+			if ( '' === $quantity ) {
+				delete_post_meta( $id, '_sidrena_quantity' );
+			} else {
+				update_post_meta( $id, '_sidrena_quantity', $quantity );
+			}
+			$quantity_unit = Sidrena_Utils::normalize_unit( isset( $row['quantity_unit'] ) ? $row['quantity_unit'] : '' );
+			if ( '' === $quantity_unit ) {
+				delete_post_meta( $id, '_sidrena_quantity_unit' );
+			} else {
+				update_post_meta( $id, '_sidrena_quantity_unit', $quantity_unit );
+			}
 			$this->set_text_meta( $id, '_sidrena_unit', isset( $row['unit'] ) ? $row['unit'] : '' );
 
 			$unit_price = Sidrena_Utils::decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
+			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
+				$product = wc_get_product( $id );
+				if ( $product ) {
+					$raw_price = $product->get_price( 'edit' );
+					if ( '' !== $raw_price ) {
+						$retail = function_exists( 'wc_get_price_including_tax' ) ? wc_get_price_including_tax( $product, array( 'price' => (float) $raw_price ) ) : (float) $raw_price;
+						$calculated = Sidrena_Utils::calculate_unit_price( $retail, $quantity, $quantity_unit );
+						if ( $calculated ) {
+							$this->set_text_meta( $id, '_sidrena_unit', $calculated['unit'] );
+							$unit_price = $calculated['unit_price'];
+						}
+					}
+				}
+			}
 			if ( '' === $unit_price ) {
 				delete_post_meta( $id, '_sidrena_unit_price' );
 			} else {
