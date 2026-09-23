@@ -1,0 +1,422 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+final class Sidrena_Utils {
+	public static function defaults() {
+		return array(
+			'business_mode'        => 'mixed',
+			'display_anchor'       => 'yes',
+			'display_lowest_30'    => 'yes',
+			'label_mode'           => 'date_only',
+			'label_custom'         => 'Cijena na %s',
+			'default_ref_date'     => '2026-09-10',
+			'fmcg_ref_date'        => '2025-05-02',
+			'generate_csv'         => 'yes',
+			'generate_xml'         => 'yes',
+			'csv_delimiter'        => ';',
+			'generation_time'      => '06:30',
+			'retention_days'       => 45,
+			'enable_rest_index'    => 'yes',
+			'publish_manifest'     => 'yes',
+			'track_price_history'  => 'yes',
+		);
+	}
+
+	public static function settings() {
+		$settings = get_option( 'sidrena_settings', array() );
+		$settings = is_array( $settings ) ? $settings : array();
+		if ( empty( $settings['fmcg_ref_date'] ) && ! empty( $settings['fmsid_ref_date'] ) ) {
+			$settings['fmcg_ref_date'] = self::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
+		}
+		unset( $settings['fmsid_ref_date'] );
+		$settings = wp_parse_args( $settings, self::defaults() );
+		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
+		return $settings;
+	}
+
+	public static function locations() {
+		$locations = get_option( 'sidrena_locations', array() );
+		if ( ! is_array( $locations ) || empty( $locations ) ) {
+			$locations = array(
+				array(
+					'id'       => 'webshop',
+					'enabled'  => 'yes',
+					'kind'     => 'webshop',
+					'address'  => '',
+					'code'     => 'WEB-01',
+					'sequence' => 1,
+				),
+			);
+		}
+		return $locations;
+	}
+
+	public static function decimal( $value ) {
+		if ( '' === $value || null === $value ) {
+			return '';
+		}
+
+		$value = str_replace( array( ' ', ',' ), array( '', '.' ), (string) $value );
+		if ( ! is_numeric( $value ) ) {
+			return '';
+		}
+
+		if ( function_exists( 'wc_format_decimal' ) ) {
+			return wc_format_decimal( $value );
+		}
+
+		return rtrim( rtrim( number_format( (float) $value, 6, '.', '' ), '0' ), '.' );
+	}
+
+	public static function money( $value, $decimals = 2 ) {
+		if ( '' === $value || null === $value ) {
+			return '';
+		}
+		return number_format( (float) $value, $decimals, ',', '' );
+	}
+
+	public static function sanitize_date( $date, $fallback = '' ) {
+		$date = sanitize_text_field( (string) $date );
+		$dt   = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
+		if ( $dt && $dt->format( 'Y-m-d' ) === $date ) {
+			return $date;
+		}
+		return $fallback;
+	}
+
+
+	public static function format_mysql_datetime( $value ) {
+		$value = sanitize_text_field( (string) $value );
+		if ( ! $value ) {
+			return '';
+		}
+		try {
+			$dt = new DateTimeImmutable( $value, wp_timezone() );
+			return $dt->format( 'd.m.Y. H:i:s' );
+		} catch ( Exception $e ) {
+			return $value;
+		}
+	}
+
+	public static function date_display( $date ) {
+		$date = self::sanitize_date( $date );
+		if ( ! $date ) {
+			return '';
+		}
+		$dt = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
+		return $dt ? $dt->format( 'd.m.Y.' ) : '';
+	}
+
+	public static function current_reference_date( $product_id = 0 ) {
+		$settings = self::settings();
+		if ( $product_id ) {
+			$lookup_ids = array( (int) $product_id );
+			$parent_id  = wp_get_post_parent_id( $product_id );
+			if ( $parent_id ) {
+				$lookup_ids[] = (int) $parent_id;
+			}
+
+			foreach ( $lookup_ids as $lookup_id ) {
+				$custom = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );
+				if ( $custom ) {
+					return sanitize_text_field( $custom );
+				}
+			}
+
+			foreach ( $lookup_ids as $lookup_id ) {
+				$group = get_post_meta( $lookup_id, '_sidrena_reference_group', true );
+				if ( 'fmcg' === $group ) {
+					return $settings['fmcg_ref_date'];
+				}
+				if ( 'standard' === $group ) {
+					return $settings['default_ref_date'];
+				}
+			}
+		}
+		return $settings['default_ref_date'];
+	}
+
+	public static function anchor_label( $date ) {
+		$settings = self::settings();
+		$display  = self::date_display( $date );
+
+		if ( 'date_only' === $settings['label_mode'] ) {
+			return sprintf(
+				/* translators: %s is a date. */
+				__( 'Cijena na %s', 'sidrena' ),
+				$display
+			);
+		}
+
+		$template = trim( (string) $settings['label_custom'] );
+		if ( false === strpos( $template, '%s' ) ) {
+			$template .= ' %s';
+		}
+		return sprintf( $template, $display );
+	}
+
+	public static function upload_paths() {
+		$uploads = wp_upload_dir();
+		$base    = trailingslashit( $uploads['basedir'] ) . 'sidrena/';
+		$url     = trailingslashit( $uploads['baseurl'] ) . 'sidrena/';
+		return array(
+			'base_dir'     => $base,
+			'archive_dir'  => $base . 'arhiva/',
+			'base_url'     => $url,
+			'archive_url'  => $url . 'arhiva/',
+			'manifest'     => $base . 'manifest.json',
+			'manifest_url' => $url . 'manifest.json',
+		);
+	}
+
+	public static function sanitize_location_id( $value ) {
+		$value = sanitize_title( $value );
+		return $value ? $value : 'lokacija';
+	}
+
+	public static function filename_part( $value ) {
+		$value = remove_accents( wp_strip_all_tags( (string) $value ) );
+		$value = preg_replace( '/[^A-Za-z0-9]+/', '-', $value );
+		return trim( (string) $value, '-' );
+	}
+
+	public static function schedule_timestamp( $time_string = '' ) {
+		$settings    = self::settings();
+		$time_string = $time_string ? $time_string : $settings['generation_time'];
+		if ( ! preg_match( '/^(\d{2}):(\d{2})$/', $time_string, $matches ) ) {
+			$matches = array( '', '06', '30' );
+		}
+
+		$timezone = wp_timezone();
+		$now      = new DateTimeImmutable( 'now', $timezone );
+		$next     = $now->setTime( (int) $matches[1], (int) $matches[2], 0 );
+		if ( $next <= $now ) {
+			$next = $next->modify( '+1 day' );
+		}
+		return $next->getTimestamp();
+	}
+
+	public static function is_woocommerce_active() {
+		return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
+	}
+
+	public static function product_anchor_price( $product_id ) {
+		$value = get_post_meta( $product_id, '_sidrena_anchor_price', true );
+		return '' === $value ? '' : (float) $value;
+	}
+
+	public static function product_meta_with_parent( $product, $key, $default = '' ) {
+		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
+			return $default;
+		}
+
+		$value = get_post_meta( $product->get_id(), $key, true );
+		if ( '' !== $value && null !== $value ) {
+			return $value;
+		}
+
+		if ( is_callable( array( $product, 'is_type' ) ) && $product->is_type( 'variation' ) ) {
+			$parent_id = $product->get_parent_id();
+			if ( $parent_id ) {
+				$value = get_post_meta( $parent_id, $key, true );
+				if ( '' !== $value && null !== $value ) {
+					return $value;
+				}
+			}
+		}
+		return $default;
+	}
+
+	public static function get_product_code( $product ) {
+		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
+			return '';
+		}
+
+		$sku = is_callable( array( $product, 'get_sku' ) ) ? trim( (string) $product->get_sku() ) : '';
+		if ( $sku ) {
+			return $sku;
+		}
+
+		$custom = trim( (string) self::product_meta_with_parent( $product, '_sidrena_code' ) );
+		if ( $custom ) {
+			return $custom;
+		}
+
+		return 'WP-' . absint( $product->get_id() );
+	}
+
+	public static function find_product_id_by_code( $code ) {
+		$code = sanitize_text_field( (string) $code );
+		if ( ! $code || ! self::is_woocommerce_active() ) {
+			return 0;
+		}
+
+		$product_id = absint( wc_get_product_id_by_sku( $code ) );
+		if ( $product_id ) {
+			return $product_id;
+		}
+
+		if ( preg_match( '/^WP-(\d+)$/i', $code, $matches ) ) {
+			$product = wc_get_product( absint( $matches[1] ) );
+			if ( $product ) {
+				return absint( $product->get_id() );
+			}
+		}
+
+		$ids = get_posts(
+			array(
+				'post_type'      => array( 'product', 'product_variation' ),
+				'post_status'    => array( 'publish', 'private', 'draft' ),
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => '_sidrena_code',
+				'meta_value'     => $code,
+				'no_found_rows'  => true,
+			)
+		);
+		return empty( $ids ) ? 0 : absint( $ids[0] );
+	}
+
+	public static function get_brand( $product ) {
+		if ( ! $product ) {
+			return '';
+		}
+
+		$product_id = $product->get_id();
+		if ( taxonomy_exists( 'product_brand' ) ) {
+			$terms = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'names' ) );
+			if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+				return implode( ', ', $terms );
+			}
+		}
+
+		$attribute = $product->get_attribute( 'pa_brand' );
+		if ( $attribute ) {
+			return $attribute;
+		}
+		return (string) get_post_meta( $product_id, '_sidrena_brand', true );
+	}
+
+	public static function get_barcode( $product ) {
+		if ( ! $product ) {
+			return '';
+		}
+		if ( is_callable( array( $product, 'get_global_unique_id' ) ) ) {
+			$value = $product->get_global_unique_id();
+			if ( $value ) {
+				return $value;
+			}
+		}
+		return (string) get_post_meta( $product->get_id(), '_global_unique_id', true );
+	}
+
+	public static function public_index() {
+		$index = get_option( 'sidrena_public_index', array() );
+		return is_array( $index ) ? $index : array();
+	}
+
+	public static function archive_index() {
+		$index = get_option( 'sidrena_archive_index', array() );
+		return is_array( $index ) ? $index : array();
+	}
+
+	public static function archive_stats() {
+		$archive = self::archive_index();
+		$days    = array();
+		$oldest  = 0;
+		$newest  = 0;
+		foreach ( $archive as $entry ) {
+			$ts = absint( $entry['generated_ts'] ?? 0 );
+			if ( ! $ts ) {
+				continue;
+			}
+			$days[ wp_date( 'Y-m-d', $ts ) ] = true;
+			$oldest = ! $oldest || $ts < $oldest ? $ts : $oldest;
+			$newest = $ts > $newest ? $ts : $newest;
+		}
+		return array(
+			'files'         => count( $archive ),
+			'distinct_days' => count( $days ),
+			'oldest_ts'     => $oldest,
+			'newest_ts'     => $newest,
+		);
+	}
+
+	public static function archive_integrity() {
+		$paths         = self::upload_paths();
+		$current       = self::public_index();
+		$archive       = self::archive_index();
+		$current_names = array();
+		$missing       = array();
+		$hash_mismatch = array();
+
+		foreach ( $current as $entry ) {
+			$filename = isset( $entry['filename'] ) ? basename( (string) $entry['filename'] ) : '';
+			if ( $filename ) {
+				$current_names[ $filename ] = true;
+			}
+		}
+
+		foreach ( $archive as $entry ) {
+			$filename = isset( $entry['filename'] ) ? basename( (string) $entry['filename'] ) : '';
+			if ( ! $filename ) {
+				continue;
+			}
+			$path = $paths['archive_dir'] . $filename;
+			if ( ! is_file( $path ) ) {
+				$missing[] = $filename;
+				continue;
+			}
+			$expected_hash = isset( $entry['sha256'] ) ? strtolower( trim( (string) $entry['sha256'] ) ) : '';
+			if ( $expected_hash && function_exists( 'hash_file' ) ) {
+				$actual_hash = strtolower( (string) hash_file( 'sha256', $path ) );
+				if ( $actual_hash && ! hash_equals( $expected_hash, $actual_hash ) ) {
+					$hash_mismatch[] = $filename;
+				}
+			}
+		}
+
+		$current_missing = array();
+		foreach ( array_keys( $current_names ) as $filename ) {
+			if ( ! is_file( $paths['archive_dir'] . $filename ) ) {
+				$current_missing[] = $filename;
+			}
+		}
+
+		return array(
+			'archive_entries' => count( $archive ),
+			'current_entries' => count( $current ),
+			'missing_files'   => $missing,
+			'current_missing' => $current_missing,
+			'hash_mismatch'   => $hash_mismatch,
+			'ok'              => empty( $missing ) && empty( $current_missing ) && empty( $hash_mismatch ),
+		);
+	}
+
+	public static function archive_retention_status() {
+		$settings = self::settings();
+		$stats    = self::archive_stats();
+		$days     = max( 30, absint( $settings['retention_days'] ) );
+		$age      = 0;
+
+		if ( ! empty( $stats['oldest_ts'] ) && ! empty( $stats['newest_ts'] ) ) {
+			$age = max( 1, (int) floor( ( $stats['newest_ts'] - $stats['oldest_ts'] ) / DAY_IN_SECONDS ) + 1 );
+		}
+
+		return array(
+			'configured_days' => $days,
+			'archive_span'    => $age,
+			'minimum_days'    => 30,
+			'buffer_days'     => max( 0, $days - 30 ),
+			'building'        => $age > 0 && $age < 30,
+		);
+	}
+
+	public static function rules_are_effective() {
+		$effective = new DateTimeImmutable( SIDRENA_RULES_EFFECTIVE . ' 00:00:00', wp_timezone() );
+		$now       = new DateTimeImmutable( 'now', wp_timezone() );
+		return $now >= $effective;
+	}
+}
