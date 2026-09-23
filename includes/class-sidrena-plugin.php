@@ -22,6 +22,7 @@ final class Sidrena_Plugin {
 		Sidrena_Services::instance()->hooks();
 		Sidrena_Pricelist::instance()->hooks();
 		Sidrena_REST::instance()->hooks();
+		Sidrena_Public::instance()->hooks();
 
 		Sidrena_CLI::register();
 
