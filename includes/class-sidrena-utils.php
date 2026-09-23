@@ -291,7 +291,11 @@ final class Sidrena_Utils {
 		foreach ( $encodings as $encoding ) {
 			$converted = false;
 			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$converted = @mb_convert_encoding( $contents, 'UTF-8', $encoding ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				try {
+					$converted = @mb_convert_encoding( $contents, 'UTF-8', $encoding ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				} catch ( Throwable $e ) {
+					$converted = false;
+				}
 				if ( is_string( $converted ) && 1 === preg_match( '//u', $converted ) && false === strpos( $converted, "\xEF\xBF\xBD" ) && substr_count( $converted, '?' ) <= $source_questions ) {
 					return $converted;
 				}
