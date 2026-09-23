@@ -66,6 +66,12 @@ final class Sidrena_Standalone {
 				$availability = 'dostupno';
 			}
 
+			$unit = get_post_meta( $id, '_sidrena_standalone_unit', true );
+			$unit_price = get_post_meta( $id, '_sidrena_standalone_unit_price', true );
+			if ( in_array( $unit_status, array( 'not_required', 'exception' ), true ) ) {
+				$unit = '';
+				$unit_price = '';
+			}
 			$rows[] = array(
 				'_sidrena_lowest_30'        => Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_lowest_30', true ) ),
 				'_sidrena_item_id'           => $id,
@@ -74,8 +80,8 @@ final class Sidrena_Standalone {
 				'naziv'                      => get_the_title( $post ),
 				'sifra'                      => get_post_meta( $id, '_sidrena_standalone_code', true ),
 				'marka'                      => get_post_meta( $id, '_sidrena_standalone_brand', true ),
-				'jedinica_mjere'             => get_post_meta( $id, '_sidrena_standalone_unit', true ),
-				'cijena_za_jedinicu_mjere'   => Sidrena_Utils::money( get_post_meta( $id, '_sidrena_standalone_unit_price', true ), 4 ),
+				'jedinica_mjere'             => $unit,
+				'cijena_za_jedinicu_mjere'   => Sidrena_Utils::money( $unit_price, 4 ),
 				'maloprodajna_cijena'        => Sidrena_Utils::money( $current ),
 				'posebni_oblik_prodaje'      => $sale_name ? 'da' : 'ne',
 				'naziv_posebnog_oblika_prodaje' => $sale_name,
