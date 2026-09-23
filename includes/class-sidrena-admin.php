@@ -274,7 +274,7 @@ final class Sidrena_Admin {
 				<h2><?php esc_html_e( 'Upute za korištenje Sidrene', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Praktičan redoslijed od instalacije do provjere javnih cjenika. Koraci vrijede za WooCommerce i samostalni WordPress katalog.', 'sidrena' ); ?></p>
 			</div>
-			<a class="button sid-secondary" href="https://sidrene-cijene.com.hr/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Službena web stranica', 'sidrena' ); ?></a>
+			<div class="sid-head-inline-actions"><a class="button sid-secondary" href="https://github.com/bren-wp/SIDRENA/blob/main/docs/UPUTE.md" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-media-document"></span><?php esc_html_e( 'Pune upute na GitHubu', 'sidrena' ); ?></a><a class="button sid-secondary" href="https://sidrene-cijene.com.hr/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Službena web stranica', 'sidrena' ); ?></a></div>
 		</div>
 
 		<div class="sid-grid sid-grid-2">
@@ -1879,8 +1879,9 @@ final class Sidrena_Admin {
 			$response = wp_safe_remote_get(
 				$url,
 				array(
-					'timeout'     => 10,
-					'redirection' => 3,
+					'timeout'             => 10,
+					'redirection'         => 3,
+					'limit_response_size' => 262144,
 					'headers'     => array(
 						'Accept'     => 'text/csv, application/xml, text/xml, */*;q=0.1',
 						'User-Agent' => 'Sidrena-Public-Check/' . SIDRENA_VERSION,
