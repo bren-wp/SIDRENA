@@ -187,6 +187,25 @@ final class Sidrena_Products {
 		);
 		woocommerce_wp_text_input(
 			array(
+				'id'                => '_sidrena_quantity',
+				'label'             => __( 'Količina pakiranja', 'sidrena' ),
+				'type'              => 'number',
+				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
+				'desc_tip'          => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_sidrena_quantity_unit',
+				'label'       => __( 'Jedinica pakiranja', 'sidrena' ),
+				'placeholder' => 'g / kg / ml / l / m / kom',
+				'description' => __( 'Podržane su uobičajene jedinice mase, volumena, duljine, površine, obujma i komada.', 'sidrena' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
 				'id'          => '_sidrena_unit',
 				'label'       => __( 'Jedinica mjere', 'sidrena' ),
 				'desc_tip'    => true,
@@ -284,6 +303,27 @@ final class Sidrena_Products {
 		);
 		woocommerce_wp_text_input(
 			array(
+				'id'                => "_sidrena_quantity_{$loop}",
+				'name'              => "_sidrena_quantity[{$loop}]",
+				'value'             => get_post_meta( $variation_id, '_sidrena_quantity', true ),
+				'label'             => __( 'Količina pakiranja', 'sidrena' ),
+				'type'              => 'number',
+				'wrapper_class'     => 'form-row form-row-first',
+				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'            => "_sidrena_quantity_unit_{$loop}",
+				'name'          => "_sidrena_quantity_unit[{$loop}]",
+				'value'         => get_post_meta( $variation_id, '_sidrena_quantity_unit', true ),
+				'label'         => __( 'Jedinica pakiranja', 'sidrena' ),
+				'placeholder'   => 'g / kg / ml / l / m / kom',
+				'wrapper_class' => 'form-row form-row-last',
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
 				'id'            => "_sidrena_unit_{$loop}",
 				'name'          => "_sidrena_unit[{$loop}]",
 				'value'         => get_post_meta( $variation_id, '_sidrena_unit', true ),
@@ -359,10 +399,12 @@ final class Sidrena_Products {
 			'_sidrena_unit'                     => 'text',
 			'_sidrena_unit_price'               => 'decimal',
 			'_sidrena_unit_price_status'        => 'unit_status',
+			'_sidrena_quantity'                 => 'decimal',
+			'_sidrena_quantity_unit'            => 'unit_key',
 			'_sidrena_sale_name'                => 'text',
 			'_sidrena_lowest_30_manual'         => 'decimal',
 			'_sidrena_sale_reference_exemption' => 'exemption',
-			'_sidrena_expiry_date'                 => 'date',
+			'_sidrena_expiry_date'              => 'date',
 		);
 		foreach ( $map as $key => $type ) {
 			if ( ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request.
@@ -376,9 +418,9 @@ final class Sidrena_Products {
 				$product->update_meta_data( $key, $value );
 			}
 		}
+		$this->maybe_calculate_unit_price( $product );
 		Sidrena_Pricelist::queue_regeneration();
 	}
-
 	public function save_variation( $variation_id, $loop ) {
 		$fields = array(
 			'_sidrena_code'                     => 'text',
@@ -387,12 +429,14 @@ final class Sidrena_Products {
 			'_sidrena_anchor_date'              => 'date',
 			'_sidrena_reference_group'          => 'key',
 			'_sidrena_unit_price_status'        => 'unit_status_inherit',
+			'_sidrena_quantity'                 => 'decimal',
+			'_sidrena_quantity_unit'            => 'unit_key',
 			'_sidrena_unit'                     => 'text',
 			'_sidrena_unit_price'               => 'decimal',
 			'_sidrena_sale_name'                => 'text',
 			'_sidrena_lowest_30_manual'         => 'decimal',
 			'_sidrena_sale_reference_exemption' => 'exemption',
-			'_sidrena_expiry_date'                 => 'date',
+			'_sidrena_expiry_date'              => 'date',
 		);
 		foreach ( $fields as $key => $type ) {
 			if ( ! isset( $_POST[ $key ][ $loop ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request.
@@ -406,8 +450,55 @@ final class Sidrena_Products {
 				update_post_meta( $variation_id, $key, $value );
 			}
 		}
+
+		$variation = wc_get_product( $variation_id );
+		if ( $variation ) {
+			$this->maybe_calculate_unit_price( $variation );
+			$variation->save_meta_data();
+		}
 		$this->maybe_snapshot_new_variation( $variation_id );
 		Sidrena_Pricelist::queue_regeneration();
+	}
+
+	private function maybe_calculate_unit_price( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return;
+		}
+
+		$status = sanitize_key( (string) $product->get_meta( '_sidrena_unit_price_status', true ) );
+		if ( '' === $status && $product->is_type( 'variation' ) && $product->get_parent_id() ) {
+			$status = sanitize_key( (string) get_post_meta( $product->get_parent_id(), '_sidrena_unit_price_status', true ) );
+		}
+		if ( 'required' !== $status || '' !== Sidrena_Utils::decimal( $product->get_meta( '_sidrena_unit_price', true ) ) ) {
+			return;
+		}
+
+		$quantity = Sidrena_Utils::decimal( $product->get_meta( '_sidrena_quantity', true ) );
+		$unit     = Sidrena_Utils::normalize_unit( $product->get_meta( '_sidrena_quantity_unit', true ) );
+		if ( ( '' === $quantity || '' === $unit ) && $product->is_type( 'variation' ) && $product->get_parent_id() ) {
+			if ( '' === $quantity ) {
+				$quantity = Sidrena_Utils::decimal( get_post_meta( $product->get_parent_id(), '_sidrena_quantity', true ) );
+			}
+			if ( '' === $unit ) {
+				$unit = Sidrena_Utils::normalize_unit( get_post_meta( $product->get_parent_id(), '_sidrena_quantity_unit', true ) );
+			}
+		}
+
+		$raw_price = $product->get_price( 'edit' );
+		if ( '' === $raw_price || '' === $quantity || '' === $unit ) {
+			return;
+		}
+
+		$retail = (float) $raw_price;
+		if ( function_exists( 'wc_get_price_including_tax' ) ) {
+			$retail = wc_get_price_including_tax( $product, array( 'price' => (float) $raw_price ) );
+		}
+		$calculated = Sidrena_Utils::calculate_unit_price( $retail, $quantity, $unit );
+		if ( ! $calculated ) {
+			return;
+		}
+		$product->update_meta_data( '_sidrena_unit', $calculated['unit'] );
+		$product->update_meta_data( '_sidrena_unit_price', $calculated['unit_price'] );
 	}
 
 	private function sanitize_by_type( $value, $type ) {
@@ -428,6 +519,8 @@ final class Sidrena_Products {
 			case 'unit_status_inherit':
 				$value = sanitize_key( $value );
 				return '' === $value || in_array( $value, array( 'review', 'required', 'not_required', 'exception' ), true ) ? $value : '';
+			case 'unit_key':
+				return Sidrena_Utils::normalize_unit( $value );
 			default:
 				return sanitize_text_field( $value );
 		}
