@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="t d">
+<title id="t">Sidrena ključne mogućnosti</title><desc id="d">Četiri kartice: WooCommerce, arhiva, lokacije i privatnost.</desc>
+<defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2B6DF7"/><stop offset="1" stop-color="#2BC7B8"/></linearGradient></defs>
+<rect width="1600" height="520" rx="28" fill="#F5F8FC"/>
+<g font-family="Inter,Segoe UI,Arial,sans-serif">
+  <g transform="translate(40 42)">
+    <rect width="350" height="436" rx="24" fill="#fff" stroke="#DCE7F1"/>
+    <circle cx="58" cy="62" r="30" fill="#EAF1FF"/><path d="M43 62h30M58 47v30" stroke="#2B6DF7" stroke-width="5" stroke-linecap="round"/>
+    <text x="32" y="135" font-size="28" font-weight="800" fill="#0A2038">WooCommerce</text>
+    <text x="32" y="175" font-size="18" fill="#597087">Proizvodi i varijacije dobivaju</text>
+    <text x="32" y="203" font-size="18" fill="#597087">sidrenu cijenu, referentni datum</text>
+    <text x="32" y="231" font-size="18" fill="#597087">i praćenje promjena.</text>
+    <rect x="32" y="286" width="286" height="1" fill="#E3EBF2"/>
+    <text x="32" y="329" font-size="17" font-weight="700" fill="#0A2038">Bulk katalog</text>
+    <text x="32" y="360" font-size="17" font-weight="700" fill="#0A2038">Varijacije i SKU</text>
+    <text x="32" y="391" font-size="17" font-weight="700" fill="#0A2038">Povijest cijena</text>
+  </g>
+  <g transform="translate(430 42)">
+    <rect width="350" height="436" rx="24" fill="#fff" stroke="#DCE7F1"/>
+    <circle cx="58" cy="62" r="30" fill="#E8FBF7"/><path d="M44 52h28v24H44zM49 47h18" fill="none" stroke="#20A99B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="135" font-size="28" font-weight="800" fill="#0A2038">Arhiva 30+</text>
+    <text x="32" y="175" font-size="18" fill="#597087">Svaka uspješna objava ostaje</text>
+    <text x="32" y="203" font-size="18" fill="#597087">zasebno spremljena i provjerljiva.</text>
+    <text x="32" y="231" font-size="18" fill="#597087">Nema prepisivanja povijesti.</text>
+    <rect x="32" y="286" width="286" height="1" fill="#E3EBF2"/>
+    <text x="32" y="329" font-size="17" font-weight="700" fill="#0A2038">CSV / XML</text>
+    <text x="32" y="360" font-size="17" font-weight="700" fill="#0A2038">SHA-256 integritet</text>
+    <text x="32" y="391" font-size="17" font-weight="700" fill="#0A2038">Rokovi čuvanja</text>
+  </g>
+  <g transform="translate(820 42)">
+    <rect width="350" height="436" rx="24" fill="#fff" stroke="#DCE7F1"/>
+    <circle cx="58" cy="62" r="30" fill="#EAF1FF"/><path d="M58 43c-10 0-18 8-18 18 0 14 18 31 18 31s18-17 18-31c0-10-8-18-18-18z" fill="none" stroke="#2B6DF7" stroke-width="4"/><circle cx="58" cy="61" r="6" fill="#2B6DF7"/>
+    <text x="32" y="135" font-size="28" font-weight="800" fill="#0A2038">Lokacije</text>
+    <text x="32" y="175" font-size="18" fill="#597087">Odvojeni cjenici za poslovnice</text>
+    <text x="32" y="203" font-size="18" fill="#597087">i webshop, s lokacijskim cijenama</text>
+    <text x="32" y="231" font-size="18" fill="#597087">i raspoloživošću.</text>
+    <rect x="32" y="286" width="286" height="1" fill="#E3EBF2"/>
+    <text x="32" y="329" font-size="17" font-weight="700" fill="#0A2038">Više poslovnica</text>
+    <text x="32" y="360" font-size="17" font-weight="700" fill="#0A2038">Webshop kao objekt</text>
+    <text x="32" y="391" font-size="17" font-weight="700" fill="#0A2038">Dostupno / nedostupno</text>
+  </g>
+  <g transform="translate(1210 42)">
+    <rect width="350" height="436" rx="24" fill="#07182D"/>
+    <circle cx="58" cy="62" r="30" fill="url(#g1)"/><path d="M45 60l9 9 19-21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="135" font-size="28" font-weight="800" fill="#F6FAFF">Free &amp; local</text>
+    <text x="32" y="175" font-size="18" fill="#A9C4DF">Bez Pro paywalla, licence, clouda</text>
+    <text x="32" y="203" font-size="18" fill="#A9C4DF">i obaveznog računa. Podaci ostaju</text>
+    <text x="32" y="231" font-size="18" fill="#A9C4DF">na vašem WordPressu.</text>
+    <rect x="32" y="286" width="286" height="1" fill="#1D3C59"/>
+    <text x="32" y="329" font-size="17" font-weight="700" fill="#F6FAFF">0 telemetrije</text>
+    <text x="32" y="360" font-size="17" font-weight="700" fill="#F6FAFF">GPLv2+</text>
+    <text x="32" y="391" font-size="17" font-weight="700" fill="#F6FAFF">Autor: Brendigo</text>
+  </g>
+</g>
+</svg>
