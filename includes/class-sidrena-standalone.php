@@ -66,6 +66,7 @@ final class Sidrena_Standalone {
 			}
 
 			$rows[] = array(
+				'_sidrena_lowest_30'        => Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_lowest_30', true ) ),
 				'_sidrena_item_id'           => $id,
 				'_sidrena_unit_status'       => $unit_status ? $unit_status : 'review',
 				'_sidrena_location_explicit' => 'yes',
@@ -102,6 +103,7 @@ final class Sidrena_Standalone {
 			'unit_price_review'  => 0,
 			'unit_price_missing' => 0,
 			'active_sales'       => 0,
+			'sale_incomplete'     => 0,
 		);
 
 		foreach ( self::rows() as $row ) {
@@ -123,6 +125,9 @@ final class Sidrena_Standalone {
 			}
 			if ( 'da' === $row['posebni_oblik_prodaje'] ) {
 				++$stats['active_sales'];
+				if ( '' === Sidrena_Utils::decimal( $row['_sidrena_lowest_30'] ?? '' ) ) {
+					++$stats['sale_incomplete'];
+				}
 			}
 		}
 		return $stats;
@@ -204,7 +209,7 @@ final class Sidrena_Standalone {
 			<td><input type="text" name="items[<?php echo esc_attr( $key ); ?>][barcode]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_barcode' ) ); ?>"></td>
 			<td><select name="items[<?php echo esc_attr( $key ); ?>][unit_status]"><option value="review" <?php selected( $status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select><input type="text" name="items[<?php echo esc_attr( $key ); ?>][unit]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_unit' ) ); ?>" placeholder="kg / l / m"><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $key ); ?>][unit_price]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_unit_price' ) ); ?>"></td>
 			<td><select name="items[<?php echo esc_attr( $key ); ?>][availability]"><option value="dostupno" <?php selected( $availability, 'dostupno' ); ?>><?php esc_html_e( 'Dostupno', 'sidrena' ); ?></option><option value="nedostupno" <?php selected( $availability, 'nedostupno' ); ?>><?php esc_html_e( 'Nedostupno', 'sidrena' ); ?></option></select></td>
-			<td><input type="text" name="items[<?php echo esc_attr( $key ); ?>][sale_name]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_sale_name' ) ); ?>" placeholder="<?php esc_attr_e( 'npr. Akcija', 'sidrena' ); ?>"></td>
+			<td><input type="text" name="items[<?php echo esc_attr( $key ); ?>][sale_name]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_sale_name' ) ); ?>" placeholder="<?php esc_attr_e( 'npr. Akcija', 'sidrena' ); ?>"><input type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $key ); ?>][lowest_30]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_lowest_30' ) ); ?>" placeholder="<?php esc_attr_e( 'Najniža cijena 30 dana', 'sidrena' ); ?>"></td>
 			<td><?php if ( $id ) : ?><label class="sid-inline-delete"><input type="checkbox" name="items[<?php echo esc_attr( $key ); ?>][delete]" value="yes"> <?php esc_html_e( 'Obriši', 'sidrena' ); ?></label><?php else : ?><button type="button" class="button-link-delete sidrena-remove-standalone"><?php esc_html_e( 'Ukloni', 'sidrena' ); ?></button><?php endif; ?></td>
 		</tr>
 		<?php
@@ -270,6 +275,7 @@ final class Sidrena_Standalone {
 			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_availability', $availability );
 			$this->set_meta( $saved_id, '_sidrena_standalone_sale_name', sanitize_text_field( $row['sale_name'] ?? '' ) );
+			$this->set_meta( $saved_id, '_sidrena_standalone_lowest_30', Sidrena_Utils::decimal( $row['lowest_30'] ?? '' ) );
 		}
 
 		Sidrena_Audit::log( 'standalone_catalog_save', 'success', __( 'Samostalni Sidrena katalog je spremljen.', 'sidrena' ) );
@@ -305,6 +311,11 @@ final class Sidrena_Standalone {
 		$out = '<span class="sidrena-standalone-price">';
 		if ( '' !== $current ) {
 			$out .= '<span class="sidrena-standalone-price__current">' . esc_html( Sidrena_Utils::money( $current ) . ' ' . $currency ) . '</span>';
+		}
+		$sale_name = trim( (string) get_post_meta( $id, '_sidrena_standalone_sale_name', true ) );
+		$lowest_30 = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_lowest_30', true ) );
+		if ( $sale_name && '' !== $lowest_30 ) {
+			$out .= '<span class="sidrena-lowest"><span class="sidrena-lowest__label">' . esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . ':</span> <span class="sidrena-lowest__value">' . esc_html( Sidrena_Utils::money( $lowest_30 ) . ' ' . $currency ) . '</span></span>';
 		}
 		if ( '' !== $anchor ) {
 			$date = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'];
