@@ -34,8 +34,9 @@ final class Sidrena_Pricelist {
 		$generated = 0;
 
 		wp_mkdir_p( $paths['archive_dir'] );
+		wp_mkdir_p( $paths['snapshot_dir'] );
 		$timestamp = time();
-		$stamp     = wp_date( 'd.m.Y_H-i-s', $timestamp );
+		$stamp     = wp_date( 'd.m.Y_H-i', $timestamp );
 		$formats   = $this->formats( $settings );
 
 		if ( empty( $formats ) ) {
@@ -50,21 +51,33 @@ final class Sidrena_Pricelist {
 			$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
 			if ( '' === $address ) {
 				$errors[] = sprintf(
-					/* translators: %s is a location code. */
 					__( 'Lokacija "%s" nema upisanu adresu potrebnu za naziv datoteke cjenika.', 'sidrena' ),
 					isset( $location['code'] ) ? $location['code'] : ( $location_index + 1 )
 				);
 				continue;
 			}
 
-			$sequence = max( 1, isset( $location['sequence'] ) ? absint( $location['sequence'] ) : 1 );
+			$sequence          = max( 1, isset( $location['sequence'] ) ? absint( $location['sequence'] ) : 1 );
+			$snapshot_catalogs = array();
+
 			foreach ( $this->catalog_types( $settings['business_mode'] ) as $catalog_type ) {
 				foreach ( $formats as $format ) {
-					$key              = $this->index_key( $location, $catalog_type, $format );
-					$expected[ $key ] = true;
-					$filename         = $this->build_filename( $location, $sequence, $stamp, $format );
-					$filepath         = $paths['archive_dir'] . $filename;
-					$result           = 'products' === $catalog_type
+					$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
+				}
+
+				if ( 'yes' === $settings['strict_publication'] ) {
+					$preflight = $this->preflight_catalog( $catalog_type, $location );
+					if ( is_wp_error( $preflight ) ) {
+						$errors[] = $preflight->get_error_message();
+						continue;
+					}
+				}
+
+				$catalog_generated = false;
+				foreach ( $formats as $format ) {
+					$filename = $this->build_filename( $location, $sequence, $stamp, $format );
+					$filepath = $paths['archive_dir'] . $filename;
+					$result   = 'products' === $catalog_type
 						? $this->write_products( $filepath, $format, $location )
 						: $this->write_services( $filepath, $format, $location );
 
@@ -74,29 +87,42 @@ final class Sidrena_Pricelist {
 						continue;
 					}
 
+					$catalog_generated = true;
 					$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
 					$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
 					++$generated;
 					$index[] = array(
-						'location_id'   => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
-						'location_code' => sanitize_text_field( isset( $location['code'] ) ? $location['code'] : '' ),
-						'kind'          => sanitize_key( isset( $location['kind'] ) ? $location['kind'] : 'objekt' ),
-						'catalog'       => $catalog_type,
-						'format'        => $format,
-						'url'           => $paths['archive_url'] . rawurlencode( $filename ),
-						'filename'      => $filename,
-						'generated_at'  => wp_date( DATE_ATOM, $timestamp ),
-						'generated_ts'  => $timestamp,
-						'retain_until'  => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
+						'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
+						'location_code'   => sanitize_text_field( isset( $location['code'] ) ? $location['code'] : '' ),
+						'kind'            => sanitize_key( isset( $location['kind'] ) ? $location['kind'] : 'objekt' ),
+						'catalog'         => $catalog_type,
+						'format'          => $format,
+						'url'             => $paths['archive_url'] . rawurlencode( $filename ),
+						'filename'        => $filename,
+						'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
+						'generated_ts'    => $timestamp,
+						'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
 						'retain_until_ts' => $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ),
-						'sequence'      => $sequence,
-						'rows'          => (int) $result,
-						'bytes'         => (int) $bytes,
-						'sha256'        => $hash ? sanitize_text_field( $hash ) : '',
+						'sequence'        => $sequence,
+						'rows'            => (int) $result,
+						'bytes'           => (int) $bytes,
+						'sha256'          => $hash ? sanitize_text_field( $hash ) : '',
 					);
 					++$sequence;
 				}
+
+				if ( $catalog_generated ) {
+					$snapshot_catalogs[] = $catalog_type;
+				}
 			}
+
+			if ( ! empty( $snapshot_catalogs ) ) {
+				$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
+				if ( is_wp_error( $snapshot ) ) {
+					$errors[] = $snapshot->get_error_message();
+				}
+			}
+
 			$location['sequence'] = $sequence;
 		}
 		unset( $location );
@@ -106,6 +132,7 @@ final class Sidrena_Pricelist {
 			$this->merge_archive_index( $index );
 		}
 		$this->merge_current_index( $index, $expected );
+		$this->cleanup_public_snapshots( $locations );
 
 		update_option(
 			'sidrena_last_run',
@@ -129,6 +156,167 @@ final class Sidrena_Pricelist {
 			)
 		);
 		return empty( $errors );
+	}
+
+
+	private function preflight_catalog( $catalog_type, $location ) {
+		$issues = array();
+		$rows   = 'products' === $catalog_type ? $this->product_rows( $location ) : $this->service_rows( $location );
+		$kind   = sanitize_key( $location['kind'] ?? 'objekt' );
+		$code   = sanitize_text_field( $location['code'] ?? $location['id'] ?? 'lokacija' );
+
+		foreach ( $rows as $row ) {
+			$row_issues = 'products' === $catalog_type
+				? $this->validate_product_row( $row, $kind )
+				: $this->validate_service_row( $row );
+
+			foreach ( $row_issues as $issue ) {
+				$issues[] = $issue;
+				if ( count( $issues ) >= 12 ) {
+					break 2;
+				}
+			}
+		}
+
+		if ( empty( $issues ) ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'sidrena_preflight_failed',
+			sprintf(
+				__( 'Cjenik za lokaciju %1$s (%2$s) nije objavljen jer stroga provjera nije prošla: %3$s', 'sidrena' ),
+				$code,
+				'products' === $catalog_type ? __( 'proizvodi', 'sidrena' ) : __( 'usluge', 'sidrena' ),
+				implode( '; ', $issues )
+			)
+		);
+	}
+
+	private function validate_product_row( $row, $location_kind ) {
+		$issues = array();
+		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
+		$name   = trim( (string) ( $row['naziv'] ?? '' ) );
+		$label  = $name ? $name : sprintf( __( 'proizvod #%d', 'sidrena' ), $id );
+
+		$required = array(
+			'sifra'               => __( 'šifra', 'sidrena' ),
+			'marka'               => __( 'marka', 'sidrena' ),
+			'maloprodajna_cijena' => __( 'maloprodajna cijena', 'sidrena' ),
+			'sidrena_cijena'      => __( 'sidrena cijena', 'sidrena' ),
+			'barkod'              => __( 'barkod', 'sidrena' ),
+			'dostupnost'          => __( 'dostupnost', 'sidrena' ),
+		);
+		if ( '' === $name ) {
+			$issues[] = sprintf( __( '%s: nedostaje naziv', 'sidrena' ), $label );
+		}
+		foreach ( $required as $key => $field_label ) {
+			if ( '' === trim( (string) ( $row[ $key ] ?? '' ) ) ) {
+				$issues[] = sprintf( __( '%1$s: nedostaje %2$s', 'sidrena' ), $label, $field_label );
+			}
+		}
+
+		if ( 'webshop' !== $location_kind && 'yes' !== ( $row['_sidrena_location_explicit'] ?? 'no' ) ) {
+			$issues[] = sprintf( __( '%s: fizička lokacija nema unesenu stvarnu raspoloživost', 'sidrena' ), $label );
+		}
+
+		$unit_status = sanitize_key( (string) ( $row['_sidrena_unit_status'] ?? 'review' ) );
+		if ( ! $unit_status || 'review' === $unit_status ) {
+			$issues[] = sprintf( __( '%s: primjenjivost jedinične cijene nije pregledana', 'sidrena' ), $label );
+		} elseif ( 'required' === $unit_status ) {
+			if ( '' === trim( (string) ( $row['jedinica_mjere'] ?? '' ) ) || '' === trim( (string) ( $row['cijena_za_jedinicu_mjere'] ?? '' ) ) ) {
+				$issues[] = sprintf( __( '%s: obvezna jedinična cijena nije potpuno unesena', 'sidrena' ), $label );
+			}
+		}
+
+		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+		}
+		return $issues;
+	}
+
+	private function validate_service_row( $row ) {
+		$issues = array();
+		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
+		$name   = trim( (string) ( $row['naziv_usluge'] ?? '' ) );
+		$label  = $name ? $name : sprintf( __( 'usluga #%d', 'sidrena' ), $id );
+
+		if ( '' === $name ) {
+			$issues[] = sprintf( __( '%s: nedostaje naziv usluge', 'sidrena' ), $label );
+		}
+		if ( '' === trim( (string) ( $row['maloprodajna_cijena'] ?? '' ) ) ) {
+			$issues[] = sprintf( __( '%s: nedostaje maloprodajna cijena', 'sidrena' ), $label );
+		}
+		if ( '' === trim( (string) ( $row['sidrena_cijena'] ?? '' ) ) {
+			$issues[] = sprintf( __( '%s: nedostaje sidrena cijena', 'sidrena' ), $label );
+		}
+		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+		}
+		return $issues;
+	}
+
+	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
+		$rows = array();
+		foreach ( array_unique( $catalogs ) as $catalog ) {
+			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
+			foreach ( $source as $row ) {
+				foreach ( array_keys( $row ) as $key ) {
+					if ( 0 === strpos( $key, '_sidrena_' ) ) {
+						unset( $row[ $key ] );
+					}
+				}
+				$row['type'] = 'products' === $catalog ? 'product' : 'service';
+				$rows[] = $row;
+			}
+		}
+
+		$data = array(
+			'schema'       => 1,
+			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
+			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
+			'location'     => array(
+				'id'      => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
+				'code'    => sanitize_text_field( $location['code'] ?? '' ),
+				'kind'    => sanitize_text_field( $location['kind'] ?? '' ),
+				'address' => sanitize_text_field( $location['address'] ?? '' ),
+			),
+			'rows' => $rows,
+		);
+		$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		if ( false === $json ) {
+			return new WP_Error( 'snapshot_encode', __( 'Nije moguće pripremiti javni HTML snapshot cjenika.', 'sidrena' ) );
+		}
+
+		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$temp = $path . '.tmp';
+		if ( false === file_put_contents( $temp, $json . "\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
+		}
+		if ( ! rename( $temp, $path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
+			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+			return new WP_Error( 'snapshot_commit', __( 'Nije moguće dovršiti javni HTML snapshot cjenika.', 'sidrena' ) );
+		}
+		return count( $rows );
+	}
+
+	private function cleanup_public_snapshots( $locations ) {
+		$paths = Sidrena_Utils::upload_paths();
+		if ( ! is_dir( $paths['snapshot_dir'] ) ) {
+			return;
+		}
+		$keep = array();
+		foreach ( $locations as $location ) {
+			if ( 'yes' === ( $location['enabled'] ?? '' ) ) {
+				$keep[ basename( Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' ) ) ] = true;
+			}
+		}
+		$files = glob( $paths['snapshot_dir'] . 'cjenik-*.json' );
+		foreach ( is_array( $files ) ? $files : array() as $file ) {
+			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
+				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+		}
 	}
 
 	private function formats( $settings ) {
@@ -275,7 +463,8 @@ final class Sidrena_Pricelist {
 			$anchor = wc_get_price_including_tax( $product, array( 'price' => (float) $anchor ) );
 		}
 
-		$available = isset( $override['availability'] ) && in_array( $override['availability'], array( 'dostupno', 'nedostupno' ), true )
+		$has_location_availability = isset( $override['availability'] ) && in_array( $override['availability'], array( 'dostupno', 'nedostupno' ), true );
+		$available = $has_location_availability
 			? $override['availability']
 			: ( $product->is_in_stock() ? 'dostupno' : 'nedostupno' );
 		$available = apply_filters( 'sidrena_product_availability', $available, $product, $location );
@@ -295,6 +484,9 @@ final class Sidrena_Pricelist {
 
 		$brand_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
 		return array(
+			'_sidrena_item_id'          => $product->get_id(),
+			'_sidrena_unit_status'      => sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price_status', 'review' ) ),
+			'_sidrena_location_explicit' => $has_location_availability ? 'yes' : 'no',
 			'naziv'                         => $name,
 			'sifra'                         => Sidrena_Utils::get_product_code( $product ),
 			'marka'                         => Sidrena_Utils::get_brand( $brand_product ),
@@ -346,6 +538,7 @@ final class Sidrena_Pricelist {
 				$current = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
 				$sale    = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
 				yield array(
+					'_sidrena_item_id'                   => $service->ID,
 					'naziv_usluge'                  => get_the_title( $service ),
 					'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
 					'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
@@ -383,7 +576,7 @@ final class Sidrena_Pricelist {
 		foreach ( $rows as $row ) {
 			$line = array();
 			foreach ( $headers as $header ) {
-				$line[] = isset( $row[ $header ] ) ? $row[ $header ] : '';
+				$line[] = Sidrena_Utils::csv_safe_cell( isset( $row[ $header ] ) ? $row[ $header ] : '' );
 			}
 			fputcsv( $handle, $line, $delimiter );
 			++$count;
