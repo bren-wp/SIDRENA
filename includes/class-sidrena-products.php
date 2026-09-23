@@ -458,8 +458,13 @@ final class Sidrena_Products {
 		}
 
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'sidrena_cijena' );
+		$raw_id = trim( (string) $atts['id'] );
+		if ( preg_match( '/^s(\d+)$/i', $raw_id, $match ) ) {
+			return Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . absint( $match[1] ) ) );
+		}
+
 		global $product;
-		$target = absint( $atts['id'] ) ? wc_get_product( absint( $atts['id'] ) ) : ( $product instanceof WC_Product ? $product : null );
+		$target = absint( $raw_id ) ? wc_get_product( absint( $raw_id ) ) : ( $product instanceof WC_Product ? $product : null );
 		if ( ! $target ) {
 			return '';
 		}
