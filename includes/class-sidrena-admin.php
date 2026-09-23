@@ -592,7 +592,7 @@ final class Sidrena_Admin {
 		$before_eight   = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
 		$cron_scheduled = (bool) wp_next_scheduled( 'sidrena_daily_generation' );
 		$checks = array(
-			array( ! $needs_products || Sidrena_Utils::is_woocommerce_active(), __( 'WooCommerce je dostupan za način rada s proizvodima', 'sidrena' ), __( 'Aktivirajte WooCommerce ili promijenite način rada.', 'sidrena' ) ),
+			array( ! $needs_products || Sidrena_Utils::is_woocommerce_active() || class_exists( 'Sidrena_Standalone' ), __( 'Katalog proizvoda je dostupan', 'sidrena' ), __( 'Aktivirajte WooCommerce ili koristite samostalni Sidrena katalog.', 'sidrena' ) ),
 			array( ! $missing_address, __( 'Sve aktivne lokacije imaju adresu za naziv datoteke', 'sidrena' ), __( 'Dopunite adresu u kartici Lokacije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_anchor'], __( 'WooCommerce stavke imaju sidrenu cijenu', 'sidrena' ), __( 'Izvezite popis nedostajućih i dopunite povijesne vrijednosti.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_brand'], __( 'WooCommerce stavke imaju podatak o marki za digitalni cjenik', 'sidrena' ), __( 'Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka.', 'sidrena' ) ),
@@ -1534,6 +1534,20 @@ final class Sidrena_Admin {
 					++$perishable_expiry_missing;
 				}
 			}
+		}
+
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			$standalone                = Sidrena_Standalone::audit_stats();
+			$products                  = $standalone['products'];
+			$missing                   = $standalone['missing_anchor'];
+			$missing_brand             = $standalone['missing_brand'];
+			$missing_barcode           = $standalone['missing_barcode'];
+			$unit_price_review         = $standalone['unit_price_review'];
+			$unit_price_missing        = $standalone['unit_price_missing'];
+			$active_sales              = $standalone['active_sales'];
+			$sale_incomplete           = $standalone['sale_incomplete'];
+			$perishable_expiry_missing = 0;
 		}
 
 		$service_query = new WP_Query( array( 'post_type' => 'sidrena_service', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true ) );
