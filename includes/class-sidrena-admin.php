@@ -585,6 +585,8 @@ final class Sidrena_Admin {
 			array( ! $missing_address, __( 'Sve aktivne lokacije imaju adresu za naziv datoteke', 'sidrena' ), __( 'Dopunite adresu u kartici Lokacije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_anchor'], __( 'WooCommerce stavke imaju sidrenu cijenu', 'sidrena' ), __( 'Izvezite popis nedostajućih i dopunite povijesne vrijednosti.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_brand'], __( 'WooCommerce stavke imaju podatak o marki za digitalni cjenik', 'sidrena' ), __( 'Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka.', 'sidrena' ) ),
+			array( ! $needs_products || 0 === $stats['unit_price_review'], __( 'Primjenjivost cijene za jedinicu mjere pregledana je za proizvode', 'sidrena' ), __( 'U Katalogu/WooCommerce proizvodima označite je li jedinična cijena obvezna, nije primjenjiva ili postoji propisana iznimka prema NN 105/2026.', 'sidrena' ) ),
+			array( ! $needs_products || 0 === $stats['unit_price_missing'], __( 'Stavke za koje je jedinična cijena obvezna imaju jedinicu i iznos', 'sidrena' ), __( 'Dopunite jedinicu mjere i cijenu za jedinicu mjere za označene proizvode/varijacije.', 'sidrena' ) ),
 			array( 0 === $stats['missing_service_anchor'], __( 'Objavljene usluge imaju sidrenu cijenu', 'sidrena' ), __( 'Dopunite usluge kojima nedostaje referentna cijena.', 'sidrena' ) ),
 			array( 0 === $stats['service_details_missing'], __( 'Objavljene usluge imaju vrstu i opseg za javni cjenik', 'sidrena' ), __( 'Dopunite vrstu i opseg usluge kako bi javni cjenik sadržavao podatke iz NN 105/2026.', 'sidrena' ) ),
 			array( 0 === $stats['sale_incomplete'], __( 'Aktivna sniženja proizvoda imaju provjerljivu 30-dnevnu referencu ili evidentirano izuzeće', 'sidrena' ), __( 'Za nepotpunu povijest proizvoda unesite provjerenu ručnu vrijednost.', 'sidrena' ) ),
@@ -1442,6 +1444,8 @@ final class Sidrena_Admin {
 		$active_sales              = 0;
 		$perishable_expiry_missing = 0;
 		$missing_brand             = 0;
+		$unit_price_review         = 0;
+		$unit_price_missing        = 0;
 		foreach ( $this->catalog_items() as $item ) {
 			++$products;
 			if ( '' === get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
@@ -1450,6 +1454,16 @@ final class Sidrena_Admin {
 			$brand_product = $item->is_type( 'variation' ) ? wc_get_product( $item->get_parent_id() ) : $item;
 			if ( ! trim( (string) Sidrena_Utils::get_brand( $brand_product ) ) ) {
 				++$missing_brand;
+			}
+			$unit_status = sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $item, '_sidrena_unit_price_status', 'review' ) );
+			if ( ! $unit_status || 'review' === $unit_status ) {
+				++$unit_price_review;
+			} elseif ( 'required' === $unit_status ) {
+				$unit       = trim( (string) Sidrena_Utils::product_meta_with_parent( $item, '_sidrena_unit' ) );
+				$unit_price = Sidrena_Utils::decimal( Sidrena_Utils::product_meta_with_parent( $item, '_sidrena_unit_price' ) );
+				if ( '' === $unit || '' === $unit_price ) {
+					++$unit_price_missing;
+				}
 			}
 			if ( $item->is_on_sale() ) {
 				++$active_sales;
@@ -1484,7 +1498,7 @@ final class Sidrena_Admin {
 			}
 		}
 		$settings = Sidrena_Utils::settings();
-		$issues   = $missing + $missing_brand + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
+		$issues   = $missing + $missing_brand + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
 		if ( ( in_array( $settings['business_mode'], array( 'products', 'mixed' ), true ) && ! Sidrena_Utils::is_woocommerce_active() ) || ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) ) {
 			++$issues;
 		}
@@ -1495,6 +1509,8 @@ final class Sidrena_Admin {
 			'products'               => $products,
 			'missing_anchor'         => $missing,
 			'missing_brand'          => $missing_brand,
+			'unit_price_review'      => $unit_price_review,
+			'unit_price_missing'     => $unit_price_missing,
 			'services'               => $services,
 			'missing_service_anchor' => $missing_service_anchor,
 			'service_details_missing' => $service_details_missing,
