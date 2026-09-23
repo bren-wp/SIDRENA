@@ -41,6 +41,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-services.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-pricelist.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-rest.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-public.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-admin.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-plugin.php';
 
