@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="880" viewBox="0 0 1600 880" role="img" aria-labelledby="t d">
+<title id="t">Sidrena administracijski panel</title><desc id="d">Stilizirani prikaz modernog Sidrena WordPress administracijskog sučelja.</desc>
+<defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0A223B"/><stop offset="1" stop-color="#07182D"/></linearGradient><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2B6DF7"/><stop offset="1" stop-color="#2BC7B8"/></linearGradient></defs>
+<rect width="1600" height="880" rx="28" fill="#EDF3F8"/>
+<rect x="36" y="32" width="1528" height="816" rx="24" fill="#fff" stroke="#D5E1EB"/>
+<rect x="36" y="32" width="246" height="816" rx="24" fill="url(#b)"/>
+<g font-family="Inter,Segoe UI,Arial,sans-serif">
+  <g transform="translate(72 72)"><circle cx="28" cy="28" r="28" fill="url(#a)"/><path d="M28 14v30M17 22h22M13 33c3 13 8 19 15 19s12-6 15-19" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><text x="70" y="36" fill="#fff" font-size="28" font-weight="800">Sidrena</text></g>
+  <g fill="#A9C4DF" font-size="16" font-weight="700">
+    <text x="76" y="190">Pregled</text><text x="76" y="238">Usklađenost</text><text x="76" y="286">Katalog</text><text x="76" y="334">Cjenici</text><text x="76" y="382">Arhiva 30+ dana</text><text x="76" y="430">Lokacije</text><text x="76" y="478">Postavke</text><text x="76" y="526">Alati</text><text x="76" y="574">Dnevnik</text><text x="76" y="622">Propisi</text>
+  </g>
+  <rect x="58" y="163" width="202" height="46" rx="12" fill="#103B60"/><circle cx="76" cy="186" r="5" fill="#2BC7B8"/><text x="92" y="192" fill="#fff" font-size="16" font-weight="800">Pregled</text>
+
+  <text x="330" y="98" fill="#0A2038" font-size="34" font-weight="800">Pregled</text>
+  <text x="330" y="132" fill="#607A91" font-size="17">Status cjenika, arhive, rasporeda i podataka na jednom mjestu.</text>
+  <rect x="1290" y="72" width="216" height="48" rx="14" fill="#07182D"/><text x="1331" y="102" fill="#fff" font-size="16" font-weight="800">Generiraj cjenik</text>
+
+  <g transform="translate(330 178)">
+    <rect width="270" height="138" rx="20" fill="#F7FAFD" stroke="#DDE7F0"/><text x="24" y="34" fill="#607A91" font-size="15" font-weight="700">DANA JAVNE ARHIVE</text><text x="24" y="88" fill="#0A2038" font-size="46" font-weight="800">45</text><text x="92" y="88" fill="#20A99B" font-size="17" font-weight="800">≥ 30 dana</text>
+  </g>
+  <g transform="translate(620 178)">
+    <rect width="270" height="138" rx="20" fill="#F7FAFD" stroke="#DDE7F0"/><text x="24" y="34" fill="#607A91" font-size="15" font-weight="700">SLJEDEĆA OBJAVA</text><text x="24" y="88" fill="#0A2038" font-size="46" font-weight="800">06:30</text><text x="24" y="116" fill="#2B6DF7" font-size="15" font-weight="800">WordPress vrijeme</text>
+  </g>
+  <g transform="translate(910 178)">
+    <rect width="270" height="138" rx="20" fill="#F7FAFD" stroke="#DDE7F0"/><text x="24" y="34" fill="#607A91" font-size="15" font-weight="700">LOKACIJE</text><text x="24" y="88" fill="#0A2038" font-size="46" font-weight="800">4</text><text x="58" y="88" fill="#20A99B" font-size="17" font-weight="800">aktivne</text>
+  </g>
+  <g transform="translate(1200 178)">
+    <rect width="306" height="138" rx="20" fill="#07182D"/><text x="24" y="34" fill="#9DBCD6" font-size="15" font-weight="700">TEHNIČKI STATUS</text><circle cx="39" cy="83" r="14" fill="#2BC7B8"/><path d="M32 83l5 5 9-11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><text x="64" y="91" fill="#fff" font-size="26" font-weight="800">Spremno</text>
+  </g>
+
+  <rect x="330" y="348" width="1176" height="210" rx="22" fill="#fff" stroke="#DDE7F0"/>
+  <text x="356" y="386" fill="#0A2038" font-size="22" font-weight="800">Dnevna kontrola</text>
+  <text x="1352" y="386" fill="#20A99B" font-size="15" font-weight="800">SVE U REDU</text>
+  <line x1="356" y1="410" x2="1480" y2="410" stroke="#E6EDF3"/>
+  <g font-size="16" font-weight="700"><circle cx="372" cy="449" r="11" fill="#E8FBF7"/><path d="M366 449l4 4 8-10" fill="none" stroke="#20A99B" stroke-width="3" stroke-linecap="round"/><text x="397" y="455" fill="#36516A">Arhiva ima minimalno 30 dana čuvanja</text>
+  <circle cx="372" cy="493" r="11" fill="#E8FBF7"/><path d="M366 493l4 4 8-10" fill="none" stroke="#20A99B" stroke-width="3" stroke-linecap="round"/><text x="397" y="499" fill="#36516A">CSV/XML zadnja objava generirana uspješno</text>
+  <circle cx="910" cy="449" r="11" fill="#EAF1FF"/><path d="M904 449l4 4 8-10" fill="none" stroke="#2B6DF7" stroke-width="3" stroke-linecap="round"/><text x="935" y="455" fill="#36516A">SHA-256 provjera integriteta uredna</text>
+  <circle cx="910" cy="493" r="11" fill="#EAF1FF"/><path d="M904 493l4 4 8-10" fill="none" stroke="#2B6DF7" stroke-width="3" stroke-linecap="round"/><text x="935" y="499" fill="#36516A">REST dohvat aktualnih cijena aktivan</text></g>
+
+  <rect x="330" y="588" width="760" height="216" rx="22" fill="#fff" stroke="#DDE7F0"/>
+  <text x="356" y="626" fill="#0A2038" font-size="22" font-weight="800">Posljednje objave</text>
+  <g fill="#607A91" font-size="15" font-weight="600"><text x="356" y="670">Zagreb · proizvodi.csv</text><text x="874" y="670">06:31</text><text x="356" y="711">Rijeka · proizvodi.xml</text><text x="874" y="711">06:31</text><text x="356" y="752">Webshop · proizvodi.csv</text><text x="874" y="752">06:32</text></g>
+  <g fill="#20A99B" font-size="14" font-weight="800"><text x="960" y="670">OBJAVLJENO</text><text x="960" y="711">OBJAVLJENO</text><text x="960" y="752">OBJAVLJENO</text></g>
+
+  <rect x="1122" y="588" width="384" height="216" rx="22" fill="#F7FAFD" stroke="#DDE7F0"/>
+  <text x="1148" y="626" fill="#0A2038" font-size="22" font-weight="800">Brzi pristup</text>
+  <rect x="1148" y="654" width="332" height="46" rx="12" fill="#EAF1FF"/><text x="1170" y="683" fill="#245DCA" font-size="16" font-weight="800">Otvori javne cjenike</text>
+  <rect x="1148" y="716" width="332" height="46" rx="12" fill="#E8FBF7"/><text x="1170" y="745" fill="#148D82" font-size="16" font-weight="800">Provjeri arhivu</text>
+</g>
+</svg>
