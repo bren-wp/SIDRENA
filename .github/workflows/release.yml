@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${VERSION:?Release version was not resolved}"
           STAGE="$RUNNER_TEMP/sidrena"
           rm -rf "$STAGE"
           mkdir -p "$STAGE"
@@ -73,7 +73,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq librsvg2-bin
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${VERSION:?Release version was not resolved}"
           OUT="$RUNNER_TEMP/wporg-assets"
           mkdir -p "$OUT"
           rsvg-convert -w 772 -h 250 .wordpress-org/source/banner.svg > "$OUT/banner-772x250.png"
