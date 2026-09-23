@@ -1,3 +1,10 @@
+= 1.6.2 =
+* Expanded compatibility coverage for WooCommerce Blocks and popular dynamic page-builder price elements.
+* Added safe WP-CLI `wp sidrena fill` with `--dry-run` and `--today`; existing Sidrena values are never overwritten.
+* Added `[sidrena-cijena]` alias and universal `sidrena_cijena()` PHP helper.
+* Standardized storefront ordering so Sidrena anchor price appears before the 30-day reduction reference.
+* Expanded operational CLI status with history, current/public files, archive files and strict-publication mode.
+
 = 1.6.0 =
 * Rebuilt the Sidrena admin interface around the production reference design with separate WordPress submenu screens.
 * Added real price-history dashboard series and recent-change tables from local WooCommerce history.
