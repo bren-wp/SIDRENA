@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RIniE 'cijenaguard|digiadria' . --exclude-dir=.git; then
+          if grep -RIniE 'cijenaguard|digiadria' .             --exclude-dir=.git             --exclude-dir=.github; then
             echo 'Retired branding detected.' >&2
             exit 1
           fi
