@@ -1,5 +1,6 @@
 = 1.6.1 =
 * Added standalone WordPress product catalog when WooCommerce is unavailable.
+* Added additional manual items alongside WooCommerce products, including public cjenik output and per-item shortcodes.
 * Added standalone CSV/XML import by product code with Croatian column aliases.
 * Added native WooCommerce product CSV Import/Export mappings for Sidrena fields.
 * Added cached public HTML pricelist and archive routes plus underscore/hyphen shortcode aliases.
