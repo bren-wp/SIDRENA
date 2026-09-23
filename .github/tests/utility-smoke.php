@@ -56,3 +56,15 @@ sidrena_assert_same(
 );
 
 fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );
+
+
+sidrena_assert_same( 'naziv_proizvoda', Sidrena_Utils::import_header_key( 'NAZIV PROIZVODA' ), 'Croatian CSV header normalization failed.' );
+sidrena_assert_same( 'sidrena_cijena_na_10_09_2026', Sidrena_Utils::import_header_key( 'SIDRENA CIJENA NA 10.09.2026.' ), 'Dated anchor header normalization failed.' );
+
+$quantity = Sidrena_Utils::parse_quantity_with_unit( '750 g' );
+sidrena_assert_same( '750', $quantity['quantity'] ?? '', 'Package quantity parsing failed.' );
+sidrena_assert_same( 'g', $quantity['unit'] ?? '', 'Package unit parsing failed.' );
+
+$unit_price = Sidrena_Utils::calculate_unit_price( '3,75', '750', 'g' );
+sidrena_assert_same( 'kg', $unit_price['unit'] ?? '', 'Base unit calculation failed.' );
+sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculation failed.' );
