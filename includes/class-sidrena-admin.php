@@ -1174,8 +1174,8 @@ final class Sidrena_Admin {
 		}
 		list( $resource, $delimiter, $map ) = $handle;
 		$aliases = array(
-			'sku'             => array( 'sku', 'sifra', 'šifra' ),
-			'anchor_price'    => array( 'anchor_price', 'sidrena_cijena', 'dodatna_cijena', 'sidrena_price' ),
+			'sku'             => array( 'sku', 'sifra', 'šifra', 'sifra_proizvoda', 'šifra proizvoda', 'sifra_artikla' ),
+			'anchor_price'    => array( 'anchor_price', 'sidrena_cijena', 'sidrena cijena', 'dodatna_cijena', 'dodatna cijena', 'sidrena_price' ),
 			'anchor_date'     => array( 'anchor_date', 'datum_sidrene_cijene', 'referentni_datum' ),
 			'reference_group' => array( 'reference_group', 'referentna_skupina', 'skupina' ),
 		);
@@ -1185,15 +1185,26 @@ final class Sidrena_Admin {
 			$this->redirect( 'tools', 'import_failed' );
 		}
 
+		$processed = 0;
+		$updated   = 0;
+		$skipped   = 0;
 		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+			++$processed;
+			if ( $processed > 50000 ) {
+				++$skipped;
+				break;
+			}
 			$sku = isset( $row[ $map['sku'] ] ) ? sanitize_text_field( $row[ $map['sku'] ] ) : '';
 			if ( ! $sku ) {
+				++$skipped;
 				continue;
 			}
 			$product_id = Sidrena_Utils::find_product_id_by_code( $sku );
 			if ( ! $product_id ) {
+				++$skipped;
 				continue;
 			}
+			++$updated;
 			$price = isset( $row[ $map['anchor_price'] ] ) ? Sidrena_Utils::decimal( $row[ $map['anchor_price'] ] ) : '';
 			if ( '' === $price ) {
 				delete_post_meta( $product_id, '_sidrena_anchor_price' );
@@ -1218,7 +1229,12 @@ final class Sidrena_Admin {
 		}
 		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		Sidrena_Pricelist::queue_regeneration();
-		Sidrena_Audit::log( 'anchor_import', 'success', __( 'Uvezen je CSV sidrenih cijena.', 'sidrena' ) );
+		Sidrena_Audit::log(
+			'anchor_import',
+			'success',
+			sprintf( __( 'Uvoz sidrenih cijena: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno.', 'sidrena' ), $processed, $updated, $skipped ),
+			array( 'processed' => $processed, 'updated' => $updated, 'skipped' => $skipped )
+		);
 		$this->redirect( 'tools', 'imported' );
 	}
 
@@ -1233,9 +1249,9 @@ final class Sidrena_Admin {
 		}
 		list( $resource, $delimiter, $map ) = $handle;
 		$aliases = array(
-			'location_id'  => array( 'location_id', 'lokacija', 'id_lokacije' ),
+			'location_id'  => array( 'location_id', 'lokacija', 'id_lokacije', 'id lokacije', 'oznaka_lokacije' ),
 			'product_id'   => array( 'product_id', 'id_proizvoda' ),
-			'sku'          => array( 'sku', 'sifra', 'šifra' ),
+			'sku'          => array( 'sku', 'sifra', 'šifra', 'sifra_proizvoda', 'šifra proizvoda', 'sifra_artikla' ),
 			'price'        => array( 'price', 'cijena', 'maloprodajna_cijena' ),
 			'anchor_price' => array( 'anchor_price', 'sidrena_cijena', 'dodatna_cijena' ),
 			'availability' => array( 'availability', 'dostupnost', 'raspolozivost', 'raspoloživost' ),
@@ -1249,9 +1265,18 @@ final class Sidrena_Admin {
 		foreach ( Sidrena_Utils::locations() as $location ) {
 			$valid_locations[ Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) ] = true;
 		}
+		$processed = 0;
+		$updated   = 0;
+		$skipped   = 0;
 		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+			++$processed;
+			if ( $processed > 50000 ) {
+				++$skipped;
+				break;
+			}
 			$location_id = Sidrena_Utils::sanitize_location_id( $row[ $map['location_id'] ] ?? '' );
 			if ( ! isset( $valid_locations[ $location_id ] ) ) {
+				++$skipped;
 				continue;
 			}
 			$product_id = 0;
@@ -1266,11 +1291,13 @@ final class Sidrena_Admin {
 			}
 			$product = $product_id ? wc_get_product( $product_id ) : false;
 			if ( ! $product ) {
+				++$skipped;
 				continue;
 			}
 			$availability = sanitize_key( remove_accents( (string) ( $row[ $map['availability'] ] ?? '' ) ) );
 			$availability = 'dostupno' === $availability ? 'dostupno' : ( 'nedostupno' === $availability ? 'nedostupno' : '' );
 			if ( '' === $availability ) {
+				++$skipped;
 				continue;
 			}
 			$price        = isset( $map['price'] ) ? Sidrena_Utils::decimal( $row[ $map['price'] ] ?? '' ) : '';
@@ -1278,10 +1305,16 @@ final class Sidrena_Admin {
 			$parent_id    = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
 			$variation_id = $product->is_type( 'variation' ) ? $product->get_id() : 0;
 			Sidrena_Location_Data::upsert( $location_id, $parent_id, $variation_id, $price, $availability, $anchor_price );
+			++$updated;
 		}
 		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		Sidrena_Pricelist::queue_regeneration();
-		Sidrena_Audit::log( 'location_import', 'success', __( 'Uvezen je CSV lokacijskih cijena i raspoloživosti.', 'sidrena' ) );
+		Sidrena_Audit::log(
+			'location_import',
+			'success',
+			sprintf( __( 'Uvoz lokacijskih podataka: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno.', 'sidrena' ), $processed, $updated, $skipped ),
+			array( 'processed' => $processed, 'updated' => $updated, 'skipped' => $skipped )
+		);
 		$this->redirect( 'tools', 'location_imported' );
 	}
 
@@ -1301,7 +1334,7 @@ final class Sidrena_Admin {
 			return new WP_Error( 'upload_extension' );
 		}
 		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		if ( false === $contents || '' === $contents ) {
+		if ( false === $contents || '' === $contents || false !== strpos( $contents, "\0" ) ) {
 			return new WP_Error( 'upload_empty' );
 		}
 		$contents = Sidrena_Utils::normalize_text_encoding( $contents );
@@ -1327,7 +1360,12 @@ final class Sidrena_Admin {
 			return new WP_Error( 'upload_header' );
 		}
 		$head[0] = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
-		$head    = array_map( 'sanitize_key', $head );
+		$head    = array_map( array( 'Sidrena_Utils', 'import_header_key' ), $head );
+		$nonempty = array_values( array_filter( $head ) );
+		if ( count( $nonempty ) !== count( array_unique( $nonempty ) ) ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'upload_duplicate_headers' );
+		}
 		return array( $resource, $delimiter, array_flip( $head ) );
 	}
 
@@ -1337,10 +1375,18 @@ final class Sidrena_Admin {
 				continue;
 			}
 			foreach ( $names as $name ) {
-				$key = sanitize_key( $name );
+				$key = Sidrena_Utils::import_header_key( $name );
 				if ( isset( $map[ $key ] ) ) {
 					$map[ $canonical ] = $map[ $key ];
 					break;
+				}
+			}
+			if ( 'anchor_price' === $canonical && ! isset( $map[ $canonical ] ) ) {
+				foreach ( $map as $header => $index ) {
+					if ( 0 === strpos( (string) $header, 'sidrena_cijena_na_' ) ) {
+						$map[ $canonical ] = $index;
+						break;
+					}
 				}
 			}
 		}
