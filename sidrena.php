@@ -3,7 +3,7 @@
  * Plugin Name: Sidrena
  * Plugin URI: https://sidrena-cijena.com.hr/
  * Description: Sidrene cijene, WooCommerce i usluge s javnim CSV/XML cjenicima, arhivom 30+ dana i poviješću cijena.
- * Version: 1.5.0
+ * Version: 1.5.1
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Brendigo
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SIDRENA_VERSION', '1.5.0' );
+define( 'SIDRENA_VERSION', '1.5.1' );
 define( 'SIDRENA_RULESET', 'NN 101/2026 · MINGO 22.09.2026' );
 define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );
 define( 'SIDRENA_FILE', __FILE__ );
@@ -50,7 +50,7 @@ register_deactivation_hook( __FILE__, array( 'Sidrena_Activator', 'deactivate' )
 add_action(
 	'before_woocommerce_init',
 	static function () {
-		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}
 	}

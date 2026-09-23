@@ -51,9 +51,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'Version: 1.5.0' sidrena.php
-          grep -q "define( 'SIDRENA_VERSION', '1.5.0' );" sidrena.php
-          grep -q 'Stable tag: 1.5.0' readme.txt
+          HEADER_VERSION="$(sed -n 's/^ \* Version: //p' sidrena.php | head -n1)"
+          CONSTANT_VERSION="$(sed -n "s/^define( 'SIDRENA_VERSION', '\([^']*\)' );$/\1/p" sidrena.php | head -n1)"
+          STABLE_TAG="$(sed -n 's/^Stable tag: //p' readme.txt | head -n1)"
+          test -n "$HEADER_VERSION"
+          test "$HEADER_VERSION" = "$CONSTANT_VERSION"
+          test "$HEADER_VERSION" = "$STABLE_TAG"
           grep -q 'Author: Brendigo' sidrena.php
           grep -q 'Author URI: https://brendigo.com/' sidrena.php
           grep -q 'Plugin URI: https://sidrena-cijena.com.hr/' sidrena.php
@@ -77,7 +80,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RIniE 'cijenaguard|digiadria' .             --exclude-dir=.git             --exclude-dir=.github; then
+          if grep -RIniE 'cijenaguard|digiadria' . \
+            --exclude-dir=.git \
+            --exclude-dir=.github; then
             echo 'Retired branding detected.' >&2
             exit 1
           fi
