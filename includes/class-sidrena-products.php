@@ -621,6 +621,7 @@ final class Sidrena_Products {
 			$display_price = wc_get_price_to_display( $product, array( 'price' => (float) $anchor ) );
 		}
 		$display_price = apply_filters( 'sidrena_anchor_price_to_display', $display_price, $product, $anchor );
+		$display_price = apply_filters( 'sidrena_cijena_price_to_display', $display_price, $product, $anchor );
 		$date          = Sidrena_Utils::current_reference_date( $id );
 		$label         = Sidrena_Utils::anchor_label( $date );
 		$tooltip       = Sidrena_Utils::anchor_tooltip();
@@ -652,7 +653,9 @@ final class Sidrena_Products {
 			$display = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$values[] = (float) apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}
 
