@@ -366,7 +366,8 @@ final class Sidrena_Admin {
 				<circle class="sid-chart-point" cx="<?php echo esc_attr( $xy[0] ); ?>" cy="<?php echo esc_attr( $xy[1] ); ?>" r="3.5"></circle>
 			<?php endforeach; ?>
 		</svg>
-		<div class="sid-chart-axis"><span><?php echo esc_html( wp_date( 'd.m.', strtotime( $points[0]['recorded_at'] ) ) ); ?></span><span><?php esc_html_e( '30 dana', 'sidrena' ); ?></span><span><?php echo esc_html( wp_date( 'd.m.', strtotime( end( $points )['recorded_at'] ) ) ); ?></span></div>
+		<?php $last_point = end( $points ); ?>
+		<div class="sid-chart-axis"><span><?php echo esc_html( wp_date( 'd.m.', strtotime( $points[0]['recorded_at'] ) ) ); ?></span><span><?php esc_html_e( '30 dana', 'sidrena' ); ?></span><span><?php echo esc_html( wp_date( 'd.m.', strtotime( $last_point['recorded_at'] ) ) ); ?></span></div>
 		<?php
 	}
 
@@ -595,6 +596,7 @@ final class Sidrena_Admin {
 			array( ! $missing_address, __( 'Sve aktivne lokacije imaju adresu za naziv datoteke', 'sidrena' ), __( 'Dopunite adresu u kartici Lokacije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_anchor'], __( 'WooCommerce stavke imaju sidrenu cijenu', 'sidrena' ), __( 'Izvezite popis nedostajućih i dopunite povijesne vrijednosti.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_brand'], __( 'WooCommerce stavke imaju podatak o marki za digitalni cjenik', 'sidrena' ), __( 'Dopunite marku kroz WooCommerce Brands, atribut pa_brand ili Sidrena polje Marka.', 'sidrena' ) ),
+			array( ! $needs_products || 0 === $stats['missing_barcode'], __( 'WooCommerce stavke imaju barkod za digitalni cjenik', 'sidrena' ), __( 'Dopunite WooCommerce Global Unique ID ili Sidrena polje Barkod iz vjerodostojne poslovne evidencije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['unit_price_review'], __( 'Primjenjivost cijene za jedinicu mjere pregledana je za proizvode', 'sidrena' ), __( 'U Katalogu/WooCommerce proizvodima označite je li jedinična cijena obvezna, nije primjenjiva ili postoji propisana iznimka prema NN 105/2026.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['unit_price_missing'], __( 'Stavke za koje je jedinična cijena obvezna imaju jedinicu i iznos', 'sidrena' ), __( 'Dopunite jedinicu mjere i cijenu za jedinicu mjere za označene proizvode/varijacije.', 'sidrena' ) ),
 			array( 0 === $stats['missing_service_anchor'], __( 'Objavljene usluge imaju sidrenu cijenu', 'sidrena' ), __( 'Dopunite usluge kojima nedostaje referentna cijena.', 'sidrena' ) ),
@@ -1454,6 +1456,7 @@ final class Sidrena_Admin {
 		$active_sales              = 0;
 		$perishable_expiry_missing = 0;
 		$missing_brand             = 0;
+		$missing_barcode           = 0;
 		$unit_price_review         = 0;
 		$unit_price_missing        = 0;
 		foreach ( $this->catalog_items() as $item ) {
@@ -1464,6 +1467,9 @@ final class Sidrena_Admin {
 			$brand_product = $item->is_type( 'variation' ) ? wc_get_product( $item->get_parent_id() ) : $item;
 			if ( ! trim( (string) Sidrena_Utils::get_brand( $brand_product ) ) ) {
 				++$missing_brand;
+			}
+			if ( ! trim( (string) Sidrena_Utils::get_barcode( $item ) ) ) {
+				++$missing_barcode;
 			}
 			$unit_status = sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $item, '_sidrena_unit_price_status', 'review' ) );
 			if ( ! $unit_status || 'review' === $unit_status ) {
@@ -1508,7 +1514,7 @@ final class Sidrena_Admin {
 			}
 		}
 		$settings = Sidrena_Utils::settings();
-		$issues   = $missing + $missing_brand + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
+		$issues   = $missing + $missing_brand + $missing_barcode + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
 		if ( ( in_array( $settings['business_mode'], array( 'products', 'mixed' ), true ) && ! Sidrena_Utils::is_woocommerce_active() ) || ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) ) {
 			++$issues;
 		}
@@ -1519,6 +1525,7 @@ final class Sidrena_Admin {
 			'products'               => $products,
 			'missing_anchor'         => $missing,
 			'missing_brand'          => $missing_brand,
+			'missing_barcode'        => $missing_barcode,
 			'unit_price_review'      => $unit_price_review,
 			'unit_price_missing'     => $unit_price_missing,
 			'services'               => $services,
