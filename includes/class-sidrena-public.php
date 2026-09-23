@@ -187,13 +187,13 @@ final class Sidrena_Public {
 							$availability = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
 							$search = implode( ' ', array( $name, $code, $brand, $barcode, $availability, $unit ) );
 							?>
-							<tr data-sidrena-row data-search="<?php echo esc_attr( remove_accents( strtolower( wp_strip_all_tags( $search ) ) ) ); ?>">
+							<tr data-sidrena-row data-search="<?php echo esc_attr( strtolower( remove_accents( wp_strip_all_tags( $search ) ) ) ); ?>">
 								<td data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
-								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( Sidrena_Utils::money( $current ) . ' ' . $currency ) : '—'; ?></strong></td>
-								<td data-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>"><?php echo '' !== $anchor ? esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) : '—'; ?></td>
-								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ?: '—' ); ?><?php if ( '' !== $unit_price ) : ?><small><?php echo esc_html( Sidrena_Utils::money( $unit_price, 4 ) . ' ' . $currency ); ?></small><?php endif; ?></td>
+								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong></td>
+								<td data-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>"><?php echo '' !== $anchor ? esc_html( (string) $anchor . ' ' . $currency ) : '—'; ?></td>
+								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ?: '—' ); ?><?php if ( '' !== $unit_price ) : ?><small><?php echo esc_html( (string) $unit_price . ' ' . $currency ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Barkod', 'sidrena' ); ?>"><?php echo esc_html( $barcode ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Dostupnost', 'sidrena' ); ?>"><span class="sidrena-availability sidrena-availability--<?php echo esc_attr( sanitize_html_class( remove_accents( strtolower( (string) $availability ) ) ) ); ?>"><?php echo esc_html( $availability ?: '—' ); ?></span></td>
 							</tr>
