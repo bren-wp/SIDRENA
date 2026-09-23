@@ -269,7 +269,17 @@ final class Sidrena_Utils {
 		if ( '' === $header ) {
 			return '';
 		}
-		$header = remove_accents( $header );
+		if ( function_exists( 'remove_accents' ) ) {
+			$header = remove_accents( $header );
+		} else {
+			$header = strtr(
+				$header,
+				array(
+					'č' => 'c', 'ć' => 'c', 'đ' => 'd', 'š' => 's', 'ž' => 'z',
+					'Č' => 'C', 'Ć' => 'C', 'Đ' => 'D', 'Š' => 'S', 'Ž' => 'Z',
+				)
+			);
+		}
 		$header = function_exists( 'mb_strtolower' ) ? mb_strtolower( $header, 'UTF-8' ) : strtolower( $header );
 		$header = preg_replace( '/[^a-z0-9]+/', '_', $header );
 		return trim( (string) $header, '_' );

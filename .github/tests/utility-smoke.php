@@ -55,7 +55,7 @@ sidrena_assert_same(
 	'Pricelist filename format changed unexpectedly.'
 );
 
-fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );
+
 
 
 sidrena_assert_same( 'naziv_proizvoda', Sidrena_Utils::import_header_key( 'NAZIV PROIZVODA' ), 'Croatian CSV header normalization failed.' );
@@ -68,3 +68,5 @@ sidrena_assert_same( 'g', $quantity['unit'] ?? '', 'Package unit parsing failed.
 $unit_price = Sidrena_Utils::calculate_unit_price( '3,75', '750', 'g' );
 sidrena_assert_same( 'kg', $unit_price['unit'] ?? '', 'Base unit calculation failed.' );
 sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculation failed.' );
+
+fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );
