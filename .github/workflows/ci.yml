@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   validate:
-    name: PHP \${{ matrix.php }} validation
+    name: PHP ${{ matrix.php }} validation
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: \${{ matrix.php }}
+          php-version: ${{ matrix.php }}
           coverage: none
 
       - name: PHP syntax
