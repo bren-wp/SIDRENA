@@ -11,6 +11,8 @@ final class Sidrena_Utils {
 			'display_lowest_30'    => 'yes',
 			'label_mode'           => 'date_only',
 			'label_custom'         => 'Cijena na %s',
+			'anchor_tooltip_enabled' => 'yes',
+			'anchor_tooltip_text'    => 'Sidrena cijena prikazuje referentnu cijenu evidentiranu za mjerodavni datum.',
 			'default_ref_date'     => '2026-09-10',
 			'fmcg_ref_date'        => '2025-05-02',
 			'generate_csv'         => 'yes',
@@ -158,11 +160,48 @@ final class Sidrena_Utils {
 			);
 		}
 
-		$template = trim( (string) $settings['label_custom'] );
+		$template = self::translate_user_string( trim( (string) $settings['label_custom'] ), 'label_custom' );
 		if ( false === strpos( $template, '%s' ) ) {
 			$template .= ' %s';
 		}
 		return sprintf( $template, $display );
+	}
+
+	public static function anchor_tooltip() {
+		$settings = self::settings();
+		if ( 'yes' !== $settings['anchor_tooltip_enabled'] ) {
+			return '';
+		}
+		return self::translate_user_string( trim( (string) $settings['anchor_tooltip_text'] ), 'anchor_tooltip_text' );
+	}
+
+	public static function register_translation_strings() {
+		$settings = self::settings();
+		$strings  = array(
+			'label_custom'        => (string) $settings['label_custom'],
+			'anchor_tooltip_text' => (string) $settings['anchor_tooltip_text'],
+		);
+
+		foreach ( $strings as $name => $value ) {
+			if ( '' === trim( $value ) ) {
+				continue;
+			}
+			if ( function_exists( 'pll_register_string' ) ) {
+				pll_register_string( 'Sidrena ' . $name, $value, 'Sidrena', false );
+			}
+			do_action( 'wpml_register_single_string', 'Sidrena', $name, $value );
+		}
+	}
+
+	public static function translate_user_string( $value, $name ) {
+		$value = (string) $value;
+		if ( '' === $value ) {
+			return '';
+		}
+		if ( function_exists( 'pll__' ) ) {
+			$value = pll__( $value );
+		}
+		return (string) apply_filters( 'wpml_translate_single_string', $value, 'Sidrena', $name );
 	}
 
 	public static function upload_paths() {
