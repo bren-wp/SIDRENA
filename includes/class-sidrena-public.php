@@ -27,7 +27,18 @@ final class Sidrena_Public {
 	}
 
 	public function register_rewrites() {
-		add_rewrite_rule( '^sidrena-cjenik/?
+		add_rewrite_rule( '^sidrena-cjenik/?$', 'index.php?sidrena_public=cjenik', 'top' );
+		add_rewrite_rule( '^arhiva-sidrene-cijene/?$', 'index.php?sidrena_public=arhiva', 'top' );
+	}
+
+	public function maybe_flush_rewrites() {
+		if ( (string) get_option( 'sidrena_rewrite_version', '' ) === SIDRENA_VERSION ) {
+			return;
+		}
+		flush_rewrite_rules( false );
+		update_option( 'sidrena_rewrite_version', SIDRENA_VERSION, false );
+	}
+
 	public function query_vars( $vars ) {
 		$vars[] = 'sidrena_public';
 		return $vars;
