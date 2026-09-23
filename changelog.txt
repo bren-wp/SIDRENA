@@ -1,3 +1,13 @@
+= 1.6.0 =
+* Rebuilt the Sidrena admin interface around the production reference design with separate WordPress submenu screens.
+* Added real price-history dashboard series and recent-change tables from local WooCommerce history.
+* Added an optional, non-intrusive donation link inside Sidrena only; no feature is gated by donations.
+* Added explicit unit-price applicability workflow and readiness checks for NN 105/2026.
+* Added service component/replacement-goods information and machine-readable export field.
+* Added new local Sidrena logo, admin hero and WordPress.org visual source set.
+* Improved legal/technical notes and removed development-only material from release packaging.
+* Kept Sidrena fully free, local, GPL-compatible and telemetry-free.
+
 = 1.5.1 =
 * Fixed CI retired-brand validation so the guard does not match its own workflow definition.
 * Made CI version validation compare the plugin header, SIDRENA_VERSION constant and WordPress.org Stable tag automatically.
