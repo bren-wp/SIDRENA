@@ -39,6 +39,7 @@ final class Sidrena_Products {
 			'_sidrena_reference_group'               => 'string',
 			'_sidrena_brand'                         => 'string',
 			'_sidrena_code'                          => 'string',
+			'_sidrena_barcode'                       => 'string',
 			'_sidrena_unit'                          => 'string',
 			'_sidrena_unit_price'                    => 'number',
 			'_sidrena_unit_price_status'             => 'string',
@@ -155,6 +156,14 @@ final class Sidrena_Products {
 		);
 		woocommerce_wp_text_input(
 			array(
+				'id'          => '_sidrena_barcode',
+				'label'       => __( 'Barkod za cjenik', 'sidrena' ),
+				'description' => __( 'Koristi se kada WooCommerce Global Unique ID / barkod nije dostupan. Unesite stvarni barkod iz poslovne evidencije.', 'sidrena' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
 				'id'          => '_sidrena_brand',
 				'label'       => __( 'Marka za cjenik', 'sidrena' ),
 				'description' => __( 'Koristi se ako marka nije dostupna kroz WooCommerce Brands ili atribut pa_brand.', 'sidrena' ),
@@ -209,6 +218,15 @@ final class Sidrena_Products {
 				'name'          => "_sidrena_code[{$loop}]",
 				'value'         => get_post_meta( $variation_id, '_sidrena_code', true ),
 				'label'         => __( 'Šifra za cjenik (ako nema SKU-a)', 'sidrena' ),
+				'wrapper_class' => 'form-row form-row-wide',
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'            => "_sidrena_barcode_{$loop}",
+				'name'          => "_sidrena_barcode[{$loop}]",
+				'value'         => get_post_meta( $variation_id, '_sidrena_barcode', true ),
+				'label'         => __( 'Barkod za cjenik', 'sidrena' ),
 				'wrapper_class' => 'form-row form-row-wide',
 			)
 		);
@@ -336,6 +354,7 @@ final class Sidrena_Products {
 			'_sidrena_reference_group'          => 'key',
 			'_sidrena_brand'                    => 'text',
 			'_sidrena_code'                     => 'text',
+			'_sidrena_barcode'                  => 'text',
 			'_sidrena_unit'                     => 'text',
 			'_sidrena_unit_price'               => 'decimal',
 			'_sidrena_unit_price_status'        => 'unit_status',
@@ -362,6 +381,7 @@ final class Sidrena_Products {
 	public function save_variation( $variation_id, $loop ) {
 		$fields = array(
 			'_sidrena_code'                     => 'text',
+			'_sidrena_barcode'                  => 'text',
 			'_sidrena_anchor_price'             => 'decimal',
 			'_sidrena_anchor_date'              => 'date',
 			'_sidrena_reference_group'          => 'key',
