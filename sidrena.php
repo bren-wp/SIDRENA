@@ -37,6 +37,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-service-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-location-data.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-location-history.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-standalone.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-woo-import-export.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-compatibility.php';
