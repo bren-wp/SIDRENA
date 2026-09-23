@@ -19,6 +19,7 @@ final class Sidrena_Plugin {
 		Sidrena_History::instance()->hooks();
 		Sidrena_Service_History::instance()->hooks();
 		Sidrena_Location_History::instance()->hooks();
+		Sidrena_Standalone::instance()->hooks();
 		Sidrena_Products::instance()->hooks();
 		Sidrena_Woo_Import_Export::instance()->hooks();
 		Sidrena_Compatibility::instance()->hooks();
