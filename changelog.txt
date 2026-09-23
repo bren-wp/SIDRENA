@@ -1,3 +1,9 @@
+= 1.5.1 =
+* Fixed CI retired-brand validation so the guard does not match its own workflow definition.
+* Made CI version validation compare the plugin header, SIDRENA_VERSION constant and WordPress.org Stable tag automatically.
+* Added tag-driven GitHub release packaging with an installable Sidrena ZIP and SHA-256 checksum.
+* Kept the plugin fully free, Brendigo-branded and WordPress.org-ready.
+
 = 1.5.0 =
 * Added WooCommerce bulk catalog editor for Sidrena fields.
 * Added local audit log with 400-day technical retention.
