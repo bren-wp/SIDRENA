@@ -65,6 +65,7 @@ jobs:
           test -n "$HEADER_VERSION"
           test "$HEADER_VERSION" = "$CONSTANT_VERSION"
           test "$HEADER_VERSION" = "$STABLE_TAG"
+          grep -Fq "\"Project-Id-Version: Sidrena ${HEADER_VERSION}\\n\"" languages/sidrena.pot
           grep -q 'Author: Brendigo' sidrena.php
           grep -q 'Author URI: https://brendigo.com/' sidrena.php
           grep -q 'Plugin URI: https://sidrene-cijene.com.hr/' sidrena.php
@@ -176,5 +177,16 @@ jobs:
             --include='*.php' --include='*.js' --include='*.css' --include='readme.txt' . \
             --exclude-dir=.git --exclude-dir=.github; then
             echo 'Debug or unfinished-code marker detected in production files.' >&2
+            exit 1
+          fi
+
+      - name: Secret-material guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}' . \
+            --exclude-dir=.git --exclude-dir=.github; then
+            echo 'Potential secret material detected in production files.' >&2
             exit 1
           fi

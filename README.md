@@ -12,7 +12,7 @@
 
 ## Sidrene cijene pod kontrolom
 
-**Sidrena 1.6.2** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+**Sidrena 1.6.3** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
 
 **Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
 
