@@ -442,6 +442,10 @@ final class Sidrena_Pricelist {
 			}
 			++$page;
 		} while ( count( $products ) === 100 );
+
+		foreach ( Sidrena_Standalone::rows( $location ) as $row ) {
+			yield $row;
+		}
 	}
 
 	private function product_row( $product, $location ) {
