@@ -1576,7 +1576,21 @@ final class Sidrena_Admin {
 	}
 
 	private function redirect( $tab, $notice ) {
-		$url = add_query_arg( array( 'page' => 'sidrena', 'tab' => sanitize_key( $tab ), 'sid_notice' => sanitize_key( $notice ) ), admin_url( 'admin.php' ) );
+		$pages = array(
+			'dashboard'  => 'sidrena',
+			'compliance' => 'sidrena-compliance',
+			'catalog'    => 'sidrena-catalog',
+			'files'      => 'sidrena-files',
+			'archive'    => 'sidrena-archive',
+			'locations'  => 'sidrena-locations',
+			'settings'   => 'sidrena-settings',
+			'tools'      => 'sidrena-tools',
+			'log'        => 'sidrena-log',
+			'rules'      => 'sidrena-rules',
+		);
+		$tab  = sanitize_key( $tab );
+		$page = isset( $pages[ $tab ] ) ? $pages[ $tab ] : 'sidrena';
+		$url  = add_query_arg( array( 'page' => $page, 'sid_notice' => sanitize_key( $notice ) ), admin_url( 'admin.php' ) );
 		wp_safe_redirect( $url );
 		exit;
 	}
