@@ -947,3 +947,34 @@ body[class*="sidrena_page_sidrena-"] {
 		justify-content: center;
 	}
 }
+
+
+/* 1.6.4 final state and motion accessibility. */
+.sid-code-row.is-disabled {
+	opacity: .62;
+	background: #f7f9fc;
+}
+
+.sid-code-row > span small {
+	display: block;
+	margin-top: 3px;
+	font-size: 10px;
+	font-weight: 650;
+	color: var(--sid160-muted);
+}
+
+.sid-table-wrap {
+	overscroll-behavior-inline: contain;
+	scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidrena-160 *,
+	.sidrena-160 *::before,
+	.sidrena-160 *::after {
+		scroll-behavior: auto !important;
+		transition-duration: .01ms !important;
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
