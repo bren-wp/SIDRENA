@@ -12,7 +12,7 @@
 
 ## Sidrene cijene pod kontrolom
 
-**Sidrena 1.6** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+**Sidrena 1.6.2** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
 
 **Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
 
@@ -51,6 +51,26 @@ U samom Sidrena panelu postoji diskretan **“Podržite razvoj Sidrene”** blok
 - **SHA-256 integritet** — provjera arhiviranih datoteka.
 - **Bulk katalog, Site Health, audit dnevnik i WP-CLI** — alati za ozbiljnije produkcijske instalacije.
 - **Sve lokalno** — nema udaljene aktivacije, telemetrije ni vanjskog runtime koda.
+
+## Kompatibilnost prikaza cijene
+
+Sidrena koristi standardni WooCommerce `woocommerce_get_price_html` filter, WooCommerce block rendering, builder-specific filtre i lokalni JS fallback za dinamičke price widgete. Time pokriva tipične prikaze cijene u Elementor/JetWooBuilder/ShopEngine, Divi, Oxygen, Bricks, Beaver Builder, Breakdance, Brizy, Avada/Fusion, Woodmart/Flatsome, WPBakery i WooCommerce Blocks.
+
+Za potpuno custom predloške dostupni su:
+
+- `[sidrena-cijena id="123"]`
+- `[sidrena_cijena id="123"]`
+- `do_action( 'sidrena_cijena' )`
+- `sidrena_cijena( 123 )`
+
+## WP-CLI za velike kataloge
+
+- `wp sidrena fill --dry-run` — samo izračuna koliko bi praznih Sidrena cijena bilo popunjeno.
+- `wp sidrena fill` — kopira WooCommerce redovnu cijenu samo u prazna Sidrena polja.
+- `wp sidrena fill --today` — isto, uz današnji prilagođeni referentni datum kada ga proizvod nema.
+- `wp sidrena generate`, `wp sidrena status` i `wp sidrena audit` ostaju dostupni za produkcijsku automatizaciju i dijagnostiku.
+
+Postojeće Sidrena cijene se ovim postupkom ne prepisuju.
 
 ## Jedinična cijena — NN 105/2026
 
