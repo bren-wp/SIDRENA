@@ -214,6 +214,9 @@ final class Sidrena_REST {
 
 		$items = array();
 		foreach ( is_object( $result ) && isset( $result->products ) ? $result->products : array() as $product ) {
+			if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
+				continue;
+			}
 			if ( $product->is_type( 'variable' ) ) {
 				foreach ( $product->get_children() as $variation_id ) {
 					$variation = wc_get_product( $variation_id );
