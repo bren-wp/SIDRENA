@@ -30,14 +30,9 @@ sidrena_assert_same( "'=HYPERLINK(\"https://example.test\")", Sidrena_Utils::csv
 sidrena_assert_same( "' \t=1+1", Sidrena_Utils::csv_safe_cell( " \t=1+1" ), 'Whitespace-prefixed formula must be neutralized.' );
 sidrena_assert_same( '-12,50', Sidrena_Utils::csv_safe_cell( '-12,50' ), 'Negative numeric values must stay numeric.' );
 
-if ( ! function_exists( 'iconv' ) ) {
-	fwrite( STDERR, "iconv is required by this CI fixture.\n" );
-	exit( 1 );
-}
-
 $croatian = 'Željko Šarić, Čakovec';
-$cp1250   = iconv( 'UTF-8', 'Windows-1250//IGNORE', $croatian );
-$iso88592 = iconv( 'UTF-8', 'ISO-8859-2//IGNORE', $croatian );
+$cp1250   = "\x8Eeljko \x8Aari\xE6, \xC8akovec";
+$iso88592 = "\xAEeljko \xA9ari\xE6, \xC8akovec";
 sidrena_assert_same( $croatian, Sidrena_Utils::normalize_text_encoding( $cp1250 ), 'Windows-1250 conversion failed.' );
 sidrena_assert_same( $croatian, Sidrena_Utils::normalize_text_encoding( $iso88592 ), 'ISO-8859-2 conversion failed.' );
 

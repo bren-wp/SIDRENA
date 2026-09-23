@@ -287,16 +287,20 @@ final class Sidrena_Utils {
 			$encodings = array( 'Windows-1250', 'ISO-8859-2' );
 		}
 
+		$source_questions = substr_count( $contents, '?' );
 		foreach ( $encodings as $encoding ) {
+			$converted = false;
 			if ( function_exists( 'mb_convert_encoding' ) ) {
 				$converted = @mb_convert_encoding( $contents, 'UTF-8', $encoding ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			} elseif ( function_exists( 'iconv' ) ) {
-				$converted = @iconv( $encoding, 'UTF-8//IGNORE', $contents ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			} else {
-				$converted = false;
+				if ( is_string( $converted ) && 1 === preg_match( '//u', $converted ) && false === strpos( $converted, "\xEF\xBF\xBD" ) && substr_count( $converted, '?' ) <= $source_questions ) {
+					return $converted;
+				}
 			}
-			if ( is_string( $converted ) && 1 === preg_match( '//u', $converted ) ) {
-				return $converted;
+			if ( function_exists( 'iconv' ) ) {
+				$converted = @iconv( $encoding, 'UTF-8//IGNORE', $contents ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				if ( is_string( $converted ) && 1 === preg_match( '//u', $converted ) && false === strpos( $converted, "\xEF\xBF\xBD" ) && substr_count( $converted, '?' ) <= $source_questions ) {
+					return $converted;
+				}
 			}
 		}
 		return wp_check_invalid_utf8( $contents, true );
