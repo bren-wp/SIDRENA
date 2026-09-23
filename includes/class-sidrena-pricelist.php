@@ -423,6 +423,9 @@ final class Sidrena_Pricelist {
 			$products = $query->get_products();
 
 			foreach ( $products as $product ) {
+				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
+					continue;
+				}
 				if ( $product->is_type( 'variable' ) ) {
 					foreach ( $product->get_children() as $variation_id ) {
 						$variation = wc_get_product( $variation_id );
