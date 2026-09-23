@@ -141,3 +141,46 @@
 		font-weight: 650;
 	}
 }
+
+
+.sidrena-anchor--has-tooltip {
+	position: relative;
+	cursor: help;
+	outline: none;
+}
+
+.sidrena-anchor__tooltip {
+	position: absolute;
+	z-index: 9999;
+	left: 0;
+	bottom: calc(100% + 8px);
+	width: min(320px, 78vw);
+	padding: .65rem .75rem;
+	border-radius: 9px;
+	background: #082d4f;
+	color: #fff;
+	font-size: 12px;
+	line-height: 1.45;
+	font-weight: 400;
+	box-shadow: 0 10px 28px rgba(0, 24, 47, .2);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(4px);
+	transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+	pointer-events: none;
+	white-space: normal;
+}
+
+.sidrena-anchor--has-tooltip:hover .sidrena-anchor__tooltip,
+.sidrena-anchor--has-tooltip:focus .sidrena-anchor__tooltip,
+.sidrena-anchor--has-tooltip:focus-within .sidrena-anchor__tooltip {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidrena-anchor__tooltip {
+		transition: none;
+	}
+}
