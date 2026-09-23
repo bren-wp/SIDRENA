@@ -247,7 +247,7 @@ final class Sidrena_Pricelist {
 		if ( '' === trim( (string) ( $row['maloprodajna_cijena'] ?? '' ) ) ) {
 			$issues[] = sprintf( __( '%s: nedostaje maloprodajna cijena', 'sidrena' ), $label );
 		}
-		if ( '' === trim( (string) ( $row['sidrena_cijena'] ?? '' ) ) {
+		if ( '' === trim( (string) ( $row['sidrena_cijena'] ?? '' ) ) ) {
 			$issues[] = sprintf( __( '%s: nedostaje sidrena cijena', 'sidrena' ), $label );
 		}
 		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
