@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,7 +72,7 @@ Dodatne tehničke bilješke nalaze se u `docs/legal-and-technical-notes.md`, a s
 == Installation ==
 
 1. Otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-2. Prenesite `sidrena-1.5.0.zip`, instalirajte i aktivirajte.
+2. Prenesite `sidrena-1.5.1.zip`, instalirajte i aktivirajte.
 3. Otvorite glavni izbornik **Sidrena**.
 4. Odaberite proizvode, usluge ili mješoviti način rada.
 5. Dodajte svaku fizičku lokaciju i zaseban webshop ako postoji.
