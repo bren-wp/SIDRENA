@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 Donate link: https://sidrena-cijena.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,9 +41,27 @@ Sidrena tehnički podržava evidenciju, prikaz i objavu podataka prema službeni
 * Samostalni Sidrena izbornik s odvojenim stranicama umjesto dvostrukih navigacija.
 * Nema vanjskih runtime biblioteka, CDN-a, telemetrije, licence ili paywalla.
 
+= Novo u 1.6.1 =
+
+* Radi s WooCommerceom ili kao samostalni WordPress katalog proizvoda.
+* Samostalni katalog podržava CSV/XML uvoz po šifri.
+* WooCommerce standardni CSV Import/Export dobiva Sidrena polja.
+* Javni pretraživi HTML cjenik: /sidrena-cjenik/ i [sidrena_cjenik] / [sidrena-cjenik].
+* Javna arhiva: /arhiva-sidrene-cijene/ i [sidrena_arhiva] / [sidrena-arhiva].
+* HTML cjenik koristi spremljeni snapshot, bez prolaska kroz cijeli katalog pri svakom posjetu.
+* Ako snapshot nedostaje, vraća se pripremna poruka/503 i zakazuje jedna pozadinska obnova.
+* Stroga provjera može spriječiti da nepotpuna nova objava zamijeni zadnji valjani cjenik.
+* Admin upozorava na zastarjelo generiranje i objašnjava WP-Cron / server-cron režim.
+* CSV import normalizira UTF-8, Windows-1250 i ISO-8859-2 gdje je moguće.
+* Javni CSV neutralizira spreadsheet formula-prefikse u tekstualnim ćelijama.
+* Dodan je fallback za Woo Blocks, Elementor, WPBakery, Oxygen, Divi, Bricks, Beaver Builder i druge česte price wrappere.
+* Varijacije zadržavaju svoju Sidrena vrijednost nakon dinamičkih promjena WooCommerce forme.
+* Oznaka i tooltip mogu se prilagoditi i registriraju se za WPML/Polylang prijevod.
+* Catalog-hidden WooCommerce proizvodi ne ulaze u javni CSV/XML, snapshot ni realtime API.
+
 = Produkcijski panel =
 
-Sidrena 1.6 donosi redizajn administracije prema novom Sidrena vizualnom identitetu. Pregled koristi stvarne podatke iz instalacije i prikazuje cijene, cjenike, povijest, arhivu i tehnička upozorenja bez lažnih rezultata ili izmišljenih postotaka usklađenosti.
+Sidrena 1.6.1 donosi produkcijsko sučelje i dodatne javne/uvozne mogućnosti prema novom Sidrena vizualnom identitetu. Pregled koristi stvarne podatke iz instalacije i prikazuje cijene, cjenike, povijest, arhivu i tehnička upozorenja bez lažnih rezultata ili izmišljenih postotaka usklađenosti.
 
 = Jedinična cijena =
 
@@ -134,6 +152,18 @@ Ne. Automatizira tehničku evidenciju, prikaz i objavu. Primjenjivost propisa i 
 
 == Changelog ==
 
+= 1.6.1 =
+* Samostalni WordPress katalog proizvoda bez obveznog WooCommercea.
+* CSV/XML uvoz za samostalni katalog.
+* Native WooCommerce CSV Import/Export Sidrena polja.
+* Cacheirani javni HTML cjenik i arhiva s novim shortcodeovima.
+* Stroga validacija objave i zadržavanje zadnje valjane datoteke kod greške.
+* Cron-health upozorenja, UTF-8 normalizacija i CSV formula-injection zaštita.
+* Proširena kompatibilnost s WooCommerce Blocks i popularnim page builderima.
+* WPML/Polylang registracija prilagodljivih frontend stringova.
+* Catalog-hidden proizvodi isključeni iz javnih izlaza.
+* Dostupan pristupačan tooltip za sidrenu cijenu.
+
 = 1.6.0 =
 * Novi produkcijski Sidrena admin dizajn prema službenom vizualnom identitetu.
 * Odvojene top-level Sidrena podstranice bez dvostruke navigacije.
@@ -147,6 +177,10 @@ Ne. Automatizira tehničku evidenciju, prikaz i objavu. Primjenjivost propisa i 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.1 =
+
+Preporučena nadogradnja: javni HTML cjenik, standalone katalog, stroga objava, Woo CSV integracija i dodatna kompatibilnost.
 
 = 1.6.0 =
 
