@@ -41,6 +41,7 @@ final class Sidrena_Products {
 			'_sidrena_code'                          => 'string',
 			'_sidrena_unit'                          => 'string',
 			'_sidrena_unit_price'                    => 'number',
+			'_sidrena_unit_price_status'             => 'string',
 			'_sidrena_sale_name'                     => 'string',
 			'_sidrena_lowest_30_manual'              => 'number',
 			'_sidrena_sale_reference_exemption'      => 'string',
@@ -160,10 +161,26 @@ final class Sidrena_Products {
 				'desc_tip'    => true,
 			)
 		);
+		woocommerce_wp_select(
+			array(
+				'id'          => '_sidrena_unit_price_status',
+				'label'       => __( 'Jedinična cijena — primjenjivost', 'sidrena' ),
+				'desc_tip'    => true,
+				'description' => __( 'Provjerite primjenjivost čl. 8. NN 105/2026. Jedinična cijena obvezna je za propisane skupine robe, uz propisane iznimke. Sidrena ne zaključuje automatski pravni status proizvoda.', 'sidrena' ),
+				'options'     => array(
+					'review'       => __( 'Potrebna provjera', 'sidrena' ),
+					'required'     => __( 'Jedinična cijena je obvezna', 'sidrena' ),
+					'not_required' => __( 'Nije primjenjiva', 'sidrena' ),
+					'exception'    => __( 'Primjenjuje se propisana iznimka', 'sidrena' ),
+				),
+			)
+		);
 		woocommerce_wp_text_input(
 			array(
-				'id'    => '_sidrena_unit',
-				'label' => __( 'Jedinica mjere', 'sidrena' ),
+				'id'          => '_sidrena_unit',
+				'label'       => __( 'Jedinica mjere', 'sidrena' ),
+				'desc_tip'    => true,
+				'description' => __( 'Npr. kg, l, m, m² ili druga odgovarajuća jedinica kada je jedinična cijena primjenjiva.', 'sidrena' ),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -230,6 +247,42 @@ final class Sidrena_Products {
 				),
 			)
 		);
+		woocommerce_wp_select(
+			array(
+				'id'            => "_sidrena_unit_price_status_{$loop}",
+				'name'          => "_sidrena_unit_price_status[{$loop}]",
+				'value'         => get_post_meta( $variation_id, '_sidrena_unit_price_status', true ),
+				'label'         => __( 'Jedinična cijena', 'sidrena' ),
+				'wrapper_class' => 'form-row form-row-first',
+				'options'       => array(
+					''             => __( 'Naslijedi s proizvoda', 'sidrena' ),
+					'review'       => __( 'Potrebna provjera', 'sidrena' ),
+					'required'     => __( 'Obvezna', 'sidrena' ),
+					'not_required' => __( 'Nije primjenjiva', 'sidrena' ),
+					'exception'    => __( 'Propisana iznimka', 'sidrena' ),
+				),
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'            => "_sidrena_unit_{$loop}",
+				'name'          => "_sidrena_unit[{$loop}]",
+				'value'         => get_post_meta( $variation_id, '_sidrena_unit', true ),
+				'label'         => __( 'Jedinica mjere', 'sidrena' ),
+				'wrapper_class' => 'form-row form-row-last',
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'                => "_sidrena_unit_price_{$loop}",
+				'name'              => "_sidrena_unit_price[{$loop}]",
+				'value'             => get_post_meta( $variation_id, '_sidrena_unit_price', true ),
+				'label'             => __( 'Cijena za jedinicu mjere', 'sidrena' ),
+				'type'              => 'number',
+				'wrapper_class'     => 'form-row form-row-wide',
+				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+			)
+		);
 		woocommerce_wp_text_input(
 			array(
 				'id'            => "_sidrena_sale_name_{$loop}",
@@ -283,6 +336,10 @@ final class Sidrena_Products {
 			'_sidrena_reference_group'          => 'key',
 			'_sidrena_brand'                    => 'text',
 			'_sidrena_code'                     => 'text',
+			'_sidrena_unit'                     => 'text',
+			'_sidrena_unit_price'               => 'decimal',
+			'_sidrena_unit_price_status'        => 'unit_status',
+			'_sidrena_unit_price_status'        => 'unit_status',
 			'_sidrena_unit'                     => 'text',
 			'_sidrena_unit_price'               => 'decimal',
 			'_sidrena_sale_name'                => 'text',
@@ -344,6 +401,9 @@ final class Sidrena_Products {
 			case 'exemption':
 				$value = sanitize_key( $value );
 				return in_array( $value, array( 'none', 'perishable', 'fast_expiry' ), true ) ? $value : 'none';
+			case 'unit_status':
+				$value = sanitize_key( $value );
+				return in_array( $value, array( 'review', 'required', 'not_required', 'exception' ), true ) ? $value : 'review';
 			default:
 				return sanitize_text_field( $value );
 		}
