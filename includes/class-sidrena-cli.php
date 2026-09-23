@@ -32,6 +32,110 @@ final class Sidrena_CLI {
 		WP_CLI::error( $errors );
 	}
 
+
+	/**
+	 * Fill empty Sidrena anchor prices from the current WooCommerce regular price.
+	 *
+	 * Existing Sidrena values are never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--today]
+	 * : Also stores today's date as the custom reference date when the date is empty.
+	 *
+	 * [--dry-run]
+	 * : Show how many rows would be changed without saving anything.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp sidrena fill --dry-run
+	 *     wp sidrena fill
+	 *     wp sidrena fill --today
+	 */
+	public function fill( $args, $assoc_args ) {
+		unset( $args );
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			WP_CLI::error( 'WooCommerce nije aktivan.' );
+		}
+
+		$today   = ! empty( $assoc_args['today'] );
+		$dry_run = ! empty( $assoc_args['dry-run'] );
+		$page    = 1;
+		$seen    = 0;
+		$filled  = 0;
+		$skipped = 0;
+		$date    = wp_date( 'Y-m-d' );
+
+		do {
+			$query = new WC_Product_Query(
+				array(
+					'limit'   => 100,
+					'page'    => $page,
+					'status'  => array( 'publish', 'private', 'draft', 'pending' ),
+					'return'  => 'objects',
+					'orderby' => 'ID',
+					'order'   => 'ASC',
+				)
+			);
+			$products = $query->get_products();
+
+			foreach ( $products as $product ) {
+				$items = $product->is_type( 'variable' )
+					? array_filter( array_map( 'wc_get_product', $product->get_children() ) )
+					: array( $product );
+
+				foreach ( $items as $item ) {
+					if ( ! $item instanceof WC_Product || $item->is_type( 'variable' ) || $item->is_type( 'grouped' ) ) {
+						continue;
+					}
+					++$seen;
+
+					if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
+						++$skipped;
+						continue;
+					}
+
+					$regular = $item->get_regular_price( 'edit' );
+					if ( '' === $regular ) {
+						++$skipped;
+						continue;
+					}
+
+					++$filled;
+					if ( $dry_run ) {
+						continue;
+					}
+
+					update_post_meta( $item->get_id(), '_sidrena_anchor_price', wc_format_decimal( $regular ) );
+					if ( $today && '' === get_post_meta( $item->get_id(), '_sidrena_anchor_date', true ) ) {
+						update_post_meta( $item->get_id(), '_sidrena_anchor_date', $date );
+						update_post_meta( $item->get_id(), '_sidrena_reference_group', 'custom' );
+					}
+				}
+			}
+			++$page;
+		} while ( 100 === count( $products ) );
+
+		if ( ! $dry_run && $filled ) {
+			Sidrena_Pricelist::queue_regeneration();
+			Sidrena_Audit::log(
+				'cli_fill',
+				'success',
+				sprintf( 'WP-CLI popunio je %d praznih Sidrena cijena.', $filled ),
+				array( 'today' => $today ? 'yes' : 'no', 'seen' => $seen, 'skipped' => $skipped )
+			);
+		}
+
+		$message = sprintf(
+			'%s Pregledano: %d, za popuniti/popunjeno: %d, preskočeno: %d.',
+			$dry_run ? 'Probni pregled dovršen.' : 'Popunjavanje dovršeno.',
+			$seen,
+			$filled,
+			$skipped
+		);
+		WP_CLI::success( $message );
+	}
+
 	/**
 	 * Show operational status.
 	 */
@@ -46,6 +150,10 @@ final class Sidrena_CLI {
 			array( 'key' => 'next_run', 'value' => $next ? wp_date( DATE_ATOM, $next ) : 'not-scheduled' ),
 			array( 'key' => 'last_run', 'value' => ! empty( $last['generated_at'] ) ? $last['generated_at'] : 'never' ),
 			array( 'key' => 'audit_rows', 'value' => Sidrena_Audit::count_rows() ),
+			array( 'key' => 'history_rows', 'value' => Sidrena_History::count_rows() + Sidrena_Service_History::count_rows() + Sidrena_Location_History::count_rows() ),
+			array( 'key' => 'public_files', 'value' => count( Sidrena_Utils::public_index() ) ),
+			array( 'key' => 'archive_files', 'value' => count( Sidrena_Utils::archive_index() ) ),
+			array( 'key' => 'strict_publication', 'value' => $settings['strict_publication'] ),
 		);
 		WP_CLI\Utils\format_items( 'table', $rows, array( 'key', 'value' ) );
 	}

@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 Donate link: https://sidrena-cijena.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -36,9 +36,10 @@ Sidrena tehnički podržava evidenciju, prikaz i objavu podataka prema službeni
 * Lokacijske cijene, sidrene cijene i raspoloživost dostupno / nedostupno.
 * Automatsko dnevno generiranje; zadano 06:30 prema WordPress vremenskoj zoni.
 * Javni REST /wp-json/sidrena/v1/cjenici i /wp-json/sidrena/v1/cijene.
-* Shortcodeovi [sidrena_cjenici], [sidrena_usluge] i [sidrena_cijena].
-* Bulk katalog, Site Health dijagnostika, lokalni audit dnevnik i WP-CLI.
+* Shortcodeovi [sidrena_cjenici], [sidrena_usluge], [sidrena_cijena] i [sidrena-cijena].
+* Bulk katalog, Site Health dijagnostika, lokalni audit dnevnik i WP-CLI (wp sidrena generate, status, audit, fill).
 * Samostalni Sidrena izbornik s odvojenim stranicama umjesto dvostrukih navigacija.
+* Kompatibilnost s WooCommerce Blocks te popularnim builderima i dinamičkim price widgetima (Elementor, Divi, Bricks, Beaver Builder, Oxygen, WPBakery, Avada/Fusion, Woodmart/Flatsome, Breakdance/Brizy i srodni elementi).
 * Nema vanjskih runtime biblioteka, CDN-a, telemetrije, licence ili paywalla.
 
 = Novo u 1.6.1 =
@@ -142,6 +143,18 @@ Ne pouzdano. Ako nema provjerljivog povijesnog zapisa, Sidrena traži ručni uno
 
 Ne. Automatizira tehničku evidenciju, prikaz i objavu. Primjenjivost propisa i točnost poslovnih podataka potrebno je provjeriti za konkretan poslovni subjekt.
 
+= Kako masovno popuniti prazne Sidrena cijene? =
+
+Za velike kataloge koristite wp sidrena fill --dry-run za pregled, wp sidrena fill za sigurno popunjavanje samo praznih Sidrena cijena iz WooCommerce redovne cijene i wp sidrena fill --today kada za nove artikle želite upisati i današnji prilagođeni referentni datum. Postojeće Sidrena vrijednosti se ne prepisuju.
+
+= Kako ručno prikazati Sidrena cijenu u custom predlošku? =
+
+Koristite [sidrena-cijena id="123"], [sidrena_cijena id="123"], do_action( 'sidrena_cijena' ) ili PHP helper sidrena_cijena( 123 ).
+
+= Radi li s page builderima? =
+
+Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS fallback za dinamički promijenjene cijene. Pokriva tipične price elemente u Elementor/JetWooBuilder/ShopEngine, Divi, Oxygen, Bricks, Beaver Builder, Breakdance, Brizy, Avada/Fusion, Woodmart/Flatsome, WPBakery i WooCommerce Blocks.
+
 == Screenshots ==
 
 1. Novi Sidrena 1.6 pregled s cijenama, stvarnom poviješću, akcijama i tehničkim statusom.
@@ -152,6 +165,13 @@ Ne. Automatizira tehničku evidenciju, prikaz i objavu. Primjenjivost propisa i 
 6. Produkcijski alati za uvoz, izvoz, arhivu i provjerene poslovne evidencije.
 
 == Changelog ==
+
+= 1.6.2 =
+* Proširena kompatibilnost s builderima i dinamičkim WooCommerce price widgetima.
+* Dodan sigurni WP-CLI wp sidrena fill s --dry-run i --today; postojeće Sidrena cijene se nikada ne prepisuju.
+* Dodan shortcode alias [sidrena-cijena] i univerzalni PHP helper sidrena_cijena().
+* Standardiziran redoslijed prikaza: aktualna cijena → sidrena cijena → 30-dnevna referenca → rok uporabe kada je primjenjivo.
+* Poboljšan WP-CLI status s poviješću, javnim datotekama, arhivom i statusom stroge objave.
 
 = 1.6.1 =
 * Samostalni WordPress katalog proizvoda bez obveznog WooCommercea.
@@ -178,6 +198,10 @@ Ne. Automatizira tehničku evidenciju, prikaz i objavu. Primjenjivost propisa i 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.2 =
+
+Preporučena nadogradnja: builder kompatibilnost, WP-CLI fill, standalone katalog, javni HTML cjenik i stroža produkcijska automatizacija.
 
 = 1.6.1 =
 
