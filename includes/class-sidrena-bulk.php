@@ -54,8 +54,10 @@ final class Sidrena_Bulk {
 			<?php wp_nonce_field( 'sidrena_bulk_save' ); ?>
 			<div class="sid-table-wrap">
 			<table class="widefat striped sid-bulk-table">
-				<thead><tr><th><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th><th><?php esc_html_e( 'Marka', 'sidrena' ); ?></th><th><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th><th><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th><th><?php esc_html_e( 'Datum', 'sidrena' ); ?></th><th><?php esc_html_e( 'Grupa', 'sidrena' ); ?></th><th><?php esc_html_e( 'Jedinična cijena', 'sidrena' ); ?></th><th><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th><th><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></th></tr></thead>
+				<caption class="screen-reader-text"><?php esc_html_e( 'WooCommerce Sidrena katalog', 'sidrena' ); ?></caption>
+				<thead><tr><th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Marka', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Datum', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Grupa', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinična cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></th></tr></thead>
 				<tbody>
+				<?php if ( empty( $items ) ) : ?><tr><td colspan="10"><?php esc_html_e( 'Na ovoj stranici nema WooCommerce proizvoda.', 'sidrena' ); ?></td></tr><?php endif; ?>
 				<?php foreach ( $items as $product ) : $id = $product->get_id(); ?>
 				<tr>
 					<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product->get_type() ); ?></span></td>
