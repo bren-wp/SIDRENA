@@ -1,57 +1,70 @@
-# Sidrena — legal and technical notes
+# Sidrena — pravne i tehničke bilješke
 
-Sidrena is a technical WordPress/WooCommerce tool. It does not replace legal advice and it does not infer historical prices that are not present in a verifiable source.
+Sidrena je tehnički WordPress/WooCommerce alat za evidenciju, prikaz i objavu cijena. Ne zamjenjuje pravni savjet i ne smije izmišljati povijesne vrijednosti koje ne postoje u provjerljivom izvoru.
 
-## Core official references
+## Službeni izvori
 
-- NN 101/2026, no. 1212 — additional price / reference dates; effective 1 October 2026.
-- NN 101/2026, no. 1213 — public CSV/XML price lists, update timing, 30-day public availability, required columns, file naming and machine retrieval; effective 1 October 2026.
-- Ministry of Economy clarification dated 22 September 2026 — implementation examples, multiple locations, webshop, newly listed items and machine-readable publication.
-- NN 59/2026 — Consumer Protection Act amendments relevant to the lowest price in the preceding 30 days during reductions.
-- NN 105/2026 — rules relevant to service price lists and service information.
+- **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.**
+- **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.**
+- **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja za dodatnu cijenu i objavu cjenika.
+- **NN 59/2026, 728** — relevantne izmjene Zakona o zaštiti potrošača, uključujući najnižu cijenu u prethodnih 30 dana kod posebnih oblika prodaje.
+- **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026. i stupa na snagu osmoga dana od objave.
 
-Official links are also shown in the Sidrena > Propisi screen.
+Službeni URL-ovi nalaze se i u Sidrena → Propisi.
 
-## Separate records
+## Dodatna / sidrena cijena
 
-Sidrena intentionally keeps two different records:
+Za novobuhvaćene proizvode i usluge Odluka koristi referentni datum **10.09.2026.** Za ranije obuhvaćene FMCG kategorije ostaje **02.05.2025.** Dodatna cijena prikazuje se uz aktualnu cijenu.
 
-1. **Public CSV/XML archive** — every successful publication is a separate file, publicly available for at least 30 days. Default retention is 45 days. A current file is protected even when older than the retention window until it is superseded.
-2. **Internal price history** — WooCommerce products/variations, Sidrena services and per-location product values are stored as changed states and daily snapshots. The internal history is retained for 400 days so future 30-day look-back windows can have a known baseline.
+Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put uvedene nakon referentnog datuma, promjene naziva ili šifre, proizvode bez zalihe te odnos aktualne cijene, najniže cijene prije sniženja i dodatne cijene.
 
-The plugin does not fabricate the period before installation. Historical anchor/reference values should be imported or entered only from reliable business records.
+## Digitalni cjenici
 
-## Products
+Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javne strojno obradive CSV/XML cjenike. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu.
 
-Generated product rows include the product name, stable code, brand, unit and unit price when applicable, retail price, sale indicator/name, anchor price/date, barcode and per-location availability. Product code resolution is WooCommerce SKU -> Sidrena code -> stable WP-ID fallback.
+Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti automatizirano prikupljanje podataka o aktualnim maloprodajnim cijenama.
 
-For physical locations, Sidrena supports location-specific current price, anchor price and availability. Imported location prices are treated as final retail amounts. Base WooCommerce prices are converted to tax-inclusive retail values when WooCommerce provides the conversion helper.
+Sidrena zato:
+- generira zasebnu datoteku po aktivnoj lokaciji i zaseban webshop objekt,
+- koristi istu strukturu za lokacije istog kataloga,
+- u naziv datoteke uključuje vrstu objekta, adresu, oznaku, redni broj pohrane i vremensku oznaku,
+- čuva svaku uspješnu objavu kao zasebnu datoteku,
+- objavljuje REST dohvat aktualnih cijena,
+- vodi SHA-256 zapis arhive.
 
-## Services
+## Proizvodi
 
-Sidrena services support current price, anchor price/date, sale state/name, service type, scope, related costs/price note and per-location current/anchor prices. The service public list and machine endpoint expose these values.
+Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-## Multiple locations and webshop
+Sidrena 1.6 uvodi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
-Each enabled location generates its own file. A webshop is modeled as its own location/object. File names contain object kind, address, object code, storage sequence and generation timestamp. The same column structure is used across locations for a given catalog type.
+NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
-## Automation
+## Usluge
 
-The default daily schedule is 06:30 in the WordPress timezone. WP-Cron depends on site traffic, therefore a real server cron that calls WordPress cron is recommended where execution before 08:00 is operationally critical.
+NN 105/2026 zahtijeva lako dostupan cjenik usluga, jasan prikaz cijena te naziv, vrstu i opseg usluge. Cijena usluge obuhvaća pripadajuće troškove. Kada je ugradbena ili zamjenska roba sastavni dio usluge, njezina cijena mora biti istaknuta uz pripadajuću uslugu.
 
-Product/service edits and scheduled WooCommerce sale transitions can queue a new generation. If one new file fails, the last successful current file for that location/catalog/format remains published.
+Sidrena zato vodi naziv, vrstu i opseg usluge, aktualnu i sidrenu cijenu, posebni oblik prodaje, pripadajuće troškove / napomenu o cijeni, ugradbenu ili zamjensku robu i njezinu cijenu kada je primjenjivo te lokalne cijene po poslovnici/webshopu.
 
-## Integrity and exports
+## Dvije različite evidencije “30 dana”
 
-Archive records contain file size, row count, SHA-256, publication time and retain-until time. The admin panel verifies indexed files and hashes. Archive metadata and internal price history can be exported as CSV.
+1. **Javna arhiva CSV/XML** — prethodne uspješne objave javno se čuvaju najmanje 30 dana. Zadana Sidrena postavka je 45 dana.
+2. **Interna povijest cijena** — služi kao tehnička podloga za 30-dnevnu referencu kod sniženja.
 
-## Privacy
+To nisu ista evidencija i Sidrena ih ne spaja.
 
-No telemetry, analytics, remote activation, license server, account or paid feature gate is required. Runtime assets are local to the plugin.
+## Povijesne cijene
 
+Plugin ne može pouzdano rekonstruirati vrijeme prije instalacije. Ako nema poznatu cijenu na početku relevantnog prozora, referenca se označava kao nepotpuna. Ručni unos ili uvoz dopušten je samo za vrijednost provjerenu iz vjerodostojne poslovne evidencije.
 
-## Operativna pouzdanost
+## Lokacije i webshop
 
-Sidrena 1.5.0 dodaje Site Health provjeru rasporeda i zapisivosti arhive te WP-CLI naredbe za produkcijske servere. WordPress WP-Cron ovisi o prometu i sam po sebi ne jamči izvršavanje u točno određenoj minuti. Za poslovne procese koji zahtijevaju objavu prije određenog roka preporučuje se server cron koji redovito pokreće WordPress cron ili izravno koristi `wp sidrena generate` u odgovarajuće vrijeme.
+Ministarstvo je pojasnilo da se kod više fizičkih lokacija objavljuju zasebne datoteke po lokaciji, a webshop se vodi zasebno. Raspoloživost proizvoda odnosi se na konkretnu lokaciju i mora odgovarati stvarnom stanju.
 
-Lokalni audit dnevnik služi tehničkoj sljedivosti generiranja i administrativnih promjena. Ne predstavlja pravno jamstvo usklađenosti i ne šalje podatke izvan WordPress instalacije.
+## Automatizacija
+
+Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba wp sidrena generate.
+
+## Privatnost i donacije
+
+Sidrena nema telemetriju, udaljenu aktivaciju, licencni server, obavezni račun ni Pro paywall. Donacija je dobrovoljna, nalazi se samo unutar Sidrena sučelja i na projektnoj stranici te ne mijenja dostupnost funkcija.
