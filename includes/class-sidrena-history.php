@@ -290,7 +290,7 @@ final class Sidrena_History {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
 		$limit = min( 20, max( 1, absint( $limit ) ) );
-		$scan  = max( 30, $limit * 8 );
+		$scan  = max( 120, $limit * 30 );
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -304,49 +304,38 @@ final class Sidrena_History {
 			ARRAY_A
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 
+		$newest  = array();
 		$changes = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
 			if ( ! $item_id ) {
 				continue;
 			}
+			$key = ( absint( $row['variation_id'] ) ? 'v:' : 'p:' ) . $item_id;
 
-			if ( absint( $row['variation_id'] ) ) {
-				$previous = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT price FROM {$table}
-						WHERE variation_id = %d AND id < %d AND price IS NOT NULL
-						ORDER BY id DESC LIMIT 1",
-						absint( $row['variation_id'] ),
-						absint( $row['id'] )
-					)
-				); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
-			} else {
-				$previous = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT price FROM {$table}
-						WHERE product_id = %d AND variation_id = 0 AND id < %d AND price IS NOT NULL
-						ORDER BY id DESC LIMIT 1",
-						absint( $row['product_id'] ),
-						absint( $row['id'] )
-					)
-				); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			if ( ! isset( $newest[ $key ] ) ) {
+				$newest[ $key ] = $row;
+				continue;
 			}
 
-			if ( null === $previous || '' === $previous || abs( (float) $previous - (float) $row['price'] ) < 0.000001 ) {
+			$new = $newest[ $key ];
+			if ( abs( (float) $new['price'] - (float) $row['price'] ) < 0.000001 ) {
+				$newest[ $key ] = $row;
 				continue;
 			}
 
 			$product = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
 			$name    = $product ? $product->get_name() : get_the_title( $item_id );
 			$changes[] = array(
-				'item_id'      => $item_id,
-				'name'         => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
-				'old_price'    => (float) $previous,
-				'new_price'    => (float) $row['price'],
-				'recorded_at'  => sanitize_text_field( $row['recorded_at'] ),
-				'change_pct'   => 0.0 !== (float) $previous ? ( ( (float) $row['price'] - (float) $previous ) / (float) $previous ) * 100 : 0,
+				'item_id'     => $item_id,
+				'name'        => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
+				'old_price'   => (float) $row['price'],
+				'new_price'   => (float) $new['price'],
+				'recorded_at' => sanitize_text_field( $new['recorded_at'] ),
+				'change_pct'  => 0.0 !== (float) $row['price'] ? ( ( (float) $new['price'] - (float) $row['price'] ) / (float) $row['price'] ) * 100 : 0,
+				'kind'        => 'product',
 			);
+			unset( $newest[ $key ] );
 
 			if ( count( $changes ) >= $limit ) {
 				break;
