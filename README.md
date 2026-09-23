@@ -101,6 +101,7 @@ Sidrena koristi vlastiti lokalni vizualni sustav: tamnoplavu bazu, Sidrena plavu
 Sidrena 1.6.1 proširuje sustav iz administracijskog dodatka u kompletan produkcijski cjenik:
 
 - **WooCommerce ili obični WordPress** — kada WooCommerce nije aktivan, Sidrena ima vlastiti katalog proizvoda s nazivom, šifrom, markom, cijenom, sidrenom cijenom, barkodom, jediničnom cijenom, raspoloživošću i podacima o posebnom obliku prodaje.
+- **Dodatne stavke uz WooCommerce** — ručno vođeni proizvodi/usluge koje nisu Woo artikli mogu se voditi u Sidreni, ulaze na kraj javnog cjenika i imaju vlastiti shortcode oblika `[sidrena_cijena id="s123"]`.
 - **CSV/XML uvoz samostalnog kataloga** — postojeće stavke povezuju se po šifri, a validne nove stavke mogu se dodati iz datoteke.
 - **WooCommerce native Import/Export** — Sidrena polja pojavljuju se u standardnom WooCommerce CSV uvozu i izvozu.
 - **Javni HTML cjenik** — /sidrena-cjenik/ i shortcodeovi [sidrena_cjenik] / [sidrena-cjenik].
