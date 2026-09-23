@@ -94,7 +94,20 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           target_commitish: ${{ github.sha }}
           name: Sidrena ${{ env.VERSION }}
-          generate_release_notes: true
+          prerelease: false
+          make_latest: true
+          generate_release_notes: false
+          body: |
+            ## Sidrena ${{ env.VERSION }}
+
+            Produkcijsko izdanje besplatnog WordPress/WooCommerce dodatka Sidrena.
+
+            - Instalacijski ZIP i SHA-256 nalaze se među assetima ovog izdanja.
+            - WordPress.org vizualni asset paket i njegov SHA-256 također su priloženi.
+            - Upute za instalaciju i korištenje nalaze se u `docs/UPUTE.md`.
+            - Detaljan popis promjena nalazi se u `changelog.txt` i `readme.txt`.
+
+            Službena stranica: https://sidrene-cijene.com.hr/
           files: |
             ${{ runner.temp }}/sidrena-*.zip
             ${{ runner.temp }}/sidrena-*.zip.sha256
