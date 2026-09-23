@@ -26,6 +26,7 @@ final class Sidrena_Products {
 		add_action( 'woocommerce_new_product_variation', array( $this, 'snapshot_new_variation' ), 20, 1 );
 		add_filter( 'woocommerce_get_price_html', array( $this, 'append_reference_prices' ), 999, 2 );
 		add_shortcode( 'sidrena_cijena', array( $this, 'shortcode' ) );
+		add_shortcode( 'sidrena-cijena', array( $this, 'shortcode' ) );
 		add_action( 'sidrena_cijena', array( $this, 'action_output' ), 10, 1 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ) );
 		add_action( 'transition_post_status', array( $this, 'snapshot_newly_published' ), 10, 3 );
@@ -442,13 +443,13 @@ final class Sidrena_Products {
 
 		$settings = Sidrena_Utils::settings();
 		$extra    = '';
+		if ( 'yes' === $settings['display_anchor'] ) {
+			$extra .= $this->anchor_html( $product );
+		}
 		if ( 'yes' === $settings['display_lowest_30'] ) {
 			$extra .= $this->lowest_30_html( $product );
 		}
 		$extra .= $this->expiry_html( $product );
-		if ( 'yes' === $settings['display_anchor'] ) {
-			$extra .= $this->anchor_html( $product );
-		}
 		return $extra ? $html . '<span class="sidrena-reference-prices">' . $extra . '</span>' : $html;
 	}
 
@@ -467,13 +468,13 @@ final class Sidrena_Products {
 		wp_enqueue_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
 		$settings = Sidrena_Utils::settings();
 		$out      = '';
+		if ( 'yes' === $settings['display_anchor'] ) {
+			$out .= $this->anchor_html( $target );
+		}
 		if ( 'yes' === $settings['display_lowest_30'] ) {
 			$out .= $this->lowest_30_html( $target );
 		}
 		$out .= $this->expiry_html( $target );
-		if ( 'yes' === $settings['display_anchor'] ) {
-			$out .= $this->anchor_html( $target );
-		}
 		return $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 	}
 
