@@ -124,6 +124,8 @@ final class Sidrena_Compatibility {
 					'.elementor-widget-woocommerce-product-price .price',
 					'.elementor-widget-woocommerce-product-price',
 					'.oxy-product-price .price',
+					'.wpb_wrapper > p.price',
+					'.fl-module-woocommerce .price',
 					'.et_pb_wc_price .price',
 					'.brxe-product-price .price',
 					'.shopengine-product-price .price',
@@ -131,6 +133,7 @@ final class Sidrena_Compatibility {
 					'.wd-single-price',
 					'.product-page-price',
 					'.fusion-woo-price',
+					'.wc-block-components-product-price',
 				),
 			)
 		);
