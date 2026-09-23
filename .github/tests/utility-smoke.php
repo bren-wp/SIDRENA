@@ -69,4 +69,8 @@ $unit_price = Sidrena_Utils::calculate_unit_price( '3,75', '750', 'g' );
 sidrena_assert_same( 'kg', $unit_price['unit'] ?? '', 'Base unit calculation failed.' );
 sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculation failed.' );
 
+sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1.234,56' ), 'Croatian thousands/decimal parsing failed.' );
+sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1,234.56' ), 'International thousands/decimal parsing failed.' );
+sidrena_assert_same( '', Sidrena_Utils::decimal( '1e9999' ), 'Non-finite numeric values must be rejected.' );
+
 fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );

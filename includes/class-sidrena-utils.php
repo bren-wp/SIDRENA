@@ -74,8 +74,29 @@ final class Sidrena_Utils {
 			return '';
 		}
 
-		$value = str_replace( array( ' ', ',' ), array( '', '.' ), (string) $value );
+		$value = trim( str_replace( array( "\xC2\xA0", ' ' ), '', (string) $value ) );
+		if ( '' === $value ) {
+			return '';
+		}
+
+		$comma = strrpos( $value, ',' );
+		$dot   = strrpos( $value, '.' );
+		if ( false !== $comma && false !== $dot ) {
+			if ( $comma > $dot ) {
+				$value = str_replace( '.', '', $value );
+				$value = str_replace( ',', '.', $value );
+			} else {
+				$value = str_replace( ',', '', $value );
+			}
+		} elseif ( false !== $comma ) {
+			$value = str_replace( ',', '.', $value );
+		}
+
 		if ( ! is_numeric( $value ) ) {
+			return '';
+		}
+		$number = (float) $value;
+		if ( ! is_finite( $number ) || abs( $number ) > 99999999999999.0 ) {
 			return '';
 		}
 
@@ -83,7 +104,7 @@ final class Sidrena_Utils {
 			return wc_format_decimal( $value );
 		}
 
-		return rtrim( rtrim( number_format( (float) $value, 6, '.', '' ), '0' ), '.' );
+		return rtrim( rtrim( number_format( $number, 6, '.', '' ), '0' ), '.' );
 	}
 
 	public static function money( $value, $decimals = 2 ) {
