@@ -26,7 +26,7 @@ final class Sidrena_Bulk {
 		}
 
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			echo '<section class="sid-card"><h2>' . esc_html__( 'WooCommerce nije aktivan', 'sidrena' ) . '</h2><p>' . esc_html__( 'Katalog proizvoda postaje dostupan kada je WooCommerce aktivan.', 'sidrena' ) . '</p></section>';
+			Sidrena_Standalone::instance()->render();
 			return;
 		}
 
