@@ -10,6 +10,18 @@
 
 define( 'ABSPATH', __DIR__ . '/' );
 
+if ( ! function_exists( 'sanitize_text_field' ) ) {
+	function sanitize_text_field( $value ) {
+		return trim( preg_replace( '/[\x00-\x1F\x7F]+/', '', (string) $value ) );
+	}
+}
+if ( ! function_exists( 'absint' ) ) {
+	function absint( $value ) {
+		return abs( (int) $value );
+	}
+}
+
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-legal-automation.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 
 function sidrena_schema_assert( $condition, $message ) {
@@ -76,4 +88,28 @@ $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-
 sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Strict service preflight must require service type.' );
 sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Strict service preflight must require service scope.' );
 
-fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema smoke test passed.\n" );
+sidrena_schema_assert( '06:30' === Sidrena_Legal_Automation::normalize_generation_time( '08:00' ), 'Generation at 08:00 or later must be clamped before the publication deadline.' );
+sidrena_schema_assert( '06:30' === Sidrena_Legal_Automation::normalize_generation_time( '09:15' ), 'Generation after the publication deadline must be clamped.' );
+sidrena_schema_assert( '07:59' === Sidrena_Legal_Automation::normalize_generation_time( '7:59' ), 'Generation before 08:00 must be accepted and normalized.' );
+sidrena_schema_assert( '06:30' === Sidrena_Legal_Automation::normalize_generation_time( 'not-a-time' ), 'Invalid generation time must fall back to the safe default.' );
+sidrena_schema_assert( '08:00' === Sidrena_Legal_Automation::publication_deadline(), 'Publication deadline marker must remain 08:00.' );
+
+$hardened = Sidrena_Legal_Automation::normalize_settings(
+	array(
+		'generation_time'       => '12:15',
+		'retention_days'        => 7,
+		'generate_csv'          => 'no',
+		'generate_xml'          => 'no',
+		'enable_public_html'    => 'no',
+		'publish_manifest'      => 'no',
+		'strict_publication'    => 'no',
+		'failure_notifications' => 'no',
+	)
+);
+sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
+sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
+foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
+	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication automation flag not hardened: ' . $required_flag );
+}
+
+fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema and automation smoke test passed.\n" );
