@@ -107,7 +107,7 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za pouzdano izvršavanje prij
 
 ## Arhiva
 
-Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana.
+Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.3.0 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
 
 ## WP-CLI
 
