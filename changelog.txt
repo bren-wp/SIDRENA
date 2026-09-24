@@ -11,6 +11,9 @@ Sidrena changelog
 * Guard eksplicitno dopušta samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
 * Build provjera ruši workflow ako se vrati generički root `sidrena.php`, `static-php`, dodatna edicija ili datoteke izvan korijena pojedinog ZIP paketa.
 * Release priprema za 0.5.0 dodatno učvršćuje zahtjev da se ne objavljuju lokalni, generički ili lažni paketi.
+* Dodan je legal automation hardening sloj koji normalizira rizične postavke objave pri spremanju i runtime čitanju.
+* Automatizacija vraća generiranje prije 08:00, zadržava arhivu najmanje 30 dana i uključuje CSV/XML, javni HTML, manifest, strict publication i upozorenja o grešci.
+* NN 101/2026 + NN 105/2026 smoke test sada provjerava i automatizirane zaštite uz postojeću shemu proizvoda/usluga.
 
 = 0.4.0 =
 * Javni cjenik usluga koristi bounded server-side paginaciju od 10 do 100 stavki, zadano 50.
