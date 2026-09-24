@@ -308,27 +308,38 @@ final class Sidrena_Services {
 		}
 	}
 
-	public function shortcode() {
-		$query = new WP_Query(
+	public function shortcode( $atts = array() ) {
+		$atts = shortcode_atts(
 			array(
-				'post_type'      => 'sidrena_service',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'orderby'        => 'menu_order title',
-				'order'          => 'ASC',
-				'no_found_rows'  => true,
-			)
+				'po_stranici' => 50,
+			),
+			$atts,
+			'sidrena_usluge'
 		);
+		$per_page = min( 100, max( 10, absint( $atts['po_stranici'] ) ) );
+		$page     = isset( $_GET['sidrena_usluge_stranica'] ) ? max( 1, absint( wp_unslash( $_GET['sidrena_usluge_stranica'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$query    = $this->service_page_query( $page, $per_page );
+
+		if ( $query->max_num_pages && $page > (int) $query->max_num_pages ) {
+			$page  = (int) $query->max_num_pages;
+			$query = $this->service_page_query( $page, $per_page );
+		}
 
 		if ( empty( $query->posts ) ) {
-			return '<p>' . esc_html__( 'Cjenik usluga još nema objavljenih stavki.', 'sidrena' ) . '</p>';
+			wp_reset_postdata();
+			return '<p class="sidrena-public-message">' . esc_html__( 'Cjenik usluga još nema objavljenih stavki.', 'sidrena' ) . '</p>';
 		}
 
 		wp_enqueue_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
-		$out  = '<div class="sidrena-services" role="region" aria-label="' . esc_attr__( 'Cjenik usluga', 'sidrena' ) . '">';
-		$out .= '<table class="sidrena-services__table"><thead><tr>';
-		$out .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
-		$out .= '<th scope="col">' . esc_html__( 'Aktualna cijena', 'sidrena' ) . '</th>';
+		$total       = absint( $query->found_posts );
+		$total_pages = max( 1, absint( $query->max_num_pages ) );
+		$first       = ( ( $page - 1 ) * $per_page ) + 1;
+		$last        = min( $total, $first + count( $query->posts ) - 1 );
+		$out         = '<div class="sidrena-services" role="region" aria-label="' . esc_attr__( 'Cjenik usluga', 'sidrena' ) . '">';
+		$out        .= '<p class="sidrena-services__summary">' . esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d usluga.', 'sidrena' ), $first, $last, $total ) ) . '</p>';
+		$out        .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table"><thead><tr>';
+		$out        .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
+		$out        .= '<th scope="col">' . esc_html__( 'Aktualna cijena', 'sidrena' ) . '</th>';
 		$show_lowest = 'yes' === Sidrena_Utils::settings()['display_lowest_30'];
 		if ( $show_lowest ) {
 			$out .= '<th scope="col">' . esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . '</th>';
@@ -378,7 +389,37 @@ final class Sidrena_Services {
 			$out .= '</tr>';
 		}
 		$out .= '</tbody></table></div>';
+
+		if ( $total_pages > 1 ) {
+			$base_url = remove_query_arg( 'sidrena_usluge_stranica' );
+			$out .= '<nav class="sidrena-services__pagination" aria-label="' . esc_attr__( 'Stranice cjenika usluga', 'sidrena' ) . '">';
+			if ( $page > 1 ) {
+				$out .= '<a rel="prev" href="' . esc_url( add_query_arg( 'sidrena_usluge_stranica', $page - 1, $base_url ) ) . '">' . esc_html__( 'Prethodna stranica', 'sidrena' ) . '</a>';
+			}
+			$out .= '<span>' . esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $total_pages ) ) . '</span>';
+			if ( $page < $total_pages ) {
+				$out .= '<a rel="next" href="' . esc_url( add_query_arg( 'sidrena_usluge_stranica', $page + 1, $base_url ) ) . '">' . esc_html__( 'Sljedeća stranica', 'sidrena' ) . '</a>';
+			}
+			$out .= '</nav>';
+		}
+
+		$out .= '</div>';
 		wp_reset_postdata();
 		return $out;
 	}
+
+	private function service_page_query( $page, $per_page ) {
+		return new WP_Query(
+			array(
+				'post_type'      => 'sidrena_service',
+				'post_status'    => 'publish',
+				'posts_per_page' => min( 100, max( 10, absint( $per_page ) ) ),
+				'paged'          => max( 1, absint( $page ) ),
+				'orderby'        => 'menu_order title',
+				'order'          => 'ASC',
+				'no_found_rows'  => false,
+			)
+		);
+	}
+
 }

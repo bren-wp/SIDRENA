@@ -1880,6 +1880,58 @@ final class Sidrena_Admin {
 		exit;
 	}
 
+	private function service_audit_stats() {
+		$stats = array(
+			'services'        => 0,
+			'missing_anchor'  => 0,
+			'details_missing' => 0,
+			'sale_incomplete' => 0,
+		);
+		$page       = 1;
+		$batch_size = 250;
+
+		do {
+			$query = new WP_Query(
+				array(
+					'post_type'      => 'sidrena_service',
+					'post_status'    => 'publish',
+					'posts_per_page' => $batch_size,
+					'paged'          => $page,
+					'fields'         => 'ids',
+					'orderby'        => 'ID',
+					'order'          => 'ASC',
+					'no_found_rows'  => true,
+				)
+			);
+			$ids = is_array( $query->posts ) ? $query->posts : array();
+			foreach ( $ids as $service_id ) {
+				$service_id = absint( $service_id );
+				if ( ! $service_id ) {
+					continue;
+				}
+				++$stats['services'];
+				if ( '' === get_post_meta( $service_id, '_sidrena_service_anchor_price', true ) ) {
+					++$stats['missing_anchor'];
+				}
+				if ( '' === trim( (string) get_post_meta( $service_id, '_sidrena_service_type', true ) ) || '' === trim( (string) get_post_meta( $service_id, '_sidrena_service_scope', true ) ) ) {
+					++$stats['details_missing'];
+				}
+				if ( 'yes' === get_post_meta( $service_id, '_sidrena_service_sale', true ) ) {
+					$reference = Sidrena_Service_History::sale_reference( $service_id );
+					if ( 'incomplete' === $reference['status'] ) {
+						++$stats['sale_incomplete'];
+					}
+				}
+			}
+			$count = count( $ids );
+			++$page;
+		} while ( $count === $batch_size );
+
+		wp_reset_postdata();
+		return $stats;
+	}
+
+
 	private function audit_stats() {
 		$products        = 0;
 		$missing         = 0;
@@ -1939,25 +1991,11 @@ final class Sidrena_Admin {
 			$perishable_expiry_missing = 0;
 		}
 
-		$service_query = new WP_Query( array( 'post_type' => 'sidrena_service', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true ) );
-		$services                 = count( $service_query->posts );
-		$missing_service_anchor  = 0;
-		$service_details_missing = 0;
-		$service_sale_incomplete = 0;
-		foreach ( $service_query->posts as $service_id ) {
-			if ( '' === get_post_meta( $service_id, '_sidrena_service_anchor_price', true ) ) {
-				++$missing_service_anchor;
-			}
-			if ( '' === trim( (string) get_post_meta( $service_id, '_sidrena_service_type', true ) ) || '' === trim( (string) get_post_meta( $service_id, '_sidrena_service_scope', true ) ) ) {
-				++$service_details_missing;
-			}
-			if ( 'yes' === get_post_meta( $service_id, '_sidrena_service_sale', true ) ) {
-				$reference = Sidrena_Service_History::sale_reference( $service_id );
-				if ( 'incomplete' === $reference['status'] ) {
-					++$service_sale_incomplete;
-				}
-			}
-		}
+		$service_stats            = $this->service_audit_stats();
+		$services                 = $service_stats['services'];
+		$missing_service_anchor  = $service_stats['missing_anchor'];
+		$service_details_missing = $service_stats['details_missing'];
+		$service_sale_incomplete = $service_stats['sale_incomplete'];
 		$settings = Sidrena_Utils::settings();
 		$issues   = $missing + $missing_brand + $missing_barcode + $unit_price_review + $unit_price_missing + $missing_service_anchor + $service_details_missing + $sale_incomplete + $service_sale_incomplete + $perishable_expiry_missing;
 		if ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) {

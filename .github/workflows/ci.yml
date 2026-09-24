@@ -98,6 +98,9 @@ jobs:
       - name: Public page automation smoke test
         run: php .github/tests/public-page-smoke.php
 
+      - name: Service scalability smoke test
+        run: php .github/tests/service-scalability-smoke.php
+
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
 
