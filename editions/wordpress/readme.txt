@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: Sidrena Software License 1.0
 License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 
 == Description ==
 
-= Sidrena WordPress 0.3.0 =
+= Sidrena WordPress 0.4.0 =
 
 Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
@@ -72,7 +72,7 @@ Plugin možete instalirati i postaviti sami.
 
 == Installation ==
 
-1. Prenesite sidrena-wordpress-0.3.0.zip.
+1. Prenesite sidrena-wordpress-0.4.0.zip.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog.
 4. Povežite postojeći WordPress tip sadržaja ili unesite/uvezite proizvode.
@@ -99,6 +99,12 @@ Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Si
 Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo.
 
 == Changelog ==
+
+= 0.4.0 =
+* Usluge koriste bounded server-side paginaciju; admin audit usluga obrađuje podatke u batchovima.
+* CSV/XML import provjerava row-limit prije promjena i smanjuje memorijski pritisak streaming obradom.
+* Preveliki Woo CSV više ne završava djelomičnim importom uz success rezultat.
+* Release build je reproducibilan, a rerun postojećeg releasea ne overwritea assete.
 
 = 0.3.0 =
 * Javna arhiva cjenika grupirana je po datumima objave.
