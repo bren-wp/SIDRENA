@@ -82,7 +82,7 @@ steps = [
     "Popunite katalog i obvezne podatke: naziv, šifra, marka, cijena, sidrena cijena, barkod, dostupnost te jediničnu cijenu kada je primjenjiva.",
     "Otvorite <b>Sidrena → Usklađenost</b> i riješite upozorenja koja plugin može tehnički provjeriti.",
     "Otvorite <b>Sidrena → Cjenici</b>, generirajte datoteke i pokrenite provjeru javne dostupnosti.",
-    "Izradite javnu WordPress stranicu <b>Cjenici</b> i provjerite preuzimanje aktualnih i arhivskih datoteka.",
+    "Izradite javnu WordPress stranicu <b>Objava cjenika</b> i provjerite aktualni cjenik, preuzimanje i arhivu.",
 ]
 for i, item in enumerate(steps, 1):
     story.append(Paragraph(f"<b>{i}.</b> {item}", body))
