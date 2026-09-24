@@ -36,7 +36,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.6 uvodi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 0.1.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -65,6 +65,10 @@ Ministarstvo je pojasnilo da se kod više fizičkih lokacija objavljuju zasebne 
 
 Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba wp sidrena generate.
 
-## Privatnost i donacije
+## Podrška, distribucija i donacija
 
-Sidrena nema telemetriju, udaljenu aktivaciju, licencni server, obavezni račun ni Pro paywall. Donacija je dobrovoljna, nalazi se samo unutar Sidrena sučelja i na projektnoj stranici te ne mijenja dostupnost funkcija.
+Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 0092. Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
+
+Donacija se otvara izravno preko Revolut gumba u Sidrena administraciji.
+
+Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.
