@@ -62,7 +62,11 @@ final class Sidrena_Activator {
 				if ( ! is_object( $role ) || ! is_callable( array( $role, 'has_cap' ) ) || ! is_callable( array( $role, 'add_cap' ) ) ) {
 					continue;
 				}
-				if ( $role->has_cap( 'manage_options' ) || $role->has_cap( 'manage_woocommerce' ) || $role->has_cap( 'manage_sidrena' ) ) {
+				$elevated = $role->has_cap( 'manage_options' ) || $role->has_cap( 'manage_sidrena' );
+				if ( Sidrena_Utils::is_woocommerce_edition() && $role->has_cap( 'manage_woocommerce' ) ) {
+					$elevated = true;
+				}
+				if ( $elevated ) {
 					if ( ! $role->has_cap( 'manage_sidrena' ) ) {
 						$role->add_cap( 'manage_sidrena' );
 					}
