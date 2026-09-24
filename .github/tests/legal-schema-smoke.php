@@ -70,6 +70,6 @@ $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidr
 sidrena_schema_assert( false !== strpos( $utils_source, "'default_ref_date'     => '2026-09-10'" ), 'Default reference date must remain 10.09.2026.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        => '2025-05-02'" ), 'Existing FMCG reference date must remain 02.05.2025.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "'retention_days'       => 45" ), 'Default archive retention should preserve an operational margin above 30 days.' );
-sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( $settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
 fwrite( STDOUT, "Sidrena NN 101/2026 schema smoke test passed.\n" );
