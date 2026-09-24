@@ -10,13 +10,19 @@ Support: sidrena@brendigo.com
 
 Sidrena je tehnički WordPress/WooCommerce alat za evidenciju, prikaz i objavu cijena. Ne zamjenjuje pravni savjet i ne smije izmišljati povijesne vrijednosti koje ne postoje u provjerljivom izvoru.
 
+## Granica tehničke provjere
+
+Sidrena može provjeriti strukturu, dostupnost i konzistentnost podataka koje ima na raspolaganju, ali ne može sama potvrditi da je konkretni poslovni subjekt u svakom trenutku potpuno pravno usklađen. To ovisi o stvarnom stanju zalihe, stvarnim cijenama, točnoj klasifikaciji proizvoda/usluga, drugim propisima i poslovnoj evidenciji korisnika.
+
+Zbog toga oznake u administraciji predstavljaju **tehničku spremnost/pokrivenost**, a ne pravni certifikat.
+
 ## Službeni izvori
 
 - **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.**
 - **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.**
 - **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja za dodatnu cijenu i objavu cjenika.
 - **NN 59/2026, 728** — relevantne izmjene Zakona o zaštiti potrošača, uključujući najnižu cijenu u prethodnih 30 dana kod posebnih oblika prodaje.
-- **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026. i stupa na snagu osmoga dana od objave.
+- **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026., stupa na snagu **26.09.2026.**
 
 Službeni URL-ovi nalaze se i u Sidrena → Propisi.
 
@@ -92,8 +98,12 @@ Sidrena ih zato vodi zasebno u Postavkama i, po izboru administratora, prikazuje
 
 ## Podrška, distribucija i donacija
 
-Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 0092. Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
+Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 0092.
 
-Donacija se otvara izravno preko Revolut gumba u Sidrena administraciji.
+Plugin korisnik može instalirati, postaviti i održavati sam. Brendigo usluge naručuju se samo po želji korisnika:
+- jednokratna instalacija i početno postavljanje: **80 EUR**
+- opcionalno tehničko održavanje: **20 EUR mjesečno**
+
+Dobrovoljna donacija za razvoj otvara se izravno preko Revolut gumba u Sidrena administraciji. Donacija nije naknada za instalaciju ili održavanje i ne predstavlja narudžbu usluge.
 
 Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.

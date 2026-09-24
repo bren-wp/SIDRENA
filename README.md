@@ -111,11 +111,14 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 |---|---|
 | 📧 E-mail | **sidrena@brendigo.com** |
 | 💬 WhatsApp | **+385 91 901 0092** |
-| 🧰 Instalacija i početno postavljanje | **80 EUR jednokratno** |
-| ❤️ Donacija | izravni Revolut gumb u Sidrena administraciji |
+| 🧰 Opcionalno jednokratno postavljanje | **80 EUR jednokratno**, samo ako želite da Brendigo sve postavi |
+| 🔧 Opcionalno tehničko održavanje | **20 EUR mjesečno**, samo ako želite da Brendigo održava plugin |
+| ❤️ Donacija za razvoj | dobrovoljna, izravno preko Revoluta; nije naknada za uslugu |
 | 👨‍💻 Developer | **Brendigo LTD Developer** |
 
 PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
+
+**Važno:** plugin možete instalirati, postaviti i održavati sami. Cijene 80 EUR i 20 EUR/mj odnose se isključivo na opcionalne Brendigo usluge koje se naručuju po želji korisnika. Dobrovoljna donacija ne uključuje instalaciju ni održavanje.
 
 ## 📥 Release 0.1.0
 
@@ -132,9 +135,13 @@ Korištenje je dopušteno prema **Sidrena Software License 1.0**. Nije dopušten
 
 Puni tekst: [LICENSE](LICENSE)
 
-## ⚖️ Tehnička usklađenost
+## ⚖️ Tehnička podrška propisima
 
-Sidrena je tehnički alat za unos, provjeru i objavu podataka. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
+Sidrena 0.1.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
+
+Plugin podržava obvezni skup podataka, CSV/XML objavu, zasebne lokacije/webshop, najmanje 30 dana javne arhive, referentne datume i automatizirani dohvat aktualnih cijena. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
+
+Softver **ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja**; primjenjivost obveza ovisi o stvarnim proizvodima/uslugama, poslovnom modelu i podacima koje korisnik unese.
 
 ## 🧪 Razvoj i provjera
 
