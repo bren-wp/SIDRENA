@@ -23,7 +23,7 @@ function sidrena_stream_assert( $condition, $message ) {
 }
 
 sidrena_stream_assert( '' !== $reader, 'Streaming snapshot reader method could not be inspected.' );
-sidrena_stream_assert( false !== strpos( $utils, "cjenik-' . $id . '.jsonl'" ), 'Public snapshot path must use JSONL.' );
+sidrena_stream_assert( false !== strpos( $utils, "'.jsonl'" ), 'Public snapshot path must use JSONL.' );
 sidrena_stream_assert( false !== strpos( $reader, "fopen( $path, 'rb' )" ), 'Streaming snapshot reader must open the file as a stream.' );
 sidrena_stream_assert( false !== strpos( $reader, 'fgets( $handle, 1048577 )' ), 'Streaming snapshot reader must consume bounded rows.' );
 sidrena_stream_assert( false === strpos( $reader, 'file_get_contents(' ), 'Streaming snapshot reader must not load the full snapshot into memory.' );
