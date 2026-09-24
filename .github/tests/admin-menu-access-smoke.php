@@ -1,5 +1,6 @@
 <?php
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena/' );
 
 $GLOBALS['sidrena_test_caps'] = array(

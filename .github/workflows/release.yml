@@ -97,7 +97,6 @@ jobs:
             - **Sidrena WooCommerce** — `sidrena-woocommerce-${{ env.VERSION }}.zip` za WordPress + WooCommerce.
             - Nemojte aktivirati oba izdanja istodobno.
             - Za svaki ZIP objavljen je SHA-256 checksum.
-            - Static/PHP izdanje više nije dio projekta niti releasea.
 
             Upute su uključene unutar svakog instalacijskog ZIP-a.
 

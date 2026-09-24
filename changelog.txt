@@ -1,138 +1,26 @@
-= 1.7.0 =
-* Added a second first-class distribution: Sidrena Static PHP.
-* Static PHP runs without WordPress, WooCommerce, a database, or an admin panel.
-* Added CSV-driven product/service sources, public responsive HTML catalog, JSON API, CSV/XML publication and archive downloads.
-* Added Croatian header/encoding/decimal normalization and automatic unit-price calculation to the static engine.
-* Added strict preflight validation, non-blocking generation lock, atomic writes, manifest metadata and SHA-256 checksums.
-* Added private storage layout with Apache/IIS access-denial files and safe download routing.
-* Added CLI/cron generation plus optional source-mtime based auto-generation for shared hosting.
-* Split release packaging into explicit WordPress and Static PHP ZIPs while retaining the legacy WordPress sidrena-x.y.z.zip alias.
-* Added CI smoke coverage that executes a real Static PHP generation and verifies archives, downloads, formula-injection safety, XML and unit-price calculation.
+Sidrena changelog
+
+= 2.0.0 =
+* Projekt razdvojen na dva potpuno odvojena WordPress plugina: Sidrena WordPress i Sidrena WooCommerce.
+* Uklonjen je generički plugin entrypoint; svaki paket sada ima vlastiti plugin header i vlastiti slug.
+* Sidrena WordPress koristi isključivo vlastiti WordPress katalog proizvoda i usluga.
+* Sidrena WooCommerce koristi isključivo WooCommerce proizvode/varijacije i deklarira WooCommerce kao obaveznu ovisnost.
+* Uklonjeno je automatsko prebacivanje načina rada ovisno o tome je li WooCommerce trenutno aktivan.
+* WordPress paket više ne sadrži Woo product/history/location/bulk/import/compatibility klase.
+* WooCommerce paket više ne sadrži standalone WordPress katalog klasu.
+* Admin, REST, cjenici, Site Health, capability logika i DB schema sada poštuju eksplicitno izdanje.
+* Woo product/location history tablice kreiraju se samo u WooCommerce izdanju.
+* Dodani su zasebni runtime smoke testovi za oba izdanja.
+* Dodan je jedan reproducibilni build skript koji iz istog izvora stvara oba izolirana ZIP-a.
+* GitHub Release objavljuje samo dva instalacijska paketa i njihove SHA-256 checksumove.
 
 = 1.6.6 =
-* Fixed missing Sidrena top-level admin menu and plugin action link when manage_sidrena had not propagated to the current WordPress user object.
-* Added manage_options and manage_woocommerce fallbacks while preserving manage_sidrena for custom roles.
-* Added a map_meta_cap bridge so elevated existing/custom roles can immediately access Sidrena.
-* Expanded capability backfill to every role that already has manage_options or manage_woocommerce.
-* Unified admin, bulk and standalone permission checks behind a resilient access helper.
-* Added an administrator-menu regression smoke test to CI.
+* Ispravljen prikaz Sidrena top-level admin menija za administratore kojima custom manage_sidrena capability još nije propagiran.
+* Dodani manage_options/manage_woocommerce fallback i capability regresijski test.
 
 = 1.6.5 =
-* Made plain-WordPress standalone mode a first-class runtime rather than a fallback path.
-* Core Sidrena modules now initialize independently from WooCommerce; Woo-only history, product, CSV and builder integrations register only when WooCommerce is active.
-* Added explicit runtime-mode reporting in the admin toolbar and WordPress Site Health.
-* Made the universal sidrena_cijena helper/action work with standalone products.
-* Added standalone products to the public realtime REST API and added /display/s<ID> support.
-* Kept Woo and standalone REST collections separately paginated when both catalogs exist.
-* Fixed a real standalone import fatal caused by a missing find_by_code method.
-* Added one-pass standalone code indexing and duplicate-code validation across import/edit/delete workflows.
-* Streamed standalone product rows in bounded batches for large-catalog generation and audits.
-* Replaced N+1 standalone code-index metadata reads with one prepared database query.
-* Normalized Croatian XML field names with the shared CSV normalizer, restored libxml error state and enforced the 50,000-record cap.
-* Added a real no-WooCommerce CI boot test that loads sidrena.php and verifies admin, shortcodes, schedules and absence of Woo-only hooks.
+* WordPress bez WooCommercea dobio punopravni katalog, REST, Site Health i no-Woo runtime test.
+* Poboljšani standalone import, streaming velikih kataloga, hrvatski XML i sigurnosne provjere.
 
 = 1.6.4 =
-* Fixed dynamic location add/remove collisions, active-location validation and cleanup of removed location data.
-* Paginated the standalone catalog and improved partial save/import reporting.
-* Added shared Croatian import-header normalization, legacy encoding handling and locale-aware decimal parsing.
-* Added package quantity/unit metadata and automatic base-unit pricing across standalone, WooCommerce product/variation, Sidrena bulk editor and native Woo CSV Import/Export.
-* Added direct WooCommerce price-meta tracking with shutdown deduplication and regeneration scheduling.
-* Hardened public HTML/REST state behavior and suppressed stale unit-price values when applicability changes.
-* Improved cron diagnostics, public HTTP checks, destructive-action confirmations, keyboard focus, mobile touch targets and reduced-motion behavior.
-* Added a complete Croatian installation and usage guide in docs/UPUTE.md.
-* Expanded deterministic tests for Croatian headers, quantity parsing and decimal formats.
-
-= 1.6.3 =
-* Added non-blocking generation locking to prevent overlapping cron, WP-CLI and manual publication jobs.
-* Made JSON manifest publication atomic and preserved the last valid public index when no output format is enabled.
-* Streamed public HTML snapshot generation to reduce peak memory use on large catalogs while keeping atomic publication.
-* Treats missing, corrupt or structurally invalid public snapshots as unavailable and returns the existing 503 preparation flow.
-* Hardened public WooCommerce visibility checks for password-protected products and non-public variations in REST and generated output.
-* Hardened spreadsheet formula-injection handling for text values with leading whitespace.
-* Improved Windows-1250 and ISO-8859-2 normalization across PHP 7.4, 8.3 and 8.4, including safe mbstring fallback behavior.
-* Expanded CI to PHP 8.4 and added deterministic Croatian filename, encoding, CSV-injection and unfinished-code smoke checks.
-* Corrected standalone-catalog and installation documentation.
-
-= 1.6.2 =
-* Expanded compatibility coverage for WooCommerce Blocks and popular dynamic page-builder price elements.
-* Added safe WP-CLI `wp sidrena fill` with `--dry-run` and `--today`; existing Sidrena values are never overwritten.
-* Added `[sidrena-cijena]` alias and universal `sidrena_cijena()` PHP helper.
-* Standardized storefront ordering so Sidrena anchor price appears before the 30-day reduction reference.
-* Expanded operational CLI status with history, current/public files, archive files and strict-publication mode.
-
-= 1.6.1 =
-* Added standalone WordPress product catalog when WooCommerce is unavailable.
-* Added additional manual items alongside WooCommerce products, including public cjenik output and per-item shortcodes.
-* Added standalone CSV/XML import by product code with Croatian column aliases.
-* Added native WooCommerce product CSV Import/Export mappings for Sidrena fields.
-* Added cached public HTML pricelist and archive routes plus underscore/hyphen shortcode aliases.
-* Added background rebuild behavior with 503 response when public snapshot is unavailable.
-* Added strict publication preflight so incomplete output cannot replace the last valid public cjenik.
-* Added physical-location availability validation.
-* Added cron freshness warnings and server-cron guidance.
-* Added UTF-8/Windows-1250/ISO-8859-2 import normalization.
-* Added CSV formula-injection neutralization for public cjenici.
-* Added Elementor, Woo Blocks, WPBakery, Oxygen, Divi, Bricks, Beaver Builder and common theme price fallbacks.
-* Added variation-aware dynamic compatibility endpoint without exposing non-public products.
-* Added configurable, accessible anchor-price tooltip and WPML/Polylang string registration.
-* Excluded catalog-hidden WooCommerce products from public cjenici and realtime API.
-* Preserved cached decimal formatting in the public HTML cjenik.
-
-= 1.6.0 =
-* Rebuilt the Sidrena admin interface around the production reference design with separate WordPress submenu screens.
-* Added real price-history dashboard series and recent-change tables from local WooCommerce history.
-* Added an optional, non-intrusive donation link inside Sidrena only; no feature is gated by donations.
-* Added explicit unit-price applicability workflow and readiness checks for NN 105/2026.
-* Added service component/replacement-goods information and machine-readable export field.
-* Added new local Sidrena logo, admin hero and WordPress.org visual source set.
-* Improved legal/technical notes and removed development-only material from release packaging.
-* Kept Sidrena fully free, local, GPL-compatible and telemetry-free.
-
-= 1.5.1 =
-* Fixed CI retired-brand validation so the guard does not match its own workflow definition.
-* Made CI version validation compare the plugin header, SIDRENA_VERSION constant and WordPress.org Stable tag automatically.
-* Added tag-driven GitHub release packaging with an installable Sidrena ZIP and SHA-256 checksum.
-* Kept the plugin fully free, Brendigo-branded and WordPress.org-ready.
-
-= 1.5.0 =
-* Added WooCommerce bulk catalog editor for Sidrena fields.
-* Added local audit log with 400-day technical retention.
-* Added WordPress Site Health diagnostics for schedule and archive writability.
-* Added optional WP-CLI commands: `wp sidrena generate`, `wp sidrena status`, and `wp sidrena audit`.
-* Added audit events for pricelist generation, settings, locations, public page creation, and CSV imports.
-* Improved admin UI with Catalog and Log tabs.
-
-=== Sidrena — full changelog ===
-
-= 1.4.0 =
-* Added a dedicated technical readiness / compliance center.
-* Added per-location history of prices, anchor prices and availability, retained internally for 400 days.
-* Added unified CSV export for WooCommerce, service and location price history.
-* Added one-click creation of a public Cjenici page with current files and the public archive.
-* Added stable product-code fallback: WooCommerce SKU, Sidrena code, then WP-ID.
-* Expanded real-time REST fields for products, services and locations.
-* Added WooCommerce scheduled-sale start/end history hooks and price-list regeneration.
-* Improved the premium admin UI and archive diagnostics.
-* Kept Sidrena fully free, local and telemetry-free.
-
-= 1.3.0 =
-* Added public real-time prices endpoint `/wp-json/sidrena/v1/cijene` with no-cache headers.
-* Added products, variations, services and location-aware prices/availability to real-time retrieval.
-* Expanded the Propisi tab with the Ministry clarification dated 22.09.2026.
-* Clarified the distinction between the public 30+ day price-list archive and internal 30-day reduction history.
-
-= 1.2.0 =
-* Added service type, scope and associated-cost fields for the public service price list.
-* Added daily WP-Cron schedule diagnostics and schedule recovery.
-* Added archive-register export with SHA-256, publication time and retention deadline.
-* Added the premium top-level Sidrena admin panel.
-* Enforced at least 30 days of public archive retention; default remains 45 days.
-* Added per-file retain-until metadata, integrity verification and archive calendar.
-* Added support for perishable / fast-expiry reduction metadata.
-* Improved WooCommerce variations, location prices, anchor prices and admin checks.
-
-= 1.1.0 =
-* Expanded anchor-price, 30-day history, services, locations, CSV/XML and public archive support.
-
-= 1.0.0 =
-* First public Sidrena release.
+* Poboljšanja stabilnosti, administracije, dokumentacije i javnog cjenika.

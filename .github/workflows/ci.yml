@@ -91,8 +91,6 @@ jobs:
           test -s docs/UPUTE-WOOCOMMERCE.md
           test -x tools/build-editions.sh
           test ! -f sidrena.php
-          test ! -d static-php
-          test ! -f .github/tests/static-php-smoke.php
           grep -Fq 'is_wordpress_edition' includes/class-sidrena-utils.php
           grep -Fq 'is_woocommerce_edition' includes/class-sidrena-utils.php
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
@@ -153,8 +151,6 @@ jobs:
 
           unzip -l "$OUT/sidrena-wordpress-$VERSION.zip" > "$OUT/wordpress-files.txt"
           unzip -l "$OUT/sidrena-woocommerce-$VERSION.zip" > "$OUT/woocommerce-files.txt"
-          ! grep -q 'static-php' "$OUT/wordpress-files.txt"
-          ! grep -q 'static-php' "$OUT/woocommerce-files.txt"
 
       - name: Guard against inline PHP script/style blocks
         if: matrix.php == '8.3'
