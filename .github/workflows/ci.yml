@@ -182,6 +182,8 @@ jobs:
           test -f "$STATIC_STAGE/generate.php"
           test -f "$STATIC_STAGE/config.php"
           test -f "$STATIC_STAGE/src/SidrenaStatic.php"
+          test -f "$STATIC_STAGE/assets/style.css"
+          test -f "$STATIC_STAGE/assets/app.js"
           test -f "$STATIC_STAGE/storage/source/products.csv"
           test -f "$STATIC_STAGE/storage/source/services.csv"
           test -f "$STATIC_STAGE/storage/.htaccess"
