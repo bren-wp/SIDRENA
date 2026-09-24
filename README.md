@@ -12,7 +12,7 @@ Support: sidrena@brendigo.com
 
 <p align="center">
   <strong>Produk­cijski WordPress/WooCommerce dodatak za sidrene cijene, javne cjenike i 30+ dana arhive objava.</strong><br>
-  Brendigo · Sidrena 0.6.0
+  Brendigo · Sidrena 0.7.0
 </p>
 
 <p align="center">
@@ -23,9 +23,9 @@ Support: sidrena@brendigo.com
   ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛡 Compliance guard · 🛟 Brendigo podrška
 </p>
 
-![Sidrena 0.6.0](docs/media/readme-hero.svg)
+![Sidrena 0.7.0](docs/media/readme-hero.svg)
 
-# Sidrena 0.6.0
+# Sidrena 0.7.0
 
 Sidrena je Brendigo dodatak za trgovce, web shopove i WordPress stranice koje moraju jasno voditi **sidrene/referentne cijene**, javno objavljivati CSV/XML cjenike i zadržati javnu arhivu prethodnih objava najmanje 30 dana.
 
@@ -136,7 +136,7 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 
 ## Produkcijska kvaliteta
 
-Sidrena 0.6.0 release linija čuva se automatiziranim provjerama:
+Sidrena 0.7.0 release linija čuva se automatiziranim provjerama:
 
 - PHP 7.4, 8.3 i 8.4 syntax/runtime smoke testovi
 - odvojena WordPress i WooCommerce runtime provjera
@@ -164,8 +164,8 @@ PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
 Objavljuju se samo:
 
-- `sidrena-wordpress-0.6.0.zip`
-- `sidrena-woocommerce-0.6.0.zip`
+- `sidrena-wordpress-0.7.0.zip`
+- `sidrena-woocommerce-0.7.0.zip`
 
 Službeni release mora nastati kroz GitHub release workflow. Lokalni, generički ili dodatni ZIP paketi nisu release artefakti.
 
@@ -179,7 +179,7 @@ Puni tekst: [LICENSE](LICENSE)
 
 ## ⚖️ Tehnička podrška propisima
 
-Sidrena 0.6.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
+Sidrena 0.7.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 
 Plugin podržava obvezni skup podataka, CSV/XML objavu, zasebne lokacije/webshop, najmanje 30 dana javne arhive, referentne datume i automatizirani dohvat aktualnih cijena. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
 
