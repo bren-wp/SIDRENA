@@ -1,0 +1,40 @@
+# Sidrena source file.
+# Author: Brendigo LTD Developer
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Apply Sidrena metadata v2
+
+on:
+  push:
+    branches:
+      - develop/0.1.0
+    paths:
+      - '.github/workflows/apply-source-metadata-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/0.1.0
+      - name: Apply source metadata
+        run: python3 tools/apply-source-metadata.py
+      - name: Commit source metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No metadata changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: standardize Sidrena source metadata"
+          git push origin HEAD:develop/0.1.0
