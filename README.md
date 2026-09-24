@@ -12,16 +12,16 @@ Support: sidrena@brendigo.com
 
 <p align="center">
   <strong>Sidrene cijene, javni cjenici i arhiva objava za WordPress i WooCommerce.</strong><br>
-  Brendigo · verzija 0.3.0
+  Brendigo · verzija 0.4.0
 </p>
 
 <p align="center">
   ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛟 Podrška
 </p>
 
-![Sidrena 0.3.0](docs/media/readme-hero.svg)
+![Sidrena 0.4.0](docs/media/readme-hero.svg)
 
-# Sidrena 0.3.0
+# Sidrena 0.4.0
 
 Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo izdanje koje odgovara web stranici.
 
@@ -87,7 +87,7 @@ Kompletna javna stranica koristi shortcode:
 
 Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu. Javni cjenik koristi streaming snapshot, server-side pretragu cijelog kataloga i paginaciju, pa velika baza ne mora biti učitana odjednom u PHP memoriju ili DOM.
 
-U 0.3.0 `[sidrena_arhiva]` i arhiva na stranici Objava cjenika koriste isti grupirani prikaz po datumu. Trenutno aktivne datoteke ostaju u odjeljku **Aktualni cjenici** i ne dupliciraju se među prethodnim objavama.
+`[sidrena_arhiva]` i arhiva na stranici Objava cjenika koriste isti grupirani prikaz po datumu. Trenutno aktivne datoteke ostaju u odjeljku **Aktualni cjenici** i ne dupliciraju se među prethodnim objavama.
 
 Dostupni su i zasebni prikazi:
 
@@ -100,6 +100,12 @@ Dostupni su i zasebni prikazi:
 ```
 
 Za zasebni cjenik broj stavki po stranici može se prilagoditi, primjerice `[sidrena_cjenik po_stranici="50"]`. Podržano je 10–100 stavki po stranici; zadano je 50.
+
+## 🧰 Usluge i uvoz
+
+U 0.4.0 `[sidrena_usluge]` koristi server-side paginaciju od 10 do 100 stavki, zadano 50. Admin compliance audit usluge obrađuje u batchovima od 250 umjesto učitavanja cijelog kataloga.
+
+WordPress katalog obrađuje CSV retke streaming pristupom. XML koristi `XMLReader` kada je dostupan, uz NONET i zabranu DOCTYPE/ENTITY deklaracija. CSV/XML import ograničen je na 50.000 zapisa po datoteci, a limit se provjerava prije poslovnih promjena. Woo sidrena/location CSV import također radi row-limit preflight, pa prevelik upload ne završava djelomičnim importom.
 
 ## ⏰ Automatizirana dnevna objava
 
@@ -123,12 +129,12 @@ PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
 **Važno:** plugin možete instalirati, postaviti i održavati sami. Cijena 80 EUR odnosi se na jednokratnu instalaciju i početno postavljanje kada tu uslugu želite naručiti. Donacija je dobrovoljna i odvojena od usluge instalacije.
 
-## 📥 Release 0.3.0
+## 📥 Release 0.4.0
 
 Objavljuju se samo:
 
-- `sidrena-wordpress-0.3.0.zip`
-- `sidrena-woocommerce-0.3.0.zip`
+- `sidrena-wordpress-0.4.0.zip`
+- `sidrena-woocommerce-0.4.0.zip`
 
 ## 🔐 Licenca
 
@@ -140,7 +146,7 @@ Puni tekst: [LICENSE](LICENSE)
 
 ## ⚖️ Tehnička podrška propisima
 
-Sidrena 0.3.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
+Sidrena 0.4.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 
 Plugin podržava obvezni skup podataka, CSV/XML objavu, zasebne lokacije/webshop, najmanje 30 dana javne arhive, referentne datume i automatizirani dohvat aktualnih cijena. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
 
@@ -151,7 +157,7 @@ Softver **ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja**; prim
 CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje i stvarne build staging pakete.
 
 ```bash
-./tools/build-editions.sh 0.3.0 /tmp/sidrena-build
+./tools/build-editions.sh 0.4.0 /tmp/sidrena-build
 ```
 
 ## Brendigo
