@@ -177,6 +177,7 @@ jobs:
           unzip -l sidrena-static-smoke.zip > static-package-files.txt
           test -f "$STATIC_STAGE/index.php"
           test -f "$STATIC_STAGE/api.php"
+          test -f "$STATIC_STAGE/health.php"
           test -f "$STATIC_STAGE/download.php"
           test -f "$STATIC_STAGE/generate.php"
           test -f "$STATIC_STAGE/config.php"
