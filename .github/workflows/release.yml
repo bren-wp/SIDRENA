@@ -61,6 +61,10 @@ jobs:
             echo "Removing previous $TAG_NAME tag before the final 0.1.0 rebuild."
             git push origin --delete "$TAG_NAME"
           fi
+          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "Removing checkout-local $TAG_NAME tag before recreating it."
+            git tag -d "$TAG_NAME"
+          fi
 
       - name: Create release tag from release branch
         if: startsWith(github.ref, 'refs/heads/release/')
