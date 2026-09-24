@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * a legal conclusion about the merchant's concrete business obligations.
  */
 final class Sidrena_Compliance {
+	const LAST_STATUS_OPTION = 'sidrena_compliance_last_status';
+
 	private static $instance;
 
 	public static function instance() {
@@ -110,19 +112,119 @@ final class Sidrena_Compliance {
 	}
 
 	public function watchdog() {
-		$paths = Sidrena_Utils::upload_paths();
-		wp_mkdir_p( $paths['archive_dir'] );
-		wp_mkdir_p( $paths['snapshot_dir'] );
+		$repairs = array();
+		$repairs = array_merge( $repairs, $this->repair_settings() );
+		$repairs = array_merge( $repairs, $this->repair_schedules() );
+		$repairs = array_merge( $repairs, $this->repair_public_surface() );
+
+		$readiness = self::readiness();
+		$this->log_watchdog_result( $readiness, $repairs );
+	}
+
+	private function repair_settings() {
+		$settings = get_option( 'sidrena_settings', array() );
+		$settings = is_array( $settings ) ? $settings : array();
+		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
+		$repairs  = array();
+
+		$required = array(
+			'default_ref_date'      => '2026-09-10',
+			'fmcg_ref_date'         => '2025-05-02',
+			'generate_csv'          => 'yes',
+			'generate_xml'          => 'yes',
+			'enable_public_html'    => 'yes',
+			'strict_publication'    => 'yes',
+			'failure_notifications' => 'yes',
+		);
+
+		foreach ( $required as $key => $value ) {
+			if ( ! isset( $settings[ $key ] ) || $value !== $settings[ $key ] ) {
+				$settings[ $key ] = $value;
+				$repairs[]        = 'settings:' . $key;
+			}
+		}
+
+		$retention = max( 30, absint( $settings['retention_days'] ) );
+		if ( $retention !== absint( $settings['retention_days'] ) ) {
+			$settings['retention_days'] = $retention;
+			$repairs[]                  = 'settings:retention_days';
+		}
+
+		$time = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '';
+		if ( ! preg_match( '/^(0[0-7]):[0-5][0-9]$/', $time ) ) {
+			$settings['generation_time'] = '06:30';
+			$repairs[]                   = 'settings:generation_time';
+		}
+
+		if ( $repairs ) {
+			update_option( 'sidrena_settings', $settings, false );
+		}
+
+		return $repairs;
+	}
+
+	private function repair_schedules() {
+		$repairs = array();
+
+		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
+			$timestamp = is_callable( array( 'Sidrena_Utils', 'schedule_timestamp' ) ) ? Sidrena_Utils::schedule_timestamp() : time() + HOUR_IN_SECONDS;
+			wp_schedule_event( $timestamp, 'daily', 'sidrena_daily_generation' );
+			$repairs[] = 'schedule:sidrena_daily_generation';
+		}
+
+		if ( ! wp_next_scheduled( 'sidrena_publication_watch' ) ) {
+			wp_schedule_event( time() + 300, 'hourly', 'sidrena_publication_watch' );
+			$repairs[] = 'schedule:sidrena_publication_watch';
+		}
+
+		return $repairs;
+	}
+
+	private function repair_public_surface() {
+		$repairs = array();
+		$paths   = Sidrena_Utils::upload_paths();
+
+		foreach ( array( 'archive_dir', 'snapshot_dir' ) as $path_key ) {
+			if ( ! is_dir( $paths[ $path_key ] ) ) {
+				wp_mkdir_p( $paths[ $path_key ] );
+				$repairs[] = 'directory:' . $path_key;
+			}
+		}
 
 		foreach ( array( $paths['base_dir'], $paths['archive_dir'], $paths['snapshot_dir'] ) as $dir ) {
-			$this->protect_directory( $dir );
+			if ( $this->protect_directory( $dir ) ) {
+				$repairs[] = 'directory:index';
+			}
 		}
 
 		if ( class_exists( 'Sidrena_Public' ) ) {
 			Sidrena_Public::ensure_public_page();
+			$repairs[] = 'public_page:ensure';
 		}
 
-		$readiness = self::readiness();
+		return $repairs;
+	}
+
+	private function log_watchdog_result( $readiness, $repairs ) {
+		$hash = md5( wp_json_encode( array( $readiness['issues'], $readiness['profile'], $repairs ) ) );
+		$last = get_option( self::LAST_STATUS_OPTION, array() );
+		$last = is_array( $last ) ? $last : array();
+		$age  = isset( $last['checked_at'] ) ? time() - absint( $last['checked_at'] ) : DAY_IN_SECONDS + 1;
+
+		update_option(
+			self::LAST_STATUS_OPTION,
+			array(
+				'hash'       => $hash,
+				'ok'         => (bool) $readiness['ok'],
+				'checked_at' => time(),
+			),
+			false
+		);
+
+		if ( isset( $last['hash'] ) && $hash === $last['hash'] && $age < DAY_IN_SECONDS ) {
+			return;
+		}
+
 		Sidrena_Audit::log(
 			'legal_automation_watchdog',
 			$readiness['ok'] ? 'success' : 'warning',
@@ -130,18 +232,21 @@ final class Sidrena_Compliance {
 			array(
 				'issues'  => $readiness['issues'],
 				'profile' => $readiness['profile'],
+				'repairs' => array_values( array_unique( $repairs ) ),
 			),
 			0
 		);
 	}
 
 	private function protect_directory( $dir ) {
-		if ( ! is_dir( $dir ) ) {
-			return;
+		if ( ! is_dir( $dir ) || ( function_exists( 'wp_is_writable' ) && ! wp_is_writable( $dir ) ) ) {
+			return false;
 		}
 		$index = trailingslashit( $dir ) . 'index.html';
-		if ( ! file_exists( $index ) ) {
-			file_put_contents( $index, '<!doctype html><meta charset="utf-8"><title>Sidrena</title>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( file_exists( $index ) ) {
+			return false;
 		}
+		file_put_contents( $index, '<!doctype html><meta charset="utf-8"><title>Sidrena</title>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		return true;
 	}
 }

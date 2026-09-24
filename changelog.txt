@@ -12,6 +12,8 @@ Sidrena changelog
 * Build provjera ruši workflow ako se vrati generički root `sidrena.php`, `static-php`, dodatna edicija ili datoteke izvan korijena pojedinog ZIP paketa.
 * Dodan je compliance/automation watchdog koji centralno prati NN 101/2026, NN 105/2026 i pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 * Watchdog automatski obnavlja javnu Sidrena stranicu, upload direktorije, zaštitne index datoteke i zapisuje lokalni audit log bez slanja podataka izvan WordPress instalacije.
+* Compliance watchdog sada automatski popravlja obavezne tehničke postavke, dnevni cron i publication watch kada je sigurno moguće.
+* Audit log je production hardening slojem ograničen po veličini poruke/konteksta, čuva najviše 5000 zapisa i tiho se preskače ako tablica još nije spremna.
 * Nova legal automation CI provjera čuva referentne datume 10.09.2026. i 02.05.2025., rano automatsko generiranje, strict publication, failure notifications i hourly publication watch.
 * Release priprema za 0.5.0 dodatno učvršćuje zahtjev da se ne objavljuju lokalni, generički ili lažni paketi.
 
