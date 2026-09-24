@@ -1,6 +1,6 @@
-#define AppVersion GetEnv('SIDRENA_VERSION')
-#define SourceDir GetEnv('SIDRENA_PUBLISH_DIR')
-#define OutputDir GetEnv('SIDRENA_WINDOWS_ARTIFACTS')
+#define AppVersion GetEnv("SIDRENA_VERSION")
+#define SourceDir GetEnv("SIDRENA_PUBLISH_DIR")
+#define OutputDir GetEnv("SIDRENA_WINDOWS_ARTIFACTS")
 
 [Setup]
 AppId={{0D734305-68E9-44E4-97E7-52EF724DD2DE}
@@ -22,10 +22,8 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayName=Sidrena Desktop
-SetupIconFile=
 
 [Languages]
-Name: "croatian"; MessagesFile: "compiler:Languages\Croatian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
