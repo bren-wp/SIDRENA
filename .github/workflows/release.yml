@@ -45,6 +45,23 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
 
+      - name: Refresh first public 0.1.0 release when rebuilding from release branch
+        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '0.1.0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/$TAG_NAME" --jq '.id' 2>/dev/null || true)"
+          if [[ -n "$RELEASE_ID" ]]; then
+            echo "Removing previous $TAG_NAME release before the final 0.1.0 rebuild."
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/$RELEASE_ID"
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "Removing previous $TAG_NAME tag before the final 0.1.0 rebuild."
+            git push origin --delete "$TAG_NAME"
+          fi
+
       - name: Create release tag from release branch
         if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
