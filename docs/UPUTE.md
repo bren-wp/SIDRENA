@@ -1,4 +1,4 @@
-# Sidrena 1.6.4 - Upute za instalaciju i korištenje
+# Sidrena 1.6.5 - Upute za instalaciju i korištenje
 
 **Službena stranica:** https://sidrene-cijene.com.hr/  
 **GitHub:** https://github.com/bren-wp/SIDRENA  
@@ -17,10 +17,16 @@ Sidrena je jedan plugin za tri scenarija:
 
 Možete koristiti proizvode, usluge ili mješoviti način rada.
 
+### Samostalni WordPress način je punopravni način rada
+
+WooCommerce nije potreban za aktivaciju niti za prikaz Sidrena izbornika. Bez WooCommercea dostupni su Sidrena katalog proizvoda, usluge, CSV/XML uvoz, automatsko generiranje, javni HTML, arhiva, REST API, Site Health i shortcodeovi. U toolbaru piše **Samostalni WordPress način**.
+
+Ako kasnije aktivirate WooCommerce, ista Sidrena instalacija automatski uključuje Woo integraciju. Ne trebate mijenjati plugin niti migrirati postojeći standalone katalog.
+
 ## 2. Instalacija
 
 1. WordPress: **Dodaci > Dodaj novi > Prenesi dodatak**.
-2. Prenesite **sidrena-1.6.4.zip**.
+2. Prenesite **sidrena-1.6.5.zip**.
 3. Kliknite **Instaliraj sada** i **Aktiviraj**.
 4. Otvorite **Sidrena > Pregled**.
 5. Provjerite izbornike Pregled, Usklađenost, Katalog, Cjenici, Arhiva, Lokacije, Postavke, Alati, Dnevnik, Propisi i Upute.
@@ -179,6 +185,16 @@ Primjeri:
 ## 19. REST
 
 Ako je uključen u Postavkama, ekran Cjenici prikazuje Sidrena REST endpointove. Ako REST ne koristite, možete ga isključiti.
+
+### REST u samostalnom i WooCommerce načinu
+
+`/wp-json/sidrena/v1/cijene?type=products` radi i bez WooCommercea.
+
+- bez WooCommercea: `products` sadrži standalone Sidrena proizvode
+- s WooCommerceom: `products` sadrži WooCommerce proizvode, a `standalone_products` zasebno paginirane dodatne Sidrena stavke
+- `catalog_mode` navodi `standalone` ili `woocommerce`
+- `woocommerce_active` eksplicitno navodi stanje integracije
+- standalone prikaz pojedine stavke dostupan je putem `/display/s123`
 
 ## 20. Site Health i Dnevnik
 

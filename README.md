@@ -12,7 +12,7 @@
 
 ## Sidrene cijene pod kontrolom
 
-**Sidrena 1.6.4** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+**Sidrena 1.6.5** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
 
 **Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
 
@@ -167,6 +167,12 @@ WP-CLI:
 - **NN 105/2026** — način isticanja maloprodajne/jedinične cijene i pravila za cjenike usluga; objavljen 18.09.2026., stupa na snagu osmoga dana od objave.
 
 Službeni linkovi i informativni sažeci nalaze se u **Sidrena → Propisi**.
+
+## WordPress bez WooCommercea — punopravni način rada
+
+WooCommerce **nije obavezan dependency**. Sidrena se aktivira, prikazuje u WordPress administraciji i radi na običnom WordPressu s vlastitim katalogom proizvoda, uslugama, CSV/XML uvozom, javnim HTML cjenikom, arhivom, REST API-jem, cron generiranjem, Site Health provjerama i shortcodeovima.
+
+Kada je WooCommerce aktivan, ista instalacija automatski uključuje WooCommerce proizvode/varijacije, native Woo CSV Import/Export, price history i builder integracije. Nije potrebna migracija ni drugi Sidrena plugin.
 
 ## Dokumentacija
 

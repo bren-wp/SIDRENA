@@ -1,3 +1,17 @@
+= 1.6.5 =
+* Made plain-WordPress standalone mode a first-class runtime rather than a fallback path.
+* Core Sidrena modules now initialize independently from WooCommerce; Woo-only history, product, CSV and builder integrations register only when WooCommerce is active.
+* Added explicit runtime-mode reporting in the admin toolbar and WordPress Site Health.
+* Made the universal sidrena_cijena helper/action work with standalone products.
+* Added standalone products to the public realtime REST API and added /display/s<ID> support.
+* Kept Woo and standalone REST collections separately paginated when both catalogs exist.
+* Fixed a real standalone import fatal caused by a missing find_by_code method.
+* Added one-pass standalone code indexing and duplicate-code validation across import/edit/delete workflows.
+* Streamed standalone product rows in bounded batches for large-catalog generation and audits.
+* Replaced N+1 standalone code-index metadata reads with one prepared database query.
+* Normalized Croatian XML field names with the shared CSV normalizer, restored libxml error state and enforced the 50,000-record cap.
+* Added a real no-WooCommerce CI boot test that loads sidrena.php and verifies admin, shortcodes, schedules and absence of Woo-only hooks.
+
 = 1.6.4 =
 * Fixed dynamic location add/remove collisions, active-location validation and cleanup of removed location data.
 * Paginated the standalone catalog and improved partial save/import reporting.
