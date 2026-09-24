@@ -1,0 +1,60 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Sidrena legal automation guard
+
+on:
+  push:
+    branches:
+      - main
+      - 'develop/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - 'develop/**'
+
+permissions:
+  contents: read
+
+jobs:
+  legal-automation:
+    name: Legal automation and source alignment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Legal automation smoke test
+        run: php .github/tests/legal-automation-smoke.php
+
+      - name: Production legal-copy guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIniE '100% (pravno )?usklađ|100% (pravno )?usklad|jamči.*usklađen|garantira.*usklađen|pravna garancija' \
+            --include='*.php' --include='*.md' --include='*.txt' . --exclude-dir=.git; then
+            echo 'Unsafe legal-compliance guarantee detected.' >&2
+            exit 1
+          fi
+
+      - name: Automation defaults guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "'default_ref_date'     => '2026-09-10'" includes/class-sidrena-utils.php
+          grep -Fq "'fmcg_ref_date'        => '2025-05-02'" includes/class-sidrena-utils.php
+          grep -Fq "'generation_time'      => '06:30'" includes/class-sidrena-utils.php
+          grep -Fq "'strict_publication'   => 'yes'" includes/class-sidrena-utils.php
+          grep -Fq "'failure_notifications' => 'yes'" includes/class-sidrena-utils.php
+          grep -Fq "wp_schedule_event( self::publication_watch_timestamp(), 'hourly', 'sidrena_publication_watch' );" includes/class-sidrena-activator.php
