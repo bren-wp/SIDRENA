@@ -65,10 +65,14 @@ $html = Sidrena_Products::instance()->append_reference_prices( '<span class="pri
 
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-reference-prices' ), 'Automatic Woo output must append Sidrena reference wrapper.' );
 sidrena_woo_output_assert( false !== strpos( $html, '29,99 €' ), 'Automatic Woo output must include the entered Sidrena price.' );
+sidrena_woo_output_assert( false !== strpos( $html, 'Sidrena cijena (10.09.2026.)' ), 'Default storefront label must identify the Sidrena price and reference date.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-anchor__info' ), 'Automatic Woo output must include the accessible info indicator.' );
 
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );
 sidrena_woo_output_assert( 1 === substr_count( $again, 'sidrena-reference-prices' ), 'Sidrena wrapper must appear exactly once.' );
+
+$product = null;
+sidrena_woo_output_assert( '' === Sidrena_Products::instance()->shortcode( array( 'id' => 's123' ) ), 'Woo shortcode must reject standalone IDs without loading a missing class.' );
 
 fwrite( STDOUT, "Sidrena Woo automatic price output smoke test passed.\n" );

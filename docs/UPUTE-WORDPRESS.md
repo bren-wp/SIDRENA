@@ -115,17 +115,32 @@ Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razd
 
 `wp sidrena audit`
 
+## Tehnička kontrola obveznih elemenata
+
+Prije produkcijske objave provjerite najmanje sljedeće:
+
+- dodatna/sidrena cijena uz važeću cijenu kada je obveza primjenjiva
+- referentni datum 10.09.2026. za novobuhvaćene proizvode/usluge, odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije
+- CSV ili XML javni cjenik
+- zasebnu objavu po lokaciji i webshopu kada je primjenjivo
+- najmanje 30 dana javne dostupnosti prethodnih objava
+- aktualni cjenik trgovca za tekući radni dan najkasnije do 08:00, odnosno cjenik usluga pri promjeni cijene prema primjenjivom pravilu
+- automatizirani dohvat aktualnih maloprodajnih cijena
+- obvezna polja proizvoda: naziv, šifra, marka, primjenjiva jedinica i jedinična cijena, maloprodajna cijena, podatak o posebnom obliku prodaje, sidrena cijena, barkod i dostupnost
+- za usluge: naziv, maloprodajna cijena, podatak o posebnom obliku prodaje i sidrena cijena, uz podatke o vrsti/opsegu i pripadajućim troškovima gdje ih traži primjenjivi propis
+
 ## Podrška
 
 - E-mail: **sidrena@brendigo.com**
 - WhatsApp: **+385 91 901 0092**
-- Instalacija i početno postavljanje: **80 EUR jednokratno**
+- Plugin možete instalirati i postaviti sami.
+- Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
 - PDF: `docs/SIDRENA-PODRSKA.pdf`
 - Developer: **Brendigo LTD Developer**
 
 ## Donacija
 
-Izravni Revolut gumb nalazi se u Sidrena administraciji.
+Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
 
 ## Licenca
 
@@ -146,4 +161,4 @@ Provjerite:
 - arhivu
 - Dnevnik
 
-Sidrena je tehnički alat. Povijesne i referentne cijene moraju odgovarati stvarnoj poslovnoj evidenciji.
+Sidrena tehnički podržava provjerene zahtjeve za podatke i objavu cjenika, ali softver sam po sebi nije pravna potvrda poslovanja. Povijesne i referentne cijene moraju odgovarati stvarnoj poslovnoj evidenciji, a korisnik mora provjeriti primjenjivost važećih obveza na svoje konkretne proizvode, usluge i prodajna mjesta.

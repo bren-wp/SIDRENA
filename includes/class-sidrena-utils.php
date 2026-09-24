@@ -29,7 +29,7 @@ final class Sidrena_Utils {
 			'display_anchor'       => 'yes',
 			'display_lowest_30'    => 'yes',
 			'label_mode'           => 'date_only',
-			'label_custom'         => 'Cijena na %s',
+			'label_custom'         => 'Sidrena cijena (%s)',
 			'anchor_tooltip_enabled' => 'yes',
 			'anchor_tooltip_text'    => 'Sidrena cijena je referentna redovna cijena proizvoda ili usluge na prikazani datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
 			'default_ref_date'     => '2026-09-10',
@@ -198,9 +198,15 @@ final class Sidrena_Utils {
 		return 'https://wa.me/385919010092?text=' . rawurlencode( 'Pozdrav, trebam podršku za Sidrena plugin.' );
 	}
 
-	public static function installation_service_url() {
-		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - instalacija i postavljanje 80 EUR' );
+	public static function installation_price() {
+		return '80 EUR';
 	}
+
+
+	public static function installation_service_url() {
+		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno jednokratno postavljanje 80 EUR' );
+	}
+
 
 	public static function support_pdf_url() {
 		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
@@ -340,7 +346,7 @@ final class Sidrena_Utils {
 		if ( 'date_only' === $settings['label_mode'] ) {
 			return sprintf(
 				/* translators: %s is a date. */
-				__( 'Cijena na %s', 'sidrena' ),
+				__( 'Sidrena cijena (%s)', 'sidrena' ),
 				$display
 			);
 		}

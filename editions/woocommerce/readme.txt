@@ -48,7 +48,7 @@ Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao jedini izvor 
 
 🌐 Objava cjenika
 * javna stranica Objava cjenika
-* shortcode [sidrena_cjenici]
+* shortcode [sidrena_objava_cjenika]
 * pretraživi HTML cjenik
 * javna arhiva
 * CSV/XML i REST
@@ -71,6 +71,15 @@ Ovo izdanje zahtijeva WooCommerce. Za web bez WooCommercea koristite Sidrena Wor
 
 Developer: Brendigo LTD Developer
 Službena stranica: https://sidrene-cijene.com.hr/
+
+== Support and optional services ==
+
+Plugin možete instalirati i postaviti sami.
+
+* opcionalno jednokratno postavljanje od strane Brendiga: 80 EUR
+* e-mail: sidrena@brendigo.com
+* WhatsApp: +385 91 901 0092
+* dobrovoljna donacija za razvoj: izravni Revolut link
 
 == Installation ==
 

@@ -455,8 +455,8 @@ final class Sidrena_Public {
 				<?php if ( empty( $groups ) ) : ?>
 					<div class="sidrena-public-message"><?php esc_html_e( 'Arhiva još nema objavljenih datoteka.', 'sidrena' ); ?></div>
 				<?php else : ?>
-					<?php foreach ( $groups as $date => $entries ) : ?>
-						<details class="sidrena-downloads__day" <?php echo 0 === key( array( $date => $entries ) ) ? 'open' : ''; ?>>
+					<?php $group_index = 0; foreach ( $groups as $date => $entries ) : $group_index++; ?>
+						<details class="sidrena-downloads__day" <?php echo 1 === $group_index ? 'open' : ''; ?>>
 							<summary><strong><?php echo esc_html( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? wp_date( 'd.m.Y.', strtotime( $date ) ) : $date ); ?></strong><span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span></summary>
 							<div class="sidrena-downloads__grid">
 								<?php foreach ( $entries as $entry ) : ?>
