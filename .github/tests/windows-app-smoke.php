@@ -99,11 +99,14 @@ foreach ( array( 'portable.exe', 'setup.exe', 'gh release upload', 'Verify compl
 }
 
 $documentation = $readme . "\n" . $root_readme;
+$claim_prefix_g = 'garantira ';
+$claim_prefix_j = 'jamči ';
+$claim_alignment_word = 'usklađenost';
 $forbidden_claims = array(
 	'pravna ' . 'garancija',
-	'garantira ' . 'usklađenost',
-	'jamči ' . 'usklađenost',
-	'automatski ' . 'jamči',
+	$claim_prefix_g . $claim_alignment_word,
+	$claim_prefix_j . $claim_alignment_word,
+	'automatski ' . $claim_prefix_j,
 );
 foreach ( $forbidden_claims as $forbidden_claim ) {
 	sidrena_windows_assert( false === stripos( $documentation, $forbidden_claim ), 'Forbidden legal certainty wording found: ' . $forbidden_claim );
