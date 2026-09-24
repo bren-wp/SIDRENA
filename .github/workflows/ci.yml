@@ -101,6 +101,9 @@ jobs:
       - name: Atomic public snapshot smoke test
         run: php .github/tests/publication-write-smoke.php
 
+      - name: Transactional generation smoke test
+        run: php .github/tests/generation-transaction-smoke.php
+
       - name: Streaming public snapshot smoke test
         run: php .github/tests/public-snapshot-stream-smoke.php
 
