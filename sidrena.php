@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Sidrena
  * Plugin URI: https://sidrene-cijene.com.hr/
- * Description: Sidrene cijene, WooCommerce i usluge s javnim CSV/XML cjenicima, arhivom 30+ dana i poviješću cijena.
- * Version: 1.6.4
+ * Description: Sidrene cijene za WordPress sa ili bez WooCommercea, uslugama, javnim CSV/XML cjenicima i arhivom 30+ dana.
+ * Version: 1.6.5
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Brendigo
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SIDRENA_VERSION', '1.6.4' );
+define( 'SIDRENA_VERSION', '1.6.5' );
 define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 105/2026 · MINGO 22.09.2026' );
 define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );
 define( 'SIDRENA_FILE', __FILE__ );
@@ -52,18 +52,32 @@ if ( ! function_exists( 'sidrena_cijena' ) ) {
 	/**
 	 * Universal template helper for themes and page builders.
 	 *
-	 * @param int|WC_Product|null $product Product ID/object or current global product.
+	 * WooCommerce product: sidrena_cijena( 123 )
+	 * Standalone product:  sidrena_cijena( 's123' )
+	 *
+	 * @param mixed $product Product ID/object, standalone s<ID> reference, or current WooCommerce product.
 	 */
 	function sidrena_cijena( $product = null ) {
-		if ( ! class_exists( 'Sidrena_Products' ) || ! Sidrena_Utils::is_woocommerce_active() ) {
+		$raw = is_scalar( $product ) ? trim( (string) $product ) : '';
+		if ( preg_match( '/^s(\d+)$/i', $raw, $match ) && class_exists( 'Sidrena_Standalone' ) ) {
+			echo wp_kses_post( Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . absint( $match[1] ) ) ) );
+			return;
+		}
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			$id = is_numeric( $product ) ? absint( $product ) : 0;
+			if ( $id && class_exists( 'Sidrena_Standalone' ) && Sidrena_Standalone::POST_TYPE === get_post_type( $id ) ) {
+				echo wp_kses_post( Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . $id ) ) );
+			}
 			return;
 		}
 
 		if ( is_numeric( $product ) ) {
 			$product = wc_get_product( absint( $product ) );
 		}
-
-		Sidrena_Products::instance()->action_output( $product );
+		if ( class_exists( 'Sidrena_Products' ) ) {
+			Sidrena_Products::instance()->action_output( $product );
+		}
 	}
 }
 

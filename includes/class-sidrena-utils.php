@@ -472,6 +472,16 @@ final class Sidrena_Utils {
 		return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
 	}
 
+	public static function runtime_mode() {
+		return self::is_woocommerce_active() ? 'woocommerce' : 'standalone';
+	}
+
+	public static function runtime_mode_label() {
+		return self::is_woocommerce_active()
+			? __( 'WooCommerce + Sidrena', 'sidrena' )
+			: __( 'Samostalni WordPress način', 'sidrena' );
+	}
+
 	public static function is_public_wc_product( $product ) {
 		if ( ! is_object( $product ) || ! is_callable( array( $product, 'get_id' ) ) || ! is_callable( array( $product, 'is_type' ) ) ) {
 			return false;

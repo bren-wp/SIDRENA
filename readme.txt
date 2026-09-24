@@ -4,16 +4,16 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Besplatan WordPress/WooCommerce dodatak za sidrene cijene, povijest cijena, javne CSV/XML cjenike i arhivu 30+ dana.
+Besplatan WordPress dodatak koji radi sa ili bez WooCommercea: sidrene cijene, katalog, CSV/XML cjenici, REST i arhiva 30+ dana.
 
 == Description ==
 
-**Sidrena** je potpuno besplatan open-source WordPress dodatak autora **Brendigo** za trgovce, webshopove i pružatelje usluga u Hrvatskoj.
+**Sidrena** je potpuno besplatan open-source WordPress dodatak autora **Brendigo** za trgovce, webshopove i pružatelje usluga u Hrvatskoj. Radi kao samostalni WordPress katalog ili se automatski proširuje WooCommerce integracijom kada je WooCommerce aktivan.
 
 Nema Pro izdanja, licencnog ključa, pretplate, telemetrije ni obaveznog vanjskog računa.
 
@@ -166,6 +166,21 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 
 == Changelog ==
 
+= 1.6.5 =
+* WooCommerce više nije ni funkcionalno ni UX pretpostavka: Sidrena core se inicijalizira i ostaje vidljiv na običnom WordPressu.
+* Dodan eksplicitni Samostalni WordPress način / WooCommerce + Sidrena status u administraciji.
+* Woo-only hookovi, admin akcije i history seed ne registriraju se kada WooCommerce nije aktivan.
+* PHP helper i sidrena_cijena action rade i za standalone proizvode.
+* REST /cijene vraća standalone proizvode bez WooCommercea, a u Woo modu dodatne Sidrena stavke imaju zaseban paginirani standalone_products rezultat.
+* /display/s123 podržava standalone proizvod.
+* Popravljena fatalna greška standalone CSV/XML uvoza uzrokovana pozivom nepostojeće find_by_code metode.
+* Standalone šifre imaju centralni indeks i provjeru duplikata tijekom uvoza i uređivanja.
+* Veliki standalone katalog generira se i auditira u batch/streaming načinu umjesto učitavanja cijelog kataloga u memoriju.
+* Indeks standalone šifri učitava se jednim pripremljenim SQL upitom.
+* Hrvatski XML uvoz koristi isti normalizer kao CSV, ograničen je na 50.000 zapisa i sigurno vraća libxml stanje.
+* WordPress Site Health prikazuje stvarni integracijski način, standalone broj proizvoda i WooCommerce status.
+* CI sada učitava stvarni Sidrena plugin bez WooCommercea i potvrđuje da core/admin/shortcode/cron rade, a Woo-only hookovi nisu registrirani.
+
 = 1.6.4 =
 * Pouzdaniji rad lokacija: jedinstveni dinamički ključevi, validacija aktivnih lokacija i čišćenje obrisanih lokacijskih podataka.
 * Samostalni katalog je paginiran i jasnije prijavljuje djelomične greške spremanja/uvoza.
@@ -219,6 +234,10 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.5 =
+
+Preporučena nadogradnja posebno za instalacije bez WooCommercea: standalone način je sada punopravni runtime s vlastitim REST-om, jačim importom, Site Health provjerom i CI zaštitom.
 
 = 1.6.4 =
 

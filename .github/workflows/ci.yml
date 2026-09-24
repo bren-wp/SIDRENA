@@ -39,6 +39,9 @@ jobs:
       - name: Utility encoding/security smoke tests
         run: php .github/tests/utility-smoke.php
 
+      - name: No-WooCommerce runtime smoke test
+        run: php .github/tests/no-woocommerce-smoke.php
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
@@ -71,6 +74,9 @@ jobs:
           grep -q 'Author: Brendigo' sidrena.php
           grep -q 'Author URI: https://brendigo.com/' sidrena.php
           grep -q 'Plugin URI: https://sidrene-cijene.com.hr/' sidrena.php
+          ! grep -qiE '^ \* Requires Plugins:.*woocommerce' sidrena.php
+          grep -Fq 'Samostalni WordPress način' includes/class-sidrena-utils.php
+          grep -Fq 'realtime_standalone_products' includes/class-sidrena-rest.php
           grep -q 'License: GPLv2 or later' sidrena.php
           grep -q '^Donate link: https://sidrene-cijene.com.hr/#donirajte$' readme.txt
           test -f assets/images/logo-mark.svg

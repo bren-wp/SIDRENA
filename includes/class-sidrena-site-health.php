@@ -30,7 +30,54 @@ final class Sidrena_Site_Health {
 			'label' => __( 'Sidrena javna arhiva', 'sidrena' ),
 			'test'  => array( $this, 'test_archive' ),
 		);
+		$tests['direct']['sidrena_runtime'] = array(
+			'label' => __( 'Sidrena način rada', 'sidrena' ),
+			'test'  => array( $this, 'test_runtime' ),
+		);
 		return $tests;
+	}
+
+	public function test_runtime() {
+		$woo        = Sidrena_Utils::is_woocommerce_active();
+		$standalone = class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : 0;
+		$services    = wp_count_posts( 'sidrena_service' );
+		$services    = $services && isset( $services->publish ) ? absint( $services->publish ) : 0;
+
+		if ( ! class_exists( 'Sidrena_Standalone' ) || ! class_exists( 'Sidrena_Services' ) ) {
+			return array(
+				'label'       => __( 'Sidrena osnovni moduli nisu potpuno učitani', 'sidrena' ),
+				'status'      => 'critical',
+				'badge'       => array( 'label' => 'Sidrena', 'color' => 'red' ),
+				'description' => '<p>' . esc_html__( 'Nedostaje jedan od osnovnih Sidrena modula. Ponovno instalirajte kompletan plugin paket prije nastavka rada.', 'sidrena' ) . '</p>',
+				'actions'     => '',
+				'test'        => 'sidrena_runtime',
+			);
+		}
+
+		if ( $woo ) {
+			$description = sprintf(
+				/* translators: 1: standalone product count, 2: service count */
+				__( 'WooCommerce integracija je aktivna. Uz WooCommerce proizvode dostupno je i %1$d dodatnih Sidrena proizvoda te %2$d objavljenih usluga.', 'sidrena' ),
+				$standalone,
+				$services
+			);
+		} else {
+			$description = sprintf(
+				/* translators: 1: standalone product count, 2: service count */
+				__( 'Sidrena radi samostalno bez WooCommercea. Dostupno je %1$d Sidrena proizvoda i %2$d objavljenih usluga. WooCommerce nije obavezan dependency.', 'sidrena' ),
+				$standalone,
+				$services
+			);
+		}
+
+		return array(
+			'label'       => $woo ? __( 'Sidrena WooCommerce integracija je aktivna', 'sidrena' ) : __( 'Sidrena samostalni WordPress način je aktivan', 'sidrena' ),
+			'status'      => 'good',
+			'badge'       => array( 'label' => 'Sidrena', 'color' => 'blue' ),
+			'description' => '<p>' . esc_html( $description ) . '</p>',
+			'actions'     => '',
+			'test'        => 'sidrena_runtime',
+		);
 	}
 
 	public function test_schedule() {
@@ -106,7 +153,10 @@ final class Sidrena_Site_Health {
 			'label'  => __( 'Sidrena', 'sidrena' ),
 			'fields' => array(
 				'version' => array( 'label' => __( 'Verzija', 'sidrena' ), 'value' => SIDRENA_VERSION ),
-				'mode' => array( 'label' => __( 'Način rada', 'sidrena' ), 'value' => $settings['business_mode'] ),
+				'runtime_mode' => array( 'label' => __( 'Integracijski način', 'sidrena' ), 'value' => Sidrena_Utils::runtime_mode_label() ),
+				'business_mode' => array( 'label' => __( 'Poslovni model', 'sidrena' ), 'value' => $settings['business_mode'] ),
+				'woocommerce' => array( 'label' => __( 'WooCommerce', 'sidrena' ), 'value' => Sidrena_Utils::is_woocommerce_active() ? __( 'aktivan', 'sidrena' ) : __( 'nije instaliran/aktivan — Sidrena radi samostalno', 'sidrena' ) ),
+				'standalone_products' => array( 'label' => __( 'Samostalni proizvodi', 'sidrena' ), 'value' => Sidrena_Standalone::count() ),
 				'retention' => array( 'label' => __( 'Arhiva', 'sidrena' ), 'value' => max( 30, absint( $settings['retention_days'] ) ) . ' dana' ),
 				'generation_time' => array( 'label' => __( 'Vrijeme generiranja', 'sidrena' ), 'value' => $settings['generation_time'] ),
 				'next_run' => array( 'label' => __( 'Sljedeće generiranje', 'sidrena' ), 'value' => $next ? wp_date( DATE_ATOM, $next ) : __( 'nije zakazano', 'sidrena' ) ),

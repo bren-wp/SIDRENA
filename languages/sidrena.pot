@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.6.4\n"
+"Project-Id-Version: Sidrena 1.6.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 01:55+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1350,4 +1350,92 @@ msgstr ""
 
 #: 1.6.4
 msgid "Cjenik je objavljen, ali trenutačno nema stavki za prikaz."
+msgstr ""
+
+#: 1.6.5
+msgid "Samostalni WordPress način"
+msgstr ""
+
+#: 1.6.5
+msgid "WooCommerce + Sidrena"
+msgstr ""
+
+#: 1.6.5
+msgid "WooCommerce integracija je aktivna. Dostupni su Woo uvozi, lokacijski predlošci i zajednički Sidrena alati."
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena radi u samostalnom WordPress načinu. Prikazani su samo alati koji rade bez WooCommercea."
+msgstr ""
+
+#: 1.6.5
+msgid "Samostalni katalog proizvoda"
+msgstr ""
+
+#: 1.6.5
+msgid "Dodajte proizvode ručno ili uvezite CSV/XML izravno u Sidrena katalog. WooCommerce nije potreban."
+msgstr ""
+
+#: 1.6.5
+msgid "Otvori katalog i uvoz"
+msgstr ""
+
+#: 1.6.5
+msgid "Katalog usluga"
+msgstr ""
+
+#: 1.6.5
+msgid "Usluge su neovisne o WooCommerceu i mogu se koristiti samostalno ili zajedno s proizvodima."
+msgstr ""
+
+#: 1.6.5
+msgid "WooCommerce je opcionalan"
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena se aktivira i ostaje vidljiva na običnom WordPressu. Ako kasnije aktivirate WooCommerce, isti plugin automatski uključuje WooCommerce integraciju bez potrebe za zamjenom Sidrene."
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena način rada"
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena osnovni moduli nisu potpuno učitani"
+msgstr ""
+
+#: 1.6.5
+msgid "Nedostaje jedan od osnovnih Sidrena modula. Ponovno instalirajte kompletan plugin paket prije nastavka rada."
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena WooCommerce integracija je aktivna"
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena samostalni WordPress način je aktivan"
+msgstr ""
+
+#: 1.6.5
+msgid "WooCommerce integracija je aktivna. Uz WooCommerce proizvode dostupno je i %1$d dodatnih Sidrena proizvoda te %2$d objavljenih usluga."
+msgstr ""
+
+#: 1.6.5
+msgid "Sidrena radi samostalno bez WooCommercea. Dostupno je %1$d Sidrena proizvoda i %2$d objavljenih usluga. WooCommerce nije obavezan dependency."
+msgstr ""
+
+#: 1.6.5
+msgid "Integracijski način"
+msgstr ""
+
+#: 1.6.5
+msgid "Samostalni proizvodi"
+msgstr ""
+
+#: 1.6.5
+msgid "nije instaliran/aktivan — Sidrena radi samostalno"
+msgstr ""
+
+#: 1.6.5
+msgid "XML ima više od dopuštenih 50.000 zapisa."
 msgstr ""
