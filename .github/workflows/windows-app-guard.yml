@@ -1,0 +1,51 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Sidrena Windows app guard
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'develop/**'
+  pull_request:
+    branches:
+      - main
+      - 'develop/**'
+
+permissions:
+  contents: read
+
+jobs:
+  windows-app-smoke:
+    name: Windows app smoke guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Validate Windows app structure
+        run: php .github/tests/windows-app-smoke.php
+
+  windows-app-build:
+    name: Windows app build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore Sidrena Windows app
+        run: dotnet restore windows/Sidrena.Windows/Sidrena.Windows.csproj
+      - name: Build Sidrena Windows app
+        run: dotnet build windows/Sidrena.Windows/Sidrena.Windows.csproj -c Release --no-restore
