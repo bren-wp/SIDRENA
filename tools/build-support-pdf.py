@@ -63,6 +63,7 @@ contact = [
     [Paragraph("<b>WhatsApp</b>", body), Paragraph("+385 91 901 0092", body)],
     [Paragraph("<b>Instalacija i postavljanje</b>", body), Paragraph("80 EUR jednokratno", body)],
     [Paragraph("<b>Donacija</b>", body), Paragraph("Revolut - izravni gumb nalazi se u Sidrena adminu", body)],
+    [Paragraph("<b>Javna objava</b>", body), Paragraph("Objava cjenika + CSV/XML + arhiva", body)],
 ]
 table = Table(contact, colWidths=[55*mm, 105*mm], hAlign="CENTER")
 table.setStyle(TableStyle([
@@ -78,6 +79,7 @@ story.append(Paragraph("Istodobno može biti aktivno samo jedno Sidrena izdanje.
 story.append(Paragraph("Brzi postupak nakon instalacije", h2))
 steps = [
     "Otvorite <b>Sidrena → Postavke</b> i provjerite poslovni model, referentne datume, CSV/XML i vrijeme generiranja.",
+    "U Postavkama po potrebi unesite <b>podatke obrta/tvrtke</b>: naziv, adresu, OIB, e-mail, telefon i podatke registra za javnu Objavu cjenika.",
     "Otvorite <b>Sidrena → Lokacije</b> i unesite svaku lokaciju odnosno webshop koji treba vlastiti cjenik.",
     "Popunite katalog i obvezne podatke: naziv, šifra, marka, cijena, sidrena cijena, barkod, dostupnost te jediničnu cijenu kada je primjenjiva.",
     "Otvorite <b>Sidrena → Usklađenost</b> i riješite upozorenja koja plugin može tehnički provjeriti.",
@@ -90,13 +92,15 @@ for i, item in enumerate(steps, 1):
 story.extend([
     PageBreak(),
     Paragraph("Javna objava cjenika", h2),
-    Paragraph("Sidrena može objaviti javnu WordPress stranicu Objava cjenika, aktualni HTML cjenik, arhivu te CSV/XML datoteke. Za strojni dohvat dostupan je REST API i JSON manifest kada je uključen.", body),
-    Paragraph("Na javnoj stranici jasno se prikazuju datum objave, lokacija, format datoteke i gumb Preuzmi. Arhivske datoteke grupiraju se po datumima radi jednostavnijeg pregleda.", body),
+    Paragraph("Sidrena može objaviti javnu WordPress stranicu Objava cjenika preko shortcodea <b>[sidrena_objava_cjenika]</b>. Prikaz objedinjuje podatke obrta/tvrtke kada su uključeni, aktualni HTML cjenik, CSV/XML preuzimanje i arhivu. Za strojni dohvat dostupan je REST API i JSON manifest kada je uključen.", body),
+    Paragraph("Na javnoj stranici jasno se prikazuju aktualni cjenik, datum objave, lokacija, format datoteke i gumb Preuzmi. Arhivske datoteke grupiraju se po datumima radi jednostavnijeg pregleda.", body),
     Paragraph("Tehnička kontrolna lista", h2),
 ])
 for item in [
     "CSV i/ili XML je uključen.",
     "Automatsko generiranje je postavljeno dovoljno prije 08:00, a sigurnosna provjera prati propuštenu dnevnu objavu.",
+    "E-mail upozorenje za neuspjelu ili zakašnjelu objavu uključeno je ako ga želite koristiti; Sidrena ograničava ponavljanje upozorenja.",
+    "Ako javna Objava cjenika prikazuje poslovni identitet, provjerite naziv, adresu, OIB, kontakt i podatke registra.",
     "Aktualna datoteka je javno dostupna bez prijave.",
     "Arhiva čuva objavljene datoteke najmanje 30 dana.",
     "Nazivi datoteka sadrže podatke o objektu/lokaciji i vremensku oznaku.",
@@ -106,6 +110,8 @@ for item in [
     story.append(bullet(item))
 
 story.extend([
+    Paragraph("Podaci obrta / tvrtke", h2),
+    Paragraph("Naziv, sjedište/adresa, kontaktni podaci, podaci registra i PDV identifikacija pripadaju općoj transparentnosti internetske prodaje. Sidrena ih prikazuje odvojeno na javnoj stranici i ne dodaje ih kao izmišljene obvezne stupce NN 101/2026 CSV/XML cjenika.", body),
     Paragraph("Referentni datumi", h2),
     Paragraph("Za proizvode i usluge koji ranije nisu bili obuhvaćeni mjerom koristi se referentni datum 10.09.2026. Za ranije obuhvaćene kategorije hrane, pića, kozmetike, sredstava za čišćenje, toaletnih potrepština i proizvoda za kućanstvo ostaje 02.05.2025.", body),
     Paragraph("Sidrena je tehnički alat. Referentne, povijesne i druge poslovne cijene moraju dolaziti iz stvarne i provjerljive poslovne evidencije korisnika.", small),
@@ -113,6 +119,7 @@ story.extend([
     Paragraph("<b>E-mail:</b> sidrena@brendigo.com", body),
     Paragraph("<b>WhatsApp:</b> +385 91 901 0092", body),
     Paragraph("<b>Instalacija i početno postavljanje:</b> 80 EUR jednokratno.", body),
+    Paragraph("<b>U pluginu:</b> Sidrena → Podrška s PDF-om, e-mailom i WhatsApp gumbom.", body),
     Paragraph("Za prijavu problema pošaljite verziju WordPressa, aktivno Sidrena izdanje, opis koraka i relevantnu poruku iz Sidrena Dnevnika. Ne šaljite lozinke ili pristupne podatke e-poštom.", small),
     Paragraph("Licenca", h2),
     Paragraph("Sidrena se koristi prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.", body),
