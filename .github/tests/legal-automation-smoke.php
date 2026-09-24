@@ -30,8 +30,8 @@ sidrena_legal_assert( false !== strpos( $plugin_source, 'Sidrena_Compliance::ins
 sidrena_legal_assert( false !== strpos( $compliance_source, "add_action( 'sidrena_publication_watch'" ), 'Publication watchdog integration is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, "add_action( 'sidrena_daily_generation'" ), 'Daily generation watchdog integration is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Public::ensure_public_page();' ), 'Automatic public page repair is missing.' );
-sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[' . "'archive_dir'" . '] );' ), 'Archive directory self-heal is missing.' );
-sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[' . "'snapshot_dir'" . '] );' ), 'Snapshot directory self-heal is missing.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, "array( 'archive_dir', 'snapshot_dir' )" ), 'Archive/snapshot directory self-heal list is missing.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[ $path_key ] );' ), 'Looped directory self-heal is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'legal_automation_watchdog' ), 'Audit log event for legal automation watchdog is missing.' );
 
 foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
