@@ -49,6 +49,19 @@ jobs:
       - name: Admin menu capability smoke test
         run: php .github/tests/admin-menu-access-smoke.php
 
+      - name: Edition conflict guard smoke tests
+        shell: bash
+        run: |
+          php .github/tests/edition-conflict-smoke.php wordpress
+          php .github/tests/edition-conflict-smoke.php woocommerce
+
+      - name: Safe uninstall smoke tests
+        shell: bash
+        run: |
+          php .github/tests/uninstall-smoke.php preserve
+          php .github/tests/uninstall-smoke.php other-active
+          php .github/tests/uninstall-smoke.php destroy
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
