@@ -22,11 +22,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( defined( 'SIDRENA_EDITION' ) ) {
+	$sidrena_conflicting_file = __FILE__;
+
+	// During an activation request WordPress loads already active plugins first.
+	// Abort before the target plugin is added to active_plugins.
+	register_activation_hook(
+		__FILE__,
+		static function () {
+			wp_die(
+				esc_html__( 'Drugo Sidrena izdanje je već aktivno. Deaktivirajte ga prije aktivacije ovog plugina.', 'sidrena' ),
+				esc_html__( 'Sidrena — sukob izdanja', 'sidrena' ),
+				array( 'back_link' => true )
+			);
+		}
+	);
+
+	// Repair an older installation where both editions were already marked as
+	// active: the later-loaded copy deactivates itself on the next admin request.
+	add_action(
+		'admin_init',
+		static function () use ( $sidrena_conflicting_file ) {
+			if ( ! function_exists( 'deactivate_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			if ( function_exists( 'deactivate_plugins' ) ) {
+				deactivate_plugins( plugin_basename( $sidrena_conflicting_file ), true );
+			}
+		},
+		1
+	);
+
 	add_action(
 		'admin_notices',
 		static function () {
 			if ( current_user_can( 'activate_plugins' ) ) {
-				echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Deaktivirajte drugo Sidrena izdanje prije korištenja ovog plugina.', 'sidrena' ) . '</p></div>';
+				echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Drugo izdanje je blokirano/deaktivirano kako bi se spriječili dvostruki hookovi i objave.', 'sidrena' ) . '</p></div>';
 			}
 		}
 	);

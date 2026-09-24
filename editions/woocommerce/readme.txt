@@ -58,7 +58,6 @@ Detaljne upute nalaze se u `docs/UPUTE.md` unutar paketa.
 * WooCommerce katalog je jedini izvor proizvoda.
 * Samostalni WordPress katalog nije dio niti ZIP-a niti runtimea.
 * Woo history, location, bulk, CSV import/export i compatibility moduli učitavaju se samo u ovom izdanju.
-* Uklonjen je Static/PHP proizvod i sva njegova dokumentacija/testovi.
 
 == Upgrade Notice ==
 

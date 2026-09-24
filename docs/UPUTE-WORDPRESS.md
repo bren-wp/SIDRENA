@@ -58,3 +58,14 @@ Ako prelazite na WooCommerce:
 3. instalirajte i aktivirajte WooCommerce
 4. instalirajte Sidrena WooCommerce
 5. provjerite podatke prije generiranja novih javnih cjenika
+
+
+## Deinstalacija i podaci
+
+Brisanje plugin paketa po defaultu **ne briše Sidrena poslovne podatke**, postavke, tablice ni zajedničke capabilityje. To omogućuje siguran prijelaz između Sidrena WordPress i Sidrena WooCommerce izdanja.
+
+Ako želite trajno ukloniti Sidrena bazne podatke nakon što nijedno izdanje više nije aktivno, prije brisanja u `wp-config.php` postavite:
+
+`define( 'SIDRENA_DELETE_DATA_ON_UNINSTALL', true );`
+
+Javna CSV/XML arhiva i sadržaj proizvoda/usluga namjerno se ne brišu automatski.

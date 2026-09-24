@@ -59,3 +59,14 @@ Dostupni su WP-Cron i WP-CLI:
 ## Zamjena izdanja
 
 Sidrena WooCommerce i Sidrena WordPress ne smiju biti aktivni istodobno. Prije promjene izdanja napravite sigurnosnu kopiju i provjerite javne cjenike.
+
+
+## Deinstalacija i podaci
+
+Brisanje plugin paketa po defaultu **ne briše Sidrena poslovne podatke**, postavke, tablice ni zajedničke capabilityje. To omogućuje siguran prijelaz između Sidrena WooCommerce i Sidrena WordPress izdanja.
+
+Ako želite trajno ukloniti Sidrena bazne podatke nakon što nijedno izdanje više nije aktivno, prije brisanja u `wp-config.php` postavite:
+
+`define( 'SIDRENA_DELETE_DATA_ON_UNINSTALL', true );`
+
+Javna CSV/XML arhiva i sadržaj proizvoda/usluga namjerno se ne brišu automatski.

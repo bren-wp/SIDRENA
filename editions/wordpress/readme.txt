@@ -53,7 +53,6 @@ Detaljne upute nalaze se u `docs/UPUTE.md` unutar paketa.
 * Sidrena je razdvojena na dva zasebna plugina.
 * Ovo izdanje više ne učitava niti pakira WooCommerce product/history/import klase.
 * Vlastiti WordPress katalog je jedini izvor proizvoda.
-* Uklonjen je Static/PHP proizvod i sva njegova dokumentacija/testovi.
 * Admin, REST, Site Health i cjenici rade isključivo u WordPress edition modu.
 * WordPress paket ne sadrži Woo-specific klase.
 
