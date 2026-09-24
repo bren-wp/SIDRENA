@@ -636,22 +636,32 @@ final class Sidrena_Standalone {
 		if ( ! function_exists( 'simplexml_load_string' ) ) {
 			return new WP_Error( 'xml_unavailable' );
 		}
-		libxml_use_internal_errors( true );
-		$xml = simplexml_load_string( $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+
+		$previous = libxml_use_internal_errors( true );
+		$xml      = simplexml_load_string( $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
 		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
 		if ( false === $xml ) {
 			return new WP_Error( 'xml_invalid' );
 		}
 
 		$nodes = $xml->children();
-		$rows = array();
+		$rows  = array();
+		$count = 0;
 		foreach ( $nodes as $node ) {
 			if ( 0 === count( $node->children() ) ) {
 				continue;
 			}
+			++$count;
+			if ( $count > 50000 ) {
+				return new WP_Error( 'xml_row_limit', __( 'XML ima više od dopuštenih 50.000 zapisa.', 'sidrena' ) );
+			}
 			$row = array();
 			foreach ( $node->children() as $key => $value ) {
-				$row[ sanitize_key( (string) $key ) ] = (string) $value;
+				$normalized = Sidrena_Utils::import_header_key( (string) $key );
+				if ( '' !== $normalized ) {
+					$row[ $normalized ] = trim( (string) $value );
+				}
 			}
 			if ( ! empty( $row ) ) {
 				$rows[] = $row;
