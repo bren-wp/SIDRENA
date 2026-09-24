@@ -73,6 +73,9 @@ Sidrena_Plugin::instance()->run();
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_menu'] ), 'WordPress edition admin menu must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'WordPress catalog import must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_save'] ), 'WordPress catalog save must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_standalone_sync_batch'] ), 'WordPress source sync worker must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_filters']['the_content'] ), 'WordPress linked-content auto display filter must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_publication_watch'] ), 'Publication watchdog must register.' );
 
 foreach ( array_keys( $GLOBALS['sidrena_actions'] ) as $hook ) {
 	sidrena_wp_assert( 0 !== strpos( $hook, 'woocommerce_' ) && 0 !== strpos( $hook, 'wc_product_' ), 'Woo action leaked into WordPress edition: ' . $hook );
@@ -85,6 +88,7 @@ $method = new ReflectionMethod( 'Sidrena_Activator', 'ensure_schedules' );
 $method->setAccessible( true );
 $method->invoke( null );
 sidrena_wp_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_daily_generation'] ), 'Daily generation must remain scheduled.' );
+sidrena_wp_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_publication_watch'] ), 'Publication watchdog must be scheduled.' );
 sidrena_wp_assert( ! isset( $GLOBALS['sidrena_scheduled']['sidrena_history_seed'] ), 'Woo history seed must not exist in WordPress edition.' );
 
 fwrite( STDOUT, "Sidrena WordPress edition smoke test passed.\n" );

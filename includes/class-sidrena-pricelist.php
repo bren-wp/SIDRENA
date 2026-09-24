@@ -16,6 +16,7 @@ final class Sidrena_Pricelist {
 	public function hooks() {
 		add_action( 'sidrena_daily_generation', array( $this, 'generate_all' ) );
 		add_action( 'sidrena_queued_generation', array( $this, 'generate_all' ) );
+		add_action( 'sidrena_publication_watch', array( $this, 'publication_watch' ) );
 	}
 
 	public static function queue_regeneration() {
@@ -24,6 +25,33 @@ final class Sidrena_Pricelist {
 		}
 		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
 	}
+
+
+	public function publication_watch() {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== $settings['generate_csv'] && 'yes' !== $settings['generate_xml'] ) {
+			return;
+		}
+		$now_time = wp_date( 'H:i' );
+		$target   = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '06:30';
+		if ( $now_time < $target ) {
+			return;
+		}
+		$last    = get_option( 'sidrena_last_run', array() );
+		$last_ts = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		if ( $last_ts && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
+			return;
+		}
+		if ( self::queue_regeneration() ) {
+			Sidrena_Audit::log(
+				'publication_watch',
+				'info',
+				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
+				array( 'target_time' => $target )
+			);
+		}
+	}
+
 
 	public function generate_all() {
 		$settings  = Sidrena_Utils::settings();
