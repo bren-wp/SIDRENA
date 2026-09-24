@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'SIDRENA_VERSION', '0.1.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $root    = isset( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : '';
 $edition = isset( $argv[2] ) ? (string) $argv[2] : '';
 

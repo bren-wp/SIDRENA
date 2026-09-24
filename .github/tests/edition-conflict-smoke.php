@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $target = isset( $argv[1] ) ? (string) $argv[1] : '';
 $mode   = isset( $argv[2] ) ? (string) $argv[2] : 'edition';
 if ( ! in_array( $target, array( 'wordpress', 'woocommerce' ), true ) || ! in_array( $mode, array( 'edition', 'legacy' ), true ) ) {

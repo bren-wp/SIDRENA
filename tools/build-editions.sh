@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Sidrena source file.
+# Author: Brendigo LTD Developer
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
 set -euo pipefail
 
 VERSION="${1:-}"

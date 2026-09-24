@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 define( 'ABSPATH', __DIR__ . '/' );
 
 function wp_strip_all_tags( $value ) {

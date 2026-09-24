@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $scenario = isset( $argv[1] ) ? (string) $argv[1] : 'preserve';
 if ( ! in_array( $scenario, array( 'preserve', 'other-active', 'destroy' ), true ) ) {
 	fwrite( STDERR, "Unknown scenario.\n" );

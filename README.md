@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: Brendigo LTD Developer
+Author URI: https://brendigo.com/
+Plugin URI: https://sidrene-cijene.com.hr/
+Support: sidrena@brendigo.com
+-->
+
 <p align="center">
   <img src="assets/images/logo-horizontal.svg" alt="Sidrena" width="420">
 </p>

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 define( 'ABSPATH', __DIR__ . '/' );
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';

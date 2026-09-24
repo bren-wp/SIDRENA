@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: Brendigo LTD Developer
+Author URI: https://brendigo.com/
+Plugin URI: https://sidrene-cijene.com.hr/
+Support: sidrena@brendigo.com
+-->
+
 # Sidrena — pravne i tehničke bilješke
 
 Sidrena je tehnički WordPress/WooCommerce alat za evidenciju, prikaz i objavu cijena. Ne zamjenjuje pravni savjet i ne smije izmišljati povijesne vrijednosti koje ne postoje u provjerljivom izvoru.

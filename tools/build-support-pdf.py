@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Sidrena source file.
+# Author: Brendigo LTD Developer
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
 import os
 import sys
 from reportlab.lib.pagesizes import A4

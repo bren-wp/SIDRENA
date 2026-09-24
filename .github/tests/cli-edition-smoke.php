@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $edition = isset( $argv[1] ) ? (string) $argv[1] : '';
 if ( ! in_array( $edition, array( 'wordpress', 'woocommerce' ), true ) ) {
 	fwrite( STDERR, "Usage: php cli-edition-smoke.php wordpress|woocommerce\n" );
