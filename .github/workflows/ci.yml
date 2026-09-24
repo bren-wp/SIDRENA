@@ -64,6 +64,12 @@ jobs:
           php .github/tests/uninstall-smoke.php other-active
           php .github/tests/uninstall-smoke.php destroy
 
+      - name: Edition-specific WP-CLI smoke tests
+        shell: bash
+        run: |
+          php .github/tests/cli-edition-smoke.php wordpress
+          php .github/tests/cli-edition-smoke.php woocommerce
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4

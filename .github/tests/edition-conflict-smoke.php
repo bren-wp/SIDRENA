@@ -69,7 +69,7 @@ $blocked = false;
 try {
 	call_user_func( $GLOBALS['sidrena_activation_callback'] );
 } catch ( RuntimeException $e ) {
-	$blocked = false !== strpos( $e->getMessage(), 'Drugo Sidrena izdanje' );
+	$blocked = false !== strpos( $e->getMessage(), 'Sidrena izdanje' ) && false !== strpos( $e->getMessage(), 'aktivno' );
 }
 sidrena_conflict_assert( $blocked, 'Activation blocker did not stop the conflicting edition.' );
 
