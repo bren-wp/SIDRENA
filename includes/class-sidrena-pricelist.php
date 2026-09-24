@@ -112,6 +112,13 @@ final class Sidrena_Pricelist {
 					continue;
 				}
 
+				$catalog_types = $this->catalog_types( $settings['business_mode'] );
+				foreach ( $catalog_types as $catalog_type ) {
+					foreach ( $formats as $format ) {
+						$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
+					}
+				}
+
 				$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
 				if ( '' === $address ) {
 					$errors[] = sprintf(
@@ -123,21 +130,11 @@ final class Sidrena_Pricelist {
 
 				$sequence          = max( 1, isset( $location['sequence'] ) ? absint( $location['sequence'] ) : 1 );
 				$snapshot_catalogs = array();
+				$location_entries  = array();
+				$location_files    = array();
+				$location_failed   = false;
 
-				foreach ( $this->catalog_types( $settings['business_mode'] ) as $catalog_type ) {
-					foreach ( $formats as $format ) {
-						$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
-					}
-
-					if ( 'yes' === $settings['strict_publication'] ) {
-						$preflight = $this->preflight_catalog( $catalog_type, $location );
-						if ( is_wp_error( $preflight ) ) {
-							$errors[] = $preflight->get_error_message();
-							continue;
-						}
-					}
-
-					$catalog_generated = false;
+				foreach ( $catalog_types as $catalog_type ) {
 					foreach ( $formats as $format ) {
 						$filename = $this->build_filename( $location, $sequence, $stamp, $format );
 						$filepath = $paths['archive_dir'] . $filename;
@@ -146,16 +143,16 @@ final class Sidrena_Pricelist {
 							: $this->write_services( $filepath, $format, $location );
 
 						if ( is_wp_error( $result ) ) {
-							$errors[] = $result->get_error_message();
+							$errors[]        = $result->get_error_message();
+							$location_failed = true;
 							++$sequence;
-							continue;
+							break;
 						}
 
-						$catalog_generated = true;
 						$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
 						$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
-						++$generated;
-						$index[] = array(
+						$location_files[]   = $filepath;
+						$location_entries[] = array(
 							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
 							'location_code'   => sanitize_text_field( isset( $location['code'] ) ? $location['code'] : '' ),
 							'kind'            => sanitize_key( isset( $location['kind'] ) ? $location['kind'] : 'objekt' ),
@@ -175,19 +172,28 @@ final class Sidrena_Pricelist {
 						++$sequence;
 					}
 
-					if ( $catalog_generated ) {
-						$snapshot_catalogs[] = $catalog_type;
+					if ( $location_failed ) {
+						break;
 					}
+					$snapshot_catalogs[] = $catalog_type;
 				}
 
-				if ( ! empty( $snapshot_catalogs ) ) {
+				if ( ! $location_failed && 'yes' === $settings['enable_public_html'] && ! empty( $snapshot_catalogs ) ) {
 					$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
 					if ( is_wp_error( $snapshot ) ) {
-						$errors[] = $snapshot->get_error_message();
+						$errors[]        = $snapshot->get_error_message();
+						$location_failed = true;
 					}
 				}
 
 				$location['sequence'] = $sequence;
+				if ( $location_failed ) {
+					$this->discard_generated_files( $location_files );
+					continue;
+				}
+
+				$index     = array_merge( $index, $location_entries );
+				$generated += count( $location_entries );
 			}
 			unset( $location );
 
@@ -329,16 +335,36 @@ final class Sidrena_Pricelist {
 	}
 
 
-	private function preflight_catalog( $catalog_type, $location ) {
+	private function discard_generated_files( $files ) {
+		foreach ( array_unique( (array) $files ) as $file ) {
+			if ( $file && is_file( $file ) ) {
+				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+		}
+	}
+
+
+	private function validated_rows( $catalog_type, $location, $rows ) {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== ( $settings['strict_publication'] ?? 'yes' ) ) {
+			foreach ( $rows as $row ) {
+				yield $row;
+			}
+			return;
+		}
+
 		$issues = array();
-		$rows   = 'products' === $catalog_type ? $this->product_rows( $location ) : $this->service_rows( $location );
 		$kind   = sanitize_key( $location['kind'] ?? 'objekt' );
-		$code   = sanitize_text_field( $location['code'] ?? $location['id'] ?? 'lokacija' );
 
 		foreach ( $rows as $row ) {
 			$row_issues = 'products' === $catalog_type
 				? $this->validate_product_row( $row, $kind )
 				: $this->validate_service_row( $row );
+
+			if ( empty( $row_issues ) ) {
+				yield $row;
+				continue;
+			}
 
 			foreach ( $row_issues as $issue ) {
 				$issues[] = $issue;
@@ -348,17 +374,20 @@ final class Sidrena_Pricelist {
 			}
 		}
 
-		if ( empty( $issues ) ) {
-			return true;
+		if ( ! empty( $issues ) ) {
+			yield $this->catalog_validation_error( $catalog_type, $location, $issues );
 		}
+	}
 
+	private function catalog_validation_error( $catalog_type, $location, $issues ) {
+		$code = sanitize_text_field( $location['code'] ?? $location['id'] ?? 'lokacija' );
 		return new WP_Error(
 			'sidrena_preflight_failed',
 			sprintf(
 				__( 'Cjenik za lokaciju %1$s (%2$s) nije objavljen jer stroga provjera nije prošla: %3$s', 'sidrena' ),
 				$code,
 				'products' === $catalog_type ? __( 'proizvodi', 'sidrena' ) : __( 'usluge', 'sidrena' ),
-				implode( '; ', $issues )
+				implode( '; ', array_slice( array_values( (array) $issues ), 0, 12 ) )
 			)
 		);
 	}
@@ -435,7 +464,8 @@ final class Sidrena_Pricelist {
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
 		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
 		$meta = array(
-			'schema'       => 1,
+			'schema'       => 2,
+			'format'       => 'jsonl',
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
 			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
 			'location'     => array(
@@ -456,17 +486,20 @@ final class Sidrena_Pricelist {
 		}
 		list( $handle, $temp ) = $opened;
 
-		$prefix = substr( $header, 0, -1 ) . ',"rows":[';
-		if ( ! $this->write_stream_all( $handle, $prefix ) ) {
+		if ( ! $this->write_stream_all( $handle, $header . "\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
 		$count = 0;
-		$first = true;
 		foreach ( array_unique( $catalogs ) as $catalog ) {
 			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
+			$source = $this->validated_rows( $catalog, $location, $source );
 			foreach ( $source as $row ) {
+				if ( is_wp_error( $row ) ) {
+					$this->discard_atomic_writer( $handle, $temp );
+					return $row;
+				}
 				foreach ( array_keys( $row ) as $key ) {
 					if ( 0 === strpos( $key, '_sidrena_' ) ) {
 						unset( $row[ $key ] );
@@ -478,19 +511,12 @@ final class Sidrena_Pricelist {
 					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_row_encode', __( 'Jedan redak javnog HTML snapshota nije moguće JSON kodirati.', 'sidrena' ) );
 				}
-				$chunk = ( $first ? '' : ',' ) . $encoded;
-				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
+				if ( ! $this->write_stream_all( $handle, $encoded . "\n" ) ) {
 					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 				}
-				$first = false;
 				++$count;
 			}
-		}
-
-		if ( ! $this->write_stream_all( $handle, "]}\n" ) ) {
-			$this->discard_atomic_writer( $handle, $temp );
-			return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 		}
 
 		$result = $this->commit_atomic_writer( $handle, $temp, $path );
@@ -508,8 +534,14 @@ final class Sidrena_Pricelist {
 				$keep[ basename( Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' ) ) ] = true;
 			}
 		}
-		$files = glob( $paths['snapshot_dir'] . 'cjenik-*.json' );
-		foreach ( is_array( $files ) ? $files : array() as $file ) {
+		$files = array();
+		foreach ( array( 'jsonl', 'json' ) as $extension ) {
+			$matches = glob( $paths['snapshot_dir'] . 'cjenik-*.' . $extension );
+			if ( is_array( $matches ) ) {
+				$files = array_merge( $files, $matches );
+			}
+		}
+		foreach ( array_unique( $files ) as $file ) {
 			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
 				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			}
@@ -592,20 +624,22 @@ final class Sidrena_Pricelist {
 
 	private function write_products( $filepath, $format, $location ) {
 		$headers = $this->product_headers();
+		$rows    = $this->validated_rows( 'products', $location, $this->product_rows( $location ) );
 
 		if ( 'csv' === $format ) {
-			return $this->write_csv( $filepath, $headers, $this->product_rows( $location ) );
+			return $this->write_csv( $filepath, $headers, $rows );
 		}
-		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $this->product_rows( $location ) );
+		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $rows );
 	}
 
 	private function write_services( $filepath, $format, $location ) {
 		$headers = $this->service_headers();
+		$rows    = $this->validated_rows( 'services', $location, $this->service_rows( $location ) );
 
 		if ( 'csv' === $format ) {
-			return $this->write_csv( $filepath, $headers, $this->service_rows( $location ) );
+			return $this->write_csv( $filepath, $headers, $rows );
 		}
-		return $this->write_xml( $filepath, 'usluge', 'usluga', $headers, $this->service_rows( $location ) );
+		return $this->write_xml( $filepath, 'usluge', 'usluga', $headers, $rows );
 	}
 
 	private function product_rows( $location ) {
@@ -806,6 +840,10 @@ final class Sidrena_Pricelist {
 
 		$count = 0;
 		foreach ( $rows as $row ) {
+			if ( is_wp_error( $row ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return $row;
+			}
 			$line = array();
 			foreach ( $headers as $header ) {
 				$line[] = Sidrena_Utils::csv_safe_cell( isset( $row[ $header ] ) ? $row[ $header ] : '' );
@@ -834,6 +872,10 @@ final class Sidrena_Pricelist {
 
 		$count = 0;
 		foreach ( $rows as $row ) {
+			if ( is_wp_error( $row ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return $row;
+			}
 			if ( ! $this->write_stream_all( $handle, "  <{$item}>\n" ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );

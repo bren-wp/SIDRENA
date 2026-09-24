@@ -53,7 +53,7 @@ copy_common() {
   rsync -a "$ROOT/public/" "$stage/public/"
   mkdir -p "$stage/docs"
   cp "$ROOT/docs/legal-and-technical-notes.md" "$stage/docs/"
-  python3 "$ROOT/tools/build-support-pdf.py" "$stage/docs/SIDRENA-PODRSKA.pdf"
+  python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$stage/docs/SIDRENA-PODRSKA.pdf"
 }
 
 WP_STAGE="$WORK/sidrena-wordpress"

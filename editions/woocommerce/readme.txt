@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml, hrvatska, ecommerce
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: Sidrena Software License 1.0
 License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 
 == Description ==
 
-= Sidrena WooCommerce 0.1.0 =
+= Sidrena WooCommerce 0.2.0 =
 
 Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao jedini izvor proizvoda.
 
@@ -50,6 +50,7 @@ Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao jedini izvor 
 * javna stranica Objava cjenika
 * shortcode [sidrena_objava_cjenika]
 * pretraživi HTML cjenik
+* server-side pretraga cijelog cjenika i paginacija za velike kataloge
 * javna arhiva
 * CSV/XML i REST
 
@@ -84,7 +85,7 @@ Plugin možete instalirati i postaviti sami.
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite sidrena-woocommerce-0.1.0.zip.
+2. Prenesite sidrena-woocommerce-0.2.0.zip.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite postojeći WooCommerce proizvod i unesite Sidrena podatke.
 5. Provjerite automatski prikaz sidrene cijene.
@@ -110,6 +111,15 @@ Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Si
 Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo.
 
 == Changelog ==
+
+= 0.2.0 =
+* Streaming JSONL snapshot za javni HTML cjenik.
+* Server-side pretraga cijelog cjenika i paginacija bez učitavanja cijelog kataloga u memoriju.
+* Poboljšana pristupačnost WooCommerce tooltipa i stabilnost objave.
+* Batch obrada povijesti lokacijskih cijena za velike kataloge.
+* Transakcijsko generiranje čuva prethodnu valjanu objavu ako novi format ili snapshot ne prođe.
+* REST paginacija pravilno broji WooCommerce varijacije i ne prelazi traženi per_page.
+* Strict validacija je ugrađena u streaming writere bez dodatnog punog preflight prolaza.
 
 = 0.1.0 =
 * Prvo javno izdanje.

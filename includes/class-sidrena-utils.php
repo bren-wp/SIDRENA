@@ -427,7 +427,7 @@ final class Sidrena_Utils {
 	public static function public_snapshot_path( $location_id ) {
 		$paths = self::upload_paths();
 		$id    = self::sanitize_location_id( $location_id );
-		return $paths['snapshot_dir'] . 'cjenik-' . $id . '.json';
+		return $paths['snapshot_dir'] . 'cjenik-' . $id . '.jsonl';
 	}
 
 	public static function csv_safe_cell( $value ) {

@@ -65,6 +65,9 @@ jobs:
       - name: WooCommerce edition runtime smoke test
         run: php .github/tests/woocommerce-edition-smoke.php
 
+      - name: Woo REST flattened pagination smoke test
+        run: php .github/tests/rest-woocommerce-pagination-smoke.php
+
       - name: Location history batching smoke test
         run: php .github/tests/location-history-batching-smoke.php
 
@@ -97,6 +100,15 @@ jobs:
 
       - name: Atomic public snapshot smoke test
         run: php .github/tests/publication-write-smoke.php
+
+      - name: Transactional generation smoke test
+        run: php .github/tests/generation-transaction-smoke.php
+
+      - name: Streaming public snapshot smoke test
+        run: php .github/tests/public-snapshot-stream-smoke.php
+
+      - name: Streaming public snapshot runtime test
+        run: php .github/tests/public-snapshot-runtime-smoke.php
 
       - name: WordPress linked-source price smoke test
         run: php .github/tests/wordpress-sync-smoke.php
@@ -161,7 +173,7 @@ jobs:
           grep -Fq 'is_wordpress_edition' includes/class-sidrena-utils.php
           grep -Fq 'is_woocommerce_edition' includes/class-sidrena-utils.php
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
-          grep -Fq '"Project-Id-Version: Sidrena 0.1.0\n"' languages/sidrena.pot
+          grep -Fq "\"Project-Id-Version: Sidrena ${WP_VERSION}\\n\"" languages/sidrena.pot
           OLD_DOMAIN='sidrena-cijena'
           if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
             echo 'Retired Sidrena website domain detected.' >&2
