@@ -527,6 +527,9 @@ final class Sidrena_Products {
 	}
 
 	public function append_reference_prices( $html, $product ) {
+		if ( false !== strpos( (string) $html, 'sidrena-reference-prices' ) ) {
+			return $html;
+		}
 		if ( is_admin() && ! wp_doing_ajax() ) {
 			return $html;
 		}
@@ -724,11 +727,12 @@ final class Sidrena_Products {
 		$date          = Sidrena_Utils::current_reference_date( $id );
 		$label         = Sidrena_Utils::anchor_label( $date );
 		$tooltip       = Sidrena_Utils::anchor_tooltip();
-		$tooltip_html  = $tooltip ? '<span class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+		$tooltip_id    = 'sidrena-anchor-tip-' . absint( $id );
+		$tooltip_html  = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
 		$line          = sprintf(
 			'<span class="sidrena-anchor%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
 			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
-			$tooltip ? ' tabindex="0"' : '',
+			$tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '',
 			esc_html( $label ),
 			wp_kses_post( wc_price( $display_price ) ),
 			$tooltip_html
@@ -767,13 +771,14 @@ final class Sidrena_Products {
 		$date    = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::settings()['default_ref_date'];
 		$label   = Sidrena_Utils::anchor_label( $date );
 		$amount  = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
-		$tooltip = Sidrena_Utils::anchor_tooltip();
-		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+		$tooltip      = Sidrena_Utils::anchor_tooltip();
+		$tooltip_id   = 'sidrena-anchor-tip-' . absint( $product->get_id() );
+		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
 
 		$line = sprintf(
 			'<span class="sidrena-anchor sidrena-anchor--variable%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
 			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
-			$tooltip ? ' tabindex="0"' : '',
+			$tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '',
 			esc_html( $label ),
 			wp_kses_post( $amount ),
 			$tooltip_html

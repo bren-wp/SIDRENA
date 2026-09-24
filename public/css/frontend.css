@@ -184,3 +184,82 @@
 		transition: none;
 	}
 }
+
+
+/* 0.1.0 automatic sidrena price presentation */
+.sidrena-anchor {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: .28em;
+	max-width: 100%;
+	margin-top: .42rem;
+	padding: .44rem .58rem;
+	border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+	border-radius: 10px;
+	background: color-mix(in srgb, currentColor 4%, transparent);
+	color: color-mix(in srgb, currentColor 88%, transparent);
+	font-size: .9em;
+	line-height: 1.4;
+}
+
+.sidrena-anchor__label {
+	font-weight: 500;
+}
+
+.sidrena-anchor__value {
+	font-weight: 760;
+	color: currentColor;
+}
+
+.sidrena-anchor__info {
+	display: inline-grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 1.3em;
+	height: 1.3em;
+	margin-left: .1em;
+	border-radius: 999px;
+	background: #0b2b45;
+	color: #fff;
+	font-size: .72em;
+	font-style: normal;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.sidrena-anchor__tooltip::after {
+	content: "";
+	position: absolute;
+	left: 22px;
+	top: 100%;
+	border: 7px solid transparent;
+	border-top-color: #082d4f;
+}
+
+.sidrena-auto-reference {
+	margin-block: 1rem;
+}
+
+.sidrena-auto-reference .sidrena-standalone-price {
+	display: block;
+}
+
+.sidrena-standalone-price__current {
+	display: block;
+	font-size: 1.15em;
+	font-weight: 760;
+}
+
+@media (max-width: 640px) {
+	.sidrena-anchor {
+		font-size: .86em;
+		padding: .42rem .52rem;
+	}
+
+	.sidrena-anchor__tooltip {
+		left: 0;
+		width: min(290px, calc(100vw - 36px));
+	}
+}
