@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml, hrvatska, ecommerce
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,15 +38,11 @@ Ovo izdanje zahtijeva WooCommerce. Za web bez WooCommercea instalirajte zasebni 
 
 Službena stranica: https://sidrene-cijene.com.hr/
 
-== Migration from Sidrena 1.x ==
-
-Prije instalacije 2.0 deaktivirajte stari Sidrena 1.x, ali ga nemojte prvo brisati kroz WordPress. Instalirajte Sidrena WooCommerce, provjerite podatke i javne cjenike, pa tek zatim uklonite stari folder nakon backupa. Detaljan postupak je u docs/UPUTE.md.
-
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
 2. U WordPressu otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-3. Prenesite `sidrena-woocommerce-2.0.0.zip`.
+3. Prenesite `sidrena-woocommerce-0.1.0.zip`.
 4. Aktivirajte **Sidrena WooCommerce**.
 5. Otvorite Sidrena > Katalog i pregledajte WooCommerce proizvode.
 6. Pregledajte Postavke, Lokacije i Alate.
@@ -56,14 +52,12 @@ Detaljne upute nalaze se u `docs/UPUTE.md` unutar paketa.
 
 == Changelog ==
 
-= 2.0.0 =
-* Sidrena je razdvojena na dva zasebna plugina.
-* Ovo izdanje deklarira WooCommerce kao obaveznu ovisnost.
-* WooCommerce katalog je jedini izvor proizvoda.
-* Samostalni WordPress katalog nije dio niti ZIP-a niti runtimea.
-* Woo history, location, bulk, CSV import/export i compatibility moduli učitavaju se samo u ovom izdanju.
+= 0.1.0 =
+Prvo javno izdanje.
+* Produkcijska arhitektura s odvojenim WordPress i WooCommerce izdanjem.
+* CSV/XML, javni cjenici, REST i arhiva 30+ dana.
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-Velika arhitekturna promjena. Za WooCommerce trgovine instalirajte Sidrena WooCommerce 2.0.0. Za web bez WooCommercea koristite zasebni Sidrena WordPress paket.
+= 0.1.0 =
+Velika arhitekturna promjena. Za WooCommerce trgovine instalirajte Sidrena WooCommerce 0.1.0. Za web bez WooCommercea koristite zasebni Sidrena WordPress paket.

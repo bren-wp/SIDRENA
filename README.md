@@ -1,8 +1,8 @@
-# Sidrena 2.0.0
+# Sidrena 0.1.0
 
 Sidrena je besplatan open-source projekt za sidrene/referentne cijene, strojno čitljive cjenike i javnu arhivu.
 
-Od verzije **2.0.0** projekt se izdaje kao dva potpuno odvojena WordPress plugina.
+Projekt se od prvog javnog izdanja razvija kao dva odvojena WordPress plugina.
 
 ## Sidrena WordPress
 
@@ -60,8 +60,6 @@ WooCommerce je obavezna ovisnost ovog izdanja.
 
 **Ne aktivirajte oba Sidrena izdanja istodobno.**
 
-Oba paketa koriste isti Sidrena podatkovni prostor, opcije i javnu arhivu kako bi prijelaz između izdanja bio moguć bez dupliranja poslovnih podataka, ali runtime je namjerno međusobno isključiv.
-
 ## Razdvajanje koda
 
 Release build fizički uklanja edition-specifične klase koje drugom pluginu nisu potrebne.
@@ -86,15 +84,15 @@ Zajednički ostaju samo stvarno zajednički dijelovi: usluge, cjenici, REST, jav
 Lokalno ili u CI-ju:
 
 ```bash
-./tools/build-editions.sh 2.0.0 /tmp/sidrena-build
+./tools/build-editions.sh 0.1.0 /tmp/sidrena-build
 ```
 
 Dobivaju se:
 
-- `sidrena-wordpress-2.0.0.zip`
-- `sidrena-wordpress-2.0.0.zip.sha256`
-- `sidrena-woocommerce-2.0.0.zip`
-- `sidrena-woocommerce-2.0.0.zip.sha256`
+- `sidrena-wordpress-0.1.0.zip`
+- `sidrena-wordpress-0.1.0.zip.sha256`
+- `sidrena-woocommerce-0.1.0.zip`
+- `sidrena-woocommerce-0.1.0.zip.sha256`
 
 ## Dokumentacija
 

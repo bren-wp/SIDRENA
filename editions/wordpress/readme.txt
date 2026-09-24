@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,14 +36,10 @@ Ako web koristi WooCommerce, instalirajte zasebni **Sidrena WooCommerce** paket.
 
 Službena stranica: https://sidrene-cijene.com.hr/
 
-== Migration from Sidrena 1.x ==
-
-Prije instalacije 2.0 deaktivirajte stari Sidrena 1.x, ali ga nemojte prvo brisati kroz WordPress. Instalirajte Sidrena WordPress, provjerite podatke i javne cjenike, pa tek zatim uklonite stari folder nakon backupa. Detaljan postupak je u docs/UPUTE.md.
-
 == Installation ==
 
 1. U WordPressu otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-2. Prenesite `sidrena-wordpress-2.0.0.zip`.
+2. Prenesite `sidrena-wordpress-0.1.0.zip`.
 3. Aktivirajte **Sidrena WordPress**.
 4. Otvorite Sidrena > Katalog i unesite ili uvezite proizvode.
 5. Po potrebi otvorite Usluge i Lokacije.
@@ -53,14 +49,12 @@ Detaljne upute nalaze se u `docs/UPUTE.md` unutar paketa.
 
 == Changelog ==
 
-= 2.0.0 =
-* Sidrena je razdvojena na dva zasebna plugina.
-* Ovo izdanje više ne učitava niti pakira WooCommerce product/history/import klase.
-* Vlastiti WordPress katalog je jedini izvor proizvoda.
-* Admin, REST, Site Health i cjenici rade isključivo u WordPress edition modu.
-* WordPress paket ne sadrži Woo-specific klase.
+= 0.1.0 =
+Prvo javno izdanje.
+* Produkcijska arhitektura s odvojenim WordPress i WooCommerce izdanjem.
+* CSV/XML, javni cjenici, REST i arhiva 30+ dana.
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-Velika arhitekturna promjena. Za web bez WooCommercea instalirajte Sidrena WordPress 2.0.0. Za WooCommerce trgovinu koristite zasebni Sidrena WooCommerce paket.
+= 0.1.0 =
+Velika arhitekturna promjena. Za web bez WooCommercea instalirajte Sidrena WordPress 0.1.0. Za WooCommerce trgovinu koristite zasebni Sidrena WooCommerce paket.
