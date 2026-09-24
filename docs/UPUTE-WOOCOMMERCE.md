@@ -6,7 +6,7 @@ Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WooCommerce 0.1.0 - Upute za korištenje
+# Sidrena WooCommerce 0.2.0 - Upute za korištenje
 
 ## Namjena
 
@@ -15,7 +15,7 @@ Sidrena WooCommerce namijenjena je WordPress trgovinama s aktivnim WooCommerceom
 ## Instalacija
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-0.1.0.zip`.
+2. Prenesite `sidrena-woocommerce-0.2.0.zip`.
 3. Aktivirajte **Sidrena WooCommerce**.
 4. Otvorite **Sidrena** u lijevom admin meniju.
 

@@ -6,6 +6,10 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.2.0 =
+* Razvojni ciklus 0.2.0 otvoren za skalabilniju Objavu cjenika, poboljšanja pristupačnosti, stabilnosti i release provjera.
+* PDF podrška prikazuje stvarnu verziju paketa, a release/CI provjere više ne ovise o hardkodiranoj verziji 0.1.0.
+
 = 0.1.0 =
 * Prvo javno izdanje Sidrene.
 * Dva fizički i runtime odvojena plugina: Sidrena WordPress i Sidrena WooCommerce.

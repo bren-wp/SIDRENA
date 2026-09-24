@@ -6,7 +6,7 @@ Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WordPress 0.1.0 - Upute za korištenje
+# Sidrena WordPress 0.2.0 - Upute za korištenje
 
 ## Namjena
 
@@ -14,7 +14,7 @@ Sidrena WordPress namijenjena je WordPress web stranicama koje **ne koriste WooC
 
 ## Instalacija
 
-1. Prenesite `sidrena-wordpress-0.1.0.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-0.2.0.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte **Sidrena WordPress**.
 3. Otvorite **Sidrena** u lijevom admin meniju.
 4. Otvorite **Sidrena > Katalog**.

@@ -101,7 +101,7 @@ jobs:
           body: |
             ## Sidrena ${{ env.VERSION }}
 
-            Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
+            Sidrena ${{ env.VERSION }} isporučuje dva odvojena WordPress plugina:
 
             - **Sidrena WordPress** — za WordPress web bez WooCommercea.
             - **Sidrena WooCommerce** — za WordPress + WooCommerce.

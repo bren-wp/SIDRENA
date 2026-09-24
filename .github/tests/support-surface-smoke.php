@@ -50,3 +50,4 @@ foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 
 
 sidrena_support_assert( false === strpos( $admin, '20 EUR' ), 'Unrequested recurring maintenance offer leaked into admin.' );
 fwrite( STDOUT, "Sidrena support/public surface smoke test passed.\n" );
+

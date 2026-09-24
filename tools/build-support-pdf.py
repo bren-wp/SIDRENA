@@ -16,10 +16,13 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-if len(sys.argv) != 2:
-    raise SystemExit("Usage: build-support-pdf.py <output.pdf>")
+if len(sys.argv) != 3:
+    raise SystemExit("Usage: build-support-pdf.py <version> <output.pdf>")
 
-out = sys.argv[1]
+version = sys.argv[1].strip()
+out = sys.argv[2]
+if not version:
+    raise SystemExit("Sidrena version is required.")
 os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
 
 font_pairs = [
@@ -95,6 +98,7 @@ story = [
 contact = [
     [paragraph("E-MAIL PODRŠKA", label), link("sidrena@brendigo.com", "mailto:sidrena@brendigo.com")],
     [paragraph("WHATSAPP PODRŠKA", label), link("+385 91 901 0092", "https://wa.me/385919010092")],
+    [paragraph("VERZIJA", label), paragraph(version, value)],
     [paragraph("INSTALACIJA I POČETNO POSTAVLJANJE", label), paragraph("80 EUR jednokratno", value)],
     [paragraph("AUTOR", label), paragraph("Brendigo", value)],
 ]

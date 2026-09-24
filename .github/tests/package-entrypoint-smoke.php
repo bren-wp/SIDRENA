@@ -50,6 +50,10 @@ if ( ! is_file( $main ) ) {
 	exit( 1 );
 }
 
+$header = file_get_contents( $main );
+preg_match( '/^ \\* Version: ([^\\r\\n]+)/m', (string) $header, $version_match );
+$expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
+
 require $main;
 
 function sidrena_entry_assert( $condition, $message ) {
@@ -60,7 +64,7 @@ function sidrena_entry_assert( $condition, $message ) {
 }
 
 sidrena_entry_assert( defined( 'SIDRENA_EDITION' ) && SIDRENA_EDITION === $edition, 'Entrypoint defined the wrong edition.' );
-sidrena_entry_assert( defined( 'SIDRENA_VERSION' ) && '0.1.0' === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
+sidrena_entry_assert( '' !== $expected_version && defined( 'SIDRENA_VERSION' ) && $expected_version === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
 sidrena_entry_assert( defined( 'SIDRENA_DIR' ) && realpath( SIDRENA_DIR ) === realpath( $root ), 'SIDRENA_DIR does not point to the package root.' );
 sidrena_entry_assert( function_exists( 'sidrena_cijena' ), 'Template helper was not loaded through the package entrypoint.' );
 sidrena_entry_assert( class_exists( 'Sidrena_Plugin' ), 'Common plugin bootstrap did not load.' );
