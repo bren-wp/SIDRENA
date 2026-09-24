@@ -32,7 +32,10 @@ sidrena_support_assert( 'sidrena@brendigo.com' === Sidrena_Utils::support_email(
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_email_url(), 'mailto:sidrena@brendigo.com' ), 'Support mailto URL missing.' );
 sidrena_support_assert( '+385 91 901 0092' === Sidrena_Utils::whatsapp_number(), 'WhatsApp number mismatch.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::whatsapp_url(), 'wa.me/385919010092' ), 'WhatsApp URL mismatch.' );
+sidrena_support_assert( '80 EUR' === Sidrena_Utils::installation_price(), 'Installation price mismatch.' );
+sidrena_support_assert( '20 EUR/mj' === Sidrena_Utils::maintenance_price(), 'Maintenance price mismatch.' );
 sidrena_support_assert( false !== strpos( rawurldecode( Sidrena_Utils::installation_service_url() ), '80 EUR' ), 'Installation service URL must mention 80 EUR.' );
+sidrena_support_assert( false !== strpos( rawurldecode( Sidrena_Utils::maintenance_service_url() ), '20 EUR' ), 'Maintenance service URL must mention 20 EUR.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::donation_url(), 'revolut.me/catanyus' ), 'Direct Revolut donation URL missing.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-PODRSKA.pdf' ), 'Support PDF URL mismatch.' );
 sidrena_support_assert( 'Brendigo LTD Developer' === Sidrena_Utils::developer_label(), 'Developer label mismatch.' );
@@ -40,10 +43,10 @@ sidrena_support_assert( 'Brendigo LTD Developer' === Sidrena_Utils::developer_la
 $admin  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 
-foreach ( array( 'sidrena-support', 'sidrena-about', 'dashicons-pdf', 'Zatraži instalaciju - 80 EUR' ) as $needle ) {
+foreach ( array( 'sidrena-support', 'sidrena-about', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Mjesečno tehničko održavanje', 'Dobrovoljna donacija za razvoj' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
 }
-foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika' ) as $needle ) {
+foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 === $group_index' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $public, $needle ), 'Public publication surface missing: ' . $needle );
 }
 

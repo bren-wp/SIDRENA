@@ -60,5 +60,16 @@ foreach ( $required_services as $header ) {
 
 sidrena_schema_assert( count( $product_headers ) === count( array_unique( $product_headers ) ), 'Duplicate product headers detected.' );
 sidrena_schema_assert( count( $service_headers ) === count( array_unique( $service_headers ) ), 'Duplicate service headers detected.' );
+sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $product_headers, true ), 'Reference date traceability missing from product output.' );
+sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $service_headers, true ), 'Reference date traceability missing from service output.' );
+foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi' ) as $service_detail ) {
+	sidrena_schema_assert( in_array( $service_detail, $service_headers, true ), 'NN 105/2026 service detail missing: ' . $service_detail );
+}
+
+$utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
+sidrena_schema_assert( false !== strpos( $utils_source, "'default_ref_date'     => '2026-09-10'" ), 'Default reference date must remain 10.09.2026.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        => '2025-05-02'" ), 'Existing FMCG reference date must remain 02.05.2025.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "'retention_days'       => 45" ), 'Default archive retention should preserve an operational margin above 30 days.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( $settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
 fwrite( STDOUT, "Sidrena NN 101/2026 schema smoke test passed.\n" );
