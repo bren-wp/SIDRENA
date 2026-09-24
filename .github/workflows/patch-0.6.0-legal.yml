@@ -1,0 +1,195 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Sidrena 0.6.0 legal readiness patch
+
+on:
+  push:
+    branches:
+      - feature/0.6.0-legal-readiness
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'Apply 0.6.0 legal readiness hardening') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/0.6.0-legal-readiness
+          token: ${{ github.token }}
+      - name: Patch 0.6.0 legal readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path('.')
+
+          compliance_path = root / 'includes/class-sidrena-compliance.php'
+          compliance = compliance_path.read_text(encoding='utf-8')
+          if "const DEFAULT_REFERENCE_DATE" not in compliance:
+              compliance = compliance.replace(
+                  "\tconst LAST_STATUS_OPTION = 'sidrena_compliance_last_status';",
+                  "\tconst LAST_STATUS_OPTION = 'sidrena_compliance_last_status';\n\tconst DEFAULT_REFERENCE_DATE = '2026-09-10';\n\tconst FMCG_REFERENCE_DATE = '2025-05-02';\n\tconst EFFECTIVE_DATE = '2026-10-01';\n\tconst MIN_ARCHIVE_RETENTION_DAYS = 30;"
+              )
+          if "legal_source_urls" not in compliance:
+              marker = "\n\tpublic static function automation_profile() {"
+              insert = r'''
+	public static function legal_source_urls() {
+		return array(
+			'nn_101_2026_anchor_price'      => 'https://narodne-novine.nn.hr/clanci/sluzbeni/full/2026_09_101_1212.html',
+			'nn_101_2026_public_pricelist'  => 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html',
+			'nn_105_2026_retail_unit_price' => 'https://narodne-novine.nn.hr/clanci/sluzbeni/full/2026_09_105_1270.html',
+			'mingo_2026_09_22_clarifications' => 'https://mingo.gov.hr/print.aspx?id=10440&url=print',
+		);
+	}
+
+	public static function reference_groups() {
+		return array(
+			'standard' => array(
+				'label'          => 'Novobuhvaćeni proizvodi i usluge',
+				'reference_date' => self::DEFAULT_REFERENCE_DATE,
+				'effective_date' => self::EFFECTIVE_DATE,
+				'note'           => 'Za proizvode i usluge obuhvaćene novom mjerom koristi se dodatna odnosno sidrena cijena na dan 10.09.2026.',
+			),
+			'fmcg' => array(
+				'label'          => 'Prethodno obuhvaćene FMCG kategorije',
+				'reference_date' => self::FMCG_REFERENCE_DATE,
+				'effective_date' => self::EFFECTIVE_DATE,
+				'note'           => 'Za ranije obuhvaćene kategorije zadržava se referentni datum 02.05.2025.',
+			),
+		);
+	}
+'''
+              compliance = compliance.replace(marker, insert + marker, 1)
+          if "'effective_date'" not in compliance:
+              compliance = compliance.replace(
+                  "\t\t\t'generation_time'        => $settings['generation_time'],",
+                  "\t\t\t'generation_time'        => $settings['generation_time'],\n\t\t\t'effective_date'        => defined( 'SIDRENA_RULES_EFFECTIVE' ) ? SIDRENA_RULES_EFFECTIVE : self::EFFECTIVE_DATE,\n\t\t\t'ruleset'               => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : '',"
+              )
+          compliance = compliance.replace("max( 30, absint( $settings['retention_days'] ) )", "max( self::MIN_ARCHIVE_RETENTION_DAYS, absint( $settings['retention_days'] ) )")
+          compliance = compliance.replace("if ( '2026-09-10' !== $profile['default_reference_date'] ) {", "if ( self::DEFAULT_REFERENCE_DATE !== $profile['default_reference_date'] ) {")
+          compliance = compliance.replace("if ( '2025-05-02' !== $profile['fmcg_reference_date'] ) {", "if ( self::FMCG_REFERENCE_DATE !== $profile['fmcg_reference_date'] ) {")
+          if "Datum početka primjene mjera nije 01.10.2026." not in compliance:
+              compliance = compliance.replace(
+                  "\t\tif ( self::FMCG_REFERENCE_DATE !== $profile['fmcg_reference_date'] ) {\n\t\t\t$issues[] = 'FMCG referentni datum nije 02.05.2025.';\n\t\t}",
+                  "\t\tif ( self::FMCG_REFERENCE_DATE !== $profile['fmcg_reference_date'] ) {\n\t\t\t$issues[] = 'FMCG referentni datum nije 02.05.2025.';\n\t\t}\n\t\tif ( self::EFFECTIVE_DATE !== $profile['effective_date'] ) {\n\t\t\t$issues[] = 'Datum početka primjene mjera nije 01.10.2026.';\n\t\t}"
+              )
+          compliance = compliance.replace("'sources' => self::legal_sources(),", "'sources' => self::legal_sources(),\n\t\t\t'source_urls' => self::legal_source_urls(),\n\t\t\t'reference_groups' => self::reference_groups(),")
+          compliance = compliance.replace("'default_ref_date'      => '2026-09-10',", "'default_ref_date'      => self::DEFAULT_REFERENCE_DATE,")
+          compliance = compliance.replace("'fmcg_ref_date'         => '2025-05-02',", "'fmcg_ref_date'         => self::FMCG_REFERENCE_DATE,")
+          compliance = compliance.replace("max( 30, absint( $settings['retention_days'] ) )", "max( self::MIN_ARCHIVE_RETENTION_DAYS, absint( $settings['retention_days'] ) )")
+          compliance_path.write_text(compliance, encoding='utf-8')
+
+          utils_path = root / 'includes/class-sidrena-utils.php'
+          utils = utils_path.read_text(encoding='utf-8')
+          old = """\t\t\tforeach ( $lookup_ids as $lookup_id ) {\n\t\t\t\t$custom = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );\n\t\t\t\tif ( $custom ) {\n\t\t\t\t\treturn sanitize_text_field( $custom );\n\t\t\t\t}\n\t\t\t}\n"""
+          new = """\t\t\tforeach ( $lookup_ids as $lookup_id ) {\n\t\t\t\t$custom = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );\n\t\t\t\t$custom = self::sanitize_date( $custom, '' );\n\t\t\t\tif ( $custom ) {\n\t\t\t\t\treturn $custom;\n\t\t\t\t}\n\t\t\t}\n"""
+          if old in utils:
+              utils = utils.replace(old, new, 1)
+          utils_path.write_text(utils, encoding='utf-8')
+
+          test_path = root / '.github/tests/reference-readiness-smoke.php'
+          test_path.write_text('''<?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
+define( 'ABSPATH', __DIR__ . '/' );
+
+function sidrena_reference_assert( $condition, $message ) {
+	if ( ! $condition ) {
+		fwrite( STDERR, $message . "\\n" );
+		exit( 1 );
+	}
+}
+
+$root       = dirname( __DIR__, 2 );
+$compliance = file_get_contents( $root . '/includes/class-sidrena-compliance.php' );
+$utils      = file_get_contents( $root . '/includes/class-sidrena-utils.php' );
+$readme     = file_get_contents( $root . '/README.md' );
+$changelog  = file_get_contents( $root . '/changelog.txt' );
+
+foreach ( array( 'DEFAULT_REFERENCE_DATE', 'FMCG_REFERENCE_DATE', 'EFFECTIVE_DATE', 'MIN_ARCHIVE_RETENTION_DAYS', 'reference_groups', 'legal_source_urls' ) as $marker ) {
+	sidrena_reference_assert( false !== strpos( $compliance, $marker ), 'Reference readiness marker missing: ' . $marker );
+}
+foreach ( array( '2026-09-10', '2025-05-02', '2026-10-01', '2026_09_101_1212', '2026_09_101_1213', '2026_09_105_1270', 'mingo.gov.hr/print.aspx?id=10440' ) as $marker ) {
+	sidrena_reference_assert( false !== strpos( $compliance, $marker ), 'Official legal/source marker missing: ' . $marker );
+}
+sidrena_reference_assert( false !== strpos( $utils, "self::sanitize_date( $custom, '' )" ), 'Custom anchor date is not validated before use.' );
+sidrena_reference_assert( false !== strpos( $readme, 'Novo u 0.6.0' ), 'README does not market 0.6.0 changes.' );
+sidrena_reference_assert( false !== strpos( $changelog, '= 0.6.0 =' ) && false !== strpos( $changelog, 'reference readiness' ), 'Changelog is missing 0.6.0 reference readiness notes.' );
+
+fwrite( STDOUT, "Sidrena reference readiness smoke test passed.\\n" );
+''', encoding='utf-8')
+
+          ci_path = root / '.github/workflows/ci.yml'
+          ci = ci_path.read_text(encoding='utf-8')
+          if 'Reference readiness smoke test' not in ci:
+              ci = ci.replace(
+                  "      - name: NN 101/2026 price-list schema smoke test\n        run: php .github/tests/legal-schema-smoke.php\n\n",
+                  "      - name: NN 101/2026 price-list schema smoke test\n        run: php .github/tests/legal-schema-smoke.php\n\n      - name: Reference readiness smoke test\n        run: php .github/tests/reference-readiness-smoke.php\n\n",
+                  1
+              )
+          ci_path.write_text(ci, encoding='utf-8')
+
+          changelog_path = root / 'changelog.txt'
+          changelog = changelog_path.read_text(encoding='utf-8')
+          if 'reference readiness' not in changelog.split('= 0.5.0 =')[0]:
+              if '= 0.6.0 =' in changelog:
+                  changelog = changelog.replace('= 0.6.0 =', '= 0.5.0 =', 1)
+              section = '''= 0.6.0 =
+- Dodan reference readiness sloj s centralnim NN/MINGO source URL markerima, datumom početka primjene 01.10.2026. i odvojenim referentnim grupama 10.09.2026. / 02.05.2025.
+- Ručno uneseni neispravni referentni datumi više se ne koriste u prikazu; plugin ih ignorira i vraća se na sigurne zakonske zadane datume.
+- README, WordPress/WooCommerce upute i pravno-tehničke bilješke ažurirane su za 0.6.0, stvarne Sidrena slike/logotipe i produkcijsku provjeru.
+
+'''
+              changelog = section + changelog
+          changelog_path.write_text(changelog, encoding='utf-8')
+
+          readme_path = root / 'README.md'
+          readme = readme_path.read_text(encoding='utf-8')
+          if '## Novo u 0.6.0' not in readme:
+              readme = readme.replace(
+                  '# Sidrena 0.6.0\n\nSidrena je',
+                  '# Sidrena 0.6.0\n\n## Novo u 0.6.0\n\n- **Reference readiness guard** povezuje službene NN/MINGO izvore, datum primjene 01.10.2026. i dvije referentne grupe: 10.09.2026. za novobuhvaćene proizvode/usluge te 02.05.2025. za prethodno obuhvaćene FMCG kategorije.\n- **Sigurniji ručni unos** ignorira neispravan referentni datum umjesto da ga prikaže u javnom cjeniku.\n- **Jači CI gate** provjerava zakonske datume, službene source URL markere, README, changelog i release metapodatke prije objave.\n\nSidrena je',
+                  1
+              )
+          readme_path.write_text(readme, encoding='utf-8')
+
+          for rel, note in {
+              'docs/legal-and-technical-notes.md': '\n\n## 0.6.0 reference readiness\n\nSidrena 0.6.0 centralizira službene source URL markere za NN 101/2026, NN 105/2026 i pojašnjenja Ministarstva, čuva datum primjene 01.10.2026. te odvaja referentne grupe 10.09.2026. i 02.05.2025. Neispravan ručno upisan referentni datum ne koristi se u prikazu.\n',
+              'docs/UPUTE-WORDPRESS.md': '\n\n## 0.6.0 provjera referentnih datuma\n\nAko se ručno upiše neispravan referentni datum, Sidrena WordPress ga ignorira i koristi zadani sigurni datum za odabranu referentnu grupu.\n',
+              'docs/UPUTE-WOOCOMMERCE.md': '\n\n## 0.6.0 provjera referentnih datuma\n\nAko se na proizvodu ili varijaciji ručno upiše neispravan referentni datum, Sidrena WooCommerce ga ignorira i koristi zadani sigurni datum za odabranu referentnu grupu.\n',
+          }.items():
+              p = root / rel
+              text = p.read_text(encoding='utf-8')
+              if '0.6.0 provjera referentnih datuma' not in text and '0.6.0 reference readiness' not in text:
+                  text += note
+              p.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add includes/class-sidrena-compliance.php includes/class-sidrena-utils.php .github/tests/reference-readiness-smoke.php .github/workflows/ci.yml README.md changelog.txt docs/legal-and-technical-notes.md docs/UPUTE-WORDPRESS.md docs/UPUTE-WOOCOMMERCE.md
+          if git diff --cached --quiet; then
+            echo "No 0.6.0 legal readiness changes needed."
+            exit 0
+          fi
+          git commit -m "Apply 0.6.0 legal readiness hardening"
+          git push origin HEAD:feature/0.6.0-legal-readiness
