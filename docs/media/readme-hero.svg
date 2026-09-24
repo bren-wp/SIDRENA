@@ -45,7 +45,7 @@
   </g>
 
   <g transform="translate(92 462)" font-family="Inter,Segoe UI,Arial,sans-serif">
-    <text fill="#6F91B2" font-size="18" font-weight="700">Brendigo · SIDRENA 0.3.0</text>
+    <text fill="#6F91B2" font-size="18" font-weight="700">Brendigo · SIDRENA 0.4.0</text>
     <text y="40" fill="#DDEBFA" font-size="22" font-weight="700">sidrene-cijene.com.hr</text>
   </g>
 
@@ -54,7 +54,7 @@
     <rect x="24" y="24" width="526" height="58" rx="16" fill="#0A1B30"/>
     <circle cx="53" cy="53" r="10" fill="#2BC7B8"/>
     <text x="74" y="61" fill="#F6FAFF" font-size="22" font-weight="800">Sidrena pregled</text>
-    <text x="438" y="61" fill="#83A8C9" font-size="15" font-weight="700">0.3.0</text>
+    <text x="438" y="61" fill="#83A8C9" font-size="15" font-weight="700">0.4.0</text>
 
     <g transform="translate(24 104)">
       <rect width="160" height="112" rx="18" fill="#0D2947" stroke="#1E4A73"/>

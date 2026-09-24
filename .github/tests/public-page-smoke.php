@@ -9,7 +9,7 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_VERSION', '0.3.0' );
+define( 'SIDRENA_VERSION', '0.4.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena-wordpress/' );
 define( 'OBJECT', 'OBJECT' );

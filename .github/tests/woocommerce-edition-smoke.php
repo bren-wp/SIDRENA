@@ -13,7 +13,7 @@ $main = is_file( $root . '/sidrena-woocommerce.php' ) ? $root . '/sidrena-woocom
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
-define( 'SIDRENA_VERSION', '0.3.0' );
+define( 'SIDRENA_VERSION', '0.4.0' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
 define( 'SIDRENA_FILE', $main );
 define( 'SIDRENA_DIR', $root . '/' );

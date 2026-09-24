@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.4.0 =
+* Javni cjenik usluga koristi bounded server-side paginaciju od 10 do 100 stavki, zadano 50.
+* Admin compliance audit usluga obrađuje zapise u batchovima od 250 i više ne koristi unbounded upit.
+* WordPress CSV katalog import obrađuje retke streaming pristupom umjesto akumuliranja do 50.000 redaka u memoriji.
+* WordPress XML import koristi XMLReader kada je dostupan i zadržava NONET te zabranu DOCTYPE/ENTITY deklaracija.
+* CSV/XML row-limit validacija odvija se prije poslovnih promjena; prevelik import se odbija prije djelomičnog unosa.
+* Woo sidrena i location CSV import rade row-limit preflight prije obrade i više ne završavaju djelomičnim importom uz success rezultat.
+* Release build je reproducibilan i postojeći release rerun više ne overwritea assete.
+
 = 0.3.0 =
 * Javna arhiva cjenika grupirana je po datumu objave.
 * `[sidrena_arhiva]` i arhiva na stranici Objava cjenika koriste isti card/download prikaz.

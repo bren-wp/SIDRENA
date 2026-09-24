@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 0.3.0\n"
+"Project-Id-Version: Sidrena 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1393,5 +1393,29 @@ msgstr ""
 
 #: includes/class-sidrena-public.php
 msgid "Datoteka nije dostupna"
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "Prikazano %1$d–%2$d od %3$d usluga."
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "Stranice cjenika usluga"
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "CSV sadrži duplicirana zaglavlja nakon normalizacije."
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "CSV ima više od dopuštenih 50.000 redaka."
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "XML s DOCTYPE ili ENTITY deklaracijama nije dopušten."
+msgstr ""
+
+#: includes/class-sidrena-services.php includes/class-sidrena-standalone.php includes/class-sidrena-admin.php
+msgid "XML ima više od dopuštenih 50.000 zapisa."
 msgstr ""
 

@@ -767,14 +767,32 @@ final class Sidrena_Standalone {
 		}
 
 		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		if ( false === $contents || '' === $contents ) {
+		if ( false === $contents || '' === $contents || false !== strpos( $contents, "\0" ) ) {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
 		$contents = Sidrena_Utils::normalize_text_encoding( $contents );
-
-		$rows = 'xml' === $ext ? $this->parse_xml_rows( $contents ) : $this->parse_csv_rows( $contents );
-		if ( is_wp_error( $rows ) || empty( $rows ) ) {
+		if ( '' === $contents ) {
 			$this->redirect_import( 'standalone_import_failed' );
+		}
+
+		$csv_resource = null;
+		if ( 'xml' === $ext ) {
+			$xml_count = $this->validate_xml_import( $contents );
+			if ( is_wp_error( $xml_count ) || 0 === $xml_count ) {
+				$this->redirect_import( 'standalone_import_failed' );
+			}
+			$rows = $this->iterate_xml_import_rows( $contents );
+		} else {
+			$prepared = $this->prepare_csv_import_stream( $contents );
+			if ( is_wp_error( $prepared ) ) {
+				$this->redirect_import( 'standalone_import_failed' );
+			}
+			list( $csv_resource, $delimiter, $head, $csv_count ) = $prepared;
+			if ( 0 === $csv_count ) {
+				fclose( $csv_resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				$this->redirect_import( 'standalone_import_failed' );
+			}
+			$rows = $this->iterate_csv_import_rows( $csv_resource, $delimiter, $head );
 		}
 
 		$created    = 0;
@@ -866,6 +884,10 @@ final class Sidrena_Standalone {
 			);
 		}
 
+		if ( is_resource( $csv_resource ) ) {
+			fclose( $csv_resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		}
+
 		Sidrena_Audit::log(
 			'standalone_catalog_import',
 			'success',
@@ -877,12 +899,24 @@ final class Sidrena_Standalone {
 		exit;
 	}
 
-	private function parse_csv_rows( $contents ) {
-		$resource = fopen( 'php://temp', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+	private function prepare_csv_import_stream( $contents, $row_limit = 50000 ) {
+		$row_limit = min( 50000, max( 1, absint( $row_limit ) ) );
+		$resource  = fopen( 'php://temp/maxmemory:1048576', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $resource ) {
 			return new WP_Error( 'csv_open' );
 		}
-		fwrite( $resource, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$contents = (string) $contents;
+		$length   = strlen( $contents );
+		$offset   = 0;
+		while ( $offset < $length ) {
+			$written = fwrite( $resource, substr( $contents, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( false === $written || 0 === $written ) {
+				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return new WP_Error( 'csv_write' );
+			}
+			$offset += $written;
+		}
+
 		rewind( $resource );
 		$first = fgets( $resource );
 		if ( false === $first ) {
@@ -890,35 +924,46 @@ final class Sidrena_Standalone {
 			return new WP_Error( 'csv_empty' );
 		}
 		$delimiter = ';';
-		$best = -1;
+		$best      = -1;
 		foreach ( array( ';', ',', "\t" ) as $candidate ) {
 			$count = substr_count( $first, $candidate );
 			if ( $count > $best ) {
 				$delimiter = $candidate;
-				$best = $count;
+				$best      = $count;
 			}
 		}
+
 		rewind( $resource );
 		$head = fgetcsv( $resource, 0, $delimiter );
 		if ( ! is_array( $head ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'csv_header' );
 		}
-		$head[0] = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
-		$head = array_map( array( 'Sidrena_Utils', 'import_header_key' ), $head );
+		$head[0]       = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
+		$head          = array_map( array( 'Sidrena_Utils', 'import_header_key' ), $head );
 		$nonempty_head = array_values( array_filter( $head ) );
 		if ( count( $nonempty_head ) !== count( array_unique( $nonempty_head ) ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'csv_duplicate_headers', __( 'CSV sadrži duplicirana zaglavlja nakon normalizacije.', 'sidrena' ) );
 		}
-		$rows = array();
+
 		$count = 0;
-		while ( ( $values = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+		while ( false !== ( $values = fgetcsv( $resource, 0, $delimiter ) ) ) {
+			unset( $values );
 			++$count;
-			if ( $count > 50000 ) {
+			if ( $count > $row_limit ) {
 				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 				return new WP_Error( 'csv_row_limit', __( 'CSV ima više od dopuštenih 50.000 redaka.', 'sidrena' ) );
 			}
+		}
+
+		rewind( $resource );
+		fgetcsv( $resource, 0, $delimiter );
+		return array( $resource, $delimiter, $head, $count );
+	}
+
+	private function iterate_csv_import_rows( $resource, $delimiter, $head ) {
+		while ( is_resource( $resource ) && false !== ( $values = fgetcsv( $resource, 0, $delimiter ) ) ) {
 			$row = array();
 			foreach ( $head as $index => $key ) {
 				if ( '' !== $key ) {
@@ -926,14 +971,13 @@ final class Sidrena_Standalone {
 				}
 			}
 			if ( ! empty( array_filter( $row, static function ( $value ) { return '' !== trim( (string) $value ); } ) ) ) {
-				$rows[] = $row;
+				yield $row;
 			}
 		}
-		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-		return $rows;
 	}
 
-	private function parse_xml_rows( $contents ) {
+	private function validate_xml_import( $contents, $row_limit = 50000 ) {
+		$row_limit = min( 50000, max( 1, absint( $row_limit ) ) );
 		if ( preg_match( '/<!\s*(DOCTYPE|ENTITY)\b/i', (string) $contents ) ) {
 			return new WP_Error( 'xml_unsafe', __( 'XML s DOCTYPE ili ENTITY deklaracijama nije dopušten.', 'sidrena' ) );
 		}
@@ -941,24 +985,111 @@ final class Sidrena_Standalone {
 			return new WP_Error( 'xml_unavailable' );
 		}
 
-		$previous = libxml_use_internal_errors( true );
-		$xml      = simplexml_load_string( $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
-		libxml_clear_errors();
-		libxml_use_internal_errors( $previous );
-		if ( false === $xml ) {
-			return new WP_Error( 'xml_invalid' );
+		if ( class_exists( 'XMLReader' ) ) {
+			$previous = libxml_use_internal_errors( true );
+			libxml_clear_errors();
+			$reader = new XMLReader();
+			if ( ! $reader->XML( (string) $contents, null, LIBXML_NONET | LIBXML_NOCDATA | LIBXML_COMPACT ) ) {
+				libxml_clear_errors();
+				libxml_use_internal_errors( $previous );
+				return new WP_Error( 'xml_invalid' );
+			}
+			$root_depth = null;
+			$count      = 0;
+			while ( $reader->read() ) {
+				if ( XMLReader::ELEMENT !== $reader->nodeType ) {
+					continue;
+				}
+				if ( null === $root_depth ) {
+					$root_depth = $reader->depth;
+					continue;
+				}
+				if ( $reader->depth === $root_depth + 1 && ! $reader->isEmptyElement ) {
+					++$count;
+					if ( $count > $row_limit ) {
+						$reader->close();
+						libxml_clear_errors();
+						libxml_use_internal_errors( $previous );
+						return new WP_Error( 'xml_row_limit', __( 'XML ima više od dopuštenih 50.000 zapisa.', 'sidrena' ) );
+					}
+				}
+			}
+			$errors = libxml_get_errors();
+			$reader->close();
+			libxml_clear_errors();
+			libxml_use_internal_errors( $previous );
+			return empty( $errors ) ? $count : new WP_Error( 'xml_invalid' );
 		}
 
-		$nodes = $xml->children();
-		$rows  = array();
+		$previous = libxml_use_internal_errors( true );
+		$xml      = simplexml_load_string( (string) $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+		$errors   = libxml_get_errors();
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+		if ( false === $xml || ! empty( $errors ) ) {
+			return new WP_Error( 'xml_invalid' );
+		}
 		$count = 0;
-		foreach ( $nodes as $node ) {
+		foreach ( $xml->children() as $node ) {
 			if ( 0 === count( $node->children() ) ) {
 				continue;
 			}
 			++$count;
-			if ( $count > 50000 ) {
+			if ( $count > $row_limit ) {
 				return new WP_Error( 'xml_row_limit', __( 'XML ima više od dopuštenih 50.000 zapisa.', 'sidrena' ) );
+			}
+		}
+		return $count;
+	}
+
+	private function iterate_xml_import_rows( $contents ) {
+		if ( class_exists( 'XMLReader' ) ) {
+			$reader = new XMLReader();
+			if ( ! $reader->XML( (string) $contents, null, LIBXML_NONET | LIBXML_NOCDATA | LIBXML_COMPACT ) ) {
+				return;
+			}
+			$root_depth = null;
+			while ( $reader->read() ) {
+				if ( XMLReader::ELEMENT !== $reader->nodeType ) {
+					continue;
+				}
+				if ( null === $root_depth ) {
+					$root_depth = $reader->depth;
+					continue;
+				}
+				if ( $reader->depth !== $root_depth + 1 || $reader->isEmptyElement ) {
+					continue;
+				}
+				$outer = $reader->readOuterXML();
+				if ( ! $outer ) {
+					continue;
+				}
+				$node = simplexml_load_string( $outer, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+				if ( false === $node ) {
+					continue;
+				}
+				$row = array();
+				foreach ( $node->children() as $key => $value ) {
+					$normalized = Sidrena_Utils::import_header_key( (string) $key );
+					if ( '' !== $normalized ) {
+						$row[ $normalized ] = trim( (string) $value );
+					}
+				}
+				if ( ! empty( $row ) ) {
+					yield $row;
+				}
+			}
+			$reader->close();
+			return;
+		}
+
+		$xml = simplexml_load_string( (string) $contents, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+		if ( false === $xml ) {
+			return;
+		}
+		foreach ( $xml->children() as $node ) {
+			if ( 0 === count( $node->children() ) ) {
+				continue;
 			}
 			$row = array();
 			foreach ( $node->children() as $key => $value ) {
@@ -968,10 +1099,9 @@ final class Sidrena_Standalone {
 				}
 			}
 			if ( ! empty( $row ) ) {
-				$rows[] = $row;
+				yield $row;
 			}
 		}
-		return $rows;
 	}
 
 	private function code_key( $code ) {

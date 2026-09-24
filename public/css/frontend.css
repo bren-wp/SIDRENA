@@ -281,3 +281,58 @@
 		display: none;
 	}
 }
+
+
+/* Bounded public service catalog pagination */
+.sidrena-services__table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.sidrena-services__summary {
+	margin: 0 0 .75rem;
+	color: #64748b;
+	font-size: .9em;
+	font-weight: 650;
+}
+.sidrena-services__pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 1rem;
+}
+.sidrena-services__pagination a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	padding: 8px 13px;
+	border: 1px solid #cfddea;
+	border-radius: 10px;
+	background: #fff;
+	color: #1267cc;
+	font-weight: 750;
+	text-decoration: none;
+}
+.sidrena-services__pagination a:focus-visible {
+	outline: 3px solid rgba(22, 119, 255, .28);
+	outline-offset: 2px;
+}
+.sidrena-services__pagination span {
+	color: #64748b;
+	font-size: 13px;
+	font-weight: 700;
+}
+@media (max-width: 640px) {
+	.sidrena-services__pagination {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.sidrena-services__pagination a {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.sidrena-services__pagination span {
+		text-align: center;
+	}
+}

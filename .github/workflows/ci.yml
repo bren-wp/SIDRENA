@@ -53,6 +53,9 @@ jobs:
       - name: Utility encoding/security smoke tests
         run: php .github/tests/utility-smoke.php
 
+      - name: Streaming import and row-limit smoke test
+        run: php .github/tests/import-streaming-smoke.php
+
       - name: NN 101/2026 price-list schema smoke test
         run: php .github/tests/legal-schema-smoke.php
 
@@ -97,6 +100,9 @@ jobs:
 
       - name: Public page automation smoke test
         run: php .github/tests/public-page-smoke.php
+
+      - name: Service scalability smoke test
+        run: php .github/tests/service-scalability-smoke.php
 
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
