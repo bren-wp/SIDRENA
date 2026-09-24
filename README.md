@@ -12,7 +12,7 @@
 
 ## Sidrene cijene pod kontrolom
 
-**Sidrena 1.6.6** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
+**Sidrena 1.7.0** je potpuno besplatan WordPress dodatak za hrvatske trgovce, webshopove, obrtnike i pružatelje usluga. Objedinjuje sidrene/dodatne cijene, povijest cijena, digitalne cjenike, lokacije, javnu arhivu i tehničke provjere u jednom modernom administracijskom sučelju.
 
 **Bez Pro verzije. Bez licencnog ključa. Bez pretplate. Bez telemetrije. Bez obaveznog clouda.**
 
@@ -167,6 +167,30 @@ WP-CLI:
 - **NN 105/2026** — način isticanja maloprodajne/jedinične cijene i pravila za cjenike usluga; objavljen 18.09.2026., stupa na snagu osmoga dana od objave.
 
 Službeni linkovi i informativni sažeci nalaze se u **Sidrena → Propisi**.
+
+## Dvije distribucije od 1.7.0
+
+Sidrena se od verzije **1.7.0** izdaje u dvije odvojene produkcijske distribucije iz istog repozitorija:
+
+- **WordPress izdanje** — `sidrena-wordpress-x.y.z.zip` i kompatibilni alias `sidrena-x.y.z.zip`.
+- **Static PHP izdanje** — `sidrena-static-php-x.y.z.zip` za obične PHP web stranice bez WordPressa, WooCommercea, baze i admin panela.
+
+Static PHP izdanje koristi CSV datoteke kao izvor podataka i uključuje:
+
+- javni responsivni HTML cjenik,
+- JSON API,
+- CSV/XML generiranje,
+- automatski izračun jedinične cijene,
+- manifest i SHA-256,
+- arhivu 30+ dana,
+- `flock` zaštitu od paralelnog generiranja,
+- atomsko objavljivanje datoteka,
+- CLI/cron generator,
+- opcionalno auto-generiranje na zahtjev,
+- zaštićeni `storage/`,
+- siguran download bez direktnog izlaganja source datoteka.
+
+Static dokumentacija: **[static-php/README.md](static-php/README.md)**.
 
 ## Vidljivost admin izbornika u 1.6.6
 

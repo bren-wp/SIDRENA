@@ -1,3 +1,14 @@
+= 1.7.0 =
+* Added a second first-class distribution: Sidrena Static PHP.
+* Static PHP runs without WordPress, WooCommerce, a database, or an admin panel.
+* Added CSV-driven product/service sources, public responsive HTML catalog, JSON API, CSV/XML publication and archive downloads.
+* Added Croatian header/encoding/decimal normalization and automatic unit-price calculation to the static engine.
+* Added strict preflight validation, non-blocking generation lock, atomic writes, manifest metadata and SHA-256 checksums.
+* Added private storage layout with Apache/IIS access-denial files and safe download routing.
+* Added CLI/cron generation plus optional source-mtime based auto-generation for shared hosting.
+* Split release packaging into explicit WordPress and Static PHP ZIPs while retaining the legacy WordPress sidrena-x.y.z.zip alias.
+* Added CI smoke coverage that executes a real Static PHP generation and verifies archives, downloads, formula-injection safety, XML and unit-price calculation.
+
 = 1.6.6 =
 * Fixed missing Sidrena top-level admin menu and plugin action link when manage_sidrena had not propagated to the current WordPress user object.
 * Added manage_options and manage_woocommerce fallbacks while preserving manage_sidrena for custom roles.

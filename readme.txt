@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.6
+Stable tag: 1.7.0
 Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -166,6 +166,17 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 
 == Changelog ==
 
+= 1.7.0 =
+* Uvedene dvije odvojene distribucije iz istog projekta: WordPress izdanje i Static PHP izdanje.
+* Static PHP izdanje radi na običnoj PHP stranici bez WordPressa, WooCommercea, baze i admin panela.
+* Static PHP koristi CSV izvore proizvoda i usluga te generira javni HTML, JSON API, CSV i XML.
+* Dodani manifest, SHA-256, atomsko objavljivanje, generation.lock, arhiva 30+ dana i siguran download iz privatnog storagea.
+* Dodan CLI/cron generator i opcionalno automatsko generiranje kada source CSV postane noviji od zadnjeg snapshota.
+* Static izdanje podržava hrvatska CSV zaglavlja, UTF-8/legacy encoding, hrvatske decimalne formate i automatski izračun jedinične cijene.
+* Release workflow sada izrađuje zasebne sidrena-wordpress-x.y.z.zip i sidrena-static-php-x.y.z.zip pakete, uz SHA-256.
+* WordPress paket izričito ne sadrži Static PHP source, a Static paket ne sadrži WordPress plugin kod.
+* Dodan zaseban Static PHP smoke test koji stvarno generira proizvod, uslugu, CSV/XML, snapshot, manifest i arhivu.
+
 = 1.6.6 =
 * Ispravljena situacija u kojoj Sidrena top-level admin izbornik i link "Otvori Sidrenu" mogu biti skriveni administratoru ako custom capability manage_sidrena nije propagiran u trenutni WordPress user objekt.
 * Administrator s manage_options sada uvijek dobiva pristup Sidreni; WooCommerce manager ostaje podržan kroz manage_woocommerce, a manage_sidrena ostaje podržan za prilagođene uloge.
@@ -242,6 +253,10 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.7.0 =
+
+Novo veliko izdanje: GitHub Release sada sadrži zaseban WordPress paket i zaseban Static PHP paket za stranice bez CMS-a/admin panela.
 
 = 1.6.6 =
 
