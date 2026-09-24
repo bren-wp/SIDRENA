@@ -98,22 +98,45 @@ final class Sidrena_Location_History {
 
 		global $wpdb;
 		$current_table = Sidrena_Location_Data::table_name();
-		$rows          = $wpdb->get_results(
-			"SELECT location_id, product_id, variation_id, price, anchor_price, availability FROM {$current_table} ORDER BY id ASC",
-			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		$batch_size    = min( 1000, max( 50, absint( apply_filters( 'sidrena_location_history_batch_size', 250 ) ) ) );
+		$last_id       = 0;
 
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			self::capture(
-				$row['location_id'],
-				$row['product_id'],
-				$row['variation_id'],
-				null === $row['price'] ? '' : $row['price'],
-				null === $row['anchor_price'] ? '' : $row['anchor_price'],
-				$row['availability'],
-				'daily'
-			);
-		}
+		do {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT id, location_id, product_id, variation_id, price, anchor_price, availability
+					FROM {$current_table}
+					WHERE id > %d
+					ORDER BY id ASC
+					LIMIT %d",
+					$last_id,
+					$batch_size
+				),
+				ARRAY_A
+			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+
+			if ( empty( $rows ) ) {
+				break;
+			}
+
+			foreach ( $rows as $row ) {
+				$row_id = absint( $row['id'] );
+				if ( $row_id <= $last_id ) {
+					continue;
+				}
+
+				self::capture(
+					$row['location_id'],
+					$row['product_id'],
+					$row['variation_id'],
+					null === $row['price'] ? '' : $row['price'],
+					null === $row['anchor_price'] ? '' : $row['anchor_price'],
+					$row['availability'],
+					'daily'
+				);
+				$last_id = $row_id;
+			}
+		} while ( count( $rows ) === $batch_size );
 
 		$this->prune_history();
 	}

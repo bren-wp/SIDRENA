@@ -65,6 +65,9 @@ jobs:
       - name: WooCommerce edition runtime smoke test
         run: php .github/tests/woocommerce-edition-smoke.php
 
+      - name: Location history batching smoke test
+        run: php .github/tests/location-history-batching-smoke.php
+
       - name: Admin menu capability smoke test
         run: php .github/tests/admin-menu-access-smoke.php
 
