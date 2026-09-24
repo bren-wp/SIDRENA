@@ -1,0 +1,62 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Sidrena 0.6.0 alignment
+
+on:
+  push:
+    branches:
+      - feature/0.6.0-legal-readiness
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'Automated 0.6.0 version alignment') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/0.6.0-legal-readiness
+          token: ${{ github.token }}
+      - name: Align textual version markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          paths = [
+              'README.md',
+              'changelog.txt',
+              'languages/sidrena.pot',
+              'editions/wordpress/sidrena-wordpress.php',
+              'editions/woocommerce/sidrena-woocommerce.php',
+              'editions/wordpress/readme.txt',
+              'editions/woocommerce/readme.txt',
+              'docs/UPUTE-WORDPRESS.md',
+              'docs/UPUTE-WOOCOMMERCE.md',
+              'docs/legal-and-technical-notes.md',
+          ]
+          for rel in paths:
+              path = Path(rel)
+              text = path.read_text(encoding='utf-8')
+              text = text.replace('0.5.0', '0.6.0')
+              path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md changelog.txt languages/sidrena.pot editions/wordpress/sidrena-wordpress.php editions/woocommerce/sidrena-woocommerce.php editions/wordpress/readme.txt editions/woocommerce/readme.txt docs/UPUTE-WORDPRESS.md docs/UPUTE-WOOCOMMERCE.md docs/legal-and-technical-notes.md
+          if git diff --cached --quiet; then
+            echo "No version changes needed."
+            exit 0
+          fi
+          git commit -m "Automated 0.6.0 version alignment"
+          git push origin HEAD:feature/0.6.0-legal-readiness
