@@ -40,7 +40,7 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 - 🌐 javna stranica **Objava cjenika**
 - 🔎 pretraživi HTML cjenik
 - 🗂 arhiva prethodnih objava 30+ dana
-- 🔄 REST/automatizirani pristup
+- 🔄 REST/automatizirani pristup s ograničenom paginacijom; Woo varijacije broje se kao stvarne javne stavke
 - 🏬 više lokacija i webshop kao zaseban objekt
 - ⏰ dnevno automatsko generiranje, zadano u 06:30
 - 🧯 sigurnosna provjera propuštene dnevne objave
@@ -146,7 +146,7 @@ Softver **ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja**; prim
 
 ## 🧪 Razvoj i provjera
 
-CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu i stvarne build staging pakete.
+CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje i stvarne build staging pakete.
 
 ```bash
 ./tools/build-editions.sh 0.2.0 /tmp/sidrena-build
