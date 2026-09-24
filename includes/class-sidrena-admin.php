@@ -1445,10 +1445,6 @@ final class Sidrena_Admin {
 		$skipped   = 0;
 		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
 			++$processed;
-			if ( $processed > 50000 ) {
-				++$skipped;
-				break;
-			}
 			$sku = isset( $row[ $map['sku'] ] ) ? sanitize_text_field( $row[ $map['sku'] ] ) : '';
 			if ( ! $sku ) {
 				++$skipped;
@@ -1525,10 +1521,6 @@ final class Sidrena_Admin {
 		$skipped   = 0;
 		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
 			++$processed;
-			if ( $processed > 50000 ) {
-				++$skipped;
-				break;
-			}
 			$location_id = Sidrena_Utils::sanitize_location_id( $row[ $map['location_id'] ] ?? '' );
 			if ( ! isset( $valid_locations[ $location_id ] ) ) {
 				++$skipped;
@@ -1621,8 +1613,35 @@ final class Sidrena_Admin {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'upload_duplicate_headers' );
 		}
+		$row_count = $this->enforce_csv_row_limit( $resource, $delimiter, 50000 );
+		if ( is_wp_error( $row_count ) ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return $row_count;
+		}
 		return array( $resource, $delimiter, array_flip( $head ) );
 	}
+
+	private function enforce_csv_row_limit( $resource, $delimiter, $row_limit = 50000 ) {
+		$row_limit = min( 50000, max( 1, absint( $row_limit ) ) );
+		$count     = 0;
+		while ( is_resource( $resource ) && false !== ( $row = fgetcsv( $resource, 0, $delimiter ) ) ) {
+			unset( $row );
+			++$count;
+			if ( $count > $row_limit ) {
+				return new WP_Error( 'upload_row_limit', __( 'CSV ima više od dopuštenih 50.000 redaka.', 'sidrena' ) );
+			}
+		}
+
+		if ( ! is_resource( $resource ) ) {
+			return new WP_Error( 'upload_open' );
+		}
+		rewind( $resource );
+		if ( false === fgetcsv( $resource, 0, $delimiter ) ) {
+			return new WP_Error( 'upload_header' );
+		}
+		return $count;
+	}
+
 
 	private function resolve_aliases( $map, $aliases ) {
 		foreach ( $aliases as $canonical => $names ) {
