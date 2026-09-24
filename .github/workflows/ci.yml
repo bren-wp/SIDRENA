@@ -37,6 +37,9 @@ jobs:
           set -euo pipefail
           find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
 
+      - name: Sidrena source metadata
+        run: python3 tools/apply-source-metadata.py --check
+
       - name: Install PDF build dependency
         if: matrix.php == '8.3'
         run: python3 -m pip install --disable-pip-version-check --quiet reportlab
