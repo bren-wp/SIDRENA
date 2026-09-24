@@ -21,6 +21,9 @@ function plugin_dir_url( $file ) {
 function plugin_basename( $file ) {
 	return basename( $file );
 }
+function sanitize_key( $value ) {
+	return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $value ) );
+}
 function register_activation_hook( $file, $callback ) {
 	unset( $file, $callback );
 }
