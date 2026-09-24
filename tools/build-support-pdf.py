@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Sidrena source file.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com
@@ -68,7 +68,7 @@ def footer(canvas, doc):
     canvas.line(18 * mm, 13.5 * mm, 192 * mm, 13.5 * mm)
     canvas.setFont("SidrenaSans", 7.5)
     canvas.setFillColor(MUTED)
-    canvas.drawString(18 * mm, 8 * mm, "Sidrena - Brendigo LTD Developer")
+    canvas.drawString(18 * mm, 8 * mm, "Sidrena - Brendigo")
     canvas.drawRightString(192 * mm, 8 * mm, f"Stranica {doc.page}")
     canvas.restoreState()
 
@@ -80,9 +80,9 @@ doc = SimpleDocTemplate(
     topMargin=18 * mm,
     bottomMargin=20 * mm,
     title="Sidrena - Podrška i instalacija",
-    author="Brendigo LTD Developer",
+    author="Brendigo",
     subject="Podrška i instalacija za Sidrena WordPress i Sidrena WooCommerce",
-    creator="Brendigo LTD Developer",
+    creator="Brendigo",
 )
 
 story = [
@@ -96,7 +96,7 @@ contact = [
     [paragraph("E-MAIL PODRŠKA", label), link("sidrena@brendigo.com", "mailto:sidrena@brendigo.com")],
     [paragraph("WHATSAPP PODRŠKA", label), link("+385 91 901 0092", "https://wa.me/385919010092")],
     [paragraph("INSTALACIJA I POČETNO POSTAVLJANJE", label), paragraph("80 EUR jednokratno", value)],
-    [paragraph("DEVELOPER", label), paragraph("Brendigo LTD Developer", value)],
+    [paragraph("AUTOR", label), paragraph("Brendigo", value)],
 ]
 contact_table = Table(contact, colWidths=[62 * mm, 108 * mm], hAlign="LEFT")
 contact_table.setStyle(TableStyle([

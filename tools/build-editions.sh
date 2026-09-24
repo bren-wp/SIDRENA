@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sidrena source file.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com

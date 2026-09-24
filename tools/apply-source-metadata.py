@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Sidrena source metadata manager.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com
@@ -13,7 +13,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-AUTHOR = "Brendigo LTD Developer"
+AUTHOR = "Brendigo"
 AUTHOR_URI = "https://brendigo.com/"
 PLUGIN_URI = "https://sidrene-cijene.com.hr/"
 SUPPORT = "sidrena@brendigo.com"
@@ -34,7 +34,7 @@ PHP_HEADER = """/**
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo LTD Developer
+ * @author Brendigo
  * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */
@@ -42,7 +42,7 @@ PHP_HEADER = """/**
 
 BLOCK_HEADER = """/**
  * Sidrena source file.
- * Author: Brendigo LTD Developer
+ * Author: Brendigo
  * Author URI: https://brendigo.com/
  * Plugin URI: https://sidrene-cijene.com.hr/
  * Support: sidrena@brendigo.com
@@ -50,7 +50,7 @@ BLOCK_HEADER = """/**
 """
 
 HASH_HEADER = """# Sidrena source file.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com
@@ -58,14 +58,14 @@ HASH_HEADER = """# Sidrena source file.
 
 MD_HEADER = """<!--
 Sidrena source file.
-Author: Brendigo LTD Developer
+Author: Brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
 -->
 """
 
-SVG_HEADER = """<!-- Sidrena source file | Author: Brendigo LTD Developer | Author URI: https://brendigo.com/ | Plugin URI: https://sidrene-cijene.com.hr/ | Support: sidrena@brendigo.com -->"""
+SVG_HEADER = """<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://sidrene-cijene.com.hr/ | Support: sidrena@brendigo.com -->"""
 
 
 def relative(path: pathlib.Path) -> pathlib.Path:
@@ -92,14 +92,14 @@ def has_metadata(text: str) -> bool:
 
 def apply_entrypoint(text: str) -> str:
     replacements = {
-        r"(?m)^ \* Author:.*$": " * Author: Brendigo LTD Developer",
+        r"(?m)^ \* Author:.*$": " * Author: Brendigo",
         r"(?m)^ \* Author URI:.*$": " * Author URI: https://brendigo.com/",
         r"(?m)^ \* Plugin URI:.*$": " * Plugin URI: https://sidrene-cijene.com.hr/",
     }
     for pattern, value in replacements.items():
         text = re.sub(pattern, value, text, count=1)
 
-    if " * Author: Brendigo LTD Developer" not in text:
+    if " * Author: Brendigo" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Author field.")
     if " * Author URI: https://brendigo.com/" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Author URI field.")
@@ -152,7 +152,7 @@ def apply_metadata(path: pathlib.Path, text: str) -> str:
     if suffix == ".txt":
         return (
             "Sidrena source file\n"
-            "Author: Brendigo LTD Developer\n"
+            "Author: Brendigo\n"
             "Author URI: https://brendigo.com/\n"
             "Plugin URI: https://sidrene-cijene.com.hr/\n"
             "Support: sidrena@brendigo.com\n\n"
