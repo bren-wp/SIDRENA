@@ -237,7 +237,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RIniE 'cijenaguard|digiadria|Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' . --exclude-dir=.git; then
+          RETIRED_NAME_A="cijena""guard"
+          RETIRED_NAME_B="digi""adria"
+          RETIRED_BRENDIGO='Brendigo[[:space:]]+LTD([[:space:]]+Developer)?'
+          if grep -RIniE "${RETIRED_NAME_A}|${RETIRED_NAME_B}|${RETIRED_BRENDIGO}" . --exclude-dir=.git; then
             echo 'Retired branding detected.' >&2
             exit 1
           fi
