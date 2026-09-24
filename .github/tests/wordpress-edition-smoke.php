@@ -4,7 +4,7 @@ $main = is_file( $root . '/sidrena-wordpress.php' ) ? $root . '/sidrena-wordpres
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
-define( 'SIDRENA_VERSION', '2.0.0' );
+define( 'SIDRENA_VERSION', '0.1.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_FILE', $main );
 define( 'SIDRENA_DIR', $root . '/' );
