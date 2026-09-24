@@ -1,15 +1,44 @@
 <?php
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'WP_CLI', false );
 
-$GLOBALS['sidrena_called'] = array();
-$GLOBALS['sidrena_actions'] = array();
-$GLOBALS['sidrena_scheduled'] = array(
+$GLOBALS['sidrena_actions']    = array();
+$GLOBALS['sidrena_filters']    = array();
+$GLOBALS['sidrena_shortcodes'] = array();
+$GLOBALS['sidrena_scheduled']  = array(
 	'sidrena_history_seed' => 12345,
 );
 
 function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
-	unset( $callback, $priority, $accepted_args );
-	$GLOBALS['sidrena_actions'][] = $hook;
+	unset( $priority, $accepted_args );
+	$GLOBALS['sidrena_actions'][ $hook ][] = $callback;
+}
+function add_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+	unset( $priority, $accepted_args );
+	$GLOBALS['sidrena_filters'][ $hook ][] = $callback;
+}
+function add_shortcode( $tag, $callback ) {
+	$GLOBALS['sidrena_shortcodes'][ $tag ] = $callback;
+}
+function register_activation_hook( $file, $callback ) {
+	unset( $file, $callback );
+}
+function register_deactivation_hook( $file, $callback ) {
+	unset( $file, $callback );
+}
+function plugin_dir_path( $file ) {
+	return dirname( $file ) . '/';
+}
+function plugin_dir_url( $file ) {
+	unset( $file );
+	return 'https://example.test/wp-content/plugins/sidrena/';
+}
+function plugin_basename( $file ) {
+	return basename( $file );
+}
+function load_plugin_textdomain( $domain, $deprecated = false, $path = '' ) {
+	unset( $domain, $deprecated, $path );
+	return true;
 }
 function is_admin() {
 	return true;
@@ -18,7 +47,6 @@ function __( $text, $domain = null ) {
 	unset( $domain );
 	return $text;
 }
-
 function wp_parse_args( $args, $defaults = array() ) {
 	return array_merge( $defaults, is_array( $args ) ? $args : array() );
 }
@@ -31,6 +59,9 @@ function wp_timezone() {
 function get_option( $key, $default = false ) {
 	if ( 'sidrena_history_seeded_at' === $key ) {
 		return false;
+	}
+	if ( 'sidrena_settings' === $key ) {
+		return array();
 	}
 	return $default;
 }
@@ -51,38 +82,7 @@ function wp_clear_scheduled_hook( $hook ) {
 	return 1;
 }
 
-abstract class Sidrena_No_Woo_Module {
-	public static function instance() {
-		return new static();
-	}
-	public function hooks() {
-		$GLOBALS['sidrena_called'][ static::class ] = true;
-	}
-}
-class Sidrena_Audit extends Sidrena_No_Woo_Module {}
-class Sidrena_Service_History extends Sidrena_No_Woo_Module {}
-class Sidrena_Location_History extends Sidrena_No_Woo_Module {}
-class Sidrena_Standalone extends Sidrena_No_Woo_Module {}
-class Sidrena_Services extends Sidrena_No_Woo_Module {}
-class Sidrena_Pricelist extends Sidrena_No_Woo_Module {}
-class Sidrena_REST extends Sidrena_No_Woo_Module {}
-class Sidrena_Public extends Sidrena_No_Woo_Module {}
-class Sidrena_History extends Sidrena_No_Woo_Module {}
-class Sidrena_Products extends Sidrena_No_Woo_Module {}
-class Sidrena_Woo_Import_Export extends Sidrena_No_Woo_Module {}
-class Sidrena_Compatibility extends Sidrena_No_Woo_Module {}
-class Sidrena_Bulk extends Sidrena_No_Woo_Module {}
-class Sidrena_Site_Health extends Sidrena_No_Woo_Module {}
-class Sidrena_Admin extends Sidrena_No_Woo_Module {}
-class Sidrena_CLI {
-	public static function register() {
-		$GLOBALS['sidrena_called'][ __CLASS__ ] = true;
-	}
-}
-
-require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
-require dirname( __DIR__, 2 ) . '/includes/class-sidrena-plugin.php';
-require dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php';
+require dirname( __DIR__, 2 ) . '/sidrena.php';
 
 function sidrena_no_woo_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -91,11 +91,14 @@ function sidrena_no_woo_assert( $condition, $message ) {
 	}
 }
 
+sidrena_no_woo_assert( ! class_exists( 'WooCommerce' ), 'Test environment must not load WooCommerce.' );
+sidrena_no_woo_assert( ! function_exists( 'wc_get_product' ), 'Test environment must not expose WooCommerce product functions.' );
 sidrena_no_woo_assert( 'standalone' === Sidrena_Utils::runtime_mode(), 'Runtime mode must be standalone without WooCommerce.' );
+sidrena_no_woo_assert( function_exists( 'sidrena_cijena' ), 'Universal Sidrena template helper must exist without WooCommerce.' );
 
 Sidrena_Plugin::instance()->run();
 
-$core = array(
+foreach ( array(
 	'Sidrena_Audit',
 	'Sidrena_Service_History',
 	'Sidrena_Location_History',
@@ -107,20 +110,30 @@ $core = array(
 	'Sidrena_Bulk',
 	'Sidrena_Site_Health',
 	'Sidrena_Admin',
-	'Sidrena_CLI',
-);
-foreach ( $core as $class ) {
-	sidrena_no_woo_assert( ! empty( $GLOBALS['sidrena_called'][ $class ] ), $class . ' must initialize without WooCommerce.' );
+) as $class ) {
+	sidrena_no_woo_assert( class_exists( $class ), $class . ' must load without WooCommerce.' );
 }
 
-$woo_only = array(
-	'Sidrena_History',
-	'Sidrena_Products',
-	'Sidrena_Woo_Import_Export',
-	'Sidrena_Compatibility',
-);
-foreach ( $woo_only as $class ) {
-	sidrena_no_woo_assert( empty( $GLOBALS['sidrena_called'][ $class ] ), $class . ' must not register Woo-only hooks without WooCommerce.' );
+sidrena_no_woo_assert( isset( $GLOBALS['sidrena_shortcodes']['sidrena_cijena'] ), 'Standalone sidrena_cijena shortcode must register without WooCommerce.' );
+sidrena_no_woo_assert( isset( $GLOBALS['sidrena_shortcodes']['sidrena-cijena'] ), 'Standalone sidrena-cijena shortcode must register without WooCommerce.' );
+sidrena_no_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_menu'] ), 'Sidrena admin menu must register without WooCommerce.' );
+sidrena_no_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'Standalone import must register without WooCommerce.' );
+sidrena_no_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_save'] ), 'Standalone save must register without WooCommerce.' );
+
+foreach ( array(
+	'admin_post_sidrena_import_anchor',
+	'admin_post_sidrena_import_location_data',
+	'admin_post_sidrena_export_missing',
+	'admin_post_sidrena_export_location_template',
+	'admin_post_sidrena_bulk_save',
+	'woocommerce_update_product',
+	'woocommerce_update_product_variation',
+) as $hook ) {
+	sidrena_no_woo_assert( empty( $GLOBALS['sidrena_actions'][ $hook ] ), $hook . ' must not register in standalone mode.' );
+}
+
+foreach ( array_keys( $GLOBALS['sidrena_filters'] ) as $hook ) {
+	sidrena_no_woo_assert( 0 !== strpos( $hook, 'woocommerce_' ), 'WooCommerce filter registered in standalone mode: ' . $hook );
 }
 
 $method = new ReflectionMethod( 'Sidrena_Activator', 'ensure_schedules' );
@@ -132,4 +145,4 @@ sidrena_no_woo_assert( ! isset( $GLOBALS['sidrena_scheduled']['sidrena_history_s
 $main = file_get_contents( dirname( __DIR__, 2 ) . '/sidrena.php' );
 sidrena_no_woo_assert( 0 === preg_match( '/^ \* Requires Plugins:.*woocommerce/im', $main ), 'Sidrena must not declare WooCommerce as a hard dependency.' );
 
-fwrite( STDOUT, "Sidrena no-WooCommerce runtime smoke test passed.\n" );
+fwrite( STDOUT, "Sidrena real no-WooCommerce runtime smoke test passed.\n" );
