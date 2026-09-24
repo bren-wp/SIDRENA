@@ -679,27 +679,31 @@ final class Sidrena_Standalone {
 	}
 
 	private function code_index() {
-		$query = new WP_Query(
-			array(
-				'post_type'              => self::POST_TYPE,
-				'post_status'            => array( 'publish', 'draft', 'pending', 'private' ),
-				'posts_per_page'         => -1,
-				'fields'                 => 'ids',
-				'no_found_rows'          => true,
-				'orderby'                => 'ID',
-				'order'                  => 'ASC',
-				'update_post_term_cache' => false,
-			)
-		);
+		global $wpdb;
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT p.ID, pm.meta_value
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
+				WHERE p.post_type = %s
+					AND p.post_status IN ('publish','draft','pending','private')
+					AND pm.meta_key = %s
+					AND pm.meta_value <> ''
+				ORDER BY p.ID ASC",
+				self::POST_TYPE,
+				'_sidrena_standalone_code'
+			),
+			ARRAY_A
+		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- WordPress-owned table names; dynamic values are prepared.
 
 		$index = array();
-		foreach ( $query->posts as $post_id ) {
-			$key = $this->code_key( get_post_meta( $post_id, '_sidrena_standalone_code', true ) );
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$key = $this->code_key( $row['meta_value'] ?? '' );
 			if ( $key && ! isset( $index[ $key ] ) ) {
-				$index[ $key ] = absint( $post_id );
+				$index[ $key ] = absint( $row['ID'] ?? 0 );
 			}
 		}
-		wp_reset_postdata();
 		return $index;
 	}
 
