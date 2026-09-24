@@ -52,6 +52,51 @@ final class Sidrena_Public {
 		return home_url( user_trailingslashit( $route ) );
 	}
 
+	public static function ensure_public_page() {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== $settings['enable_public_html'] ) {
+			return 0;
+		}
+
+		$existing_id = absint( get_option( 'sidrena_public_page_id', 0 ) );
+		if ( $existing_id ) {
+			$existing = get_post( $existing_id );
+			if ( $existing && 'page' === $existing->post_type && 'trash' !== $existing->post_status ) {
+				return $existing_id;
+			}
+		}
+
+		foreach ( array( 'objava-cjenika', 'cjenici' ) as $path ) {
+			$existing = get_page_by_path( $path, OBJECT, 'page' );
+			if ( $existing instanceof WP_Post && 'trash' !== $existing->post_status ) {
+				update_option( 'sidrena_public_page_id', absint( $existing->ID ), false );
+				return absint( $existing->ID );
+			}
+		}
+
+		$page_id = wp_insert_post(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				'post_title'     => __( 'Objava cjenika', 'sidrena' ),
+				'post_name'      => 'objava-cjenika',
+				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->',
+				'comment_status' => 'closed',
+			),
+			true
+		);
+
+		if ( is_wp_error( $page_id ) || ! $page_id ) {
+			return $page_id;
+		}
+
+		update_option( 'sidrena_public_page_id', absint( $page_id ), false );
+		if ( class_exists( 'Sidrena_Audit' ) ) {
+			Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
+		}
+		return absint( $page_id );
+	}
+
 	public function register_assets() {
 		if ( ! wp_style_is( 'sidrena-frontend', 'registered' ) ) {
 			wp_register_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );

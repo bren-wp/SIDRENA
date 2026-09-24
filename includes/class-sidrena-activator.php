@@ -28,6 +28,7 @@ final class Sidrena_Activator {
 		self::ensure_schedules();
 		if ( class_exists( 'Sidrena_Public' ) ) {
 			Sidrena_Public::instance()->register_rewrites();
+			Sidrena_Public::ensure_public_page();
 			flush_rewrite_rules( false );
 		}
 

@@ -1355,24 +1355,10 @@ final class Sidrena_Admin {
 			}
 		}
 
-		$page_id = wp_insert_post(
-			array(
-				'post_type'      => 'page',
-				'post_status'    => 'publish',
-				'post_title'     => __( 'Objava cjenika', 'sidrena' ),
-				'post_name'      => 'objava-cjenika',
-				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->',
-				'comment_status' => 'closed',
-			),
-			true
-		);
-
+		$page_id = Sidrena_Public::ensure_public_page();
 		if ( is_wp_error( $page_id ) || ! $page_id ) {
 			$this->redirect( 'files', 'public_page_failed' );
 		}
-
-		update_option( 'sidrena_public_page_id', absint( $page_id ), false );
-		Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
 		$this->redirect( 'files', 'public_page_created' );
 	}
 
