@@ -76,7 +76,8 @@ final class Sidrena_Activator {
 		}
 
 		// Compatibility fallback for unusual WordPress bootstraps.
-		foreach ( array( 'administrator', 'shop_manager' ) as $role_name ) {
+		$fallback_roles = Sidrena_Utils::is_woocommerce_edition() ? array( 'administrator', 'shop_manager' ) : array( 'administrator' );
+		foreach ( $fallback_roles as $role_name ) {
 			$role = get_role( $role_name );
 			if ( $role && ! $role->has_cap( 'manage_sidrena' ) ) {
 				$role->add_cap( 'manage_sidrena' );
@@ -99,11 +100,14 @@ final class Sidrena_Activator {
 	}
 
 	private static function install_schema() {
-		self::create_history_table();
 		self::create_service_history_table();
-		self::create_location_table();
-		self::create_location_history_table();
 		self::create_audit_table();
+
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			self::create_history_table();
+			self::create_location_table();
+			self::create_location_history_table();
+		}
 	}
 
 	private static function create_history_table() {

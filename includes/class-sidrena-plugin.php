@@ -19,7 +19,6 @@ final class Sidrena_Plugin {
 
 		Sidrena_Audit::instance()->hooks();
 		Sidrena_Service_History::instance()->hooks();
-		Sidrena_Location_History::instance()->hooks();
 		Sidrena_Services::instance()->hooks();
 		Sidrena_Pricelist::instance()->hooks();
 		Sidrena_REST::instance()->hooks();
@@ -29,6 +28,7 @@ final class Sidrena_Plugin {
 			Sidrena_Standalone::instance()->hooks();
 		} elseif ( Sidrena_Utils::is_woocommerce_active() ) {
 			Sidrena_History::instance()->hooks();
+			Sidrena_Location_History::instance()->hooks();
 			Sidrena_Products::instance()->hooks();
 			Sidrena_Woo_Import_Export::instance()->hooks();
 			Sidrena_Compatibility::instance()->hooks();

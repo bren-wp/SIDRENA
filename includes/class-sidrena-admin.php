@@ -343,7 +343,7 @@ final class Sidrena_Admin {
 		$next_run        = wp_next_scheduled( 'sidrena_daily_generation' );
 		$product_history = class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0;
 		$service_history = Sidrena_Service_History::count_rows();
-		$location_history = Sidrena_Location_History::count_rows();
+		$location_history = class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0;
 		$history_total   = $product_history + $service_history + $location_history;
 		$anchor_ready    = max( 0, ( $stats['products'] + $stats['services'] ) - $stats['missing_total'] );
 		$series          = class_exists( 'Sidrena_History' ) ? Sidrena_History::latest_series( 30 ) : array();
@@ -550,7 +550,7 @@ final class Sidrena_Admin {
 		$integrity      = Sidrena_Utils::archive_integrity();
 		$product_hist   = class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0;
 		$service_hist   = Sidrena_Service_History::count_rows();
-		$location_hist  = Sidrena_Location_History::count_rows();
+		$location_hist  = class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0;
 		$total_items    = $stats['products'] + $stats['services'];
 		$anchor_ready   = max( 0, $total_items - $stats['missing_total'] );
 		$sales_total    = $stats['active_sales'] + $this->active_service_sales();
@@ -1617,9 +1617,10 @@ final class Sidrena_Admin {
 			$offset += 1000;
 		} while ( 1000 === $count );
 
-		$location_table = Sidrena_Location_History::table_name();
-		$offset         = 0;
-		do {
+		if ( class_exists( 'Sidrena_Location_History' ) ) {
+			$location_table = Sidrena_Location_History::table_name();
+			$offset         = 0;
+			do {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM {$location_table} ORDER BY id ASC LIMIT %d OFFSET %d",
@@ -1653,8 +1654,9 @@ final class Sidrena_Admin {
 				);
 			}
 			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+				$offset += 1000;
+			} while ( 1000 === $count );
+		}
 
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
