@@ -25,6 +25,8 @@ final class Sidrena_Public {
 		add_shortcode( 'sidrena-cjenik', array( $this, 'pricelist_shortcode' ) );
 		add_shortcode( 'sidrena_arhiva', array( $this, 'archive_shortcode' ) );
 		add_shortcode( 'sidrena-arhiva', array( $this, 'archive_shortcode' ) );
+		add_shortcode( 'sidrena_cjenici', array( $this, 'downloads_shortcode' ) );
+		add_shortcode( 'sidrena-cjenici', array( $this, 'downloads_shortcode' ) );
 	}
 
 	public function register_rewrites() {
@@ -266,6 +268,139 @@ final class Sidrena_Public {
 				</ul>
 			<?php endif; ?>
 		</section>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	public function downloads_shortcode( $atts ) {
+		if ( 'yes' !== Sidrena_Utils::settings()['enable_public_html'] ) {
+			return '';
+		}
+
+		$atts = shortcode_atts(
+			array(
+				'lokacija' => '',
+				'oznaka'   => '',
+			),
+			$atts,
+			'sidrena_cjenici'
+		);
+		$requested   = $atts['lokacija'] ? $atts['lokacija'] : $atts['oznaka'];
+		$location    = $requested ? $this->resolve_location( $requested ) : array();
+		$location_id = $location ? Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) : '';
+
+		$current = array();
+		foreach ( Sidrena_Utils::public_index() as $entry ) {
+			if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
+				continue;
+			}
+			$current[] = $entry;
+		}
+
+		$groups = array();
+		$seen   = array();
+		foreach ( Sidrena_Utils::archive_index() as $entry ) {
+			if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
+				continue;
+			}
+			$filename = sanitize_file_name( (string) ( $entry['filename'] ?? '' ) );
+			if ( ! $filename || isset( $seen[ $filename ] ) ) {
+				continue;
+			}
+			$seen[ $filename ] = true;
+			$ts = absint( $entry['generated_ts'] ?? 0 );
+			if ( ! $ts && ! empty( $entry['generated_at'] ) ) {
+				$parsed = strtotime( (string) $entry['generated_at'] );
+				$ts = $parsed ? absint( $parsed ) : 0;
+			}
+			$key = $ts ? wp_date( 'Y-m-d', $ts ) : __( 'Bez datuma', 'sidrena' );
+			if ( ! isset( $groups[ $key ] ) ) {
+				$groups[ $key ] = array();
+			}
+			$groups[ $key ][] = $entry;
+		}
+		krsort( $groups, SORT_STRING );
+
+		$this->enqueue_assets();
+		ob_start();
+		?>
+		<section class="sidrena-downloads" data-sidrena-downloads>
+			<header class="sidrena-downloads__intro">
+				<span class="sidrena-public-kicker"><?php esc_html_e( 'Objava cjenika', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Cjenici za preuzimanje', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Aktualne i prethodno objavljene CSV/XML datoteke dostupne su za pregled i automatsku obradu. Arhiva se prikazuje prema datumima objave.', 'sidrena' ); ?></p>
+			</header>
+
+			<div class="sidrena-downloads__summary">
+				<div><span><?php esc_html_e( 'Aktualno', 'sidrena' ); ?></span><strong><?php echo esc_html( count( $current ) ); ?></strong></div>
+				<div><span><?php esc_html_e( 'Arhiva', 'sidrena' ); ?></span><strong><?php echo esc_html( array_sum( array_map( 'count', $groups ) ) ); ?></strong></div>
+				<div><span><?php esc_html_e( 'Izvor podataka', 'sidrena' ); ?></span><strong><?php echo esc_html( get_bloginfo( 'name' ) ); ?></strong></div>
+			</div>
+
+			<?php if ( ! empty( $current ) ) : ?>
+				<section class="sidrena-downloads__section">
+					<div class="sidrena-downloads__section-head"><h3><?php esc_html_e( 'Aktualni cjenici', 'sidrena' ); ?></h3><span><?php esc_html_e( 'zadnja uspješna objava', 'sidrena' ); ?></span></div>
+					<div class="sidrena-downloads__grid">
+						<?php foreach ( $current as $entry ) : ?>
+							<?php echo wp_kses_post( $this->download_card( $entry ) ); ?>
+						<?php endforeach; ?>
+					</div>
+				</section>
+			<?php endif; ?>
+
+			<section class="sidrena-downloads__section">
+				<div class="sidrena-downloads__section-head"><h3><?php esc_html_e( 'Prethodne objave', 'sidrena' ); ?></h3><span><?php esc_html_e( 'grupirano po datumu', 'sidrena' ); ?></span></div>
+				<?php if ( empty( $groups ) ) : ?>
+					<div class="sidrena-public-message"><?php esc_html_e( 'Arhiva još nema objavljenih datoteka.', 'sidrena' ); ?></div>
+				<?php else : ?>
+					<?php foreach ( $groups as $date => $entries ) : ?>
+						<details class="sidrena-downloads__day" <?php echo 0 === key( array( $date => $entries ) ) ? 'open' : ''; ?>>
+							<summary><strong><?php echo esc_html( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? wp_date( 'd.m.Y.', strtotime( $date ) ) : $date ); ?></strong><span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span></summary>
+							<div class="sidrena-downloads__grid">
+								<?php foreach ( $entries as $entry ) : ?>
+									<?php echo wp_kses_post( $this->download_card( $entry ) ); ?>
+								<?php endforeach; ?>
+							</div>
+						</details>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</section>
+
+			<footer class="sidrena-downloads__source">
+				<?php echo esc_html( sprintf( __( 'Izvor podataka: %s', 'sidrena' ), get_bloginfo( 'name' ) ) ); ?>
+			</footer>
+		</section>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	private function download_card( $entry ) {
+		$filename = (string) ( $entry['filename'] ?? __( 'Cjenik', 'sidrena' ) );
+		$format   = strtoupper( sanitize_key( (string) ( $entry['format'] ?? pathinfo( $filename, PATHINFO_EXTENSION ) ) ) );
+		$catalog  = 'services' === sanitize_key( (string) ( $entry['catalog'] ?? '' ) ) ? __( 'Usluge', 'sidrena' ) : __( 'Proizvodi', 'sidrena' );
+		$location = trim( (string) ( $entry['location_code'] ?? '' ) );
+		$kind     = trim( (string) ( $entry['kind'] ?? '' ) );
+		$url      = esc_url( (string) ( $entry['url'] ?? '' ) );
+		$generated = ! empty( $entry['generated_at'] ) ? Sidrena_Utils::format_iso_datetime( (string) $entry['generated_at'] ) : '';
+
+		ob_start();
+		?>
+		<article class="sidrena-download-card">
+			<div class="sidrena-download-card__top">
+				<span class="sidrena-download-card__format"><?php echo esc_html( $format ?: 'FILE' ); ?></span>
+				<span><?php echo esc_html( $catalog ); ?></span>
+			</div>
+			<h4><?php echo esc_html( $filename ); ?></h4>
+			<div class="sidrena-download-card__meta">
+				<?php if ( $location || $kind ) : ?><span><?php echo esc_html( trim( $kind . ( $kind && $location ? ' · ' : '' ) . $location ) ); ?></span><?php endif; ?>
+				<?php if ( $generated ) : ?><span><?php echo esc_html( $generated ); ?></span><?php endif; ?>
+			</div>
+			<?php if ( $url ) : ?>
+				<a class="sidrena-download-card__button" href="<?php echo $url; ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
+			<?php else : ?>
+				<span class="sidrena-download-card__button is-disabled"><?php esc_html_e( 'Datoteka nije dostupna', 'sidrena' ); ?></span>
+			<?php endif; ?>
+		</article>
 		<?php
 		return (string) ob_get_clean();
 	}
