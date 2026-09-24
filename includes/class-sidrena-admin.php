@@ -293,7 +293,7 @@ final class Sidrena_Admin {
 			</section>
 
 			<section class="sid-card sid-tool-card">
-				<div class="sid-tool-icon"><span class="dashicons dashicons-whatsapp"></span></div>
+				<div class="sid-tool-icon"><span class="dashicons dashicons-format-chat"></span></div>
 				<h2><?php esc_html_e( 'WhatsApp podrška', 'sidrena' ); ?></h2>
 				<p>+385 91 901 0092</p>
 				<a class="button sid-secondary" href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori WhatsApp', 'sidrena' ); ?></a>
@@ -1327,7 +1327,7 @@ final class Sidrena_Admin {
 				'post_status'    => 'publish',
 				'post_title'     => __( 'Cjenici', 'sidrena' ),
 				'post_name'      => 'cjenici',
-				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenik]\n[sidrena_arhiva]<!-- /wp:shortcode -->',
+				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->',
 				'comment_status' => 'closed',
 			),
 			true
