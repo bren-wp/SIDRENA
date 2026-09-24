@@ -51,7 +51,7 @@ Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao jedini izvor 
 * shortcode [sidrena_objava_cjenika]
 * pretraživi HTML cjenik
 * server-side pretraga cijelog cjenika i paginacija za velike kataloge
-* javna arhiva
+* javna arhiva grupirana po datumu
 * CSV/XML i REST
 
 ⏰ Automatizacija
@@ -113,7 +113,10 @@ Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, p
 == Changelog ==
 
 = 0.3.0 =
-* Razvojni ciklus za grupiranu javnu arhivu cjenika i daljnja frontend poboljšanja.
+* Javna arhiva cjenika grupirana je po datumima objave.
+* Aktualne datoteke više se ne dupliciraju među prethodnim objavama.
+* Arhivske kartice jasno prikazuju format, naziv datoteke, lokaciju/datum i akciju Preuzmi.
+* Poboljšan je mobilni i tipkovnički prikaz dnevnih arhivskih grupa.
 
 = 0.2.0 =
 * Streaming JSONL snapshot za javni HTML cjenik.
