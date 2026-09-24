@@ -107,8 +107,35 @@ final class Sidrena_Utils {
 	}
 
 	public static function donation_url() {
-		$url = apply_filters( 'sidrena_donation_url', 'https://sidrene-cijene.com.hr/#donirajte' );
+		$url = apply_filters(
+			'sidrena_donation_url',
+			'https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija'
+		);
 		return is_string( $url ) ? esc_url_raw( $url ) : '';
+	}
+
+	public static function support_email() {
+		return 'sidrena@brendigo.com';
+	}
+
+	public static function support_email_url() {
+		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena podrška' );
+	}
+
+	public static function whatsapp_url() {
+		return 'https://wa.me/385919010092?text=' . rawurlencode( 'Pozdrav, trebam podršku za Sidrena plugin.' );
+	}
+
+	public static function installation_service_url() {
+		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - instalacija i postavljanje 80 EUR' );
+	}
+
+	public static function support_pdf_url() {
+		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
+	}
+
+	public static function developer_label() {
+		return 'Brendigo LTD Developer';
 	}
 
 	public static function locations() {
