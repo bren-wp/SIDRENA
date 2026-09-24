@@ -110,6 +110,9 @@ final class Sidrena_REST {
 				'plugin_url'      => 'https://sidrene-cijene.com.hr/',
 				'ruleset'         => SIDRENA_RULESET,
 				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
+				'catalog_mode'    => Sidrena_Utils::runtime_mode(),
+				'woocommerce_active' => Sidrena_Utils::is_woocommerce_active(),
+				'standalone_products' => Sidrena_Standalone::count(),
 				'generated_at'    => isset( $last['generated_at'] ) ? $last['generated_at'] : null,
 				'retention_days'  => max( 30, absint( $settings['retention_days'] ) ),
 				'manifest_url'    => 'yes' === $settings['publish_manifest'] ? $paths['manifest_url'] : null,
@@ -134,15 +137,21 @@ final class Sidrena_REST {
 			'schema'       => 1,
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
 			'as_of'        => current_time( DATE_ATOM ),
-			'location'     => $location,
-			'page'         => $page,
-			'per_page'     => $per_page,
-			'products'     => array(),
-			'services'     => array(),
+			'location'            => $location,
+			'page'                => $page,
+			'per_page'            => $per_page,
+			'catalog_mode'        => Sidrena_Utils::runtime_mode(),
+			'woocommerce_active'  => Sidrena_Utils::is_woocommerce_active(),
+			'products'            => array(),
+			'standalone_products' => array(),
+			'services'            => array(),
 		);
 
 		if ( in_array( $type, array( 'all', 'products' ), true ) ) {
 			$data['products'] = $this->realtime_products( $location, $page, $per_page );
+			if ( Sidrena_Utils::is_woocommerce_active() && Sidrena_Standalone::count() > 0 ) {
+				$data['standalone_products'] = $this->realtime_standalone_products( $location, $page, $per_page );
+			}
 		}
 		if ( in_array( $type, array( 'all', 'services' ), true ) ) {
 			$data['services'] = $this->realtime_services( $location, $page, $per_page );
@@ -249,19 +258,10 @@ final class Sidrena_REST {
 			$items[] = $this->product_item( $product, $location );
 		}
 
-		// Extra Sidrena standalone items remain available alongside WooCommerce.
-		$extras = Sidrena_Standalone::paged_rows( $page, $per_page, $location );
-		foreach ( $extras['items'] as $row ) {
-			$items[] = $this->standalone_product_item( $row, $location );
-		}
-
 		return array(
 			'items'       => $items,
-			'total'       => ( is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items ) ) + absint( $extras['total'] ),
-			'total_pages' => max(
-				is_object( $result ) && isset( $result->max_num_pages ) ? absint( $result->max_num_pages ) : 1,
-				absint( $extras['total_pages'] )
-			),
+			'total'       => is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items ),
+			'total_pages' => is_object( $result ) && isset( $result->max_num_pages ) ? absint( $result->max_num_pages ) : 1,
 		);
 	}
 
