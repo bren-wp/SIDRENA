@@ -80,8 +80,6 @@ jobs:
           body: |
             ## Sidrena ${{ env.VERSION }}
 
-            ## Sidrena 0.1.0
-
             Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
 
             - **Sidrena WordPress** — za WordPress web bez WooCommercea.
@@ -95,3 +93,34 @@ jobs:
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
+
+
+      - name: Keep only the 0.1.0 GitHub release and tag
+        if: env.VERSION == '0.1.0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[] | [.id, .tag_name] | @tsv' |
+          while IFS=$'\t' read -r RELEASE_ID RELEASE_TAG; do
+            if [[ -n "$RELEASE_ID" && "$RELEASE_TAG" != "$TAG_NAME" ]]; then
+              echo "Removing retired release $RELEASE_TAG"
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"
+            fi
+          done
+
+          git fetch --tags --force
+          while IFS= read -r TAG; do
+            if [[ -n "$TAG" && "$TAG" != "$TAG_NAME" ]]; then
+              echo "Removing retired tag $TAG"
+              git push origin --delete "$TAG"
+            fi
+          done < <(git tag -l)
+
+          REMAINING_RELEASES="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].tag_name')"
+          test "$REMAINING_RELEASES" = "$TAG_NAME"
+
+          REMAINING_TAGS="$(git ls-remote --tags --refs origin | awk '{sub("refs/tags/","",$2); print $2}')"
+          test "$REMAINING_TAGS" = "$TAG_NAME"

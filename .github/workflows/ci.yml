@@ -98,6 +98,9 @@ jobs:
       - name: Woo automatic price output smoke test
         run: php .github/tests/woo-output-smoke.php
 
+      - name: Support and public surface smoke test
+        run: php .github/tests/support-surface-smoke.php
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
@@ -136,6 +139,15 @@ jobs:
           grep -q "define( 'SIDRENA_EDITION', 'woocommerce' );" "$WOO_MAIN"
           grep -q 'Author: Brendigo' "$WP_MAIN"
           grep -q 'Author: Brendigo' "$WOO_MAIN"
+          grep -Fq 'Author URI: https://brendigo.com/' "$WP_MAIN"
+          grep -Fq 'Author URI: https://brendigo.com/' "$WOO_MAIN"
+          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WP_MAIN"
+          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WOO_MAIN"
+          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WP_MAIN"
+          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WOO_MAIN"
+          grep -Fq 'Brendigo LTD Developer' LICENSE
+          grep -Fq 'https://brendigo.com/' LICENSE
+          grep -Fq 'https://sidrene-cijene.com.hr/' LICENSE
           test -s docs/UPUTE-WORDPRESS.md
           test -s docs/UPUTE-WOOCOMMERCE.md
           test -x tools/build-editions.sh
@@ -244,6 +256,7 @@ jobs:
           grep -Fq 'sidrena_publication_watch' includes/class-sidrena-pricelist.php
           grep -Fq 'sidrena_standalone_sync_batch' includes/class-sidrena-standalone.php
           test ! -d .wordpress-org
+          test ! -f .github/workflows/wporg-assets.yml
           ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
           ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
           test "$ASSET_LINES" -eq 2
