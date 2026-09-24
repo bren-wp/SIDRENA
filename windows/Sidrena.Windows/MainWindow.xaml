@@ -20,7 +20,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <Border Width="34" Height="34" CornerRadius="12" Background="{StaticResource SidrenaPanelAltBrush}">
-                    <Image Width="22" Height="22" Source="Assets/sidrena-mark.svg" />
+                    <TextBlock Text="S" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource SidrenaAccentBrush}" />
                 </Border>
                 <StackPanel>
                     <TextBlock Text="Sidrena Desktop" FontSize="15" FontWeight="SemiBold" Foreground="White" />
@@ -41,11 +41,11 @@
                              CompactPaneLength="64"
                              Background="Transparent">
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Content="Dashboard" Icon="Home" IsSelected="True" />
-                <muxc:NavigationViewItem Content="Katalog" Icon="Shop" />
-                <muxc:NavigationViewItem Content="Import / Export" Icon="Import" />
-                <muxc:NavigationViewItem Content="Objava" Icon="Upload" />
-                <muxc:NavigationViewItem Content="Audit" Icon="ReportHacked" />
+                <muxc:NavigationViewItem Content="Dashboard" IsSelected="True" />
+                <muxc:NavigationViewItem Content="Katalog" />
+                <muxc:NavigationViewItem Content="Import / Export" />
+                <muxc:NavigationViewItem Content="Objava" />
+                <muxc:NavigationViewItem Content="Audit" />
             </muxc:NavigationView.MenuItems>
 
             <ScrollViewer Padding="24" VerticalScrollBarVisibility="Auto">
@@ -117,8 +117,8 @@
                             <StackPanel Spacing="16">
                                 <TextBlock Text="Objava i sinkronizacija" FontSize="22" FontWeight="SemiBold" Foreground="White" />
                                 <TextBlock Text="Prva verzija radi lokalni export. Sljedeća faza dodaje sigurnu REST sinkronizaciju prema Sidrena WordPress/WooCommerce pluginu." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
-                                <InfoBar Title="Referentni datumi" Message="10.09.2026. za novobuhvaćene proizvode/usluge i 02.05.2025. za prethodno obuhvaćene FMCG kategorije." Severity="Informational" IsOpen="True" />
-                                <InfoBar Title="Privatnost" Message="Aplikacija ne šalje katalog Brendigu. Export je lokalni dok korisnik ne uključi sinkronizaciju." Severity="Success" IsOpen="True" />
+                                <muxc:InfoBar Title="Referentni datumi" Message="10.09.2026. za novobuhvaćene proizvode/usluge i 02.05.2025. za prethodno obuhvaćene FMCG kategorije." Severity="Informational" IsOpen="True" />
+                                <muxc:InfoBar Title="Privatnost" Message="Aplikacija ne šalje katalog Brendigu. Export je lokalni dok korisnik ne uključi sinkronizaciju." Severity="Success" IsOpen="True" />
                             </StackPanel>
                         </Border>
                     </Grid>
