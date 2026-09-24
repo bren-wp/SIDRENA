@@ -26,16 +26,22 @@ $required = array(
 	'windows/Sidrena.Windows/MainWindow.xaml.cs',
 	'windows/Sidrena.Windows/Services/SidrenaAppServices.cs',
 	'windows/Sidrena.Windows/Assets/sidrena-mark.svg',
+	'windows/packaging/SidrenaSetup.iss',
+	'windows/packaging/SidrenaPortable.iss',
+	'.github/workflows/windows-release-assets.yml',
 );
 
 foreach ( $required as $relative ) {
 	sidrena_windows_assert( is_file( $root . '/' . $relative ), 'Missing Windows app file: ' . $relative );
 }
 
-$project = file_get_contents( $root . '/windows/Sidrena.Windows/Sidrena.Windows.csproj' );
-$window  = file_get_contents( $root . '/windows/Sidrena.Windows/MainWindow.xaml' );
-$code    = file_get_contents( $root . '/windows/Sidrena.Windows/Services/SidrenaAppServices.cs' );
-$readme  = file_get_contents( $root . '/windows/README.md' );
+$project          = file_get_contents( $root . '/windows/Sidrena.Windows/Sidrena.Windows.csproj' );
+$window           = file_get_contents( $root . '/windows/Sidrena.Windows/MainWindow.xaml' );
+$code             = file_get_contents( $root . '/windows/Sidrena.Windows/Services/SidrenaAppServices.cs' );
+$readme           = file_get_contents( $root . '/windows/README.md' );
+$setup_packaging  = file_get_contents( $root . '/windows/packaging/SidrenaSetup.iss' );
+$portable_package = file_get_contents( $root . '/windows/packaging/SidrenaPortable.iss' );
+$release_workflow = file_get_contents( $root . '/.github/workflows/windows-release-assets.yml' );
 
 foreach ( array( '<UseWinUI>true</UseWinUI>', 'Microsoft.WindowsAppSDK', '<WindowsPackageType>None</WindowsPackageType>', 'net8.0-windows', '<OutputType>WinExe</OutputType>' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $project, $marker ), 'Windows project marker missing: ' . $marker );
@@ -51,6 +57,18 @@ foreach ( array( 'nativna Windows desktop aplikacija', 'Bez Electrona', 'bez Tau
 
 foreach ( array( 'StandardReferenceDate', 'FmcgReferenceDate', 'EffectiveDate', 'ExportLocalPackage', 'sidrena-cjenik.csv', 'sidrena-cjenik.xml', 'objava-cjenika.html' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $code, $marker ), 'Windows service marker missing: ' . $marker );
+}
+
+foreach ( array( 'OutputBaseFilename=setup', 'Sidrena.Windows.exe', 'AppName=Sidrena Desktop' ) as $marker ) {
+	sidrena_windows_assert( false !== strpos( $setup_packaging, $marker ), 'Setup packaging marker missing: ' . $marker );
+}
+
+foreach ( array( 'OutputBaseFilename=portable', 'CreateUninstallRegKey=no', 'Uninstallable=no', 'Sidrena.Windows.exe' ) as $marker ) {
+	sidrena_windows_assert( false !== strpos( $portable_package, $marker ), 'Portable packaging marker missing: ' . $marker );
+}
+
+foreach ( array( 'portable.exe', 'setup.exe', 'gh release upload', 'Verify complete release asset set', 'sidrena-wordpress-$env:VERSION.zip', 'sidrena-woocommerce-$env:VERSION.zip' ) as $marker ) {
+	sidrena_windows_assert( false !== strpos( $release_workflow, $marker ), 'Windows release workflow marker missing: ' . $marker );
 }
 
 $forbidden = array(
