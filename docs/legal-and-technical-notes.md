@@ -102,7 +102,6 @@ Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 
 
 Plugin korisnik može instalirati, postaviti i održavati sam. Brendigo usluge naručuju se samo po želji korisnika:
 - jednokratna instalacija i početno postavljanje: **80 EUR**
-- opcionalno tehničko održavanje: **20 EUR mjesečno**
 
 Dobrovoljna donacija za razvoj otvara se izravno preko Revolut gumba u Sidrena administraciji. Donacija nije naknada za instalaciju ili održavanje i ne predstavlja narudžbu usluge.
 
