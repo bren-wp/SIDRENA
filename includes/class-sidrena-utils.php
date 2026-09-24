@@ -35,6 +35,8 @@ final class Sidrena_Utils {
 			'enable_public_html'   => 'yes',
 			'strict_publication'   => 'yes',
 			'track_price_history'  => 'yes',
+			'failure_notifications' => 'yes',
+			'failure_email'         => '',
 		);
 	}
 

@@ -49,6 +49,13 @@ final class Sidrena_Pricelist {
 				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
 				array( 'target_time' => $target )
 			);
+			if ( $now_time >= '07:00' ) {
+				$this->maybe_send_publication_alert(
+					'late',
+					__( 'Današnji cjenik još nije uspješno objavljen.', 'sidrena' ),
+					array( sprintf( __( 'Planirano vrijeme generiranja: %s', 'sidrena' ), $target ) )
+				);
+			}
 		}
 	}
 
@@ -206,12 +213,85 @@ final class Sidrena_Pricelist {
 					'errors' => $errors,
 				)
 			);
+			if ( ! empty( $errors ) ) {
+				$this->maybe_send_publication_alert(
+					'generation',
+					__( 'Generiranje cjenika završilo je s upozorenjima.', 'sidrena' ),
+					$errors
+				);
+			}
 			return empty( $errors );
 		} finally {
 			$this->release_generation_lock( $lock );
 		}
 	}
 
+
+	private function publication_alert_recipient() {
+		$settings = Sidrena_Utils::settings();
+		$candidates = array(
+			$settings['failure_email'] ?? '',
+			$settings['business_email'] ?? '',
+			get_option( 'admin_email', '' ),
+		);
+		foreach ( $candidates as $candidate ) {
+			$email = sanitize_email( (string) $candidate );
+			if ( $email && is_email( $email ) ) {
+				return $email;
+			}
+		}
+		return '';
+	}
+
+	private function maybe_send_publication_alert( $type, $summary, $details = array() ) {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== ( $settings['failure_notifications'] ?? 'yes' ) ) {
+			return false;
+		}
+
+		$type = sanitize_key( (string) $type );
+		if ( ! in_array( $type, array( 'generation', 'late' ), true ) ) {
+			return false;
+		}
+
+		$recipient = $this->publication_alert_recipient();
+		if ( ! $recipient ) {
+			return false;
+		}
+
+		$throttle_key = 'sidrena_notice_' . $type . '_' . md5( strtolower( $recipient ) );
+		if ( get_transient( $throttle_key ) ) {
+			return false;
+		}
+
+		$subject = sprintf( '[%s] %s', wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), __( 'Sidrena - provjerite objavu cjenika', 'sidrena' ) );
+		$lines   = array(
+			wp_strip_all_tags( (string) $summary ),
+			'',
+			sprintf( __( 'Web stranica: %s', 'sidrena' ), home_url( '/' ) ),
+			sprintf( __( 'Vrijeme provjere: %s', 'sidrena' ), wp_date( 'd.m.Y. H:i:s' ) ),
+		);
+		foreach ( array_slice( array_values( (array) $details ), 0, 10 ) as $detail ) {
+			$detail = trim( wp_strip_all_tags( (string) $detail ) );
+			if ( $detail ) {
+				$lines[] = '- ' . $detail;
+			}
+		}
+		$lines[] = '';
+		$lines[] = __( 'Otvorite Sidrena > Cjenici i Sidrena > Dnevnik te provjerite javnu dostupnost prije 08:00.', 'sidrena' );
+
+		$sent = wp_mail( $recipient, $subject, implode( "\n", $lines ) );
+		if ( $sent ) {
+			set_transient( $throttle_key, 1, 6 * HOUR_IN_SECONDS );
+			Sidrena_Audit::log(
+				'publication_alert',
+				'info',
+				__( 'Poslano je e-mail upozorenje o problemu s objavom cjenika.', 'sidrena' ),
+				array( 'type' => $type, 'recipient_domain' => substr( strrchr( $recipient, '@' ), 1 ) )
+			);
+		}
+		return (bool) $sent;
+	}
 
 	private function acquire_generation_lock( $paths ) {
 		$lock_path = trailingslashit( $paths['base_dir'] ) . 'generation.lock';
