@@ -91,7 +91,7 @@ jobs:
           body: |
             ## Sidrena ${{ env.VERSION }}
 
-            Sidrena se od 2.0.0 izdaje kao **dva zasebna WordPress plugina**.
+            Sidrena 0.1.0 isporučuje **dva zasebna WordPress plugina**.
 
             - **Sidrena WordPress** — `sidrena-wordpress-${{ env.VERSION }}.zip` za WordPress web bez WooCommercea.
             - **Sidrena WooCommerce** — `sidrena-woocommerce-${{ env.VERSION }}.zip` za WordPress + WooCommerce.
