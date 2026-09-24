@@ -332,13 +332,17 @@ final class Sidrena_Standalone {
 			if ( ! is_array( $row ) ) {
 				continue;
 			}
-			$id = absint( $row['id'] ?? 0 );
+			$id                = absint( $row['id'] ?? 0 );
+			$original_code_key = $id ? $this->code_key( get_post_meta( $id, '_sidrena_standalone_code', true ) ) : '';
 			if ( $id && self::POST_TYPE !== get_post_type( $id ) ) {
 				++$errors;
 				continue;
 			}
 			if ( $id && 'yes' === ( $row['delete'] ?? '' ) ) {
 				if ( wp_delete_post( $id, true ) ) {
+					if ( $original_code_key && isset( $code_index[ $original_code_key ] ) && absint( $code_index[ $original_code_key ] ) === $id ) {
+						unset( $code_index[ $original_code_key ] );
+					}
 					++$deleted;
 				} else {
 					++$errors;
@@ -375,6 +379,9 @@ final class Sidrena_Standalone {
 			++$saved;
 
 			$this->set_meta( $saved_id, '_sidrena_standalone_code', $code );
+			if ( $original_code_key && $original_code_key !== $code_key && isset( $code_index[ $original_code_key ] ) && absint( $code_index[ $original_code_key ] ) === $saved_id ) {
+				unset( $code_index[ $original_code_key ] );
+			}
 			if ( $code_key ) {
 				$code_index[ $code_key ] = $saved_id;
 			}
