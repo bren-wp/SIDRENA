@@ -60,6 +60,18 @@
 }
 
 .sidrena-pricelist__toolbar p,
+.sidrena-public-archive__count {
+	display: inline-flex;
+	align-items: center;
+	white-space: nowrap;
+	padding: 7px 10px;
+	border-radius: 999px;
+	background: #eef6ff;
+	color: #1267cc;
+	font-size: 12px;
+	font-weight: 750;
+}
+
 .sidrena-public-archive__head p {
 	margin: 6px 0 0;
 	color: #647a91;
@@ -187,46 +199,6 @@
 	color: #9b6018;
 }
 
-.sidrena-public-archive__list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.sidrena-public-archive__list li {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto auto;
-	gap: 18px;
-	align-items: center;
-	padding: 14px 24px;
-	border-bottom: 1px solid #edf2f6;
-}
-
-.sidrena-public-archive__list li:last-child {
-	border-bottom: 0;
-}
-
-.sidrena-public-archive__list a {
-	overflow-wrap: anywhere;
-	font-weight: 750;
-	color: #1267cc;
-	text-decoration: none;
-}
-
-.sidrena-public-archive__list span {
-	font-size: 12px;
-	color: #6d8296;
-	white-space: nowrap;
-}
-
-.sidrena-public-archive__list code {
-	font-size: 11px;
-	color: #50697f;
-	background: #f4f8fc;
-	padding: 4px 7px;
-	border-radius: 6px;
-}
-
 @media (max-width: 760px) {
 	.sidrena-public-page {
 		padding: 24px 12px 42px;
@@ -242,14 +214,6 @@
 		width: 100%;
 	}
 
-	.sidrena-public-archive__list li {
-		grid-template-columns: 1fr;
-		gap: 6px;
-	}
-
-	.sidrena-public-archive__list span {
-		white-space: normal;
-	}
 }
 
 
@@ -261,8 +225,7 @@
 .sidrena-pricelist__summary strong {
 	color: #0f2f53;
 }
-.sidrena-pricelist__search input:focus-visible,
-.sidrena-public-archive__list a:focus-visible {
+.sidrena-pricelist__search input:focus-visible {
 	outline: 3px solid rgba(22, 119, 255, .28);
 	outline-offset: 2px;
 }
@@ -301,6 +264,7 @@
 .sidrena-downloads__day{border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;overflow:hidden}
 .sidrena-downloads__day>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;padding:14px 16px}
 .sidrena-downloads__day>summary::-webkit-details-marker{display:none}
+.sidrena-downloads__day>summary:focus-visible{outline:3px solid rgba(22,119,255,.28);outline-offset:-3px}
 .sidrena-downloads__day[open]>summary{border-bottom:1px solid #e2e8f0}
 .sidrena-downloads__day>.sidrena-downloads__grid{padding:14px}
 .sidrena-downloads__source{font-size:.8rem;color:#64748b;padding-top:4px}
