@@ -39,7 +39,7 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 - 📦 CSV/XML javni cjenici
 - 🌐 javna stranica **Objava cjenika**
 - 🔎 pretraživi HTML cjenik
-- 🗂 arhiva prethodnih objava 30+ dana
+- 🗂 arhiva prethodnih objava 30+ dana, grupirana po datumu
 - 🔄 REST/automatizirani pristup s ograničenom paginacijom; Woo varijacije broje se kao stvarne javne stavke
 - 🏬 više lokacija i webshop kao zaseban objekt
 - ⏰ dnevno automatsko generiranje, zadano u 06:30
@@ -85,7 +85,9 @@ Kompletna javna stranica koristi shortcode:
 [sidrena_objava_cjenika]
 ```
 
-Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu. U 0.2.0 javni cjenik koristi streaming snapshot, server-side pretragu cijelog kataloga i paginaciju, pa velika baza ne mora biti učitana odjednom u PHP memoriju ili DOM.
+Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu. Javni cjenik koristi streaming snapshot, server-side pretragu cijelog kataloga i paginaciju, pa velika baza ne mora biti učitana odjednom u PHP memoriju ili DOM.
+
+U 0.3.0 `[sidrena_arhiva]` i arhiva na stranici Objava cjenika koriste isti grupirani prikaz po datumu. Trenutno aktivne datoteke ostaju u odjeljku **Aktualni cjenici** i ne dupliciraju se među prethodnim objavama.
 
 Dostupni su i zasebni prikazi:
 
