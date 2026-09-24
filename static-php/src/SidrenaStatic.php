@@ -118,9 +118,15 @@ final class SidrenaStatic
 
     public function needsGeneration(): bool
     {
-        $snapshot = $this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json';
-        if (!is_file($snapshot)) {
-            return true;
+        $manifest = $this->readManifest();
+        $snapshot = isset($manifest['snapshot']['path']) ? (string) $manifest['snapshot']['path'] : '';
+        if (!$this->isSafeStorageFile($snapshot) || !is_file($snapshot)) {
+            // Backward-compatible fallback for early development builds.
+            $legacy = $this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json';
+            if (!is_file($legacy)) {
+                return true;
+            }
+            $snapshot = $legacy;
         }
 
         $snapshotMtime = (int) filemtime($snapshot);
@@ -134,7 +140,6 @@ final class SidrenaStatic
         $configPath = $this->baseDir . DIRECTORY_SEPARATOR . 'config.php';
         return is_file($configPath) && (int) filemtime($configPath) > $snapshotMtime;
     }
-
     public function generate(): array
     {
         $lockPath = $this->storageDir . DIRECTORY_SEPARATOR . 'generation.lock';
@@ -147,6 +152,9 @@ final class SidrenaStatic
             fclose($lock);
             throw new RuntimeException('Generiranje Sidrena cjenika je već u tijeku.');
         }
+
+        $runDir = '';
+        $activated = false;
 
         try {
             $products = $this->loadProducts();
@@ -166,11 +174,21 @@ final class SidrenaStatic
             $stamp = $now->format('YmdHis');
             $generatedAt = $now->format(DATE_ATOM);
 
+            $runsDir = $this->generatedDir . DIRECTORY_SEPARATOR . 'runs';
+            if (!is_dir($runsDir) && !mkdir($runsDir, 0755, true) && !is_dir($runsDir)) {
+                throw new RuntimeException('Nije moguće kreirati direktorij za generiranu objavu.');
+            }
+            $runId = $stamp . '-' . bin2hex(random_bytes(4));
+            $runDir = $runsDir . DIRECTORY_SEPARATOR . $runId;
+            if (!mkdir($runDir, 0755, true) && !is_dir($runDir)) {
+                throw new RuntimeException('Nije moguće pripremiti staging direktorij objave.');
+            }
+
             $files = [];
-            $files['products_csv'] = $this->writeCatalogCsv('products', $products, $stamp);
-            $files['products_xml'] = $this->writeCatalogXml('products', $products, $stamp);
-            $files['services_csv'] = $this->writeCatalogCsv('services', $services, $stamp);
-            $files['services_xml'] = $this->writeCatalogXml('services', $services, $stamp);
+            $files['products_csv'] = $this->writeCatalogCsv('products', $products, $stamp, $runDir);
+            $files['products_xml'] = $this->writeCatalogXml('products', $products, $stamp, $runDir);
+            $files['services_csv'] = $this->writeCatalogCsv('services', $services, $stamp, $runDir);
+            $files['services_xml'] = $this->writeCatalogXml('services', $services, $stamp, $runDir);
 
             $snapshot = [
                 'schema' => 1,
@@ -181,8 +199,17 @@ final class SidrenaStatic
                 'services' => $this->publicRows($services),
                 'warnings' => $issues,
             ];
-            $this->writeJsonAtomic($this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json', $snapshot);
+            $snapshotPath = $runDir . DIRECTORY_SEPARATOR . 'snapshot.json';
+            $this->writeJsonAtomic($snapshotPath, $snapshot);
+            $snapshotDescriptor = [
+                'path' => $snapshotPath,
+                'size' => (int) filesize($snapshotPath),
+                'sha256' => hash_file('sha256', $snapshotPath),
+            ];
 
+            // Archive the fully staged files before publishing the new manifest.
+            // If archiving/indexing fails, the current manifest still points to
+            // the previous complete publication.
             $archiveEntries = [];
             foreach ($files as $key => $file) {
                 $archiveEntries[] = $this->archiveCurrentFile($key, $file, $now);
@@ -191,19 +218,24 @@ final class SidrenaStatic
             $this->pruneArchive();
 
             $manifest = [
-                'schema' => 1,
+                'schema' => 2,
                 'edition' => 'static-php',
                 'version' => self::VERSION,
+                'run_id' => $runId,
                 'generated_at' => $generatedAt,
                 'location' => $this->publicLocation(),
                 'counts' => [
                     'products' => count($products),
                     'services' => count($services),
                 ],
+                'snapshot' => $snapshotDescriptor,
                 'files' => $files,
                 'warnings' => $issues,
             ];
+
+            // This single atomic replacement is the publication boundary.
             $this->writeJsonAtomic($this->generatedDir . DIRECTORY_SEPARATOR . 'manifest.json', $manifest);
+            $activated = true;
 
             $status = [
                 'ok' => true,
@@ -213,13 +245,18 @@ final class SidrenaStatic
                 'warnings' => $issues,
             ];
             $this->writeStatus($status);
+            $this->cleanupGeneratedRuns($runDir);
             return $status;
+        } catch (Throwable $e) {
+            if (!$activated && $runDir !== '' && is_dir($runDir)) {
+                $this->removeTree($runDir);
+            }
+            throw $e;
         } finally {
             flock($lock, LOCK_UN);
             fclose($lock);
         }
     }
-
     public function status(): array
     {
         $path = $this->generatedDir . DIRECTORY_SEPARATOR . 'status.json';
@@ -241,9 +278,15 @@ final class SidrenaStatic
 
     public function readSnapshot(): array
     {
-        $path = $this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json';
-        if (!is_file($path)) {
-            return [];
+        $manifest = $this->readManifest();
+        $path = isset($manifest['snapshot']['path']) ? (string) $manifest['snapshot']['path'] : '';
+
+        if (!$this->isSafeStorageFile($path) || !is_file($path)) {
+            // Backward-compatible fallback for early development builds.
+            $path = $this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json';
+            if (!is_file($path)) {
+                return [];
+            }
         }
 
         $data = json_decode((string) file_get_contents($path), true);
@@ -254,7 +297,6 @@ final class SidrenaStatic
         $data['services'] = isset($data['services']) && is_array($data['services']) ? $data['services'] : [];
         return $data;
     }
-
     public function readManifest(): array
     {
         $path = $this->generatedDir . DIRECTORY_SEPARATOR . 'manifest.json';
@@ -451,8 +493,16 @@ final class SidrenaStatic
 
         $saleName = $this->pick($row, ['naziv_posebnog_oblika_prodaje', 'sale_name']);
         $availability = $this->lower($this->pick($row, ['dostupnost', 'availability']));
-        if (!in_array($availability, ['dostupno', 'nedostupno'], true)) {
-            $availability = 'dostupno';
+        $availabilityAliases = [
+            'available' => 'dostupno',
+            'yes' => 'dostupno',
+            '1' => 'dostupno',
+            'unavailable' => 'nedostupno',
+            'no' => 'nedostupno',
+            '0' => 'nedostupno',
+        ];
+        if (isset($availabilityAliases[$availability])) {
+            $availability = $availabilityAliases[$availability];
         }
 
         return [
@@ -518,6 +568,9 @@ final class SidrenaStatic
                     $issues[] = $label . ': nedostaje ' . $name;
                 }
             }
+            if (($row['dostupnost'] ?? '') !== '' && !in_array((string) $row['dostupnost'], ['dostupno', 'nedostupno'], true)) {
+                $issues[] = $label . ': nepoznata vrijednost dostupnosti "' . (string) $row['dostupnost'] . '"';
+            }
             $status = (string) ($row['_unit_status'] ?? 'review');
             if ($status === 'review') {
                 $issues[] = $label . ': primjenjivost jedinične cijene nije pregledana';
@@ -548,22 +601,31 @@ final class SidrenaStatic
         return $issues;
     }
 
-    private function writeCatalogCsv(string $catalog, array $rows, string $stamp): array
+    private function writeCatalogCsv(string $catalog, array $rows, string $stamp, string $outputDir): array
     {
         $headers = $catalog === 'products'
             ? ['naziv','sifra','marka','jedinica_mjere','cijena_za_jedinicu_mjere','maloprodajna_cijena','posebni_oblik_prodaje','naziv_posebnog_oblika_prodaje','sidrena_cijena','datum_sidrene_cijene','barkod','dostupnost']
             : ['naziv_usluge','vrsta_usluge','opseg_usluge','pripadajuci_troskovi','ugradbena_zamjenska_roba','maloprodajna_cijena','posebni_oblik_prodaje','naziv_posebnog_oblika_prodaje','sidrena_cijena','datum_sidrene_cijene'];
 
-        $path = $this->generatedDir . DIRECTORY_SEPARATOR . $catalog . '.csv';
+        $path = rtrim($outputDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $catalog . '.csv';
         $tmp = $path . '.tmp';
         $handle = fopen($tmp, 'wb');
         if (!$handle) {
             throw new RuntimeException('Nije moguće otvoriti privremeni CSV za zapis.');
         }
 
-        fwrite($handle, "\xEF\xBB\xBF");
+        if (fwrite($handle, "\xEF\xBB\xBF") === false) {
+            fclose($handle);
+            @unlink($tmp);
+            throw new RuntimeException('Nije moguće zapisati CSV BOM.');
+        }
+
         $delimiter = (string) $this->config['csv_delimiter'];
-        fputcsv($handle, $headers, $delimiter, '"', '');
+        if (fputcsv($handle, $headers, $delimiter, '"', '') === false) {
+            fclose($handle);
+            @unlink($tmp);
+            throw new RuntimeException('Nije moguće zapisati CSV zaglavlje.');
+        }
         foreach ($rows as $row) {
             $values = [];
             foreach ($headers as $header) {
@@ -575,20 +637,23 @@ final class SidrenaStatic
                 throw new RuntimeException('Greška pri zapisu CSV retka.');
             }
         }
-        fflush($handle);
+        if (!fflush($handle)) {
+            fclose($handle);
+            @unlink($tmp);
+            throw new RuntimeException('Nije moguće dovršiti CSV zapis.');
+        }
         fclose($handle);
         $this->replaceAtomic($tmp, $path);
 
         return $this->fileDescriptor($path, $catalog, 'csv', $stamp, count($rows));
     }
-
-    private function writeCatalogXml(string $catalog, array $rows, string $stamp): array
+    private function writeCatalogXml(string $catalog, array $rows, string $stamp, string $outputDir): array
     {
         $headers = $catalog === 'products'
             ? ['naziv','sifra','marka','jedinica_mjere','cijena_za_jedinicu_mjere','maloprodajna_cijena','posebni_oblik_prodaje','naziv_posebnog_oblika_prodaje','sidrena_cijena','datum_sidrene_cijene','barkod','dostupnost']
             : ['naziv_usluge','vrsta_usluge','opseg_usluge','pripadajuci_troskovi','ugradbena_zamjenska_roba','maloprodajna_cijena','posebni_oblik_prodaje','naziv_posebnog_oblika_prodaje','sidrena_cijena','datum_sidrene_cijene'];
 
-        $path = $this->generatedDir . DIRECTORY_SEPARATOR . $catalog . '.xml';
+        $path = rtrim($outputDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $catalog . '.xml';
         $tmp = $path . '.tmp';
         $handle = fopen($tmp, 'wb');
         if (!$handle) {
@@ -597,23 +662,41 @@ final class SidrenaStatic
 
         $root = $catalog === 'products' ? 'proizvodi' : 'usluge';
         $item = $catalog === 'products' ? 'proizvod' : 'usluga';
-        fwrite($handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n");
+        if (fwrite($handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n") === false) {
+            fclose($handle);
+            @unlink($tmp);
+            throw new RuntimeException('Nije moguće zapisati XML zaglavlje.');
+        }
         foreach ($rows as $row) {
-            fwrite($handle, "  <{$item}>\n");
+            if (fwrite($handle, "  <{$item}>\n") === false) {
+                fclose($handle);
+                @unlink($tmp);
+                throw new RuntimeException('Nije moguće zapisati XML stavku.');
+            }
             foreach ($headers as $header) {
                 $value = htmlspecialchars((string) ($row[$header] ?? ''), ENT_QUOTES | ENT_XML1, 'UTF-8');
-                fwrite($handle, "    <{$header}>{$value}</{$header}>\n");
+                if (fwrite($handle, "    <{$header}>{$value}</{$header}>\n") === false) {
+                    fclose($handle);
+                    @unlink($tmp);
+                    throw new RuntimeException('Nije moguće zapisati XML vrijednost.');
+                }
             }
-            fwrite($handle, "  </{$item}>\n");
+            if (fwrite($handle, "  </{$item}>\n") === false) {
+                fclose($handle);
+                @unlink($tmp);
+                throw new RuntimeException('Nije moguće dovršiti XML stavku.');
+            }
         }
-        fwrite($handle, "</{$root}>\n");
-        fflush($handle);
+        if (fwrite($handle, "</{$root}>\n") === false || !fflush($handle)) {
+            fclose($handle);
+            @unlink($tmp);
+            throw new RuntimeException('Nije moguće dovršiti XML zapis.');
+        }
         fclose($handle);
         $this->replaceAtomic($tmp, $path);
 
         return $this->fileDescriptor($path, $catalog, 'xml', $stamp, count($rows));
     }
-
     private function fileDescriptor(string $path, string $catalog, string $format, string $stamp, int $rows): array
     {
         return [
@@ -694,6 +777,50 @@ final class SidrenaStatic
             $keep[] = $entry;
         }
         $this->writeJsonAtomic($path, $keep);
+    }
+
+    private function cleanupGeneratedRuns(string $currentRunDir): void
+    {
+        $runsDir = $this->generatedDir . DIRECTORY_SEPARATOR . 'runs';
+        if (!is_dir($runsDir)) {
+            return;
+        }
+
+        $cutoff = time() - 3600;
+        $items = scandir($runsDir);
+        foreach (is_array($items) ? $items : [] as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $path = $runsDir . DIRECTORY_SEPARATOR . $item;
+            if (!is_dir($path) || realpath($path) === realpath($currentRunDir)) {
+                continue;
+            }
+            $mtime = (int) @filemtime($path);
+            if ($mtime > 0 && $mtime < $cutoff) {
+                $this->removeTree($path);
+            }
+        }
+    }
+
+    private function removeTree(string $path): void
+    {
+        if (!is_dir($path)) {
+            return;
+        }
+        $items = scandir($path);
+        foreach (is_array($items) ? $items : [] as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $full = $path . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($full)) {
+                $this->removeTree($full);
+            } else {
+                @unlink($full);
+            }
+        }
+        @rmdir($path);
     }
 
     private function writeStatus(array $status): void
