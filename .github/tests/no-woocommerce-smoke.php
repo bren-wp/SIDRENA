@@ -130,6 +130,6 @@ sidrena_no_woo_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_daily_gener
 sidrena_no_woo_assert( ! isset( $GLOBALS['sidrena_scheduled']['sidrena_history_seed'] ), 'WooCommerce history seed must be cleared in standalone mode.' );
 
 $main = file_get_contents( dirname( __DIR__, 2 ) . '/sidrena.php' );
-sidrena_no_woo_assert( false === preg_match( '/^ \* Requires Plugins:.*woocommerce/im', $main ), 'Sidrena must not declare WooCommerce as a hard dependency.' );
+sidrena_no_woo_assert( 0 === preg_match( '/^ \* Requires Plugins:.*woocommerce/im', $main ), 'Sidrena must not declare WooCommerce as a hard dependency.' );
 
 fwrite( STDOUT, "Sidrena no-WooCommerce runtime smoke test passed.\n" );
