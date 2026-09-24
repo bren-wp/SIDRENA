@@ -72,6 +72,16 @@ Ovo izdanje zahtijeva WooCommerce. Za web bez WooCommercea koristite Sidrena Wor
 Developer: Brendigo LTD Developer
 Službena stranica: https://sidrene-cijene.com.hr/
 
+== Support and optional services ==
+
+Plugin možete instalirati, postaviti i održavati sami.
+
+* opcionalno jednokratno postavljanje od strane Brendiga: 80 EUR
+* opcionalno tehničko održavanje: 20 EUR mjesečno
+* e-mail: sidrena@brendigo.com
+* WhatsApp: +385 91 901 0092
+* dobrovoljna donacija za razvoj: izravni Revolut link; nije naknada za uslugu
+
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
