@@ -254,10 +254,13 @@ jobs:
           grep -Fq '+385 91 901 0092' README.md
           grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
           grep -Fq "return '80 EUR';" includes/class-sidrena-utils.php
-          grep -Fq "return '20 EUR/mj';" includes/class-sidrena-utils.php
-          grep -Fq '20 EUR mjesečno' tools/build-support-pdf.py
           grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
-          grep -Fq 'plugin možete instalirati, postaviti i održavati sami' README.md
+          grep -Fq '[sidrena_objava_cjenika]' README.md
+          grep -Fq 'sidrena@brendigo.com' tools/build-support-pdf.py
+          if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git; then
+            echo 'Unrequested recurring maintenance offer detected.' >&2
+            exit 1
+          fi
           grep -Fq 'sidrena_publication_watch' includes/class-sidrena-pricelist.php
           grep -Fq 'sidrena_standalone_sync_batch' includes/class-sidrena-standalone.php
           test ! -d .wordpress-org
