@@ -74,11 +74,152 @@ jobs:
           "SIDRENA_WINDOWS_ARTIFACTS=$artifactsDir" | Out-File -FilePath $env:GITHUB_ENV -Append
           "SIDRENA_VERSION=$env:VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Install Inno Setup
+      - name: Build portable.exe launcher
+        shell: pwsh
+        run: |
+          $launcherRoot = Join-Path $env:RUNNER_TEMP 'sidrena-portable-launcher'
+          $payloadZip = Join-Path $launcherRoot 'sidrena-payload.zip'
+          $portableProject = Join-Path $launcherRoot 'Sidrena.PortableLauncher.csproj'
+          $portableSource = Join-Path $launcherRoot 'Program.cs'
+          $portableOut = Join-Path $env:RUNNER_TEMP 'sidrena-portable-launcher-out'
+          New-Item -ItemType Directory -Force -Path $launcherRoot, $portableOut | Out-Null
+
+          Compress-Archive -Path (Join-Path $env:SIDRENA_PUBLISH_DIR '*') -DestinationPath $payloadZip -Force
+
+          @"
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>WinExe</OutputType>
+              <TargetFramework>net8.0-windows</TargetFramework>
+              <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+              <SelfContained>true</SelfContained>
+              <PublishSingleFile>true</PublishSingleFile>
+              <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+              <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+              <AssemblyName>portable</AssemblyName>
+              <Version>$env:SIDRENA_VERSION</Version>
+              <FileVersion>$env:SIDRENA_VERSION.0</FileVersion>
+              <InformationalVersion>$env:SIDRENA_VERSION</InformationalVersion>
+              <Company>Brendigo</Company>
+              <Product>Sidrena Desktop Portable</Product>
+            </PropertyGroup>
+            <ItemGroup>
+              <EmbeddedResource Include="sidrena-payload.zip" LogicalName="sidrena-payload.zip" />
+            </ItemGroup>
+          </Project>
+          "@ | Set-Content -Path $portableProject -Encoding UTF8
+
+          @'
+          using System;
+          using System.Diagnostics;
+          using System.IO;
+          using System.IO.Compression;
+          using System.Linq;
+          using System.Reflection;
+          using System.Security.Cryptography;
+
+          namespace Sidrena.PortableLauncher;
+
+          internal static class Program
+          {
+              [STAThread]
+              private static int Main(string[] args)
+              {
+                  try
+                  {
+                      var assembly = Assembly.GetExecutingAssembly();
+                      using var resourceStream = assembly.GetManifestResourceStream("sidrena-payload.zip")
+                          ?? throw new InvalidOperationException("Sidrena portable payload is missing.");
+                      using var payload = new MemoryStream();
+                      resourceStream.CopyTo(payload);
+                      var payloadBytes = payload.ToArray();
+                      var payloadHash = Convert.ToHexString(SHA256.HashData(payloadBytes)).ToLowerInvariant()[..12];
+                      var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "portable";
+
+                      var exeDirectory = Path.GetDirectoryName(Environment.ProcessPath ?? AppContext.BaseDirectory) ?? AppContext.BaseDirectory;
+                      var root = ResolveWritableRoot(Path.Combine(exeDirectory, "SidrenaPortableRuntime"));
+                      var runtimeDir = Path.Combine(root, $"{version}-{payloadHash}");
+                      var markerPath = Path.Combine(runtimeDir, ".sidrena-portable-ready");
+                      var appExe = Path.Combine(runtimeDir, "Sidrena.Windows.exe");
+
+                      if (!File.Exists(markerPath) || !File.Exists(appExe))
+                      {
+                          if (Directory.Exists(runtimeDir))
+                          {
+                              Directory.Delete(runtimeDir, true);
+                          }
+
+                          Directory.CreateDirectory(runtimeDir);
+                          using var zipStream = new MemoryStream(payloadBytes, writable: false);
+                          ZipFile.ExtractToDirectory(zipStream, runtimeDir, overwriteFiles: true);
+                          File.WriteAllText(markerPath, DateTimeOffset.UtcNow.ToString("O"));
+                      }
+
+                      var startInfo = new ProcessStartInfo
+                      {
+                          FileName = appExe,
+                          WorkingDirectory = runtimeDir,
+                          UseShellExecute = false
+                      };
+
+                      foreach (var arg in args)
+                      {
+                          startInfo.ArgumentList.Add(arg);
+                      }
+
+                      Process.Start(startInfo);
+                      return 0;
+                  }
+                  catch (Exception ex)
+                  {
+                      var logPath = Path.Combine(Path.GetTempPath(), "sidrena-portable-error.log");
+                      File.WriteAllText(logPath, ex.ToString());
+                      return 1;
+                  }
+              }
+
+              private static string ResolveWritableRoot(string preferredRoot)
+              {
+                  try
+                  {
+                      Directory.CreateDirectory(preferredRoot);
+                      var probe = Path.Combine(preferredRoot, ".write-test");
+                      File.WriteAllText(probe, "ok");
+                      File.Delete(probe);
+                      return preferredRoot;
+                  }
+                  catch
+                  {
+                      var fallback = Path.Combine(
+                          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                          "SidrenaDesktop",
+                          "PortableRuntime"
+                      );
+                      Directory.CreateDirectory(fallback);
+                      return fallback;
+                  }
+              }
+          }
+          '@ | Set-Content -Path $portableSource -Encoding UTF8
+
+          dotnet publish $portableProject `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true `
+            -o $portableOut
+
+          $portableExe = Join-Path $portableOut 'portable.exe'
+          if (-not (Test-Path $portableExe)) { throw 'portable.exe launcher was not produced.' }
+          Copy-Item $portableExe (Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'portable.exe') -Force
+
+      - name: Install Inno Setup for setup installer
         shell: pwsh
         run: choco install innosetup --no-progress -y
 
-      - name: Build portable.exe and setup.exe
+      - name: Build setup.exe installer
         shell: pwsh
         run: |
           $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
@@ -87,7 +228,6 @@ jobs:
           }
 
           & $iscc windows/packaging/SidrenaSetup.iss
-          & $iscc windows/packaging/SidrenaPortable.iss
 
           $setup = Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'setup.exe'
           $portable = Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'portable.exe'
@@ -115,13 +255,22 @@ jobs:
         run: |
           $release = gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$env:TAG_NAME" | ConvertFrom-Json
           $body = [string]$release.body
-          if ($body -notmatch 'Sidrena Windows') {
-            $body += "`n`n## Sidrena Windows`n`nOvo izdanje uključuje i nativnu Windows aplikaciju:`n`n- portable.exe — prijenosna/self-contained varijanta`n- setup.exe — standardni Windows installer`n`nWindows aplikacija je nativna WinUI 3 / Windows App SDK aplikacija, bez Electrona, Taurija ili webview shell pristupa.`n"
-            $payload = @{ body = $body } | ConvertTo-Json -Depth 5
-            $payloadPath = Join-Path $env:RUNNER_TEMP 'release-body-patch.json'
-            $payload | Out-File -FilePath $payloadPath -Encoding utf8
-            gh api --method PATCH "repos/$env:GITHUB_REPOSITORY/releases/$($release.id)" --input $payloadPath | Out-Null
-          }
+          $body = [regex]::Replace($body, '(?ms)\r?\n\r?\n## Sidrena Windows.*$', '')
+          $windowsBody = @'
+          ## Sidrena Windows
+
+          Ovo izdanje uključuje i nativnu Windows aplikaciju:
+
+          - portable.exe — direktno pokretanje bez instalacijskog čarobnjaka; pri pokretanju raspakira runtime u prijenosnu radnu mapu i pokreće aplikaciju
+          - setup.exe — standardni Windows installer
+
+          Windows aplikacija je nativna WinUI 3 / Windows App SDK aplikacija, bez Electrona, Taurija ili webview shell pristupa.
+          '@
+          $body = $body.TrimEnd() + "`n`n" + $windowsBody.Trim() + "`n"
+          $payload = @{ body = $body } | ConvertTo-Json -Depth 5
+          $payloadPath = Join-Path $env:RUNNER_TEMP 'release-body-patch.json'
+          $payload | Out-File -FilePath $payloadPath -Encoding utf8
+          gh api --method PATCH "repos/$env:GITHUB_REPOSITORY/releases/$($release.id)" --input $payloadPath | Out-Null
 
       - name: Verify complete release asset set
         env:
@@ -155,3 +304,8 @@ jobs:
           $exeCount = (Get-ChildItem $verifyDir -Filter '*.exe').Count
           if ($zipCount -ne 2) { throw "Expected exactly 2 ZIP plugin assets, found $zipCount." }
           if ($exeCount -ne 2) { throw "Expected exactly 2 EXE Windows assets, found $exeCount." }
+
+          $release = gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$env:TAG_NAME" | ConvertFrom-Json
+          if ([string]$release.body -notmatch 'direktno pokretanje bez instalacijskog') {
+            throw 'Release body does not describe the corrected portable.exe behavior.'
+          }
