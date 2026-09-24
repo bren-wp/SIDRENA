@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: Sidrena Software License 1.0
 License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 
 == Description ==
 
-= Sidrena WordPress 0.4.0 =
+= Sidrena WordPress 0.5.0 =
 
 Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
@@ -45,6 +45,8 @@ Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao 
 ⏰ Automatizacija
 * zadano dnevno generiranje u 06:30
 * sigurnosna provjera ponovno pokreće propuštenu objavu nakon planiranog vremena
+* compliance watchdog obnavlja sigurne tehničke postavke, cronove, javnu stranicu i upload zaštitu
+* lokalni audit log ima limite, pruning i throttling ponavljajućih zapisa
 * za pouzdano izvršavanje poslovno kritičnog termina preporučuje se server cron
 
 🛟 Podrška
@@ -72,7 +74,7 @@ Plugin možete instalirati i postaviti sami.
 
 == Installation ==
 
-1. Prenesite sidrena-wordpress-0.4.0.zip.
+1. Prenesite sidrena-wordpress-0.5.0.zip.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog.
 4. Povežite postojeći WordPress tip sadržaja ili unesite/uvezite proizvode.
@@ -93,12 +95,18 @@ Ne kada je proizvod povezan s postojećim WordPress sadržajem. Sidrena automats
 Da. U Katalogu odaberite postojeći javni tip sadržaja i po potrebi meta ključ cijene. Sinkronizacija se obrađuje u batchovima.
 
 = Objavljuje li cjenik automatski? =
-Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Sidrena ima i sigurnosnu provjeru propuštene dnevne objave. Za precizno izvršavanje preporučuje se server cron.
+Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Sidrena ima i sigurnosnu provjeru propuštene dnevne objave. Compliance watchdog provjerava ključne tehničke postavke i raspored. Za precizno izvršavanje preporučuje se server cron.
 
 = Smijem li prodavati ili preprodavati plugin? =
 Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo.
 
 == Changelog ==
+
+= 0.5.0 =
+* Dodan je distribution guard koji čuva samo dva instalacijska ZIP-a i blokira generičke/root pakete.
+* Dodan je legal/compliance watchdog za sigurne automatske popravke javne stranice, upload direktorija, ključnih postavki i cronova.
+* Audit log ima produkcijske limite, pruning i throttling kako ne bi rastao bez kontrole.
+* Legal automation guard čuva referentne datume, strict publication, failure notifications i hourly publication watch.
 
 = 0.4.0 =
 * Usluge koriste bounded server-side paginaciju; admin audit usluga obrađuje podatke u batchovima.
