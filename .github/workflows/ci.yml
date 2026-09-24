@@ -261,6 +261,29 @@ jobs:
             exit 1
           fi
 
+      - name: Dangerous PHP primitive guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGETS=(includes editions uninstall.php)
+          if grep -RInE '\b(eval|assert|system|shell_exec|passthru|exec|proc_open|popen)[[:space:]]*\(' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Dangerous PHP execution primitive detected.' >&2
+            exit 1
+          fi
+          if grep -RInE '\bunserialize[[:space:]]*\(' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Raw unserialize detected.' >&2
+            exit 1
+          fi
+          if grep -RInE '\$_(REQUEST|COOKIE)\b' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Broad or cookie superglobal use detected; use explicit validated input.' >&2
+            exit 1
+          fi
+          if grep -RInE '(include|require)(_once)?[[:space:]]*\(?[[:space:]]*["'"'"']https?://' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Remote PHP include detected.' >&2
+            exit 1
+          fi
+
       - name: Secret-material guard
         if: matrix.php == '8.3'
         shell: bash

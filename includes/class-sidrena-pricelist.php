@@ -695,56 +695,124 @@ final class Sidrena_Pricelist {
 			$delimiter = "\t";
 		}
 
-		$temp = $filepath . '.tmp';
-		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $handle ) {
-			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti datoteku za pisanje: %s', 'sidrena' ), basename( $filepath ) ) );
+		$opened = $this->open_atomic_writer( $filepath );
+		if ( is_wp_error( $opened ) ) {
+			return $opened;
+		}
+		list( $handle, $temp ) = $opened;
+
+		if ( ! $this->write_stream_all( $handle, "\xEF\xBB\xBF" ) || false === fputcsv( $handle, $headers, $delimiter ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati zaglavlje datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
-		fwrite( $handle, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $handle, $headers, $delimiter );
 		$count = 0;
 		foreach ( $rows as $row ) {
 			$line = array();
 			foreach ( $headers as $header ) {
 				$line[] = Sidrena_Utils::csv_safe_cell( isset( $row[ $header ] ) ? $row[ $header ] : '' );
 			}
-			fputcsv( $handle, $line, $delimiter );
+			if ( false === fputcsv( $handle, $line, $delimiter ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati redak datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			++$count;
 		}
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-		if ( ! rename( $temp, $filepath ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
-			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
-		}
-		return $count;
+
+		$result = $this->commit_atomic_writer( $handle, $temp, $filepath );
+		return is_wp_error( $result ) ? $result : $count;
 	}
-
 	private function write_xml( $filepath, $root, $item, $headers, $rows ) {
-		$temp   = $filepath . '.tmp';
-		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $handle ) {
-			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti datoteku za pisanje: %s', 'sidrena' ), basename( $filepath ) ) );
+		$opened = $this->open_atomic_writer( $filepath );
+		if ( is_wp_error( $opened ) ) {
+			return $opened;
+		}
+		list( $handle, $temp ) = $opened;
+
+		if ( ! $this->write_stream_all( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće započeti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
-		fwrite( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		$count = 0;
 		foreach ( $rows as $row ) {
-			fwrite( $handle, "  <{$item}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( ! $this->write_stream_all( $handle, "  <{$item}>\n" ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			foreach ( $headers as $header ) {
 				$value = isset( $row[ $header ] ) ? (string) $row[ $header ] : '';
-				fwrite( $handle, '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+				$chunk = '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n";
+				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
+					$this->discard_atomic_writer( $handle, $temp );
+					return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+				}
 			}
-			fwrite( $handle, "  </{$item}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( ! $this->write_stream_all( $handle, "  </{$item}>\n" ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			++$count;
 		}
-		fwrite( $handle, "</{$root}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		if ( ! $this->write_stream_all( $handle, "</{$root}>\n" ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće dovršiti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+
+		$result = $this->commit_atomic_writer( $handle, $temp, $filepath );
+		return is_wp_error( $result ) ? $result : $count;
+	}
+	private function open_atomic_writer( $filepath ) {
+		$directory = dirname( $filepath );
+		$suffix    = wp_generate_password( 12, false, false );
+		$temp      = trailingslashit( $directory ) . '.' . basename( $filepath ) . '.' . $suffix . '.tmp';
+		$handle    = fopen( $temp, 'xb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $handle ) {
+			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti privremenu datoteku za zapis: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+		return array( $handle, $temp );
+	}
+
+	private function write_stream_all( $handle, $data ) {
+		$data   = (string) $data;
+		$length = strlen( $data );
+		$offset = 0;
+		while ( $offset < $length ) {
+			$written = fwrite( $handle, substr( $data, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( false === $written || 0 === $written ) {
+				return false;
+			}
+			$offset += $written;
+		}
+		return true;
+	}
+
+	private function discard_atomic_writer( $handle, $temp ) {
+		if ( is_resource( $handle ) ) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		}
+		if ( $temp && is_file( $temp ) ) {
+			unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+		}
+	}
+
+	private function commit_atomic_writer( $handle, $temp, $filepath ) {
+		if ( ! fflush( $handle ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_flush', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+		if ( function_exists( 'fsync' ) && ! fsync( $handle ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_sync', sprintf( __( 'Nije moguće sinkronizirati datoteku na disk: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		if ( ! rename( $temp, $filepath ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
-			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+			if ( is_file( $temp ) ) {
+				unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće atomski objaviti datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
-		return $count;
+		return true;
 	}
 
 	private function merge_archive_index( $new_files ) {

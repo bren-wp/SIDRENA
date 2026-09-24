@@ -1635,12 +1635,12 @@ final class Sidrena_Admin {
 		header( 'Content-Disposition: attachment; filename="sidrena-nedostajuce-sidrene-cijene.csv"' );
 		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $out, array( 'sku', 'naziv', 'anchor_price', 'anchor_date', 'reference_group' ), ';' );
+		$this->safe_fputcsv( $out, array( 'sku', 'naziv', 'anchor_price', 'anchor_date', 'reference_group' ), ';' );
 		foreach ( $this->catalog_items() as $item ) {
 			if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
 				continue;
 			}
-			fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', get_post_meta( $item->get_id(), '_sidrena_reference_group', true ) ?: 'standard' ), ';' );
+			$this->safe_fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', get_post_meta( $item->get_id(), '_sidrena_reference_group', true ) ?: 'standard' ), ';' );
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
@@ -1660,7 +1660,7 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
 		}
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv(
+		$this->safe_fputcsv(
 			$out,
 			array( 'vrsta_zapisa', 'zabiljezeno', 'lokacija', 'product_id', 'variation_id', 'service_id', 'sifra', 'naziv', 'cijena', 'redovna_cijena', 'akcijska_cijena', 'sidrena_cijena', 'dostupnost', 'izvor' ),
 			';'
@@ -1681,7 +1681,7 @@ final class Sidrena_Admin {
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
-				fputcsv(
+				$this->safe_fputcsv(
 					$out,
 					array(
 						'woocommerce',
@@ -1719,7 +1719,7 @@ final class Sidrena_Admin {
 				ARRAY_A
 			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				fputcsv(
+				$this->safe_fputcsv(
 					$out,
 					array(
 						'usluga',
@@ -1759,7 +1759,7 @@ final class Sidrena_Admin {
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
-				fputcsv(
+				$this->safe_fputcsv(
 					$out,
 					array(
 						'lokacija',
@@ -1789,6 +1789,14 @@ final class Sidrena_Admin {
 		exit;
 	}
 
+	private function safe_fputcsv( $handle, $fields, $delimiter = ',' ) {
+		$safe = array();
+		foreach ( (array) $fields as $field ) {
+			$safe[] = Sidrena_Utils::csv_safe_cell( $field );
+		}
+		return false !== fputcsv( $handle, $safe, $delimiter );
+	}
+
 	public function export_archive_index() {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_archive_index' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
@@ -1802,10 +1810,10 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
 		}
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $out, array( 'lokacija', 'vrsta_objekta', 'katalog', 'format', 'naziv_datoteke', 'objavljeno', 'cuvati_do', 'redaka', 'velicina_bajta', 'sha256', 'javni_url' ), ';' );
+		$this->safe_fputcsv( $out, array( 'lokacija', 'vrsta_objekta', 'katalog', 'format', 'naziv_datoteke', 'objavljeno', 'cuvati_do', 'redaka', 'velicina_bajta', 'sha256', 'javni_url' ), ';' );
 
 		foreach ( Sidrena_Utils::archive_index() as $entry ) {
-			fputcsv(
+			$this->safe_fputcsv(
 				$out,
 				array(
 					$entry['location_code'] ?? '',
@@ -1836,14 +1844,14 @@ final class Sidrena_Admin {
 		header( 'Content-Disposition: attachment; filename="sidrena-lokacije-predlozak.csv"' );
 		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $out, array( 'location_id', 'location_code', 'product_id', 'sku', 'naziv', 'price', 'anchor_price', 'availability' ), ';' );
+		$this->safe_fputcsv( $out, array( 'location_id', 'location_code', 'product_id', 'sku', 'naziv', 'price', 'anchor_price', 'availability' ), ';' );
 		foreach ( Sidrena_Utils::locations() as $location ) {
 			if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
 				continue;
 			}
 			foreach ( $this->catalog_items() as $item ) {
 				$data = Sidrena_Location_Data::get_for_product( $location['id'] ?? '', $item );
-				fputcsv( $out, array( $location['id'] ?? '', $location['code'] ?? '', $item->get_id(), Sidrena_Utils::get_product_code( $item ), $item->get_name(), $data['price'] ?? '', $data['anchor_price'] ?? '', $data['availability'] ?? '' ), ';' );
+				$this->safe_fputcsv( $out, array( $location['id'] ?? '', $location['code'] ?? '', $item->get_id(), Sidrena_Utils::get_product_code( $item ), $item->get_name(), $data['price'] ?? '', $data['anchor_price'] ?? '', $data['availability'] ?? '' ), ';' );
 			}
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
