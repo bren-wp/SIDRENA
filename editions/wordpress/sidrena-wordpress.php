@@ -3,7 +3,7 @@
  * Plugin Name: Sidrena WordPress
  * Plugin URI: https://sidrene-cijene.com.hr/
  * Description: Sidrene cijene za običan WordPress bez WooCommercea: vlastiti katalog proizvoda i usluga, CSV/XML cjenici i arhiva 30+ dana.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Brendigo
@@ -61,7 +61,7 @@ if ( defined( 'SIDRENA_EDITION' ) || class_exists( 'Sidrena_Plugin', false ) || 
 	return;
 }
 
-define( 'SIDRENA_VERSION', '0.5.0' );
+define( 'SIDRENA_VERSION', '0.6.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 105/2026 · MINGO 22.09.2026' );
 define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );

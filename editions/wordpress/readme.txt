@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 License: Sidrena Software License 1.0
 License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 
 == Description ==
 
-= Sidrena WordPress 0.5.0 =
+= Sidrena WordPress 0.6.0 =
 
 Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
@@ -74,7 +74,7 @@ Plugin možete instalirati i postaviti sami.
 
 == Installation ==
 
-1. Prenesite sidrena-wordpress-0.5.0.zip.
+1. Prenesite sidrena-wordpress-0.6.0.zip.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog.
 4. Povežite postojeći WordPress tip sadržaja ili unesite/uvezite proizvode.
@@ -102,7 +102,7 @@ Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, p
 
 == Changelog ==
 
-= 0.5.0 =
+= 0.6.0 =
 * Dodan je distribution guard koji čuva samo dva instalacijska ZIP-a i blokira generičke/root pakete.
 * Dodan je legal/compliance watchdog za sigurne automatske popravke javne stranice, upload direktorija, ključnih postavki i cronova.
 * Audit log ima produkcijske limite, pruning i throttling kako ne bi rastao bez kontrole.

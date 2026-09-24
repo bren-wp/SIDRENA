@@ -6,6 +6,11 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.6.0 =
+* Dodan je reference readiness sloj s centralnim NN/MINGO source URL markerima, datumom početka primjene 01.10.2026. i odvojenim referentnim grupama 10.09.2026. / 02.05.2025.
+* README i dokumentacija ostaju marketinški usklađeni s 0.6.0 releaseom, stvarnim Sidrena slikama, logotipom i dva službena ZIP paketa.
+* Release linija 0.6.0 nastavlja čuvati samo dva fizička plugina: Sidrena WordPress i Sidrena WooCommerce.
+
 = 0.5.0 =
 * Dodan je zaseban GitHub Actions distribution guard koji provjerava izvorni repozitorij i stvarni build izlaz.
 * Guard eksplicitno dopušta samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
