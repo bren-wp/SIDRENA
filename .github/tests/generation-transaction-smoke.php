@@ -30,7 +30,7 @@ sidrena_generation_transaction_assert( false !== strpos( $generate, '$location_f
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$location_failed   = false;' ), 'Generation must track transactional location failure.' );
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$this->discard_generated_files( $location_files );' ), 'Failed location generation must remove newly written files.' );
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$index     = array_merge( $index, $location_entries );' ), 'Current index entries must be committed only after location success.' );
-sidrena_generation_transaction_assert( false !== strpos( $generate, "'yes' === $settings['enable_public_html']" ), 'HTML snapshot work must be skipped when public HTML is disabled.' );
+sidrena_generation_transaction_assert( false !== strpos( $generate, "'yes' === \$settings['enable_public_html']" ), 'HTML snapshot work must be skipped when public HTML is disabled.' );
 sidrena_generation_transaction_assert( false !== strpos( $source, 'private function discard_generated_files(' ), 'Generated-file rollback helper is missing.' );
 
 fwrite( STDOUT, "Sidrena transactional generation smoke test passed.\n" );
