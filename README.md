@@ -12,16 +12,16 @@ Support: sidrena@brendigo.com
 
 <p align="center">
   <strong>Sidrene cijene, javni cjenici i arhiva objava za WordPress i WooCommerce.</strong><br>
-  Brendigo · verzija 0.4.0
+  Brendigo · verzija 0.5.0
 </p>
 
 <p align="center">
   ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛟 Podrška
 </p>
 
-![Sidrena 0.4.0](docs/media/readme-hero.svg)
+![Sidrena 0.5.0](docs/media/readme-hero.svg)
 
-# Sidrena 0.4.0
+# Sidrena 0.5.0
 
 Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo izdanje koje odgovara web stranici.
 
@@ -44,6 +44,8 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 - 🏬 više lokacija i webshop kao zaseban objekt
 - ⏰ dnevno automatsko generiranje, zadano u 06:30
 - 🧯 sigurnosna provjera propuštene dnevne objave
+- 🛡 compliance watchdog koji automatski obnavlja sigurne tehničke postavke, cronove, javnu stranicu i upload zaštitu
+- 🧾 lokalni audit log s produkcijskim limitima, pruningom i throttlingom ponavljajućih zapisa
 - ✉️ ograničena e-mail upozorenja kod neuspjele/zakašnjele objave
 - 🏢 opcionalni javni podaci obrta/tvrtke s OIB provjerom
 - 🛟 ugrađena PDF, e-mail i WhatsApp podrška
@@ -103,13 +105,15 @@ Za zasebni cjenik broj stavki po stranici može se prilagoditi, primjerice `[sid
 
 ## 🧰 Usluge i uvoz
 
-U 0.4.0 `[sidrena_usluge]` koristi server-side paginaciju od 10 do 100 stavki, zadano 50. Admin compliance audit usluge obrađuje u batchovima od 250 umjesto učitavanja cijelog kataloga.
+U 0.5.0 `[sidrena_usluge]` koristi server-side paginaciju od 10 do 100 stavki, zadano 50. Admin compliance audit usluge obrađuje u batchovima od 250 umjesto učitavanja cijelog kataloga.
 
 WordPress katalog obrađuje CSV retke streaming pristupom. XML koristi `XMLReader` kada je dostupan, uz NONET i zabranu DOCTYPE/ENTITY deklaracija. CSV/XML import ograničen je na 50.000 zapisa po datoteci, a limit se provjerava prije poslovnih promjena. Woo sidrena/location CSV import također radi row-limit preflight, pa prevelik upload ne završava djelomičnim importom.
 
 ## ⏰ Automatizirana dnevna objava
 
 Zadano vrijeme generiranja je **06:30**. Ako je planirano vrijeme prošlo, a današnja objava nije evidentirana, sigurnosna provjera stavlja novu generaciju u red.
+
+Compliance watchdog u 0.5.0 dodatno provjerava i obnavlja CSV/XML/javni HTML, strict publication, failure notifications, dnevni generation cron, hourly publication watch, javnu Sidrena stranicu i upload direktorije kada je to sigurno moguće. Audit log ima ograničenja veličine i automatsko čišćenje kako ne bi rastao bez kontrole.
 
 WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin preporučuje se pouzdan **server cron**.
 
@@ -129,12 +133,12 @@ PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
 **Važno:** plugin možete instalirati, postaviti i održavati sami. Cijena 80 EUR odnosi se na jednokratnu instalaciju i početno postavljanje kada tu uslugu želite naručiti. Donacija je dobrovoljna i odvojena od usluge instalacije.
 
-## 📥 Release 0.4.0
+## 📥 Release 0.5.0
 
 Objavljuju se samo:
 
-- `sidrena-wordpress-0.4.0.zip`
-- `sidrena-woocommerce-0.4.0.zip`
+- `sidrena-wordpress-0.5.0.zip`
+- `sidrena-woocommerce-0.5.0.zip`
 
 ## 🔐 Licenca
 
@@ -146,7 +150,7 @@ Puni tekst: [LICENSE](LICENSE)
 
 ## ⚖️ Tehnička podrška propisima
 
-Sidrena 0.4.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
+Sidrena 0.5.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 
 Plugin podržava obvezni skup podataka, CSV/XML objavu, zasebne lokacije/webshop, najmanje 30 dana javne arhive, referentne datume i automatizirani dohvat aktualnih cijena. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
 
@@ -154,10 +158,10 @@ Softver **ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja**; prim
 
 ## 🧪 Razvoj i provjera
 
-CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje i stvarne build staging pakete.
+CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje, legal automation guard, distribution guard i stvarne build staging pakete.
 
 ```bash
-./tools/build-editions.sh 0.4.0 /tmp/sidrena-build
+./tools/build-editions.sh 0.5.0 /tmp/sidrena-build
 ```
 
 ## Brendigo
