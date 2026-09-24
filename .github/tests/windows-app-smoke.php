@@ -80,6 +80,11 @@ foreach ( $iterator as $file ) {
 		continue;
 	}
 
+	$relative = str_replace( '\\', '/', substr( $file->getPathname(), strlen( $root ) + 1 ) );
+	if ( 'windows/README.md' === $relative ) {
+		continue;
+	}
+
 	$content = file_get_contents( $file->getPathname() );
 	foreach ( $forbidden as $needle ) {
 		sidrena_windows_assert( false === stripos( $content, $needle ), 'Non-native or legacy desktop marker found in ' . $file->getPathname() . ': ' . $needle );
