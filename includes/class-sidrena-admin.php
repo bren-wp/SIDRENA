@@ -59,6 +59,7 @@ final class Sidrena_Admin {
 			array( 'sidrena-log', __( 'Dnevnik', 'sidrena' ), __( 'Dnevnik', 'sidrena' ) ),
 			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
 			array( 'sidrena-support', __( 'Podrška i usluge', 'sidrena' ), __( 'Podrška', 'sidrena' ) ),
+			array( 'sidrena-about', __( 'O nama', 'sidrena' ), __( 'O nama', 'sidrena' ) ),
 			array( 'sidrena-help', __( 'Upute za korištenje', 'sidrena' ), __( 'Upute', 'sidrena' ) ),
 		);
 
@@ -131,11 +132,12 @@ final class Sidrena_Admin {
 			'sidrena-log'        => 'log',
 			'sidrena-rules'      => 'rules',
 			'sidrena-support'    => 'support',
+			'sidrena-about'      => 'about',
 			'sidrena-help'       => 'help',
 		);
 		$tab = isset( $page_map[ $page ] ) ? $page_map[ $page ] : 'dashboard';
 
-		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'support', 'help' );
+		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'support', 'about', 'help' );
 		if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$legacy_tab = sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( in_array( $legacy_tab, $legacy_tabs, true ) ) {
@@ -210,6 +212,9 @@ final class Sidrena_Admin {
 					case 'support':
 						$this->support_tab();
 						break;
+					case 'about':
+						$this->about_tab();
+						break;
 					case 'help':
 						$this->help_tab();
 						break;
@@ -240,16 +245,18 @@ final class Sidrena_Admin {
 			'location_imported'        => array( 'success', __( 'Podaci po lokacijama su uvezeni. Cjenici će koristiti unesenu raspoloživost i, gdje postoji, cijenu po lokaciji.', 'sidrena' ) ),
 			'import_failed'            => array( 'error', __( 'CSV nije moguće uvesti. Provjerite format, veličinu, zaglavlja i podatke.', 'sidrena' ) ),
 			'location_import_failed'   => array( 'error', __( 'CSV lokacija nije moguće uvesti. Provjerite location_id, product_id/SKU i stupac availability.', 'sidrena' ) ),
-			'public_page_created'      => array( 'success', __( 'Javna stranica Cjenici je izrađena i objavljena.', 'sidrena' ) ),
-			'public_page_exists'       => array( 'success', __( 'Javna stranica Cjenici već postoji.', 'sidrena' ) ),
+			'public_page_created'      => array( 'success', __( 'Javna stranica Objava cjenika je izrađena i objavljena.', 'sidrena' ) ),
+			'public_page_exists'       => array( 'success', __( 'Javna stranica Objava cjenika već postoji.', 'sidrena' ) ),
 			'public_page_failed'       => array( 'error', __( 'Javnu stranicu nije bilo moguće izraditi. Provjerite ovlasti i WordPress zapisnik.', 'sidrena' ) ),
 			'bulk_saved'                  => array( 'success', __( 'Katalog je spremljen, a ponovno generiranje cjenika stavljeno je u red.', 'sidrena' ) ),
 			'locations_required'           => array( 'error', __( 'Mora postojati barem jedna lokacija. Ako je trenutačno ne želite objavljivati, ostavite je spremljenu i isključite opciju Aktivna.', 'sidrena' ) ),
 			'locations_invalid'            => array( 'error', __( 'Lokacije nisu spremljene. Aktivna lokacija mora imati jedinstveni ID, vrstu objekta, oznaku i adresu.', 'sidrena' ) ),
 			'settings_saved_cron_warning'  => array( 'warning', __( 'Postavke su spremljene, ali WordPress nije uspio ponovno zakazati dnevno generiranje. Provjerite WP-Cron ili konfigurirajte server cron.', 'sidrena' ) ),
-			'standalone_imported'          => array( 'success', __( 'Uvoz samostalnog kataloga je dovršen.', 'sidrena' ) ),
-			'standalone_import_failed'     => array( 'error', __( 'Samostalni katalog nije moguće uvesti. Provjerite CSV/XML format, veličinu, zaglavlja i obvezne podatke.', 'sidrena' ) ),
+			'standalone_imported'          => array( 'success', __( 'Uvoz WordPress kataloga je dovršen.', 'sidrena' ) ),
+			'standalone_import_failed'     => array( 'error', __( 'WordPress katalog nije moguće uvesti. Provjerite CSV/XML format, veličinu, zaglavlja i obvezne podatke.', 'sidrena' ) ),
 			'standalone_saved_with_errors' => array( 'warning', __( 'Katalog je djelomično spremljen. Neke stavke nije bilo moguće zapisati; provjerite Dnevnik i pokušajte ponovno.', 'sidrena' ) ),
+			'standalone_sync_started'     => array( 'success', __( 'Sinkronizacija postojećeg WordPress sadržaja je pokrenuta u pozadini. Status i rezultat prikazuju se u Katalogu.', 'sidrena' ) ),
+			'standalone_sync_failed'      => array( 'error', __( 'Sinkronizaciju nije bilo moguće pokrenuti. Provjerite odabrani tip sadržaja i WordPress cron.', 'sidrena' ) ),
 			'public_access_ok'              => array( 'success', __( 'Provjera javne dostupnosti je uspješna. Aktualne javne datoteke odgovorile su valjanim HTTP odgovorom.', 'sidrena' ) ),
 			'public_access_failed'          => array( 'error', __( 'Jedna ili više javnih datoteka nisu prošle HTTP provjeru. Otvorite Dnevnik za detalje i provjerite cache, CDN, firewall ili pravila pristupa.', 'sidrena' ) ),
 		);
@@ -295,7 +302,7 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-tool-card">
 				<div class="sid-tool-icon"><span class="dashicons dashicons-format-chat"></span></div>
 				<h2><?php esc_html_e( 'WhatsApp podrška', 'sidrena' ); ?></h2>
-				<p>+385 91 901 0092</p>
+				<p><?php echo esc_html( Sidrena_Utils::whatsapp_number() ); ?></p>
 				<a class="button sid-secondary" href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori WhatsApp', 'sidrena' ); ?></a>
 			</section>
 
@@ -318,13 +325,40 @@ final class Sidrena_Admin {
 		</section>
 		<?php endif; ?>
 
-		<section class="sid-card">
-			<span class="sid-kicker"><?php esc_html_e( 'O nama', 'sidrena' ); ?></span>
-			<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
-			<p><?php esc_html_e( 'Razvoj, održavanje i podrška za Sidrena WordPress i Sidrena WooCommerce plugin.', 'sidrena' ); ?></p>
+		<?php
+	}
+
+
+	private function about_tab() {
+		?>
+		<div class="sid-page-head">
+			<div>
+				<span class="sid-kicker"><?php esc_html_e( 'O nama', 'sidrena' ); ?></span>
+				<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
+				<p><?php esc_html_e( 'Razvoj, održavanje i podrška za Sidrena WordPress i Sidrena WooCommerce izdanje.', 'sidrena' ); ?></p>
+			</div>
+			<a class="button sid-secondary" href="https://brendigo.com/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span>brendigo.com</a>
+		</div>
+		<div class="sid-grid sid-grid-2">
+			<section class="sid-card sid-contact-card">
+				<span class="sid-kicker"><?php esc_html_e( 'Developer', 'sidrena' ); ?></span>
+				<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
+				<p><?php esc_html_e( 'Sidrena je razvijena kao WordPress rješenje za upravljanje sidrenim/referentnim cijenama, javnim cjenicima i arhivom objava.', 'sidrena' ); ?></p>
+			</section>
+			<section class="sid-card sid-contact-card">
+				<span class="sid-kicker"><?php esc_html_e( 'Kontakt', 'sidrena' ); ?></span>
+				<h2><?php echo esc_html( Sidrena_Utils::support_email() ); ?></h2>
+				<p><?php echo esc_html( Sidrena_Utils::whatsapp_number() ); ?></p>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori Podršku', 'sidrena' ); ?></a>
+			</section>
+		</div>
+		<section class="sid-card sid-note">
+			<div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div>
+			<div><h2><?php esc_html_e( 'Dva odvojena izdanja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena WordPress namijenjena je web stranicama bez WooCommercea, a Sidrena WooCommerce trgovinama koje koriste WooCommerce. Istodobno može biti aktivno samo jedno izdanje.', 'sidrena' ); ?></p></div>
 		</section>
 		<?php
 	}
+
 
 	private function help_tab() {
 		$woo = Sidrena_Utils::is_woocommerce_edition();
@@ -433,7 +467,7 @@ final class Sidrena_Admin {
 		<div class="sid-dashboard-metrics">
 			<?php $this->dashboard_metric( __( 'Sidrene cijene', 'sidrena' ), $anchor_ready, 'dashicons-tag', __( 'popunjene stavke', 'sidrena' ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Digitalni cjenici', 'sidrena' ), $integrity['current_entries'], 'dashicons-media-spreadsheet', __( 'trenutačno važeće datoteke', 'sidrena' ), 'blue' ); ?>
-			<?php $this->dashboard_metric( __( 'Povijest cijena', 'sidrena' ), $history_total, 'dashicons-chart-line', __( 'lokalno zabilježeni zapisi', 'sidrena' ), 'teal' ); ?>
+			<?php $this->dashboard_metric( __( 'Povijest cijena', 'sidrena' ), $history_total, 'dashicons-chart-line', __( 'evidentirani zapisi', 'sidrena' ), 'teal' ); ?>
 			<?php $this->dashboard_metric( __( 'Arhiva 30+ dana', 'sidrena' ), $archive_stats['files'], 'dashicons-calendar-alt', sprintf( __( '%d dana politike čuvanja', 'sidrena' ), $settings['retention_days'] ), 'teal' ); ?>
 			<?php $this->dashboard_metric( __( 'Tehnička spremnost', 'sidrena' ), $is_ready ? __( 'Spremno', 'sidrena' ) : __( 'Provjera', 'sidrena' ), 'dashicons-shield-alt', $is_ready ? __( 'bez tehničkih upozorenja', 'sidrena' ) : sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $stats['issues'], 'sidrena' ), $stats['issues'] ), $is_ready ? 'ok' : 'warn' ); ?>
 		</div>
@@ -848,7 +882,7 @@ final class Sidrena_Admin {
 				<?php if ( $public_page_id ) : ?>
 					<a class="button sid-secondary" href="<?php echo esc_url( get_permalink( $public_page_id ) ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori javnu stranicu', 'sidrena' ); ?></a>
 				<?php else : ?>
-					<a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_create_public_page' ), 'sidrena_create_public_page' ) ); ?>"><span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Izradi stranicu Cjenici', 'sidrena' ); ?></a>
+					<a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_create_public_page' ), 'sidrena_create_public_page' ) ); ?>"><span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Izradi stranicu Objava cjenika', 'sidrena' ); ?></a>
 				<?php endif; ?>
 				<a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_check_public_access' ), 'sidrena_check_public_access' ) ); ?>"><span class="dashicons dashicons-shield-alt"></span><?php esc_html_e( 'Provjeri javnu dostupnost', 'sidrena' ); ?></a>
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Generiraj sada', 'sidrena' ); ?></a>
@@ -887,7 +921,7 @@ final class Sidrena_Admin {
 
 		<section class="sid-card sid-public-page-card">
 			<div class="sid-section-head">
-				<div><span class="sid-kicker"><?php esc_html_e( 'Javna dostupnost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'WordPress stranica s aktualnim cjenicima i arhivom', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena može izraditi običnu javnu WordPress stranicu “Cjenici” sa shortcodeom koji prikazuje aktualne datoteke i prethodne objave iz javne arhive.', 'sidrena' ); ?></p></div>
+				<div><span class="sid-kicker"><?php esc_html_e( 'Javna dostupnost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'WordPress stranica s aktualnim cjenicima i arhivom', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena može izraditi običnu javnu WordPress stranicu “Objava cjenika” sa shortcodeom koji prikazuje aktualne datoteke i prethodne objave iz javne arhive.', 'sidrena' ); ?></p></div>
 				<?php if ( $public_page_id && $html_enabled ) : ?>
 					<span class="sid-status-pill is-ok"><?php esc_html_e( 'Objavljeno', 'sidrena' ); ?></span>
 				<?php elseif ( $public_page_id ) : ?>
@@ -1094,7 +1128,7 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Uvoz i provjera', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Alati', 'sidrena' ); ?></h2>
-				<p><?php echo $woo ? esc_html__( 'WooCommerce integracija je aktivna. Dostupni su Woo uvozi, lokacijski predlošci i zajednički Sidrena alati.', 'sidrena' ) : esc_html__( 'Sidrena radi u samostalnom WordPress načinu. Prikazani su samo alati koji rade bez WooCommercea.', 'sidrena' ); ?></p>
+				<p><?php echo $woo ? esc_html__( 'WooCommerce integracija je aktivna. Dostupni su Woo uvozi, lokacijski predlošci i zajednički Sidrena alati.', 'sidrena' ) : esc_html__( 'Sidrena WordPress koristi vlastiti katalog proizvoda i alate namijenjene WordPress izdanju.', 'sidrena' ); ?></p>
 			</div>
 			<span class="sid-status-pill is-ok"><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
 		</div>
@@ -1118,14 +1152,14 @@ final class Sidrena_Admin {
 			<div class="sid-grid sid-grid-2">
 				<section class="sid-card sid-tool-card">
 					<div class="sid-tool-icon"><span class="dashicons dashicons-products"></span></div>
-					<h2><?php esc_html_e( 'Samostalni katalog proizvoda', 'sidrena' ); ?></h2>
+					<h2><?php esc_html_e( 'WordPress katalog proizvoda', 'sidrena' ); ?></h2>
 					<p><?php esc_html_e( 'Dodajte proizvode ručno ili uvezite CSV/XML izravno u Sidrena katalog. WooCommerce nije potreban.', 'sidrena' ); ?></p>
 					<a class="button button-primary sid-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><?php esc_html_e( 'Otvori katalog i uvoz', 'sidrena' ); ?></a>
 				</section>
 				<section class="sid-card sid-tool-card">
 					<div class="sid-tool-icon"><span class="dashicons dashicons-clipboard"></span></div>
 					<h2><?php esc_html_e( 'Katalog usluga', 'sidrena' ); ?></h2>
-					<p><?php esc_html_e( 'Usluge su neovisne o WooCommerceu i mogu se koristiti samostalno ili zajedno s proizvodima.', 'sidrena' ); ?></p>
+					<p><?php esc_html_e( 'Usluge se mogu koristiti uz proizvode ili kao zaseban cjenik usluga.', 'sidrena' ); ?></p>
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=sidrena_service' ) ); ?>"><?php esc_html_e( 'Otvori usluge', 'sidrena' ); ?></a>
 				</section>
 			</div>
@@ -1142,7 +1176,7 @@ final class Sidrena_Admin {
 	private function log_tab() {
 		$rows = Sidrena_Audit::recent( 150 );
 		?>
-		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Lokalna sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Dnevnik važnih događaja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Generiranje cjenika i administrativne promjene bilježe se lokalno radi lakše provjere rada. Dnevnik se ne šalje Brendigu niti trećim stranama.', 'sidrena' ); ?></p></div></div>
+		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Lokalna sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Dnevnik važnih događaja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Generiranje cjenika i administrativne promjene bilježe se u Dnevniku radi provjere rada i lakšeg otklanjanja pogrešaka.', 'sidrena' ); ?></p></div></div>
 		<section class="sid-card">
 			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><thead><tr><th><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
 			<?php if ( empty( $rows ) ) : ?><tr><td colspan="4"><?php esc_html_e( 'Dnevnik je zasad prazan.', 'sidrena' ); ?></td></tr><?php endif; ?>
@@ -1325,8 +1359,8 @@ final class Sidrena_Admin {
 			array(
 				'post_type'      => 'page',
 				'post_status'    => 'publish',
-				'post_title'     => __( 'Cjenici', 'sidrena' ),
-				'post_name'      => 'cjenici',
+				'post_title'     => __( 'Objava cjenika', 'sidrena' ),
+				'post_name'      => 'objava-cjenika',
 				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->',
 				'comment_status' => 'closed',
 			),
@@ -1338,7 +1372,7 @@ final class Sidrena_Admin {
 		}
 
 		update_option( 'sidrena_public_page_id', absint( $page_id ), false );
-		Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Cjenici.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
+		Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
 		$this->redirect( 'files', 'public_page_created' );
 	}
 

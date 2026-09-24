@@ -12,7 +12,7 @@ final class Sidrena_Utils {
 			'label_mode'           => 'date_only',
 			'label_custom'         => 'Cijena na %s',
 			'anchor_tooltip_enabled' => 'yes',
-			'anchor_tooltip_text'    => 'Sidrena cijena prikazuje referentnu cijenu evidentiranu za mjerodavni datum.',
+			'anchor_tooltip_text'    => 'Sidrena cijena je referentna redovna cijena proizvoda ili usluge na prikazani datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
 			'default_ref_date'     => '2026-09-10',
 			'fmcg_ref_date'        => '2025-05-02',
 			'generate_csv'         => 'yes',
@@ -120,6 +120,10 @@ final class Sidrena_Utils {
 
 	public static function support_email_url() {
 		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena podrška' );
+	}
+
+	public static function whatsapp_number() {
+		return '+385 91 901 0092';
 	}
 
 	public static function whatsapp_url() {
