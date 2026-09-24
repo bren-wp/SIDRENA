@@ -6,10 +6,9 @@
  * Version: 0.1.0
  * Requires at least: 6.6
  * Requires PHP: 7.4
- * Author: Brendigo
+ * Author: Brendigo LTD Developer
  * Author URI: https://brendigo.com/
- * License: GPLv2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * License: Sidrena Software License 1.0
  * Text Domain: sidrena
  * Domain Path: /languages
  */

@@ -1,109 +1,137 @@
+<p align="center">
+  <img src="assets/images/logo-horizontal.svg" alt="Sidrena" width="420">
+</p>
+
+<p align="center">
+  <strong>Sidrene cijene, javni cjenici i arhiva objava za WordPress i WooCommerce.</strong><br>
+  Brendigo LTD Developer · verzija 0.1.0
+</p>
+
+<p align="center">
+  ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛟 Podrška
+</p>
+
+![Sidrena 0.1.0](docs/media/readme-hero.svg)
+
 # Sidrena 0.1.0
 
-Sidrena je besplatan open-source projekt za sidrene/referentne cijene, strojno čitljive cjenike i javnu arhivu.
+Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo izdanje koje odgovara web stranici.
 
-Projekt se od prvog javnog izdanja razvija kao dva odvojena WordPress plugina.
+| Izdanje | Namjena | Izvor proizvoda |
+|---|---|---|
+| ⚓ **Sidrena WordPress** | WordPress bez WooCommercea | Sidrena katalog ili povezani postojeći WordPress sadržaj |
+| 🛒 **Sidrena WooCommerce** | WordPress + WooCommerce | postojeći WooCommerce proizvodi i varijacije |
 
-## Sidrena WordPress
+> **Važno:** dva Sidrena izdanja ne smiju biti aktivna istodobno. Plugin ima ugrađenu zaštitu od konflikta.
 
-Za običan WordPress bez WooCommercea.
+## ✨ Glavne mogućnosti
 
-- vlastiti katalog proizvoda
-- katalog usluga
-- sidrena/referentna cijena
-- jedinična cijena
-- CSV/XML
-- javni HTML cjenik
-- REST API
-- više lokacija
-- arhiva 30+ dana
-- WP-Cron i WP-CLI
+- ⚓ sidrena/referentna cijena i datum
+- 🧾 aktualna i primjenjiva jedinična cijena
+- 📦 CSV/XML javni cjenici
+- 🌐 javna stranica **Objava cjenika**
+- 🔎 pretraživi HTML cjenik
+- 🗂 arhiva prethodnih objava 30+ dana
+- 🔄 REST/automatizirani pristup
+- 🏬 više lokacija i webshop kao zaseban objekt
+- ⏰ dnevno automatsko generiranje, zadano u 06:30
+- 🧯 sigurnosna provjera propuštene dnevne objave
+- 🛟 ugrađena PDF, e-mail i WhatsApp podrška
 
-Instalacijski paket:
+![Sidrena administracija](docs/media/readme-dashboard.svg)
 
-`sidrena-wordpress-x.y.z.zip`
+## ⚓ Sidrena WordPress
 
-Glavni plugin file:
+Sidrena WordPress može povezati postojeći javni WordPress tip sadržaja s vlastitim katalogom.
 
-`sidrena-wordpress.php`
+1. Otvorite **Sidrena → Katalog**.
+2. Odaberite tip sadržaja koji predstavlja postojeće proizvode.
+3. Po potrebi unesite meta ključ postojeće cijene.
+4. Pokrenite sinkronizaciju.
+5. Dopunite sidrenu cijenu i podatke koji nedostaju.
 
-## Sidrena WooCommerce
+Sinkronizacija se obrađuje u batchovima od 100 zapisa. Nakon povezivanja Sidrena prati promjene izvornog naziva i prepoznate cijene.
 
-Za WordPress + WooCommerce.
+Na povezanoj javnoj stranici Sidrena automatski dodaje sidrenu cijenu. Shortcode `[sidrena_cijena]` ostaje dostupan za posebne rasporede.
 
-- WooCommerce proizvodi i varijacije
-- WooCommerce CSV Import/Export
-- povijest cijena
-- 30-dnevne reference
-- sidrena/referentna cijena
-- jedinična cijena
-- cijene i raspoloživost po lokaciji
-- katalog usluga
-- CSV/XML
-- javni HTML cjenik
-- REST API
-- arhiva 30+ dana
-- builder/price-output integracije
-- WP-Cron i WP-CLI
+## 🛒 Sidrena WooCommerce
 
-Instalacijski paket:
+WooCommerce ostaje jedini katalog proizvoda - nema dupliciranja.
 
-`sidrena-woocommerce-x.y.z.zip`
+1. Otvorite postojeći WooCommerce proizvod ili varijaciju.
+2. Unesite sidrenu cijenu i referentne podatke.
+3. Spremite proizvod.
+4. Sidrena automatski prikazuje sidrenu cijenu uz WooCommerce cijenu.
 
-Glavni plugin file:
+Compatibility layer pokriva standardni WooCommerce prikaz cijene, varijacije, WooCommerce blokove i više popularnih buildera.
 
-`sidrena-woocommerce.php`
+![Sidrena mogućnosti](docs/media/readme-features.svg)
 
-WooCommerce je obavezna ovisnost ovog izdanja.
+## 🌐 Objava cjenika
 
-## Važno
+Kompletna javna stranica koristi shortcode:
 
-**Ne aktivirajte oba Sidrena izdanja istodobno.**
+```text
+[sidrena_cjenici]
+```
 
-## Razdvajanje koda
+Dostupni su i zasebni prikazi:
 
-Release build fizički uklanja edition-specifične klase koje drugom pluginu nisu potrebne.
+```text
+[sidrena_cjenik]
+[sidrena_arhiva]
+[sidrena_cijena]
+[sidrena_usluge]
+```
 
-Sidrena WordPress ZIP ne sadrži:
+## ⏰ Automatizirana dnevna objava
 
-- Woo bulk editor
-- Woo product fields
-- Woo price history
-- Woo location data/history
-- Woo CSV import/export integraciju
-- Woo builder compatibility klasu
+Zadano vrijeme generiranja je **06:30**. Ako je planirano vrijeme prošlo, a današnja objava nije evidentirana, sigurnosna provjera stavlja novu generaciju u red.
 
-Sidrena WooCommerce ZIP ne sadrži:
+WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin preporučuje se pouzdan **server cron**.
 
-- standalone WordPress katalog klasu
+![Kako Sidrena radi](docs/media/readme-flow.svg)
 
-Zajednički ostaju samo stvarno zajednički dijelovi: usluge, cjenici, REST, javni prikaz, arhiva, audit, admin shell, Site Health i utility layer.
+## 🛟 Podrška
 
-## Build
+| Kanal | Podatak |
+|---|---|
+| 📧 E-mail | **sidrena@brendigo.com** |
+| 💬 WhatsApp | **+385 91 901 0092** |
+| 🧰 Instalacija i početno postavljanje | **80 EUR jednokratno** |
+| ❤️ Donacija | izravni Revolut gumb u Sidrena administraciji |
+| 👨‍💻 Developer | **Brendigo LTD Developer** |
 
-Lokalno ili u CI-ju:
+PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
+
+## 📥 Release 0.1.0
+
+Objavljuju se samo:
+
+- `sidrena-wordpress-0.1.0.zip`
+- `sidrena-woocommerce-0.1.0.zip`
+
+## 🔐 Licenca
+
+Sidrena nije open-source projekt.
+
+Korištenje je dopušteno prema **Sidrena Software License 1.0**. Nije dopušteno prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati Sidrenu bez pisanog odobrenja Brendigo LTD.
+
+Puni tekst: [LICENSE](LICENSE)
+
+## ⚖️ Tehnička usklađenost
+
+Sidrena je tehnički alat za unos, provjeru i objavu podataka. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
+
+## 🧪 Razvoj i provjera
+
+CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu i stvarne build staging pakete.
 
 ```bash
 ./tools/build-editions.sh 0.1.0 /tmp/sidrena-build
 ```
 
-Dobivaju se:
+## Brendigo LTD Developer
 
-- `sidrena-wordpress-0.1.0.zip`
-- `sidrena-wordpress-0.1.0.zip.sha256`
-- `sidrena-woocommerce-0.1.0.zip`
-- `sidrena-woocommerce-0.1.0.zip.sha256`
-
-## Dokumentacija
-
-- WordPress izdanje: `docs/UPUTE-WORDPRESS.md`
-- WooCommerce izdanje: `docs/UPUTE-WOOCOMMERCE.md`
-- pravne/tehničke bilješke: `docs/legal-and-technical-notes.md`
-
-## Projekt
-
-Autor: **Brendigo**
-
-Službena stranica: https://sidrene-cijene.com.hr/
-
-Licenca: GPLv2 or later
+Službena stranica: https://sidrene-cijene.com.hr/  
+Podrška: sidrena@brendigo.com
