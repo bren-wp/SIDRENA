@@ -57,7 +57,7 @@ Slojevi:
 - `ViewModels` — workspace modeli za prikaz i osvježavanje kataloga.
 - `Models` — katalog, rezultati importa/exporta, readiness issues i sync postavke.
 - `Services` — demo katalog, tehnička provjera, CSV/XML/HTML export, import preview, dashboard snapshot i WordPress REST sync stub.
-- `packaging` — Inno Setup nacrti za budući `setup.exe` i `portable.exe`.
+- `packaging` — Inno Setup nacrt za `setup.exe`; `portable.exe` se gradi kao launcher bez instalacijskog čarobnjaka.
 
 ## UX opis
 
@@ -100,7 +100,12 @@ dotnet restore windows/Sidrena.Windows/Sidrena.Windows.csproj
 dotnet build windows/Sidrena.Windows/Sidrena.Windows.csproj -c Release
 ```
 
-Za produkcijski installer treba zaseban potpisani packaging korak kroz službeni release workflow. Ručno napravljeni lokalni ZIP paketi nisu službeni release artefakti.
+Službeni release workflow objavljuje dva Windows asseta:
+
+- `portable.exe` — direktno pokretanje bez instalacijskog čarobnjaka; raspakira runtime u prijenosnu radnu mapu i pokreće aplikaciju.
+- `setup.exe` — standardni Windows installer.
+
+Ručno napravljeni lokalni ZIP paketi nisu službeni release artefakti.
 
 ## Veza s postojećim pluginima
 
