@@ -164,6 +164,56 @@ jobs:
           fi
 
 
+      - name: Verify and normalize stable release metadata
+        if: startsWith(github.ref, 'refs/heads/release/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CURRENT_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}")"
+          test "$(jq -r '.draft' <<<"$CURRENT_RELEASE")" = "false"
+          test "$(jq -r '.prerelease' <<<"$CURRENT_RELEASE")" = "false"
+
+          V010_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[] | select(.tag_name == "v0.1.0") | .id' | head -n1)"
+          if [[ "$V010_ID" =~ ^[0-9]+$ ]]; then
+            V010_BODY="$(cat <<'EOF'
+          ## Sidrena 0.1.0
+
+          Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
+
+          - **Sidrena WordPress** — za WordPress web bez WooCommercea.
+          - **Sidrena WooCommerce** — za WordPress + WooCommerce.
+
+          Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
+
+          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
+
+          Podrška: sidrena@brendigo.com
+          Autor: Brendigo
+          Službena stranica: https://sidrene-cijene.com.hr/
+          EOF
+          )"
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}" \
+              -F draft=false \
+              -F prerelease=false \
+              -f body="$V010_BODY" >/dev/null
+
+            V010_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}")"
+            test "$(jq -r '.draft' <<<"$V010_RELEASE")" = "false"
+            test "$(jq -r '.prerelease' <<<"$V010_RELEASE")" = "false"
+            RETIRED_BRAND_A='Brendigo[[:space:]]+L''TD'
+            RETIRED_BRAND_B='Brendigo L''TD Developer'
+            RETIRED_VERSION_A='Sidrena 1\.[0-9]'
+            RETIRED_VERSION_B='Sidrena 2\.0\.0'
+            if grep -qiE "${RETIRED_BRAND_A}|${RETIRED_BRAND_B}|${RETIRED_VERSION_A}|${RETIRED_VERSION_B}" <<<"$(jq -r '.body // ""' <<<"$V010_RELEASE")"; then
+              echo 'Retired branding/version history leaked into v0.1.0 release body.' >&2
+              exit 1
+            fi
+          fi
+
       - name: Keep only the 0.1.0 GitHub release and tag
         if: env.VERSION == '0.1.0'
         env:
