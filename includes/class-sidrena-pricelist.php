@@ -435,7 +435,8 @@ final class Sidrena_Pricelist {
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
 		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
 		$meta = array(
-			'schema'       => 1,
+			'schema'       => 2,
+			'format'       => 'jsonl',
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
 			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
 			'location'     => array(
@@ -456,14 +457,12 @@ final class Sidrena_Pricelist {
 		}
 		list( $handle, $temp ) = $opened;
 
-		$prefix = substr( $header, 0, -1 ) . ',"rows":[';
-		if ( ! $this->write_stream_all( $handle, $prefix ) ) {
+		if ( ! $this->write_stream_all( $handle, $header . "\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
 		$count = 0;
-		$first = true;
 		foreach ( array_unique( $catalogs ) as $catalog ) {
 			$source = 'products' === $catalog ? $this->product_rows( $location ) : $this->service_rows( $location );
 			foreach ( $source as $row ) {
@@ -478,19 +477,12 @@ final class Sidrena_Pricelist {
 					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_row_encode', __( 'Jedan redak javnog HTML snapshota nije moguće JSON kodirati.', 'sidrena' ) );
 				}
-				$chunk = ( $first ? '' : ',' ) . $encoded;
-				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
+				if ( ! $this->write_stream_all( $handle, $encoded . "\n" ) ) {
 					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 				}
-				$first = false;
 				++$count;
 			}
-		}
-
-		if ( ! $this->write_stream_all( $handle, "]}\n" ) ) {
-			$this->discard_atomic_writer( $handle, $temp );
-			return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 		}
 
 		$result = $this->commit_atomic_writer( $handle, $temp, $path );
@@ -508,8 +500,14 @@ final class Sidrena_Pricelist {
 				$keep[ basename( Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' ) ) ] = true;
 			}
 		}
-		$files = glob( $paths['snapshot_dir'] . 'cjenik-*.json' );
-		foreach ( is_array( $files ) ? $files : array() as $file ) {
+		$files = array();
+		foreach ( array( 'jsonl', 'json' ) as $extension ) {
+			$matches = glob( $paths['snapshot_dir'] . 'cjenik-*.' . $extension );
+			if ( is_array( $matches ) ) {
+				$files = array_merge( $files, $matches );
+			}
+		}
+		foreach ( array_unique( $files ) as $file ) {
 			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
 				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			}

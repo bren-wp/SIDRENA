@@ -117,13 +117,11 @@ final class Sidrena_Public {
 			wp_register_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
 		}
 		wp_register_style( 'sidrena-public', SIDRENA_URL . 'public/css/public.css', array( 'sidrena-frontend' ), SIDRENA_VERSION );
-		wp_register_script( 'sidrena-public', SIDRENA_URL . 'public/js/public.js', array(), SIDRENA_VERSION, true );
 	}
 
 	private function enqueue_assets() {
 		wp_enqueue_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
 		wp_enqueue_style( 'sidrena-public' );
-		wp_enqueue_script( 'sidrena-public' );
 	}
 
 	public function template_redirect() {
@@ -174,7 +172,7 @@ final class Sidrena_Public {
 		echo '<main id="primary" class="site-main sidrena-public-page">';
 		echo '<div class="sidrena-public-shell">';
 		echo '<header class="sidrena-public-head"><span class="sidrena-public-kicker">Sidrena</span><h1>' . esc_html( $title ) . '</h1></header>';
-		echo wp_kses_post( $content );
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderers escape all dynamic values before returning markup.
 		echo '</div></main>';
 		get_footer();
 		exit;
@@ -186,8 +184,9 @@ final class Sidrena_Public {
 		}
 		$atts = shortcode_atts(
 			array(
-				'lokacija' => '',
-				'oznaka'   => '',
+				'lokacija'      => '',
+				'oznaka'        => '',
+				'po_stranici'   => 50,
 			),
 			$atts,
 			'sidrena_cjenik'
@@ -199,8 +198,18 @@ final class Sidrena_Public {
 			return '<div class="sidrena-public-message sidrena-public-message--warning">' . esc_html__( 'Nema aktivne Sidrena lokacije.', 'sidrena' ) . '</div>';
 		}
 
+		$search = isset( $_GET['sidrena_q'] ) ? sanitize_text_field( wp_unslash( $_GET['sidrena_q'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search = trim( $search );
+		if ( function_exists( 'mb_substr' ) ) {
+			$search = mb_substr( $search, 0, 120 );
+		} else {
+			$search = substr( $search, 0, 120 );
+		}
+		$page     = isset( $_GET['sidrena_stranica'] ) ? max( 1, absint( wp_unslash( $_GET['sidrena_stranica'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$per_page = min( 100, max( 10, absint( $atts['po_stranici'] ) ) );
+
 		$this->last_snapshot_available = false;
-		$snapshot = $this->read_snapshot( $location['id'] );
+		$snapshot = $this->read_snapshot_page( $location['id'], $search, $page, $per_page );
 		if ( ! $snapshot ) {
 			$this->queue_snapshot_rebuild( $location['id'] );
 			return '<div class="sidrena-public-message sidrena-public-message--preparing"><strong>' . esc_html__( 'Cjenik se priprema.', 'sidrena' ) . '</strong><span>' . esc_html__( 'Sidrena je zakazala izradu javnog cjenika. Pokušajte ponovno za nekoliko trenutaka.', 'sidrena' ) . '</span></div>';
@@ -208,28 +217,46 @@ final class Sidrena_Public {
 
 		$this->last_snapshot_available = true;
 		$this->enqueue_assets();
-		$rows = isset( $snapshot['rows'] ) && is_array( $snapshot['rows'] ) ? $snapshot['rows'] : array();
-		$generated = isset( $snapshot['generated_at'] ) ? (string) $snapshot['generated_at'] : '';
-		$currency = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '€';
+		$rows        = isset( $snapshot['rows'] ) && is_array( $snapshot['rows'] ) ? $snapshot['rows'] : array();
+		$generated   = isset( $snapshot['generated_at'] ) ? (string) $snapshot['generated_at'] : '';
+		$total       = absint( $snapshot['total'] ?? 0 );
+		$page        = max( 1, absint( $snapshot['page'] ?? 1 ) );
+		$total_pages = absint( $snapshot['total_pages'] ?? 0 );
+		$currency    = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '€';
+		$first_item  = $total ? ( ( $page - 1 ) * $per_page ) + 1 : 0;
+		$last_item   = $total ? min( $total, $first_item + count( $rows ) - 1 ) : 0;
 
 		ob_start();
 		?>
-		<section class="sidrena-pricelist" data-sidrena-pricelist>
+		<section class="sidrena-pricelist">
 			<div class="sidrena-pricelist__toolbar">
 				<div>
 					<h2><?php echo esc_html( ! empty( $location['code'] ) ? $location['code'] : __( 'Cjenik', 'sidrena' ) ); ?></h2>
 					<p><?php echo esc_html( $location['address'] ); ?><?php if ( $generated ) : ?> · <?php echo esc_html( sprintf( __( 'Ažurirano: %s', 'sidrena' ), Sidrena_Utils::format_iso_datetime( $generated ) ) ); ?><?php endif; ?></p>
 				</div>
-				<label class="sidrena-pricelist__search">
-					<span class="screen-reader-text"><?php esc_html_e( 'Pretraži cjenik', 'sidrena' ); ?></span>
-					<input type="search" placeholder="<?php esc_attr_e( 'Pretraži naziv, šifru, marku ili barkod…', 'sidrena' ); ?>" data-sidrena-search>
-				</label>
+				<form class="sidrena-pricelist__search" role="search" method="get">
+					<label>
+						<span class="screen-reader-text"><?php esc_html_e( 'Pretraži cjenik', 'sidrena' ); ?></span>
+						<input type="search" name="sidrena_q" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Pretraži naziv, šifru, marku ili barkod…', 'sidrena' ); ?>" maxlength="120">
+					</label>
+					<?php if ( isset( $_GET['lokacija'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+					<input type="hidden" name="lokacija" value="<?php echo esc_attr( Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) ); ?>">
+					<?php endif; ?>
+					<button type="submit"><?php esc_html_e( 'Pretraži cjenik', 'sidrena' ); ?></button>
+					<?php if ( '' !== $search ) : ?><a class="sidrena-pricelist__reset" href="<?php echo esc_url( $this->pricelist_url( 1, '', $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Očisti pretragu', 'sidrena' ); ?></a><?php endif; ?>
+				</form>
 			</div>
 
-			<?php if ( empty( $rows ) ) : ?>
-				<div class="sidrena-public-message"><?php esc_html_e( 'Cjenik je objavljen, ali trenutačno nema stavki za prikaz.', 'sidrena' ); ?></div>
+			<?php if ( 0 === $total ) : ?>
+				<div class="sidrena-public-message"><?php echo '' !== $search ? esc_html__( 'Nema stavki koje odgovaraju pretrazi.', 'sidrena' ) : esc_html__( 'Cjenik je objavljen, ali trenutačno nema stavki za prikaz.', 'sidrena' ); ?></div>
 			<?php else : ?>
-			<p class="sidrena-pricelist__summary" aria-live="polite"><span><?php esc_html_e( 'Prikazano', 'sidrena' ); ?></span> <strong data-sidrena-visible-count><?php echo esc_html( count( $rows ) ); ?></strong> <span><?php echo esc_html( sprintf( __( 'od %d stavki', 'sidrena' ), count( $rows ) ) ); ?></span></p>
+			<p class="sidrena-pricelist__summary" aria-live="polite">
+				<?php if ( '' !== $search ) : ?>
+					<?php echo esc_html( sprintf( __( 'Pronađeno %d stavki.', 'sidrena' ), $total ) ); ?>
+				<?php else : ?>
+					<?php echo esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d stavki.', 'sidrena' ), $first_item, $last_item, $total ) ); ?>
+				<?php endif; ?>
+			</p>
 			<div class="sidrena-pricelist__table-wrap">
 				<table class="sidrena-pricelist__table">
 					<caption class="screen-reader-text"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
@@ -248,19 +275,18 @@ final class Sidrena_Public {
 					<tbody>
 						<?php foreach ( $rows as $row ) : ?>
 							<?php
-							$type = sanitize_key( $row['type'] ?? 'product' );
-							$name = 'service' === $type ? ( $row['naziv_usluge'] ?? '' ) : ( $row['naziv'] ?? '' );
-							$code = 'service' === $type ? ( $row['sifra'] ?? '' ) : ( $row['sifra'] ?? '' );
-							$brand = 'service' === $type ? '' : ( $row['marka'] ?? '' );
-							$current = $row['maloprodajna_cijena'] ?? '';
-							$anchor = $row['sidrena_cijena'] ?? '';
-							$unit = 'service' === $type ? '' : ( $row['jedinica_mjere'] ?? '' );
-							$unit_price = 'service' === $type ? '' : ( $row['cijena_za_jedinicu_mjere'] ?? '' );
-							$barcode = 'service' === $type ? '' : ( $row['barkod'] ?? '' );
+							$type         = sanitize_key( $row['type'] ?? 'product' );
+							$name         = 'service' === $type ? ( $row['naziv_usluge'] ?? '' ) : ( $row['naziv'] ?? '' );
+							$code         = $row['sifra'] ?? '';
+							$brand        = 'service' === $type ? '' : ( $row['marka'] ?? '' );
+							$current      = $row['maloprodajna_cijena'] ?? '';
+							$anchor       = $row['sidrena_cijena'] ?? '';
+							$unit         = 'service' === $type ? '' : ( $row['jedinica_mjere'] ?? '' );
+							$unit_price   = 'service' === $type ? '' : ( $row['cijena_za_jedinicu_mjere'] ?? '' );
+							$barcode      = 'service' === $type ? '' : ( $row['barkod'] ?? '' );
 							$availability = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
-							$search = implode( ' ', array( $name, $code, $brand, $barcode, $availability, $unit ) );
 							?>
-							<tr data-sidrena-row data-search="<?php echo esc_attr( strtolower( remove_accents( wp_strip_all_tags( $search ) ) ) ); ?>">
+							<tr>
 								<td data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
@@ -274,7 +300,13 @@ final class Sidrena_Public {
 					</tbody>
 				</table>
 			</div>
-			<p class="sidrena-pricelist__empty" data-sidrena-empty hidden><?php esc_html_e( 'Nema stavki koje odgovaraju pretrazi.', 'sidrena' ); ?></p>
+			<?php if ( $total_pages > 1 ) : ?>
+			<nav class="sidrena-pricelist__pagination" aria-label="<?php esc_attr_e( 'Stranice cjenika', 'sidrena' ); ?>">
+				<?php if ( $page > 1 ) : ?><a rel="prev" href="<?php echo esc_url( $this->pricelist_url( $page - 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Prethodna stranica', 'sidrena' ); ?></a><?php endif; ?>
+				<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $total_pages ) ); ?></span>
+				<?php if ( $page < $total_pages ) : ?><a rel="next" href="<?php echo esc_url( $this->pricelist_url( $page + 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Sljedeća stranica', 'sidrena' ); ?></a><?php endif; ?>
+			</nav>
+			<?php endif; ?>
 			<?php endif; ?>
 		</section>
 		<?php
@@ -367,7 +399,7 @@ final class Sidrena_Public {
 				</dl>
 			</section>
 			<?php endif; ?>
-			<div class="sidrena-publication__section"><?php echo wp_kses_post( $this->pricelist_shortcode( $atts ) ); ?></div>
+			<div class="sidrena-publication__section"><?php echo $this->pricelist_shortcode( $atts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes all dynamic values. ?></div>
 			<div class="sidrena-publication__section"><?php echo wp_kses_post( $this->downloads_shortcode( $atts ) ); ?></div>
 		</section>
 		<?php
@@ -526,25 +558,122 @@ final class Sidrena_Public {
 		return array();
 	}
 
-	private function read_snapshot( $location_id ) {
+	private function pricelist_url( $page, $search, $location_id ) {
+		$url = remove_query_arg( array( 'sidrena_q', 'sidrena_stranica' ) );
+		$args = array();
+		$page = max( 1, absint( $page ) );
+		if ( $page > 1 ) {
+			$args['sidrena_stranica'] = $page;
+		}
+		if ( '' !== $search ) {
+			$args['sidrena_q'] = $search;
+		}
+		if ( isset( $_GET['lokacija'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$args['lokacija'] = Sidrena_Utils::sanitize_location_id( $location_id );
+		}
+		return empty( $args ) ? $url : add_query_arg( $args, $url );
+	}
+
+	private function normalize_snapshot_search( $value ) {
+		$value = remove_accents( wp_strip_all_tags( (string) $value ) );
+		return strtolower( trim( $value ) );
+	}
+
+	private function snapshot_row_matches( $row, $needle ) {
+		if ( '' === $needle ) {
+			return true;
+		}
+		$parts = array();
+		foreach ( (array) $row as $value ) {
+			if ( is_scalar( $value ) ) {
+				$parts[] = (string) $value;
+			}
+		}
+		return false !== strpos( $this->normalize_snapshot_search( implode( ' ', $parts ) ), $needle );
+	}
+
+	private function read_snapshot_page( $location_id, $search = '', $page = 1, $per_page = 50 ) {
 		$path = Sidrena_Utils::public_snapshot_path( $location_id );
 		if ( ! is_file( $path ) || ! is_readable( $path ) ) {
 			return array();
 		}
-		$raw = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		if ( ! is_string( $raw ) || '' === $raw ) {
+
+		$handle = fopen( $path, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $handle ) {
 			return array();
 		}
-		$data = json_decode( $raw, true );
-		if ( ! is_array( $data ) || 1 !== absint( $data['schema'] ?? 0 ) || ! isset( $data['rows'] ) || ! is_array( $data['rows'] ) || ! isset( $data['location'] ) || ! is_array( $data['location'] ) ) {
+
+		$header_line = fgets( $handle, 65536 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fgets
+		if ( false === $header_line ) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return array();
 		}
+		$meta = json_decode( trim( $header_line ), true );
 		$expected_id = Sidrena_Utils::sanitize_location_id( $location_id );
-		$snapshot_id = Sidrena_Utils::sanitize_location_id( $data['location']['id'] ?? '' );
-		if ( $expected_id !== $snapshot_id || empty( $data['generated_at'] ) ) {
+		$snapshot_id = is_array( $meta ) ? Sidrena_Utils::sanitize_location_id( $meta['location']['id'] ?? '' ) : '';
+		if (
+			! is_array( $meta )
+			|| 2 !== absint( $meta['schema'] ?? 0 )
+			|| 'jsonl' !== ( $meta['format'] ?? '' )
+			|| ! isset( $meta['location'] )
+			|| ! is_array( $meta['location'] )
+			|| $expected_id !== $snapshot_id
+			|| empty( $meta['generated_at'] )
+		) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return array();
 		}
-		return $data;
+
+		$page     = max( 1, absint( $page ) );
+		$per_page = min( 100, max( 10, absint( $per_page ) ) );
+		$offset   = ( $page - 1 ) * $per_page;
+		$needle   = $this->normalize_snapshot_search( $search );
+		$rows     = array();
+		$total    = 0;
+
+		while ( ! feof( $handle ) ) {
+			$line = fgets( $handle, 1048577 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fgets
+			if ( false === $line ) {
+				if ( feof( $handle ) ) {
+					break;
+				}
+				fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return array();
+			}
+			if ( 1048576 <= strlen( $line ) && "\n" !== substr( $line, -1 ) && ! feof( $handle ) ) {
+				fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return array();
+			}
+			$line = trim( $line );
+			if ( '' === $line ) {
+				continue;
+			}
+			$row = json_decode( $line, true );
+			if ( ! is_array( $row ) ) {
+				fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return array();
+			}
+			if ( ! $this->snapshot_row_matches( $row, $needle ) ) {
+				continue;
+			}
+			if ( $total >= $offset && count( $rows ) < $per_page ) {
+				$rows[] = $row;
+			}
+			++$total;
+		}
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		$total_pages = $total ? (int) ceil( $total / $per_page ) : 0;
+		if ( $total_pages && $page > $total_pages ) {
+			return $this->read_snapshot_page( $location_id, $search, $total_pages, $per_page );
+		}
+
+		$meta['rows']        = $rows;
+		$meta['total']       = $total;
+		$meta['page']        = $page;
+		$meta['per_page']    = $per_page;
+		$meta['total_pages'] = $total_pages;
+		return $meta;
 	}
 
 
