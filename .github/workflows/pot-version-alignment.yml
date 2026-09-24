@@ -1,0 +1,32 @@
+name: Sidrena POT version alignment
+
+on:
+  push:
+    branches:
+      - feature/0.5.0-release-alignment
+
+permissions:
+  contents: write
+
+jobs:
+  align-pot-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - name: Align POT project version
+        run: |
+          set -euo pipefail
+          sed -i 's/Project-Id-Version: Sidrena 0\.4\.0/Project-Id-Version: Sidrena 0.5.0/' languages/sidrena.pot
+          if git diff --quiet -- languages/sidrena.pot; then
+            echo 'POT project version is already aligned.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add languages/sidrena.pot
+          git commit -m 'Align POT project version for 0.5.0'
+          git push origin HEAD:${{ github.ref_name }}
