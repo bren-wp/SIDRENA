@@ -51,7 +51,6 @@ final class Sidrena_Admin {
 			array( 'sidrena', __( 'Pregled', 'sidrena' ), __( 'Pregled', 'sidrena' ) ),
 			array( 'sidrena-compliance', __( 'Tehnička spremnost', 'sidrena' ), __( 'Usklađenost', 'sidrena' ) ),
 			array( 'sidrena-catalog', __( 'Katalog', 'sidrena' ), __( 'Katalog', 'sidrena' ) ),
-			array( 'sidrena-extra', __( 'Dodatne stavke', 'sidrena' ), __( 'Dodatne stavke', 'sidrena' ) ),
 			array( 'sidrena-files', __( 'Digitalni cjenici', 'sidrena' ), __( 'Cjenici', 'sidrena' ) ),
 			array( 'sidrena-archive', __( 'Arhiva 30+ dana', 'sidrena' ), __( 'Arhiva 30+ dana', 'sidrena' ) ),
 			array( 'sidrena-locations', __( 'Lokacije', 'sidrena' ), __( 'Lokacije', 'sidrena' ) ),
@@ -61,18 +60,6 @@ final class Sidrena_Admin {
 			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
 			array( 'sidrena-help', __( 'Upute za korištenje', 'sidrena' ), __( 'Upute', 'sidrena' ) ),
 		);
-
-
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			$items = array_values(
-				array_filter(
-					$items,
-					static function ( $item ) {
-						return isset( $item[0] ) && 'sidrena-extra' !== $item[0];
-					}
-				)
-			);
-		}
 
 		foreach ( $items as $item ) {
 			add_submenu_page(
@@ -90,7 +77,7 @@ final class Sidrena_Admin {
 		$screen         = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		$is_plugin_page = false !== strpos( (string) $hook, 'sidrena' );
 		$is_service     = $screen && 'sidrena_service' === $screen->post_type;
-		$is_product     = $screen && 'product' === $screen->post_type;
+		$is_product     = Sidrena_Utils::is_woocommerce_edition() && $screen && 'product' === $screen->post_type;
 
 		if ( ! $is_plugin_page && ! $is_service && ! $is_product ) {
 			return;
@@ -135,7 +122,6 @@ final class Sidrena_Admin {
 			'sidrena'            => 'dashboard',
 			'sidrena-compliance' => 'compliance',
 			'sidrena-catalog'    => 'catalog',
-			'sidrena-extra'      => 'extra',
 			'sidrena-files'      => 'files',
 			'sidrena-archive'    => 'archive',
 			'sidrena-locations'  => 'locations',
@@ -147,7 +133,7 @@ final class Sidrena_Admin {
 		);
 		$tab = isset( $page_map[ $page ] ) ? $page_map[ $page ] : 'dashboard';
 
-		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'extra', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'help' );
+		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'help' );
 		if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$legacy_tab = sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( in_array( $legacy_tab, $legacy_tabs, true ) ) {
@@ -172,7 +158,7 @@ final class Sidrena_Admin {
 			<div class="sid-toolbar">
 				<div class="sid-toolbar__meta">
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?> · 100% FREE</span>
-					<span class="sid-mode-badge <?php echo Sidrena_Utils::is_woocommerce_active() ? 'is-woo' : 'is-standalone'; ?>"><span class="dashicons <?php echo Sidrena_Utils::is_woocommerce_active() ? 'dashicons-cart' : 'dashicons-wordpress-alt'; ?>"></span><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
+					<span class="sid-mode-badge <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'is-woo' : 'is-standalone'; ?>"><span class="dashicons <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'dashicons-cart' : 'dashicons-wordpress-alt'; ?>"></span><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
 					<span class="sid-toolbar__rule"><?php echo esc_html( SIDRENA_RULESET ); ?></span>
 				</div>
 				<div class="sid-toolbar__actions">
@@ -192,10 +178,11 @@ final class Sidrena_Admin {
 						$this->compliance_tab();
 						break;
 					case 'catalog':
-						Sidrena_Bulk::instance()->render();
-						break;
-					case 'extra':
-						Sidrena_Standalone::instance()->render();
+						if ( Sidrena_Utils::is_wordpress_edition() ) {
+							Sidrena_Standalone::instance()->render();
+						} else {
+							Sidrena_Bulk::instance()->render();
+						}
 						break;
 					case 'files':
 						$this->files_tab();
@@ -271,7 +258,7 @@ final class Sidrena_Admin {
 
 
 	private function help_tab() {
-		$woo = Sidrena_Utils::is_woocommerce_active();
+		$woo = Sidrena_Utils::is_woocommerce_edition();
 		?>
 		<div class="sid-page-head">
 			<div>
@@ -354,16 +341,17 @@ final class Sidrena_Admin {
 		$integrity       = Sidrena_Utils::archive_integrity();
 		$retention       = Sidrena_Utils::archive_retention_status();
 		$next_run        = wp_next_scheduled( 'sidrena_daily_generation' );
-		$product_history = Sidrena_History::count_rows();
+		$product_history = class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0;
 		$service_history = Sidrena_Service_History::count_rows();
-		$location_history = Sidrena_Location_History::count_rows();
+		$location_history = class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0;
 		$history_total   = $product_history + $service_history + $location_history;
 		$anchor_ready    = max( 0, ( $stats['products'] + $stats['services'] ) - $stats['missing_total'] );
-		$series          = Sidrena_History::latest_series( 30 );
+		$series          = class_exists( 'Sidrena_History' ) ? Sidrena_History::latest_series( 30 ) : array();
 		if ( empty( $series ) ) {
 			$series = Sidrena_Service_History::latest_series( 30 );
 		}
-		$changes = array_merge( Sidrena_History::recent_changes( 5 ), Sidrena_Service_History::recent_changes( 5 ) );
+		$product_changes = class_exists( 'Sidrena_History' ) ? Sidrena_History::recent_changes( 5 ) : array();
+		$changes         = array_merge( $product_changes, Sidrena_Service_History::recent_changes( 5 ) );
 		usort(
 			$changes,
 			static function ( $a, $b ) {
@@ -560,9 +548,9 @@ final class Sidrena_Admin {
 		$file_coverage  = $this->public_file_coverage();
 		$archive_stats  = Sidrena_Utils::archive_stats();
 		$integrity      = Sidrena_Utils::archive_integrity();
-		$product_hist   = Sidrena_History::count_rows();
+		$product_hist   = class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0;
 		$service_hist   = Sidrena_Service_History::count_rows();
-		$location_hist  = Sidrena_Location_History::count_rows();
+		$location_hist  = class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0;
 		$total_items    = $stats['products'] + $stats['services'];
 		$anchor_ready   = max( 0, $total_items - $stats['missing_total'] );
 		$sales_total    = $stats['active_sales'] + $this->active_service_sales();
@@ -597,9 +585,9 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-compliance-history">
 				<span class="sid-kicker"><?php esc_html_e( 'Evidencija promjena', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Povijest se gradi kontinuirano', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Sidrena vodi dostupnu lokalnu povijest WooCommerce cijena kada je integracija aktivna, cijena usluga i lokacijskih podataka. Samostalni proizvodi koriste vlastiti Sidrena katalog bez ovisnosti o WooCommerceu. Javne CSV/XML objave čuvaju se prema postavljenoj politici arhive.', 'sidrena' ); ?></p>
+				<p><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Ovo izdanje vodi lokalnu povijest WooCommerce cijena, cijena usluga i lokacijskih podataka. Javne CSV/XML objave čuvaju se prema postavljenoj politici arhive.', 'sidrena' ) : esc_html__( 'Ovo izdanje koristi vlastiti Sidrena katalog proizvoda i usluga bez WooCommercea. Javne CSV/XML objave čuvaju se prema postavljenoj politici arhive.', 'sidrena' ); ?></p>
 				<div class="sid-history-stack">
-					<div><span class="dashicons dashicons-products"></span><span><?php echo Sidrena_Utils::is_woocommerce_active() ? esc_html__( 'WooCommerce povijest', 'sidrena' ) : esc_html__( 'Samostalni proizvodi', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::is_woocommerce_active() ? $product_hist : Sidrena_Standalone::count() ); ?></strong></div>
+					<div><span class="dashicons dashicons-products"></span><span><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'WooCommerce povijest', 'sidrena' ) : esc_html__( 'WordPress proizvodi', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::is_woocommerce_edition() ? $product_hist : ( class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : 0 ) ); ?></strong></div>
 					<div><span class="dashicons dashicons-clipboard"></span><span><?php esc_html_e( 'Povijest usluga', 'sidrena' ); ?></span><strong><?php echo esc_html( $service_hist ); ?></strong></div>
 					<div><span class="dashicons dashicons-location-alt"></span><span><?php esc_html_e( 'Lokacijska povijest', 'sidrena' ); ?></span><strong><?php echo esc_html( $location_hist ); ?></strong></div>
 					<div><span class="dashicons dashicons-backup"></span><span><?php esc_html_e( 'Čuvanje javne arhive', 'sidrena' ); ?></span><strong><?php echo esc_html( max( 30, absint( $settings['retention_days'] ) ) ); ?> d</strong></div>
@@ -720,8 +708,11 @@ final class Sidrena_Admin {
 		$integrity      = Sidrena_Utils::archive_integrity();
 		$before_eight   = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
 		$cron_scheduled = (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$product_catalog_ready = Sidrena_Utils::is_wordpress_edition()
+			? class_exists( 'Sidrena_Standalone' )
+			: ( Sidrena_Utils::is_woocommerce_active() && class_exists( 'Sidrena_Products' ) );
 		$checks = array(
-			array( ! $needs_products || class_exists( 'Sidrena_Standalone' ), __( 'Katalog proizvoda je dostupan', 'sidrena' ), __( 'Provjerite instalaciju Sidrena kataloga.', 'sidrena' ) ),
+			array( ! $needs_products || $product_catalog_ready, __( 'Katalog proizvoda je dostupan', 'sidrena' ), __( 'Provjerite instalaciju odgovarajućeg Sidrena izdanja i izvora proizvoda.', 'sidrena' ) ),
 			array( ! $missing_address, __( 'Sve aktivne lokacije imaju adresu za naziv datoteke', 'sidrena' ), __( 'Dopunite adresu u kartici Lokacije.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_anchor'], __( 'Proizvodi imaju sidrenu cijenu', 'sidrena' ), __( 'Dopunite nedostajuće vrijednosti u Sidrena katalogu ili u WooCommerce proizvodima kada je integracija aktivna.', 'sidrena' ) ),
 			array( ! $needs_products || 0 === $stats['missing_brand'], __( 'Proizvodi imaju podatak o marki za digitalni cjenik', 'sidrena' ), __( 'Dopunite marku u Sidrena katalogu; uz WooCommerce možete koristiti i Brands/pa_brand.', 'sidrena' ) ),
@@ -976,7 +967,7 @@ final class Sidrena_Admin {
 
 	private function location_card( $index, $location, $product_count, $template = false ) {
 		$location_id = $template ? '' : ( $location['id'] ?? '' );
-		$coverage    = $location_id ? Sidrena_Location_Data::coverage( $location_id ) : 0;
+		$coverage    = Sidrena_Utils::is_woocommerce_edition() && class_exists( 'Sidrena_Location_Data' ) && $location_id ? Sidrena_Location_Data::coverage( $location_id ) : 0;
 		$kind        = $location['kind'] ?? 'objekt';
 		?>
 		<div class="sid-location">
@@ -1020,7 +1011,7 @@ final class Sidrena_Admin {
 				<div class="sid-fields"><label><span><?php esc_html_e( 'Vrijeme dnevnog generiranja', 'sidrena' ); ?></span><input type="time" name="generation_time" value="<?php echo esc_attr( $settings['generation_time'] ); ?>"><small><?php esc_html_e( 'Preporuka: dovoljno prije 08:00.', 'sidrena' ); ?></small></label><label><span><?php esc_html_e( 'Čuvanje arhive (dana)', 'sidrena' ); ?></span><input type="number" min="30" max="3650" name="retention_days" value="<?php echo esc_attr( $settings['retention_days'] ); ?>"><small><?php esc_html_e( 'Plugin ne dopušta manje od 30 dana.', 'sidrena' ); ?></small></label><label><span><?php esc_html_e( 'CSV razdjelnik', 'sidrena' ); ?></span><select name="csv_delimiter"><option value=";" <?php selected( $settings['csv_delimiter'], ';' ); ?>>;</option><option value="," <?php selected( $settings['csv_delimiter'], ',' ); ?>>,</option><option value="\t" <?php selected( $settings['csv_delimiter'], '\t' ); ?>>TAB</option></select></label></div>
 			</section>
 
-			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-chart-line"></span><div><h2><?php esc_html_e( 'Povijest cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Automatska lokalna povijest prati WooCommerce proizvode kada je integracija aktivna te Sidrena usluge. Samostalni proizvodi čuvaju aktualnu, sidrenu i potvrđenu 30-dnevnu vrijednost izravno u katalogu.', 'sidrena' ); ?></p></div></div><div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="track_price_history" value="yes" <?php checked( $settings['track_price_history'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prati dostupnu automatsku povijest cijena', 'sidrena' ); ?></strong><small><?php esc_html_e( 'WooCommerce proizvodi kada je WooCommerce aktivan te Sidrena usluge; plugin i bez WooCommercea ostaje potpuno funkcionalan.', 'sidrena' ); ?></small></span></label></div></section>
+			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-chart-line"></span><div><h2><?php esc_html_e( 'Povijest cijena', 'sidrena' ); ?></h2><p><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Ovo izdanje prati dostupnu lokalnu povijest WooCommerce proizvoda i Sidrena usluga.', 'sidrena' ) : esc_html__( 'WordPress izdanje čuva aktualnu, sidrenu i potvrđenu 30-dnevnu vrijednost izravno u vlastitom katalogu, uz povijest Sidrena usluga.', 'sidrena' ); ?></p></div></div><div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="track_price_history" value="yes" <?php checked( $settings['track_price_history'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prati dostupnu automatsku povijest cijena', 'sidrena' ); ?></strong><small><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Prati WooCommerce proizvode i Sidrena usluge.', 'sidrena' ) : esc_html__( 'Prati Sidrena usluge; proizvodi koriste vlastiti WordPress katalog.', 'sidrena' ); ?></small></span></label></div></section>
 
 			<div class="sid-form-actions sid-sticky-actions"><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Spremi postavke', 'sidrena' ); ?></button></div>
 		</form>
@@ -1076,7 +1067,7 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-tool-card"><div class="sid-tool-icon"><span class="dashicons dashicons-media-spreadsheet"></span></div><h2><?php esc_html_e( 'Evidencija javne arhive', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Izvezite indeks svih objavljenih cjenika s datumom, rokom čuvanja, brojem redaka, veličinom, SHA-256 zapisom i URL-om.', 'sidrena' ); ?></p><a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_export_archive_index' ), 'sidrena_export_archive_index' ) ); ?>"><?php esc_html_e( 'Preuzmi indeks arhive', 'sidrena' ); ?></a></section>
 		</div>
 
-		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-shield"></span></div><div><h2><?php esc_html_e( 'WooCommerce je opcionalan', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena se aktivira i ostaje vidljiva na običnom WordPressu. Ako kasnije aktivirate WooCommerce, isti plugin automatski uključuje WooCommerce integraciju bez potrebe za zamjenom Sidrene.', 'sidrena' ); ?></p></div></section>
+		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-shield"></span></div><div><h2><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'WooCommerce izdanje', 'sidrena' ) : esc_html__( 'WordPress izdanje', 'sidrena' ); ?></h2><p><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Ovaj plugin radi isključivo s WooCommerce katalogom. Za web bez WooCommercea instalirajte zasebni Sidrena WordPress paket.', 'sidrena' ) : esc_html__( 'Ovaj plugin koristi vlastiti WordPress katalog i ne integrira WooCommerce proizvode. Za WooCommerce trgovinu instalirajte zasebni Sidrena WooCommerce paket.', 'sidrena' ); ?></p></div></section>
 		<?php
 	}
 	private function log_tab() {
@@ -1230,8 +1221,10 @@ final class Sidrena_Admin {
 		}
 
 		$new_ids = wp_list_pluck( $out, 'id' );
-		foreach ( array_diff( $old_ids, $new_ids ) as $deleted_id ) {
-			Sidrena_Location_Data::delete_location( $deleted_id );
+		if ( Sidrena_Utils::is_woocommerce_edition() && class_exists( 'Sidrena_Location_Data' ) ) {
+			foreach ( array_diff( $old_ids, $new_ids ) as $deleted_id ) {
+				Sidrena_Location_Data::delete_location( $deleted_id );
+			}
 		}
 		update_option( 'sidrena_locations', $out, false );
 		Sidrena_Pricelist::queue_regeneration();
@@ -1550,9 +1543,10 @@ final class Sidrena_Admin {
 			';'
 		);
 
-		$product_table = $wpdb->prefix . 'sidrena_price_history';
-		$offset        = 0;
-		do {
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			$product_table = $wpdb->prefix . 'sidrena_price_history';
+			$offset        = 0;
+			do {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM {$product_table} ORDER BY id ASC LIMIT %d OFFSET %d",
@@ -1585,9 +1579,10 @@ final class Sidrena_Admin {
 					';'
 				);
 			}
-			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+				$count   = is_array( $rows ) ? count( $rows ) : 0;
+				$offset += 1000;
+			} while ( 1000 === $count );
+		}
 
 		$service_table = $wpdb->prefix . 'sidrena_service_price_history';
 		$offset        = 0;
@@ -1626,9 +1621,10 @@ final class Sidrena_Admin {
 			$offset += 1000;
 		} while ( 1000 === $count );
 
-		$location_table = Sidrena_Location_History::table_name();
-		$offset         = 0;
-		do {
+		if ( class_exists( 'Sidrena_Location_History' ) ) {
+			$location_table = Sidrena_Location_History::table_name();
+			$offset         = 0;
+			do {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM {$location_table} ORDER BY id ASC LIMIT %d OFFSET %d",
@@ -1662,8 +1658,9 @@ final class Sidrena_Admin {
 				);
 			}
 			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+				$offset += 1000;
+			} while ( 1000 === $count );
+		}
 
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
@@ -1776,17 +1773,8 @@ final class Sidrena_Admin {
 		}
 
 
-		$standalone = Sidrena_Standalone::audit_stats();
-		if ( Sidrena_Utils::is_woocommerce_active() ) {
-			$products          += $standalone['products'];
-			$missing           += $standalone['missing_anchor'];
-			$missing_brand     += $standalone['missing_brand'];
-			$missing_barcode   += $standalone['missing_barcode'];
-			$unit_price_review += $standalone['unit_price_review'];
-			$unit_price_missing += $standalone['unit_price_missing'];
-			$active_sales      += $standalone['active_sales'];
-			$sale_incomplete   += $standalone['sale_incomplete'];
-		} else {
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
+			$standalone                = Sidrena_Standalone::audit_stats();
 			$products                  = $standalone['products'];
 			$missing                   = $standalone['missing_anchor'];
 			$missing_brand             = $standalone['missing_brand'];

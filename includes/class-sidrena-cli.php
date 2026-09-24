@@ -11,7 +11,15 @@ final class Sidrena_CLI {
 		if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
 			return;
 		}
-		WP_CLI::add_command( 'sidrena', __CLASS__ );
+
+		$instance = new self();
+		WP_CLI::add_command( 'sidrena generate', array( $instance, 'generate' ) );
+		WP_CLI::add_command( 'sidrena status', array( $instance, 'status' ) );
+		WP_CLI::add_command( 'sidrena audit', array( $instance, 'audit' ) );
+
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			WP_CLI::add_command( 'sidrena fill', array( $instance, 'fill' ) );
+		}
 	}
 
 	/**
@@ -149,8 +157,14 @@ final class Sidrena_CLI {
 			array( 'key' => 'retention_days', 'value' => max( 30, absint( $settings['retention_days'] ) ) ),
 			array( 'key' => 'next_run', 'value' => $next ? wp_date( DATE_ATOM, $next ) : 'not-scheduled' ),
 			array( 'key' => 'last_run', 'value' => ! empty( $last['generated_at'] ) ? $last['generated_at'] : 'never' ),
+			array( 'key' => 'edition', 'value' => Sidrena_Utils::edition() ),
 			array( 'key' => 'audit_rows', 'value' => Sidrena_Audit::count_rows() ),
-			array( 'key' => 'history_rows', 'value' => Sidrena_History::count_rows() + Sidrena_Service_History::count_rows() + Sidrena_Location_History::count_rows() ),
+			array(
+				'key'   => 'history_rows',
+				'value' => ( class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0 )
+					+ Sidrena_Service_History::count_rows()
+					+ ( class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0 ),
+			),
 			array( 'key' => 'public_files', 'value' => count( Sidrena_Utils::public_index() ) ),
 			array( 'key' => 'archive_files', 'value' => count( Sidrena_Utils::archive_index() ) ),
 			array( 'key' => 'strict_publication', 'value' => $settings['strict_publication'] ),

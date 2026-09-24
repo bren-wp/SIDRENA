@@ -60,7 +60,7 @@ final class Sidrena_Utils {
 		if ( current_user_can( 'manage_options' ) ) {
 			return 'manage_options';
 		}
-		if ( current_user_can( 'manage_woocommerce' ) ) {
+		if ( self::is_woocommerce_edition() && current_user_can( 'manage_woocommerce' ) ) {
 			return 'manage_woocommerce';
 		}
 
@@ -78,7 +78,10 @@ final class Sidrena_Utils {
 		// custom administrator roles and the same request in which capabilities
 		// were repaired.
 		if ( 'manage_sidrena' === $capability ) {
-			return current_user_can( 'manage_options' ) || current_user_can( 'manage_woocommerce' );
+			if ( current_user_can( 'manage_options' ) ) {
+				return true;
+			}
+			return self::is_woocommerce_edition() && current_user_can( 'manage_woocommerce' );
 		}
 
 		return false;
@@ -92,7 +95,10 @@ final class Sidrena_Utils {
 
 		$user = get_userdata( absint( $user_id ) );
 		if ( $user && is_array( $user->allcaps ) ) {
-			if ( ! empty( $user->allcaps['manage_options'] ) || ! empty( $user->allcaps['manage_woocommerce'] ) ) {
+			if ( ! empty( $user->allcaps['manage_options'] ) ) {
+				return array( 'exist' );
+			}
+			if ( self::is_woocommerce_edition() && ! empty( $user->allcaps['manage_woocommerce'] ) ) {
 				return array( 'exist' );
 			}
 		}
@@ -521,18 +527,35 @@ final class Sidrena_Utils {
 		return $next->getTimestamp();
 	}
 
-	public static function is_woocommerce_active() {
+	public static function edition() {
+		$edition = defined( 'SIDRENA_EDITION' ) ? sanitize_key( (string) SIDRENA_EDITION ) : 'wordpress';
+		return in_array( $edition, array( 'wordpress', 'woocommerce' ), true ) ? $edition : 'wordpress';
+	}
+
+	public static function is_wordpress_edition() {
+		return 'wordpress' === self::edition();
+	}
+
+	public static function is_woocommerce_edition() {
+		return 'woocommerce' === self::edition();
+	}
+
+	public static function woocommerce_runtime_available() {
 		return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
 	}
 
+	public static function is_woocommerce_active() {
+		return self::is_woocommerce_edition() && self::woocommerce_runtime_available();
+	}
+
 	public static function runtime_mode() {
-		return self::is_woocommerce_active() ? 'woocommerce' : 'standalone';
+		return self::edition();
 	}
 
 	public static function runtime_mode_label() {
-		return self::is_woocommerce_active()
-			? __( 'WooCommerce + Sidrena', 'sidrena' )
-			: __( 'Samostalni WordPress način', 'sidrena' );
+		return self::is_woocommerce_edition()
+			? __( 'Sidrena WooCommerce', 'sidrena' )
+			: __( 'Sidrena WordPress', 'sidrena' );
 	}
 
 	public static function is_public_wc_product( $product ) {

@@ -28,7 +28,7 @@ final class Sidrena_Bulk {
 		}
 
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			Sidrena_Standalone::instance()->render();
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'WooCommerce nije dostupan. Sidrena WooCommerce katalog nije moguće otvoriti.', 'sidrena' ) . '</p></div>';
 			return;
 		}
 
