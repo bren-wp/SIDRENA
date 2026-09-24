@@ -10,6 +10,8 @@ Sidrena changelog
 * Dodan je zaseban GitHub Actions distribution guard koji provjerava izvorni repozitorij i stvarni build izlaz.
 * Guard eksplicitno dopušta samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
 * Build provjera ruši workflow ako se vrati generički root `sidrena.php`, `static-php`, dodatna edicija ili datoteke izvan korijena pojedinog ZIP paketa.
+* Sidrena admin menu ikonica neutralizira se nakon registracije WordPress menija, tako da se prilagođena SVG oznaka više ne prikazuje u bočnom WordPress meniju.
+* Dodan je Admin polish guard workflow koji provjerava zaštitu admin menu ikonice i sprječava slučajno vraćanje privremenih workflowova u release liniju.
 * Dodan je compliance/automation watchdog koji centralno prati NN 101/2026, NN 105/2026 i pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 * Watchdog automatski obnavlja javnu Sidrena stranicu, upload direktorije, zaštitne index datoteke i zapisuje lokalni audit log bez slanja podataka izvan WordPress instalacije.
 * Compliance watchdog sada automatski popravlja obavezne tehničke postavke, dnevni cron i publication watch kada je sigurno moguće.
@@ -24,7 +26,7 @@ Sidrena changelog
 * WordPress CSV katalog import obrađuje retke streaming pristupom umjesto akumuliranja do 50.000 redaka u memoriji.
 * WordPress XML import koristi XMLReader kada je dostupan i zadržava NONET te zabranu DOCTYPE/ENTITY deklaracija.
 * CSV/XML row-limit validacija odvija se prije poslovnih promjena; prevelik import se odbija prije djelomičnog unosa.
-* Woo sidrena i location CSV import rade row-limit preflight prije obrade i više ne završavaju djelomičnim importom uz success rezultat.
+* Woo sidrena i location CSV import rade row-limit preflight prije obrade i više ne završava djelomičnim importom uz success rezultat.
 * Release build je reproducibilan i postojeći release rerun više ne overwritea assete.
 
 = 0.3.0 =
