@@ -20,7 +20,7 @@ function sidrena_service_scale_assert( $condition, $message ) {
 }
 
 sidrena_service_scale_assert( 0 === preg_match( "/'posts_per_page'\s*=>\s*-1/", $services ), 'Service shortcode must not query all services at once.' );
-sidrena_service_scale_assert( false === preg_match( "/'posts_per_page'\s*=>\s*-1/", $admin ), 'Admin service audit must not query all services at once.' );
+sidrena_service_scale_assert( 0 === preg_match( "/'posts_per_page'\s*=>\s*-1/", $admin ), 'Admin service audit must not query all services at once.' );
 sidrena_service_scale_assert( false !== strpos( $services, "'po_stranici' => 50" ), 'Service shortcode needs a bounded default page size.' );
 sidrena_service_scale_assert( false !== strpos( $services, "min( 100, max( 10" ), 'Service shortcode page size must be bounded to 10–100.' );
 sidrena_service_scale_assert( false !== strpos( $services, "'sidrena_usluge_stranica'" ), 'Service shortcode page query parameter is missing.' );
