@@ -19,12 +19,34 @@ function sidrena_windows_assert( $condition, $message ) {
 
 $required = array(
 	'windows/README.md',
+	'windows/Sidrena.Windows.sln',
 	'windows/Sidrena.Windows/Sidrena.Windows.csproj',
 	'windows/Sidrena.Windows/App.xaml',
 	'windows/Sidrena.Windows/App.xaml.cs',
 	'windows/Sidrena.Windows/MainWindow.xaml',
 	'windows/Sidrena.Windows/MainWindow.xaml.cs',
+	'windows/Sidrena.Windows/Models/CatalogItem.cs',
+	'windows/Sidrena.Windows/Models/DashboardSnapshot.cs',
+	'windows/Sidrena.Windows/Models/ReadinessIssue.cs',
+	'windows/Sidrena.Windows/Models/WorkflowResults.cs',
+	'windows/Sidrena.Windows/ViewModels/CatalogWorkspaceViewModel.cs',
+	'windows/Sidrena.Windows/Views/DashboardPage.xaml',
+	'windows/Sidrena.Windows/Views/DashboardPage.xaml.cs',
+	'windows/Sidrena.Windows/Views/CatalogPage.xaml',
+	'windows/Sidrena.Windows/Views/CatalogPage.xaml.cs',
+	'windows/Sidrena.Windows/Views/ImportExportPage.xaml',
+	'windows/Sidrena.Windows/Views/ImportExportPage.xaml.cs',
+	'windows/Sidrena.Windows/Views/LegalReadinessPage.xaml',
+	'windows/Sidrena.Windows/Views/LegalReadinessPage.xaml.cs',
+	'windows/Sidrena.Windows/Views/WordPressSyncPage.xaml',
+	'windows/Sidrena.Windows/Views/WordPressSyncPage.xaml.cs',
 	'windows/Sidrena.Windows/Services/SidrenaAppServices.cs',
+	'windows/Sidrena.Windows/Services/CatalogRepository.cs',
+	'windows/Sidrena.Windows/Services/LegalReadinessService.cs',
+	'windows/Sidrena.Windows/Services/ExportService.cs',
+	'windows/Sidrena.Windows/Services/ImportService.cs',
+	'windows/Sidrena.Windows/Services/WordPressSyncService.cs',
+	'windows/Sidrena.Windows/Services/DashboardService.cs',
 	'windows/Sidrena.Windows/Assets/sidrena-mark.svg',
 	'windows/packaging/SidrenaSetup.iss',
 	'windows/packaging/SidrenaPortable.iss',
@@ -37,26 +59,31 @@ foreach ( $required as $relative ) {
 
 $project          = file_get_contents( $root . '/windows/Sidrena.Windows/Sidrena.Windows.csproj' );
 $window           = file_get_contents( $root . '/windows/Sidrena.Windows/MainWindow.xaml' );
-$code             = file_get_contents( $root . '/windows/Sidrena.Windows/Services/SidrenaAppServices.cs' );
 $readme           = file_get_contents( $root . '/windows/README.md' );
+$root_readme      = file_get_contents( $root . '/README.md' );
 $setup_packaging  = file_get_contents( $root . '/windows/packaging/SidrenaSetup.iss' );
 $portable_package = file_get_contents( $root . '/windows/packaging/SidrenaPortable.iss' );
 $release_workflow = file_get_contents( $root . '/.github/workflows/windows-release-assets.yml' );
+
+$service_files = '';
+foreach ( glob( $root . '/windows/Sidrena.Windows/Services/*.cs' ) as $service_file ) {
+	$service_files .= file_get_contents( $service_file ) . "\n";
+}
 
 foreach ( array( '<UseWinUI>true</UseWinUI>', 'Microsoft.WindowsAppSDK', '<WindowsPackageType>None</WindowsPackageType>', 'net8.0-windows', '<OutputType>WinExe</OutputType>' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $project, $marker ), 'Windows project marker missing: ' . $marker );
 }
 
-foreach ( array( 'NavigationView', 'Mica', 'Legal readiness', 'Lokalni export', 'Sidrena Desktop' ) as $marker ) {
+foreach ( array( 'NavigationView', 'Mica', 'Dashboard', 'Katalog', 'Import / Export', 'Legal readiness', 'WordPress sync', 'Local-first' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $window . $readme, $marker ), 'Premium app marker missing: ' . $marker );
 }
 
-foreach ( array( 'nativna Windows desktop aplikacija', 'Bez Electrona', 'bez Tauri webviewa', 'bez web stranice u desktop prozoru' ) as $marker ) {
+foreach ( array( 'nativna Windows desktop aplikacija', 'Bez Electrona', 'bez Tauri webviewa', 'bez web stranice u desktop prozoru', 'Windows 11 stil', 'Views', 'ViewModels', 'Models', 'Services' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $readme, $marker ), 'Native app requirement missing: ' . $marker );
 }
 
-foreach ( array( 'StandardReferenceDate', 'FmcgReferenceDate', 'EffectiveDate', 'ExportLocalPackage', 'sidrena-cjenik.csv', 'sidrena-cjenik.xml', 'objava-cjenika.html' ) as $marker ) {
-	sidrena_windows_assert( false !== strpos( $code, $marker ), 'Windows service marker missing: ' . $marker );
+foreach ( array( 'StandardReferenceDate', 'FmcgReferenceDate', 'EffectiveDate', 'ExportLocalPackage', 'sidrena-cjenik.csv', 'sidrena-cjenik.xml', 'objava-cjenika.html', 'BuildCsvPreview', 'BuildXmlPreview', 'WordPressSyncService', 'ConfigureLocalDraft', 'BuildSyncPreview' ) as $marker ) {
+	sidrena_windows_assert( false !== strpos( $service_files, $marker ), 'Windows service marker missing: ' . $marker );
 }
 
 foreach ( array( 'OutputBaseFilename=setup', 'Sidrena.Windows.exe', 'AppName=Sidrena Desktop' ) as $marker ) {
@@ -69,6 +96,17 @@ foreach ( array( 'OutputBaseFilename=portable', 'CreateUninstallRegKey=no', 'Uni
 
 foreach ( array( 'portable.exe', 'setup.exe', 'gh release upload', 'Verify complete release asset set', 'sidrena-wordpress-$env:VERSION.zip', 'sidrena-woocommerce-$env:VERSION.zip' ) as $marker ) {
 	sidrena_windows_assert( false !== strpos( $release_workflow, $marker ), 'Windows release workflow marker missing: ' . $marker );
+}
+
+$documentation = $readme . "\n" . $root_readme;
+foreach ( array( 'pravna garancija', 'garantira usklađenost', 'jamči usklađenost', 'automatski jamči' ) as $forbidden_claim ) {
+	sidrena_windows_assert( false === stripos( $documentation, $forbidden_claim ), 'Forbidden legal guarantee wording found: ' . $forbidden_claim );
+}
+
+$workflow_files = glob( $root . '/.github/workflows/*.yml' );
+foreach ( $workflow_files as $workflow_file ) {
+	$basename = basename( $workflow_file );
+	sidrena_windows_assert( 1 !== preg_match( '/(tmp|temp|scratch|debug|draft|adhoc|ad-hoc|manual-release|test-release)/i', $basename ), 'Temporary workflow must not stay in release line: ' . $basename );
 }
 
 $forbidden = array(

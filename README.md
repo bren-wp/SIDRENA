@@ -12,7 +12,7 @@ Support: sidrena@brendigo.com
 
 <p align="center">
   <strong>Produk­cijski WordPress/WooCommerce dodatak za sidrene cijene, javne cjenike i 30+ dana arhive objava.</strong><br>
-  Brendigo · Sidrena 0.7.0
+  Brendigo · Sidrena 0.7.0 development line
 </p>
 
 <p align="center">
@@ -25,17 +25,17 @@ Support: sidrena@brendigo.com
 
 ![Sidrena 0.7.0](docs/media/readme-hero.svg)
 
-# Sidrena 0.7.0
+# Sidrena
 
 Sidrena je Brendigo dodatak za trgovce, web shopove i WordPress stranice koje moraju jasno voditi **sidrene/referentne cijene**, javno objavljivati CSV/XML cjenike i zadržati javnu arhivu prethodnih objava najmanje 30 dana.
 
-Isporučuje se kao **dva zasebna WordPress plugina** i nova **nativna Windows aplikacija** za lokalnu pripremu, provjeru i export podataka. Na webu se instalira samo plugin izdanje koje odgovara stranici.
+Službeno izdanje v0.6.0 isporučuje **dva zasebna WordPress plugina**. Trenutna razvojna linija dodatno uvodi **nativnu Windows aplikaciju** za lokalnu pripremu, provjeru i export podataka. Na webu se instalira samo plugin izdanje koje odgovara stranici.
 
 | Izdanje | Namjena | Izvor proizvoda |
 |---|---|---|
 | ⚓ **Sidrena WordPress** | WordPress bez WooCommercea | Sidrena katalog ili povezani postojeći WordPress sadržaj |
 | 🛒 **Sidrena WooCommerce** | WordPress + WooCommerce | postojeći WooCommerce proizvodi i varijacije |
-| 🪟 **Sidrena Windows** | lokalna priprema i provjera | nativni Windows katalog/export alat |
+| 🪟 **Sidrena Windows** | lokalna priprema i provjera | nativni Windows katalog/export alat u razvoju |
 
 > **Važno:** dva Sidrena WordPress izdanja ne smiju biti aktivna istodobno. Plugin ima ugrađenu zaštitu od konflikta.
 
@@ -101,12 +101,15 @@ Sidrena Windows je premium **nativna Windows aplikacija** za lokalnu pripremu, p
 
 - koristi WinUI 3 / Windows App SDK i C# servisni sloj
 - nije Electron, Tauri, WebView2 shell ni web stranica u desktop prozoru
-- ima premium dashboard, Mica pozadinu, kartice, legal-readiness panel i lokalni export
+- cilja Windows 11 / Fluent stil: Mica, NavigationView, InfoBar, kartice, status badges i čist desktop layout
+- ima dashboard, katalog, import/export, legal-readiness panel i WordPress sync stub
 - priprema `sidrena-cjenik.csv`, `sidrena-cjenik.xml` i `objava-cjenika.html`
 - lokalno obrađuje katalog i ne šalje poslovne podatke Brendigu
-- sljedeća razvojna faza dodaje stvarni CSV/XLSX/XML uvoz, SQLite bazu i sigurnu WordPress/WooCommerce REST sinkronizaciju
+- sljedeća razvojna faza dodaje stvarni file picker import, SQLite bazu i sigurnu WordPress/WooCommerce REST sinkronizaciju
 
-U GitHub releaseu Windows aplikacija izlazi kao:
+Windows aplikacija nije označena kao službeno objavljen desktop release dok Windows build, release workflow i asset verifikacija ne prođu.
+
+Kada bude izdan kroz službeni release workflow, Windows dio mora biti provjeren kao:
 
 - `portable.exe` — prijenosna/self-contained varijanta
 - `setup.exe` — standardni Windows installer
@@ -155,7 +158,7 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 
 ## Produkcijska kvaliteta
 
-Sidrena 0.7.0 release linija čuva se automatiziranim provjerama:
+Sidrena release linija čuva se automatiziranim provjerama:
 
 - PHP 7.4, 8.3 i 8.4 syntax/runtime smoke testovi
 - odvojena WordPress i WooCommerce runtime provjera
@@ -165,7 +168,7 @@ Sidrena 0.7.0 release linija čuva se automatiziranim provjerama:
 - legal automation guard za referentne datume, cronove i objave
 - admin polish guard za neutralan WordPress menu i čistu release granu
 - Windows app guard za native-only strukturu i stvarni `dotnet build` na `windows-latest`
-- Windows release asset workflow koji provjerava `portable.exe` i `setup.exe` uz plugin ZIP pakete
+- Windows release asset workflow koji provjerava `portable.exe` i `setup.exe` uz plugin ZIP pakete kada se pokrene službena release linija
 
 ## 🛟 Podrška
 
@@ -181,16 +184,18 @@ PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
 **Važno:** plugin možete instalirati, postaviti i održavati sami. Cijena 80 EUR odnosi se na jednokratnu instalaciju i početno postavljanje kada tu uslugu želite naručiti. Donacija je dobrovoljna i odvojena od usluge instalacije.
 
-## 📥 Release 0.7.0
+## 📥 Službeni release asseti
 
-Službeni GitHub release mora sadržavati ova četiri asseta:
+Službeni v0.6.0 release objavljen je kroz GitHub workflow i sadrži samo dva plugin ZIP asseta.
 
-- `sidrena-wordpress-0.7.0.zip`
-- `sidrena-woocommerce-0.7.0.zip`
+Za buduću release liniju s Windows aplikacijom, službeni GitHub release smije nastati samo kroz release workflow i mora proći asset provjeru prije tvrdnje da je spreman:
+
+- `sidrena-wordpress-<verzija>.zip`
+- `sidrena-woocommerce-<verzija>.zip`
 - `portable.exe`
 - `setup.exe`
 
-Službeni release mora nastati kroz GitHub release workflow. Lokalni, generički ili dodatni ZIP paketi nisu release artefakti.
+Lokalni, generički ili dodatni ZIP paketi nisu release artefakti.
 
 ## 🔐 Licenca
 
@@ -202,7 +207,7 @@ Puni tekst: [LICENSE](LICENSE)
 
 ## ⚖️ Tehnička podrška propisima
 
-Sidrena 0.7.0 tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
+Sidrena tehnički prati provjerene zahtjeve iz NN 101/2026 (dodatna cijena i objava cjenika), NN 105/2026 (maloprodajna/jedinična cijena i usluge) te službenih pojašnjenja Ministarstva gospodarstva od 22.09.2026.
 
 Plugin podržava obvezni skup podataka, CSV/XML objavu, zasebne lokacije/webshop, najmanje 30 dana javne arhive, referentne datume i automatizirani dohvat aktualnih cijena. Referentne i povijesne cijene moraju odgovarati stvarnoj poslovnoj evidenciji korisnika.
 

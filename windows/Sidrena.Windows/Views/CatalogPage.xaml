@@ -1,0 +1,62 @@
+<Page
+    x:Class="Sidrena.Windows.Views.CatalogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="28" RowSpacing="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource SidrenaSubtleCardStyle}">
+            <Grid ColumnSpacing="18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Katalog proizvoda i usluga" FontSize="28" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="Naziv, SKU, aktualna cijena, sidrena cijena, jedinična cijena, referentni datum, lokacija, kategorija i status greške." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Content="Osvježi" Click="OnRefreshClick" />
+                    <Button Content="Auto-fix demo greške" Click="OnAutoFixClick" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ListView Grid.Row="1" x:Name="CatalogList" SelectionMode="Single" Background="Transparent">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,10" Padding="16" CornerRadius="18" Background="{StaticResource SidrenaPanelBrush}" BorderBrush="{StaticResource SidrenaStrokeBrush}" BorderThickness="1">
+                        <Grid ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="0.8*" />
+                                <ColumnDefinition Width="0.8*" />
+                                <ColumnDefinition Width="0.8*" />
+                                <ColumnDefinition Width="0.8*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="0.9*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="White" />
+                                <TextBlock Text="{Binding Sku}" Foreground="{StaticResource SidrenaMutedBrush}" FontSize="12" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding Category}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding CurrentPrice}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding AnchorPrice}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{Binding UnitPrice}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="5" Text="{Binding Location}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="6" Text="{Binding ErrorStatus}" Foreground="{StaticResource SidrenaWarningBrush}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <TextBlock Grid.Row="2" x:Name="CatalogStatusText" Foreground="{StaticResource SidrenaAccentBrush}" TextWrapping="Wrap" />
+    </Grid>
+</Page>
