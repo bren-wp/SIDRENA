@@ -53,6 +53,9 @@ jobs:
             git push origin "$TAG_NAME"
           fi
 
+      - name: Install PDF build dependency
+        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+
       - name: Build WordPress and WooCommerce ZIPs
         shell: bash
         run: |
