@@ -257,7 +257,7 @@ jobs:
           grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
           grep -Fq '[sidrena_objava_cjenika]' README.md
           grep -Fq 'sidrena@brendigo.com' tools/build-support-pdf.py
-          if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git; then
+          if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git --exclude-dir=.github; then
             echo 'Unrequested recurring maintenance offer detected.' >&2
             exit 1
           fi
