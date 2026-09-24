@@ -109,6 +109,28 @@ sidrena_static_assert( 4 === count( $archive ), 'Expected four archive entries f
 $archive_download = $sidrena->resolveDownload( '', $archive[0]['id'] );
 sidrena_static_assert( is_array( $archive_download ) && is_file( $archive_download['path'] ), 'Archive download resolution failed.' );
 
+// Regression: an invalid availability value must stop publication and preserve
+// the previous manifest/snapshot/current files.
+$manifest_before = file_get_contents( $base . '/storage/generated/manifest.json' );
+$current_before  = hash_file( 'sha256', $product_file['path'] );
+$broken_product_csv = str_replace( ';dostupno' . "\n", ';dostupnoo' . "\n", $product_csv );
+file_put_contents( $base . '/storage/source/products.csv', $broken_product_csv );
+
+$failed = false;
+try {
+	$sidrena->generate();
+} catch ( RuntimeException $e ) {
+	$failed = true;
+	sidrena_static_assert( false !== strpos( $e->getMessage(), 'nepoznata vrijednost dostupnosti' ), 'Invalid availability failure was not explicit.' );
+}
+sidrena_static_assert( $failed, 'Invalid availability must block strict publication.' );
+sidrena_static_assert( $manifest_before === file_get_contents( $base . '/storage/generated/manifest.json' ), 'Failed publication changed the active manifest.' );
+$product_after = $sidrena->resolveDownload( 'products_csv' );
+sidrena_static_assert( is_array( $product_after ) && $current_before === hash_file( 'sha256', $product_after['path'] ), 'Failed publication changed the active products CSV.' );
+$snapshot_after = $sidrena->readSnapshot();
+sidrena_static_assert( 'dostupno' === $snapshot_after['products'][0]['dostupnost'], 'Failed publication changed the active snapshot.' );
+sidrena_static_assert( 4 === count( $sidrena->readArchiveIndex( 20 ) ), 'Failed preflight must not add archive entries.' );
+
 sidrena_static_assert( 'static-php' === $sidrena->runtimeInfo()['edition'], 'Static edition runtime marker missing.' );
 sidrena_static_assert( SidrenaStatic::VERSION === '1.7.0', 'Static edition version mismatch.' );
 
