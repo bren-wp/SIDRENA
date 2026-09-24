@@ -68,6 +68,7 @@ Montaža uređaja;montaža;do 60 min;dolazak uključen;;45,00;ne;;40,00;2026-09-
 
 - `index.php` — responsivni javni cjenik
 - `api.php` — JSON snapshot proizvoda i usluga
+- `health.php` — JSON health/status za uptime monitoring i cron provjere
 - `download.php?file=products_csv`
 - `download.php?file=products_xml`
 - `download.php?file=services_csv`
@@ -98,6 +99,7 @@ Arhiva se čuva najmanje 30 dana.
 - `generate.php` — CLI/zaštićeni web generator
 - `index.php` — HTML prikaz
 - `api.php` — JSON
+- `health.php` — health/status endpoint bez privatnih putanja
 - `download.php` — sigurni download
 - `assets/` — lokalni CSS/JS, bez vanjskih dependencyja
 
