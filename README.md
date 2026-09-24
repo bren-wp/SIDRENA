@@ -112,13 +112,12 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 | 📧 E-mail | **sidrena@brendigo.com** |
 | 💬 WhatsApp | **+385 91 901 0092** |
 | 🧰 Opcionalno jednokratno postavljanje | **80 EUR jednokratno**, samo ako želite da Brendigo sve postavi |
-| 🔧 Opcionalno tehničko održavanje | **20 EUR mjesečno**, samo ako želite da Brendigo održava plugin |
 | ❤️ Donacija za razvoj | dobrovoljna, izravno preko Revoluta; nije naknada za uslugu |
 | 👨‍💻 Developer | **Brendigo LTD Developer** |
 
 PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
-**Važno:** plugin možete instalirati, postaviti i održavati sami. Cijene 80 EUR i 20 EUR/mj odnose se isključivo na opcionalne Brendigo usluge koje se naručuju po želji korisnika. Dobrovoljna donacija ne uključuje instalaciju ni održavanje.
+**Važno:** plugin možete instalirati, postaviti i održavati sami. Cijena 80 EUR odnosi se na jednokratnu instalaciju i početno postavljanje kada tu uslugu želite naručiti. Donacija je dobrovoljna i odvojena od usluge instalacije.
 
 ## 📥 Release 0.1.0
 
