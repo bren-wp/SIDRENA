@@ -1,0 +1,157 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Build Sidrena Windows release assets
+
+on:
+  workflow_run:
+    workflows:
+      - Build Sidrena editions release
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+jobs:
+  windows-release-assets:
+    name: Windows portable.exe and setup.exe
+    if: github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'release/')
+    runs-on: windows-latest
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Resolve release version
+        shell: pwsh
+        run: |
+          $branch = '${{ github.event.workflow_run.head_branch }}'
+          $version = $branch -replace '^release/', ''
+          if (-not $version -or $version -eq $branch) {
+            throw "Unable to resolve Sidrena release version from branch '$branch'."
+          }
+
+          $wpVersion = Select-String -Path 'editions/wordpress/sidrena-wordpress.php' -Pattern '^ \* Version: (.+)$' | Select-Object -First 1 | ForEach-Object { $_.Matches[0].Groups[1].Value }
+          $wooVersion = Select-String -Path 'editions/woocommerce/sidrena-woocommerce.php' -Pattern '^ \* Version: (.+)$' | Select-Object -First 1 | ForEach-Object { $_.Matches[0].Groups[1].Value }
+          if ($version -ne $wpVersion -or $version -ne $wooVersion) {
+            throw "Release branch version $version does not match plugin metadata: WP=$wpVersion WOO=$wooVersion"
+          }
+
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "TAG_NAME=v$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish native Sidrena Windows app
+        shell: pwsh
+        run: |
+          $publishDir = Join-Path $env:RUNNER_TEMP 'sidrena-windows-publish'
+          $artifactsDir = Join-Path $env:RUNNER_TEMP 'sidrena-windows-artifacts'
+          New-Item -ItemType Directory -Force -Path $publishDir, $artifactsDir | Out-Null
+
+          dotnet restore windows/Sidrena.Windows/Sidrena.Windows.csproj
+          dotnet publish windows/Sidrena.Windows/Sidrena.Windows.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:WindowsAppSDKSelfContained=true `
+            -p:PublishSingleFile=false `
+            -o $publishDir
+
+          if (-not (Test-Path (Join-Path $publishDir 'Sidrena.Windows.exe'))) {
+            throw 'Sidrena.Windows.exe was not produced by dotnet publish.'
+          }
+
+          "SIDRENA_PUBLISH_DIR=$publishDir" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "SIDRENA_WINDOWS_ARTIFACTS=$artifactsDir" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "SIDRENA_VERSION=$env:VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build portable.exe and setup.exe
+        shell: pwsh
+        run: |
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          if (-not (Test-Path $iscc)) {
+            throw 'Inno Setup compiler was not found.'
+          }
+
+          & $iscc windows/packaging/SidrenaSetup.iss
+          & $iscc windows/packaging/SidrenaPortable.iss
+
+          $setup = Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'setup.exe'
+          $portable = Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'portable.exe'
+          if (-not (Test-Path $setup)) { throw 'setup.exe was not produced.' }
+          if (-not (Test-Path $portable)) { throw 'portable.exe was not produced.' }
+          if ((Get-Item $setup).Length -le 0) { throw 'setup.exe is empty.' }
+          if ((Get-Item $portable).Length -le 0) { throw 'portable.exe is empty.' }
+
+      - name: Upload Windows assets to GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release view $env:TAG_NAME --repo $env:GITHUB_REPOSITORY | Out-Null
+          gh release upload $env:TAG_NAME `
+            (Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'portable.exe') `
+            (Join-Path $env:SIDRENA_WINDOWS_ARTIFACTS 'setup.exe') `
+            --repo $env:GITHUB_REPOSITORY `
+            --clobber
+
+      - name: Append Windows notes to release body
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $release = gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$env:TAG_NAME" | ConvertFrom-Json
+          $body = [string]$release.body
+          if ($body -notmatch 'Sidrena Windows') {
+            $body += "`n`n## Sidrena Windows`n`nOvo izdanje uključuje i nativnu Windows aplikaciju:`n`n- portable.exe — prijenosna/self-contained varijanta`n- setup.exe — standardni Windows installer`n`nWindows aplikacija je nativna WinUI 3 / Windows App SDK aplikacija, bez Electrona, Taurija ili webview shell pristupa.`n"
+            $payload = @{ body = $body } | ConvertTo-Json -Depth 5
+            $payloadPath = Join-Path $env:RUNNER_TEMP 'release-body-patch.json'
+            $payload | Out-File -FilePath $payloadPath -Encoding utf8
+            gh api --method PATCH "repos/$env:GITHUB_REPOSITORY/releases/$($release.id)" --input $payloadPath | Out-Null
+          }
+
+      - name: Verify complete release asset set
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $verifyDir = Join-Path $env:RUNNER_TEMP 'sidrena-complete-release-verify'
+          Remove-Item -Recurse -Force $verifyDir -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path $verifyDir | Out-Null
+
+          gh release download $env:TAG_NAME --repo $env:GITHUB_REPOSITORY --dir $verifyDir
+
+          $required = @(
+            "sidrena-wordpress-$env:VERSION.zip",
+            "sidrena-woocommerce-$env:VERSION.zip",
+            'portable.exe',
+            'setup.exe'
+          )
+
+          foreach ($asset in $required) {
+            $path = Join-Path $verifyDir $asset
+            if (-not (Test-Path $path)) {
+              throw "Missing release asset: $asset"
+            }
+            if ((Get-Item $path).Length -le 0) {
+              throw "Release asset is empty: $asset"
+            }
+          }
+
+          $zipCount = (Get-ChildItem $verifyDir -Filter '*.zip').Count
+          $exeCount = (Get-ChildItem $verifyDir -Filter '*.exe').Count
+          if ($zipCount -ne 2) { throw "Expected exactly 2 ZIP plugin assets, found $zipCount." }
+          if ($exeCount -ne 2) { throw "Expected exactly 2 EXE Windows assets, found $exeCount." }
