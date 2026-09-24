@@ -9,6 +9,8 @@
  * Author: Brendigo LTD Developer
  * Author URI: https://brendigo.com/
  * License: Sidrena Software License 1.0
+ * License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
+ * Update URI: https://github.com/bren-wp/SIDRENA#sidrena-wordpress
  * Text Domain: sidrena
  * Domain Path: /languages
  */

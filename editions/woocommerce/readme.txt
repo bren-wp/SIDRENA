@@ -7,8 +7,14 @@ Tested up to: 7.1.2
 Requires PHP: 7.4
 Stable tag: 0.1.0
 License: Sidrena Software License 1.0
+License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
 Sidrena WooCommerce automatski prikazuje sidrenu cijenu uz WooCommerce cijenu i objavljuje javne CSV/XML cjenike s arhivom.
+
+Developer: Brendigo LTD Developer
+Plugin URI: https://sidrene-cijene.com.hr/
+Author URI: https://brendigo.com/
+Support: sidrena@brendigo.com
 
 == Description ==
 
