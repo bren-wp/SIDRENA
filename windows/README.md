@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: Brendigo
+Author URI: https://brendigo.com/
+Plugin URI: https://sidrene-cijene.com.hr/
+Support: sidrena@brendigo.com
+-->
+
 # Sidrena Windows
 
 Sidrena Windows je premium nativna Windows desktop aplikacija za pripremu, provjeru i izvoz sidrenih cijena prije javne objave kroz Sidrena WordPress/WooCommerce plugin ili kroz lokalni export paket.
