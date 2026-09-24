@@ -28,7 +28,7 @@ sidrena_publication_write_assert( false !== strpos( $method, 'write_stream_all( 
 sidrena_publication_write_assert( false !== strpos( $method, 'write_stream_all( $handle, $encoded . "\\n" )' ), 'Public snapshot rows must handle short writes.' );
 sidrena_publication_write_assert( false !== strpos( $method, 'commit_atomic_writer( $handle, $temp, $path )' ), 'Public snapshot must fsync and atomically commit.' );
 sidrena_publication_write_assert( false === strpos( $method, 'fwrite(' ), 'Public snapshot must not bypass the short-write helper.' );
-sidrena_publication_write_assert( false === strpos( $method, "$path . '.tmp'" ), 'Public snapshot must not use a fixed temporary filename.' );
+sidrena_publication_write_assert( false === strpos( $method, ".tmp'" ), 'Public snapshot must not use a fixed temporary filename.' );
 sidrena_publication_write_assert( false === strpos( $method, ',"rows":[' ), 'Streaming public snapshot must not build one monolithic JSON rows array.' );
 
 fwrite( STDOUT, "Sidrena atomic publication smoke test passed.\n" );
