@@ -1,0 +1,127 @@
+name: Sidrena production polish automation
+
+on:
+  push:
+    branches:
+      - feature/0.5.0-production-polish
+
+permissions:
+  contents: write
+
+jobs:
+  production-polish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - name: Apply production polish changes
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+
+          admin = Path('includes/class-sidrena-admin.php')
+          admin_text = admin.read_text(encoding='utf-8')
+          admin_text = admin_text.replace("\t\t\tSIDRENA_URL . 'assets/images/logo-mark.svg',\n", "\t\t\t'none',\n")
+          admin_text = admin_text.replace("\t\twp_enqueue_style( 'sidrena-admin-160', SIDRENA_URL . 'admin/css/admin-160.css', array( 'sidrena-admin' ), SIDRENA_VERSION );\n", "")
+          admin.write_text(admin_text, encoding='utf-8')
+
+          base_css = Path('admin/css/admin.css')
+          extra_css = Path('admin/css/admin-160.css')
+          base_text = base_css.read_text(encoding='utf-8')
+          extra_text = extra_css.read_text(encoding='utf-8')
+          marker = '/* Sidrena production interface styles integrated from admin-160.css. */'
+          if marker not in base_text:
+              if extra_text.startswith('/**'):
+                  end = extra_text.find('*/')
+                  if end != -1:
+                      extra_text = extra_text[end + 2:].lstrip()
+              extra_text = extra_text.replace('/* Sidrena 1.6 production interface — local-only, no external UI dependencies. */', '/* Sidrena 0.5 production interface — local-only, no external UI dependencies. */')
+              base_css.write_text(base_text.rstrip() + '\n\n' + marker + '\n' + extra_text.lstrip(), encoding='utf-8')
+
+          smoke = Path('.github/tests/admin-assets-smoke.php')
+          smoke.write_text("""<?php
+          /**
+           * Sidrena admin asset production smoke test.
+           */
+
+          $root = dirname( __DIR__, 2 );
+          $admin = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
+
+          if ( false !== strpos( $admin, "assets/images/logo-mark.svg" ) ) {
+              fwrite( STDERR, "Sidrena admin menu must not register a custom menu icon.\n" );
+              exit( 1 );
+          }
+
+          if ( false === strpos( $admin, "'none'," ) ) {
+              fwrite( STDERR, "Sidrena admin menu icon placeholder must be explicit.\n" );
+              exit( 1 );
+          }
+
+          if ( false !== strpos( $admin, "admin-160.css" ) ) {
+              fwrite( STDERR, "Sidrena admin must not enqueue the legacy split admin-160.css file.\n" );
+              exit( 1 );
+          }
+
+          if ( file_exists( $root . '/admin/css/admin-160.css' ) ) {
+              fwrite( STDERR, "Legacy split admin-160.css must be removed from the source tree.\n" );
+              exit( 1 );
+          }
+
+          $css = file_get_contents( $root . '/admin/css/admin.css' );
+          if ( false === strpos( $css, 'Sidrena production interface styles integrated from admin-160.css' ) ) {
+              fwrite( STDERR, "Integrated production interface marker missing from admin.css.\n" );
+              exit( 1 );
+          }
+
+          echo "Sidrena admin asset smoke test passed.\n";
+          """.replace('          ', ''), encoding='utf-8')
+
+          ci = Path('.github/workflows/ci.yml')
+          ci_text = ci.read_text(encoding='utf-8')
+          needle = "          php .github/tests/support-surface-smoke.php\n"
+          addition = needle + "          php .github/tests/admin-assets-smoke.php\n"
+          if 'admin-assets-smoke.php' not in ci_text:
+              ci_text = ci_text.replace(needle, addition)
+              ci.write_text(ci_text, encoding='utf-8')
+
+          changelog = Path('changelog.txt')
+          changelog_text = changelog.read_text(encoding='utf-8')
+          marker_line = '= 0.5.0 =\n'
+          insert = (
+              '- Uklonjena je prilagođena SVG ikonica iz WordPress admin menija; Sidrena sada eksplicitno koristi neutralni WordPress menu placeholder bez dodatnog logo requesta.\n'
+              '- Spojeni su produkcijski admin stilovi u jedan lokalni `admin/css/admin.css`, a zastarjeli split `admin/css/admin-160.css` uklonjen je iz izvornog stabla i build paketa.\n'
+              '- Dodan je admin-assets smoke test koji ruši CI ako se menu ikonica, legacy admin-160 enqueue ili mrtvi CSS fajl vrate u kod.\n'
+          )
+          if insert not in changelog_text:
+              changelog_text = changelog_text.replace(marker_line, marker_line + insert, 1)
+              changelog.write_text(changelog_text, encoding='utf-8')
+
+          for doc_path in ('docs/UPUTE-WORDPRESS.md', 'docs/UPUTE-WOOCOMMERCE.md', 'docs/legal-and-technical-notes.md'):
+              p = Path(doc_path)
+              text = p.read_text(encoding='utf-8')
+              section = """
+
+## Produkcijsko poliranje 0.5.0
+
+- Sidrena ne dodaje vlastitu SVG ikonicu u WordPress admin menu, čime se smanjuje nepotreban admin asset request i izbjegava vizualno dupliranje brenda u bočnom meniju.
+- Admin sučelje koristi jedan lokalni CSS paket (`admin/css/admin.css`) umjesto odvojenog legacy split fajla.
+- CI uključuje provjeru da se uklonjena menu ikonica, zastarjeli `admin-160.css` enqueue i mrtvi CSS fajl ne vrate u release liniju.
+"""
+              if '## Produkcijsko poliranje 0.5.0' not in text:
+                  p.write_text(text.rstrip() + section, encoding='utf-8')
+          PY
+          git rm -f admin/css/admin-160.css
+          git status --short
+          if git diff --quiet --cached && git diff --quiet; then
+            echo 'No production polish changes detected.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add includes/class-sidrena-admin.php admin/css/admin.css .github/tests/admin-assets-smoke.php .github/workflows/ci.yml changelog.txt docs/UPUTE-WORDPRESS.md docs/UPUTE-WOOCOMMERCE.md docs/legal-and-technical-notes.md
+          git commit -m 'Polish admin assets for production readiness'
+          git push origin HEAD:${{ github.ref_name }}
