@@ -133,15 +133,14 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 
 - E-mail: **sidrena@brendigo.com**
 - WhatsApp: **+385 91 901 0092**
-- Plugin možete instalirati, postaviti i održavati sami.
+- Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- Opcionalno tehničko održavanje od strane Brendiga: **20 EUR mjesečno**.
 - PDF: `docs/SIDRENA-PODRSKA.pdf`
 - Developer: **Brendigo LTD Developer**
 
 ## Donacija
 
-Donacija za razvoj je **dobrovoljna**. Otvara se izravno preko Revoluta i nije naknada za instalaciju, postavljanje ili mjesečno održavanje.
+Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
 
 ## Licenca
 
