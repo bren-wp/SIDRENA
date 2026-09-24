@@ -90,18 +90,18 @@ for i, item in enumerate(steps, 1):
 story.extend([
     PageBreak(),
     Paragraph("Javna objava cjenika", h2),
-    Paragraph("Sidrena može objaviti javnu WordPress stranicu Cjenici, aktualni HTML cjenik, arhivu te CSV/XML datoteke. Za strojni dohvat dostupan je REST API i JSON manifest kada je uključen.", body),
+    Paragraph("Sidrena može objaviti javnu WordPress stranicu Objava cjenika, aktualni HTML cjenik, arhivu te CSV/XML datoteke. Za strojni dohvat dostupan je REST API i JSON manifest kada je uključen.", body),
     Paragraph("Na javnoj stranici jasno se prikazuju datum objave, lokacija, format datoteke i gumb Preuzmi. Arhivske datoteke grupiraju se po datumima radi jednostavnijeg pregleda.", body),
     Paragraph("Tehnička kontrolna lista", h2),
 ])
 for item in [
     "CSV i/ili XML je uključen.",
-    "Automatsko generiranje je postavljeno dovoljno prije 08:00.",
+    "Automatsko generiranje je postavljeno dovoljno prije 08:00, a sigurnosna provjera prati propuštenu dnevnu objavu.",
     "Aktualna datoteka je javno dostupna bez prijave.",
     "Arhiva čuva objavljene datoteke najmanje 30 dana.",
     "Nazivi datoteka sadrže podatke o objektu/lokaciji i vremensku oznaku.",
     "REST/automatizirani dohvat radi kada je uključen.",
-    "Sidrena cijena je jasno prikazana uz aktualnu cijenu na webu kada se proizvod ili usluga oglašava.",
+    "Sidrena cijena je jasno prikazana uz aktualnu cijenu na webu kada se proizvod ili usluga oglašava; WooCommerce izdanje prikazuje je automatski, a WordPress izdanje automatski na povezanim zapisima.",
 ]:
     story.append(bullet(item))
 
@@ -114,6 +114,8 @@ story.extend([
     Paragraph("<b>WhatsApp:</b> +385 91 901 0092", body),
     Paragraph("<b>Instalacija i početno postavljanje:</b> 80 EUR jednokratno.", body),
     Paragraph("Za prijavu problema pošaljite verziju WordPressa, aktivno Sidrena izdanje, opis koraka i relevantnu poruku iz Sidrena Dnevnika. Ne šaljite lozinke ili pristupne podatke e-poštom.", small),
+    Paragraph("Licenca", h2),
+    Paragraph("Sidrena se koristi prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.", body),
     Spacer(1, 4*mm),
     Paragraph("Brendigo LTD Developer", ParagraphStyle("brand", parent=center, fontName="SidrenaSansBold", fontSize=12, leading=16, textColor=colors.HexColor("#111827"))),
     Paragraph("sidrena@brendigo.com · brendigo.com", center),

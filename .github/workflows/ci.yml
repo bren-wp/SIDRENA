@@ -206,6 +206,28 @@ jobs:
             exit 1
           fi
 
+      - name: Distribution and production-copy guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'License: Sidrena Software License 1.0' editions/wordpress/sidrena-wordpress.php
+          grep -Fq 'License: Sidrena Software License 1.0' editions/woocommerce/sidrena-woocommerce.php
+          grep -Fq 'Brendigo LTD Developer' README.md
+          grep -Fq 'sidrena@brendigo.com' README.md
+          grep -Fq '+385 91 901 0092' README.md
+          grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
+          grep -Fq 'sidrena_publication_watch' includes/class-sidrena-pricelist.php
+          grep -Fq 'sidrena_standalone_sync_batch' includes/class-sidrena-standalone.php
+          test ! -d .wordpress-org
+          ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
+          ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
+          test "$ASSET_LINES" -eq 2
+          if grep -RIniE 'bez telemetrije|Pro paywall|100% FREE|OPEN SOURCE · GPL|GPLv2\+|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
+            echo 'Retired product/distribution wording detected.' >&2
+            exit 1
+          fi
+
       - name: Production-content guard
         if: matrix.php == '8.3'
         shell: bash
