@@ -70,7 +70,7 @@ jobs:
           zip -qr "sidrena-wordpress-${VERSION}.zip" sidrena
           sha256sum "sidrena-wordpress-${VERSION}.zip" > "sidrena-wordpress-${VERSION}.zip.sha256"
           cp "sidrena-wordpress-${VERSION}.zip" "sidrena-${VERSION}.zip"
-          cp "sidrena-wordpress-${VERSION}.zip.sha256" "sidrena-${VERSION}.zip.sha256"
+          sha256sum "sidrena-${VERSION}.zip" > "sidrena-${VERSION}.zip.sha256"
 
       - name: Build Static PHP edition archive
         shell: bash
