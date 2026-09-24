@@ -6,7 +6,7 @@ Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WordPress 0.2.0 - Upute za korištenje
+# Sidrena WordPress 0.3.0 - Upute za korištenje
 
 ## Namjena
 
@@ -14,7 +14,7 @@ Sidrena WordPress namijenjena je WordPress web stranicama koje **ne koriste WooC
 
 ## Instalacija
 
-1. Prenesite `sidrena-wordpress-0.2.0.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-0.3.0.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte **Sidrena WordPress**.
 3. Otvorite **Sidrena** u lijevom admin meniju.
 4. Otvorite **Sidrena > Katalog**.
@@ -73,7 +73,7 @@ Plugin objavljuje WordPress stranicu sa shortcodeom:
 
 Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
-Javni cjenik u 0.2.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik u 0.3.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
 
 Dostupni su i zasebni prikazi:
 
