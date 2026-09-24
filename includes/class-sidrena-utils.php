@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo LTD Developer
+ * @author Brendigo
  * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */
@@ -213,7 +213,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function developer_label() {
-		return 'Brendigo LTD Developer';
+		return 'Brendigo';
 	}
 
 	public static function locations() {

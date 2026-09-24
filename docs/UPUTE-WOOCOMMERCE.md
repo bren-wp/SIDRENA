@@ -1,6 +1,6 @@
 <!--
 Sidrena source file.
-Author: Brendigo LTD Developer
+Author: Brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
@@ -144,7 +144,7 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
 - PDF: `docs/SIDRENA-PODRSKA.pdf`
-- Developer: **Brendigo LTD Developer**
+- Autor: **Brendigo**
 
 ## Donacija
 
@@ -152,7 +152,7 @@ Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
 
 ## Licenca
 
-Sidrena se koristi prema **Sidrena Software License 1.0**. Plugin se ne smije prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati bez pisanog odobrenja Brendigo LTD.
+Sidrena se koristi prema **Sidrena Software License 1.0**. Plugin se ne smije prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati bez pisanog odobrenja Brendigo.
 
 Puni tekst licence nalazi se u datoteci `LICENSE`.
 

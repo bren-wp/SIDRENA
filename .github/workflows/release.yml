@@ -1,5 +1,5 @@
 # Sidrena source file.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com
@@ -112,11 +112,56 @@ jobs:
             Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
             Podrška: sidrena@brendigo.com
-            Developer: Brendigo LTD Developer
+            Autor: Brendigo
             Službena stranica: https://sidrene-cijene.com.hr/
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
+
+      - name: Verify published GitHub release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERIFY_DIR="$RUNNER_TEMP/sidrena-release-verify"
+          rm -rf "$VERIFY_DIR"
+          mkdir -p "$VERIFY_DIR"
+
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --dir "$VERIFY_DIR"
+
+          test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
+          test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.zip' | wc -l | tr -d ' ')" = "2"
+
+          unzip -t "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip" >/dev/null
+          unzip -t "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip" >/dev/null
+
+          mkdir -p "$VERIFY_DIR/wp" "$VERIFY_DIR/woo"
+          unzip -q "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip" -d "$VERIFY_DIR/wp"
+          unzip -q "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip" -d "$VERIFY_DIR/woo"
+
+          WP="$VERIFY_DIR/wp/sidrena-wordpress"
+          WOO="$VERIFY_DIR/woo/sidrena-woocommerce"
+
+          test -f "$WP/sidrena-wordpress.php"
+          test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
+          test -f "$WP/includes/class-sidrena-standalone.php"
+          test ! -f "$WP/includes/class-sidrena-products.php"
+          test ! -f "$WP/sidrena.php"
+          test ! -d "$WP/static-php"
+
+          test -f "$WOO/sidrena-woocommerce.php"
+          test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
+          test -f "$WOO/includes/class-sidrena-products.php"
+          test ! -f "$WOO/includes/class-sidrena-standalone.php"
+          test ! -f "$WOO/sidrena.php"
+          test ! -d "$WOO/static-php"
+
+          if grep -RIniE 'Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
+            echo 'Retired branding detected inside published ZIP asset.' >&2
+            exit 1
+          fi
 
 
       - name: Keep only the 0.1.0 GitHub release and tag

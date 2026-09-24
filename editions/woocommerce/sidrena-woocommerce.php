@@ -9,7 +9,7 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 8.0
  * WC tested up to: 11.1.2
- * Author: Brendigo LTD Developer
+ * Author: Brendigo
  * Author URI: https://brendigo.com/
  * License: Sidrena Software License 1.0
  * License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE

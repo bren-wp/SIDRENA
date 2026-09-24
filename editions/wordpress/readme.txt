@@ -11,7 +11,7 @@ License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
 Sidrena WordPress povezuje postojeći WordPress sadržaj ili vlastiti katalog sa sidrenim cijenama, javnim cjenicima i arhivom objava.
 
-Developer: Brendigo LTD Developer
+Autor: Brendigo
 Plugin URI: https://sidrene-cijene.com.hr/
 Author URI: https://brendigo.com/
 Support: sidrena@brendigo.com
@@ -57,7 +57,7 @@ Izravna Revolut donacija dostupna je u Sidrena administraciji.
 
 Ako web koristi WooCommerce proizvode, instalirajte zasebni Sidrena WooCommerce paket. Istodobno može biti aktivno samo jedno Sidrena izdanje.
 
-Developer: Brendigo LTD Developer
+Autor: Brendigo
 Službena stranica: https://sidrene-cijene.com.hr/
 
 == Support and optional services ==
@@ -95,7 +95,7 @@ Da. U Katalogu odaberite postojeći javni tip sadržaja i po potrebi meta ključ
 Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Sidrena ima i sigurnosnu provjeru propuštene dnevne objave. Za precizno izvršavanje preporučuje se server cron.
 
 = Smijem li prodavati ili preprodavati plugin? =
-Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo LTD.
+Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo.
 
 == Changelog ==
 

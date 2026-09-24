@@ -1,5 +1,5 @@
 Sidrena source file
-Author: Brendigo LTD Developer
+Author: Brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
@@ -26,6 +26,6 @@ Sidrena changelog
 * Ugrađena PDF podrška, e-mail sidrena@brendigo.com i WhatsApp +385 91 901 0092.
 * Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
 * Izravna Revolut donacija nalazi se u Sidrena administraciji.
-* Developer oznaka: Brendigo LTD Developer.
-* Sidrena Software License 1.0 dopušta korištenje prema uvjetima licence, ali zabranjuje prodaju/preprodaju, sublicenciranje, redistribuciju, white-label i rebrandiranje bez pisanog odobrenja Brendigo LTD.
+* Developer oznaka: Brendigo.
+* Sidrena Software License 1.0 dopušta korištenje prema uvjetima licence, ali zabranjuje prodaju/preprodaju, sublicenciranje, redistribuciju, white-label i rebrandiranje bez pisanog odobrenja Brendigo.
 * GitHub Release objavljuje samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.

@@ -1,6 +1,6 @@
 <!--
 Sidrena source file.
-Author: Brendigo LTD Developer
+Author: Brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
@@ -105,4 +105,4 @@ Plugin korisnik može instalirati, postaviti i održavati sam. Brendigo usluge n
 
 Dobrovoljna donacija za razvoj otvara se izravno preko Revolut gumba u Sidrena administraciji. Donacija nije naknada za instalaciju ili održavanje i ne predstavlja narudžbu usluge.
 
-Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.
+Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo.
