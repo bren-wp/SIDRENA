@@ -40,7 +40,7 @@ sidrena_support_assert( 'Brendigo LTD Developer' === Sidrena_Utils::developer_la
 $admin  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 
-foreach ( array( 'sidrena-support', 'sidrena-about', 'PDF podrška', 'Zatraži instalaciju - 80 EUR' ) as $needle ) {
+foreach ( array( 'sidrena-support', 'sidrena-about', 'dashicons-pdf', 'Zatraži instalaciju - 80 EUR' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
 }
 foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika' ) as $needle ) {
