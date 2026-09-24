@@ -18,6 +18,7 @@ fi
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUTDIR="$(mkdir -p "$OUTDIR" && cd "$OUTDIR" && pwd)"
 WORK="$OUTDIR/.sidrena-build"
+NORMALIZED_EPOCH="${SOURCE_DATE_EPOCH:-946684800}"
 rm -rf "$WORK"
 mkdir -p "$WORK"
 
@@ -70,14 +71,31 @@ cp "$WOO_README" "$WOO_STAGE/readme.txt"
 cp "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 rm -f "$WOO_STAGE/includes/class-sidrena-standalone.php"
 
+python3 - "$NORMALIZED_EPOCH" "$WP_STAGE" "$WOO_STAGE" <<'PY'
+import os
+import sys
+
+epoch = int(sys.argv[1])
+for root in sys.argv[2:]:
+    for current, dirs, files in os.walk(root):
+        for name in dirs + files:
+            path = os.path.join(current, name)
+            os.utime(path, (epoch, epoch), follow_symlinks=False)
+        os.utime(current, (epoch, epoch), follow_symlinks=False)
+PY
+
+rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"
 (
   cd "$WORK"
-  zip -qr "$OUTDIR/sidrena-wordpress-$VERSION.zip" sidrena-wordpress
-  zip -qr "$OUTDIR/sidrena-woocommerce-$VERSION.zip" sidrena-woocommerce
+  LC_ALL=C find sidrena-wordpress -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
+  LC_ALL=C find sidrena-woocommerce -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
 )
 
-sha256sum "$OUTDIR/sidrena-wordpress-$VERSION.zip" > "$OUTDIR/sidrena-wordpress-$VERSION.zip.sha256"
-sha256sum "$OUTDIR/sidrena-woocommerce-$VERSION.zip" > "$OUTDIR/sidrena-woocommerce-$VERSION.zip.sha256"
+(
+  cd "$OUTDIR"
+  sha256sum "sidrena-wordpress-$VERSION.zip" > "sidrena-wordpress-$VERSION.zip.sha256"
+  sha256sum "sidrena-woocommerce-$VERSION.zip" > "sidrena-woocommerce-$VERSION.zip.sha256"
+)
 
 echo "$WP_STAGE"
 echo "$WOO_STAGE"
