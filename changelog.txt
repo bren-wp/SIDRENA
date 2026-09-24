@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.3.0 =
+* Javna arhiva cjenika grupirana je po datumu objave.
+* `[sidrena_arhiva]` i arhiva na stranici Objava cjenika koriste isti card/download prikaz.
+* Trenutno aktivne CSV/XML datoteke više se ne dupliciraju u odjeljku prethodnih objava.
+* Arhivske datoteke se dedupliciraju po nazivu, filtriraju po lokaciji i sortiraju newest-first; zapisi bez datuma ostaju dostupni na kraju.
+* Poboljšan je keyboard focus state za otvaranje i zatvaranje dnevnih arhivskih grupa.
+* Uklonjen je zastarjeli CSS ravne archive liste.
+
 = 0.2.0 =
 * Razvojni ciklus 0.2.0 otvoren za skalabilniju Objavu cjenika, poboljšanja pristupačnosti, stabilnosti i release provjera.
 * PDF podrška prikazuje stvarnu verziju paketa, a release/CI provjere više ne ovise o hardkodiranoj verziji 0.1.0.

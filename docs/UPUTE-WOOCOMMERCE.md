@@ -6,7 +6,7 @@ Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WooCommerce 0.2.0 - Upute za korištenje
+# Sidrena WooCommerce 0.3.0 - Upute za korištenje
 
 ## Namjena
 
@@ -15,7 +15,7 @@ Sidrena WooCommerce namijenjena je WordPress trgovinama s aktivnim WooCommerceom
 ## Instalacija
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-0.2.0.zip`.
+2. Prenesite `sidrena-woocommerce-0.3.0.zip`.
 3. Aktivirajte **Sidrena WooCommerce**.
 4. Otvorite **Sidrena** u lijevom admin meniju.
 
@@ -79,7 +79,7 @@ Kompletni javni prikaz koristi:
 
 Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
-Javni cjenik u 0.2.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik u 0.3.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
 
 Dostupni su i:
 
@@ -113,7 +113,7 @@ Za pouzdano izvršavanje prije poslovno kritičnog roka koristite server cron ko
 
 ## Arhiva
 
-Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana.
+Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.3.0 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
 
 ## WP-CLI
 

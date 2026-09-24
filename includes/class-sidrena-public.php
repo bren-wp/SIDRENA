@@ -326,39 +326,34 @@ final class Sidrena_Public {
 			'sidrena_arhiva'
 		);
 
-		$requested = $atts['lokacija'] ? $atts['lokacija'] : $atts['oznaka'];
-		$location  = $requested ? $this->resolve_location( $requested ) : array();
-		$location_id = $location ? Sidrena_Utils::sanitize_location_id( $location['id'] ) : '';
-
-		$entries = array();
-		foreach ( Sidrena_Utils::archive_index() as $entry ) {
-			if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
-				continue;
-			}
-			$entries[] = $entry;
-		}
+		$requested   = $atts['lokacija'] ? $atts['lokacija'] : $atts['oznaka'];
+		$location    = $requested ? $this->resolve_location( $requested ) : array();
+		$location_id = $location ? Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) : '';
+		$groups      = $this->archive_groups( $location_id, true );
+		$total       = array_sum( array_map( 'count', $groups ) );
 
 		$this->enqueue_assets();
 		ob_start();
 		?>
-		<section class="sidrena-public-archive">
+		<section class="sidrena-public-archive sidrena-downloads">
 			<div class="sidrena-public-archive__head">
-				<h2><?php esc_html_e( 'Arhiva cjenika', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Prethodno objavljene CSV/XML datoteke dostupne su najmanje tijekom propisanog razdoblja čuvanja.', 'sidrena' ); ?></p>
+				<div>
+					<h2><?php esc_html_e( 'Arhiva cjenika', 'sidrena' ); ?></h2>
+					<p><?php esc_html_e( 'Prethodno objavljene CSV/XML datoteke dostupne su najmanje tijekom propisanog razdoblja čuvanja.', 'sidrena' ); ?></p>
+				</div>
+				<span class="sidrena-public-archive__count"><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', $total, 'sidrena' ), $total ) ); ?></span>
 			</div>
-			<?php if ( empty( $entries ) ) : ?>
-				<div class="sidrena-public-message"><?php esc_html_e( 'Arhiva još nema objavljenih datoteka.', 'sidrena' ); ?></div>
-			<?php else : ?>
-				<ul class="sidrena-public-archive__list">
-					<?php foreach ( $entries as $entry ) : ?>
-						<li>
-							<a href="<?php echo esc_url( $entry['url'] ?? '' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $entry['filename'] ?? __( 'Cjenik', 'sidrena' ) ); ?></a>
-							<span><?php echo ! empty( $entry['generated_at'] ) ? esc_html( Sidrena_Utils::format_iso_datetime( $entry['generated_at'] ) ) : ''; ?></span>
-							<?php if ( ! empty( $entry['sha256'] ) ) : ?><code>SHA-256 <?php echo esc_html( substr( (string) $entry['sha256'], 0, 12 ) ); ?>…</code><?php endif; ?>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			<?php endif; ?>
+			<section class="sidrena-downloads__section">
+				<div class="sidrena-downloads__section-head">
+					<h3><?php esc_html_e( 'Prethodne objave', 'sidrena' ); ?></h3>
+					<span><?php esc_html_e( 'grupirano po datumu', 'sidrena' ); ?></span>
+				</div>
+				<?php if ( empty( $groups ) ) : ?>
+					<div class="sidrena-public-message"><?php esc_html_e( 'Arhiva još nema objavljenih datoteka.', 'sidrena' ); ?></div>
+				<?php else : ?>
+					<?php echo $this->render_archive_groups( $groups ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal renderer escapes all dynamic values. ?>
+				<?php endif; ?>
+			</section>
 		</section>
 		<?php
 		return (string) ob_get_clean();
@@ -431,29 +426,7 @@ final class Sidrena_Public {
 			$current[] = $entry;
 		}
 
-		$groups = array();
-		$seen   = array();
-		foreach ( Sidrena_Utils::archive_index() as $entry ) {
-			if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
-				continue;
-			}
-			$filename = sanitize_file_name( (string) ( $entry['filename'] ?? '' ) );
-			if ( ! $filename || isset( $seen[ $filename ] ) ) {
-				continue;
-			}
-			$seen[ $filename ] = true;
-			$ts = absint( $entry['generated_ts'] ?? 0 );
-			if ( ! $ts && ! empty( $entry['generated_at'] ) ) {
-				$parsed = strtotime( (string) $entry['generated_at'] );
-				$ts = $parsed ? absint( $parsed ) : 0;
-			}
-			$key = $ts ? wp_date( 'Y-m-d', $ts ) : __( 'Bez datuma', 'sidrena' );
-			if ( ! isset( $groups[ $key ] ) ) {
-				$groups[ $key ] = array();
-			}
-			$groups[ $key ][] = $entry;
-		}
-		krsort( $groups, SORT_STRING );
+		$groups = $this->archive_groups( $location_id, true );
 
 		$this->enqueue_assets();
 		ob_start();
@@ -487,16 +460,7 @@ final class Sidrena_Public {
 				<?php if ( empty( $groups ) ) : ?>
 					<div class="sidrena-public-message"><?php esc_html_e( 'Arhiva još nema objavljenih datoteka.', 'sidrena' ); ?></div>
 				<?php else : ?>
-					<?php $group_index = 0; foreach ( $groups as $date => $entries ) : $group_index++; ?>
-						<details class="sidrena-downloads__day" <?php echo 1 === $group_index ? 'open' : ''; ?>>
-							<summary><strong><?php echo esc_html( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? wp_date( 'd.m.Y.', strtotime( $date ) ) : $date ); ?></strong><span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span></summary>
-							<div class="sidrena-downloads__grid">
-								<?php foreach ( $entries as $entry ) : ?>
-									<?php echo wp_kses_post( $this->download_card( $entry ) ); ?>
-								<?php endforeach; ?>
-							</div>
-						</details>
-					<?php endforeach; ?>
+					<?php echo $this->render_archive_groups( $groups ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal renderer escapes all dynamic values. ?>
 				<?php endif; ?>
 			</section>
 
@@ -507,6 +471,105 @@ final class Sidrena_Public {
 		<?php
 		return (string) ob_get_clean();
 	}
+
+	private function archive_groups( $location_id = '', $exclude_current = true ) {
+		$location_id   = Sidrena_Utils::sanitize_location_id( $location_id );
+		$current_names = array();
+		if ( $exclude_current ) {
+			foreach ( Sidrena_Utils::public_index() as $entry ) {
+				if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
+					continue;
+				}
+				$filename = sanitize_file_name( (string) ( $entry['filename'] ?? '' ) );
+				if ( $filename ) {
+					$current_names[ $filename ] = true;
+				}
+			}
+		}
+
+		$groups = array();
+		$seen   = array();
+		foreach ( Sidrena_Utils::archive_index() as $entry ) {
+			if ( $location_id && Sidrena_Utils::sanitize_location_id( $entry['location_id'] ?? '' ) !== $location_id ) {
+				continue;
+			}
+			$filename = sanitize_file_name( (string) ( $entry['filename'] ?? '' ) );
+			if ( ! $filename || isset( $seen[ $filename ] ) || isset( $current_names[ $filename ] ) ) {
+				continue;
+			}
+			$seen[ $filename ] = true;
+			$ts = absint( $entry['generated_ts'] ?? 0 );
+			if ( ! $ts && ! empty( $entry['generated_at'] ) ) {
+				$parsed = strtotime( (string) $entry['generated_at'] );
+				$ts     = $parsed ? absint( $parsed ) : 0;
+			}
+			$key = $ts ? wp_date( 'Y-m-d', $ts ) : 'undated';
+			if ( ! isset( $groups[ $key ] ) ) {
+				$groups[ $key ] = array();
+			}
+			$groups[ $key ][] = $entry;
+		}
+
+		uksort(
+			$groups,
+			static function ( $a, $b ) {
+				if ( 'undated' === $a ) {
+					return 1;
+				}
+				if ( 'undated' === $b ) {
+					return -1;
+				}
+				return strcmp( $b, $a );
+			}
+		);
+		foreach ( $groups as &$entries ) {
+			usort(
+				$entries,
+				static function ( $a, $b ) {
+					$left  = absint( $a['generated_ts'] ?? 0 );
+					$right = absint( $b['generated_ts'] ?? 0 );
+					return $left === $right
+						? strcmp( (string) ( $a['filename'] ?? '' ), (string) ( $b['filename'] ?? '' ) )
+						: $right <=> $left;
+				}
+			);
+		}
+		unset( $entries );
+		return $groups;
+	}
+
+	private function archive_date_label( $date ) {
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $date ) ) {
+			$timestamp = strtotime( (string) $date );
+			if ( $timestamp ) {
+				return wp_date( 'd.m.Y.', $timestamp );
+			}
+		}
+		return __( 'Bez datuma', 'sidrena' );
+	}
+
+	private function render_archive_groups( $groups ) {
+		ob_start();
+		$group_index = 0;
+		foreach ( (array) $groups as $date => $entries ) {
+			++$group_index;
+			?>
+			<details class="sidrena-downloads__day" <?php echo 1 === $group_index ? 'open' : ''; ?>>
+				<summary>
+					<strong><?php echo esc_html( $this->archive_date_label( $date ) ); ?></strong>
+					<span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span>
+				</summary>
+				<div class="sidrena-downloads__grid">
+					<?php foreach ( $entries as $entry ) : ?>
+						<?php echo wp_kses_post( $this->download_card( $entry ) ); ?>
+					<?php endforeach; ?>
+				</div>
+			</details>
+			<?php
+		}
+		return (string) ob_get_clean();
+	}
+
 
 	private function download_card( $entry ) {
 		$filename = (string) ( $entry['filename'] ?? __( 'Cjenik', 'sidrena' ) );

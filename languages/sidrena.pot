@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 0.2.0\n"
+"Project-Id-Version: Sidrena 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1219,6 +1219,7 @@ msgid "Što točno usluga uključuje"
 msgstr ""
 
 #: includes/class-sidrena-admin.php:396
+#: includes/class-sidrena-public.php
 msgid "%d datoteka"
 msgid_plural "%d datoteka"
 msgstr[0] ""
@@ -1368,5 +1369,29 @@ msgstr ""
 
 #: includes/class-sidrena-public.php
 msgid "Nema stavki koje odgovaraju pretrazi."
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Arhiva cjenika"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Prethodne objave"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "grupirano po datumu"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Bez datuma"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Preuzmi"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Datoteka nije dostupna"
 msgstr ""
 

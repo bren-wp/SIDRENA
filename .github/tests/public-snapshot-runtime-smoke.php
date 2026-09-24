@@ -9,7 +9,7 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_VERSION', '0.2.0' );
+define( 'SIDRENA_VERSION', '0.3.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena-wordpress/' );
 
@@ -51,7 +51,7 @@ mkdir( dirname( $path ), 0777, true );
 $header = array(
 	'schema'       => 2,
 	'format'       => 'jsonl',
-	'generator'    => 'Sidrena 0.2.0',
+	'generator'    => 'Sidrena 0.3.0',
 	'generated_at' => '2026-09-24T17:00:00+02:00',
 	'location'     => array(
 		'id'      => 'lokacija-1',
