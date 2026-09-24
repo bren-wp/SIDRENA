@@ -17,7 +17,9 @@ final class Sidrena_Bulk {
 	}
 
 	public function hooks() {
-		add_action( 'admin_post_sidrena_bulk_save', array( $this, 'save' ) );
+		if ( Sidrena_Utils::is_woocommerce_active() ) {
+			add_action( 'admin_post_sidrena_bulk_save', array( $this, 'save' ) );
+		}
 	}
 
 	public function render() {

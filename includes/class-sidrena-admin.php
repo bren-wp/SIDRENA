@@ -19,14 +19,18 @@ final class Sidrena_Admin {
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
 		add_action( 'admin_post_sidrena_generate', array( $this, 'generate' ) );
-		add_action( 'admin_post_sidrena_import_anchor', array( $this, 'import_anchor' ) );
-		add_action( 'admin_post_sidrena_import_location_data', array( $this, 'import_location_data' ) );
-		add_action( 'admin_post_sidrena_export_missing', array( $this, 'export_missing' ) );
-		add_action( 'admin_post_sidrena_export_location_template', array( $this, 'export_location_template' ) );
 		add_action( 'admin_post_sidrena_export_archive_index', array( $this, 'export_archive_index' ) );
 		add_action( 'admin_post_sidrena_export_price_history', array( $this, 'export_price_history' ) );
 		add_action( 'admin_post_sidrena_create_public_page', array( $this, 'create_public_page' ) );
 		add_action( 'admin_post_sidrena_check_public_access', array( $this, 'check_public_access' ) );
+
+		if ( Sidrena_Utils::is_woocommerce_active() ) {
+			add_action( 'admin_post_sidrena_import_anchor', array( $this, 'import_anchor' ) );
+			add_action( 'admin_post_sidrena_import_location_data', array( $this, 'import_location_data' ) );
+			add_action( 'admin_post_sidrena_export_missing', array( $this, 'export_missing' ) );
+			add_action( 'admin_post_sidrena_export_location_template', array( $this, 'export_location_template' ) );
+		}
+
 		add_filter( 'plugin_action_links_' . plugin_basename( SIDRENA_FILE ), array( $this, 'action_links' ) );
 	}
 

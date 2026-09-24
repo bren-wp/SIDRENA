@@ -978,3 +978,38 @@ body[class*="sidrena_page_sidrena-"] {
 		animation-iteration-count: 1 !important;
 	}
 }
+
+
+.sid-mode-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	min-height: 28px;
+	padding: 4px 9px;
+	border: 1px solid #cfe1f7;
+	border-radius: 999px;
+	background: #f7fbff;
+	color: #315b82;
+	font-size: 11px;
+	font-weight: 760;
+	line-height: 1;
+}
+
+.sid-mode-badge .dashicons {
+	width: 14px;
+	height: 14px;
+	font-size: 14px;
+	line-height: 14px;
+}
+
+.sid-mode-badge.is-woo {
+	border-color: #d9d1f7;
+	background: #f7f4ff;
+	color: #6246a8;
+}
+
+.sid-mode-badge.is-standalone {
+	border-color: #cce9df;
+	background: #f0fbf7;
+	color: #17745f;
+}
