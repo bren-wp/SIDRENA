@@ -22,6 +22,7 @@ final class Sidrena_Standalone {
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
 			add_shortcode( 'sidrena_cijena', array( $this, 'price_shortcode' ) );
 			add_shortcode( 'sidrena-cijena', array( $this, 'price_shortcode' ) );
+			add_action( 'sidrena_cijena', array( $this, 'action_output' ), 10, 1 );
 		}
 	}
 
@@ -660,6 +661,18 @@ final class Sidrena_Standalone {
 			return;
 		}
 		update_post_meta( $id, $key, $value );
+	}
+
+	public function action_output( $item = null ) {
+		$raw = is_scalar( $item ) ? trim( (string) $item ) : '';
+		$id  = absint( preg_replace( '/\D+/', '', $raw ) );
+		if ( ! $id && is_object( $item ) && isset( $item->ID ) ) {
+			$id = absint( $item->ID );
+		}
+		if ( ! $id ) {
+			return;
+		}
+		echo wp_kses_post( $this->price_shortcode( array( 'id' => 's' . $id ) ) );
 	}
 
 	public function price_shortcode( $atts ) {
