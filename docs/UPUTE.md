@@ -1,4 +1,4 @@
-# Sidrena 1.6.6 - Upute za instalaciju i korištenje
+# Sidrena 1.7.0 - Upute za instalaciju i korištenje
 
 **Službena stranica:** https://sidrene-cijene.com.hr/  
 **GitHub:** https://github.com/bren-wp/SIDRENA  
@@ -6,6 +6,14 @@
 **Licenca:** GPL-2.0-or-later
 
 > Sidrena je tehnički alat za vođenje, objavu i arhiviranje cijena. Ne zamjenjuje pravni ili računovodstveni savjet. Povijesne i referentne cijene moraju dolaziti iz stvarne poslovne evidencije.
+
+## Static PHP izdanje za web stranice bez admin panela
+
+Od Sidrena 1.7.0 GitHub Release sadrži i zasebni paket **sidrena-static-php-1.7.0.zip**. To nije WordPress plugin nego samostalna PHP aplikacija za postojeće web stranice koje nemaju CMS/admin panel.
+
+Static izdanje ne koristi WordPress ni bazu podataka. Proizvodi i usluge održavaju se u CSV datotekama, a generator izrađuje HTML/JSON/CSV/XML objavu, manifest, SHA-256 i arhivu.
+
+Detaljne upute nalaze se u `static-php/README.md` i unutar samog Static ZIP paketa.
 
 ## 1. Načini rada
 
@@ -32,7 +40,7 @@ Za prilagođene role i WooCommerce shop management i dalje su podržani `manage_
 ## 2. Instalacija
 
 1. WordPress: **Dodaci > Dodaj novi > Prenesi dodatak**.
-2. Prenesite **sidrena-1.6.6.zip**.
+2. Prenesite **sidrena-wordpress-1.7.0.zip**.
 3. Kliknite **Instaliraj sada** i **Aktiviraj**.
 4. Otvorite **Sidrena > Pregled**.
 5. Provjerite izbornike Pregled, Usklađenost, Katalog, Cjenici, Arhiva, Lokacije, Postavke, Alati, Dnevnik, Propisi i Upute.
