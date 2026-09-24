@@ -74,6 +74,15 @@ jobs:
           php .github/tests/cli-edition-smoke.php wordpress
           php .github/tests/cli-edition-smoke.php woocommerce
 
+      - name: Public page automation smoke test
+        run: php .github/tests/public-page-smoke.php
+
+      - name: WordPress linked-source price smoke test
+        run: php .github/tests/wordpress-sync-smoke.php
+
+      - name: Woo automatic price output smoke test
+        run: php .github/tests/woo-output-smoke.php
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
