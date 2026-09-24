@@ -14,6 +14,10 @@ Sidrena changelog
 * Uklonjena je ovisnost javnog cjenika o JavaScript filtriranju; pretraga i navigacija rade kao obični GET zahtjevi.
 * Woo location-history dnevni snapshot koristi bounded keyset batch obradu.
 * Javni snapshot koristi short-write-safe atomic writer s flush/fsync zaštitom.
+* Strict validacija odvija se unutar streaming writera pa je uklonjen zaseban puni preflight prolaz kroz katalog.
+* Nova lokacijska objava postaje aktualna tek nakon uspjeha svih traženih formata i, kada je uključen, javnog HTML snapshota; neuspjeli novi fajlovi se uklanjaju, a prethodna valjana objava ostaje aktivna.
+* Woo REST paginacija računa stvarne javne stavke: jednostavan proizvod ili varijacija je jedna stavka, a variable parent se ne broji zasebno.
+* Woo REST skupe cijene/meta/lokacijske podatke učitava samo za stavke tražene stranice.
 
 = 0.1.0 =
 * Prvo javno izdanje Sidrene.
@@ -35,6 +39,6 @@ Sidrena changelog
 * Ugrađena PDF podrška, e-mail sidrena@brendigo.com i WhatsApp +385 91 901 0092.
 * Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
 * Izravna Revolut donacija nalazi se u Sidrena administraciji.
-* Developer oznaka: Brendigo.
+* Autor: Brendigo.
 * Sidrena Software License 1.0 dopušta korištenje prema uvjetima licence, ali zabranjuje prodaju/preprodaju, sublicenciranje, redistribuciju, white-label i rebrandiranje bez pisanog odobrenja Brendigo.
 * GitHub Release objavljuje samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
