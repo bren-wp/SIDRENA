@@ -1,9 +1,25 @@
 Sidrena changelog
 
 = 0.1.0 =
-* Prvo javno izdanje nove Sidrena arhitekture.
-* Dva zasebna WordPress plugina: Sidrena WordPress i Sidrena WooCommerce.
-* Sidrena WordPress koristi vlastiti katalog proizvoda i usluga bez WooCommerce ovisnosti.
-* Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao jedini izvor proizvoda.
-* CSV/XML cjenici, javni HTML prikaz, REST i arhiva 30+ dana.
-* Spriječena istodobna aktivacija dvaju Sidrena izdanja.
+* Prvo javno izdanje Sidrene.
+* Dva fizički i runtime odvojena plugina: Sidrena WordPress i Sidrena WooCommerce.
+* Sidrena WordPress može povezati postojeći javni WordPress tip sadržaja s vlastitim katalogom.
+* Automatsko prepoznavanje uobičajenih meta ključeva postojeće cijene i batch sinkronizacija većih kataloga.
+* Povezani WordPress zapisi automatski prikazuju sidrenu cijenu bez ručnog shortcodea.
+* Sinkronizacija uklanja zastarjelu javnu cijenu ako praćena izvorna cijena više ne postoji.
+* Sidrena WooCommerce koristi postojeće WooCommerce proizvode i varijacije bez duplog kataloga.
+* Sidrena cijena automatski se dodaje WooCommerce price HTML-u, uz zaštitu od dvostrukog umetanja.
+* Compatibility layer za WooCommerce blokove i popularne page-builder prikaze.
+* CSV/XML cjenici, javni HTML cjenik, REST, JSON manifest i javna arhiva 30+ dana.
+* Automatska stranica Objava cjenika stvara se pri aktivaciji kada je javni HTML uključen.
+* Dnevno generiranje zadano je u 06:30, uz sigurnosni watchdog za propuštenu dnevnu objavu.
+* Više lokacija i zaseban webshop objekt.
+* Povijest cijena u WooCommerce izdanju i tehničke kontrole za 30-dnevnu referencu.
+* Spriječena istodobna aktivacija WordPress i WooCommerce izdanja.
+* Safe-uninstall ponašanje čuva zajedničke poslovne podatke po defaultu.
+* Ugrađena PDF podrška, e-mail sidrena@brendigo.com i WhatsApp +385 91 901 0092.
+* Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
+* Izravna Revolut donacija nalazi se u Sidrena administraciji.
+* Developer oznaka: Brendigo LTD Developer.
+* Sidrena Software License 1.0 dopušta korištenje prema uvjetima licence, ali zabranjuje prodaju/preprodaju, sublicenciranje, redistribuciju, white-label i rebrandiranje bez pisanog odobrenja Brendigo LTD.
+* GitHub Release objavljuje samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.

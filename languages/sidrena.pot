@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidrena 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:55+0200\\n"
+"POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -138,10 +138,6 @@ msgstr ""
 
 #: includes/class-sidrena-admin.php:200
 msgid "Bez tehničkih upozorenja"
-msgstr ""
-
-#: includes/class-sidrena-admin.php:232
-msgid "Bez telemetrije, licenci i obaveznih vanjskih servisa."
 msgstr ""
 
 #: includes/class-sidrena-admin.php:90
@@ -566,10 +562,6 @@ msgstr ""
 
 #: includes/class-sidrena-products.php:126 includes/class-sidrena-products.php:243
 msgid "Nema izuzeća"
-msgstr ""
-
-#: includes/class-sidrena-admin.php:520
-msgid "Nema telemetrije, cloud računa, licencnog servera niti automatskog slanja poslovnih podataka Brendigu ili trećim stranama. Javno se izlažu samo cjenici koje administrator generira."
 msgstr ""
 
 #: includes/class-sidrena-admin.php:193
@@ -1280,162 +1272,59 @@ msgstr ""
 msgid "Nije moguće atomski objaviti JSON manifest cjenika."
 msgstr ""
 
-#: 1.6.4
-msgid "Količina pakiranja"
+#: includes/class-sidrena-admin.php
+msgid "Objava cjenika"
 msgstr ""
 
-#: 1.6.4
-msgid "Jedinica pakiranja"
+#: includes/class-sidrena-admin.php
+msgid "Podrška"
 msgstr ""
 
-#: 1.6.4
-msgid "Pune upute na GitHubu"
+#: includes/class-sidrena-admin.php
+msgid "O nama"
 msgstr ""
 
-#: 1.6.4
-msgid "CSV sadrži duplicirana zaglavlja nakon normalizacije."
+#: includes/class-sidrena-admin.php
+msgid "Sinkronizacija postojećeg WordPress sadržaja je pokrenuta u pozadini. Status i rezultat prikazuju se u Katalogu."
 msgstr ""
 
-#: 1.6.4
-msgid "CSV ima više od dopuštenih 50.000 redaka."
+#: includes/class-sidrena-admin.php
+msgid "Sinkronizaciju nije bilo moguće pokrenuti. Provjerite odabrani tip sadržaja i WordPress cron."
 msgstr ""
 
-#: 1.6.4
-msgid "XML s DOCTYPE ili ENTITY deklaracijama nije dopušten."
+#: includes/class-sidrena-standalone.php
+msgid "Automatsko povezivanje"
 msgstr ""
 
-#: 1.6.4
-msgid "Uvoz sidrenih cijena: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno."
+#: includes/class-sidrena-standalone.php
+msgid "Povuci postojeće proizvode / sadržaj"
 msgstr ""
 
-#: 1.6.4
-msgid "Uvoz lokacijskih podataka: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno."
+#: includes/class-sidrena-standalone.php
+msgid "Pokreni sinkronizaciju"
 msgstr ""
 
-#: 1.6.4
-msgid "WordPress WP-Cron je isključen"
+#: includes/class-sidrena-standalone.php
+msgid "Povezana stranica"
 msgstr ""
 
-#: 1.6.4
-msgid "Dnevno generiranje nije zakazano"
+#: includes/class-sidrena-standalone.php
+msgid "Sinkronizacija WordPress sadržaja zaustavljena je jer sljedeći batch nije bilo moguće zakazati."
 msgstr ""
 
-#: 1.6.4
-msgid "Automatsko generiranje je zakazano"
+#: includes/class-sidrena-pricelist.php
+msgid "Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje."
 msgstr ""
 
-#: 1.6.4
-msgid "HTML prikaz je isključen"
+#: includes/class-sidrena-public.php
+msgid "Objavljena je javna stranica Objava cjenika."
 msgstr ""
 
-#: 1.6.4
-msgid "Isključeno u Postavkama"
+#: includes/class-sidrena-admin.php
+msgid "Dva odvojena izdanja"
 msgstr ""
 
-#: 1.6.4
-msgid "URL nedostaje"
+#: includes/class-sidrena-admin.php
+msgid "Otvori Podršku"
 msgstr ""
 
-#: 1.6.4
-msgid "Prikazano"
-msgstr ""
-
-#: 1.6.4
-msgid "od %d stavki"
-msgstr ""
-
-#: 1.6.4
-msgid "Aktualni Sidrena cjenik"
-msgstr ""
-
-#: 1.6.4
-msgid "Cjenik je objavljen, ali trenutačno nema stavki za prikaz."
-msgstr ""
-
-#: 1.6.5
-msgid "Samostalni WordPress način"
-msgstr ""
-
-#: 1.6.5
-msgid "WooCommerce + Sidrena"
-msgstr ""
-
-#: 1.6.5
-msgid "WooCommerce integracija je aktivna. Dostupni su Woo uvozi, lokacijski predlošci i zajednički Sidrena alati."
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena radi u samostalnom WordPress načinu. Prikazani su samo alati koji rade bez WooCommercea."
-msgstr ""
-
-#: 1.6.5
-msgid "Samostalni katalog proizvoda"
-msgstr ""
-
-#: 1.6.5
-msgid "Dodajte proizvode ručno ili uvezite CSV/XML izravno u Sidrena katalog. WooCommerce nije potreban."
-msgstr ""
-
-#: 1.6.5
-msgid "Otvori katalog i uvoz"
-msgstr ""
-
-#: 1.6.5
-msgid "Katalog usluga"
-msgstr ""
-
-#: 1.6.5
-msgid "Usluge su neovisne o WooCommerceu i mogu se koristiti samostalno ili zajedno s proizvodima."
-msgstr ""
-
-#: 1.6.5
-msgid "WooCommerce je opcionalan"
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena se aktivira i ostaje vidljiva na običnom WordPressu. Ako kasnije aktivirate WooCommerce, isti plugin automatski uključuje WooCommerce integraciju bez potrebe za zamjenom Sidrene."
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena način rada"
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena osnovni moduli nisu potpuno učitani"
-msgstr ""
-
-#: 1.6.5
-msgid "Nedostaje jedan od osnovnih Sidrena modula. Ponovno instalirajte kompletan plugin paket prije nastavka rada."
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena WooCommerce integracija je aktivna"
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena samostalni WordPress način je aktivan"
-msgstr ""
-
-#: 1.6.5
-msgid "WooCommerce integracija je aktivna. Uz WooCommerce proizvode dostupno je i %1$d dodatnih Sidrena proizvoda te %2$d objavljenih usluga."
-msgstr ""
-
-#: 1.6.5
-msgid "Sidrena radi samostalno bez WooCommercea. Dostupno je %1$d Sidrena proizvoda i %2$d objavljenih usluga. WooCommerce nije obavezan dependency."
-msgstr ""
-
-#: 1.6.5
-msgid "Integracijski način"
-msgstr ""
-
-#: 1.6.5
-msgid "Samostalni proizvodi"
-msgstr ""
-
-#: 1.6.5
-msgid "nije instaliran/aktivan — Sidrena radi samostalno"
-msgstr ""
-
-#: 1.6.5
-msgid "XML ima više od dopuštenih 50.000 zapisa."
-msgstr ""
