@@ -18,6 +18,16 @@ function __( $text, $domain = null ) {
 	unset( $domain );
 	return $text;
 }
+
+function wp_parse_args( $args, $defaults = array() ) {
+	return array_merge( $defaults, is_array( $args ) ? $args : array() );
+}
+function absint( $value ) {
+	return abs( (int) $value );
+}
+function wp_timezone() {
+	return new DateTimeZone( 'Europe/Zagreb' );
+}
 function get_option( $key, $default = false ) {
 	if ( 'sidrena_history_seeded_at' === $key ) {
 		return false;
