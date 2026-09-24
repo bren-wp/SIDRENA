@@ -56,6 +56,22 @@ final class Sidrena_Activator {
 	}
 
 	private static function ensure_capabilities() {
+		$roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
+		if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects ) ) {
+			foreach ( $roles->role_objects as $role ) {
+				if ( ! is_object( $role ) || ! is_callable( array( $role, 'has_cap' ) ) || ! is_callable( array( $role, 'add_cap' ) ) ) {
+					continue;
+				}
+				if ( $role->has_cap( 'manage_options' ) || $role->has_cap( 'manage_woocommerce' ) || $role->has_cap( 'manage_sidrena' ) ) {
+					if ( ! $role->has_cap( 'manage_sidrena' ) ) {
+						$role->add_cap( 'manage_sidrena' );
+					}
+				}
+			}
+			return;
+		}
+
+		// Compatibility fallback for unusual WordPress bootstraps.
 		foreach ( array( 'administrator', 'shop_manager' ) as $role_name ) {
 			$role = get_role( $role_name );
 			if ( $role && ! $role->has_cap( 'manage_sidrena' ) ) {

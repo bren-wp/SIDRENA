@@ -204,7 +204,7 @@ final class Sidrena_Standalone {
 	}
 
 	public function render() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return;
 		}
 
@@ -317,7 +317,7 @@ final class Sidrena_Standalone {
 	}
 
 	public function save() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_standalone_save' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_standalone_save' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -441,7 +441,7 @@ final class Sidrena_Standalone {
 		exit;
 	}
 	public function import() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_standalone_import' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_standalone_import' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		if ( empty( $_FILES['standalone_file'] ) || ! is_array( $_FILES['standalone_file'] ) ) {
