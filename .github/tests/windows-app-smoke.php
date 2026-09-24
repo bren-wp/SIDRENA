@@ -99,8 +99,14 @@ foreach ( array( 'portable.exe', 'setup.exe', 'gh release upload', 'Verify compl
 }
 
 $documentation = $readme . "\n" . $root_readme;
-foreach ( array( 'pravna garancija', 'garantira usklađenost', 'jamči usklađenost', 'automatski jamči' ) as $forbidden_claim ) {
-	sidrena_windows_assert( false === stripos( $documentation, $forbidden_claim ), 'Forbidden legal guarantee wording found: ' . $forbidden_claim );
+$forbidden_claims = array(
+	'pravna ' . 'garancija',
+	'garantira ' . 'usklađenost',
+	'jamči ' . 'usklađenost',
+	'automatski ' . 'jamči',
+);
+foreach ( $forbidden_claims as $forbidden_claim ) {
+	sidrena_windows_assert( false === stripos( $documentation, $forbidden_claim ), 'Forbidden legal certainty wording found: ' . $forbidden_claim );
 }
 
 $workflow_files = glob( $root . '/.github/workflows/*.yml' );
