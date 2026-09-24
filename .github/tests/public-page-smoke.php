@@ -10,6 +10,8 @@ class WP_Post {
 	public $post_type = 'page';
 	public $post_status = 'publish';
 	public $post_name = '';
+	public $post_content = '';
+	public $post_title = '';
 	public function __construct( $id, $name = '' ) { $this->ID = $id; $this->post_name = $name; }
 }
 class WP_Error {}
@@ -38,11 +40,19 @@ function wp_insert_post( $args, $wp_error = false ) {
 	unset( $wp_error );
 	$id = 1000 + ++$GLOBALS['sidrena_insert_count'];
 	$page = new WP_Post( $id, $args['post_name'] ?? '' );
-	$page->post_status = $args['post_status'] ?? 'draft';
+	$page->post_status  = $args['post_status'] ?? 'draft';
+	$page->post_content = $args['post_content'] ?? '';
+	$page->post_title   = $args['post_title'] ?? '';
 	$GLOBALS['sidrena_pages'][ $id ] = $page;
 	return $id;
 }
 function is_wp_error( $value ) { return $value instanceof WP_Error; }
+function wp_update_post( $args ) {
+	$id = isset( $args['ID'] ) ? (int) $args['ID'] : 0;
+	if ( ! $id || empty( $GLOBALS['sidrena_pages'][ $id ] ) ) return 0;
+	if ( array_key_exists( 'post_content', $args ) ) $GLOBALS['sidrena_pages'][ $id ]->post_content = (string) $args['post_content'];
+	return $id;
+}
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
 function apply_filters( $tag, $value ) { unset( $tag ); return $value; }
 function esc_url_raw( $url ) { return $url; }
@@ -62,6 +72,8 @@ $id1 = Sidrena_Public::ensure_public_page();
 sidrena_page_assert( 1001 === $id1, 'First ensure must create the public page.' );
 sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Public page must be inserted exactly once.' );
 sidrena_page_assert( 1001 === (int) get_option( 'sidrena_public_page_id' ), 'Created public page ID must be stored.' );
+sidrena_page_assert( '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' === $GLOBALS['sidrena_pages'][1001]->post_content, 'Public page must use the complete publication shortcode.' );
+sidrena_page_assert( 'Objava cjenika' === $GLOBALS['sidrena_pages'][1001]->post_title, 'Public page title must be production-ready.' );
 
 $id2 = Sidrena_Public::ensure_public_page();
 sidrena_page_assert( $id1 === $id2, 'Second ensure must reuse stored public page.' );

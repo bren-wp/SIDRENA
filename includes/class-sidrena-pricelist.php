@@ -472,8 +472,8 @@ final class Sidrena_Pricelist {
 		return sprintf( '%s_%s_%s_%06d_%s.%s', $kind, $address, $code, $sequence, $stamp, $format );
 	}
 
-	private function write_products( $filepath, $format, $location ) {
-		$headers = array(
+	private function product_headers() {
+		return array(
 			'naziv',
 			'sifra',
 			'marka',
@@ -487,15 +487,10 @@ final class Sidrena_Pricelist {
 			'barkod',
 			'dostupnost',
 		);
-
-		if ( 'csv' === $format ) {
-			return $this->write_csv( $filepath, $headers, $this->product_rows( $location ) );
-		}
-		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $this->product_rows( $location ) );
 	}
 
-	private function write_services( $filepath, $format, $location ) {
-		$headers = array(
+	private function service_headers() {
+		return array(
 			'naziv_usluge',
 			'vrsta_usluge',
 			'opseg_usluge',
@@ -507,6 +502,19 @@ final class Sidrena_Pricelist {
 			'sidrena_cijena',
 			'datum_sidrene_cijene',
 		);
+	}
+
+	private function write_products( $filepath, $format, $location ) {
+		$headers = $this->product_headers();
+
+		if ( 'csv' === $format ) {
+			return $this->write_csv( $filepath, $headers, $this->product_rows( $location ) );
+		}
+		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $this->product_rows( $location ) );
+	}
+
+	private function write_services( $filepath, $format, $location ) {
+		$headers = $this->service_headers();
 
 		if ( 'csv' === $format ) {
 			return $this->write_csv( $filepath, $headers, $this->service_rows( $location ) );

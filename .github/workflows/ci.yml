@@ -44,6 +44,9 @@ jobs:
       - name: Utility encoding/security smoke tests
         run: php .github/tests/utility-smoke.php
 
+      - name: NN 101/2026 price-list schema smoke test
+        run: php .github/tests/legal-schema-smoke.php
+
       - name: WordPress edition runtime smoke test
         run: php .github/tests/wordpress-edition-smoke.php
 
