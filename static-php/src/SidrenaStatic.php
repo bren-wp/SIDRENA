@@ -53,6 +53,9 @@ final class SidrenaStatic
         ];
 
         $this->config = $this->mergeRecursive($defaults, $config);
+        if (!in_array($this->config['csv_delimiter'], [';', ',', "\t"], true)) {
+            $this->config['csv_delimiter'] = ';';
+        }
         $this->baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR);
         $this->storageDir = $this->baseDir . DIRECTORY_SEPARATOR . 'storage';
         $this->sourceDir = $this->storageDir . DIRECTORY_SEPARATOR . 'source';
@@ -174,8 +177,8 @@ final class SidrenaStatic
                 'generator' => 'Sidrena Static PHP ' . self::VERSION,
                 'generated_at' => $generatedAt,
                 'location' => $this->publicLocation(),
-                'products' => $products,
-                'services' => $services,
+                'products' => $this->publicRows($products),
+                'services' => $this->publicRows($services),
                 'warnings' => $issues,
             ];
             $this->writeJsonAtomic($this->generatedDir . DIRECTORY_SEPARATOR . 'snapshot.json', $snapshot);
@@ -375,7 +378,7 @@ final class SidrenaStatic
         fwrite($stream, $raw);
         rewind($stream);
 
-        $headers = fgetcsv($stream, 0, $delimiter);
+        $headers = fgetcsv($stream, 0, $delimiter, '"', '');
         if (!is_array($headers)) {
             fclose($stream);
             return [];
@@ -397,7 +400,7 @@ final class SidrenaStatic
         }
 
         $rows = [];
-        while (($values = fgetcsv($stream, 0, $delimiter)) !== false) {
+        while (($values = fgetcsv($stream, 0, $delimiter, '"', '')) !== false) {
             if (count($rows) >= 50000) {
                 fclose($stream);
                 throw new RuntimeException('CSV ima više od dopuštenih 50.000 redaka.');
@@ -488,6 +491,23 @@ final class SidrenaStatic
         ];
     }
 
+    private function publicRows(array $rows): array
+    {
+        $public = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            foreach (array_keys($row) as $key) {
+                if (strpos((string) $key, '_') === 0) {
+                    unset($row[$key]);
+                }
+            }
+            $public[] = $row;
+        }
+        return $public;
+    }
+
     private function validateProducts(array $rows): array
     {
         $issues = [];
@@ -543,13 +563,13 @@ final class SidrenaStatic
 
         fwrite($handle, "\xEF\xBB\xBF");
         $delimiter = (string) $this->config['csv_delimiter'];
-        fputcsv($handle, $headers, $delimiter);
+        fputcsv($handle, $headers, $delimiter, '"', '');
         foreach ($rows as $row) {
             $values = [];
             foreach ($headers as $header) {
                 $values[] = $this->csvSafeCell((string) ($row[$header] ?? ''));
             }
-            if (fputcsv($handle, $values, $delimiter) === false) {
+            if (fputcsv($handle, $values, $delimiter, '"', '') === false) {
                 fclose($handle);
                 @unlink($tmp);
                 throw new RuntimeException('Greška pri zapisu CSV retka.');
@@ -652,10 +672,17 @@ final class SidrenaStatic
         $days = max(30, (int) $this->config['retention_days']);
         $cutoff = time() - ($days * 86400);
         $path = $this->archiveDir . DIRECTORY_SEPARATOR . 'index.json';
-        $entries = $this->readArchiveIndex(100000);
+        $entries = [];
+        if (is_file($path)) {
+            $decoded = json_decode((string) file_get_contents($path), true);
+            $entries = is_array($decoded) ? $decoded : [];
+        }
         $keep = [];
 
         foreach ($entries as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
             $ts = strtotime((string) ($entry['generated_at'] ?? '')) ?: 0;
             $file = (string) ($entry['path'] ?? '');
             if ($ts > 0 && $ts < $cutoff) {
