@@ -47,6 +47,9 @@ jobs:
       - name: NN 101/2026 price-list schema smoke test
         run: php .github/tests/legal-schema-smoke.php
 
+      - name: Publication alert throttle smoke test
+        run: php .github/tests/publication-alert-smoke.php
+
       - name: WordPress edition runtime smoke test
         run: php .github/tests/wordpress-edition-smoke.php
 
