@@ -19,6 +19,7 @@ function sidrena_legal_assert( $condition, $message ) {
 
 $root              = dirname( __DIR__, 2 );
 $compliance_source = file_get_contents( $root . '/includes/class-sidrena-compliance.php' );
+$audit_source      = file_get_contents( $root . '/includes/class-sidrena-audit.php' );
 $bootstrap_source  = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
 $plugin_source     = file_get_contents( $root . '/includes/class-sidrena-plugin.php' );
 $utils_source      = file_get_contents( $root . '/includes/class-sidrena-utils.php' );
@@ -40,11 +41,19 @@ foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'en
 	sidrena_legal_assert( false !== strpos( $compliance_source, $profile_key ), 'Automation profile marker missing: ' . $profile_key );
 }
 
+foreach ( array( 'repair_settings', 'repair_schedules', 'repair_public_surface', 'log_watchdog_result', 'LAST_STATUS_OPTION' ) as $marker ) {
+	sidrena_legal_assert( false !== strpos( $compliance_source, $marker ), 'Production compliance hardening marker missing: ' . $marker );
+}
+foreach ( array( 'MAX_MESSAGE_BYTES', 'MAX_CONTEXT_BYTES', 'MAX_ROWS', 'table_exists', 'trim_bytes', 'sidrena_publication_watch' ) as $marker ) {
+	sidrena_legal_assert( false !== strpos( $audit_source, $marker ), 'Audit hardening marker missing: ' . $marker );
+}
+
 sidrena_legal_assert( false !== strpos( $utils_source, "'default_ref_date'     => '2026-09-10'" ), 'Default reference date is not aligned with NN 101/2026.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        => '2025-05-02'" ), 'FMCG reference date is not preserved.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'generation_time'      => '06:30'" ), 'Default generation time is not automated early enough.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'strict_publication'   => 'yes'" ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '0.5.0' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '0.5.0 changelog does not mention legal automation watchdog.' );
+sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '0.5.0 changelog does not mention production hardening.' );
 
 fwrite( STDOUT, "Sidrena legal automation smoke test passed.\n" );
