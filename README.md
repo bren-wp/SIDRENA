@@ -36,6 +36,8 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 - 🏬 više lokacija i webshop kao zaseban objekt
 - ⏰ dnevno automatsko generiranje, zadano u 06:30
 - 🧯 sigurnosna provjera propuštene dnevne objave
+- ✉️ ograničena e-mail upozorenja kod neuspjele/zakašnjele objave
+- 🏢 opcionalni javni podaci obrta/tvrtke s OIB provjerom
 - 🛟 ugrađena PDF, e-mail i WhatsApp podrška
 
 ![Sidrena administracija](docs/media/readme-dashboard.svg)
@@ -72,12 +74,15 @@ Compatibility layer pokriva standardni WooCommerce prikaz cijene, varijacije, Wo
 Kompletna javna stranica koristi shortcode:
 
 ```text
-[sidrena_cjenici]
+[sidrena_objava_cjenika]
 ```
+
+Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu.
 
 Dostupni su i zasebni prikazi:
 
 ```text
+[sidrena_cjenici]
 [sidrena_cjenik]
 [sidrena_arhiva]
 [sidrena_cijena]

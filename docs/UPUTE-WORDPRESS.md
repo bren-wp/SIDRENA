@@ -61,15 +61,27 @@ U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
 
 Plugin objavljuje WordPress stranicu sa shortcodeom:
 
-`[sidrena_cjenici]`
+`[sidrena_objava_cjenika]`
+
+Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
 Dostupni su i zasebni prikazi:
+
+`[sidrena_cjenici]` — samo aktualne datoteke i arhiva preuzimanja
 
 `[sidrena_cjenik]`
 
 `[sidrena_arhiva]`
 
 `[sidrena_usluge]`
+
+## Podaci obrta / tvrtke
+
+U **Sidrena > Postavke** možete unijeti naziv, sjedište/adresu, OIB, poslovni e-mail, telefon, naziv i broj javnog registra, PDV identifikacijski broj te nadležno/nadzorno tijelo kada je primjenjivo.
+
+Ta se polja mogu prikazati na stranici **Objava cjenika**, ali nisu dodani stupci propisanog CSV/XML cjenika proizvoda/usluga.
+
+Ako unesete OIB, Sidrena provjerava njegovu kontrolnu znamenku.
 
 ## Automatska dnevna objava
 
@@ -79,6 +91,7 @@ Sidrena:
 - zakazuje dnevno generiranje
 - nakon spremanja bitnih podataka stavlja ponovno generiranje u red
 - ima sigurnosnu provjeru koja nakon planiranog vremena provjerava postoji li današnja objava i po potrebi pokreće novu generaciju
+- može poslati ograničeno e-mail upozorenje kod neuspjele ili zakašnjele objave
 
 WordPress WP-Cron ovisi o izvršavanju WordPressa. Za pouzdano izvršavanje prije poslovno kritičnog roka konfigurirajte server cron koji redovito pokreće WordPress cron.
 
