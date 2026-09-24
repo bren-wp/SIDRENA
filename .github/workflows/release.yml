@@ -1,4 +1,4 @@
-name: Build Sidrena release
+name: Build Sidrena editions release
 
 on:
   push:
@@ -28,12 +28,14 @@ jobs:
           else
             VERSION="${GITHUB_REF_NAME#release/}"
           fi
-          HEADER_VERSION="$(sed -n 's/^ \* Version: //p' sidrena.php | head -n1)"
-          STABLE_TAG="$(sed -n 's/^Stable tag: //p' readme.txt | head -n1)"
-          test "$VERSION" = "$HEADER_VERSION"
-          test "$VERSION" = "$STABLE_TAG"
-          STATIC_VERSION="$(sed -n "s/^    public const VERSION = '\([^']*\)';$/\1/p" static-php/src/SidrenaStatic.php | head -n1)"
-          test "$VERSION" = "$STATIC_VERSION"
+          WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
+          WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1)"
+          WOO_STABLE="$(sed -n 's/^Stable tag: //p' editions/woocommerce/readme.txt | head -n1)"
+          test "$VERSION" = "$WP_VERSION"
+          test "$VERSION" = "$WOO_VERSION"
+          test "$VERSION" = "$WP_STABLE"
+          test "$VERSION" = "$WOO_STABLE"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
 
@@ -51,39 +53,11 @@ jobs:
             git push origin "$TAG_NAME"
           fi
 
-      - name: Build WordPress edition archive
+      - name: Build WordPress and WooCommerce ZIPs
         shell: bash
         run: |
           set -euo pipefail
-          VERSION="${VERSION:?Release version was not resolved}"
-          STAGE="$RUNNER_TEMP/sidrena"
-          rm -rf "$STAGE"
-          mkdir -p "$STAGE"
-          rsync -a ./ "$STAGE/" \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='.wordpress-org/' \
-            --exclude='static-php/' \
-            --exclude='.gitignore' \
-            --exclude='README.md'
-          cd "$RUNNER_TEMP"
-          zip -qr "sidrena-wordpress-${VERSION}.zip" sidrena
-          sha256sum "sidrena-wordpress-${VERSION}.zip" > "sidrena-wordpress-${VERSION}.zip.sha256"
-          cp "sidrena-wordpress-${VERSION}.zip" "sidrena-${VERSION}.zip"
-          sha256sum "sidrena-${VERSION}.zip" > "sidrena-${VERSION}.zip.sha256"
-
-      - name: Build Static PHP edition archive
-        shell: bash
-        run: |
-          set -euo pipefail
-          VERSION="${VERSION:?Release version was not resolved}"
-          STAGE="$RUNNER_TEMP/sidrena-static-php"
-          rm -rf "$STAGE"
-          mkdir -p "$STAGE"
-          rsync -a static-php/ "$STAGE/"
-          cd "$RUNNER_TEMP"
-          zip -qr "sidrena-static-php-${VERSION}.zip" sidrena-static-php
-          sha256sum "sidrena-static-php-${VERSION}.zip" > "sidrena-static-php-${VERSION}.zip.sha256"
+          ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
 
       - name: Build WordPress.org visual assets
         shell: bash
@@ -91,7 +65,6 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq librsvg2-bin
-          VERSION="${VERSION:?Release version was not resolved}"
           OUT="$RUNNER_TEMP/wporg-assets"
           mkdir -p "$OUT"
           rsvg-convert -w 772 -h 250 .wordpress-org/source/banner.svg > "$OUT/banner-772x250.png"
@@ -118,16 +91,21 @@ jobs:
           body: |
             ## Sidrena ${{ env.VERSION }}
 
-            Produkcijsko izdanje Sidrene u dvije odvojene distribucije.
+            Sidrena se od 2.0.0 izdaje kao **dva zasebna WordPress plugina**.
 
-            - **WordPress izdanje:** `sidrena-wordpress-${{ env.VERSION }}.zip` (uz kompatibilni alias `sidrena-${{ env.VERSION }}.zip`).
-            - **Static PHP izdanje:** `sidrena-static-php-${{ env.VERSION }}.zip` za obične PHP web stranice bez WordPressa, WooCommercea, baze i admin panela.
-            - Za svaki instalacijski ZIP objavljen je SHA-256 checksum.
-            - WordPress.org vizualni asset paket i njegov SHA-256 također su priloženi.
-            - WordPress upute nalaze se u `docs/UPUTE.md`, a Static PHP upute u `static-php/README.md`.
-            - Detaljan popis promjena nalazi se u `changelog.txt` i `readme.txt`.
+            - **Sidrena WordPress** — `sidrena-wordpress-${{ env.VERSION }}.zip` za WordPress web bez WooCommercea.
+            - **Sidrena WooCommerce** — `sidrena-woocommerce-${{ env.VERSION }}.zip` za WordPress + WooCommerce.
+            - Nemojte aktivirati oba izdanja istodobno.
+            - Za svaki ZIP objavljen je SHA-256 checksum.
+            - Static/PHP izdanje više nije dio projekta niti releasea.
+
+            Upute su uključene unutar svakog instalacijskog ZIP-a.
 
             Službena stranica: https://sidrene-cijene.com.hr/
           files: |
-            ${{ runner.temp }}/sidrena-*.zip
-            ${{ runner.temp }}/sidrena-*.zip.sha256
+            ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256
+            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
+            ${{ runner.temp }}/sidrena-wporg-assets-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/sidrena-wporg-assets-${{ env.VERSION }}.zip.sha256
