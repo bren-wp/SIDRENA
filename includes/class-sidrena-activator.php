@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_Activator {
-	const DB_VERSION = '2.0.0';
+	const DB_VERSION = '0.1.0';
 
 	public static function activate() {
 		self::install_schema();
