@@ -4,10 +4,10 @@
 <rect width="1600" height="420" rx="28" fill="#07182D"/>
 <g font-family="Inter,Segoe UI,Arial,sans-serif">
 <text x="72" y="74" fill="#fff" font-size="34" font-weight="800">Jedan tok. Jedna evidencija. Više izlaza.</text>
-<text x="72" y="112" fill="#9DBCD6" font-size="18">Sidrena povezuje katalog, povijest i javnu objavu bez vanjskog clouda.</text>
+<text x="72" y="112" fill="#9DBCD6" font-size="18">Sidrena povezuje katalog, povijest i javnu objavu kroz WordPress automatizaciju.</text>
 
 <g transform="translate(72 158)">
-  <rect width="300" height="190" rx="22" fill="#0D2947" stroke="#204C73"/><circle cx="48" cy="48" r="26" fill="#173B61"/><path d="M34 49h28M48 35v28" stroke="#5E8BFF" stroke-width="4" stroke-linecap="round"/><text x="28" y="104" fill="#fff" font-size="23" font-weight="800">1. Podaci</text><text x="28" y="137" fill="#A9C4DF" font-size="17">WooCommerce proizvodi</text><text x="28" y="165" fill="#A9C4DF" font-size="17">i Sidrena usluge</text>
+  <rect width="300" height="190" rx="22" fill="#0D2947" stroke="#204C73"/><circle cx="48" cy="48" r="26" fill="#173B61"/><path d="M34 49h28M48 35v28" stroke="#5E8BFF" stroke-width="4" stroke-linecap="round"/><text x="28" y="104" fill="#fff" font-size="23" font-weight="800">1. Podaci</text><text x="28" y="137" fill="#A9C4DF" font-size="17">WordPress / WooCommerce</text><text x="28" y="165" fill="#A9C4DF" font-size="17">proizvodi i usluge</text>
 </g>
 <path d="M392 253h84" stroke="#2B6DF7" stroke-width="4" stroke-linecap="round"/><path d="m465 242 14 11-14 11" fill="none" stroke="#2B6DF7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 

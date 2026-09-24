@@ -62,26 +62,6 @@ jobs:
           set -euo pipefail
           ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
 
-      - name: Build WordPress.org visual assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq librsvg2-bin
-          OUT="$RUNNER_TEMP/wporg-assets"
-          mkdir -p "$OUT"
-          rsvg-convert -w 772 -h 250 .wordpress-org/source/banner.svg > "$OUT/banner-772x250.png"
-          rsvg-convert -w 1544 -h 500 .wordpress-org/source/banner.svg > "$OUT/banner-1544x500.png"
-          rsvg-convert -w 128 -h 128 assets/images/logo-mark.svg > "$OUT/icon-128x128.png"
-          rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > "$OUT/icon-256x256.png"
-          cp assets/images/logo-mark.svg "$OUT/icon.svg"
-          for N in 1 2 3 4 5 6; do
-            rsvg-convert -w 1448 -h 1086 ".wordpress-org/source/screenshot-${N}.svg" > "$OUT/screenshot-${N}.png"
-          done
-          cd "$RUNNER_TEMP"
-          zip -qr "sidrena-wporg-assets-${VERSION}.zip" wporg-assets
-          sha256sum "sidrena-wporg-assets-${VERSION}.zip" > "sidrena-wporg-assets-${VERSION}.zip.sha256"
-
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
@@ -94,20 +74,18 @@ jobs:
           body: |
             ## Sidrena ${{ env.VERSION }}
 
-            Sidrena 0.1.0 isporučuje **dva zasebna WordPress plugina**.
+            ## Sidrena 0.1.0
 
-            - **Sidrena WordPress** — `sidrena-wordpress-${{ env.VERSION }}.zip` za WordPress web bez WooCommercea.
-            - **Sidrena WooCommerce** — `sidrena-woocommerce-${{ env.VERSION }}.zip` za WordPress + WooCommerce.
-            - Nemojte aktivirati oba izdanja istodobno.
-            - Za svaki ZIP objavljen je SHA-256 checksum.
+            Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
 
-            Upute su uključene unutar svakog instalacijskog ZIP-a.
+            - **Sidrena WordPress** — za WordPress web bez WooCommercea.
+            - **Sidrena WooCommerce** — za WordPress + WooCommerce.
 
+            Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
+
+            Podrška: sidrena@brendigo.com
+            Developer: Brendigo LTD Developer
             Službena stranica: https://sidrene-cijene.com.hr/
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
-            ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
-            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
-            ${{ runner.temp }}/sidrena-wporg-assets-${{ env.VERSION }}.zip
-            ${{ runner.temp }}/sidrena-wporg-assets-${{ env.VERSION }}.zip.sha256
