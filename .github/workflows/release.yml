@@ -87,10 +87,8 @@ jobs:
 
             Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
 
-            Plugin korisnik može postaviti i održavati sam.
-            Opcionalno postavljanje od strane Brendiga: 80 EUR jednokratno.
-            Opcionalno tehničko održavanje: 20 EUR mjesečno.
-            Dobrovoljna donacija za razvoj odvojena je od plaćenih usluga.
+            Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+            Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
             Podrška: sidrena@brendigo.com
             Developer: Brendigo LTD Developer
