@@ -20,6 +20,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-utils.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-legal-automation.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-activator.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-audit.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-compliance.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-site-health.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-cli.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-service-history.php';
