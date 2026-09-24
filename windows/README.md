@@ -28,7 +28,7 @@ Aplikacija nije zamjena za web plugin. Ona je nativni radni alat za trgovca:
 - Bez legacy Windows Forms/WPF pristupa.
 - Mica pozadina, tamni premium layout i kartični dashboard.
 - Izvršavanje kao lokalna Windows aplikacija, s C# servisima za katalog, provjeru i export.
-- Bez telemetrije i bez slanja poslovnih podataka Brendigu.
+- Aplikacija lokalno obrađuje katalog i ne šalje poslovne podatke Brendigu.
 - Lokalni export ide u korisnički `%LOCALAPPDATA%/SidrenaDesktop/exports` direktorij.
 - Legal-readiness panel je tehnička provjera, ne pravna garancija.
 
