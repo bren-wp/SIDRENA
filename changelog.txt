@@ -1,3 +1,11 @@
+= 1.6.6 =
+* Fixed missing Sidrena top-level admin menu and plugin action link when manage_sidrena had not propagated to the current WordPress user object.
+* Added manage_options and manage_woocommerce fallbacks while preserving manage_sidrena for custom roles.
+* Added a map_meta_cap bridge so elevated existing/custom roles can immediately access Sidrena.
+* Expanded capability backfill to every role that already has manage_options or manage_woocommerce.
+* Unified admin, bulk and standalone permission checks behind a resilient access helper.
+* Added an administrator-menu regression smoke test to CI.
+
 = 1.6.5 =
 * Made plain-WordPress standalone mode a first-class runtime rather than a fallback path.
 * Core Sidrena modules now initialize independently from WooCommerce; Woo-only history, product, CSV and builder integrations register only when WooCommerce is active.
