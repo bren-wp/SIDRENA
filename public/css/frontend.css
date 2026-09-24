@@ -154,7 +154,11 @@
 .sidrena-anchor--has-tooltip {
 	position: relative;
 	cursor: help;
-	outline: none;
+}
+
+.sidrena-anchor--has-tooltip:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
 }
 
 .sidrena-anchor__tooltip {
@@ -267,7 +271,13 @@
 	}
 
 	.sidrena-anchor__tooltip {
-		left: 0;
-		width: min(290px, calc(100vw - 36px));
+		position: fixed;
+		inset: auto 18px 18px;
+		width: auto;
+		max-width: calc(100vw - 36px);
+	}
+
+	.sidrena-anchor__tooltip::after {
+		display: none;
 	}
 }

@@ -434,7 +434,6 @@ final class Sidrena_Pricelist {
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
 		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$temp = $path . '.tmp';
 		$meta = array(
 			'schema'       => 1,
 			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
@@ -451,15 +450,15 @@ final class Sidrena_Pricelist {
 			return new WP_Error( 'snapshot_encode', __( 'Nije moguće pripremiti javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
-		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $handle ) {
-			return new WP_Error( 'snapshot_write', __( 'Nije moguće otvoriti javni HTML snapshot za zapis.', 'sidrena' ) );
+		$opened = $this->open_atomic_writer( $path );
+		if ( is_wp_error( $opened ) ) {
+			return $opened;
 		}
+		list( $handle, $temp ) = $opened;
 
 		$prefix = substr( $header, 0, -1 ) . ',"rows":[';
-		if ( false === fwrite( $handle, $prefix ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( ! $this->write_stream_all( $handle, $prefix ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće zapisati javni HTML snapshot cjenika.', 'sidrena' ) );
 		}
 
@@ -476,14 +475,12 @@ final class Sidrena_Pricelist {
 				$row['type'] = 'products' === $catalog ? 'product' : 'service';
 				$encoded = wp_json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 				if ( false === $encoded ) {
-					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_row_encode', __( 'Jedan redak javnog HTML snapshota nije moguće JSON kodirati.', 'sidrena' ) );
 				}
 				$chunk = ( $first ? '' : ',' ) . $encoded;
-				if ( false === fwrite( $handle, $chunk ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-					fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-					@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
+					$this->discard_atomic_writer( $handle, $temp );
 					return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 				}
 				$first = false;
@@ -491,19 +488,13 @@ final class Sidrena_Pricelist {
 			}
 		}
 
-		if ( false === fwrite( $handle, "]}\n" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( ! $this->write_stream_all( $handle, "]}\n" ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
 			return new WP_Error( 'snapshot_write', __( 'Nije moguće dovršiti zapis javnog HTML snapshota cjenika.', 'sidrena' ) );
 		}
-		fflush( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fflush
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
-		if ( ! rename( $temp, $path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
-			return new WP_Error( 'snapshot_commit', __( 'Nije moguće dovršiti javni HTML snapshot cjenika.', 'sidrena' ) );
-		}
-		return $count;
+		$result = $this->commit_atomic_writer( $handle, $temp, $path );
+		return is_wp_error( $result ) ? $result : $count;
 	}
 
 	private function cleanup_public_snapshots( $locations ) {
