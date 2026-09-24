@@ -61,7 +61,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 0.1.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 0.5.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -88,7 +88,19 @@ Ministarstvo je pojasnilo da se kod više fizičkih lokacija objavljuju zasebne 
 
 ## Automatizacija
 
-Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba wp sidrena generate.
+Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba `wp sidrena generate`.
+
+## Produkcijski i release guardovi
+
+Sidrena 0.5.0 release linija koristi zasebne provjere za:
+
+- stvarni build dvaju ZIP paketa,
+- zabranu generičkog/root/static PHP paketa,
+- referentne datume i automation/legal obveze,
+- neutralan WordPress admin menu bez vizualne custom SVG ikonice,
+- zabranu privremenih workflowova u release grani.
+
+Službeni release smije nastati samo kroz GitHub release workflow i smije objaviti samo `sidrena-wordpress-0.5.0.zip` i `sidrena-woocommerce-0.5.0.zip`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 
