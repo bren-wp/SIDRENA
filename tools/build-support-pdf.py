@@ -46,14 +46,14 @@ ORANGE = colors.HexColor("#FF661F")
 GREEN = colors.HexColor("#218D65")
 DARK = colors.HexColor("#384552")
 
-base = ParagraphStyle("base", fontName="SidrenaSans", fontSize=10.2, leading=14.4, textColor=TEXT, spaceAfter=4)
-h1 = ParagraphStyle("h1", fontName="SidrenaSansBold", fontSize=24, leading=28, textColor=NAVY, spaceAfter=8)
-h2 = ParagraphStyle("h2", fontName="SidrenaSansBold", fontSize=14.5, leading=18, textColor=NAVY, spaceBefore=6, spaceAfter=7)
-kicker = ParagraphStyle("kicker", fontName="SidrenaSansBold", fontSize=8.6, leading=10, textColor=MUTED, spaceAfter=5)
-small = ParagraphStyle("small", parent=base, fontSize=8.4, leading=11.4, textColor=MUTED)
-label = ParagraphStyle("label", parent=base, fontName="SidrenaSansBold", fontSize=8.8, leading=11, textColor=MUTED)
-value = ParagraphStyle("value", parent=base, fontName="SidrenaSansBold", fontSize=10.2, leading=12.6, textColor=NAVY)
-button = ParagraphStyle("button", fontName="SidrenaSansBold", fontSize=10.5, leading=13, alignment=TA_LEFT, textColor=colors.white)
+base = ParagraphStyle("base", fontName="SidrenaSans", fontSize=9.6, leading=13.4, textColor=TEXT, spaceAfter=4)
+h1 = ParagraphStyle("h1", fontName="SidrenaSansBold", fontSize=23, leading=27, textColor=NAVY, spaceAfter=8)
+h2 = ParagraphStyle("h2", fontName="SidrenaSansBold", fontSize=13.7, leading=17, textColor=NAVY, spaceBefore=6, spaceAfter=7)
+kicker = ParagraphStyle("kicker", fontName="SidrenaSansBold", fontSize=8.3, leading=10, textColor=MUTED, spaceAfter=5)
+small = ParagraphStyle("small", parent=base, fontSize=8.1, leading=10.8, textColor=MUTED)
+label = ParagraphStyle("label", parent=base, fontName="SidrenaSansBold", fontSize=8.3, leading=10.5, textColor=MUTED)
+value = ParagraphStyle("value", parent=base, fontName="SidrenaSansBold", fontSize=9.6, leading=12, textColor=NAVY)
+button = ParagraphStyle("button", fontName="SidrenaSansBold", fontSize=9.3, leading=12, alignment=TA_LEFT, textColor=colors.white)
 
 def paragraph(text, style=base):
     return Paragraph(text, style)
@@ -79,16 +79,16 @@ doc = SimpleDocTemplate(
     rightMargin=20 * mm,
     topMargin=18 * mm,
     bottomMargin=20 * mm,
-    title="Sidrena - Podrška i instalacija",
+    title="Sidrena - Podrška i opcionalne usluge",
     author="Brendigo LTD Developer",
-    subject="Podrška, instalacija i kontakti za Sidrena WordPress i Sidrena WooCommerce",
+    subject="Podrška i opcionalne usluge za Sidrena WordPress i Sidrena WooCommerce",
     creator="Brendigo LTD Developer",
 )
 
 story = [
     paragraph("SIDRENA", kicker),
-    paragraph("Podrška i instalacija", h1),
-    paragraph("Službeni kontakt za pomoć pri instalaciji, početnom postavljanju, provjeri javnog cjenika i radu Sidrena WordPress / Sidrena WooCommerce plugina."),
+    paragraph("Podrška i opcionalne usluge", h1),
+    paragraph("Službeni kontakt za pomoć pri radu Sidrena WordPress / Sidrena WooCommerce plugina. Plugin možete instalirati, postaviti i održavati sami; plaćene Brendigo usluge naručuju se samo ako ih želite."),
     Spacer(1, 4 * mm),
 ]
 
