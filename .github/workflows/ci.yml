@@ -98,6 +98,9 @@ jobs:
       - name: Public page automation smoke test
         run: php .github/tests/public-page-smoke.php
 
+      - name: Grouped public archive runtime test
+        run: php .github/tests/public-archive-groups-smoke.php
+
       - name: Atomic public snapshot smoke test
         run: php .github/tests/publication-write-smoke.php
 
