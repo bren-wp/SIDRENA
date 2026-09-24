@@ -1,6 +1,6 @@
-#define AppVersion GetEnv('SIDRENA_VERSION')
-#define SourceDir GetEnv('SIDRENA_PUBLISH_DIR')
-#define OutputDir GetEnv('SIDRENA_WINDOWS_ARTIFACTS')
+#define AppVersion GetEnv("SIDRENA_VERSION")
+#define SourceDir GetEnv("SIDRENA_PUBLISH_DIR")
+#define OutputDir GetEnv("SIDRENA_WINDOWS_ARTIFACTS")
 
 [Setup]
 AppId={{8C0B26C6-A93B-43CB-9C8B-D1C1D42E4D7A}
@@ -25,7 +25,6 @@ CreateUninstallRegKey=no
 Uninstallable=no
 
 [Languages]
-Name: "croatian"; MessagesFile: "compiler:Languages\Croatian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
