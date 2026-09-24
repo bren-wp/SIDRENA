@@ -69,8 +69,12 @@ final class Sidrena_Activator {
 			wp_schedule_event( Sidrena_Utils::schedule_timestamp(), 'daily', 'sidrena_daily_generation' );
 		}
 
-		if ( ! get_option( 'sidrena_history_seeded_at' ) && ! wp_next_scheduled( 'sidrena_history_seed' ) ) {
-			wp_schedule_single_event( time() + 30, 'sidrena_history_seed' );
+		if ( Sidrena_Utils::is_woocommerce_active() ) {
+			if ( ! get_option( 'sidrena_history_seeded_at' ) && ! wp_next_scheduled( 'sidrena_history_seed' ) ) {
+				wp_schedule_single_event( time() + 30, 'sidrena_history_seed' );
+			}
+		} elseif ( wp_next_scheduled( 'sidrena_history_seed' ) ) {
+			wp_clear_scheduled_hook( 'sidrena_history_seed' );
 		}
 	}
 
