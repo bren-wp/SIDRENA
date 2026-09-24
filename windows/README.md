@@ -71,9 +71,9 @@ Aplikacija koristi Windows 11 / Fluent smjer: tamni sidebar, gornju titlebar zon
 
 ## Sigurnost i privatnost
 
-- Bez telemetrije.
-- Bez slanja kataloga Brendigu.
-- Bez mrežnog prijenosa u prvoj desktop verziji.
+- Aplikacija ne koristi telemetriju.
+- Katalog se ne šalje Brendigu.
+- Prva desktop verzija ne radi mrežni prijenos kataloga.
 - WordPress REST sync je pripremljen kao apstrakcija za kasniji ručno konfigurirani prijenos.
 - Tokeni i tajne nisu implementirani u skeletonu i ne smiju se hardkodirati.
 - Lokalni export ostaje na računalu korisnika.
