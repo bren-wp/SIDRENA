@@ -11,19 +11,25 @@ Support: sidrena@brendigo.com
 </p>
 
 <p align="center">
-  <strong>Sidrene cijene, javni cjenici i arhiva objava za WordPress i WooCommerce.</strong><br>
-  Brendigo · verzija 0.5.0
+  <strong>Produk­cijski WordPress/WooCommerce dodatak za sidrene cijene, javne cjenike i 30+ dana arhive objava.</strong><br>
+  Brendigo · Sidrena 0.5.0
 </p>
 
 <p align="center">
-  ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛟 Podrška
+  <img src="assets/images/logo-mark.svg" alt="Sidrena znak" width="54">
+</p>
+
+<p align="center">
+  ⚓ Sidrena WordPress · 🛒 Sidrena WooCommerce · 🌐 Objava cjenika · 🛡 Compliance guard · 🛟 Brendigo podrška
 </p>
 
 ![Sidrena 0.5.0](docs/media/readme-hero.svg)
 
 # Sidrena 0.5.0
 
-Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo izdanje koje odgovara web stranici.
+Sidrena je Brendigo dodatak za trgovce, web shopove i WordPress stranice koje moraju jasno voditi **sidrene/referentne cijene**, javno objavljivati CSV/XML cjenike i zadržati javnu arhivu prethodnih objava najmanje 30 dana.
+
+Isporučuje se isključivo kao **dva zasebna WordPress plugina**. Instalira se samo izdanje koje odgovara web stranici.
 
 | Izdanje | Namjena | Izvor proizvoda |
 |---|---|---|
@@ -31,6 +37,14 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 | 🛒 **Sidrena WooCommerce** | WordPress + WooCommerce | postojeći WooCommerce proizvodi i varijacije |
 
 > **Važno:** dva Sidrena izdanja ne smiju biti aktivna istodobno. Plugin ima ugrađenu zaštitu od konflikta.
+
+## Zašto Sidrena
+
+- **Jedan jasan sustav cijena** — sidrena cijena, aktualna cijena, jedinična cijena, referentni datum i lokacija/webshop.
+- **Javna objava bez ručnog rada** — CSV/XML datoteke, pretraživi HTML cjenik i arhiva objava.
+- **Veliki katalozi bez pucanja memorije** — streaming snapshot, server-side pretraga i paginacija.
+- **Produkcijska zaštita** — CI, distribution guard, legal automation guard i admin polish guard čuvaju release liniju.
+- **Brendigo podrška** — ugrađen PDF, e-mail i WhatsApp kontakt bez vanjskog slanja poslovnih podataka.
 
 ## ✨ Glavne mogućnosti
 
@@ -48,6 +62,7 @@ Sidrena se isporučuje kao **dva zasebna WordPress plugina**. Instalira se samo 
 - 🧾 lokalni audit log s produkcijskim limitima, pruningom i throttlingom ponavljajućih zapisa
 - ✉️ ograničena e-mail upozorenja kod neuspjele/zakašnjele objave
 - 🏢 opcionalni javni podaci obrta/tvrtke s OIB provjerom
+- 🧼 neutralan WordPress admin menu bez dodatne custom SVG ikonice u bočnom meniju
 - 🛟 ugrađena PDF, e-mail i WhatsApp podrška
 
 ![Sidrena administracija](docs/media/readme-dashboard.svg)
@@ -119,6 +134,18 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 
 ![Kako Sidrena radi](docs/media/readme-flow.svg)
 
+## Produkcijska kvaliteta
+
+Sidrena 0.5.0 release linija čuva se automatiziranim provjerama:
+
+- PHP 7.4, 8.3 i 8.4 syntax/runtime smoke testovi
+- odvojena WordPress i WooCommerce runtime provjera
+- konflikt guard za dva izdanja
+- streaming public snapshot, transactional generation i archive smoke testovi
+- distribution guard koji dopušta samo dva ZIP-a
+- legal automation guard za referentne datume, cronove i objave
+- admin polish guard za neutralan WordPress menu i čistu release granu
+
 ## 🛟 Podrška
 
 | Kanal | Podatak |
@@ -140,6 +167,8 @@ Objavljuju se samo:
 - `sidrena-wordpress-0.5.0.zip`
 - `sidrena-woocommerce-0.5.0.zip`
 
+Službeni release mora nastati kroz GitHub release workflow. Lokalni, generički ili dodatni ZIP paketi nisu release artefakti.
+
 ## 🔐 Licenca
 
 Sidrena nije open-source projekt.
@@ -158,7 +187,7 @@ Softver **ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja**; prim
 
 ## 🧪 Razvoj i provjera
 
-CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje, legal automation guard, distribution guard i stvarne build staging pakete.
+CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konflikt, siguran uninstall, WP-CLI površinu, streaming javni cjenik, transakcijsko generiranje, legal automation guard, distribution guard, admin polish guard i stvarne build staging pakete.
 
 ```bash
 ./tools/build-editions.sh 0.5.0 /tmp/sidrena-build
