@@ -30,7 +30,7 @@ Aplikacija nije zamjena za web plugin. Ona je nativni radni alat za trgovca:
 - Izvršavanje kao lokalna Windows aplikacija, s C# servisima za katalog, provjeru i export.
 - Aplikacija lokalno obrađuje katalog i ne šalje poslovne podatke Brendigu.
 - Lokalni export ide u korisnički `%LOCALAPPDATA%/SidrenaDesktop/exports` direktorij.
-- Legal-readiness panel je tehnička provjera, ne pravna garancija.
+- Legal-readiness panel je tehnička provjera prije objave; konačnu procjenu usklađenosti radi korisnik ili njegov stručni savjetnik.
 
 ## Trenutni opseg
 
