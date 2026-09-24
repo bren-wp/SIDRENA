@@ -17,13 +17,15 @@ class Sidrena_Location_Data {
 		return array();
 	}
 }
+$GLOBALS['sidrena_anchor_calls'] = 0;
+
 class Sidrena_Utils {
 	public static function is_wordpress_edition() { return false; }
 	public static function is_woocommerce_active() { return true; }
 	public static function is_public_wc_product( $product ) { return $product instanceof Mock_Sidrena_Product && $product->is_public; }
 	public static function sanitize_location_id( $value ) { return strtolower( preg_replace( '/[^a-z0-9_-]/i', '', (string) $value ) ); }
 	public static function decimal( $value ) { return '' === $value ? '' : (float) $value; }
-	public static function product_anchor_price( $id ) { return 100 + (int) $id; }
+	public static function product_anchor_price( $id ) { ++$GLOBALS['sidrena_anchor_calls']; return 100 + (int) $id; }
 	public static function product_meta_with_parent( $product, $key, $default = '' ) {
 		unset( $product );
 		return '_sidrena_unit_price_status' === $key ? 'review' : $default;
@@ -125,5 +127,6 @@ sidrena_rest_page_assert( array( 5 ) === array_column( $page3['items'], 'id' ), 
 
 sidrena_rest_page_assert( ! isset( $GLOBALS['sidrena_wc_queries'][0]['paginate'] ), 'Woo REST flattened iterator must not use parent-product paginate totals.' );
 sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Woo REST flattened iterator must fetch bounded catalog batches.' );
+sidrena_rest_page_assert( 5 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for items returned on the requested pages.' );
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );

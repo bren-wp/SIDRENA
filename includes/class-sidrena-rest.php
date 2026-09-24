@@ -233,9 +233,9 @@ final class Sidrena_REST {
 		$items    = array();
 		$total    = 0;
 
-		foreach ( $this->realtime_woocommerce_product_items( $location ) as $item ) {
+		foreach ( $this->realtime_woocommerce_products() as $product ) {
 			if ( $total >= $offset && count( $items ) < $per_page ) {
-				$items[] = $item;
+				$items[] = $this->product_item( $product, $location );
 			}
 			++$total;
 		}
@@ -247,7 +247,7 @@ final class Sidrena_REST {
 		);
 	}
 
-	private function realtime_woocommerce_product_items( $location ) {
+	private function realtime_woocommerce_products() {
 		$catalog_page = 1;
 		do {
 			$products = wc_get_products(
@@ -279,13 +279,13 @@ final class Sidrena_REST {
 					foreach ( $product->get_children() as $variation_id ) {
 						$variation = wc_get_product( $variation_id );
 						if ( $variation && $variation->exists() && Sidrena_Utils::is_public_wc_product( $variation ) ) {
-							yield $this->product_item( $variation, $location );
+							yield $variation;
 						}
 					}
 					continue;
 				}
 
-				yield $this->product_item( $product, $location );
+				yield $product;
 			}
 			++$catalog_page;
 		} while ( 100 === count( $products ) );
