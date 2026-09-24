@@ -6,6 +6,12 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.5.0 =
+* Dodan je zaseban GitHub Actions distribution guard koji provjerava izvorni repozitorij i stvarni build izlaz.
+* Guard eksplicitno dopušta samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
+* Build provjera ruši workflow ako se vrati generički root `sidrena.php`, `static-php`, dodatna edicija ili datoteke izvan korijena pojedinog ZIP paketa.
+* Release priprema za 0.5.0 dodatno učvršćuje zahtjev da se ne objavljuju lokalni, generički ili lažni paketi.
+
 = 0.4.0 =
 * Javni cjenik usluga koristi bounded server-side paginaciju od 10 do 100 stavki, zadano 50.
 * Admin compliance audit usluga obrađuje zapise u batchovima od 250 i više ne koristi unbounded upit.
