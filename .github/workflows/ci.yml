@@ -95,6 +95,9 @@ jobs:
       - name: Public page automation smoke test
         run: php .github/tests/public-page-smoke.php
 
+      - name: Atomic public snapshot smoke test
+        run: php .github/tests/publication-write-smoke.php
+
       - name: WordPress linked-source price smoke test
         run: php .github/tests/wordpress-sync-smoke.php
 
