@@ -137,14 +137,13 @@ jobs:
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='.wordpress-org/' \
-            --exclude='docs/' \
             --exclude='static-php/' \
             --exclude='.gitignore' \
             --exclude='README.md'
           cd "$RUNNER_TEMP/sidrena-package"
           zip -qr sidrena-smoke.zip sidrena
           unzip -l sidrena-smoke.zip > package-files.txt
-          if grep -E '(^|/)(\.github|\.wordpress-org|docs|static-php)/|README\.md|\.gitignore' package-files.txt; then
+          if grep -E '(^|/)(\.github|\.wordpress-org|static-php)/|README\.md|\.gitignore' package-files.txt; then
             echo 'Development/documentation material leaked into production package.' >&2
             exit 1
           fi
@@ -161,6 +160,8 @@ jobs:
           test -f "$STAGE/assets/images/logo-mark.svg"
           test -f "$STAGE/assets/images/logo-horizontal.svg"
           test -f "$STAGE/assets/images/admin-hero.svg"
+          test -f "$STAGE/docs/UPUTE.md"
+          test -f "$STAGE/docs/legal-and-technical-notes.md"
           test ! -e "$STAGE/static-php"
 
       - name: Build Static PHP package smoke test
