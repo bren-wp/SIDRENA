@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,6 +25,7 @@ final class Sidrena_Pricelist {
 	public function hooks() {
 		add_action( 'sidrena_daily_generation', array( $this, 'generate_all' ) );
 		add_action( 'sidrena_queued_generation', array( $this, 'generate_all' ) );
+		add_action( 'sidrena_publication_watch', array( $this, 'publication_watch' ) );
 	}
 
 	public static function queue_regeneration() {
@@ -24,6 +34,40 @@ final class Sidrena_Pricelist {
 		}
 		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
 	}
+
+
+	public function publication_watch() {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== $settings['generate_csv'] && 'yes' !== $settings['generate_xml'] ) {
+			return;
+		}
+		$now_time = wp_date( 'H:i' );
+		$target   = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '06:30';
+		if ( $now_time < $target ) {
+			return;
+		}
+		$last    = get_option( 'sidrena_last_run', array() );
+		$last_ts = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		if ( $last_ts && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
+			return;
+		}
+		if ( self::queue_regeneration() ) {
+			Sidrena_Audit::log(
+				'publication_watch',
+				'info',
+				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
+				array( 'target_time' => $target )
+			);
+			if ( $now_time >= '07:00' ) {
+				$this->maybe_send_publication_alert(
+					'late',
+					__( 'Današnji cjenik još nije uspješno objavljen.', 'sidrena' ),
+					array( sprintf( __( 'Planirano vrijeme generiranja: %s', 'sidrena' ), $target ) )
+				);
+			}
+		}
+	}
+
 
 	public function generate_all() {
 		$settings  = Sidrena_Utils::settings();
@@ -178,12 +222,85 @@ final class Sidrena_Pricelist {
 					'errors' => $errors,
 				)
 			);
+			if ( ! empty( $errors ) ) {
+				$this->maybe_send_publication_alert(
+					'generation',
+					__( 'Generiranje cjenika završilo je s upozorenjima.', 'sidrena' ),
+					$errors
+				);
+			}
 			return empty( $errors );
 		} finally {
 			$this->release_generation_lock( $lock );
 		}
 	}
 
+
+	private function publication_alert_recipient() {
+		$settings = Sidrena_Utils::settings();
+		$candidates = array(
+			$settings['failure_email'] ?? '',
+			$settings['business_email'] ?? '',
+			get_option( 'admin_email', '' ),
+		);
+		foreach ( $candidates as $candidate ) {
+			$email = sanitize_email( (string) $candidate );
+			if ( $email && is_email( $email ) ) {
+				return $email;
+			}
+		}
+		return '';
+	}
+
+	private function maybe_send_publication_alert( $type, $summary, $details = array() ) {
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== ( $settings['failure_notifications'] ?? 'yes' ) ) {
+			return false;
+		}
+
+		$type = sanitize_key( (string) $type );
+		if ( ! in_array( $type, array( 'generation', 'late' ), true ) ) {
+			return false;
+		}
+
+		$recipient = $this->publication_alert_recipient();
+		if ( ! $recipient ) {
+			return false;
+		}
+
+		$throttle_key = 'sidrena_notice_' . $type . '_' . md5( strtolower( $recipient ) );
+		if ( get_transient( $throttle_key ) ) {
+			return false;
+		}
+
+		$subject = sprintf( '[%s] %s', wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), __( 'Sidrena - provjerite objavu cjenika', 'sidrena' ) );
+		$lines   = array(
+			wp_strip_all_tags( (string) $summary ),
+			'',
+			sprintf( __( 'Web stranica: %s', 'sidrena' ), home_url( '/' ) ),
+			sprintf( __( 'Vrijeme provjere: %s', 'sidrena' ), wp_date( 'd.m.Y. H:i:s' ) ),
+		);
+		foreach ( array_slice( array_values( (array) $details ), 0, 10 ) as $detail ) {
+			$detail = trim( wp_strip_all_tags( (string) $detail ) );
+			if ( $detail ) {
+				$lines[] = '- ' . $detail;
+			}
+		}
+		$lines[] = '';
+		$lines[] = __( 'Otvorite Sidrena > Cjenici i Sidrena > Dnevnik te provjerite javnu dostupnost prije 08:00.', 'sidrena' );
+
+		$sent = wp_mail( $recipient, $subject, implode( "\n", $lines ) );
+		if ( $sent ) {
+			set_transient( $throttle_key, 1, 6 * HOUR_IN_SECONDS );
+			Sidrena_Audit::log(
+				'publication_alert',
+				'info',
+				__( 'Poslano je e-mail upozorenje o problemu s objavom cjenika.', 'sidrena' ),
+				array( 'type' => $type, 'recipient_domain' => substr( strrchr( $recipient, '@' ), 1 ) )
+			);
+		}
+		return (bool) $sent;
+	}
 
 	private function acquire_generation_lock( $paths ) {
 		$lock_path = trailingslashit( $paths['base_dir'] ) . 'generation.lock';
@@ -444,8 +561,8 @@ final class Sidrena_Pricelist {
 		return sprintf( '%s_%s_%s_%06d_%s.%s', $kind, $address, $code, $sequence, $stamp, $format );
 	}
 
-	private function write_products( $filepath, $format, $location ) {
-		$headers = array(
+	private function product_headers() {
+		return array(
 			'naziv',
 			'sifra',
 			'marka',
@@ -459,15 +576,10 @@ final class Sidrena_Pricelist {
 			'barkod',
 			'dostupnost',
 		);
-
-		if ( 'csv' === $format ) {
-			return $this->write_csv( $filepath, $headers, $this->product_rows( $location ) );
-		}
-		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $this->product_rows( $location ) );
 	}
 
-	private function write_services( $filepath, $format, $location ) {
-		$headers = array(
+	private function service_headers() {
+		return array(
 			'naziv_usluge',
 			'vrsta_usluge',
 			'opseg_usluge',
@@ -479,6 +591,19 @@ final class Sidrena_Pricelist {
 			'sidrena_cijena',
 			'datum_sidrene_cijene',
 		);
+	}
+
+	private function write_products( $filepath, $format, $location ) {
+		$headers = $this->product_headers();
+
+		if ( 'csv' === $format ) {
+			return $this->write_csv( $filepath, $headers, $this->product_rows( $location ) );
+		}
+		return $this->write_xml( $filepath, 'proizvodi', 'proizvod', $headers, $this->product_rows( $location ) );
+	}
+
+	private function write_services( $filepath, $format, $location ) {
+		$headers = $this->service_headers();
 
 		if ( 'csv' === $format ) {
 			return $this->write_csv( $filepath, $headers, $this->service_rows( $location ) );
@@ -516,7 +641,11 @@ final class Sidrena_Pricelist {
 				if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
 					continue;
 				}
-				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
+				$cjenik_visibility = sanitize_key( (string) get_post_meta( $product->get_id(), '_sidrena_cjenik_visibility', true ) );
+				if ( 'exclude' === $cjenik_visibility ) {
+					continue;
+				}
+				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
 					continue;
 				}
 				if ( $product->is_type( 'variable' ) ) {
@@ -667,56 +796,124 @@ final class Sidrena_Pricelist {
 			$delimiter = "\t";
 		}
 
-		$temp = $filepath . '.tmp';
-		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $handle ) {
-			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti datoteku za pisanje: %s', 'sidrena' ), basename( $filepath ) ) );
+		$opened = $this->open_atomic_writer( $filepath );
+		if ( is_wp_error( $opened ) ) {
+			return $opened;
+		}
+		list( $handle, $temp ) = $opened;
+
+		if ( ! $this->write_stream_all( $handle, "\xEF\xBB\xBF" ) || false === fputcsv( $handle, $headers, $delimiter ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati zaglavlje datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
-		fwrite( $handle, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $handle, $headers, $delimiter );
 		$count = 0;
 		foreach ( $rows as $row ) {
 			$line = array();
 			foreach ( $headers as $header ) {
 				$line[] = Sidrena_Utils::csv_safe_cell( isset( $row[ $header ] ) ? $row[ $header ] : '' );
 			}
-			fputcsv( $handle, $line, $delimiter );
+			if ( false === fputcsv( $handle, $line, $delimiter ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati redak datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			++$count;
 		}
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-		if ( ! rename( $temp, $filepath ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
-			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
-		}
-		return $count;
+
+		$result = $this->commit_atomic_writer( $handle, $temp, $filepath );
+		return is_wp_error( $result ) ? $result : $count;
 	}
-
 	private function write_xml( $filepath, $root, $item, $headers, $rows ) {
-		$temp   = $filepath . '.tmp';
-		$handle = fopen( $temp, 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $handle ) {
-			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti datoteku za pisanje: %s', 'sidrena' ), basename( $filepath ) ) );
+		$opened = $this->open_atomic_writer( $filepath );
+		if ( is_wp_error( $opened ) ) {
+			return $opened;
+		}
+		list( $handle, $temp ) = $opened;
+
+		if ( ! $this->write_stream_all( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće započeti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
-		fwrite( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		$count = 0;
 		foreach ( $rows as $row ) {
-			fwrite( $handle, "  <{$item}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( ! $this->write_stream_all( $handle, "  <{$item}>\n" ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			foreach ( $headers as $header ) {
 				$value = isset( $row[ $header ] ) ? (string) $row[ $header ] : '';
-				fwrite( $handle, '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+				$chunk = '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n";
+				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
+					$this->discard_atomic_writer( $handle, $temp );
+					return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+				}
 			}
-			fwrite( $handle, "  </{$item}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( ! $this->write_stream_all( $handle, "  </{$item}>\n" ) ) {
+				$this->discard_atomic_writer( $handle, $temp );
+				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+			}
 			++$count;
 		}
-		fwrite( $handle, "</{$root}>\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		if ( ! $this->write_stream_all( $handle, "</{$root}>\n" ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće dovršiti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+
+		$result = $this->commit_atomic_writer( $handle, $temp, $filepath );
+		return is_wp_error( $result ) ? $result : $count;
+	}
+	private function open_atomic_writer( $filepath ) {
+		$directory = dirname( $filepath );
+		$suffix    = wp_generate_password( 12, false, false );
+		$temp      = trailingslashit( $directory ) . '.' . basename( $filepath ) . '.' . $suffix . '.tmp';
+		$handle    = fopen( $temp, 'xb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $handle ) {
+			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti privremenu datoteku za zapis: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+		return array( $handle, $temp );
+	}
+
+	private function write_stream_all( $handle, $data ) {
+		$data   = (string) $data;
+		$length = strlen( $data );
+		$offset = 0;
+		while ( $offset < $length ) {
+			$written = fwrite( $handle, substr( $data, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( false === $written || 0 === $written ) {
+				return false;
+			}
+			$offset += $written;
+		}
+		return true;
+	}
+
+	private function discard_atomic_writer( $handle, $temp ) {
+		if ( is_resource( $handle ) ) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		}
+		if ( $temp && is_file( $temp ) ) {
+			unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+		}
+	}
+
+	private function commit_atomic_writer( $handle, $temp, $filepath ) {
+		if ( ! fflush( $handle ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_flush', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
+		if ( function_exists( 'fsync' ) && ! fsync( $handle ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
+			return new WP_Error( 'file_sync', sprintf( __( 'Nije moguće sinkronizirati datoteku na disk: %s', 'sidrena' ), basename( $filepath ) ) );
+		}
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		if ( ! rename( $temp, $filepath ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
-			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
+			if ( is_file( $temp ) ) {
+				unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće atomski objaviti datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
-		return $count;
+		return true;
 	}
 
 	private function merge_archive_index( $new_files ) {

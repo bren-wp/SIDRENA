@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Sidrena source file.
+# Author: Brendigo LTD Developer
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
 set -euo pipefail
 
 VERSION="${1:-}"
@@ -47,6 +53,7 @@ copy_common() {
   rsync -a "$ROOT/public/" "$stage/public/"
   mkdir -p "$stage/docs"
   cp "$ROOT/docs/legal-and-technical-notes.md" "$stage/docs/"
+  python3 "$ROOT/tools/build-support-pdf.py" "$stage/docs/SIDRENA-PODRSKA.pdf"
 }
 
 WP_STAGE="$WORK/sidrena-wordpress"

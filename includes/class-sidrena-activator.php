@@ -1,10 +1,19 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class Sidrena_Activator {
-	const DB_VERSION = '2.0.0';
+	const DB_VERSION = '0.1.0';
 
 	public static function activate() {
 		self::install_schema();
@@ -28,6 +37,7 @@ final class Sidrena_Activator {
 		self::ensure_schedules();
 		if ( class_exists( 'Sidrena_Public' ) ) {
 			Sidrena_Public::instance()->register_rewrites();
+			Sidrena_Public::ensure_public_page();
 			flush_rewrite_rules( false );
 		}
 
@@ -51,6 +61,7 @@ final class Sidrena_Activator {
 	public static function deactivate() {
 		wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
+		wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
 		flush_rewrite_rules( false );
 	}
@@ -89,6 +100,9 @@ final class Sidrena_Activator {
 		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
 			wp_schedule_event( Sidrena_Utils::schedule_timestamp(), 'daily', 'sidrena_daily_generation' );
 		}
+		if ( ! wp_next_scheduled( 'sidrena_publication_watch' ) ) {
+			wp_schedule_event( self::publication_watch_timestamp(), 'hourly', 'sidrena_publication_watch' );
+		}
 
 		if ( Sidrena_Utils::is_woocommerce_active() ) {
 			if ( ! get_option( 'sidrena_history_seeded_at' ) && ! wp_next_scheduled( 'sidrena_history_seed' ) ) {
@@ -98,6 +112,23 @@ final class Sidrena_Activator {
 			wp_clear_scheduled_hook( 'sidrena_history_seed' );
 		}
 	}
+
+
+	private static function publication_watch_timestamp() {
+		$timezone = wp_timezone();
+		$now      = new DateTimeImmutable( 'now', $timezone );
+		$next     = $now->setTime( 5, 15, 0 );
+		if ( $next <= $now ) {
+			$settings = Sidrena_Utils::settings();
+			$target   = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '06:30';
+			if ( $now->format( 'H:i' ) >= $target && $now->format( 'H:i' ) < '08:00' ) {
+				return time() + 120;
+			}
+			$next = $next->modify( '+1 day' );
+		}
+		return $next->getTimestamp();
+	}
+
 
 	private static function install_schema() {
 		self::create_service_history_table();

@@ -1,3 +1,9 @@
+# Sidrena source file.
+# Author: Brendigo LTD Developer
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
 name: Sidrena CI
 
 on:
@@ -37,8 +43,21 @@ jobs:
           set -euo pipefail
           find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
 
+      - name: Sidrena source metadata
+        run: python3 tools/apply-source-metadata.py --check
+
+      - name: Install PDF build dependency
+        if: matrix.php == '8.3'
+        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+
       - name: Utility encoding/security smoke tests
         run: php .github/tests/utility-smoke.php
+
+      - name: NN 101/2026 price-list schema smoke test
+        run: php .github/tests/legal-schema-smoke.php
+
+      - name: Publication alert throttle smoke test
+        run: php .github/tests/publication-alert-smoke.php
 
       - name: WordPress edition runtime smoke test
         run: php .github/tests/wordpress-edition-smoke.php
@@ -69,6 +88,18 @@ jobs:
         run: |
           php .github/tests/cli-edition-smoke.php wordpress
           php .github/tests/cli-edition-smoke.php woocommerce
+
+      - name: Public page automation smoke test
+        run: php .github/tests/public-page-smoke.php
+
+      - name: WordPress linked-source price smoke test
+        run: php .github/tests/wordpress-sync-smoke.php
+
+      - name: Woo automatic price output smoke test
+        run: php .github/tests/woo-output-smoke.php
+
+      - name: Support and public surface smoke test
+        run: php .github/tests/support-surface-smoke.php
 
       - name: Set up Node
         if: matrix.php == '8.3'
@@ -108,6 +139,15 @@ jobs:
           grep -q "define( 'SIDRENA_EDITION', 'woocommerce' );" "$WOO_MAIN"
           grep -q 'Author: Brendigo' "$WP_MAIN"
           grep -q 'Author: Brendigo' "$WOO_MAIN"
+          grep -Fq 'Author URI: https://brendigo.com/' "$WP_MAIN"
+          grep -Fq 'Author URI: https://brendigo.com/' "$WOO_MAIN"
+          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WP_MAIN"
+          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WOO_MAIN"
+          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WP_MAIN"
+          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WOO_MAIN"
+          grep -Fq 'Brendigo LTD Developer' LICENSE
+          grep -Fq 'https://brendigo.com/' LICENSE
+          grep -Fq 'https://sidrene-cijene.com.hr/' LICENSE
           test -s docs/UPUTE-WORDPRESS.md
           test -s docs/UPUTE-WOOCOMMERCE.md
           test -x tools/build-editions.sh
@@ -115,7 +155,7 @@ jobs:
           grep -Fq 'is_wordpress_edition' includes/class-sidrena-utils.php
           grep -Fq 'is_woocommerce_edition' includes/class-sidrena-utils.php
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
-          grep -Fq '"Project-Id-Version: Sidrena 2.0.0\n"' languages/sidrena.pot
+          grep -Fq '"Project-Id-Version: Sidrena 0.1.0\n"' languages/sidrena.pot
           OLD_DOMAIN='sidrena-cijena'
           if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
             echo 'Retired Sidrena website domain detected.' >&2
@@ -146,6 +186,7 @@ jobs:
 
           test -f "$WP/sidrena-wordpress.php"
           test -f "$WP/readme.txt"
+          test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
           test ! -f "$WP/includes/class-sidrena-history.php"
@@ -159,6 +200,7 @@ jobs:
 
           test -f "$WOO/sidrena-woocommerce.php"
           test -f "$WOO/readme.txt"
+          test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test -f "$WOO/includes/class-sidrena-history.php"
           test -f "$WOO/includes/class-sidrena-location-data.php"
@@ -200,6 +242,29 @@ jobs:
             exit 1
           fi
 
+      - name: Distribution and production-copy guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'License: Sidrena Software License 1.0' editions/wordpress/sidrena-wordpress.php
+          grep -Fq 'License: Sidrena Software License 1.0' editions/woocommerce/sidrena-woocommerce.php
+          grep -Fq 'Brendigo LTD Developer' README.md
+          grep -Fq 'sidrena@brendigo.com' README.md
+          grep -Fq '+385 91 901 0092' README.md
+          grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
+          grep -Fq 'sidrena_publication_watch' includes/class-sidrena-pricelist.php
+          grep -Fq 'sidrena_standalone_sync_batch' includes/class-sidrena-standalone.php
+          test ! -d .wordpress-org
+          test ! -f .github/workflows/wporg-assets.yml
+          ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
+          ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
+          test "$ASSET_LINES" -eq 2
+          if grep -RIniE 'bez telemetrije|Pro paywall|100% FREE|OPEN SOURCE · GPL|GPLv2\+|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
+            echo 'Retired product/distribution wording detected.' >&2
+            exit 1
+          fi
+
       - name: Production-content guard
         if: matrix.php == '8.3'
         shell: bash
@@ -221,6 +286,29 @@ jobs:
             --include='*.php' --include='*.js' --include='*.css' --include='readme.txt' . \
             --exclude-dir=.git --exclude-dir=.github; then
             echo 'Debug or unfinished-code marker detected in production files.' >&2
+            exit 1
+          fi
+
+      - name: Dangerous PHP primitive guard
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGETS=(includes editions uninstall.php)
+          if grep -RInE '\b(eval|assert|system|shell_exec|passthru|exec|proc_open|popen)[[:space:]]*\(' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Dangerous PHP execution primitive detected.' >&2
+            exit 1
+          fi
+          if grep -RInE '\bunserialize[[:space:]]*\(' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Raw unserialize detected.' >&2
+            exit 1
+          fi
+          if grep -RInE '\$_(REQUEST|COOKIE)\b' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Broad or cookie superglobal use detected; use explicit validated input.' >&2
+            exit 1
+          fi
+          if grep -RInE '(include|require)(_once)?[[:space:]]*\(?[[:space:]]*["'"'"']https?://' "${TARGETS[@]}" --include='*.php'; then
+            echo 'Remote PHP include detected.' >&2
             exit 1
           fi
 

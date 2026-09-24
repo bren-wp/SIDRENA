@@ -1,10 +1,19 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $root = isset( $argv[1] ) && is_dir( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : dirname( __DIR__, 2 );
 $main = is_file( $root . '/sidrena-woocommerce.php' ) ? $root . '/sidrena-woocommerce.php' : $root . '/editions/woocommerce/sidrena-woocommerce.php';
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
-define( 'SIDRENA_VERSION', '2.0.0' );
+define( 'SIDRENA_VERSION', '0.1.0' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
 define( 'SIDRENA_FILE', $main );
 define( 'SIDRENA_DIR', $root . '/' );
@@ -70,6 +79,7 @@ Sidrena_Plugin::instance()->run();
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_update_product'] ), 'Woo price history hook must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_product_options_pricing'] ), 'Woo product fields must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_bulk_save'] ), 'Woo bulk save must register.' );
+sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_publication_watch'] ), 'Publication watchdog must register.' );
 sidrena_woo_assert( empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'Standalone import must not register in Woo edition.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_filters']['woocommerce_product_export_column_names'] ), 'Woo CSV export filters must register.' );
 
@@ -77,6 +87,7 @@ $method = new ReflectionMethod( 'Sidrena_Activator', 'ensure_schedules' );
 $method->setAccessible( true );
 $method->invoke( null );
 sidrena_woo_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_daily_generation'] ), 'Daily generation must be scheduled.' );
+sidrena_woo_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_publication_watch'] ), 'Publication watchdog must be scheduled.' );
 sidrena_woo_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_history_seed'] ), 'Woo history seed must be scheduled.' );
 
 fwrite( STDOUT, "Sidrena WooCommerce edition smoke test passed.\n" );

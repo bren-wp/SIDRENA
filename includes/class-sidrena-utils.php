@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -7,12 +16,22 @@ final class Sidrena_Utils {
 	public static function defaults() {
 		return array(
 			'business_mode'        => 'mixed',
+			'business_name'        => '',
+			'business_address'     => '',
+			'business_oib'         => '',
+			'business_email'       => '',
+			'business_phone'       => '',
+			'business_registry'    => '',
+			'business_registry_number' => '',
+			'business_vat_id'      => '',
+			'business_supervisory_authority' => '',
+			'show_business_identity' => 'yes',
 			'display_anchor'       => 'yes',
 			'display_lowest_30'    => 'yes',
 			'label_mode'           => 'date_only',
 			'label_custom'         => 'Cijena na %s',
 			'anchor_tooltip_enabled' => 'yes',
-			'anchor_tooltip_text'    => 'Sidrena cijena prikazuje referentnu cijenu evidentiranu za mjerodavni datum.',
+			'anchor_tooltip_text'    => 'Sidrena cijena je referentna redovna cijena proizvoda ili usluge na prikazani datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
 			'default_ref_date'     => '2026-09-10',
 			'fmcg_ref_date'        => '2025-05-02',
 			'generate_csv'         => 'yes',
@@ -25,6 +44,8 @@ final class Sidrena_Utils {
 			'enable_public_html'   => 'yes',
 			'strict_publication'   => 'yes',
 			'track_price_history'  => 'yes',
+			'failure_notifications' => 'yes',
+			'failure_email'         => '',
 		);
 	}
 
@@ -106,9 +127,87 @@ final class Sidrena_Utils {
 		return $caps;
 	}
 
+	public static function sanitize_oib( $value ) {
+		$digits = preg_replace( '/\D+/', '', (string) $value );
+		return substr( (string) $digits, 0, 11 );
+	}
+
+	public static function is_valid_oib( $value ) {
+		$oib = self::sanitize_oib( $value );
+		if ( 11 !== strlen( $oib ) ) {
+			return false;
+		}
+		$a = 10;
+		for ( $i = 0; $i < 10; $i++ ) {
+			$a = ( $a + (int) $oib[ $i ] ) % 10;
+			if ( 0 === $a ) {
+				$a = 10;
+			}
+			$a = ( 2 * $a ) % 11;
+		}
+		$control = 11 - $a;
+		if ( 10 === $control ) {
+			$control = 0;
+		}
+		return $control === (int) $oib[10];
+	}
+
+	public static function sanitize_business_phone( $value ) {
+		$value = sanitize_text_field( (string) $value );
+		$value = preg_replace( '/[^0-9+() .\/-]/', '', $value );
+		return substr( trim( (string) $value ), 0, 40 );
+	}
+
+	public static function business_identity() {
+		$settings = self::settings();
+		return array(
+			'name'                  => sanitize_text_field( (string) ( $settings['business_name'] ?? '' ) ),
+			'address'               => sanitize_text_field( (string) ( $settings['business_address'] ?? '' ) ),
+			'oib'                   => self::sanitize_oib( $settings['business_oib'] ?? '' ),
+			'email'                 => sanitize_email( (string) ( $settings['business_email'] ?? '' ) ),
+			'phone'                 => self::sanitize_business_phone( $settings['business_phone'] ?? '' ),
+			'registry'              => sanitize_text_field( (string) ( $settings['business_registry'] ?? '' ) ),
+			'registry_number'       => sanitize_text_field( (string) ( $settings['business_registry_number'] ?? '' ) ),
+			'vat_id'                => sanitize_text_field( (string) ( $settings['business_vat_id'] ?? '' ) ),
+			'supervisory_authority' => sanitize_text_field( (string) ( $settings['business_supervisory_authority'] ?? '' ) ),
+			'show'                  => 'yes' === ( $settings['show_business_identity'] ?? 'yes' ),
+		);
+	}
+
 	public static function donation_url() {
-		$url = apply_filters( 'sidrena_donation_url', 'https://sidrene-cijene.com.hr/#donirajte' );
+		$url = apply_filters(
+			'sidrena_donation_url',
+			'https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija'
+		);
 		return is_string( $url ) ? esc_url_raw( $url ) : '';
+	}
+
+	public static function support_email() {
+		return 'sidrena@brendigo.com';
+	}
+
+	public static function support_email_url() {
+		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena podrška' );
+	}
+
+	public static function whatsapp_number() {
+		return '+385 91 901 0092';
+	}
+
+	public static function whatsapp_url() {
+		return 'https://wa.me/385919010092?text=' . rawurlencode( 'Pozdrav, trebam podršku za Sidrena plugin.' );
+	}
+
+	public static function installation_service_url() {
+		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - instalacija i postavljanje 80 EUR' );
+	}
+
+	public static function support_pdf_url() {
+		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
+	}
+
+	public static function developer_label() {
+		return 'Brendigo LTD Developer';
 	}
 
 	public static function locations() {

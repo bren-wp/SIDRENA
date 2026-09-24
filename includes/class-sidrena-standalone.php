@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,6 +28,10 @@ final class Sidrena_Standalone {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'admin_post_sidrena_standalone_save', array( $this, 'save' ) );
 		add_action( 'admin_post_sidrena_standalone_import', array( $this, 'import' ) );
+		add_action( 'admin_post_sidrena_standalone_sync_source', array( $this, 'start_source_sync' ) );
+		add_action( 'sidrena_standalone_sync_batch', array( $this, 'sync_source_batch' ), 10, 3 );
+		add_action( 'save_post', array( $this, 'sync_linked_source_on_save' ), 30, 3 );
+		add_filter( 'the_content', array( $this, 'append_reference_to_linked_content' ), 25 );
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
 			add_shortcode( 'sidrena_cijena', array( $this, 'price_shortcode' ) );
 			add_shortcode( 'sidrena-cijena', array( $this, 'price_shortcode' ) );
@@ -203,6 +216,279 @@ final class Sidrena_Standalone {
 		return $stats;
 	}
 
+
+	private function source_post_types() {
+		$objects = get_post_types( array( 'public' => true ), 'objects' );
+		$out     = array();
+		foreach ( is_array( $objects ) ? $objects : array() as $name => $object ) {
+			$name = sanitize_key( $name );
+			if ( ! $name || in_array( $name, array( 'attachment', self::POST_TYPE, 'sidrena_service' ), true ) ) {
+				continue;
+			}
+			if ( 'product' === $name && class_exists( 'WooCommerce' ) ) {
+				continue;
+			}
+			$label        = is_object( $object ) && ! empty( $object->labels->name ) ? $object->labels->name : $name;
+			$out[ $name ] = sanitize_text_field( $label );
+		}
+		asort( $out, SORT_NATURAL | SORT_FLAG_CASE );
+		return $out;
+	}
+
+	private function linked_item_id( $source_post_id ) {
+		$source_post_id = absint( $source_post_id );
+		if ( ! $source_post_id ) {
+			return 0;
+		}
+		$ids = get_posts(
+			array(
+				'post_type'      => self::POST_TYPE,
+				'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => '_sidrena_standalone_source_post_id',
+				'meta_value'     => $source_post_id,
+				'no_found_rows'  => true,
+			)
+		);
+		return ! empty( $ids ) ? absint( $ids[0] ) : 0;
+	}
+
+	private function source_price( $source_post_id, $preferred_key = '' ) {
+		$source_post_id = absint( $source_post_id );
+		$preferred_key  = sanitize_key( (string) $preferred_key );
+		$keys           = array();
+		if ( $preferred_key ) {
+			$keys[] = $preferred_key;
+		}
+		$keys = array_merge( $keys, array( '_price', 'price', 'cijena', 'product_price', '_regular_price', 'regular_price' ) );
+		$keys = array_values( array_unique( $keys ) );
+		foreach ( $keys as $key ) {
+			$value = Sidrena_Utils::decimal( get_post_meta( $source_post_id, $key, true ) );
+			if ( '' !== $value ) {
+				return array( 'price' => $value, 'key' => $key );
+			}
+		}
+		return array( 'price' => '', 'key' => $preferred_key );
+	}
+
+	public function start_source_sync() {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_standalone_sync_source' ) ) {
+			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
+		}
+		$post_type = isset( $_POST['source_post_type'] ) ? sanitize_key( wp_unslash( $_POST['source_post_type'] ) ) : '';
+		$price_key = isset( $_POST['source_price_key'] ) ? sanitize_key( wp_unslash( $_POST['source_price_key'] ) ) : '';
+		$types     = $this->source_post_types();
+		if ( ! $post_type || ! isset( $types[ $post_type ] ) ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_sync_failed' ) );
+			exit;
+		}
+
+		update_option(
+			'sidrena_standalone_sync_state',
+			array(
+				'post_type'  => $post_type,
+				'price_key'  => $price_key,
+				'status'     => 'queued',
+				'page'       => 1,
+				'created'    => 0,
+				'updated'    => 0,
+				'skipped'    => 0,
+				'started_at' => current_time( 'mysql' ),
+			),
+			false
+		);
+		$scheduled = wp_schedule_single_event( time() + 2, 'sidrena_standalone_sync_batch', array( $post_type, 1, $price_key ) );
+		if ( false === $scheduled || is_wp_error( $scheduled ) ) {
+			update_option( 'sidrena_standalone_sync_state', array( 'post_type' => $post_type, 'status' => 'error' ), false );
+			wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_sync_failed' ) );
+			exit;
+		}
+		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_sync_started' ) );
+		exit;
+	}
+
+	public function sync_source_batch( $post_type, $page = 1, $price_key = '' ) {
+		$post_type = sanitize_key( (string) $post_type );
+		$page      = max( 1, absint( $page ) );
+		$price_key = sanitize_key( (string) $price_key );
+		if ( ! post_type_exists( $post_type ) || in_array( $post_type, array( 'attachment', self::POST_TYPE, 'sidrena_service' ), true ) ) {
+			return;
+		}
+
+		$source_ids = get_posts(
+			array(
+				'post_type'              => $post_type,
+				'post_status'            => 'publish',
+				'posts_per_page'         => 100,
+				'paged'                  => $page,
+				'orderby'                => 'ID',
+				'order'                  => 'ASC',
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		$state   = get_option( 'sidrena_standalone_sync_state', array() );
+		$created = absint( $state['created'] ?? 0 );
+		$updated = absint( $state['updated'] ?? 0 );
+		$skipped = absint( $state['skipped'] ?? 0 );
+
+		foreach ( is_array( $source_ids ) ? $source_ids : array() as $source_id ) {
+			$source_id = absint( $source_id );
+			if ( ! $source_id ) {
+				++$skipped;
+				continue;
+			}
+			$item_id    = $this->linked_item_id( $source_id );
+			$title      = sanitize_text_field( get_the_title( $source_id ) );
+			$stored_key = $item_id ? sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) ) : '';
+			$lookup_key = $price_key ?: $stored_key;
+			$price      = $this->source_price( $source_id, $lookup_key );
+			$current    = $item_id ? Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) ) : '';
+			if ( '' !== $price['price'] ) {
+				$current = $price['price'];
+			} elseif ( $lookup_key ) {
+				$current = '';
+			}
+			$post_status = $title && '' !== $current ? 'publish' : 'draft';
+
+			if ( $item_id ) {
+				$result = wp_update_post( array( 'ID' => $item_id, 'post_title' => $title ?: __( 'Proizvod bez naziva', 'sidrena' ), 'post_status' => $post_status ), true );
+				if ( is_wp_error( $result ) ) {
+					++$skipped;
+					continue;
+				}
+				++$updated;
+			} else {
+				$item_id = wp_insert_post(
+					array(
+						'post_type'   => self::POST_TYPE,
+						'post_status' => $post_status,
+						'post_title'  => $title ?: __( 'Proizvod bez naziva', 'sidrena' ),
+					),
+					true
+				);
+				if ( is_wp_error( $item_id ) || ! $item_id ) {
+					++$skipped;
+					continue;
+				}
+				++$created;
+				update_post_meta( $item_id, '_sidrena_standalone_code', 'WP-' . $source_id );
+			}
+			update_post_meta( $item_id, '_sidrena_standalone_source_post_id', $source_id );
+			update_post_meta( $item_id, '_sidrena_standalone_source_post_type', $post_type );
+			if ( $price['key'] ) {
+				update_post_meta( $item_id, '_sidrena_standalone_source_price_key', $price['key'] );
+			}
+			if ( '' !== $current ) {
+				update_post_meta( $item_id, '_sidrena_standalone_current_price', $current );
+			} elseif ( $lookup_key ) {
+				delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
+			}
+			if ( '' === get_post_meta( $item_id, '_sidrena_standalone_availability', true ) ) {
+				update_post_meta( $item_id, '_sidrena_standalone_availability', 'dostupno' );
+			}
+		}
+
+		$state = array(
+			'post_type'  => $post_type,
+			'price_key'  => $price_key,
+			'status'     => count( $source_ids ) === 100 ? 'running' : 'complete',
+			'page'       => $page,
+			'created'    => $created,
+			'updated'    => $updated,
+			'skipped'    => $skipped,
+			'updated_at' => current_time( 'mysql' ),
+		);
+		update_option( 'sidrena_standalone_sync_state', $state, false );
+
+		if ( count( $source_ids ) === 100 ) {
+			$scheduled = wp_schedule_single_event( time() + 3, 'sidrena_standalone_sync_batch', array( $post_type, $page + 1, $price_key ) );
+			if ( false === $scheduled || is_wp_error( $scheduled ) ) {
+				$state['status']     = 'error';
+				$state['updated_at'] = current_time( 'mysql' );
+				update_option( 'sidrena_standalone_sync_state', $state, false );
+				Sidrena_Audit::log(
+					'wordpress_catalog_sync',
+					'error',
+					__( 'Sinkronizacija WordPress sadržaja zaustavljena je jer sljedeći batch nije bilo moguće zakazati.', 'sidrena' ),
+					$state
+				);
+			}
+			return;
+		}
+
+		Sidrena_Audit::log(
+			'wordpress_catalog_sync',
+			'success',
+			sprintf( __( 'Sinkronizacija WordPress sadržaja dovršena: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
+			$state
+		);
+		Sidrena_Pricelist::queue_regeneration();
+	}
+
+	public function sync_linked_source_on_save( $post_id, $post, $update ) {
+		unset( $update );
+		$post_id = absint( $post_id );
+		if ( ! $post_id || ! $post instanceof WP_Post || self::POST_TYPE === $post->post_type || 'sidrena_service' === $post->post_type || wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+		$item_id = $this->linked_item_id( $post_id );
+		if ( ! $item_id ) {
+			return;
+		}
+		$price_key = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
+		$price     = $this->source_price( $post_id, $price_key );
+		$changed   = false;
+		$old       = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
+		if ( '' !== $price['price'] ) {
+			if ( $old !== $price['price'] ) {
+				update_post_meta( $item_id, '_sidrena_standalone_current_price', $price['price'] );
+				$changed = true;
+			}
+		} elseif ( $price_key && '' !== $old ) {
+			delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
+			$changed = true;
+		}
+		$title = sanitize_text_field( get_the_title( $post_id ) );
+		if ( $title && $title !== get_the_title( $item_id ) ) {
+			wp_update_post( array( 'ID' => $item_id, 'post_title' => $title ) );
+			$changed = true;
+		}
+		$current = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
+		$desired = 'publish' === $post->post_status && '' !== $current ? 'publish' : 'draft';
+		if ( $desired !== get_post_status( $item_id ) ) {
+			wp_update_post( array( 'ID' => $item_id, 'post_status' => $desired ) );
+			$changed = true;
+		}
+		if ( $changed ) {
+			Sidrena_Pricelist::queue_regeneration();
+		}
+	}
+
+	public function append_reference_to_linked_content( $content ) {
+		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() ) {
+			return $content;
+		}
+		$source_id = get_the_ID();
+		$item_id   = $this->linked_item_id( $source_id );
+		if ( ! $item_id || 'publish' !== get_post_status( $item_id ) ) {
+			return $content;
+		}
+		if ( function_exists( 'has_shortcode' ) && ( has_shortcode( $content, 'sidrena_cijena' ) || has_shortcode( $content, 'sidrena-cijena' ) ) ) {
+			return $content;
+		}
+		$reference = $this->price_shortcode( array( 'id' => 's' . $item_id, 'show_current' => 'no' ) );
+		if ( ! $reference ) {
+			return $content;
+		}
+		return $content . '<div class="sidrena-auto-reference">' . $reference . '</div>';
+	}
+
+
 	public function render() {
 		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return;
@@ -226,12 +512,30 @@ final class Sidrena_Standalone {
 		?>
 		<div class="sid-page-head">
 			<div>
-				<span class="sid-kicker"><?php esc_html_e( 'Samostalni katalog', 'sidrena' ); ?></span>
-				<h2><?php esc_html_e( 'Proizvodi bez WooCommercea', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Za običan WordPress unesite proizvode izravno u Sidreni. Isti podaci koriste se za javni HTML cjenik, CSV/XML, arhivu i tehničku provjeru.', 'sidrena' ); ?></p>
+				<span class="sid-kicker"><?php esc_html_e( 'WordPress katalog', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Postojeći proizvodi i WordPress katalog', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Možete voditi proizvode izravno u Sidreni ili povući postojeći WordPress tip sadržaja. Povezanim zapisima Sidrena automatski prikazuje sidrenu cijenu na njihovoj javnoj stranici.', 'sidrena' ); ?></p>
 			</div>
 			<span class="sid-status-pill"><?php echo esc_html( sprintf( __( '%d proizvoda', 'sidrena' ), $total ) ); ?></span>
 		</div>
+		<?php
+		$source_types = $this->source_post_types();
+		$sync_state   = get_option( 'sidrena_standalone_sync_state', array() );
+		?>
+		<section class="sid-card sid-source-sync">
+			<div class="sid-section-head">
+				<div><span class="sid-kicker"><?php esc_html_e( 'Automatsko povezivanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Povuci postojeće proizvode / sadržaj', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Odaberite postojeći tip sadržaja. Sidrena će povući nazive, povezati zapise i pokušati prepoznati postojeće polje cijene. Nakon toga u pravilu trebate dopuniti samo sidrenu cijenu i ostale obvezne podatke koji nedostaju.', 'sidrena' ); ?></p></div>
+				<?php if ( ! empty( $sync_state['status'] ) ) : ?><span class="sid-status-pill <?php echo 'complete' === $sync_state['status'] ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( ucfirst( (string) $sync_state['status'] ) ); ?></span><?php endif; ?>
+			</div>
+			<form class="sid-inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="sidrena_standalone_sync_source">
+				<?php wp_nonce_field( 'sidrena_standalone_sync_source' ); ?>
+				<label><span><?php esc_html_e( 'Tip sadržaja', 'sidrena' ); ?></span><select name="source_post_type" required><option value=""><?php esc_html_e( 'Odaberite…', 'sidrena' ); ?></option><?php foreach ( $source_types as $source_name => $source_label ) : ?><option value="<?php echo esc_attr( $source_name ); ?>"><?php echo esc_html( $source_label . ' (' . $source_name . ')' ); ?></option><?php endforeach; ?></select></label>
+				<label><span><?php esc_html_e( 'Meta ključ postojeće cijene', 'sidrena' ); ?></span><input type="text" name="source_price_key" placeholder="_price / price / cijena"><small><?php esc_html_e( 'Ostavite prazno za automatsko prepoznavanje.', 'sidrena' ); ?></small></label>
+				<button type="submit" class="button sid-secondary"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Pokreni sinkronizaciju', 'sidrena' ); ?></button>
+			</form>
+			<?php if ( ! empty( $sync_state['created'] ) || ! empty( $sync_state['updated'] ) || ! empty( $sync_state['skipped'] ) ) : ?><p class="description"><?php echo esc_html( sprintf( __( 'Zadnja sinkronizacija: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), absint( $sync_state['created'] ?? 0 ), absint( $sync_state['updated'] ?? 0 ), absint( $sync_state['skipped'] ?? 0 ) ) ); ?></p><?php endif; ?>
+		</section>
 		<form class="sid-card sid-form sid-standalone-import" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="sidrena_standalone_import">
 			<?php wp_nonce_field( 'sidrena_standalone_import' ); ?>
@@ -250,7 +554,7 @@ final class Sidrena_Standalone {
 			<?php wp_nonce_field( 'sidrena_standalone_save' ); ?>
 			<div class="sid-table-wrap">
 				<table class="widefat striped sid-bulk-table sid-standalone-table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'Samostalni Sidrena katalog proizvoda', 'sidrena' ); ?></caption>
+					<caption class="screen-reader-text"><?php esc_html_e( 'Sidrena WordPress katalog proizvoda', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
 							<th scope="col"><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
@@ -284,7 +588,7 @@ final class Sidrena_Standalone {
 			<template id="sidrena-standalone-template"><?php $this->row( 0, '__KEY__', true ); ?></template>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
-		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija samostalnog kataloga', 'sidrena' ); ?>">
+		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija WordPress kataloga', 'sidrena' ); ?>">
 			<?php if ( $page > 1 ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page - 1 ) ) ); ?>">← <?php esc_html_e( 'Prethodna', 'sidrena' ); ?></a><?php endif; ?>
 			<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), min( $page, $pages ), $pages ) ); ?></span>
 			<?php if ( $page < $pages ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page + 1 ) ) ); ?>"><?php esc_html_e( 'Sljedeća', 'sidrena' ); ?> →</a><?php endif; ?>
@@ -302,7 +606,7 @@ final class Sidrena_Standalone {
 		$availability = $meta( '_sidrena_standalone_availability' ) ?: 'dostupno';
 		?>
 		<tr class="sidrena-standalone-row">
-			<td><input type="hidden" name="items[<?php echo esc_attr( $key ); ?>][id]" value="<?php echo esc_attr( $id ); ?>"><input type="text" name="items[<?php echo esc_attr( $key ); ?>][name]" value="<?php echo esc_attr( $id ? get_the_title( $id ) : '' ); ?>" placeholder="<?php esc_attr_e( 'Naziv proizvoda', 'sidrena' ); ?>"><?php if ( $id ) : ?><small class="sid-bulk-meta"><code>[sidrena_cijena id="s<?php echo esc_attr( $id ); ?>"]</code></small><?php endif; ?></td>
+			<td><input type="hidden" name="items[<?php echo esc_attr( $key ); ?>][id]" value="<?php echo esc_attr( $id ); ?>"><input type="text" name="items[<?php echo esc_attr( $key ); ?>][name]" value="<?php echo esc_attr( $id ? get_the_title( $id ) : '' ); ?>" placeholder="<?php esc_attr_e( 'Naziv proizvoda', 'sidrena' ); ?>"><?php if ( $id ) : ?><small class="sid-bulk-meta"><code>[sidrena_cijena id="s<?php echo esc_attr( $id ); ?>"]</code><?php $source_id = absint( $meta( '_sidrena_standalone_source_post_id' ) ); if ( $source_id ) : ?> · <a href="<?php echo esc_url( get_permalink( $source_id ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Povezana stranica', 'sidrena' ); ?> #<?php echo esc_html( $source_id ); ?></a><?php endif; ?></small><?php endif; ?></td>
 			<td><input type="text" name="items[<?php echo esc_attr( $key ); ?>][code]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_code' ) ); ?>"></td>
 			<td><input type="text" name="items[<?php echo esc_attr( $key ); ?>][brand]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_brand' ) ); ?>"></td>
 			<td><input type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $key ); ?>][current]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_current_price' ) ); ?>"></td>
@@ -424,7 +728,7 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log(
 			'standalone_catalog_save',
 			$errors ? 'warning' : 'success',
-			sprintf( __( 'Samostalni katalog spremljen: %1$d spremljenih, %2$d obrisanih, %3$d grešaka.', 'sidrena' ), $saved, $deleted, $errors ),
+			sprintf( __( 'WordPress katalog spremljen: %1$d spremljenih, %2$d obrisanih, %3$d grešaka.', 'sidrena' ), $saved, $deleted, $errors ),
 			array( 'saved' => $saved, 'deleted' => $deleted, 'errors' => $errors )
 		);
 		Sidrena_Pricelist::queue_regeneration();
@@ -565,7 +869,7 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log(
 			'standalone_catalog_import',
 			'success',
-			sprintf( __( 'Uvoz samostalnog kataloga dovršen: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
+			sprintf( __( 'Uvoz WordPress kataloga dovršen: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
 			array( 'created' => $created, 'updated' => $updated, 'skipped' => $skipped )
 		);
 		Sidrena_Pricelist::queue_regeneration();
@@ -807,7 +1111,7 @@ final class Sidrena_Standalone {
 	}
 
 	public function price_shortcode( $atts ) {
-		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'sidrena_cijena' );
+		$atts = shortcode_atts( array( 'id' => 0, 'show_current' => 'yes' ), $atts, 'sidrena_cijena' );
 		$raw  = (string) $atts['id'];
 		$id   = absint( preg_replace( '/\D+/', '', $raw ) );
 		if ( ! $id || self::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
@@ -823,7 +1127,7 @@ final class Sidrena_Standalone {
 		wp_enqueue_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
 		$currency = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '€';
 		$out = '<span class="sidrena-standalone-price">';
-		if ( '' !== $current ) {
+		if ( 'no' !== sanitize_key( (string) $atts['show_current'] ) && '' !== $current ) {
 			$out .= '<span class="sidrena-standalone-price__current">' . esc_html( Sidrena_Utils::money( $current ) . ' ' . $currency ) . '</span>';
 		}
 		$sale_name = trim( (string) get_post_meta( $id, '_sidrena_standalone_sale_name', true ) );
@@ -832,8 +1136,11 @@ final class Sidrena_Standalone {
 			$out .= '<span class="sidrena-lowest"><span class="sidrena-lowest__label">' . esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . ':</span> <span class="sidrena-lowest__value">' . esc_html( Sidrena_Utils::money( $lowest_30 ) . ' ' . $currency ) . '</span></span>';
 		}
 		if ( '' !== $anchor ) {
-			$date = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'];
-			$out .= '<span class="sidrena-anchor"><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span></span>';
+			$date       = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'];
+			$tooltip    = Sidrena_Utils::anchor_tooltip();
+			$tooltip_id = 'sidrena-anchor-tip-s' . absint( $id );
+			$tip_html   = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+			$out       .= '<span class="sidrena-anchor' . ( $tooltip ? ' sidrena-anchor--has-tooltip' : '' ) . '"' . ( $tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '' ) . '><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span>' . $tip_html . '</span>';
 		}
 		$out .= '</span>';
 		return $out;

@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: Brendigo LTD Developer
+Author URI: https://brendigo.com/
+Plugin URI: https://sidrene-cijene.com.hr/
+Support: sidrena@brendigo.com
+-->
+
 # Sidrena — pravne i tehničke bilješke
 
 Sidrena je tehnički WordPress/WooCommerce alat za evidenciju, prikaz i objavu cijena. Ne zamjenjuje pravni savjet i ne smije izmišljati povijesne vrijednosti koje ne postoje u provjerljivom izvoru.
@@ -12,6 +20,15 @@ Sidrena je tehnički WordPress/WooCommerce alat za evidenciju, prikaz i objavu c
 
 Službeni URL-ovi nalaze se i u Sidrena → Propisi.
 
+## Primarni i pomoćni izvori
+
+Sidrena razlikuje izvore po ulozi:
+
+- **Narodne novine i Ministarstvo gospodarstva** koriste se kao primarni izvori za rokove, obvezna polja, referentne datume i način objave.
+- **Hrvatska obrtnička komora (HOK)** koristi se kao praktično pojašnjenje za obrtnike, ali ne zamjenjuje tekst propisa.
+- **Državni inspektorat** koristi se za opća pravila transparentnosti i predugovorne informacije kod internetske prodaje.
+- Implementacije drugih WordPress plugina i javni cjenici drugih trgovaca koriste se samo kao UX/tehnička inspiracija; njihov format nije pravni standard.
+
 ## Dodatna / sidrena cijena
 
 Za novobuhvaćene proizvode i usluge Odluka koristi referentni datum **10.09.2026.** Za ranije obuhvaćene FMCG kategorije ostaje **02.05.2025.** Dodatna cijena prikazuje se uz aktualnu cijenu.
@@ -23,6 +40,8 @@ Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put 
 Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javne strojno obradive CSV/XML cjenike. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu.
 
 Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti automatizirano prikupljanje podataka o aktualnim maloprodajnim cijenama.
+
+Odluka ne propisuje točan redoslijed CSV stupaca, naziv XML elemenata, razdjelnik ni XSD shemu. Sidrena zato ne tvrdi da postoji jedinstveni službeni CSV/XML predložak, nego čuva obvezni skup podataka i stabilnu vlastitu strukturu.
 
 Sidrena zato:
 - generira zasebnu datoteku po aktivnoj lokaciji i zaseban webshop objekt,
@@ -36,7 +55,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.6 uvodi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 0.1.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -65,6 +84,16 @@ Ministarstvo je pojasnilo da se kod više fizičkih lokacija objavljuju zasebne 
 
 Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba wp sidrena generate.
 
-## Privatnost i donacije
+## Podaci obrta / tvrtke na mrežnoj stranici
 
-Sidrena nema telemetriju, udaljenu aktivaciju, licencni server, obavezni račun ni Pro paywall. Donacija je dobrovoljna, nalazi se samo unutar Sidrena sučelja i na projektnoj stranici te ne mijenja dostupnost funkcija.
+Podaci kao što su naziv i sjedište, kontaktni e-mail i telefon, podaci javnog registra, PDV identifikacija kada je primjenjiva te nadležno tijelo proizlaze iz širih pravila elektroničke trgovine i zaštite potrošača. To **nisu dodatni obvezni stupci NN 101/2026 CSV/XML cjenika**.
+
+Sidrena ih zato vodi zasebno u Postavkama i, po izboru administratora, prikazuje iznad javne stranice **Objava cjenika**. OIB se tehnički provjerava kontrolnom znamenkom, ali administrator i dalje odgovara za točnost poslovnih podataka.
+
+## Podrška, distribucija i donacija
+
+Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 0092. Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
+
+Donacija se otvara izravno preko Revolut gumba u Sidrena administraciji.
+
+Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo LTD.

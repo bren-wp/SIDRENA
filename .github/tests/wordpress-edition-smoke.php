@@ -1,10 +1,19 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $root = isset( $argv[1] ) && is_dir( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : dirname( __DIR__, 2 );
 $main = is_file( $root . '/sidrena-wordpress.php' ) ? $root . '/sidrena-wordpress.php' : $root . '/editions/wordpress/sidrena-wordpress.php';
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
-define( 'SIDRENA_VERSION', '2.0.0' );
+define( 'SIDRENA_VERSION', '0.1.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_FILE', $main );
 define( 'SIDRENA_DIR', $root . '/' );
@@ -73,6 +82,9 @@ Sidrena_Plugin::instance()->run();
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_menu'] ), 'WordPress edition admin menu must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'WordPress catalog import must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_save'] ), 'WordPress catalog save must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_standalone_sync_batch'] ), 'WordPress source sync worker must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_filters']['the_content'] ), 'WordPress linked-content auto display filter must register.' );
+sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_publication_watch'] ), 'Publication watchdog must register.' );
 
 foreach ( array_keys( $GLOBALS['sidrena_actions'] ) as $hook ) {
 	sidrena_wp_assert( 0 !== strpos( $hook, 'woocommerce_' ) && 0 !== strpos( $hook, 'wc_product_' ), 'Woo action leaked into WordPress edition: ' . $hook );
@@ -85,6 +97,7 @@ $method = new ReflectionMethod( 'Sidrena_Activator', 'ensure_schedules' );
 $method->setAccessible( true );
 $method->invoke( null );
 sidrena_wp_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_daily_generation'] ), 'Daily generation must remain scheduled.' );
+sidrena_wp_assert( isset( $GLOBALS['sidrena_scheduled']['sidrena_publication_watch'] ), 'Publication watchdog must be scheduled.' );
 sidrena_wp_assert( ! isset( $GLOBALS['sidrena_scheduled']['sidrena_history_seed'] ), 'Woo history seed must not exist in WordPress edition.' );
 
 fwrite( STDOUT, "Sidrena WordPress edition smoke test passed.\n" );

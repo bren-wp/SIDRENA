@@ -1,4 +1,13 @@
 <?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo LTD Developer
+ * @link https://sidrene-cijene.com.hr/
+ * @see https://brendigo.com/
+ */
+
 $root    = isset( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : '';
 $edition = isset( $argv[2] ) ? (string) $argv[2] : '';
 
@@ -51,7 +60,7 @@ function sidrena_entry_assert( $condition, $message ) {
 }
 
 sidrena_entry_assert( defined( 'SIDRENA_EDITION' ) && SIDRENA_EDITION === $edition, 'Entrypoint defined the wrong edition.' );
-sidrena_entry_assert( defined( 'SIDRENA_VERSION' ) && '2.0.0' === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
+sidrena_entry_assert( defined( 'SIDRENA_VERSION' ) && '0.1.0' === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
 sidrena_entry_assert( defined( 'SIDRENA_DIR' ) && realpath( SIDRENA_DIR ) === realpath( $root ), 'SIDRENA_DIR does not point to the package root.' );
 sidrena_entry_assert( function_exists( 'sidrena_cijena' ), 'Template helper was not loaded through the package entrypoint.' );
 sidrena_entry_assert( class_exists( 'Sidrena_Plugin' ), 'Common plugin bootstrap did not load.' );

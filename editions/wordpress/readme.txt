@@ -1,66 +1,99 @@
 === Sidrena WordPress ===
 Contributors: brendigo
-Donate link: https://sidrene-cijene.com.hr/#donirajte
+Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
 Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 2.0.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 0.1.0
+License: Sidrena Software License 1.0
+License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
-Sidrene cijene za običan WordPress bez WooCommercea: vlastiti katalog proizvoda i usluga, CSV/XML cjenici i arhiva 30+ dana.
+Sidrena WordPress povezuje postojeći WordPress sadržaj ili vlastiti katalog sa sidrenim cijenama, javnim cjenicima i arhivom objava.
+
+Developer: Brendigo LTD Developer
+Plugin URI: https://sidrene-cijene.com.hr/
+Author URI: https://brendigo.com/
+Support: sidrena@brendigo.com
 
 == Description ==
 
-**Sidrena WordPress** je samostalni WordPress plugin za web stranice koje ne koriste WooCommerce.
+= Sidrena WordPress 0.1.0 =
 
-Ovo izdanje koristi vlastiti Sidrena katalog proizvoda i katalog usluga. WooCommerce proizvodi, WooCommerce history hookovi i WooCommerce CSV integracija nisu dio ovog paketa.
+Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
-Glavne mogućnosti:
+⚓ Automatski prikaz sidrene cijene
+* povežite postojeći javni WordPress tip sadržaja s Sidrena katalogom
+* Sidrena pokušava prepoznati postojeće polje cijene
+* nakon povezivanja prati promjene naziva i cijene
+* sidrena cijena automatski se prikazuje na povezanoj javnoj stranici
 
-* vlastiti katalog proizvoda
-* katalog usluga
-* sidrena/referentna cijena
-* jedinična cijena
-* CSV/XML javni cjenici
-* javni HTML cjenik
-* REST API
-* više lokacija
-* arhiva 30+ dana
-* SHA-256 integritet
-* WP-Cron i WP-CLI
-* bez telemetrije i bez Pro paywalla
+📦 Katalog i uvoz
+* vlastiti WordPress katalog proizvoda
+* CSV/XML uvoz
+* proizvodi, usluge, marka, šifra, barkod i dostupnost
+* jedinična cijena i podaci o pakiranju
 
-Ako web koristi WooCommerce, instalirajte zasebni **Sidrena WooCommerce** paket. Nemojte aktivirati oba Sidrena izdanja istodobno.
+🌐 Objava cjenika
+* javna stranica Objava cjenika
+* shortcode [sidrena_cjenici]
+* pretraživi HTML cjenik
+* javna arhiva prethodnih objava
+* CSV/XML i REST pristup
 
+⏰ Automatizacija
+* zadano dnevno generiranje u 06:30
+* sigurnosna provjera ponovno pokreće propuštenu objavu nakon planiranog vremena
+* za pouzdano izvršavanje poslovno kritičnog termina preporučuje se server cron
+
+🛟 Podrška
+* sidrena@brendigo.com
+* WhatsApp +385 91 901 0092
+* PDF podrška u plugin paketu
+* instalacija i početno postavljanje: 80 EUR jednokratno
+
+❤️ Donacija
+Izravna Revolut donacija dostupna je u Sidrena administraciji.
+
+Ako web koristi WooCommerce proizvode, instalirajte zasebni Sidrena WooCommerce paket. Istodobno može biti aktivno samo jedno Sidrena izdanje.
+
+Developer: Brendigo LTD Developer
 Službena stranica: https://sidrene-cijene.com.hr/
-
-== Migration from Sidrena 1.x ==
-
-Prije instalacije 2.0 deaktivirajte stari Sidrena 1.x, ali ga nemojte prvo brisati kroz WordPress. Instalirajte Sidrena WordPress, provjerite podatke i javne cjenike, pa tek zatim uklonite stari folder nakon backupa. Detaljan postupak je u docs/UPUTE.md.
 
 == Installation ==
 
-1. U WordPressu otvorite Dodaci > Dodaj novi > Prenesi dodatak.
-2. Prenesite `sidrena-wordpress-2.0.0.zip`.
-3. Aktivirajte **Sidrena WordPress**.
-4. Otvorite Sidrena > Katalog i unesite ili uvezite proizvode.
-5. Po potrebi otvorite Usluge i Lokacije.
-6. Pregledajte Postavke i generirajte prvi cjenik.
+1. Prenesite sidrena-wordpress-0.1.0.zip.
+2. Aktivirajte Sidrena WordPress.
+3. Otvorite Sidrena > Katalog.
+4. Povežite postojeći WordPress tip sadržaja ili unesite/uvezite proizvode.
+5. Dopunite sidrene cijene i obvezne podatke.
+6. Provjerite Lokacije.
+7. U Cjenicima generirajte prvu objavu.
+8. Izradite stranicu Objava cjenika.
+9. Provjerite automatski prikaz sidrene cijene i javnu arhivu.
 
-Detaljne upute nalaze se u `docs/UPUTE.md` unutar paketa.
+Detaljne upute i PDF podrška nalaze se u docs/.
+
+== Frequently Asked Questions ==
+
+= Moram li ručno dodavati shortcode uz svaki proizvod? =
+Ne kada je proizvod povezan s postojećim WordPress sadržajem. Sidrena automatski dodaje sidrenu cijenu na povezanu javnu stranicu.
+
+= Može li Sidrena povući postojeće proizvode? =
+Da. U Katalogu odaberite postojeći javni tip sadržaja i po potrebi meta ključ cijene. Sinkronizacija se obrađuje u batchovima.
+
+= Objavljuje li cjenik automatski? =
+Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Sidrena ima i sigurnosnu provjeru propuštene dnevne objave. Za precizno izvršavanje preporučuje se server cron.
+
+= Smijem li prodavati ili preprodavati plugin? =
+Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo LTD.
 
 == Changelog ==
 
-= 2.0.0 =
-* Sidrena je razdvojena na dva zasebna plugina.
-* Ovo izdanje više ne učitava niti pakira WooCommerce product/history/import klase.
-* Vlastiti WordPress katalog je jedini izvor proizvoda.
-* Admin, REST, Site Health i cjenici rade isključivo u WordPress edition modu.
-* WordPress paket ne sadrži Woo-specific klase.
-
-== Upgrade Notice ==
-
-= 2.0.0 =
-Velika arhitekturna promjena. Za web bez WooCommercea instalirajte Sidrena WordPress 2.0.0. Za WooCommerce trgovinu koristite zasebni Sidrena WooCommerce paket.
+= 0.1.0 =
+* Prvo javno izdanje.
+* WordPress katalog i povezivanje postojećeg WordPress sadržaja.
+* Automatski prikaz sidrene cijene na povezanoj javnoj stranici.
+* CSV/XML, REST, Objava cjenika i arhiva 30+ dana.
+* Automatska dnevna objava i sigurnosna provjera propuštenog rasporeda.
+* Ugrađena PDF, e-mail i WhatsApp podrška.
