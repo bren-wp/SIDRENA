@@ -112,7 +112,7 @@ Dostupni su i zasebni prikazi:
 
 ## 🧰 Usluge i uvoz
 
-`[sidrena_usluge]` koristi server-side paginaciju od 10 do 100 stavki, zadano 50. Admin compliance audit usluge obrađuje u batchovima od 250 umjesto učitavanja cijelog kataloga.
+`[sidrena_usluge]` koristi server-side paginaciju od 10 do 100 stavki, zadano 50. Admin compliance audit usluga obrađuje se u batchovima od 250 umjesto učitavanja cijelog kataloga.
 
 WordPress katalog obrađuje CSV retke streaming pristupom. XML koristi `XMLReader` kada je dostupan, uz NONET i zabranu DOCTYPE/ENTITY deklaracija. CSV/XML import ograničen je na 50.000 zapisa po datoteci, a limit se provjerava prije poslovnih promjena.
 
@@ -155,7 +155,7 @@ Službeni GitHub release smije sadržavati samo dva plugin ZIP asseta:
 - `sidrena-wordpress-<verzija>.zip`
 - `sidrena-woocommerce-<verzija>.zip`
 
-`portable.exe`, `setup.exe`, desktop aplikacije i dodatni generički paketi nisu dio Sidrena distribucije.
+Dodatni paketi nisu dio Sidrena distribucije.
 
 ## 🔐 Licenca
 
