@@ -107,12 +107,21 @@ final class SidrenaStatic
         try {
             return $this->generate();
         } catch (Throwable $e) {
-            $this->writeStatus([
-                'ok' => false,
-                'generated_at' => null,
-                'message' => $e->getMessage(),
-            ]);
-            return $this->status();
+            try {
+                $this->writeStatus([
+                    'ok' => false,
+                    'generated_at' => null,
+                    'message' => $e->getMessage(),
+                ]);
+            } catch (Throwable $statusError) {
+                // A read-only/full storage failure must not hide an already
+                // valid previous snapshot from the public page.
+            }
+            $status = $this->status();
+            if (empty($status['message'])) {
+                $status['message'] = $e->getMessage();
+            }
+            return $status;
         }
     }
 
@@ -448,13 +457,20 @@ final class SidrenaStatic
                 throw new RuntimeException('CSV ima više od dopuštenih 50.000 redaka.');
             }
             $row = [];
+            $hasValue = false;
             foreach ($normalized as $i => $key) {
                 if (strpos($key, '_empty_') === 0) {
                     continue;
                 }
-                $row[$key] = isset($values[$i]) ? trim((string) $values[$i]) : '';
+                $value = isset($values[$i]) ? trim((string) $values[$i]) : '';
+                $row[$key] = $value;
+                if ($value !== '') {
+                    $hasValue = true;
+                }
             }
-            $rows[] = $row;
+            if ($hasValue) {
+                $rows[] = $row;
+            }
         }
         fclose($stream);
         return $rows;
@@ -571,6 +587,9 @@ final class SidrenaStatic
             if (($row['dostupnost'] ?? '') !== '' && !in_array((string) $row['dostupnost'], ['dostupno', 'nedostupno'], true)) {
                 $issues[] = $label . ': nepoznata vrijednost dostupnosti "' . (string) $row['dostupnost'] . '"';
             }
+            if (($row['sidrena_cijena'] ?? '') !== '' && ($row['datum_sidrene_cijene'] ?? '') === '') {
+                $issues[] = $label . ': sidrena cijena nema valjani referentni datum';
+            }
             $status = (string) ($row['_unit_status'] ?? 'review');
             if ($status === 'review') {
                 $issues[] = $label . ': primjenjivost jedinične cijene nije pregledana';
@@ -596,6 +615,9 @@ final class SidrenaStatic
             }
             if ($row['posebni_oblik_prodaje'] === 'da' && $row['naziv_posebnog_oblika_prodaje'] === '') {
                 $issues[] = $label . ': posebni oblik prodaje nema naziv';
+            }
+            if (($row['sidrena_cijena'] ?? '') !== '' && ($row['datum_sidrene_cijene'] ?? '') === '') {
+                $issues[] = $label . ': sidrena cijena nema valjani referentni datum';
             }
         }
         return $issues;
@@ -1071,13 +1093,23 @@ final class SidrenaStatic
         if ($value === '') {
             return '';
         }
-        foreach (['!Y-m-d', '!d.m.Y.', '!d.m.Y'] as $format) {
+
+        $formats = [
+            '!Y-m-d' => 'Y-m-d',
+            '!d.m.Y.' => 'd.m.Y.',
+            '!d.m.Y' => 'd.m.Y',
+        ];
+        foreach ($formats as $format => $roundTrip) {
             $date = DateTimeImmutable::createFromFormat($format, $value);
-            if ($date instanceof DateTimeImmutable) {
+            $errors = DateTimeImmutable::getLastErrors();
+            $valid = $date instanceof DateTimeImmutable
+                && ($errors === false || ((int) $errors['warning_count'] === 0 && (int) $errors['error_count'] === 0))
+                && $date->format($roundTrip) === $value;
+            if ($valid) {
                 return $date->format('Y-m-d');
             }
         }
-        return $this->clean($value);
+        return '';
     }
 
     private function csvSafeCell(string $value): string
@@ -1138,7 +1170,17 @@ final class SidrenaStatic
 
     private function lower(string $value): string
     {
-        return function_exists('mb_strtolower') ? mb_strtolower($value, 'UTF-8') : strtolower($value);
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($value, 'UTF-8');
+        }
+        $value = strtr($value, [
+            'Č' => 'č',
+            'Ć' => 'ć',
+            'Đ' => 'đ',
+            'Š' => 'š',
+            'Ž' => 'ž',
+        ]);
+        return strtolower($value);
     }
 
     private function mergeRecursive(array $defaults, array $config): array
