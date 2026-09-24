@@ -112,7 +112,7 @@ final class Sidrena_REST {
 				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
 				'catalog_mode'    => Sidrena_Utils::runtime_mode(),
 				'woocommerce_active' => Sidrena_Utils::is_woocommerce_active(),
-				'standalone_products' => Sidrena_Standalone::count(),
+				'product_count'   => Sidrena_Utils::is_wordpress_edition() && class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : null,
 				'generated_at'    => isset( $last['generated_at'] ) ? $last['generated_at'] : null,
 				'retention_days'  => max( 30, absint( $settings['retention_days'] ) ),
 				'manifest_url'    => 'yes' === $settings['publish_manifest'] ? $paths['manifest_url'] : null,
@@ -143,15 +143,11 @@ final class Sidrena_REST {
 			'catalog_mode'        => Sidrena_Utils::runtime_mode(),
 			'woocommerce_active'  => Sidrena_Utils::is_woocommerce_active(),
 			'products'            => array(),
-			'standalone_products' => array(),
 			'services'            => array(),
 		);
 
 		if ( in_array( $type, array( 'all', 'products' ), true ) ) {
 			$data['products'] = $this->realtime_products( $location, $page, $per_page );
-			if ( Sidrena_Utils::is_woocommerce_active() && Sidrena_Standalone::count() > 0 ) {
-				$data['standalone_products'] = $this->realtime_standalone_products( $location, $page, $per_page );
-			}
 		}
 		if ( in_array( $type, array( 'all', 'services' ), true ) ) {
 			$data['services'] = $this->realtime_services( $location, $page, $per_page );
@@ -163,9 +159,10 @@ final class Sidrena_REST {
 
 	public function display( WP_REST_Request $request ) {
 		$raw = strtolower( trim( (string) $request->get_param( 'id' ) ) );
-		if ( preg_match( '/^s(\d+)$/', $raw, $match ) ) {
-			$id = absint( $match[1] );
-			if ( ! $id || Sidrena_Standalone::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
+
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
+			$id = preg_match( '/^s(\d+)$/', $raw, $match ) ? absint( $match[1] ) : absint( $raw );
+			if ( ! $id || ! class_exists( 'Sidrena_Standalone' ) || Sidrena_Standalone::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
 				return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
 			}
 			return $this->no_cache_response(
@@ -176,19 +173,11 @@ final class Sidrena_REST {
 			);
 		}
 
-		$id = absint( $raw );
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			if ( $id && Sidrena_Standalone::POST_TYPE === get_post_type( $id ) && 'publish' === get_post_status( $id ) ) {
-				return $this->no_cache_response(
-					array(
-						'id'   => 's' . $id,
-						'html' => Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . $id ) ),
-					)
-				);
-			}
+		if ( ! Sidrena_Utils::is_woocommerce_active() || ! preg_match( '/^\d+$/', $raw ) ) {
 			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
 		}
 
+		$id      = absint( $raw );
 		$product = $id ? wc_get_product( $id ) : false;
 		if ( ! $product || ! $product->exists() ) {
 			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
@@ -222,8 +211,11 @@ final class Sidrena_REST {
 	}
 
 	private function realtime_products( $location, $page, $per_page ) {
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
 			return $this->realtime_standalone_products( $location, $page, $per_page );
+		}
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			return array( 'items' => array(), 'total' => 0, 'total_pages' => 0 );
 		}
 
 		$result = wc_get_products(
