@@ -7,6 +7,7 @@
 
 import os
 import sys
+from reportlab import rl_config
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
@@ -15,6 +16,8 @@ from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+rl_config.invariant = 1
 
 if len(sys.argv) != 3:
     raise SystemExit("Usage: build-support-pdf.py <version> <output.pdf>")

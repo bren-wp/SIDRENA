@@ -80,43 +80,90 @@ jobs:
             git push origin "$TAG_NAME"
           fi
 
-      - name: Install PDF build dependency
-        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
-
-      - name: Build WordPress and WooCommerce ZIPs
+      - name: Resolve tag target and release state
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
+          git fetch --tags --force
+          RELEASE_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
+          test -n "$RELEASE_TARGET"
+          echo "RELEASE_TARGET=$RELEASE_TARGET" >> "$GITHUB_ENV"
 
-      - name: Publish GitHub release
+          RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}" --jq '.id' 2>/dev/null || true)"
+          if [[ "$RELEASE_ID" =~ ^[0-9]+$ ]]; then
+            echo "RELEASE_EXISTS=true" >> "$GITHUB_ENV"
+            echo "EXISTING_RELEASE_ID=$RELEASE_ID" >> "$GITHUB_ENV"
+          else
+            echo "RELEASE_EXISTS=false" >> "$GITHUB_ENV"
+            echo "EXISTING_RELEASE_ID=" >> "$GITHUB_ENV"
+          fi
+
+      - name: Prepare release body
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/sidrena-release-body.md" <<EOF
+          ## Sidrena $VERSION
+
+          Sidrena $VERSION isporučuje dva odvojena WordPress plugina:
+
+          - **Sidrena WordPress** — za WordPress web bez WooCommercea.
+          - **Sidrena WooCommerce** — za WordPress + WooCommerce.
+
+          Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
+
+          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
+
+          Podrška: sidrena@brendigo.com
+          Autor: Brendigo
+          Službena stranica: https://sidrene-cijene.com.hr/
+          EOF
+
+      - name: Install PDF build dependency
+        if: env.RELEASE_EXISTS != 'true'
+        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+
+      - name: Build WordPress and WooCommerce ZIPs
+        if: env.RELEASE_EXISTS != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
+
+      - name: Publish new GitHub release
+        if: env.RELEASE_EXISTS != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
-          target_commitish: ${{ github.sha }}
+          target_commitish: ${{ env.RELEASE_TARGET }}
           name: Sidrena ${{ env.VERSION }}
           prerelease: false
           make_latest: true
           generate_release_notes: false
-          body: |
-            ## Sidrena ${{ env.VERSION }}
-
-            Sidrena ${{ env.VERSION }} isporučuje dva odvojena WordPress plugina:
-
-            - **Sidrena WordPress** — za WordPress web bez WooCommercea.
-            - **Sidrena WooCommerce** — za WordPress + WooCommerce.
-
-            Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
-
-            Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
-            Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
-
-            Podrška: sidrena@brendigo.com
-            Autor: Brendigo
-            Službena stranica: https://sidrene-cijene.com.hr/
+          body_path: ${{ runner.temp }}/sidrena-release-body.md
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
+
+      - name: Refresh existing release metadata without replacing assets
+        if: env.RELEASE_EXISTS == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -n \
+            --arg tag "$TAG_NAME" \
+            --arg target "$RELEASE_TARGET" \
+            --arg name "Sidrena $VERSION" \
+            --rawfile body "$RUNNER_TEMP/sidrena-release-body.md" \
+            '{tag_name:$tag,target_commitish:$target,name:$name,body:$body,draft:false,prerelease:false,make_latest:"true"}' \
+            > "$RUNNER_TEMP/release-update.json"
+
+          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${EXISTING_RELEASE_ID}" \
+            --input "$RUNNER_TEMP/release-update.json" >/dev/null
 
       - name: Verify published GitHub release assets
         env:
@@ -175,6 +222,7 @@ jobs:
           CURRENT_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}")"
           test "$(jq -r '.draft' <<<"$CURRENT_RELEASE")" = "false"
           test "$(jq -r '.prerelease' <<<"$CURRENT_RELEASE")" = "false"
+          test "$(jq -r '.target_commitish' <<<"$CURRENT_RELEASE")" = "$RELEASE_TARGET"
 
           V010_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[] | select(.tag_name == "v0.1.0") | .id' | head -n1)"
           if [[ "$V010_ID" =~ ^[0-9]+$ ]]; then

@@ -197,6 +197,14 @@ jobs:
           mkdir -p "$OUT"
           ./tools/build-editions.sh "$VERSION" "$OUT"
 
+          REPEAT_OUT="$RUNNER_TEMP/sidrena-editions-repeat"
+          mkdir -p "$REPEAT_OUT"
+          ./tools/build-editions.sh "$VERSION" "$REPEAT_OUT"
+          cmp "$OUT/sidrena-wordpress-$VERSION.zip" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip"
+          cmp "$OUT/sidrena-woocommerce-$VERSION.zip" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip"
+          cmp "$OUT/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
+          cmp "$OUT/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
+
           WP="$OUT/.sidrena-build/sidrena-wordpress"
           WOO="$OUT/.sidrena-build/sidrena-woocommerce"
 
