@@ -112,6 +112,13 @@ final class Sidrena_Pricelist {
 					continue;
 				}
 
+				$catalog_types = $this->catalog_types( $settings['business_mode'] );
+				foreach ( $catalog_types as $catalog_type ) {
+					foreach ( $formats as $format ) {
+						$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
+					}
+				}
+
 				$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
 				if ( '' === $address ) {
 					$errors[] = sprintf(
@@ -127,11 +134,7 @@ final class Sidrena_Pricelist {
 				$location_files    = array();
 				$location_failed   = false;
 
-				foreach ( $this->catalog_types( $settings['business_mode'] ) as $catalog_type ) {
-					foreach ( $formats as $format ) {
-						$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;
-					}
-
+				foreach ( $catalog_types as $catalog_type ) {
 					foreach ( $formats as $format ) {
 						$filename = $this->build_filename( $location, $sequence, $stamp, $format );
 						$filepath = $paths['archive_dir'] . $filename;
