@@ -202,17 +202,11 @@ final class Sidrena_Utils {
 		return '80 EUR';
 	}
 
-	public static function maintenance_price() {
-		return '20 EUR/mj';
-	}
 
 	public static function installation_service_url() {
 		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno jednokratno postavljanje 80 EUR' );
 	}
 
-	public static function maintenance_service_url() {
-		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno mjesečno održavanje 20 EUR' );
-	}
 
 	public static function support_pdf_url() {
 		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
