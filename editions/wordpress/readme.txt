@@ -105,6 +105,8 @@ Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, p
 * Server-side pretraga cijelog cjenika i paginacija bez učitavanja cijelog kataloga u memoriju.
 * Poboljšana pristupačnost WooCommerce tooltipa i stabilnost objave.
 * Batch obrada povijesti lokacijskih cijena za velike kataloge.
+* Transakcijsko generiranje čuva prethodnu valjanu objavu ako novi format ili snapshot ne prođe.
+* Strict validacija je ugrađena u streaming writere bez dodatnog punog preflight prolaza.
 
 = 0.1.0 =
 * Prvo javno izdanje.
