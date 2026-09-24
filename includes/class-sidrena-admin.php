@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo LTD Developer
+ * @author Brendigo
  * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */
@@ -355,7 +355,7 @@ final class Sidrena_Admin {
 		</div>
 		<div class="sid-grid sid-grid-2">
 			<section class="sid-card sid-contact-card">
-				<span class="sid-kicker"><?php esc_html_e( 'Developer', 'sidrena' ); ?></span>
+				<span class="sid-kicker"><?php esc_html_e( 'Autor', 'sidrena' ); ?></span>
 				<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
 				<p><?php esc_html_e( 'Sidrena je razvijena kao WordPress rješenje za upravljanje sidrenim/referentnim cijenama, javnim cjenicima i arhivom objava.', 'sidrena' ); ?></p>
 			</section>
@@ -638,7 +638,7 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Podrška po izboru korisnika', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati Brendigo', 'sidrena' ); ?></h2>
-				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da Brendigo odradi početno postavljanje, cijena je %1$s jednokratno; opcionalno tehničko održavanje je %2$s.', 'sidrena' ), Sidrena_Utils::installation_price(), Sidrena_Utils::maintenance_price() ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da Brendigo odradi instalaciju i početno postavljanje, cijena je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
 				<div class="sid-head-inline-actions">
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
 					<?php if ( $donation_url ) : ?><a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Dobrovoljna donacija', 'sidrena' ); ?></a><?php endif; ?>

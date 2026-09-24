@@ -1,5 +1,5 @@
 # Sidrena source file.
-# Author: Brendigo LTD Developer
+# Author: Brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://sidrene-cijene.com.hr/
 # Support: sidrena@brendigo.com
@@ -145,7 +145,7 @@ jobs:
           grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WOO_MAIN"
           grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WP_MAIN"
           grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WOO_MAIN"
-          grep -Fq 'Brendigo LTD Developer' LICENSE
+          grep -Fq 'Brendigo' LICENSE
           grep -Fq 'https://brendigo.com/' LICENSE
           grep -Fq 'https://sidrene-cijene.com.hr/' LICENSE
           test -s docs/UPUTE-WORDPRESS.md
@@ -237,7 +237,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RIniE 'cijenaguard|digiadria' . --exclude-dir=.git --exclude-dir=.github; then
+          if grep -RIniE 'cijenaguard|digiadria|Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' . --exclude-dir=.git --exclude-dir=.github; then
             echo 'Retired branding detected.' >&2
             exit 1
           fi
@@ -249,7 +249,7 @@ jobs:
           set -euo pipefail
           grep -Fq 'License: Sidrena Software License 1.0' editions/wordpress/sidrena-wordpress.php
           grep -Fq 'License: Sidrena Software License 1.0' editions/woocommerce/sidrena-woocommerce.php
-          grep -Fq 'Brendigo LTD Developer' README.md
+          grep -Fq 'Brendigo' README.md
           grep -Fq 'sidrena@brendigo.com' README.md
           grep -Fq '+385 91 901 0092' README.md
           grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
@@ -257,7 +257,7 @@ jobs:
           grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
           grep -Fq '[sidrena_objava_cjenika]' README.md
           grep -Fq 'sidrena@brendigo.com' tools/build-support-pdf.py
-          if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git --exclude-dir=.github; then
+          if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20|opcionalno tehničko održavanje|maintenance_price'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git --exclude-dir=.github; then
             echo 'Unrequested recurring maintenance offer detected.' >&2
             exit 1
           fi

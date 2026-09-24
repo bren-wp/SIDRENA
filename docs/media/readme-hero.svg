@@ -1,4 +1,4 @@
-<!-- Sidrena source file | Author: Brendigo LTD Developer | Author URI: https://brendigo.com/ | Plugin URI: https://sidrene-cijene.com.hr/ | Support: sidrena@brendigo.com -->
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://sidrene-cijene.com.hr/ | Support: sidrena@brendigo.com -->
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
   <title id="title">Sidrena — WordPress i WooCommerce sidrene cijene</title>
   <desc id="desc">Premium marketing banner za Sidrena plugin.</desc>
@@ -45,7 +45,7 @@
   </g>
 
   <g transform="translate(92 462)" font-family="Inter,Segoe UI,Arial,sans-serif">
-    <text fill="#6F91B2" font-size="18" font-weight="700">BRENDIGO LTD DEVELOPER · SIDRENA 0.1.0</text>
+    <text fill="#6F91B2" font-size="18" font-weight="700">Brendigo · SIDRENA 0.1.0</text>
     <text y="40" fill="#DDEBFA" font-size="22" font-weight="700">sidrene-cijene.com.hr</text>
   </g>
 

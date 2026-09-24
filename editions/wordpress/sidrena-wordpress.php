@@ -6,7 +6,7 @@
  * Version: 0.1.0
  * Requires at least: 6.6
  * Requires PHP: 7.4
- * Author: Brendigo LTD Developer
+ * Author: Brendigo
  * Author URI: https://brendigo.com/
  * License: Sidrena Software License 1.0
  * License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE

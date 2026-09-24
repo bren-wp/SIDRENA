@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo LTD Developer
+ * @author Brendigo
  * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */

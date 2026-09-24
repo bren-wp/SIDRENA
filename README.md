@@ -1,6 +1,6 @@
 <!--
 Sidrena source file.
-Author: Brendigo LTD Developer
+Author: Brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://sidrene-cijene.com.hr/
 Support: sidrena@brendigo.com
@@ -12,7 +12,7 @@ Support: sidrena@brendigo.com
 
 <p align="center">
   <strong>Sidrene cijene, javni cjenici i arhiva objava za WordPress i WooCommerce.</strong><br>
-  Brendigo LTD Developer · verzija 0.1.0
+  Brendigo · verzija 0.1.0
 </p>
 
 <p align="center">
@@ -113,7 +113,7 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za poslovno kritičan termin 
 | 💬 WhatsApp | **+385 91 901 0092** |
 | 🧰 Opcionalno jednokratno postavljanje | **80 EUR jednokratno**, samo ako želite da Brendigo sve postavi |
 | ❤️ Donacija za razvoj | dobrovoljna, izravno preko Revoluta; nije naknada za uslugu |
-| 👨‍💻 Developer | **Brendigo LTD Developer** |
+| 👤 Autor | **Brendigo** |
 
 PDF podrška uključena je u oba ZIP-a kao `docs/SIDRENA-PODRSKA.pdf`.
 
@@ -130,7 +130,7 @@ Objavljuju se samo:
 
 Sidrena nije open-source projekt.
 
-Korištenje je dopušteno prema **Sidrena Software License 1.0**. Nije dopušteno prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati Sidrenu bez pisanog odobrenja Brendigo LTD.
+Korištenje je dopušteno prema **Sidrena Software License 1.0**. Nije dopušteno prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati Sidrenu bez pisanog odobrenja Brendigo.
 
 Puni tekst: [LICENSE](LICENSE)
 
@@ -150,7 +150,7 @@ CI provjerava PHP 7.4, 8.3 i 8.4, odvojeni runtime oba izdanja, međusobni konfl
 ./tools/build-editions.sh 0.1.0 /tmp/sidrena-build
 ```
 
-## Brendigo LTD Developer
+## Brendigo
 
 Službena stranica: https://sidrene-cijene.com.hr/  
 Podrška: sidrena@brendigo.com
