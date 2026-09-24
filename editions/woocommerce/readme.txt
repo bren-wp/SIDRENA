@@ -38,6 +38,10 @@ Ovo izdanje zahtijeva WooCommerce. Za web bez WooCommercea instalirajte zasebni 
 
 Službena stranica: https://sidrene-cijene.com.hr/
 
+== Migration from Sidrena 1.x ==
+
+Prije instalacije 2.0 deaktivirajte stari Sidrena 1.x, ali ga nemojte prvo brisati kroz WordPress. Instalirajte Sidrena WooCommerce, provjerite podatke i javne cjenike, pa tek zatim uklonite stari folder nakon backupa. Detaljan postupak je u docs/UPUTE.md.
+
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.

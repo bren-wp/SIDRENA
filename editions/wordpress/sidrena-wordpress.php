@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( defined( 'SIDRENA_EDITION' ) ) {
+if ( defined( 'SIDRENA_EDITION' ) || class_exists( 'Sidrena_Plugin', false ) || class_exists( 'Sidrena_Utils', false ) ) {
 	$sidrena_conflicting_file = __FILE__;
 
 	// During an activation request WordPress loads already active plugins first.
@@ -27,7 +27,7 @@ if ( defined( 'SIDRENA_EDITION' ) ) {
 		__FILE__,
 		static function () {
 			wp_die(
-				esc_html__( 'Drugo Sidrena izdanje je već aktivno. Deaktivirajte ga prije aktivacije ovog plugina.', 'sidrena' ),
+				esc_html__( 'Drugo ili starije Sidrena izdanje je već aktivno. Deaktivirajte ga prije aktivacije ovog plugina.', 'sidrena' ),
 				esc_html__( 'Sidrena — sukob izdanja', 'sidrena' ),
 				array( 'back_link' => true )
 			);
@@ -53,7 +53,7 @@ if ( defined( 'SIDRENA_EDITION' ) ) {
 		'admin_notices',
 		static function () {
 			if ( current_user_can( 'activate_plugins' ) ) {
-				echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Drugo izdanje je blokirano/deaktivirano kako bi se spriječili dvostruki hookovi i objave.', 'sidrena' ) . '</p></div>';
+				echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Drugo ili starije izdanje je blokirano/deaktivirano kako bi se spriječili dvostruki hookovi, klase i objave.', 'sidrena' ) . '</p></div>';
 			}
 		}
 	);

@@ -36,6 +36,10 @@ Ako web koristi WooCommerce, instalirajte zasebni **Sidrena WooCommerce** paket.
 
 Službena stranica: https://sidrene-cijene.com.hr/
 
+== Migration from Sidrena 1.x ==
+
+Prije instalacije 2.0 deaktivirajte stari Sidrena 1.x, ali ga nemojte prvo brisati kroz WordPress. Instalirajte Sidrena WordPress, provjerite podatke i javne cjenike, pa tek zatim uklonite stari folder nakon backupa. Detaljan postupak je u docs/UPUTE.md.
+
 == Installation ==
 
 1. U WordPressu otvorite Dodaci > Dodaj novi > Prenesi dodatak.

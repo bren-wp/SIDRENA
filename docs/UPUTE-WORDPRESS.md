@@ -69,3 +69,19 @@ Ako želite trajno ukloniti Sidrena bazne podatke nakon što nijedno izdanje vi�
 `define( 'SIDRENA_DELETE_DATA_ON_UNINSTALL', true );`
 
 Javna CSV/XML arhiva i sadržaj proizvoda/usluga namjerno se ne brišu automatski.
+
+
+## Nadogradnja sa Sidrena 1.x
+
+Sidrena 2.0 koristi dva nova plugin sluga, zato prijelaz nije klasična zamjena ZIP-a preko starog plugina.
+
+Preporučeni redoslijed:
+
+1. Napravite backup baze i `wp-content/uploads/sidrena/`.
+2. Na stranici Dodaci **deaktivirajte** stari Sidrena 1.x.
+3. Nemojte prvo kliknuti **Obriši** na starom 1.x paketu: starije verzije imaju staru uninstall logiku koja može obrisati zajedničke Sidrena opcije/tablice.
+4. Instalirajte i aktivirajte `sidrena-wordpress-2.0.0.zip`.
+5. Provjerite Katalog, Usluge, Lokacije, Postavke, Arhivu i javni cjenik.
+6. Tek nakon provjere uklonite stari 1.x folder kroz hosting File Manager/SFTP ili ga ostavite deaktiviranog do sigurnog održavanja.
+
+Postojeći Sidrena proizvodi, usluge, post meta, postavke i arhiva koriste isti `sidrena_` podatkovni prostor i 2.0 ih može nastaviti koristiti.
