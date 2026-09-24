@@ -101,6 +101,9 @@ jobs:
       - name: Streaming public snapshot smoke test
         run: php .github/tests/public-snapshot-stream-smoke.php
 
+      - name: Streaming public snapshot runtime test
+        run: php .github/tests/public-snapshot-runtime-smoke.php
+
       - name: WordPress linked-source price smoke test
         run: php .github/tests/wordpress-sync-smoke.php
 

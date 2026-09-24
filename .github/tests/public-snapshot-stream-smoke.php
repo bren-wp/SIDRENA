@@ -10,6 +10,7 @@
 
 $public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 $utils  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
+$pricelist = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
 
 $start  = strpos( $public, 'private function read_snapshot_page(' );
 $end    = strpos( $public, 'private function queue_snapshot_rebuild(', $start );
@@ -31,5 +32,6 @@ sidrena_stream_assert( false !== strpos( $reader, 'min( 100, max( 10' ), 'Public
 sidrena_stream_assert( false !== strpos( $public, "name=\"sidrena_q\"" ), 'Public pricelist search must use a GET query.' );
 sidrena_stream_assert( false !== strpos( $public, "name=\"sidrena_stranica\"" ) || false !== strpos( $public, "'sidrena_stranica'" ), 'Public pricelist pagination parameter is missing.' );
 sidrena_stream_assert( false === strpos( $public, "wp_enqueue_script( 'sidrena-public'" ), 'Public pricelist must not require JavaScript for search or pagination.' );
+sidrena_stream_assert( false !== strpos( $pricelist, "array( 'jsonl', 'json' )" ), 'Snapshot cleanup must remove legacy JSON after a successful JSONL regeneration.' );
 
 fwrite( STDOUT, "Sidrena streaming public snapshot smoke test passed.\n" );
