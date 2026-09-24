@@ -1,0 +1,33 @@
+name: Sidrena admin polish guard
+
+on:
+  push:
+    branches:
+      - main
+      - develop/**
+      - feature/**
+  pull_request:
+    branches:
+      - main
+      - develop/**
+
+permissions:
+  contents: read
+
+jobs:
+  admin-polish-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify neutral admin menu icon
+        run: |
+          set -euo pipefail
+          php -l includes/sidrena-bootstrap.php
+          grep -q "function sidrena_neutralize_admin_menu_icon" includes/sidrena-bootstrap.php
+          grep -q "add_action( 'admin_menu', 'sidrena_neutralize_admin_menu_icon', 999 )" includes/sidrena-bootstrap.php
+          grep -q "\$menu\[ \$index \]\[6\] = 'none';" includes/sidrena-bootstrap.php
+          if [ -f .github/workflows/production-polish-automation.yml ]; then
+            echo "Temporary production polish workflow must not be shipped."
+            exit 1
+          fi
