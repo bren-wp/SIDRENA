@@ -300,9 +300,10 @@ final class Sidrena_Standalone {
 
 		$items   = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? wp_unslash( $_POST['items'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$page    = max( 1, isset( $_POST['standalone_page'] ) ? absint( $_POST['standalone_page'] ) : 1 );
-		$saved   = 0;
-		$deleted = 0;
-		$errors  = 0;
+		$saved      = 0;
+		$deleted    = 0;
+		$errors     = 0;
+		$code_index = $this->code_index();
 
 		foreach ( $items as $row ) {
 			if ( ! is_array( $row ) ) {
@@ -322,10 +323,16 @@ final class Sidrena_Standalone {
 				continue;
 			}
 
-			$name    = sanitize_text_field( $row['name'] ?? '' );
-			$current = Sidrena_Utils::decimal( $row['current'] ?? '' );
-			$anchor  = Sidrena_Utils::decimal( $row['anchor'] ?? '' );
-			if ( ! $id && '' === $name && '' === $current && '' === $anchor ) {
+			$name     = sanitize_text_field( $row['name'] ?? '' );
+			$code     = sanitize_text_field( $row['code'] ?? '' );
+			$code_key = $this->code_key( $code );
+			$current  = Sidrena_Utils::decimal( $row['current'] ?? '' );
+			$anchor   = Sidrena_Utils::decimal( $row['anchor'] ?? '' );
+			if ( ! $id && '' === $name && '' === $current && '' === $anchor && '' === $code ) {
+				continue;
+			}
+			if ( $code_key && isset( $code_index[ $code_key ] ) && absint( $code_index[ $code_key ] ) !== $id ) {
+				++$errors;
 				continue;
 			}
 
@@ -344,7 +351,10 @@ final class Sidrena_Standalone {
 			}
 			++$saved;
 
-			$this->set_meta( $saved_id, '_sidrena_standalone_code', sanitize_text_field( $row['code'] ?? '' ) );
+			$this->set_meta( $saved_id, '_sidrena_standalone_code', $code );
+			if ( $code_key ) {
+				$code_index[ $code_key ] = $saved_id;
+			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_brand', sanitize_text_field( $row['brand'] ?? '' ) );
 			$this->set_meta( $saved_id, '_sidrena_standalone_current_price', $current );
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_price', $anchor );
@@ -433,13 +443,15 @@ final class Sidrena_Standalone {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
 
-		$created = 0;
-		$updated = 0;
-		$skipped = 0;
+		$created    = 0;
+		$updated    = 0;
+		$skipped    = 0;
+		$code_index = $this->code_index();
 		foreach ( $rows as $raw ) {
-			$row = $this->canonical_import_row( $raw );
-			$code = sanitize_text_field( $row['code'] ?? '' );
-			$id   = $code ? $this->find_by_code( $code ) : 0;
+			$row      = $this->canonical_import_row( $raw );
+			$code     = sanitize_text_field( $row['code'] ?? '' );
+			$code_key = $this->code_key( $code );
+			$id       = $code_key && isset( $code_index[ $code_key ] ) ? absint( $code_index[ $code_key ] ) : 0;
 
 			if ( ! $id ) {
 				$name    = sanitize_text_field( $row['name'] ?? '' );
@@ -470,6 +482,9 @@ final class Sidrena_Standalone {
 			}
 
 			$this->import_field( $id, '_sidrena_standalone_code', $row, 'code', 'text' );
+			if ( $code_key ) {
+				$code_index[ $code_key ] = $id;
+			}
 			$this->import_field( $id, '_sidrena_standalone_brand', $row, 'brand', 'text' );
 			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
 			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
@@ -613,6 +628,39 @@ final class Sidrena_Standalone {
 			}
 		}
 		return $rows;
+	}
+
+	private function code_key( $code ) {
+		$code = trim( wp_strip_all_tags( (string) $code ) );
+		if ( '' === $code ) {
+			return '';
+		}
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $code, 'UTF-8' ) : strtolower( $code );
+	}
+
+	private function code_index() {
+		$query = new WP_Query(
+			array(
+				'post_type'              => self::POST_TYPE,
+				'post_status'            => array( 'publish', 'draft', 'pending', 'private' ),
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'orderby'                => 'ID',
+				'order'                  => 'ASC',
+				'update_post_term_cache' => false,
+			)
+		);
+
+		$index = array();
+		foreach ( $query->posts as $post_id ) {
+			$key = $this->code_key( get_post_meta( $post_id, '_sidrena_standalone_code', true ) );
+			if ( $key && ! isset( $index[ $key ] ) ) {
+				$index[ $key ] = absint( $post_id );
+			}
+		}
+		wp_reset_postdata();
+		return $index;
 	}
 
 	private function canonical_import_row( $row ) {
