@@ -9,6 +9,11 @@ Sidrena changelog
 = 0.2.0 =
 * Razvojni ciklus 0.2.0 otvoren za skalabilniju Objavu cjenika, poboljšanja pristupačnosti, stabilnosti i release provjera.
 * PDF podrška prikazuje stvarnu verziju paketa, a release/CI provjere više ne ovise o hardkodiranoj verziji 0.1.0.
+* Javni HTML cjenik koristi streaming JSONL snapshot umjesto učitavanja cijelog JSON kataloga u PHP memoriju.
+* Dodane su server-side pretraga cijelog cjenika i paginacija od 10 do 100 stavki po stranici, zadano 50.
+* Uklonjena je ovisnost javnog cjenika o JavaScript filtriranju; pretraga i navigacija rade kao obični GET zahtjevi.
+* Woo location-history dnevni snapshot koristi bounded keyset batch obradu.
+* Javni snapshot koristi short-write-safe atomic writer s flush/fsync zaštitom.
 
 = 0.1.0 =
 * Prvo javno izdanje Sidrene.

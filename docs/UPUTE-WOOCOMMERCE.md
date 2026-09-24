@@ -79,6 +79,8 @@ Kompletni javni prikaz koristi:
 
 Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
+Javni cjenik u 0.2.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+
 Dostupni su i:
 
 `[sidrena_cjenici]` — samo aktualne datoteke i arhiva preuzimanja

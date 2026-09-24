@@ -85,7 +85,7 @@ Kompletna javna stranica koristi shortcode:
 [sidrena_objava_cjenika]
 ```
 
-Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu.
+Prikaz može uključiti podatke obrta/tvrtke, aktualni pretraživi cjenik, datoteke za preuzimanje i arhivu. U 0.2.0 javni cjenik koristi streaming snapshot, server-side pretragu cijelog kataloga i paginaciju, pa velika baza ne mora biti učitana odjednom u PHP memoriju ili DOM.
 
 Dostupni su i zasebni prikazi:
 
@@ -96,6 +96,8 @@ Dostupni su i zasebni prikazi:
 [sidrena_cijena]
 [sidrena_usluge]
 ```
+
+Za zasebni cjenik broj stavki po stranici može se prilagoditi, primjerice `[sidrena_cjenik po_stranici="50"]`. Podržano je 10–100 stavki po stranici; zadano je 50.
 
 ## ⏰ Automatizirana dnevna objava
 

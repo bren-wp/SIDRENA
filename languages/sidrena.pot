@@ -1334,3 +1334,39 @@ msgstr ""
 msgid "Otvori Podršku"
 msgstr ""
 
+#: includes/class-sidrena-public.php
+msgid "Pretraži cjenik"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Očisti pretragu"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Pronađeno %d stavki."
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Prikazano %1$d–%2$d od %3$d stavki."
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Stranice cjenika"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Prethodna stranica"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Stranica %1$d od %2$d"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Sljedeća stranica"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Nema stavki koje odgovaraju pretrazi."
+msgstr ""
+

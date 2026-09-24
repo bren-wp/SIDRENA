@@ -38,6 +38,7 @@ Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao 
 * javna stranica Objava cjenika
 * shortcode [sidrena_objava_cjenika]
 * pretraživi HTML cjenik
+* server-side pretraga cijelog cjenika i paginacija za velike kataloge
 * javna arhiva prethodnih objava
 * CSV/XML i REST pristup
 
@@ -100,7 +101,10 @@ Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, p
 == Changelog ==
 
 = 0.2.0 =
-* Razvojni ciklus za skalabilniju Objavu cjenika, poboljšanja pristupačnosti i stabilnosti.
+* Streaming JSONL snapshot za javni HTML cjenik.
+* Server-side pretraga cijelog cjenika i paginacija bez učitavanja cijelog kataloga u memoriju.
+* Poboljšana pristupačnost WooCommerce tooltipa i stabilnost objave.
+* Batch obrada povijesti lokacijskih cijena za velike kataloge.
 
 = 0.1.0 =
 * Prvo javno izdanje.
