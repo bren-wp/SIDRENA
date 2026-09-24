@@ -237,7 +237,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RIniE 'cijenaguard|digiadria|Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' . --exclude-dir=.git --exclude-dir=.github; then
+          if grep -RIniE 'cijenaguard|digiadria|Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' . --exclude-dir=.git; then
             echo 'Retired branding detected.' >&2
             exit 1
           fi
