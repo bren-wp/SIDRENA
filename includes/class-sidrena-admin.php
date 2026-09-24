@@ -967,7 +967,7 @@ final class Sidrena_Admin {
 
 	private function location_card( $index, $location, $product_count, $template = false ) {
 		$location_id = $template ? '' : ( $location['id'] ?? '' );
-		$coverage    = $location_id ? Sidrena_Location_Data::coverage( $location_id ) : 0;
+		$coverage    = Sidrena_Utils::is_woocommerce_edition() && class_exists( 'Sidrena_Location_Data' ) && $location_id ? Sidrena_Location_Data::coverage( $location_id ) : 0;
 		$kind        = $location['kind'] ?? 'objekt';
 		?>
 		<div class="sid-location">
@@ -1221,8 +1221,10 @@ final class Sidrena_Admin {
 		}
 
 		$new_ids = wp_list_pluck( $out, 'id' );
-		foreach ( array_diff( $old_ids, $new_ids ) as $deleted_id ) {
-			Sidrena_Location_Data::delete_location( $deleted_id );
+		if ( Sidrena_Utils::is_woocommerce_edition() && class_exists( 'Sidrena_Location_Data' ) ) {
+			foreach ( array_diff( $old_ids, $new_ids ) as $deleted_id ) {
+				Sidrena_Location_Data::delete_location( $deleted_id );
+			}
 		}
 		update_option( 'sidrena_locations', $out, false );
 		Sidrena_Pricelist::queue_regeneration();
@@ -1541,9 +1543,10 @@ final class Sidrena_Admin {
 			';'
 		);
 
-		$product_table = $wpdb->prefix . 'sidrena_price_history';
-		$offset        = 0;
-		do {
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			$product_table = $wpdb->prefix . 'sidrena_price_history';
+			$offset        = 0;
+			do {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM {$product_table} ORDER BY id ASC LIMIT %d OFFSET %d",
@@ -1576,9 +1579,10 @@ final class Sidrena_Admin {
 					';'
 				);
 			}
-			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+				$count   = is_array( $rows ) ? count( $rows ) : 0;
+				$offset += 1000;
+			} while ( 1000 === $count );
+		}
 
 		$service_table = $wpdb->prefix . 'sidrena_service_price_history';
 		$offset        = 0;
