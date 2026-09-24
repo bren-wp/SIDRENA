@@ -47,6 +47,59 @@ final class Sidrena_Utils {
 		return $capability ? $capability : 'manage_sidrena';
 	}
 
+	public static function admin_menu_capability() {
+		$capability = self::admin_capability();
+
+		// Respect an explicitly customized capability exactly as configured.
+		if ( 'manage_sidrena' !== $capability ) {
+			return $capability;
+		}
+
+		// Never hide Sidrena from a real WordPress administrator just because a
+		// newly added custom capability has not yet propagated to WP_User.
+		if ( current_user_can( 'manage_options' ) ) {
+			return 'manage_options';
+		}
+		if ( current_user_can( 'manage_woocommerce' ) ) {
+			return 'manage_woocommerce';
+		}
+
+		return $capability;
+	}
+
+	public static function current_user_can_manage() {
+		$capability = self::admin_capability();
+		if ( current_user_can( $capability ) ) {
+			return true;
+		}
+
+		// Default Sidrena capability is additive. Core administrator/shop
+		// management capabilities remain valid fallbacks for existing installs,
+		// custom administrator roles and the same request in which capabilities
+		// were repaired.
+		if ( 'manage_sidrena' === $capability ) {
+			return current_user_can( 'manage_options' ) || current_user_can( 'manage_woocommerce' );
+		}
+
+		return false;
+	}
+
+	public static function map_admin_capability( $caps, $cap, $user_id, $args ) {
+		unset( $args );
+		if ( 'manage_sidrena' !== self::admin_capability() || 'manage_sidrena' !== $cap ) {
+			return $caps;
+		}
+
+		$user = get_userdata( absint( $user_id ) );
+		if ( $user && is_array( $user->allcaps ) ) {
+			if ( ! empty( $user->allcaps['manage_options'] ) || ! empty( $user->allcaps['manage_woocommerce'] ) ) {
+				return array( 'exist' );
+			}
+		}
+
+		return $caps;
+	}
+
 	public static function donation_url() {
 		$url = apply_filters( 'sidrena_donation_url', 'https://sidrene-cijene.com.hr/#donirajte' );
 		return is_string( $url ) ? esc_url_raw( $url ) : '';

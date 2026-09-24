@@ -1,4 +1,4 @@
-# Sidrena 1.6.5 - Upute za instalaciju i korištenje
+# Sidrena 1.6.6 - Upute za instalaciju i korištenje
 
 **Službena stranica:** https://sidrene-cijene.com.hr/  
 **GitHub:** https://github.com/bren-wp/SIDRENA  
@@ -23,10 +23,16 @@ WooCommerce nije potreban za aktivaciju niti za prikaz Sidrena izbornika. Bez Wo
 
 Ako kasnije aktivirate WooCommerce, ista Sidrena instalacija automatski uključuje Woo integraciju. Ne trebate mijenjati plugin niti migrirati postojeći standalone katalog.
 
+### Ako Sidrena nije vidljiva u lijevom admin izborniku
+
+Od verzije 1.6.6 administrator s WordPress capabilityjem `manage_options` mora uvijek vidjeti top-level **Sidrena** izbornik, čak i ako custom capability `manage_sidrena` još nije zapisan ili osvježen u trenutnoj sesiji. Isto vrijedi za link **Otvori Sidrenu** na stranici Dodaci.
+
+Za prilagođene role i WooCommerce shop management i dalje su podržani `manage_sidrena` i `manage_woocommerce`.
+
 ## 2. Instalacija
 
 1. WordPress: **Dodaci > Dodaj novi > Prenesi dodatak**.
-2. Prenesite **sidrena-1.6.5.zip**.
+2. Prenesite **sidrena-1.6.6.zip**.
 3. Kliknite **Instaliraj sada** i **Aktiviraj**.
 4. Otvorite **Sidrena > Pregled**.
 5. Provjerite izbornike Pregled, Usklađenost, Katalog, Cjenici, Arhiva, Lokacije, Postavke, Alati, Dnevnik, Propisi i Upute.

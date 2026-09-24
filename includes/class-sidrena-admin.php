@@ -35,7 +35,7 @@ final class Sidrena_Admin {
 	}
 
 	public function menu() {
-		$capability = Sidrena_Utils::admin_capability();
+		$capability = Sidrena_Utils::admin_menu_capability();
 
 		add_menu_page(
 			'Sidrena',
@@ -114,7 +114,7 @@ final class Sidrena_Admin {
 	}
 
 	public function action_links( $links ) {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return $links;
 		}
 
@@ -126,7 +126,7 @@ final class Sidrena_Admin {
 	}
 
 	public function page() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return;
 		}
 
@@ -1239,7 +1239,7 @@ final class Sidrena_Admin {
 		$this->redirect( 'locations', 'saved' );
 	}
 	public function generate() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_generate' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_generate' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		$success = Sidrena_Pricelist::instance()->generate_all();
@@ -1247,7 +1247,7 @@ final class Sidrena_Admin {
 	}
 
 	public function create_public_page() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_create_public_page' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_create_public_page' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1511,7 +1511,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_missing() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_missing' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_missing' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		nocache_headers();
@@ -1531,7 +1531,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_price_history() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_price_history' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_price_history' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1670,7 +1670,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_archive_index() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_archive_index' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_archive_index' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
@@ -1708,7 +1708,7 @@ final class Sidrena_Admin {
 	}
 
 	public function export_location_template() {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		nocache_headers();
@@ -1952,7 +1952,7 @@ final class Sidrena_Admin {
 	}
 
 	private function guard_post( $action ) {
-		if ( ! current_user_can( Sidrena_Utils::admin_capability() ) || ! check_admin_referer( $action ) ) {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( $action ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 	}

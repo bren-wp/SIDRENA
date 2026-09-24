@@ -4,7 +4,7 @@ Tags: woocommerce, cijene, cjenik, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 Donate link: https://sidrene-cijene.com.hr/#donirajte
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -166,6 +166,14 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 
 == Changelog ==
 
+= 1.6.6 =
+* Ispravljena situacija u kojoj Sidrena top-level admin izbornik i link "Otvori Sidrenu" mogu biti skriveni administratoru ako custom capability manage_sidrena nije propagiran u trenutni WordPress user objekt.
+* Administrator s manage_options sada uvijek dobiva pristup Sidreni; WooCommerce manager ostaje podržan kroz manage_woocommerce, a manage_sidrena ostaje podržan za prilagođene uloge.
+* Capability backfill sada obuhvaća sve uloge koje već imaju manage_options ili manage_woocommerce, ne samo role naziva administrator/shop_manager.
+* Admin, standalone i bulk provjere koriste zajednički resilient access helper.
+* Dodan map_meta_cap bridge za postojeće instalacije i custom administratorske uloge.
+* Dodan CI regresijski test koji potvrđuje da Sidrena menu postoji kada admin ima manage_options, ali nema manage_sidrena.
+
 = 1.6.5 =
 * WooCommerce više nije ni funkcionalno ni UX pretpostavka: Sidrena core se inicijalizira i ostaje vidljiv na običnom WordPressu.
 * Dodan eksplicitni Samostalni WordPress način / WooCommerce + Sidrena status u administraciji.
@@ -234,6 +242,10 @@ Da. Sidrena koristi WooCommerce price filter, block/builder filtre i lokalni JS 
 Starije promjene: changelog.txt.
 
 == Upgrade Notice ==
+
+= 1.6.6 =
+
+Preporučena nadogradnja ako nakon aktivacije ne vidite Sidrena izbornik: administratorski pristup više ne ovisi isključivo o custom manage_sidrena capabilityju.
 
 = 1.6.5 =
 
