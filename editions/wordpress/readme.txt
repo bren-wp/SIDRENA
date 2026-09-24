@@ -105,7 +105,7 @@ Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, p
 = 0.7.0 =
 * Zadržana je distribucija isključivo kroz dva WordPress plugin ZIP paketa.
 * Dokumentacija i release pravila usklađeni su s plugin-only isporukom.
-* Release asseti ne uključuju desktop aplikacije, portable buildove ni Windows installere.
+* Release pravila čuvaju samo WordPress i WooCommerce ZIP pakete.
 
 = 0.6.0 =
 * Dodan je distribution guard koji čuva samo dva instalacijska ZIP-a i blokira generičke/root pakete.
