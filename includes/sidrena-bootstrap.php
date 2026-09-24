@@ -17,6 +17,7 @@ if ( ! defined( 'SIDRENA_VERSION' ) || ! defined( 'SIDRENA_EDITION' ) || ! defin
 }
 
 require_once SIDRENA_DIR . 'includes/class-sidrena-utils.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-legal-automation.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-activator.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-audit.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-site-health.php';
