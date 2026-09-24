@@ -7,6 +7,16 @@ final class Sidrena_Utils {
 	public static function defaults() {
 		return array(
 			'business_mode'        => 'mixed',
+			'business_name'        => '',
+			'business_address'     => '',
+			'business_oib'         => '',
+			'business_email'       => '',
+			'business_phone'       => '',
+			'business_registry'    => '',
+			'business_registry_number' => '',
+			'business_vat_id'      => '',
+			'business_supervisory_authority' => '',
+			'show_business_identity' => 'yes',
 			'display_anchor'       => 'yes',
 			'display_lowest_30'    => 'yes',
 			'label_mode'           => 'date_only',
@@ -104,6 +114,53 @@ final class Sidrena_Utils {
 		}
 
 		return $caps;
+	}
+
+	public static function sanitize_oib( $value ) {
+		$digits = preg_replace( '/\D+/', '', (string) $value );
+		return substr( (string) $digits, 0, 11 );
+	}
+
+	public static function is_valid_oib( $value ) {
+		$oib = self::sanitize_oib( $value );
+		if ( 11 !== strlen( $oib ) ) {
+			return false;
+		}
+		$a = 10;
+		for ( $i = 0; $i < 10; $i++ ) {
+			$a = ( $a + (int) $oib[ $i ] ) % 10;
+			if ( 0 === $a ) {
+				$a = 10;
+			}
+			$a = ( 2 * $a ) % 11;
+		}
+		$control = 11 - $a;
+		if ( 10 === $control ) {
+			$control = 0;
+		}
+		return $control === (int) $oib[10];
+	}
+
+	public static function sanitize_business_phone( $value ) {
+		$value = sanitize_text_field( (string) $value );
+		$value = preg_replace( '/[^0-9+() .\/-]/', '', $value );
+		return substr( trim( (string) $value ), 0, 40 );
+	}
+
+	public static function business_identity() {
+		$settings = self::settings();
+		return array(
+			'name'                  => sanitize_text_field( (string) ( $settings['business_name'] ?? '' ) ),
+			'address'               => sanitize_text_field( (string) ( $settings['business_address'] ?? '' ) ),
+			'oib'                   => self::sanitize_oib( $settings['business_oib'] ?? '' ),
+			'email'                 => sanitize_email( (string) ( $settings['business_email'] ?? '' ) ),
+			'phone'                 => self::sanitize_business_phone( $settings['business_phone'] ?? '' ),
+			'registry'              => sanitize_text_field( (string) ( $settings['business_registry'] ?? '' ) ),
+			'registry_number'       => sanitize_text_field( (string) ( $settings['business_registry_number'] ?? '' ) ),
+			'vat_id'                => sanitize_text_field( (string) ( $settings['business_vat_id'] ?? '' ) ),
+			'supervisory_authority' => sanitize_text_field( (string) ( $settings['business_supervisory_authority'] ?? '' ) ),
+			'show'                  => 'yes' === ( $settings['show_business_identity'] ?? 'yes' ),
+		);
 	}
 
 	public static function donation_url() {

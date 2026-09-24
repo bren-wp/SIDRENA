@@ -27,6 +27,8 @@ final class Sidrena_Public {
 		add_shortcode( 'sidrena-arhiva', array( $this, 'archive_shortcode' ) );
 		add_shortcode( 'sidrena_cjenici', array( $this, 'downloads_shortcode' ) );
 		add_shortcode( 'sidrena-cjenici', array( $this, 'downloads_shortcode' ) );
+		add_shortcode( 'sidrena_objava_cjenika', array( $this, 'publication_shortcode' ) );
+		add_shortcode( 'sidrena-objava-cjenika', array( $this, 'publication_shortcode' ) );
 	}
 
 	public function register_rewrites() {
@@ -62,6 +64,10 @@ final class Sidrena_Public {
 		if ( $existing_id ) {
 			$existing = get_post( $existing_id );
 			if ( $existing && 'page' === $existing->post_type && 'trash' !== $existing->post_status ) {
+				$legacy_content = trim( (string) $existing->post_content );
+				if ( in_array( $legacy_content, array( '[sidrena_cjenici]', '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->' ), true ) ) {
+					wp_update_post( array( 'ID' => $existing_id, 'post_content' => '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' ) );
+				}
 				return $existing_id;
 			}
 		}
@@ -80,7 +86,7 @@ final class Sidrena_Public {
 				'post_status'    => 'publish',
 				'post_title'     => __( 'Objava cjenika', 'sidrena' ),
 				'post_name'      => 'objava-cjenika',
-				'post_content'   => '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->',
+				'post_content'   => '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->',
 				'comment_status' => 'closed',
 			),
 			true
@@ -312,6 +318,48 @@ final class Sidrena_Public {
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>
+		</section>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	public function publication_shortcode( $atts ) {
+		if ( 'yes' !== Sidrena_Utils::settings()['enable_public_html'] ) {
+			return '';
+		}
+		$atts = shortcode_atts(
+			array(
+				'lokacija' => '',
+				'oznaka'   => '',
+			),
+			$atts,
+			'sidrena_objava_cjenika'
+		);
+		$this->enqueue_assets();
+		$identity = Sidrena_Utils::business_identity();
+		ob_start();
+		?>
+		<section class="sidrena-publication">
+			<header class="sidrena-publication__hero">
+				<span class="sidrena-public-kicker"><?php esc_html_e( 'Objava cjenika', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Aktualne cijene i prethodne objave', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Na jednom mjestu dostupni su aktualni pretraživi cjenik, CSV/XML datoteke za preuzimanje i arhiva prethodnih objava.', 'sidrena' ); ?></p>
+			</header>
+			<?php if ( ! empty( $identity['show'] ) && array_filter( $identity ) ) : ?>
+			<section class="sidrena-business-card" aria-label="<?php esc_attr_e( 'Podaci poslovnog subjekta', 'sidrena' ); ?>">
+				<div><span><?php esc_html_e( 'Poslovni subjekt', 'sidrena' ); ?></span><strong><?php echo esc_html( $identity['name'] ?: get_bloginfo( 'name' ) ); ?></strong><?php if ( $identity['address'] ) : ?><small><?php echo esc_html( $identity['address'] ); ?></small><?php endif; ?></div>
+				<dl>
+					<?php if ( $identity['oib'] ) : ?><div><dt>OIB</dt><dd><?php echo esc_html( $identity['oib'] ); ?></dd></div><?php endif; ?>
+					<?php if ( $identity['email'] ) : ?><div><dt><?php esc_html_e( 'E-mail', 'sidrena' ); ?></dt><dd><a href="mailto:<?php echo esc_attr( $identity['email'] ); ?>"><?php echo esc_html( $identity['email'] ); ?></a></dd></div><?php endif; ?>
+					<?php if ( $identity['phone'] ) : ?><div><dt><?php esc_html_e( 'Telefon', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['phone'] ); ?></dd></div><?php endif; ?>
+					<?php if ( $identity['registry'] || $identity['registry_number'] ) : ?><div><dt><?php esc_html_e( 'Registar', 'sidrena' ); ?></dt><dd><?php echo esc_html( trim( $identity['registry'] . ' ' . $identity['registry_number'] ) ); ?></dd></div><?php endif; ?>
+					<?php if ( $identity['vat_id'] ) : ?><div><dt><?php esc_html_e( 'PDV ID', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['vat_id'] ); ?></dd></div><?php endif; ?>
+					<?php if ( $identity['supervisory_authority'] ) : ?><div><dt><?php esc_html_e( 'Nadležno tijelo', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['supervisory_authority'] ); ?></dd></div><?php endif; ?>
+				</dl>
+			</section>
+			<?php endif; ?>
+			<div class="sidrena-publication__section"><?php echo wp_kses_post( $this->pricelist_shortcode( $atts ) ); ?></div>
+			<div class="sidrena-publication__section"><?php echo wp_kses_post( $this->downloads_shortcode( $atts ) ); ?></div>
 		</section>
 		<?php
 		return (string) ob_get_clean();

@@ -301,3 +301,87 @@
  .sidrena-downloads__section-head{align-items:flex-start;flex-direction:column;gap:4px}
  .sidrena-download-card__button{width:100%;box-sizing:border-box}
 }
+
+/* Public business identity + composite publication */
+.sidrena-publication {
+	display: grid;
+	gap: 22px;
+}
+.sidrena-publication__hero,
+.sidrena-business-card {
+	padding: clamp(20px, 3vw, 30px);
+	border: 1px solid #dce8f3;
+	border-radius: 18px;
+	background: #fff;
+	box-shadow: 0 12px 28px rgba(15,53,87,.06);
+}
+.sidrena-publication__hero h2 {
+	margin: 0;
+	color: #082642;
+	font-size: clamp(26px, 4vw, 40px);
+	line-height: 1.12;
+}
+.sidrena-publication__hero p {
+	max-width: 820px;
+	margin: 12px 0 0;
+	color: #5c7388;
+	line-height: 1.6;
+}
+.sidrena-business-card {
+	display: grid;
+	grid-template-columns: minmax(220px,.75fr) minmax(0,1.25fr);
+	gap: 28px;
+}
+.sidrena-business-card > div > span {
+	display: block;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: #6b8196;
+}
+.sidrena-business-card > div > strong {
+	display: block;
+	margin-top: 5px;
+	font-size: 20px;
+	color: #082642;
+}
+.sidrena-business-card > div > small {
+	display: block;
+	margin-top: 5px;
+	color: #5c7388;
+}
+.sidrena-business-card dl {
+	display: grid;
+	grid-template-columns: repeat(2,minmax(0,1fr));
+	gap: 10px 18px;
+	margin: 0;
+}
+.sidrena-business-card dl > div {
+	min-width: 0;
+}
+.sidrena-business-card dt {
+	font-size: 10px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: #7890a5;
+}
+.sidrena-business-card dd {
+	margin: 3px 0 0;
+	overflow-wrap: anywhere;
+	color: #213f59;
+	font-weight: 650;
+}
+.sidrena-business-card a {
+	color: #1267cc;
+}
+@media (max-width:760px) {
+	.sidrena-business-card {
+		grid-template-columns: 1fr;
+		gap: 18px;
+	}
+	.sidrena-business-card dl {
+		grid-template-columns: 1fr;
+	}
+}
