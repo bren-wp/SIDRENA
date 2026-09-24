@@ -333,12 +333,16 @@ final class Sidrena_Standalone {
 				++$skipped;
 				continue;
 			}
-			$item_id = $this->linked_item_id( $source_id );
-			$title   = sanitize_text_field( get_the_title( $source_id ) );
-			$price   = $this->source_price( $source_id, $price_key );
-			$current = $item_id ? Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) ) : '';
+			$item_id    = $this->linked_item_id( $source_id );
+			$title      = sanitize_text_field( get_the_title( $source_id ) );
+			$stored_key = $item_id ? sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) ) : '';
+			$lookup_key = $price_key ?: $stored_key;
+			$price      = $this->source_price( $source_id, $lookup_key );
+			$current    = $item_id ? Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) ) : '';
 			if ( '' !== $price['price'] ) {
 				$current = $price['price'];
+			} elseif ( $lookup_key ) {
+				$current = '';
 			}
 			$post_status = $title && '' !== $current ? 'publish' : 'draft';
 
@@ -372,6 +376,8 @@ final class Sidrena_Standalone {
 			}
 			if ( '' !== $current ) {
 				update_post_meta( $item_id, '_sidrena_standalone_current_price', $current );
+			} elseif ( $lookup_key ) {
+				delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
 			}
 			if ( '' === get_post_meta( $item_id, '_sidrena_standalone_availability', true ) ) {
 				update_post_meta( $item_id, '_sidrena_standalone_availability', 'dostupno' );
@@ -391,7 +397,18 @@ final class Sidrena_Standalone {
 		update_option( 'sidrena_standalone_sync_state', $state, false );
 
 		if ( count( $source_ids ) === 100 ) {
-			wp_schedule_single_event( time() + 3, 'sidrena_standalone_sync_batch', array( $post_type, $page + 1, $price_key ) );
+			$scheduled = wp_schedule_single_event( time() + 3, 'sidrena_standalone_sync_batch', array( $post_type, $page + 1, $price_key ) );
+			if ( false === $scheduled || is_wp_error( $scheduled ) ) {
+				$state['status']     = 'error';
+				$state['updated_at'] = current_time( 'mysql' );
+				update_option( 'sidrena_standalone_sync_state', $state, false );
+				Sidrena_Audit::log(
+					'wordpress_catalog_sync',
+					'error',
+					__( 'Sinkronizacija WordPress sadržaja zaustavljena je jer sljedeći batch nije bilo moguće zakazati.', 'sidrena' ),
+					$state
+				);
+			}
 			return;
 		}
 
@@ -417,12 +434,15 @@ final class Sidrena_Standalone {
 		$price_key = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
 		$price     = $this->source_price( $post_id, $price_key );
 		$changed   = false;
+		$old       = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
 		if ( '' !== $price['price'] ) {
-			$old = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
 			if ( $old !== $price['price'] ) {
 				update_post_meta( $item_id, '_sidrena_standalone_current_price', $price['price'] );
 				$changed = true;
 			}
+		} elseif ( $price_key && '' !== $old ) {
+			delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
+			$changed = true;
 		}
 		$title = sanitize_text_field( get_the_title( $post_id ) );
 		if ( $title && $title !== get_the_title( $item_id ) ) {
@@ -525,7 +545,7 @@ final class Sidrena_Standalone {
 			<?php wp_nonce_field( 'sidrena_standalone_save' ); ?>
 			<div class="sid-table-wrap">
 				<table class="widefat striped sid-bulk-table sid-standalone-table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'Samostalni Sidrena katalog proizvoda', 'sidrena' ); ?></caption>
+					<caption class="screen-reader-text"><?php esc_html_e( 'Sidrena WordPress katalog proizvoda', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
 							<th scope="col"><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
