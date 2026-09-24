@@ -22,6 +22,7 @@ $GLOBALS['sidrena_regen'] = 0;
 
 function absint( $value ) { return abs( (int) $value ); }
 function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $value ) ); }
+function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
 function get_posts( $args ) {
 	if ( isset( $args['meta_key'], $args['meta_value'] ) && '_sidrena_standalone_source_post_id' === $args['meta_key'] && 100 === (int) $args['meta_value'] ) return array( 200 );
 	return array();
