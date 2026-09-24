@@ -488,7 +488,7 @@ final class Sidrena_Pricelist {
 
 	private function product_rows( $location ) {
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			foreach ( Sidrena_Standalone::rows( $location ) as $row ) {
+			foreach ( Sidrena_Standalone::iterate_rows( $location ) as $row ) {
 				yield $row;
 			}
 			return;
@@ -529,7 +529,7 @@ final class Sidrena_Pricelist {
 			++$page;
 		} while ( count( $products ) === 100 );
 
-		foreach ( Sidrena_Standalone::rows( $location ) as $row ) {
+		foreach ( Sidrena_Standalone::iterate_rows( $location ) as $row ) {
 			yield $row;
 		}
 	}

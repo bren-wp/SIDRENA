@@ -45,25 +45,48 @@ final class Sidrena_Standalone {
 	}
 
 	public static function rows( $location = array() ) {
-		$query = new WP_Query(
-			array(
-				'post_type'      => self::POST_TYPE,
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'orderby'        => array( 'menu_order' => 'ASC', 'ID' => 'ASC' ),
-				'no_found_rows'  => true,
-			)
-		);
-
 		$rows = array();
-		foreach ( $query->posts as $post ) {
-			$row = self::export_row( $post, $location );
-			if ( $row ) {
-				$rows[] = $row;
-			}
+		foreach ( self::iterate_rows( $location ) as $row ) {
+			$rows[] = $row;
 		}
-		wp_reset_postdata();
-		return apply_filters( 'sidrena_standalone_rows', $rows, $location );
+		return $rows;
+	}
+
+	public static function iterate_rows( $location = array(), $batch_size = 200 ) {
+		$batch_size = min( 500, max( 20, absint( $batch_size ) ) );
+		$page       = 1;
+
+		do {
+			$query = new WP_Query(
+				array(
+					'post_type'              => self::POST_TYPE,
+					'post_status'            => 'publish',
+					'posts_per_page'         => $batch_size,
+					'paged'                  => $page,
+					'orderby'                => array( 'menu_order' => 'ASC', 'ID' => 'ASC' ),
+					'no_found_rows'          => true,
+					'update_post_term_cache' => false,
+				)
+			);
+
+			$batch = array();
+			foreach ( $query->posts as $post ) {
+				$row = self::export_row( $post, $location );
+				if ( $row ) {
+					$batch[] = $row;
+				}
+			}
+			$batch = apply_filters( 'sidrena_standalone_rows', $batch, $location );
+			foreach ( $batch as $row ) {
+				if ( is_array( $row ) ) {
+					yield $row;
+				}
+			}
+
+			$count = count( $query->posts );
+			wp_reset_postdata();
+			++$page;
+		} while ( $count === $batch_size );
 	}
 
 	public static function paged_rows( $page = 1, $per_page = 100, $location = array() ) {
@@ -153,7 +176,7 @@ final class Sidrena_Standalone {
 			'sale_incomplete'     => 0,
 		);
 
-		foreach ( self::rows() as $row ) {
+		foreach ( self::iterate_rows() as $row ) {
 			++$stats['products'];
 			if ( '' === trim( (string) $row['sidrena_cijena'] ) ) {
 				++$stats['missing_anchor'];
