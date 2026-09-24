@@ -62,7 +62,7 @@ final class Sidrena_REST {
 
 		register_rest_route(
 			'sidrena/v1',
-			'/display/(?P<id>\d+)',
+			'/display/(?P<id>s?\d+)',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'display' ),
@@ -70,9 +70,11 @@ final class Sidrena_REST {
 				'args'                => array(
 					'id' => array(
 						'required'          => true,
-						'sanitize_callback' => 'absint',
+						'sanitize_callback' => static function ( $value ) {
+							return strtolower( trim( (string) $value ) );
+						},
 						'validate_callback' => static function ( $value ) {
-							return absint( $value ) > 0;
+							return 1 === preg_match( '/^s?\d+$/i', (string) $value );
 						},
 					),
 				),
@@ -151,11 +153,33 @@ final class Sidrena_REST {
 
 
 	public function display( WP_REST_Request $request ) {
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			return new WP_Error( 'woocommerce_required', __( 'WooCommerce nije aktivan.', 'sidrena' ), array( 'status' => 404 ) );
+		$raw = strtolower( trim( (string) $request->get_param( 'id' ) ) );
+		if ( preg_match( '/^s(\d+)$/', $raw, $match ) ) {
+			$id = absint( $match[1] );
+			if ( ! $id || Sidrena_Standalone::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
+				return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
+			}
+			return $this->no_cache_response(
+				array(
+					'id'   => 's' . $id,
+					'html' => Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . $id ) ),
+				)
+			);
 		}
 
-		$id      = absint( $request->get_param( 'id' ) );
+		$id = absint( $raw );
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			if ( $id && Sidrena_Standalone::POST_TYPE === get_post_type( $id ) && 'publish' === get_post_status( $id ) ) {
+				return $this->no_cache_response(
+					array(
+						'id'   => 's' . $id,
+						'html' => Sidrena_Standalone::instance()->price_shortcode( array( 'id' => 's' . $id ) ),
+					)
+				);
+			}
+			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+
 		$product = $id ? wc_get_product( $id ) : false;
 		if ( ! $product || ! $product->exists() ) {
 			return new WP_Error( 'product_not_found', __( 'Proizvod nije pronađen.', 'sidrena' ), array( 'status' => 404 ) );
@@ -171,7 +195,6 @@ final class Sidrena_REST {
 			)
 		);
 	}
-
 	private function resolve_location( $requested ) {
 		$locations = Sidrena_Utils::locations();
 		if ( $requested ) {
@@ -191,7 +214,7 @@ final class Sidrena_REST {
 
 	private function realtime_products( $location, $page, $per_page ) {
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			return array( 'items' => array(), 'total' => 0, 'total_pages' => 0, 'notice' => __( 'WooCommerce nije aktivan.', 'sidrena' ) );
+			return $this->realtime_standalone_products( $location, $page, $per_page );
 		}
 
 		$result = wc_get_products(
@@ -226,13 +249,58 @@ final class Sidrena_REST {
 			$items[] = $this->product_item( $product, $location );
 		}
 
+		// Extra Sidrena standalone items remain available alongside WooCommerce.
+		$extras = Sidrena_Standalone::paged_rows( $page, $per_page, $location );
+		foreach ( $extras['items'] as $row ) {
+			$items[] = $this->standalone_product_item( $row, $location );
+		}
+
 		return array(
 			'items'       => $items,
-			'total'       => is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items ),
-			'total_pages' => is_object( $result ) && isset( $result->max_num_pages ) ? absint( $result->max_num_pages ) : 1,
+			'total'       => ( is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items ) ) + absint( $extras['total'] ),
+			'total_pages' => max(
+				is_object( $result ) && isset( $result->max_num_pages ) ? absint( $result->max_num_pages ) : 1,
+				absint( $extras['total_pages'] )
+			),
 		);
 	}
 
+	private function realtime_standalone_products( $location, $page, $per_page ) {
+		$result = Sidrena_Standalone::paged_rows( $page, $per_page, $location );
+		$items  = array();
+		foreach ( $result['items'] as $row ) {
+			$items[] = $this->standalone_product_item( $row, $location );
+		}
+		return array(
+			'items'       => $items,
+			'total'       => absint( $result['total'] ),
+			'total_pages' => absint( $result['total_pages'] ),
+		);
+	}
+
+	private function standalone_product_item( $row, $location ) {
+		$id = absint( $row['_sidrena_item_id'] ?? 0 );
+		return array(
+			'id'                           => 's' . $id,
+			'parent_id'                    => 0,
+			'lokacija_id'                  => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
+			'lokacija_sifra'               => sanitize_text_field( $location['code'] ?? '' ),
+			'naziv'                        => sanitize_text_field( $row['naziv'] ?? '' ),
+			'sifra'                        => sanitize_text_field( $row['sifra'] ?? '' ),
+			'marka'                        => sanitize_text_field( $row['marka'] ?? '' ),
+			'jedinica_mjere'               => sanitize_text_field( $row['jedinica_mjere'] ?? '' ),
+			'cijena_za_jedinicu_mjere'     => Sidrena_Utils::decimal( $row['cijena_za_jedinicu_mjere'] ?? '' ),
+			'jedinicna_cijena_status'       => sanitize_key( $row['_sidrena_unit_status'] ?? 'review' ),
+			'maloprodajna_cijena'          => Sidrena_Utils::decimal( $row['maloprodajna_cijena'] ?? '' ),
+			'posebni_oblik_prodaje'        => 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) ? 'da' : 'ne',
+			'naziv_posebnog_oblika_prodaje'=> sanitize_text_field( $row['naziv_posebnog_oblika_prodaje'] ?? '' ),
+			'sidrena_cijena'               => Sidrena_Utils::decimal( $row['sidrena_cijena'] ?? '' ),
+			'datum_sidrene_cijene'         => sanitize_text_field( $row['datum_sidrene_cijene'] ?? '' ),
+			'barkod'                       => sanitize_text_field( $row['barkod'] ?? '' ),
+			'dostupnost'                   => sanitize_key( $row['dostupnost'] ?? 'dostupno' ),
+			'updated_at'                   => $id ? get_post_modified_time( 'c', true, $id ) : null,
+		);
+	}
 	private function product_item( $product, $location ) {
 		$override             = ! empty( $location['id'] ) ? Sidrena_Location_Data::get_for_product( $location['id'], $product ) : array();
 		$has_location_price    = isset( $override['price'] ) && '' !== $override['price'];
