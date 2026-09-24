@@ -7,11 +7,11 @@
 
     <Grid Background="{StaticResource SidrenaBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="56" />
+            <RowDefinition Height="52" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="AppTitleBar" Grid.Row="0" Padding="20,0" Background="Transparent">
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Padding="18,0" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -19,111 +19,45 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Border Width="34" Height="34" CornerRadius="12" Background="{StaticResource SidrenaPanelAltBrush}">
+                <Border Width="34" Height="34" CornerRadius="10" Background="{StaticResource SidrenaAccentSoftBrush}" BorderBrush="{StaticResource SidrenaStrokeBrush}" BorderThickness="1">
                     <TextBlock Text="S" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource SidrenaAccentBrush}" />
                 </Border>
                 <StackPanel>
-                    <TextBlock Text="Sidrena Desktop" FontSize="15" FontWeight="SemiBold" Foreground="White" />
-                    <TextBlock Text="Premium Windows app za sidrene cijene" FontSize="11" Foreground="{StaticResource SidrenaMutedBrush}" />
+                    <TextBlock Text="Sidrena Desktop" FontSize="14" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="WinUI 3 premium workspace" FontSize="11" Foreground="{StaticResource SidrenaMutedBrush}" />
                 </StackPanel>
             </StackPanel>
 
-            <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="16" Padding="12,6" Background="#183526">
-                <TextBlock Text="Legal readiness · 0.6.x" Foreground="{StaticResource SidrenaAccentBrush}" FontSize="12" FontWeight="SemiBold" />
-            </Border>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Border CornerRadius="14" Padding="12,5" Background="{StaticResource SidrenaAccentSoftBrush}">
+                    <TextBlock Text="Local-first · no telemetry" Foreground="{StaticResource SidrenaAccentBrush}" FontSize="12" FontWeight="SemiBold" />
+                </Border>
+                <Border CornerRadius="14" Padding="12,5" Background="{StaticResource SidrenaPanelAltBrush}" BorderBrush="{StaticResource SidrenaStrokeBrush}" BorderThickness="1">
+                    <TextBlock Text="Development line" Foreground="{StaticResource SidrenaMutedBrush}" FontSize="12" FontWeight="SemiBold" />
+                </Border>
+            </StackPanel>
         </Grid>
 
-        <muxc:NavigationView Grid.Row="1"
+        <muxc:NavigationView x:Name="RootNavigation"
+                             Grid.Row="1"
                              PaneDisplayMode="Left"
+                             PaneTitle="Sidrena"
+                             Header="Dashboard"
                              IsBackButtonVisible="Collapsed"
                              IsSettingsVisible="False"
-                             OpenPaneLength="250"
+                             OpenPaneLength="252"
                              CompactPaneLength="64"
-                             Background="Transparent">
+                             Background="Transparent"
+                             SelectionChanged="OnNavigationSelectionChanged">
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Content="Dashboard" IsSelected="True" />
-                <muxc:NavigationViewItem Content="Katalog" />
-                <muxc:NavigationViewItem Content="Import / Export" />
-                <muxc:NavigationViewItem Content="Objava" />
-                <muxc:NavigationViewItem Content="Audit" />
+                <muxc:NavigationViewItem Content="Dashboard" Tag="dashboard" Icon="Home" IsSelected="True" />
+                <muxc:NavigationViewItem Content="Katalog" Tag="catalog" Icon="List" />
+                <muxc:NavigationViewItem Content="Import / Export" Tag="importExport" Icon="Import" />
+                <muxc:NavigationViewItem Content="Legal readiness" Tag="legal" Icon="Shield" />
+                <muxc:NavigationViewItem Content="WordPress sync" Tag="sync" Icon="Sync" />
             </muxc:NavigationView.MenuItems>
 
-            <ScrollViewer Padding="24" VerticalScrollBarVisibility="Auto">
-                <StackPanel Spacing="22">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Sidrene cijene bez ručnog kaosa" FontSize="34" FontWeight="SemiBold" Foreground="White" />
-                            <TextBlock Text="Uvoz, provjera, priprema javnog CSV/XML/HTML cjenika i buduća objava prema Sidrena pluginu." FontSize="15" Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" MaxWidth="760" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Top">
-                            <Button Content="Provjeri katalog" Click="OnValidateClick" />
-                            <Button Content="Lokalni export" Click="OnExportClick" />
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border Grid.Column="0" CornerRadius="22" Padding="18" Background="{StaticResource SidrenaPanelBrush}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Proizvodi" Foreground="{StaticResource SidrenaMutedBrush}" />
-                                <TextBlock x:Name="ProductCountText" Text="0" FontSize="28" FontWeight="SemiBold" Foreground="White" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" CornerRadius="22" Padding="18" Background="{StaticResource SidrenaPanelBrush}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Spremno" Foreground="{StaticResource SidrenaMutedBrush}" />
-                                <TextBlock x:Name="ReadyCountText" Text="0" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource SidrenaAccentBrush}" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="2" CornerRadius="22" Padding="18" Background="{StaticResource SidrenaPanelBrush}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Upozorenja" Foreground="{StaticResource SidrenaMutedBrush}" />
-                                <TextBlock x:Name="IssueCountText" Text="0" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource SidrenaWarningBrush}" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="3" CornerRadius="22" Padding="18" Background="{StaticResource SidrenaPanelBrush}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Zadnji export" Foreground="{StaticResource SidrenaMutedBrush}" />
-                                <TextBlock x:Name="LastExportText" Text="nije izrađen" FontSize="14" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Grid ColumnSpacing="18">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1.15*" />
-                            <ColumnDefinition Width="0.85*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border CornerRadius="28" Padding="22" Background="{StaticResource SidrenaPanelBrush}">
-                            <StackPanel Spacing="16">
-                                <TextBlock Text="Legal readiness" FontSize="22" FontWeight="SemiBold" Foreground="White" />
-                                <TextBlock Text="Tehnička provjera obaveznih polja, referentnih datuma, jedinica mjere i lokacija. Ovo nije pravna garancija, nego kontrolna lista prije objave." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
-                                <ListView x:Name="IssueList" MinHeight="220" SelectionMode="None" Background="Transparent" />
-                            </StackPanel>
-                        </Border>
-
-                        <Border Grid.Column="1" CornerRadius="28" Padding="22" Background="{StaticResource SidrenaPanelAltBrush}">
-                            <StackPanel Spacing="16">
-                                <TextBlock Text="Objava i sinkronizacija" FontSize="22" FontWeight="SemiBold" Foreground="White" />
-                                <TextBlock Text="Prva verzija radi lokalni export. Sljedeća faza dodaje sigurnu REST sinkronizaciju prema Sidrena WordPress/WooCommerce pluginu." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
-                                <muxc:InfoBar Title="Referentni datumi" Message="10.09.2026. za novobuhvaćene proizvode/usluge i 02.05.2025. za prethodno obuhvaćene FMCG kategorije." Severity="Informational" IsOpen="True" />
-                                <muxc:InfoBar Title="Privatnost" Message="Aplikacija ne šalje katalog Brendigu. Export je lokalni dok korisnik ne uključi sinkronizaciju." Severity="Success" IsOpen="True" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </StackPanel>
-            </ScrollViewer>
+            <Frame x:Name="ContentFrame" />
         </muxc:NavigationView>
     </Grid>
 </Window>

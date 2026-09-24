@@ -1,0 +1,49 @@
+<Page
+    x:Class="Sidrena.Windows.Views.LegalReadinessPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+
+    <ScrollViewer Padding="28">
+        <StackPanel Spacing="18">
+            <Border Style="{StaticResource SidrenaSubtleCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Legal readiness" FontSize="28" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="Tehnička provjera obaveznih podataka, referentnih datuma, lokacije/webshopa i javnog exporta. Konačnu poslovnu i pravnu procjenu donosi korisnik ili njegov savjetnik." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Grid ColumnSpacing="18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.9*" />
+                    <ColumnDefinition Width="1.1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource SidrenaCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Referentni datumi" FontSize="22" FontWeight="SemiBold" Foreground="White" />
+                        <muxc:InfoBar Title="10.09.2026." Message="Referentni datum za novobuhvaćene proizvode i usluge." Severity="Informational" IsOpen="True" />
+                        <muxc:InfoBar Title="02.05.2025." Message="Referentni datum za ranije obuhvaćene FMCG kategorije." Severity="Informational" IsOpen="True" />
+                        <muxc:InfoBar Title="01.10.2026." Message="Datum primjene koji se koristi u tehničkoj dokumentaciji." Severity="Informational" IsOpen="True" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource SidrenaCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Službene napomene" FontSize="22" FontWeight="SemiBold" Foreground="White" />
+                        <ListView x:Name="SourceNotesList" MinHeight="130" SelectionMode="None" Background="Transparent" />
+                        <Button Content="Ponovno provjeri katalog" Click="OnValidateClick" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource SidrenaCardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Rezultati provjere" FontSize="22" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock x:Name="StatusText" Foreground="{StaticResource SidrenaAccentBrush}" TextWrapping="Wrap" />
+                    <ListView x:Name="IssueList" MinHeight="240" SelectionMode="None" Background="Transparent" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

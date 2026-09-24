@@ -1,0 +1,31 @@
+<Page
+    x:Class="Sidrena.Windows.Views.WordPressSyncPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+
+    <ScrollViewer Padding="28">
+        <StackPanel Spacing="18">
+            <Border Style="{StaticResource SidrenaSubtleCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="WordPress / WooCommerce povezivanje" FontSize="28" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="Pripremljena je servisna apstrakcija za kasniji REST sync. Trenutna verzija ne šalje podatke izvan računala." Foreground="{StaticResource SidrenaMutedBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SidrenaCardStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Lokalni nacrt veze" FontSize="22" FontWeight="SemiBold" Foreground="White" />
+                    <TextBox x:Name="SiteUrlBox" Header="WordPress URL" PlaceholderText="https://primjer.hr" />
+                    <TextBox x:Name="TokenAliasBox" Header="Naziv API ključa / alias" PlaceholderText="Ne sprema se stvarni token u ovom skeletonu" />
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Spremi lokalni nacrt" Click="OnSaveDraftClick" />
+                        <Button Content="Pripremi sync preview" Click="OnPreviewSyncClick" />
+                    </StackPanel>
+                    <muxc:InfoBar Title="Privatnost" Message="Nema telemetrije. Nema prijenosa kataloga dok korisnik ručno ne uključi i potvrdi sync u budućoj verziji." Severity="Success" IsOpen="True" />
+                    <TextBlock x:Name="SyncResultText" Foreground="{StaticResource SidrenaAccentBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

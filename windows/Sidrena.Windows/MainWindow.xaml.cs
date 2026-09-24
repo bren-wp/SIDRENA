@@ -1,12 +1,14 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Sidrena.Windows.Services;
+using Sidrena.Windows.Views;
 
 namespace Sidrena.Windows;
 
 public sealed partial class MainWindow : Window
 {
-    private readonly IReadOnlyList<SidrenaCatalogItem> catalog;
+    private readonly SidrenaAppServices services;
 
     public MainWindow()
     {
@@ -15,29 +17,30 @@ public sealed partial class MainWindow : Window
         SetTitleBar(AppTitleBar);
         SystemBackdrop = new MicaBackdrop();
 
-        catalog = SampleCatalogService.LoadDemoCatalog();
-        RefreshDashboard();
+        services = SidrenaAppServices.Create();
+        ContentFrame.Navigate(typeof(DashboardPage), services);
     }
 
-    private void RefreshDashboard()
+    private void OnNavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        var issues = LegalReadinessService.Validate(catalog);
-        var errorCount = issues.Count(issue => issue.Severity is "Error" or "Warning");
+        if (args.SelectedItem is not NavigationViewItem item || item.Tag is not string tag)
+        {
+            return;
+        }
 
-        ProductCountText.Text = catalog.Count.ToString();
-        IssueCountText.Text = errorCount.ToString();
-        ReadyCountText.Text = catalog.Count(item => item.CurrentPrice > 0 && item.AnchorPrice > 0).ToString();
-        IssueList.ItemsSource = issues.Select(issue => issue.ToString()).ToArray();
-    }
+        sender.Header = item.Content?.ToString() ?? "Sidrena";
+        var targetPage = tag switch
+        {
+            "catalog" => typeof(CatalogPage),
+            "importExport" => typeof(ImportExportPage),
+            "legal" => typeof(LegalReadinessPage),
+            "sync" => typeof(WordPressSyncPage),
+            _ => typeof(DashboardPage)
+        };
 
-    private void OnValidateClick(object sender, RoutedEventArgs e)
-    {
-        RefreshDashboard();
-    }
-
-    private void OnExportClick(object sender, RoutedEventArgs e)
-    {
-        var exportPath = ExportService.ExportLocalPackage(catalog);
-        LastExportText.Text = exportPath;
+        if (ContentFrame.CurrentSourcePageType != targetPage)
+        {
+            ContentFrame.Navigate(targetPage, services);
+        }
     }
 }

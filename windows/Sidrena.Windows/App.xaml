@@ -13,15 +13,33 @@
             <Color x:Key="SidrenaPanelColor">#111827</Color>
             <Color x:Key="SidrenaPanelAltColor">#162033</Color>
             <Color x:Key="SidrenaAccentColor">#35F2B7</Color>
+            <Color x:Key="SidrenaAccentSoftColor">#123B31</Color>
             <Color x:Key="SidrenaWarningColor">#FFD166</Color>
+            <Color x:Key="SidrenaDangerColor">#FB7185</Color>
             <Color x:Key="SidrenaTextMutedColor">#94A3B8</Color>
+            <Color x:Key="SidrenaStrokeColor">#253044</Color>
 
             <SolidColorBrush x:Key="SidrenaBackgroundBrush" Color="{StaticResource SidrenaBackgroundColor}" />
             <SolidColorBrush x:Key="SidrenaPanelBrush" Color="{StaticResource SidrenaPanelColor}" />
             <SolidColorBrush x:Key="SidrenaPanelAltBrush" Color="{StaticResource SidrenaPanelAltColor}" />
             <SolidColorBrush x:Key="SidrenaAccentBrush" Color="{StaticResource SidrenaAccentColor}" />
+            <SolidColorBrush x:Key="SidrenaAccentSoftBrush" Color="{StaticResource SidrenaAccentSoftColor}" />
             <SolidColorBrush x:Key="SidrenaWarningBrush" Color="{StaticResource SidrenaWarningColor}" />
+            <SolidColorBrush x:Key="SidrenaDangerBrush" Color="{StaticResource SidrenaDangerColor}" />
             <SolidColorBrush x:Key="SidrenaMutedBrush" Color="{StaticResource SidrenaTextMutedColor}" />
+            <SolidColorBrush x:Key="SidrenaStrokeBrush" Color="{StaticResource SidrenaStrokeColor}" />
+
+            <Style x:Key="SidrenaCardStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="22" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Background" Value="{StaticResource SidrenaPanelBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource SidrenaStrokeBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+
+            <Style x:Key="SidrenaSubtleCardStyle" TargetType="Border" BasedOn="{StaticResource SidrenaCardStyle}">
+                <Setter Property="Background" Value="{StaticResource SidrenaPanelAltBrush}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
