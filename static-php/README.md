@@ -37,7 +37,7 @@ location ^~ /sidrena/storage/ {
 
 Generirani CSV/XML se ne otvaraju direktno iz storagea, nego kroz `download.php`, koji dopušta samo datoteke registrirane u Sidrena manifestu/arhivi.
 
-`generate.php` je iz CLI-ja uvijek dostupan. HTTP generiranje je po defaultu isključeno. Ako ga baš trebate, postavite `SIDRENA_GENERATE_TOKEN` environment varijablu ili `web_generate_token` u configu.
+`generate.php` je iz CLI-ja uvijek dostupan. HTTP generiranje je po defaultu isključeno. Ako ga baš trebate, postavite `SIDRENA_GENERATE_TOKEN` environment varijablu ili `web_generate_token` u configu. HTTP endpoint prihvaća samo **POST**; token šaljite kroz `X-Sidrena-Token` ili `Authorization: Bearer ...` header (POST polje `token` postoji samo kao kompatibilni fallback). Token se namjerno ne prima kroz URL/query string kako ne bi završio u access logovima.
 
 ## Proizvodi
 
