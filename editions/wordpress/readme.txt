@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, hrvatska, trgovina, usluge
 Requires at least: 6.6
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 0.7.0
+Stable tag: 0.8.0
 License: Sidrena Software License 1.0
 License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE
 
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 
 == Description ==
 
-= Sidrena WordPress 0.7.0 =
+= Sidrena WordPress 0.8.0 =
 
 Sidrena WordPress namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
@@ -74,7 +74,7 @@ Plugin možete instalirati i postaviti sami.
 
 == Installation ==
 
-1. Prenesite sidrena-wordpress-0.7.0.zip.
+1. Prenesite sidrena-wordpress-0.8.0.zip.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog.
 4. Povežite postojeći WordPress tip sadržaja ili unesite/uvezite proizvode.
@@ -101,6 +101,12 @@ Da, WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Si
 Ne. Korištenje je dopušteno prema Sidrena Software License 1.0, ali prodaja, preprodaja, sublicenciranje, redistribucija i rebrandiranje nisu dopušteni bez pisanog odobrenja Brendigo.
 
 == Changelog ==
+
+= 0.8.0 =
+* Windows aplikacija proširena je iz jednog shell ekrana u strukturirani WinUI 3 workspace s Views, ViewModels, Models i Services slojevima.
+* Dodane su stranice Dashboard, Katalog, Import/Export, Legal readiness i WordPress sync.
+* Dodani su lokalni servisi za demo katalog, tehničku provjeru, CSV/XML import preview, CSV/XML/HTML export i WordPress sync preview bez mrežnog slanja.
+* Pojačani su Windows smoke guard i dokumentacija za native Windows 11 / Fluent smjer.
 
 = 0.7.0 =
 * Dodana je nativna Windows aplikacija pod /windows, temeljena na WinUI 3 / Windows App SDK, bez Electrona, Taurija, WebView2 shell pristupa i legacy WinForms/WPF UI-ja.
