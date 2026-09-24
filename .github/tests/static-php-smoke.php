@@ -50,7 +50,7 @@ $product_csv = implode(
 		'DOSTUPNOST',
 	)
 ) . "\n";
-$product_csv .= '=Formula test;KAVA-750;Primjer;750;g;required;;;6,00;ne;;5,50;10.09.2026;3850000000000;dostupno' . "\n";
+$product_csv .= '=Formula test;KAVA-750;Primjer;750;g;required;;;6,00;ne;;5,50;10.09.2026;3850000000000;dostupno' . "\n\n";
 file_put_contents( $base . '/storage/source/products.csv', $product_csv );
 
 $service_csv = "naziv_usluge;vrsta_usluge;opseg_usluge;pripadajuci_troskovi;ugradbena_zamjenska_roba;maloprodajna_cijena;posebni_oblik_prodaje;naziv_posebnog_oblika_prodaje;sidrena_cijena;datum_sidrene_cijene\n";
@@ -130,6 +130,21 @@ sidrena_static_assert( is_array( $product_after ) && $current_before === hash_fi
 $snapshot_after = $sidrena->readSnapshot();
 sidrena_static_assert( 'dostupno' === $snapshot_after['products'][0]['dostupnost'], 'Failed publication changed the active snapshot.' );
 sidrena_static_assert( 4 === count( $sidrena->readArchiveIndex( 20 ) ), 'Failed preflight must not add archive entries.' );
+
+// Regression: impossible Croatian dates must be rejected rather than silently
+// normalized by DateTimeImmutable.
+$invalid_date_csv = str_replace( '10.09.2026', '31.02.2026.', $product_csv );
+file_put_contents( $base . '/storage/source/products.csv', $invalid_date_csv );
+$date_failed = false;
+try {
+	$sidrena->generate();
+} catch ( RuntimeException $e ) {
+	$date_failed = true;
+	sidrena_static_assert( false !== strpos( $e->getMessage(), 'referentni datum' ), 'Invalid date failure was not explicit.' );
+}
+sidrena_static_assert( $date_failed, 'Impossible anchor date must block strict publication.' );
+sidrena_static_assert( $manifest_before === file_get_contents( $base . '/storage/generated/manifest.json' ), 'Invalid date changed the active manifest.' );
+sidrena_static_assert( 4 === count( $sidrena->readArchiveIndex( 20 ) ), 'Invalid date must not add archive entries.' );
 
 sidrena_static_assert( 'static-php' === $sidrena->runtimeInfo()['edition'], 'Static edition runtime marker missing.' );
 sidrena_static_assert( SidrenaStatic::VERSION === '1.7.0', 'Static edition version mismatch.' );
