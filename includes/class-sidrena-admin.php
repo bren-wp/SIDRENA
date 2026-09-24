@@ -58,6 +58,7 @@ final class Sidrena_Admin {
 			array( 'sidrena-tools', __( 'Alati', 'sidrena' ), __( 'Alati', 'sidrena' ) ),
 			array( 'sidrena-log', __( 'Dnevnik', 'sidrena' ), __( 'Dnevnik', 'sidrena' ) ),
 			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
+			array( 'sidrena-support', __( 'Podrška i usluge', 'sidrena' ), __( 'Podrška', 'sidrena' ) ),
 			array( 'sidrena-help', __( 'Upute za korištenje', 'sidrena' ), __( 'Upute', 'sidrena' ) ),
 		);
 
@@ -129,11 +130,12 @@ final class Sidrena_Admin {
 			'sidrena-tools'      => 'tools',
 			'sidrena-log'        => 'log',
 			'sidrena-rules'      => 'rules',
+			'sidrena-support'    => 'support',
 			'sidrena-help'       => 'help',
 		);
 		$tab = isset( $page_map[ $page ] ) ? $page_map[ $page ] : 'dashboard';
 
-		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'help' );
+		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'support', 'help' );
 		if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$legacy_tab = sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( in_array( $legacy_tab, $legacy_tabs, true ) ) {
@@ -157,14 +159,14 @@ final class Sidrena_Admin {
 
 			<div class="sid-toolbar">
 				<div class="sid-toolbar__meta">
-					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?> · 100% FREE</span>
+					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
 					<span class="sid-mode-badge <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'is-woo' : 'is-standalone'; ?>"><span class="dashicons <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'dashicons-cart' : 'dashicons-wordpress-alt'; ?>"></span><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
 					<span class="sid-toolbar__rule"><?php echo esc_html( SIDRENA_RULESET ); ?></span>
 				</div>
 				<div class="sid-toolbar__actions">
-					<a class="sid-link-button" href="https://sidrene-cijene.com.hr/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Web plugina', 'sidrena' ); ?></a>
+					<a class="sid-link-button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><span class="dashicons dashicons-sos"></span><?php esc_html_e( 'Podrška', 'sidrena' ); ?></a>
 					<?php if ( $donation_url ) : ?>
-						<a class="sid-link-button sid-donate-link" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Podržite razvoj', 'sidrena' ); ?></a>
+						<a class="sid-link-button sid-donate-link" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Donacija', 'sidrena' ); ?></a>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -205,6 +207,9 @@ final class Sidrena_Admin {
 					case 'rules':
 						$this->rules_tab();
 						break;
+					case 'support':
+						$this->support_tab();
+						break;
 					case 'help':
 						$this->help_tab();
 						break;
@@ -215,8 +220,8 @@ final class Sidrena_Admin {
 			</main>
 
 			<footer class="sid-footer sid-footer-160">
-				<span><?php esc_html_e( 'Sidrena je besplatan open-source dodatak bez telemetrije i Pro paywalla.', 'sidrena' ); ?></span>
-				<span>Brendigo · <a href="https://brendigo.com/" target="_blank" rel="noopener noreferrer">brendigo.com</a><?php if ( $donation_url ) : ?> · <a href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Donirajte', 'sidrena' ); ?></a><?php endif; ?></span>
+				<span><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></span>
+				<span><a href="mailto:<?php echo esc_attr( Sidrena_Utils::support_email() ); ?>"><?php echo esc_html( Sidrena_Utils::support_email() ); ?></a> · <a href="https://brendigo.com/" target="_blank" rel="noopener noreferrer">brendigo.com</a></span>
 			</footer>
 		</div>
 		<?php
@@ -257,6 +262,70 @@ final class Sidrena_Admin {
 	}
 
 
+	private function support_tab() {
+		$pdf_url      = Sidrena_Utils::support_pdf_url();
+		$email_url    = Sidrena_Utils::support_email_url();
+		$whatsapp_url = Sidrena_Utils::whatsapp_url();
+		$install_url  = Sidrena_Utils::installation_service_url();
+		$donation_url = Sidrena_Utils::donation_url();
+		?>
+		<div class="sid-page-head">
+			<div>
+				<span class="sid-kicker"><?php esc_html_e( 'Brendigo LTD Developer', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Podrška i usluge', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Dokumentacija i izravni kanali za pomoć pri instalaciji, konfiguraciji, uvozu podataka i provjeri javnih cjenika.', 'sidrena' ); ?></p>
+			</div>
+		</div>
+
+		<div class="sid-grid sid-grid-2">
+			<section class="sid-card sid-tool-card">
+				<div class="sid-tool-icon"><span class="dashicons dashicons-pdf"></span></div>
+				<h2><?php esc_html_e( 'PDF upute i podrška', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'PDF je uključen u instalacijski paket i može se otvoriti bez odlaska na vanjsku dokumentaciju.', 'sidrena' ); ?></p>
+				<a class="button button-primary sid-primary" href="<?php echo esc_url( $pdf_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori PDF', 'sidrena' ); ?></a>
+			</section>
+
+			<section class="sid-card sid-tool-card">
+				<div class="sid-tool-icon"><span class="dashicons dashicons-email-alt"></span></div>
+				<h2><?php esc_html_e( 'E-mail podrška', 'sidrena' ); ?></h2>
+				<p><strong><?php echo esc_html( Sidrena_Utils::support_email() ); ?></strong></p>
+				<a class="button sid-secondary" href="<?php echo esc_url( $email_url ); ?>"><?php esc_html_e( 'Pošalji e-mail', 'sidrena' ); ?></a>
+			</section>
+
+			<section class="sid-card sid-tool-card">
+				<div class="sid-tool-icon"><span class="dashicons dashicons-whatsapp"></span></div>
+				<h2><?php esc_html_e( 'WhatsApp podrška', 'sidrena' ); ?></h2>
+				<p>+385 91 901 0092</p>
+				<a class="button sid-secondary" href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori WhatsApp', 'sidrena' ); ?></a>
+			</section>
+
+			<section class="sid-card sid-tool-card">
+				<div class="sid-tool-icon"><span class="dashicons dashicons-admin-tools"></span></div>
+				<h2><?php esc_html_e( 'Instalacija i početno postavljanje', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Jednokratna usluga instalacije i osnovnog postavljanja Sidrena plugina: 80 EUR.', 'sidrena' ); ?></p>
+				<a class="button button-primary sid-primary" href="<?php echo esc_url( $install_url ); ?>"><?php esc_html_e( 'Zatraži instalaciju - 80 EUR', 'sidrena' ); ?></a>
+			</section>
+		</div>
+
+		<?php if ( $donation_url ) : ?>
+		<section class="sid-card sid-note">
+			<div class="sid-note-icon"><span class="dashicons dashicons-heart"></span></div>
+			<div>
+				<h2><?php esc_html_e( 'Donacija', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Ako želite podržati daljnje održavanje Sidrene, donacija se otvara izravno na Revolutu.', 'sidrena' ); ?></p>
+				<a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Doniraj putem Revoluta', 'sidrena' ); ?></a>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<section class="sid-card">
+			<span class="sid-kicker"><?php esc_html_e( 'O nama', 'sidrena' ); ?></span>
+			<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
+			<p><?php esc_html_e( 'Razvoj, održavanje i podrška za Sidrena WordPress i Sidrena WooCommerce plugin.', 'sidrena' ); ?></p>
+		</section>
+		<?php
+	}
+
 	private function help_tab() {
 		$woo = Sidrena_Utils::is_woocommerce_edition();
 		?>
@@ -264,9 +333,9 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Dokumentacija', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Upute za korištenje Sidrene', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Praktičan redoslijed od instalacije do provjere javnih cjenika. Koraci vrijede za WooCommerce i samostalni WordPress katalog.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'Praktičan redoslijed od instalacije do provjere javnih cjenika za aktivno Sidrena izdanje.', 'sidrena' ); ?></p>
 			</div>
-			<div class="sid-head-inline-actions"><a class="button sid-secondary" href="https://github.com/bren-wp/SIDRENA/blob/main/docs/UPUTE.md" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-media-document"></span><?php esc_html_e( 'Pune upute na GitHubu', 'sidrena' ); ?></a><a class="button sid-secondary" href="https://sidrene-cijene.com.hr/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Službena web stranica', 'sidrena' ); ?></a></div>
+			<div class="sid-head-inline-actions"><a class="button sid-secondary" href="<?php echo esc_url( Sidrena_Utils::support_pdf_url() ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-pdf"></span><?php esc_html_e( 'PDF upute', 'sidrena' ); ?></a><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Podrška', 'sidrena' ); ?></a></div>
 		</div>
 
 		<div class="sid-grid sid-grid-2">
@@ -283,8 +352,8 @@ final class Sidrena_Admin {
 
 			<section class="sid-card">
 				<span class="sid-kicker"><?php esc_html_e( '2. Katalog', 'sidrena' ); ?></span>
-				<h2><?php echo $woo ? esc_html__( 'WooCommerce i dodatne stavke', 'sidrena' ) : esc_html__( 'Samostalni katalog', 'sidrena' ); ?></h2>
-				<p><?php echo $woo ? esc_html__( 'Sidrena čita WooCommerce proizvode i varijacije, a zasebne stavke koje nisu Woo artikli možete voditi u Dodatnim stavkama.', 'sidrena' ) : esc_html__( 'Bez WooCommercea sve proizvode vodite u Sidrena katalogu i možete ih uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
+				<h2><?php echo $woo ? esc_html__( 'WooCommerce katalog', 'sidrena' ) : esc_html__( 'WordPress katalog', 'sidrena' ); ?></h2>
+				<p><?php echo $woo ? esc_html__( 'Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao izvor proizvoda.', 'sidrena' ) : esc_html__( 'Sidrena WordPress koristi vlastiti katalog proizvoda koji možete unositi ručno ili uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
 				<p><?php esc_html_e( 'Za jediničnu cijenu prvo označite primjenjivost. Kada je obvezna, količina pakiranja i jedinica mogu poslužiti za automatski izračun ako iznos nije ručno unesen.', 'sidrena' ); ?></p>
 				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><?php esc_html_e( 'Otvori Katalog', 'sidrena' ); ?></a>
 			</section>
@@ -514,18 +583,18 @@ final class Sidrena_Admin {
 	}
 
 	private function support_card() {
-		$url = Sidrena_Utils::donation_url();
-		if ( ! $url ) {
-			return;
-		}
+		$donation_url = Sidrena_Utils::donation_url();
 		?>
 		<section class="sid-card sid-support-card">
-			<div class="sid-support-card__icon"><span class="dashicons dashicons-heart"></span></div>
+			<div class="sid-support-card__icon"><span class="dashicons dashicons-sos"></span></div>
 			<div>
-				<span class="sid-kicker"><?php esc_html_e( '100% besplatno', 'sidrena' ); ?></span>
-				<h2><?php esc_html_e( 'Podržite razvoj Sidrene', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Ako vam je dodatak koristan, možete dobrovoljno podržati daljnji razvoj, testiranje i održavanje. Donacija ne otključava funkcije — Sidrena ostaje besplatna.', 'sidrena' ); ?></p>
-				<a class="button sid-support-button" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Donirajte', 'sidrena' ); ?></a>
+				<span class="sid-kicker"><?php esc_html_e( 'Podrška', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Trebate pomoć s postavljanjem?', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Otvorite upute, javite se e-poštom ili WhatsAppom. Dostupna je i jednokratna instalacija i početno postavljanje plugina za 80 EUR.', 'sidrena' ); ?></p>
+				<div class="sid-head-inline-actions">
+					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
+					<?php if ( $donation_url ) : ?><a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Donacija putem Revoluta', 'sidrena' ); ?></a><?php endif; ?>
+				</div>
 			</div>
 		</section>
 		<?php
