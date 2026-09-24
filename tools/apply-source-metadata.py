@@ -76,6 +76,8 @@ def should_process(path: pathlib.Path) -> bool:
     rel = relative(path)
     if any(part in SKIP_DIRS for part in rel.parts):
         return False
+    if len(rel.parts) >= 3 and rel.parts[0] == ".github" and rel.parts[1] == "workflows":
+        return False
     if rel in SKIP_FILES:
         return False
     if path.suffix.lower() in TEXT_SUFFIXES:
