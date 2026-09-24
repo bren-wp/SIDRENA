@@ -96,7 +96,10 @@ jobs:
           test -f languages/sidrena.pot
           test -f docs/legal-and-technical-notes.md
           grep -Fq 'manage_sidrena' includes/class-sidrena-activator.php
-          grep -Fq 'Sidrena_Utils::admin_capability()' includes/class-sidrena-admin.php
+          grep -Fq 'Sidrena_Utils::admin_menu_capability()' includes/class-sidrena-admin.php
+          grep -Fq 'Sidrena_Utils::current_user_can_manage()' includes/class-sidrena-admin.php
+          grep -Fq 'map_admin_capability' includes/class-sidrena-plugin.php
+          test -f .github/tests/admin-menu-access-smoke.php
           OLD_DOMAIN='sidrena-cijena'
           if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
             echo 'Retired Sidrena website domain detected.' >&2
