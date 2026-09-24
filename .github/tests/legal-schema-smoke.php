@@ -72,4 +72,8 @@ sidrena_schema_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        
 sidrena_schema_assert( false !== strpos( $utils_source, "'retention_days'       => 45" ), 'Default archive retention should preserve an operational margin above 30 days.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
-fwrite( STDOUT, "Sidrena NN 101/2026 schema smoke test passed.\n" );
+$pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
+sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Strict service preflight must require service type.' );
+sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Strict service preflight must require service scope.' );
+
+fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema smoke test passed.\n" );
