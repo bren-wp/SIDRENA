@@ -62,11 +62,16 @@ function sidrena_woo_output_assert( $condition, $message ) {
 
 $product = new WC_Product( 12 );
 $html = Sidrena_Products::instance()->append_reference_prices( '<span class="price">19,99 €</span>', $product );
+$frontend_css = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-reference-prices' ), 'Automatic Woo output must append Sidrena reference wrapper.' );
 sidrena_woo_output_assert( false !== strpos( $html, '29,99 €' ), 'Automatic Woo output must include the entered Sidrena price.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'Sidrena cijena (10.09.2026.)' ), 'Default storefront label must identify the Sidrena price and reference date.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-anchor__info' ), 'Automatic Woo output must include the accessible info indicator.' );
+sidrena_woo_output_assert( false !== strpos( $html, 'tabindex="0"' ), 'Sidrena tooltip trigger must be keyboard focusable.' );
+sidrena_woo_output_assert( false !== strpos( $html, 'aria-describedby=' ), 'Sidrena tooltip trigger must reference its tooltip with aria-describedby.' );
+sidrena_woo_output_assert( false !== strpos( $frontend_css, '.sidrena-anchor--has-tooltip:focus-visible' ), 'Sidrena tooltip needs a visible keyboard focus state.' );
+sidrena_woo_output_assert( false !== strpos( $frontend_css, 'position: fixed;' ) && false !== strpos( $frontend_css, 'max-width: calc(100vw - 36px);' ), 'Mobile Sidrena tooltip viewport clamp is missing.' );
 
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );
