@@ -79,24 +79,23 @@ doc = SimpleDocTemplate(
     rightMargin=20 * mm,
     topMargin=18 * mm,
     bottomMargin=20 * mm,
-    title="Sidrena - Podrška i opcionalne usluge",
+    title="Sidrena - Podrška i instalacija",
     author="Brendigo LTD Developer",
-    subject="Podrška i opcionalne usluge za Sidrena WordPress i Sidrena WooCommerce",
+    subject="Podrška i instalacija za Sidrena WordPress i Sidrena WooCommerce",
     creator="Brendigo LTD Developer",
 )
 
 story = [
     paragraph("SIDRENA", kicker),
-    paragraph("Podrška i opcionalne usluge", h1),
-    paragraph("Službeni kontakt za pomoć pri radu Sidrena WordPress / Sidrena WooCommerce plugina. Plugin možete instalirati, postaviti i održavati sami; plaćene Brendigo usluge naručuju se samo ako ih želite."),
+    paragraph("Podrška i instalacija", h1),
+    paragraph("Službeni kontakt za pomoć pri instalaciji, početnom postavljanju, provjeri javnog cjenika i radu Sidrena WordPress / Sidrena WooCommerce plugina."),
     Spacer(1, 4 * mm),
 ]
 
 contact = [
     [paragraph("E-MAIL PODRŠKA", label), link("sidrena@brendigo.com", "mailto:sidrena@brendigo.com")],
     [paragraph("WHATSAPP PODRŠKA", label), link("+385 91 901 0092", "https://wa.me/385919010092")],
-    [paragraph("OPCIONALNO POSTAVLJANJE", label), paragraph("80 EUR jednokratno", value)],
-    [paragraph("OPCIONALNO ODRŽAVANJE", label), paragraph("20 EUR mjesečno", value)],
+    [paragraph("INSTALACIJA I POČETNO POSTAVLJANJE", label), paragraph("80 EUR jednokratno", value)],
     [paragraph("DEVELOPER", label), paragraph("Brendigo LTD Developer", value)],
 ]
 contact_table = Table(contact, colWidths=[62 * mm, 108 * mm], hAlign="LEFT")
@@ -112,11 +111,7 @@ contact_table.setStyle(TableStyle([
 story.extend([
     contact_table,
     Spacer(1, 2.5 * mm),
-    paragraph("Plaćene usluge su opcionalne", h2),
-    paragraph("<b>Plugin možete postaviti i održavati sami.</b> Iznos od 80 EUR odnosi se samo na jednokratno postavljanje kada želite da ga odradi Brendigo. Održavanje od 20 EUR mjesečno uključuje se samo ako želite kontinuirano tehničko održavanje."),
-    paragraph("Dobrovoljna donacija za razvoj nije naknada za instalaciju ili održavanje i nije uvjet za korištenje plugina.", small),
-    Spacer(1, 1.2 * mm),
-    paragraph("Što uključuje opcionalno jednokratno postavljanje", h2),
+    paragraph("Što uključuje jednokratna instalacija", h2),
 ])
 
 for item in [
@@ -135,16 +130,13 @@ def button_link(text, url):
 
 buttons = Table([
     [button_link("Pošalji e-mail", "mailto:sidrena@brendigo.com"), button_link("Otvori WhatsApp", "https://wa.me/385919010092")],
-    [button_link("Zatraži postavljanje", "mailto:sidrena@brendigo.com?subject=Sidrena%20-%20postavljanje%2080%20EUR"), button_link("Zatraži održavanje", "mailto:sidrena@brendigo.com?subject=Sidrena%20-%20odrzavanje%2020%20EUR")],
-    [button_link("Dobrovoljna Revolut donacija", "https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija"), button_link("Sidrena web", "https://sidrene-cijene.com.hr/")],
-], colWidths=[85 * mm, 85 * mm], rowHeights=[13 * mm, 13 * mm, 13 * mm])
+    [button_link("Revolut donacija", "https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija"), button_link("Sidrena web", "https://sidrene-cijene.com.hr/")],
+], colWidths=[85 * mm, 85 * mm], rowHeights=[13 * mm, 13 * mm])
 buttons.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (0, 0), NAVY),
     ("BACKGROUND", (1, 0), (1, 0), ORANGE),
-    ("BACKGROUND", (0, 1), (0, 1), DARK),
+    ("BACKGROUND", (0, 1), (0, 1), GREEN),
     ("BACKGROUND", (1, 1), (1, 1), DARK),
-    ("BACKGROUND", (0, 2), (0, 2), GREEN),
-    ("BACKGROUND", (1, 2), (1, 2), DARK),
     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ("LEFTPADDING", (0, 0), (-1, -1), 28),
     ("RIGHTPADDING", (0, 0), (-1, -1), 8),
