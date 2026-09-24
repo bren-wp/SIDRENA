@@ -1,4 +1,4 @@
-# Sidrena WooCommerce 2.0.0 — Upute za korištenje
+# Sidrena WooCommerce 0.1.0 — Upute za korištenje
 
 ## Namjena
 
@@ -9,7 +9,7 @@ Za web bez WooCommercea koristite Sidrena WordPress.
 ## Instalacija
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Preuzmite `sidrena-woocommerce-2.0.0.zip`.
+2. Preuzmite `sidrena-woocommerce-0.1.0.zip`.
 3. WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 4. Aktivirajte **Sidrena WooCommerce**.
 5. Otvorite **Sidrena** u lijevom admin meniju.
@@ -71,19 +71,3 @@ Ako želite trajno ukloniti Sidrena bazne podatke nakon što nijedno izdanje vi�
 
 Javna CSV/XML arhiva i sadržaj proizvoda/usluga namjerno se ne brišu automatski.
 
-
-## Nadogradnja sa Sidrena 1.x
-
-Sidrena 2.0 koristi zaseban WooCommerce plugin slug.
-
-Preporučeni redoslijed:
-
-1. Napravite backup baze i `wp-content/uploads/sidrena/`.
-2. Provjerite da je WooCommerce aktivan.
-3. Na stranici Dodaci **deaktivirajte** stari Sidrena 1.x.
-4. Nemojte prvo kliknuti **Obriši** na starom 1.x paketu: starije verzije imaju staru uninstall logiku koja može obrisati zajedničke Sidrena opcije/tablice.
-5. Instalirajte i aktivirajte `sidrena-woocommerce-2.0.0.zip`.
-6. Provjerite WooCommerce proizvode, Sidrena polja, povijest cijena, Lokacije, Arhivu i javni cjenik.
-7. Tek nakon provjere uklonite stari 1.x folder kroz hosting File Manager/SFTP ili ga ostavite deaktiviranog do sigurnog održavanja.
-
-WooCommerce post meta, Sidrena postavke, povijesne tablice, usluge i arhiva koriste isti `sidrena_` podatkovni prostor i 2.0 ih može nastaviti koristiti.
