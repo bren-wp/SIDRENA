@@ -52,8 +52,10 @@ jobs:
       - name: Edition conflict guard smoke tests
         shell: bash
         run: |
-          php .github/tests/edition-conflict-smoke.php wordpress
-          php .github/tests/edition-conflict-smoke.php woocommerce
+          php .github/tests/edition-conflict-smoke.php wordpress edition
+          php .github/tests/edition-conflict-smoke.php woocommerce edition
+          php .github/tests/edition-conflict-smoke.php wordpress legacy
+          php .github/tests/edition-conflict-smoke.php woocommerce legacy
 
       - name: Safe uninstall smoke tests
         shell: bash
@@ -161,6 +163,11 @@ jobs:
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/editions"
+
+          # Boot the exact staged packages after edition-specific classes have
+          # physically been removed.
+          php .github/tests/wordpress-edition-smoke.php "$WP"
+          php .github/tests/woocommerce-edition-smoke.php "$WOO"
 
           unzip -l "$OUT/sidrena-wordpress-$VERSION.zip" > "$OUT/wordpress-files.txt"
           unzip -l "$OUT/sidrena-woocommerce-$VERSION.zip" > "$OUT/woocommerce-files.txt"

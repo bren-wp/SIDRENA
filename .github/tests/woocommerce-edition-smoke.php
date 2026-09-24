@@ -1,10 +1,13 @@
 <?php
+$root = isset( $argv[1] ) && is_dir( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : dirname( __DIR__, 2 );
+$main = is_file( $root . '/sidrena-woocommerce.php' ) ? $root . '/sidrena-woocommerce.php' : $root . '/editions/woocommerce/sidrena-woocommerce.php';
+
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
 define( 'SIDRENA_VERSION', '2.0.0' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
-define( 'SIDRENA_FILE', dirname( __DIR__, 2 ) . '/editions/woocommerce/sidrena-woocommerce.php' );
-define( 'SIDRENA_DIR', dirname( __DIR__, 2 ) . '/' );
+define( 'SIDRENA_FILE', $main );
+define( 'SIDRENA_DIR', $root . '/' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena-woocommerce/' );
 
 class WooCommerce {}
@@ -45,7 +48,7 @@ function wp_schedule_event( $timestamp, $recurrence, $hook ) { unset( $recurrenc
 function wp_schedule_single_event( $timestamp, $hook ) { $GLOBALS['sidrena_scheduled'][ $hook ] = $timestamp; return true; }
 function wp_clear_scheduled_hook( $hook ) { unset( $GLOBALS['sidrena_scheduled'][ $hook ] ); return 1; }
 
-require dirname( __DIR__, 2 ) . '/includes/sidrena-bootstrap.php';
+require $root . '/includes/sidrena-bootstrap.php';
 
 function sidrena_woo_assert( $condition, $message ) {
 	if ( ! $condition ) {

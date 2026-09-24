@@ -1,12 +1,17 @@
 <?php
 $target = isset( $argv[1] ) ? (string) $argv[1] : '';
-if ( ! in_array( $target, array( 'wordpress', 'woocommerce' ), true ) ) {
-	fwrite( STDERR, "Usage: php edition-conflict-smoke.php wordpress|woocommerce\n" );
+$mode   = isset( $argv[2] ) ? (string) $argv[2] : 'edition';
+if ( ! in_array( $target, array( 'wordpress', 'woocommerce' ), true ) || ! in_array( $mode, array( 'edition', 'legacy' ), true ) ) {
+	fwrite( STDERR, "Usage: php edition-conflict-smoke.php wordpress|woocommerce [edition|legacy]\n" );
 	exit( 2 );
 }
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_EDITION', 'wordpress' === $target ? 'woocommerce' : 'wordpress' );
+if ( 'legacy' === $mode ) {
+	class Sidrena_Plugin {}
+} else {
+	define( 'SIDRENA_EDITION', 'wordpress' === $target ? 'woocommerce' : 'wordpress' );
+}
 
 $GLOBALS['sidrena_activation_callback'] = null;
 $GLOBALS['sidrena_actions'] = array();
@@ -68,4 +73,4 @@ try {
 }
 sidrena_conflict_assert( $blocked, 'Activation blocker did not stop the conflicting edition.' );
 
-fwrite( STDOUT, "Sidrena {$target} conflict guard smoke test passed.\n" );
+fwrite( STDOUT, "Sidrena {$target} {$mode} conflict guard smoke test passed.\n" );
