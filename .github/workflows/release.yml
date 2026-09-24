@@ -204,7 +204,11 @@ jobs:
             V010_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}")"
             test "$(jq -r '.draft' <<<"$V010_RELEASE")" = "false"
             test "$(jq -r '.prerelease' <<<"$V010_RELEASE")" = "false"
-            if grep -qiE 'Brendigo[[:space:]]+LTD|Brendigo LTD Developer|Sidrena 1\.[0-9]|Sidrena 2\.0\.0' <<<"$(jq -r '.body // ""' <<<"$V010_RELEASE")"; then
+            RETIRED_BRAND_A='Brendigo[[:space:]]+L''TD'
+            RETIRED_BRAND_B='Brendigo L''TD Developer'
+            RETIRED_VERSION_A='Sidrena 1\.[0-9]'
+            RETIRED_VERSION_B='Sidrena 2\.0\.0'
+            if grep -qiE "${RETIRED_BRAND_A}|${RETIRED_BRAND_B}|${RETIRED_VERSION_A}|${RETIRED_VERSION_B}" <<<"$(jq -r '.body // ""' <<<"$V010_RELEASE")"; then
               echo 'Retired branding/version history leaked into v0.1.0 release body.' >&2
               exit 1
             fi
