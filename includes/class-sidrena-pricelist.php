@@ -632,7 +632,11 @@ final class Sidrena_Pricelist {
 				if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
 					continue;
 				}
-				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() ) {
+				$cjenik_visibility = sanitize_key( (string) get_post_meta( $product->get_id(), '_sidrena_cjenik_visibility', true ) );
+				if ( 'exclude' === $cjenik_visibility ) {
+					continue;
+				}
+				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
 					continue;
 				}
 				if ( $product->is_type( 'variable' ) ) {

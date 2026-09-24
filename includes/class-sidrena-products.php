@@ -47,7 +47,8 @@ final class Sidrena_Products {
 			'_sidrena_sale_name'                     => 'string',
 			'_sidrena_lowest_30_manual'              => 'number',
 			'_sidrena_sale_reference_exemption'      => 'string',
-			'_sidrena_expiry_date'                      => 'string',
+			'_sidrena_expiry_date'                    => 'string',
+			'_sidrena_cjenik_visibility'              => 'string',
 		);
 		foreach ( array( 'product', 'product_variation' ) as $post_type ) {
 			foreach ( $keys as $key => $type ) {
@@ -225,6 +226,19 @@ final class Sidrena_Products {
 				'id'          => '_sidrena_sale_name',
 				'label'       => __( 'Naziv posebnog oblika prodaje', 'sidrena' ),
 				'placeholder' => __( 'npr. Akcija', 'sidrena' ),
+			)
+		);
+		woocommerce_wp_select(
+			array(
+				'id'          => '_sidrena_cjenik_visibility',
+				'label'       => __( 'Javni cjenik — uključivanje', 'sidrena' ),
+				'desc_tip'    => true,
+				'description' => __( 'Automatski poštuje WooCommerce vidljivost. Uvijek uključi može uključiti objavljen proizvod skriven iz Woo kataloga, ali ne može objaviti privatni, draft ili lozinkom zaštićeni proizvod.', 'sidrena' ),
+				'options'     => array(
+					'auto'    => __( 'Automatski', 'sidrena' ),
+					'include' => __( 'Uvijek uključi', 'sidrena' ),
+					'exclude' => __( 'Isključi iz Sidrena cjenika', 'sidrena' ),
+				),
 			)
 		);
 		echo '</div>';
@@ -405,6 +419,7 @@ final class Sidrena_Products {
 			'_sidrena_lowest_30_manual'         => 'decimal',
 			'_sidrena_sale_reference_exemption' => 'exemption',
 			'_sidrena_expiry_date'              => 'date',
+			'_sidrena_cjenik_visibility'         => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
 			if ( ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request.
@@ -519,6 +534,9 @@ final class Sidrena_Products {
 			case 'unit_status_inherit':
 				$value = sanitize_key( $value );
 				return '' === $value || in_array( $value, array( 'review', 'required', 'not_required', 'exception' ), true ) ? $value : '';
+			case 'cjenik_visibility':
+				$value = sanitize_key( $value );
+				return in_array( $value, array( 'auto', 'include', 'exclude' ), true ) ? $value : 'auto';
 			case 'unit_key':
 				return Sidrena_Utils::normalize_unit( $value );
 			default:
