@@ -1,0 +1,114 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://sidrene-cijene.com.hr/
+# Support: sidrena@brendigo.com
+
+name: Sidrena distribution guard
+
+on:
+  push:
+    branches:
+      - main
+      - 'develop/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - 'develop/**'
+
+permissions:
+  contents: read
+
+jobs:
+  distribution:
+    name: Source and ZIP distribution shape
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install PDF build dependency
+        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+
+      - name: Guard source tree edition boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -d editions/wordpress
+          test -d editions/woocommerce
+          test -f editions/wordpress/sidrena-wordpress.php
+          test -f editions/woocommerce/sidrena-woocommerce.php
+          test -f editions/wordpress/readme.txt
+          test -f editions/woocommerce/readme.txt
+
+          test ! -f sidrena.php
+          test ! -d static-php
+          test ! -d editions/static-php
+          test ! -d editions/generic
+
+          find editions -maxdepth 2 -type f -name 'sidrena-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
+          cat > "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" <<'EOF'
+          editions/woocommerce/sidrena-woocommerce.php
+          editions/wordpress/sidrena-wordpress.php
+          EOF
+          diff -u "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
+
+          if find . -path './.git' -prune -o -type f -name 'sidrena.php' -print | grep -q .; then
+            echo 'Generic root sidrena.php entrypoint detected.' >&2
+            exit 1
+          fi
+
+      - name: Build and verify only two installable ZIPs
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
+          test -n "$VERSION"
+          test "$VERSION" = "$WOO_VERSION"
+
+          OUT="$RUNNER_TEMP/sidrena-distribution"
+          mkdir -p "$OUT"
+          ./tools/build-editions.sh "$VERSION" "$OUT"
+
+          find "$OUT" -maxdepth 1 -type f -name '*.zip' -printf '%f\n' | sort > "$RUNNER_TEMP/sidrena-zip-assets.txt"
+          cat > "$RUNNER_TEMP/sidrena-expected-zip-assets.txt" <<EOF
+          sidrena-woocommerce-$VERSION.zip
+          sidrena-wordpress-$VERSION.zip
+          EOF
+          diff -u "$RUNNER_TEMP/sidrena-expected-zip-assets.txt" "$RUNNER_TEMP/sidrena-zip-assets.txt"
+
+          WP_ZIP="$OUT/sidrena-wordpress-$VERSION.zip"
+          WOO_ZIP="$OUT/sidrena-woocommerce-$VERSION.zip"
+          test -s "$WP_ZIP"
+          test -s "$WOO_ZIP"
+
+          zipinfo -1 "$WP_ZIP" > "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          zipinfo -1 "$WOO_ZIP" > "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          grep -q '^sidrena-wordpress/sidrena-wordpress.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/sidrena-woocommerce.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
