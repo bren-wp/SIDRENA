@@ -6,7 +6,9 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-<p align="center">\n  <img src="assets/images/logo-horizontal.svg" alt="SIDRENA — usklađene cijene, sigurno poslovanje" width="560">\n</p>\n\n<p align="center">\n  <img src="branding/rendered/website-hero-wordpress.png" alt="SIDRENA WordPress — službeni vizual iz branding paketa" width="49%">\n  <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce — službeni vizual iz branding paketa" width="49%">\n</p>
+<p align="center">
+  <img src="assets/images/logo-horizontal.svg" alt="SIDRENA — usklađene cijene, sigurno poslovanje" width="560">
+</p>
 
 <h1 align="center">SIDRENA 0.9.0</h1>
 
@@ -26,6 +28,14 @@ Support: sidrena@brendigo.com
 </p>
 
 ---
+
+## Za koga je SIDRENA
+
+SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji žele voditi cijene, povijest promjena, javne cjenike i lokacije iz jednog preglednog administratorskog sustava — bez izmišljanja paralelnog kataloga ondje gdje sadržaj već postoji.
+
+- **WordPress izdanje** povezuje postojeće objave, stranice ili prilagođene vrste sadržaja, a po potrebi koristi i vlastiti katalog proizvoda i usluga.
+- **WooCommerce izdanje** radi izravno s postojećim WooCommerce proizvodima i varijacijama, bez dupliciranja kataloga.
+- Oba izdanja koriste isti SIDRENA vizualni sustav, javni cjenik, CSV/XML izvoz, arhivu, lokacije, povijest i automatiziranu objavu.
 
 ## Odaberite izdanje koje odgovara vašem WordPress sustavu
 
@@ -62,7 +72,7 @@ Support: sidrena@brendigo.com
 
 ## Stvarni ekrani plugina — bez mockupova
 
-Slike ispod nisu marketinški prikazi niti generirani UI. To su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz aktivnog WordPress administratorskog sučelja. WooCommerce galerija snima se s aktivnim WooCommerceom. Marketinški branding iznad namjerno je odvojen od ove galerije.
+Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz aktivnog WordPress administratorskog sučelja. Nisu mockupovi niti generirani prikazi. WordPress galerija nastaje s aktivnim SIDRENA WordPress izdanjem, a WooCommerce galerija s aktivnim WooCommerceom i SIDRENA WooCommerce izdanjem.
 
 ### SIDRENA WordPress — stvarni wp-admin
 
