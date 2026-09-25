@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify complete Sidrena 0.9 admin branding
+      - name: Verify complete Sidrena 1.0 admin branding
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
