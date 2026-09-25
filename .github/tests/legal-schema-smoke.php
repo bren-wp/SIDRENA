@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 
 if ( ! function_exists( 'sanitize_text_field' ) ) {
@@ -84,7 +75,7 @@ sidrena_schema_assert( count( $service_headers ) === count( array_unique( $servi
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $product_headers, true ), 'Reference date traceability missing from product output.' );
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $service_headers, true ), 'Reference date traceability missing from service output.' );
 foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi' ) as $service_detail ) {
-	sidrena_schema_assert( in_array( $service_detail, $service_headers, true ), 'NN 105/2026 service detail missing: ' . $service_detail );
+	sidrena_schema_assert( in_array( $service_detail, $service_headers, true ), 'Sidrena service detail field missing: ' . $service_detail );
 }
 
 $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
@@ -111,12 +102,15 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 		'generate_xml'          => 'no',
 		'enable_public_html'    => 'no',
 		'publish_manifest'      => 'no',
+		'enable_rest_index'     => 'no',
 		'strict_publication'    => 'no',
 		'failure_notifications' => 'no',
 	)
 );
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
 sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
+sidrena_schema_assert( 'yes' === $hardened['generate_csv'] || 'yes' === $hardened['generate_xml'], 'At least one machine-readable CSV/XML format must remain enabled.' );
+sidrena_schema_assert( 'no' === $hardened['enable_public_html'], 'Public HTML must remain an optional presentation layer rather than a forced legal requirement.' );
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
 	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication automation flag not hardened: ' . $required_flag );
 }
