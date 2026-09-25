@@ -81,11 +81,22 @@ jobs:
           set -euo pipefail
           test -s assets/images/menu-anchor.svg
           test -s assets/images/logo-mark.svg
+          test -s assets/images/app-icon.svg
+          test -s assets/images/logo-horizontal-light.svg
+          test -s assets/images/logo-wordpress.svg
+          test -s assets/images/logo-woocommerce.svg
+          test -s assets/images/brand-hero.svg
+          test -s admin/css/brand.css
+          test -s branding/BRAND-GUIDE.md
+          test -s branding/website-hero-wordpress.svg
+          test -s branding/website-hero-woocommerce.svg
           test -s docs/media/screenshot-wordpress.png
           test -s docs/media/screenshot-woocommerce.png
 
           grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
-          grep -Fq "SIDRENA_URL . 'assets/images/logo-mark.svg'" includes/class-sidrena-admin.php
+          grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "SIDRENA_URL . 'admin/css/brand.css'" includes/class-sidrena-admin.php
+          ! grep -Fq "admin/css/admin-160.css" includes/class-sidrena-admin.php
 
           test -s wporg-assets/sidrena-wordpress/assets/icon-128x128.png
           test -s wporg-assets/sidrena-wordpress/assets/icon-256x256.png
