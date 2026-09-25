@@ -115,7 +115,7 @@ final class Sidrena_Admin {
 		$is_woo       = Sidrena_Utils::is_woocommerce_edition();
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'WooCommerce', 'sidrena' ) : __( 'WordPress', 'sidrena' );
-		$edition_logo = SIDRENA_URL . 'assets/images/logo-horizontal-light.svg';
+		$edition_logo = SIDRENA_URL . ( $is_woo ? 'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg' );
 		$donation_url = Sidrena_Utils::donation_url();
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
@@ -123,7 +123,7 @@ final class Sidrena_Admin {
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
 					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" alt="<?php esc_attr_e( 'Sidrena', 'sidrena' ); ?>">
-					<span class="sidrena-brandbar__edition"><?php echo esc_html( $edition_name ); ?></span>
+					
 				</div>
 				<div class="sidrena-brandbar__copy">
 					<strong><?php esc_html_e( 'Vaš pouzdan signal u svijetu propisa o cijenama.', 'sidrena' ); ?></strong>
@@ -463,7 +463,7 @@ final class Sidrena_Admin {
 				<p><?php esc_html_e( 'Stvarno stanje kataloga, objava, povijesti i tehničke spremnosti bez izmišljenih podataka.', 'sidrena' ); ?></p>
 			</div>
 			<div class="sid-head-inline-actions">
-				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-products"></span><?php esc_html_e( 'Proizvodi', 'sidrena' ); ?></a>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-products"></span><?php echo esc_html( $is_woo ? __( 'Proizvodi', 'sidrena' ) : __( 'Katalog', 'sidrena' ) ); ?></a>
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><?php esc_html_e( 'Generiraj cjenik', 'sidrena' ); ?></a>
 			</div>
 		</div>
@@ -478,7 +478,7 @@ final class Sidrena_Admin {
 		<div class="sid-dashboard-actions">
 			<a class="sid-action sid-action--primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><strong><?php esc_html_e( 'Objavi cjenik', 'sidrena' ); ?></strong><span class="dashicons dashicons-arrow-right-alt2"></span></a>
 			<a class="sid-action sid-action--soft-blue" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><span class="dashicons dashicons-media-spreadsheet"></span><strong><?php esc_html_e( 'Cjenici i izvoz', 'sidrena' ); ?></strong></a>
-			<a class="sid-action sid-action--soft-orange" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-locations' ) ); ?>"><span class="dashicons dashicons-location"></span><strong><?php esc_html_e( 'Lokacije / webshop', 'sidrena' ); ?></strong></a>
+			<a class="sid-action sid-action--soft-orange" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-locations' ) ); ?>"><span class="dashicons dashicons-location"></span><strong><?php esc_html_e( 'Lokacije', 'sidrena' ); ?></strong></a>
 			<a class="sid-action sid-action--soft-purple" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><span class="dashicons dashicons-search"></span><strong><?php esc_html_e( 'Provjeri spremnost', 'sidrena' ); ?></strong></a>
 		</div>
 
