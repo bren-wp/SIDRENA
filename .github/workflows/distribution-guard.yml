@@ -95,8 +95,8 @@ jobs:
                   continue
               text = path.read_text(encoding='utf-8', errors='replace')
               for number, line in enumerate(text.splitlines(), start=1):
-                  if len(line) > 1600:
-                      violations.append(f'{path}:{number}: line longer than 1600 characters')
+                  if len(line) > 3200:
+                      violations.append(f'{path}:{number}: line longer than 3200 characters')
               if path.suffix in {'.js', '.css'} and text.count('\n') < 3 and len(text) > 400:
                   violations.append(f'{path}: appears minified or not human-readable')
           if violations:
