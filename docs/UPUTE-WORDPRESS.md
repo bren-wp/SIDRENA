@@ -8,7 +8,9 @@ Support: sidrena@brendigo.com
 
 # Sidrena WordPress 0.8.1 - Upute za korištenje
 
-![Stvarni Sidrena WordPress admin prikaz](images/screenshot-admin.png)
+![Stvarni Sidrena WordPress admin prikaz](media/screenshot-wordpress.png)
+
+> Screenshot se automatski snima iz aktivnog WordPress admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.
 
 ## Namjena
 
