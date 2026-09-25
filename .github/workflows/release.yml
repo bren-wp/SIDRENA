@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sidrena-stable-release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
