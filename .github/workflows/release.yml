@@ -175,8 +175,8 @@ jobs:
           unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
           unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
 
-      - name: Retarget stale 0.9.0 tag after successful build
-        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true'
+      - name: Retarget stale 0.9.0 tag before a new release
+        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -232,6 +232,18 @@ jobs:
 
           gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${EXISTING_RELEASE_ID}" \
             --input "$RUNNER_TEMP/release-update.json" >/dev/null
+
+      - name: Retarget refreshed existing 0.9.0 tag
+        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$VERSION" = "0.9.0"
+          test "$RELEASE_TARGET" = "$GITHUB_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git push --force origin "refs/tags/$TAG_NAME"
 
       - name: Verify published GitHub release assets
         env:
