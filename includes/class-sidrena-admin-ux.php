@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * for both plugin editions.
  */
 final class Sidrena_Admin_UX {
+	const SERVICE_MENU_SLUG = 'edit.php?post_type=sidrena_service';
+
 	private static $instance;
 
 	public static function instance() {
@@ -39,13 +41,13 @@ final class Sidrena_Admin_UX {
 
 	public static function primary_menu_labels() {
 		return array(
-			'sidrena'                            => __( 'Početak', 'sidrena' ),
-			'sidrena-catalog'                    => __( 'Proizvodi', 'sidrena' ),
-			'edit.php?post_type=sidrena_service' => __( 'Usluge', 'sidrena' ),
-			'sidrena-files'                      => __( 'Objava cjenika', 'sidrena' ),
-			'sidrena-locations'                  => __( 'Lokacije / webshop', 'sidrena' ),
-			'sidrena-settings'                   => __( 'Zakonske postavke', 'sidrena' ),
-			'sidrena-support'                    => __( 'Pomoć', 'sidrena' ),
+			'sidrena'              => __( 'Početak', 'sidrena' ),
+			'sidrena-catalog'      => __( 'Proizvodi', 'sidrena' ),
+			self::SERVICE_MENU_SLUG => __( 'Usluge', 'sidrena' ),
+			'sidrena-files'        => __( 'Objava cjenika', 'sidrena' ),
+			'sidrena-locations'    => __( 'Lokacije / webshop', 'sidrena' ),
+			'sidrena-settings'     => __( 'Zakonske postavke', 'sidrena' ),
+			'sidrena-support'      => __( 'Pomoć', 'sidrena' ),
 		);
 	}
 
@@ -82,7 +84,7 @@ final class Sidrena_Admin_UX {
 			}
 
 			$slug = (string) $item[2];
-			if ( ! isset( $labels[ $slug ] ) ) {
+			if ( ! isset( $labels[ $slug ] ) || isset( $visible[ $slug ] ) ) {
 				continue;
 			}
 
@@ -95,8 +97,7 @@ final class Sidrena_Admin_UX {
 		}
 
 		$ordered = array();
-		foreach ( $labels as $slug => $label ) {
-			unset( $label );
+		foreach ( array_keys( $labels ) as $slug ) {
 			if ( isset( $visible[ $slug ] ) ) {
 				$ordered[] = $visible[ $slug ];
 			}
@@ -113,7 +114,7 @@ final class Sidrena_Admin_UX {
 
 	public function submenu_file( $submenu_file ) {
 		if ( $this->is_sidrena_service_screen() ) {
-			return 'edit.php?post_type=sidrena_service';
+			return self::SERVICE_MENU_SLUG;
 		}
 		if ( in_array( (string) $submenu_file, self::hidden_menu_slugs(), true ) ) {
 			return 'sidrena';
