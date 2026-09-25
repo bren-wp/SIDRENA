@@ -72,6 +72,16 @@ copy_branding_bundle() {
   cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/compact-$edition.svg" "$stage/branding/"
+
+  mkdir -p "$stage/branding/rendered"
+  cp "$ROOT/branding/rendered/email-header.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/support-cover.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/website-hero-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/plugin-cover-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/docs-cover-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/cta-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/app-card-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/compact-$edition.png" "$stage/branding/rendered/"
 }
 
 prepare_wporg_package() {

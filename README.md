@@ -107,7 +107,7 @@ Slike ispod nisu dizajnerski mockupovi. Automatski se snimaju iz stvarnog aktivn
 </tr>
 </table>
 
-Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
+Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 0.9.0 sada nosi i vlastiti edition-specific SVG branding te gotove PNG hero, cover, CTA, dokumentacijske, app-card i kompaktne assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
 
 ## Što donosi 0.9.0
 
@@ -122,6 +122,7 @@ Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i
 - stvarni WordPress.org screenshotovi snimljeni iz aktivnog wp-admin okruženja
 - CI provjera runtime grešaka, ključnih preklapanja i horizontalnog overflowa na desktop, tablet i mobilnim širinama
 - WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
+- kompletan edition-specific SVG + PNG branding paket prenesen je u oba instalacijska plugina
 
 ## Glavne mogućnosti
 
