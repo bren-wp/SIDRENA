@@ -1,0 +1,17 @@
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 165" role="img" aria-labelledby="t"><title id="t">Sidrena WordPress</title>
+ <defs><linearGradient id="sidMark" x1="16" y1="8" x2="110" y2="118" gradientUnits="userSpaceOnUse"><stop stop-color="#64E8FF"/><stop offset=".35" stop-color="#19B6F3"/><stop offset=".68" stop-color="#2563EB"/><stop offset="1" stop-color="#0E7FD1"/></linearGradient></defs>
+ <g transform="translate(8 14)">
+
+<g fill="none" stroke="url(#sidMark)" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M84 22c-9-7-21-10-33-8-13 2-22 8-26 17-4 9 0 18 9 23 7 4 14 4 22 5 11 1 18 3 20 8 2 4-1 8-7 12-7 4-16 4-24 0-6-3-11-6-15-11" stroke-width="13"/>
+  <circle cx="64" cy="28" r="8" stroke-width="6"/>
+  <path d="M64 36v49M49 50h30M34 76c5 19 15 29 30 29s25-10 30-29M34 76l-11 6 9 10m62-16 11 6-9 10" stroke-width="6"/>
+</g></g>
+ <text x="145" y="72" fill="#082D5B" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="52" font-weight="800" letter-spacing="2">SIDRENA</text>
+ <text x="145" y="124" fill="#2563EB" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="44" font-weight="800">WordPress</text>
+ <line x1="515" y1="40" x2="515" y2="132" stroke="#D9E6F2" stroke-width="2"/>
+ <text x="545" y="75" fill="#4B6B88" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="700">Za postojeće</text>
+ <text x="545" y="103" fill="#2563EB" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="800">WordPress sadržaj</text>
+ <text x="545" y="130" fill="#64748B" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16">i vlastiti katalog.</text>
+ </svg>

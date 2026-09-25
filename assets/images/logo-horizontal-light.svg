@@ -8,6 +8,6 @@
   <circle cx="64" cy="28" r="8" stroke-width="6"/>
   <path d="M64 36v49M49 50h30M34 76c5 19 15 29 30 29s25-10 30-29M34 76l-11 6 9 10m62-16 11 6-9 10" stroke-width="6"/>
 </g></g>
-  <text x="142" y="82" fill="#082D5B" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="64" font-weight="800" letter-spacing="3">SIDRENA</text>
-  <text x="145" y="112" fill="#4B6B88" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="5">USKLAĐENE CIJENE. SIGURNO POSLOVANJE.</text>
+  <text x="142" y="82" fill="#FFFFFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="64" font-weight="800" letter-spacing="3">SIDRENA</text>
+  <text x="145" y="112" fill="#C8E6F7" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="5">USKLAĐENE CIJENE. SIGURNO POSLOVANJE.</text>
 </svg>

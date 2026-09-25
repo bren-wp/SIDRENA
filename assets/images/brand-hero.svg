@@ -1,0 +1,16 @@
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="t"><title id="t">Sidrena morski vizual sa svjetionikom</title>
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0B4C8D"/><stop offset=".45" stop-color="#082D5B"/><stop offset="1" stop-color="#061A33"/></linearGradient>
+ <linearGradient id="sea" x1="0" y1=".2" x2="0" y2="1"><stop stop-color="#0C5592"/><stop offset="1" stop-color="#041C35"/></linearGradient>
+ <radialGradient id="glow" cx=".77" cy=".22" r=".32"><stop stop-color="#9CEBFA" stop-opacity=".58"/><stop offset=".35" stop-color="#4CCBEA" stop-opacity=".14"/><stop offset="1" stop-color="#4CCBEA" stop-opacity="0"/></radialGradient>
+ <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F3FFFF" stop-opacity=".64"/><stop offset="1" stop-color="#F3FFFF" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="1600" height="420" fill="url(#sky)"/><rect width="1600" height="420" fill="url(#glow)"/>
+<g fill="#B6E9F5" opacity=".16"><circle cx="160" cy="84" r="2"/><circle cx="350" cy="122" r="3"/><circle cx="620" cy="76" r="2"/><circle cx="860" cy="118" r="2"/><circle cx="1040" cy="60" r="3"/></g>
+<path d="M0 270c170-42 330 25 506-9 201-39 372 19 570-14 208-35 354-10 524 10v163H0z" fill="url(#sea)"/>
+<g opacity=".55" fill="none" stroke="#55CBE9" stroke-width="3"><path d="M0 310c130-27 238 15 392-7 177-25 314 17 490-10 186-29 370 11 718-8"/><path d="M0 352c170-22 282 12 430-4 182-19 352 13 510-4 220-23 405 2 660-8"/></g>
+<path d="M1060 375c72-53 135-63 194-110 56-44 104-53 161-40 73 16 125 68 185 114v81h-620z" fill="#03162A" opacity=".94"/>
+<path d="M1186 226l83 0-14-125h-54z" fill="#E7F1F5"/><path d="M1197 101h59l-5-24h-49z" fill="#F8FCFD"/><rect x="1210" y="50" width="34" height="27" rx="3" fill="#0A2B4A"/><path d="M1204 50h46l-23-25z" fill="#071E36"/><circle cx="1227" cy="63" r="8" fill="#FFF5A8"/>
+<path d="M1227 63L1600 25v68z" fill="url(#beam)" opacity=".7"/>
+</svg>

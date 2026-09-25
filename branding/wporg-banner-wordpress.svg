@@ -1,0 +1,15 @@
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1544 500" role="img" aria-labelledby="t"><title id="t">Sidrena WordPress plugin</title>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#082D5B"/><stop offset=".58" stop-color="#073568"/><stop offset="1" stop-color="#061A33"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#1FA7FF"/><stop offset="1" stop-color="#23D7E6"/></linearGradient></defs>
+<rect width="1544" height="500" rx="22" fill="url(#bg)"/>
+<image href="../../assets/images/brand-hero.svg" x="0" y="0" width="1544" height="500" preserveAspectRatio="xMidYMid slice" opacity=".86"/>
+<rect width="930" height="500" fill="url(#bg)" opacity=".72"/>
+<image href="../../assets/images/logo-horizontal-light.svg" x="42" y="34" width="330" height="85"/>
+<rect x="46" y="128" width="170" height="34" rx="17" fill="#1FA7FF" opacity=".18"/><text x="64" y="151" fill="#DDF7FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="700">WordPress plugin</text>
+<text x="46" y="214" fill="#FFFFFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="41" font-weight="800">Potpuna kontrola nad cijenama na vašem WordPressu.</text>
+<g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" fill="#D8EAF7"><circle cx="58" cy="343" r="6" fill="#1FA7FF"/><text x="78" y="350">Postojeći WordPress sadržaj</text><circle cx="58" cy="381" r="6" fill="#1FA7FF"/><text x="78" y="388">Vlastiti katalog proizvoda i usluga</text><circle cx="58" cy="419" r="6" fill="#1FA7FF"/><text x="78" y="426">Javni cjenici i arhiva</text></g>
+<rect x="1005" y="104" width="460" height="286" rx="22" fill="#FFFFFF" fill-opacity=".95"/><rect x="1031" y="133" width="150" height="24" rx="12" fill="#1FA7FF" fill-opacity=".14"/><text x="1048" y="151" fill="#1FA7FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="800">WordPress</text>
+<text x="1031" y="197" fill="#082D5B" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="25" font-weight="800">Javni cjenik</text>
+<g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" fill="#3E5D78"><rect x="1031" y="220" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="242">Aktualna cijena</text><circle cx="1411" cy="237" r="8" fill="#10B981"/><rect x="1031" y="265" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="287">Cijena na datum</text><circle cx="1411" cy="282" r="8" fill="#10B981"/><rect x="1031" y="310" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="332">Najniža cijena 30 dana</text><circle cx="1411" cy="327" r="8" fill="#10B981"/></g>
+<path d="M0 455C260 405 450 496 720 438c255-55 500 42 824-11v73H0z" fill="url(#accent)" opacity=".18"/>
+</svg>
