@@ -53,6 +53,7 @@ final class Sidrena_Plugin {
 			}
 			Sidrena_Site_Health::instance()->hooks();
 			Sidrena_Admin::instance()->hooks();
+			Sidrena_Admin_UX::instance()->hooks();
 		}
 	}
 }
