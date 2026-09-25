@@ -1,89 +1,23 @@
-SIDRENA SOFTWARE LICENSE 1.0
-Autor: Brendigo
-Author URI: https://brendigo.com/
-Plugin URI: https://sidrene-cijene.com.hr/
-Support: sidrena@brendigo.com
+Sidrena
+Copyright (C) 2026 Brendigo
 
-Copyright (c) 2026 Brendigo. All rights reserved.
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-1. LICENSE GRANT
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
 
-Brendigo grants a person or organization that lawfully obtained Sidrena
-("Licensee") a non-exclusive, non-transferable right to install, run and use
-the Software on websites owned, managed or controlled by the Licensee.
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-The Software may be used on commercial websites. The Licensee may charge for
-its own web-development, hosting, maintenance or consulting services where
-Sidrena is used as a component of a website, provided Sidrena itself is not
-sold, sublicensed, rented, licensed, redistributed or charged for as a separate
-software product.
+You should have received a copy of the GNU General Public License along with
+this program. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 
-The Licensee may modify the Software for its own permitted use.
-
-2. RESTRICTIONS
-
-Without prior written permission from Brendigo, the Licensee may not:
-
-- sell, resell, rent, lease, sublicense or otherwise commercially distribute
-  Sidrena or any modified version of Sidrena;
-- redistribute Sidrena, in source or compiled form, through marketplaces,
-  download portals, repositories, software bundles or other public or private
-  distribution channels;
-- repackage, white-label or rebrand Sidrena as another plugin or software
-  product;
-- provide Sidrena source code or installable packages to third parties except
-  as technically necessary to operate a website under the permitted use above;
-- remove or materially alter copyright, developer, license or trademark
-  notices included with the Software;
-- use the Sidrena or Brendigo names, logos or marks to imply endorsement or
-  ownership of the Software.
-
-3. CLIENT WEBSITES
-
-A web professional may install and configure Sidrena for a client as part of a
-website implementation service when the plugin is not sold or licensed as a
-separate product. The client receives the right to use that installed copy for
-the website for which it was provided, subject to this License.
-
-4. OWNERSHIP
-
-Sidrena is licensed, not sold. Brendigo retains all right, title and
-interest in the Software, branding, documentation and original assets, except
-for third-party components that are governed by their respective licenses.
-
-5. UPDATES AND SUPPORT
-
-This License does not create an obligation to provide updates, maintenance or
-support. Any separately purchased installation, configuration or support
-service is governed by the terms agreed for that service.
-
-6. THIRD-PARTY COMPONENTS
-
-Third-party code, libraries or assets, if any, remain subject to their own
-licenses. Nothing in this License reduces rights granted by those third-party
-licenses.
-
-7. TERMINATION
-
-This License terminates automatically if the Licensee materially violates its
-terms. Upon termination, the Licensee must cease unauthorized distribution,
-sale, resale, sublicensing or rebranding of the Software.
-
-8. NO WARRANTY
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED
-BY LAW, Brendigo SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY ARISING FROM OR RELATED TO THE SOFTWARE OR ITS USE.
-
-9. CONTACT
-
-License and distribution inquiries:
-sidrena@brendigo.com
-
-Autor:
-Brendigo
-
-Official Sidrena website:
-https://sidrene-cijene.com.hr/
+Sidrena source code, documentation, and original project artwork distributed
+with the WordPress.org plugin packages are provided under GPLv2 or later.
+The Sidrena and Brendigo names and logos identify the project and its author;
+this license does not grant permission to misrepresent authorship or imply
+endorsement by Brendigo.
