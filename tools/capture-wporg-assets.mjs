@@ -37,6 +37,19 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 
+async function assertNoRuntimeError(targetPage, route) {
+	const bodyText = await targetPage.locator('body').innerText();
+	const fatalPatterns = [
+		/there has been a critical error/i,
+		/došlo je do kritične greške/i,
+		/fatal error/i,
+		/uncaught (?:error|exception)/i,
+	];
+	if (fatalPatterns.some((pattern) => pattern.test(bodyText))) {
+		throw new Error(`Runtime error detected while capturing ${route}`);
+	}
+}
+
 try {
 	await page.goto(`${baseUrl}/wp-login.php`, { waitUntil: 'domcontentloaded' });
 	await page.locator('#user_login').fill('admin');
@@ -49,6 +62,7 @@ try {
 	for (const [filename, route, selector] of screens) {
 		await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 		await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
+		await assertNoRuntimeError(page, route);
 		const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 		if (overflow > 4) {
 			throw new Error(`Horizontal layout overflow on ${route}: ${overflow}px`);
@@ -63,6 +77,7 @@ try {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto(`${baseUrl}/wp-admin/admin.php?page=sidrena`, { waitUntil: 'networkidle' });
 	await page.locator('.sidrena-app').first().waitFor({ state: 'visible', timeout: 30000 });
+	await assertNoRuntimeError(page, '/wp-admin/admin.php?page=sidrena @390px');
 	const mobileOverflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 	if (mobileOverflow > 4) {
 		throw new Error(`Horizontal layout overflow at 390px: ${mobileOverflow}px`);
