@@ -4,7 +4,7 @@
  *
  * @package Sidrena
  * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
+ * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
 
@@ -159,19 +159,18 @@ final class Sidrena_Admin {
 		<div class="wrap sidrena-wrap sidrena-160">
 			<header class="sid-brand-banner">
 				<div class="sid-brand-banner__identity">
-					<img class="sid-brand-banner__logo" src="<?php echo esc_url( SIDRENA_URL . 'assets/images/logo-horizontal.svg' ); ?>" alt="<?php esc_attr_e( 'Sidrena', 'sidrena' ); ?>">
-					<span class="sid-brand-banner__tagline"><?php esc_html_e( 'SIDRENE CIJENE. VIŠE KONTROLE.', 'sidrena' ); ?></span>
+					<img class="sid-brand-banner__logo" src="<?php echo esc_url( SIDRENA_URL . 'assets/images/logo-mark.svg' ); ?>" alt="">
+					<div class="sid-brand-banner__copy">
+						<strong class="sid-brand-banner__name"><?php esc_html_e( 'Sidrena', 'sidrena' ); ?></strong>
+						<span class="sid-brand-banner__tagline"><?php esc_html_e( 'SIDRENE CIJENE. VIŠE KONTROLE.', 'sidrena' ); ?></span>
+					</div>
 				</div>
-				<div class="sid-brand-banner__message">
-					<span><?php esc_html_e( 'Transparentne cijene', 'sidrena' ); ?></span>
-					<strong><?php esc_html_e( 'za sigurniju i jasniju online kupovinu.', 'sidrena' ); ?></strong>
-				</div>
+				<span class="sid-brand-banner__edition"><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
 			</header>
 
 			<div class="sid-toolbar">
 				<div class="sid-toolbar__meta">
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
-					<span class="sid-mode-badge <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'is-woo' : 'is-standalone'; ?>"><span class="dashicons <?php echo Sidrena_Utils::is_woocommerce_edition() ? 'dashicons-cart' : 'dashicons-wordpress-alt'; ?>"></span><?php echo esc_html( Sidrena_Utils::runtime_mode_label() ); ?></span>
 					<span class="sid-toolbar__rule"><?php echo esc_html( SIDRENA_RULESET ); ?></span>
 				</div>
 				<div class="sid-toolbar__actions">
