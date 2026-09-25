@@ -12,6 +12,7 @@ Sidrena changelog
 * Tehnička spremnost na dashboardu usklađena je sa stvarnim detaljnim checklistom kako statusi više ne bi bili kontradiktorni.
 * Poboljšani su file inputi, prazna stanja, sticky akcije, tablice i responzivno ponašanje na desktop, tablet i mobilnim širinama.
 * Stvarni WordPress/WooCommerce screenshot pipeline ponovno je potvrđen bez critical/fatal zaslona, ključnih preklapanja i horizontalnog overflowa.
+* Finalni 1.0.0 WordPress.org i README screenshotovi ponovno su snimljeni iz stvarnog WordPress/WooCommerce runtimea nakon verzijskog prijelaza.
 * Distribucijski ZIP-ovi strogo odvajaju WordPress i WooCommerce runtime logotipe te edition-specific marketinške assete.
 * Release guard potvrđuje SHA-256, ZIP integritet, sadržaj paketa i šest stvarnih runtime screenshotova po izdanju prije objave.
 * Uninstall zaštite i smoke testovi dodatno su usklađeni za očuvanje zajedničkih poslovnih podataka i sigurno čišćenje runtime rasporeda.
