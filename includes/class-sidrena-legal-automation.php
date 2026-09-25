@@ -47,6 +47,13 @@ final class Sidrena_Legal_Automation {
 		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
 		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 45 ) );
 
+		// NN 101/2026 requires a machine-readable CSV or XML publication. Keep
+		// the merchant's chosen format when at least one is enabled, and repair
+		// only the invalid state in which both formats are disabled.
+		if ( 'yes' !== ( $settings['generate_csv'] ?? 'no' ) && 'yes' !== ( $settings['generate_xml'] ?? 'no' ) ) {
+			$settings['generate_csv'] = 'yes';
+		}
+
 		foreach ( self::required_publication_flags() as $key ) {
 			$settings[ $key ] = 'yes';
 		}
@@ -80,10 +87,7 @@ final class Sidrena_Legal_Automation {
 
 	public static function required_publication_flags() {
 		return array(
-			'generate_csv',
-			'generate_xml',
-			'enable_public_html',
-			'publish_manifest',
+			'enable_rest_index',
 			'strict_publication',
 			'failure_notifications',
 		);
