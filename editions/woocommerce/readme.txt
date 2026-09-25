@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijes
 
 == Description ==
 
-Sidrena WooCommerce 1.0.0 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+Sidrena WooCommerce 1.0.1 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
 
 * nema dupliciranja WooCommerce kataloga
 * automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
@@ -41,7 +41,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.1.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -75,6 +75,10 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.1 =
+* Produkcijsko održavanje nakon 1.0.0: čišćenje duplog/mrtvog koda, dodatno UI/UX i branding poliranje te ažurirana tehnička provjera aktualnih pravila o objavi i isticanju cijena.
+* Stvarni runtime screenshotovi i distribucijski paketi ponovno se generiraju nakon završnih izmjena.
 
 = 1.0.0 =
 * Stabilno 1.0 izdanje objedinjuje završeni Sidrena produkcijski UI/UX, stvarne runtime screenshotove i kompletan branding paket.
