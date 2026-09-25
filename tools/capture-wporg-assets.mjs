@@ -49,11 +49,23 @@ try {
 	for (const [filename, route, selector] of screens) {
 		await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 		await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
+		const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
+		if (overflow > 4) {
+			throw new Error(`Horizontal layout overflow on ${route}: ${overflow}px`);
+		}
 		await page.evaluate(() => window.scrollTo(0, 0));
 		await page.screenshot({
 			path: path.join(outputDir, filename),
 			fullPage: false,
 		});
+	}
+
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto(`${baseUrl}/wp-admin/admin.php?page=sidrena`, { waitUntil: 'networkidle' });
+	await page.locator('.sidrena-app').first().waitFor({ state: 'visible', timeout: 30000 });
+	const mobileOverflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
+	if (mobileOverflow > 4) {
+		throw new Error(`Horizontal layout overflow at 390px: ${mobileOverflow}px`);
 	}
 } finally {
 	await browser.close();
