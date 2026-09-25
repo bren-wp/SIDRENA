@@ -2,6 +2,14 @@
  * Sidrena source file.
  * Author: Brendigo
  * Author URI: https://brendigo.com/
+ * Plugin URI: https://brendigo.com/sidrene-cijene/
+ * Support: sidrena@brendigo.com
+ */
+
+/**
+ * Sidrena source file.
+ * Author: Brendigo
+ * Author URI: https://brendigo.com/
  * Plugin URI: https://sidrene-cijene.com.hr/
  * Support: sidrena@brendigo.com
  */

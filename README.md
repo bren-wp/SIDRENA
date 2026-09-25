@@ -7,7 +7,7 @@ Support: sidrena@brendigo.com
 -->
 
 <p align="center">
-  <img src="assets/images/logo-mark.svg" alt="Sidrena" width="72" height="72">
+  <img src="assets/images/logo-mark.svg" alt="Sidrena" width="48" height="48">
 </p>
 
 <h1 align="center">Sidrena</h1>
@@ -17,9 +17,15 @@ Support: sidrena@brendigo.com
   <a href="https://brendigo.com/sidrene-cijene/">brendigo.com/sidrene-cijene</a>
 </p>
 
-![Stvarni Sidrena administracijski ekran](docs/media/screenshot-wordpress.png)
+### Sidrena WordPress
 
-## Izdanje 0.8.1
+![Stvarni Sidrena WordPress administracijski ekran](docs/media/screenshot-wordpress.png)
+
+### Sidrena WooCommerce
+
+![Stvarni Sidrena WooCommerce administracijski ekran](docs/media/screenshot-woocommerce.png)
+
+## Izdanje 0.9.0
 
 Projekt isporučuje dva odvojena instalacijska paketa:
 
@@ -29,6 +35,16 @@ Projekt isporučuje dva odvojena instalacijska paketa:
 | **Sidrena WooCommerce** | WordPress + WooCommerce | postojeći WooCommerce proizvodi i varijacije |
 
 Istodobno smije biti aktivno samo jedno Sidrena izdanje. Ugrađeni conflict guard sprječava dvostruke hookove i objave.
+
+## Branding 0.9.0
+
+Sidrena 0.9.0 uvodi novi produkcijski vizualni sustav izrađen od nule prema službenim referencama: navy/cyan pomorski identitet, svjetionik, S + sidro znak, plavi WordPress akcent i ljubičasti WooCommerce akcent.
+
+- kompletan brand vodič: `branding/BRAND-GUIDE.md`
+- lokalni logo i app icon asseti: `assets/images/`
+- WordPress.org banneri: `branding/wporg-banner-*.svg`
+- promo/social asseti: `branding/social-*.svg`
+- stvarni runtime screenshotovi: `wporg-assets/*/assets/screenshot-*.png`
 
 ## Administracija
 
@@ -66,7 +82,7 @@ Za oba izdanja repozitorij sadrži zasebne WordPress.org assete u:
 - `wporg-assets/sidrena-wordpress/assets/`
 - `wporg-assets/sidrena-woocommerce/assets/`
 
-Asseti sadrže lokalne PNG ikone, banner i stvarni screenshot administracije. Install ZIP ne uključuje WordPress.org listing bannere, jer WordPress.org zahtijeva da se oni nalaze u zasebnom SVN `assets/` direktoriju.
+Asseti sadrže lokalne PNG ikone, bannere izvedene iz stvarnog administracijskog prikaza i stvarne screenshotove snimljene iz aktivnog WordPress admin sučelja. Install ZIP ne uključuje WordPress.org listing bannere, jer WordPress.org zahtijeva da se oni nalaze u zasebnom SVN `assets/` direktoriju.
 
 Readme datoteke imaju najviše pet tagova, Stable tag odgovara verziji plugina, a distribucija koristi GPLv2 ili noviju licencu.
 
@@ -81,13 +97,13 @@ Readme datoteke imaju najviše pet tagova, Stable tag odgovara verziji plugina, 
 ## Build
 
 ```bash
-./tools/build-editions.sh 0.8.1 /tmp/sidrena-build
+./tools/build-editions.sh 0.9.0 /tmp/sidrena-build
 ```
 
 Build stvara samo:
 
-- `sidrena-wordpress-0.8.1.zip`
-- `sidrena-woocommerce-0.8.1.zip`
+- `sidrena-wordpress-0.9.0.zip`
+- `sidrena-woocommerce-0.9.0.zip`
 
 ## Privatnost
 

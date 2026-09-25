@@ -114,7 +114,7 @@ sidrena_menu_assert( SIDRENA_URL . 'assets/images/menu-anchor.svg' === $GLOBALS[
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
 
 $expected_slugs  = array( 'sidrena', 'sidrena-catalog', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
-$expected_labels = array( 'Početak', 'Proizvodi', 'Usluge', 'Objava cjenika', 'Lokacije / webshop', 'Zakonske postavke', 'Pomoć' );
+$expected_labels = array( 'Pregled', 'Katalog', 'Usluge', 'Cjenici', 'Lokacije', 'Postavke', 'Pomoć' );
 
 sidrena_menu_assert( $expected_slugs === sidrena_visible_submenu_slugs(), 'Clean Sidrena submenu must register only the legal task-based pages in order.' );
 sidrena_menu_assert( $expected_labels === sidrena_visible_submenu_labels(), 'Clean Sidrena submenu labels must be clear and legal-workflow focused.' );
@@ -134,7 +134,7 @@ foreach ( $retired_slugs as $retired_slug ) {
 }
 
 $GLOBALS['submenu']['sidrena'][] = array( 'Usluge', 'manage_options', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'Usluge' );
-$GLOBALS['submenu']['sidrena'][] = array( 'Objava cjenika', 'manage_options', 'sidrena-files', 'Objava cjenika' );
+$GLOBALS['submenu']['sidrena'][] = array( 'Cjenici', 'manage_options', 'sidrena-files', 'Cjenici' );
 Sidrena_Admin_UX::instance()->simplify_menu();
 
 $visible_slugs = sidrena_visible_submenu_slugs();

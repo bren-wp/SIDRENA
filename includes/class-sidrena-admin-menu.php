@@ -34,13 +34,15 @@ final class Sidrena_Admin_Menu {
 	}
 
 	public static function items() {
+		$catalog_label = Sidrena_Utils::is_woocommerce_edition() ? __( 'Proizvodi', 'sidrena' ) : __( 'Katalog', 'sidrena' );
+
 		return array(
-			array( 'sidrena', __( 'Početak', 'sidrena' ), __( 'Početak', 'sidrena' ) ),
-			array( 'sidrena-catalog', __( 'Proizvodi', 'sidrena' ), __( 'Proizvodi', 'sidrena' ) ),
+			array( 'sidrena', __( 'Pregled', 'sidrena' ), __( 'Pregled', 'sidrena' ) ),
+			array( 'sidrena-catalog', $catalog_label, $catalog_label ),
 			array( Sidrena_Admin_UX::SERVICE_MENU_SLUG, __( 'Usluge', 'sidrena' ), __( 'Usluge', 'sidrena' ) ),
-			array( 'sidrena-files', __( 'Objava cjenika', 'sidrena' ), __( 'Objava cjenika', 'sidrena' ) ),
-			array( 'sidrena-locations', __( 'Lokacije / webshop', 'sidrena' ), __( 'Lokacije / webshop', 'sidrena' ) ),
-			array( 'sidrena-settings', __( 'Zakonske postavke', 'sidrena' ), __( 'Zakonske postavke', 'sidrena' ) ),
+			array( 'sidrena-files', __( 'Cjenici', 'sidrena' ), __( 'Cjenici', 'sidrena' ) ),
+			array( 'sidrena-locations', __( 'Lokacije', 'sidrena' ), __( 'Lokacije', 'sidrena' ) ),
+			array( 'sidrena-settings', __( 'Postavke', 'sidrena' ), __( 'Postavke', 'sidrena' ) ),
 			array( 'sidrena-support', __( 'Pomoć', 'sidrena' ), __( 'Pomoć', 'sidrena' ) ),
 		);
 	}

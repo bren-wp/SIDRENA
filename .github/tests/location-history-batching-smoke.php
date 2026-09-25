@@ -4,6 +4,15 @@
  *
  * @package Sidrena
  * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
+ */
+
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo
  * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */
