@@ -20,13 +20,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify neutral admin menu icon
+      - name: Verify compact Sidrena admin branding
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
-          grep -q "function sidrena_neutralize_admin_menu_icon" includes/sidrena-bootstrap.php
-          grep -q "add_action( 'admin_menu', 'sidrena_neutralize_admin_menu_icon', 999 )" includes/sidrena-bootstrap.php
-          grep -q "\$menu\[ \$index \]\[6\] = 'none';" includes/sidrena-bootstrap.php
+          php -l includes/class-sidrena-admin-menu.php
+          test -s assets/images/menu-anchor.svg
+          grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
+          grep -Fq "SIDRENA_URL . 'assets/images/logo-mark.svg'" includes/class-sidrena-admin.php
+          if grep -RInF 'sidrena_neutralize_admin_menu_icon' includes; then
+            echo "Obsolete menu icon neutralizer must not return."
+            exit 1
+          fi
           if [ -f .github/workflows/production-polish-automation.yml ]; then
             echo "Temporary production polish workflow must not be shipped."
             exit 1
