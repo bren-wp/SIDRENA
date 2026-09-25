@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -49,14 +40,16 @@ final class Sidrena_Admin_UX {
 	}
 
 	public static function primary_menu_labels() {
+		$catalog_label = Sidrena_Utils::is_woocommerce_edition() ? __( 'Proizvodi', 'sidrena' ) : __( 'Katalog', 'sidrena' );
+
 		return array(
-			'sidrena'              => __( 'Početak', 'sidrena' ),
-			'sidrena-catalog'      => __( 'Proizvodi', 'sidrena' ),
+			'sidrena'               => __( 'Pregled', 'sidrena' ),
+			'sidrena-catalog'       => $catalog_label,
 			self::SERVICE_MENU_SLUG => __( 'Usluge', 'sidrena' ),
-			'sidrena-files'        => __( 'Objava cjenika', 'sidrena' ),
-			'sidrena-locations'    => __( 'Lokacije / webshop', 'sidrena' ),
-			'sidrena-settings'     => __( 'Zakonske postavke', 'sidrena' ),
-			'sidrena-support'      => __( 'Pomoć', 'sidrena' ),
+			'sidrena-files'         => __( 'Cjenici', 'sidrena' ),
+			'sidrena-locations'     => __( 'Lokacije', 'sidrena' ),
+			'sidrena-settings'      => __( 'Postavke', 'sidrena' ),
+			'sidrena-support'       => __( 'Pomoć', 'sidrena' ),
 		);
 	}
 
