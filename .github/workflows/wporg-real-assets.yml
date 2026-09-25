@@ -104,7 +104,9 @@ jobs:
           set -euo pipefail
           cat > .wp-env.json <<'JSON'
           {
-            "plugins": ["./.wp-env-runtime/sidrena-woocommerce"],
+            "mappings": {
+              "wp-content/plugins/sidrena-woocommerce": "./.wp-env-runtime/sidrena-woocommerce"
+            },
             "config": {
               "WP_DEBUG": false,
               "SCRIPT_DEBUG": false
