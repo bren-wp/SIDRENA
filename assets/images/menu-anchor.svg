@@ -1,0 +1,10 @@
+<!-- Sidrena source file | Author: Brendigo | Plugin URI: https://brendigo.com/sidrene-cijene/ -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" role="img" aria-label="Sidrena">
+	<g fill="none" stroke="#f0f0f1" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+		<circle cx="10" cy="4" r="2"/>
+		<path d="M10 6v8"/>
+		<path d="M6.5 8.5h7"/>
+		<path d="M4 12.25c.75 3.1 2.75 4.75 6 4.75s5.25-1.65 6-4.75"/>
+		<path d="m4 12.25-2 1 1.75 1.75m12.25-2.75 2 1L16.25 15"/>
+	</g>
+</svg>
