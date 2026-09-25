@@ -359,7 +359,9 @@ jobs:
           test ! -f .github/workflows/wporg-assets.yml
           ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
           ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
-          test "$ASSET_LINES" -eq 2
+          test "$ASSET_LINES" -eq 4
+          grep -Fq '${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256' .github/workflows/release.yml
+          grep -Fq '${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256' .github/workflows/release.yml
           if grep -RIniE 'Pro paywall|100% FREE|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
             echo 'Retired product/distribution wording detected.' >&2
             exit 1
