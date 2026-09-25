@@ -2,7 +2,7 @@
 # Sidrena source file.
 # Author: Brendigo
 # Author URI: https://brendigo.com/
-# Plugin URI: https://sidrene-cijene.com.hr/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 
 import os
@@ -137,7 +137,7 @@ def button_link(text, url):
 
 buttons = Table([
     [button_link("Pošalji e-mail", "mailto:sidrena@brendigo.com"), button_link("Otvori WhatsApp", "https://wa.me/385919010092")],
-    [button_link("Revolut donacija", "https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija"), button_link("Sidrena web", "https://sidrene-cijene.com.hr/")],
+    [button_link("Revolut donacija", "https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija"), button_link("Sidrena web", "https://brendigo.com/sidrene-cijene/")],
 ], colWidths=[85 * mm, 85 * mm], rowHeights=[13 * mm, 13 * mm])
 buttons.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (0, 0), NAVY),
