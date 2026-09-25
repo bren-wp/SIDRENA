@@ -28,11 +28,13 @@ jobs:
           test -s assets/images/menu-anchor.svg
           test -s assets/images/app-icon.svg
           test -s assets/images/logo-horizontal-light.svg
+          test -s assets/images/logo-wordpress-light.svg
+          test -s assets/images/logo-woocommerce-light.svg
           test -s assets/images/brand-hero.svg
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
           grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
-          grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
           if grep -RInF 'sidrena_neutralize_admin_menu_icon' includes; then
             echo "Obsolete menu icon neutralizer must not return."
