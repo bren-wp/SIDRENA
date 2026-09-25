@@ -4,7 +4,7 @@
  *
  * @package Sidrena
  * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
+ * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
 
@@ -61,7 +61,7 @@ final class Sidrena_Admin_Menu {
 			$capability,
 			'sidrena',
 			array( Sidrena_Admin::instance(), 'page' ),
-			'dashicons-media-spreadsheet',
+			SIDRENA_URL . 'assets/images/menu-anchor.svg',
 			58
 		);
 
