@@ -66,10 +66,12 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Screenshots ==
 
-1. Stvarni Sidrena WordPress početni ekran snimljen iz aktivnog wp-admin sučelja.
-2. Stvarni prikaz kataloga proizvoda u Sidrena WordPress izdanju.
-3. Stvarni prikaz Objave cjenika i javnih datoteka.
-4. Stvarni prikaz Zakonskih postavki i tehničke konfiguracije.
+1. Stvarni Sidrena WordPress ekran Pregled snimljen iz aktivnog wp-admin sučelja.
+2. Stvarni prikaz Kataloga u Sidrena WordPress izdanju.
+3. Stvarni prikaz Cjenika i javnih datoteka.
+4. Stvarni prikaz Lokacija.
+5. Stvarni prikaz Postavki i tehničke konfiguracije.
+6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
 
@@ -80,7 +82,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * WordPress admin meni koristi kompaktno lokalno sidro bez vanjskih asseta.
 * WordPress.org banneri generiraju se iz službenog Sidrena brandinga, a screenshotovi iz stvarnog aktivnog wp-admin sučelja.
 * Dodan je kompletan brand vodič i produkcijski branding paket koji ulazi i u instalacijski ZIP.
-* Dokumentacija u ZIP-u sadrži četiri stvarna runtime screenshota novog 0.9.0 sučelja.
+* Dokumentacija u ZIP-u sadrži šest stvarnih runtime screenshotova novog 0.9.0 sučelja.
 * Službena stranica: https://brendigo.com/sidrene-cijene/.
 
 = 0.8.1 =

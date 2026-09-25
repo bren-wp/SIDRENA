@@ -72,6 +72,16 @@ copy_branding_bundle() {
   cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/compact-$edition.svg" "$stage/branding/"
+
+  mkdir -p "$stage/branding/rendered"
+  cp "$ROOT/branding/rendered/email-header.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/support-cover.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/website-hero-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/plugin-cover-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/docs-cover-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/cta-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/app-card-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/compact-$edition.png" "$stage/branding/rendered/"
 }
 
 prepare_wporg_package() {
@@ -117,7 +127,7 @@ mkdir -p "$WP_STAGE/docs/images"
 cp "$ROOT/docs/media/screenshot-wordpress.png" "$WP_STAGE/docs/images/screenshot-admin.png"
 cp "$ROOT/wporg-assets/sidrena-wordpress/assets/"screenshot-*.png "$WP_STAGE/docs/images/"
 sed -i 's#media/screenshot-wordpress.png#images/screenshot-admin.png#g' "$WP_STAGE/docs/UPUTE.md"
-for index in 1 2 3 4; do
+for index in 1 2 3 4 5 6; do
   sed -i "s#media/screenshot-wordpress-$index.png#images/screenshot-$index.png#g" "$WP_STAGE/docs/UPUTE.md"
 done
 prepare_wporg_package "$WP_STAGE" "sidrena-wordpress"
@@ -133,7 +143,7 @@ mkdir -p "$WOO_STAGE/docs/images"
 cp "$ROOT/docs/media/screenshot-woocommerce.png" "$WOO_STAGE/docs/images/screenshot-admin.png"
 cp "$ROOT/wporg-assets/sidrena-woocommerce/assets/"screenshot-*.png "$WOO_STAGE/docs/images/"
 sed -i 's#media/screenshot-woocommerce.png#images/screenshot-admin.png#g' "$WOO_STAGE/docs/UPUTE.md"
-for index in 1 2 3 4; do
+for index in 1 2 3 4 5 6; do
   sed -i "s#media/screenshot-woocommerce-$index.png#images/screenshot-$index.png#g" "$WOO_STAGE/docs/UPUTE.md"
 done
 prepare_wporg_package "$WOO_STAGE" "sidrena-woocommerce"

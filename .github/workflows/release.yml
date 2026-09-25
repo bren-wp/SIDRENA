@@ -147,7 +147,9 @@ jobs:
           body_path: ${{ runner.temp }}/sidrena-release-body.md
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
 
       - name: Refresh existing release metadata without replacing assets
         if: env.RELEASE_EXISTS == 'true'
@@ -180,8 +182,18 @@ jobs:
           gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --dir "$VERIFY_DIR"
 
           test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
+          test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip.sha256"
           test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip.sha256"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.zip' | wc -l | tr -d ' ')" = "2"
+          test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.sha256' | wc -l | tr -d ' ')" = "2"
+          test "$(find "$VERIFY_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "4"
+
+          (
+            cd "$VERIFY_DIR"
+            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
+            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+          )
 
           unzip -t "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip" >/dev/null
           unzip -t "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip" >/dev/null
@@ -206,6 +218,25 @@ jobs:
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/static-php"
+
+          for index in 1 2 3 4 5 6; do
+            test -s "$WP/docs/images/screenshot-$index.png"
+            test -s "$WOO/docs/images/screenshot-$index.png"
+          done
+
+          test -s "$WP/branding/BRAND-GUIDE.md"
+          test -s "$WP/branding/website-hero-wordpress.svg"
+          test -s "$WP/branding/rendered/website-hero-wordpress.png"
+          test -s "$WP/branding/rendered/plugin-cover-wordpress.png"
+          test ! -e "$WP/branding/website-hero-woocommerce.svg"
+          test ! -e "$WP/branding/rendered/website-hero-woocommerce.png"
+
+          test -s "$WOO/branding/BRAND-GUIDE.md"
+          test -s "$WOO/branding/website-hero-woocommerce.svg"
+          test -s "$WOO/branding/rendered/website-hero-woocommerce.png"
+          test -s "$WOO/branding/rendered/plugin-cover-woocommerce.png"
+          test ! -e "$WOO/branding/website-hero-wordpress.svg"
+          test ! -e "$WOO/branding/rendered/website-hero-wordpress.png"
 
           if grep -RIniE 'Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
             echo 'Retired branding detected inside published ZIP asset.' >&2

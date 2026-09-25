@@ -46,6 +46,22 @@ jobs:
       - name: Sidrena source metadata
         run: python3 tools/apply-source-metadata.py --check
 
+      - name: Admin renderer self-call guard
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          path = Path('includes/class-sidrena-admin.php')
+          source = path.read_text(encoding='utf-8')
+          calls = set(re.findall(r'\$this->([A-Za-z_][A-Za-z0-9_]*)\s*\(', source))
+          definitions = set(re.findall(r'(?:public|protected|private)\s+function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(', source))
+          missing = sorted(calls - definitions)
+          if missing:
+              raise SystemExit('Undefined Sidrena_Admin self calls: ' + ', '.join(missing))
+          PY
+
       - name: Install PDF build dependency
         if: matrix.php == '8.3'
         run: python3 -m pip install --disable-pip-version-check --quiet reportlab
@@ -251,7 +267,7 @@ jobs:
           test -f "$WOO/assets/images/menu-anchor.svg"
           test -f "$WP/docs/images/screenshot-admin.png"
           test -f "$WOO/docs/images/screenshot-admin.png"
-          for index in 1 2 3 4; do
+          for index in 1 2 3 4 5 6; do
             test -f "$WP/docs/images/screenshot-$index.png"
             test -f "$WOO/docs/images/screenshot-$index.png"
           done
@@ -259,6 +275,24 @@ jobs:
           test -f "$WOO/branding/BRAND-GUIDE.md"
           test -f "$WP/branding/website-hero-wordpress.svg"
           test -f "$WOO/branding/website-hero-woocommerce.svg"
+          test -f "$WP/branding/rendered/website-hero-wordpress.png"
+          test -f "$WOO/branding/rendered/website-hero-woocommerce.png"
+          test -f "$WP/branding/rendered/plugin-cover-wordpress.png"
+          test -f "$WOO/branding/rendered/plugin-cover-woocommerce.png"
+          test -f "$WP/branding/rendered/docs-cover-wordpress.png"
+          test -f "$WOO/branding/rendered/docs-cover-woocommerce.png"
+          test -f "$WP/branding/rendered/cta-wordpress.png"
+          test -f "$WOO/branding/rendered/cta-woocommerce.png"
+          test -f "$WP/branding/rendered/app-card-wordpress.png"
+          test -f "$WOO/branding/rendered/app-card-woocommerce.png"
+          test -f "$WP/branding/rendered/compact-wordpress.png"
+          test -f "$WOO/branding/rendered/compact-woocommerce.png"
+          test -f "$WP/branding/rendered/email-header.png"
+          test -f "$WOO/branding/rendered/email-header.png"
+          test -f "$WP/branding/rendered/support-cover.png"
+          test -f "$WOO/branding/rendered/support-cover.png"
+          test ! -f "$WP/branding/rendered/website-hero-woocommerce.png"
+          test ! -f "$WOO/branding/rendered/website-hero-wordpress.png"
           grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
           grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
           test -f "$WP/languages/sidrena-wordpress.pot"
@@ -325,7 +359,9 @@ jobs:
           test ! -f .github/workflows/wporg-assets.yml
           ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
           ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
-          test "$ASSET_LINES" -eq 2
+          test "$ASSET_LINES" -eq 4
+          grep -Eq 'sidrena-wordpress-.*\.zip\.sha256' .github/workflows/release.yml
+          grep -Eq 'sidrena-woocommerce-.*\.zip\.sha256' .github/workflows/release.yml
           if grep -RIniE 'Pro paywall|100% FREE|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
             echo 'Retired product/distribution wording detected.' >&2
             exit 1

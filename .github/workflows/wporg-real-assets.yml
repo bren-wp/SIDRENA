@@ -26,6 +26,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sidrena-wporg-assets-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   assets:
     name: Capture real wp-admin screenshots
@@ -144,7 +148,7 @@ jobs:
 
           cp "$WP_ASSETS/screenshot-1.png" docs/media/screenshot-wordpress.png
           cp "$WOO_ASSETS/screenshot-1.png" docs/media/screenshot-woocommerce.png
-          for index in 1 2 3 4; do
+          for index in 1 2 3 4 5 6; do
             cp "$WP_ASSETS/screenshot-$index.png" "docs/media/screenshot-wordpress-$index.png"
             cp "$WOO_ASSETS/screenshot-$index.png" "docs/media/screenshot-woocommerce-$index.png"
           done

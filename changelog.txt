@@ -14,8 +14,8 @@ Sidrena changelog
 * Dodan je kompletan branding direktorij s brand vodičem, WP.org bannerima i promo/social assetima.
 * WP.org screenshot pipeline podiže stvarni WordPress i WooCommerce te snima stvarne Sidrena ekrane.
 * WordPress.org ikone generiraju se iz službene Sidrena app ikone, a banneri iz edition-specific brand asseta.
-* Svaki instalacijski ZIP sada sadrži vlastiti branding paket i sva četiri stvarna runtime screenshota dokumentacije.
-* Screenshot pipeline provjerava horizontalni overflow na desktop prikazima i dodatno na 390 px mobilnoj širini.
+* Svaki instalacijski ZIP sada sadrži vlastiti branding paket i svih šest stvarnih runtime screenshotova glavnih administratorskih ekrana.
+* Screenshot pipeline blokira WordPress critical/fatal zaslone, ključna preklapanja i horizontalni overflow na desktop, tablet i mobilnim širinama.
 * Službena stranica: https://brendigo.com/sidrene-cijene/.
 
 = 0.8.1 =
