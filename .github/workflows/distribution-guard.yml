@@ -75,6 +75,35 @@ jobs:
             exit 1
           fi
 
+      - name: WordPress.org readability and safety guard
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if find . -path './.git' -prune -o -type f \( -name '*.php' -o -name '*.js' -o -name '*.css' \) -print | xargs grep -nE '(^|[^a-zA-Z0-9_])(eval|base64_decode|gzinflate|str_rot13|shell_exec|passthru|proc_open|popen|assert)\s*\(' ; then
+            echo 'WordPress.org review guard: dangerous or obfuscation-prone primitive detected.' >&2
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          checked_suffixes = {'.php', '.js', '.css'}
+          violations = []
+          for path in Path('.').rglob('*'):
+              if '.git' in path.parts or not path.is_file() or path.suffix not in checked_suffixes:
+                  continue
+              text = path.read_text(encoding='utf-8', errors='replace')
+              for number, line in enumerate(text.splitlines(), start=1):
+                  if len(line) > 1000:
+                      violations.append(f'{path}:{number}: line longer than 1000 characters')
+              if path.suffix in {'.js', '.css'} and text.count('\n') < 3 and len(text) > 400:
+                  violations.append(f'{path}: appears minified or not human-readable')
+          if violations:
+              print('\n'.join(violations))
+              raise SystemExit(1)
+          PY
+
       - name: Build and verify only two installable ZIPs
         shell: bash
         run: |
