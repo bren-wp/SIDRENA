@@ -84,7 +84,9 @@ jobs:
           test -s assets/images/app-icon.svg
           test -s assets/images/logo-horizontal-light.svg
           test -s assets/images/logo-wordpress.svg
+          test -s assets/images/logo-wordpress-light.svg
           test -s assets/images/logo-woocommerce.svg
+          test -s assets/images/logo-woocommerce-light.svg
           test -s assets/images/brand-hero.svg
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
@@ -94,7 +96,7 @@ jobs:
           test -s docs/media/screenshot-woocommerce.png
 
           grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
-          grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "SIDRENA_URL . 'admin/css/brand.css'" includes/class-sidrena-admin.php
           ! grep -Fq "admin/css/admin-160.css" includes/class-sidrena-admin.php
 
