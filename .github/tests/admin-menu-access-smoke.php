@@ -70,12 +70,31 @@ function add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin-ux.php';
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin-menu.php';
 
 function sidrena_menu_assert( $condition, $message ) {
 	if ( ! $condition ) {
 		fwrite( STDERR, $message . "\n" );
 		exit( 1 );
 	}
+}
+
+function sidrena_visible_submenu_slugs() {
+	return array_map(
+		static function ( $item ) {
+			return $item[2];
+		},
+		$GLOBALS['submenu']['sidrena']
+	);
+}
+
+function sidrena_visible_submenu_labels() {
+	return array_map(
+		static function ( $item ) {
+			return $item[0];
+		},
+		$GLOBALS['submenu']['sidrena']
+	);
 }
 
 sidrena_menu_assert( 'manage_sidrena' === Sidrena_Utils::admin_capability(), 'Default Sidrena capability changed unexpectedly.' );
@@ -85,45 +104,46 @@ sidrena_menu_assert( Sidrena_Utils::current_user_can_manage(), 'Administrator wi
 $mapped = Sidrena_Utils::map_admin_capability( array( 'manage_sidrena' ), 'manage_sidrena', 1, array() );
 sidrena_menu_assert( array( 'exist' ) === $mapped, 'manage_sidrena must map for an administrator even when the custom capability is missing.' );
 
-Sidrena_Admin::instance()->menu();
-$GLOBALS['submenu']['sidrena'][] = array( 'Usluge', 'manage_options', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'Usluge' );
-$GLOBALS['submenu']['sidrena'][] = array( 'Usluge duplicate', 'manage_options', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'Usluge duplicate' );
-$GLOBALS['submenu']['sidrena'][] = array( 'Nova usluga', 'manage_options', 'post-new.php?post_type=sidrena_service', 'Nova usluga' );
+Sidrena_Admin_Menu::instance()->register_menu();
 
 sidrena_menu_assert( isset( $GLOBALS['sidrena_test_menu']['top'] ), 'Sidrena top-level menu was not registered.' );
 sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'Sidrena top-level menu slug is incorrect.' );
 sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['capability'], 'Sidrena menu must use administrator fallback capability when needed.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
-sidrena_menu_assert( count( $GLOBALS['submenu']['sidrena'] ) >= 13, 'Baseline Sidrena submenu should expose the full internal page set before UX simplification.' );
 
-Sidrena_Admin_UX::instance()->simplify_menu();
-$visible_slugs = array_map(
-	static function ( $item ) {
-		return $item[2];
-	},
-	$GLOBALS['submenu']['sidrena']
-);
-$visible_labels = array_map(
-	static function ( $item ) {
-		return $item[0];
-	},
-	$GLOBALS['submenu']['sidrena']
-);
 $expected_slugs  = array( 'sidrena', 'sidrena-catalog', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
 $expected_labels = array( 'Početak', 'Proizvodi', 'Usluge', 'Objava cjenika', 'Lokacije / webshop', 'Zakonske postavke', 'Pomoć' );
-sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Simplified Sidrena submenu must keep only the legal task-based pages in order.' );
-sidrena_menu_assert( $expected_labels === $visible_labels, 'Simplified Sidrena submenu labels must be clear and legal-workflow focused.' );
-sidrena_menu_assert( count( $visible_slugs ) === count( array_unique( $visible_slugs ) ), 'Simplified Sidrena submenu must not contain duplicate slugs.' );
 
-foreach ( Sidrena_Admin_UX::hidden_menu_slugs() as $hidden_slug ) {
-	sidrena_menu_assert( ! in_array( $hidden_slug, $visible_slugs, true ), 'Hidden technical/support page leaked into simplified menu: ' . $hidden_slug );
+sidrena_menu_assert( $expected_slugs === sidrena_visible_submenu_slugs(), 'Clean Sidrena submenu must register only the legal task-based pages in order.' );
+sidrena_menu_assert( $expected_labels === sidrena_visible_submenu_labels(), 'Clean Sidrena submenu labels must be clear and legal-workflow focused.' );
+
+$retired_slugs = array(
+	'sidrena-compliance',
+	'sidrena-archive',
+	'sidrena-tools',
+	'sidrena-log',
+	'sidrena-rules',
+	'sidrena-about',
+	'sidrena-help',
+	'post-new.php?post_type=sidrena_service',
+);
+foreach ( $retired_slugs as $retired_slug ) {
+	sidrena_menu_assert( ! in_array( $retired_slug, sidrena_visible_submenu_slugs(), true ), 'Retired technical/support page was registered in clean menu: ' . $retired_slug );
 }
+
+$GLOBALS['submenu']['sidrena'][] = array( 'Usluge', 'manage_options', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'Usluge' );
+$GLOBALS['submenu']['sidrena'][] = array( 'Objava cjenika', 'manage_options', 'sidrena-files', 'Objava cjenika' );
+Sidrena_Admin_UX::instance()->simplify_menu();
+
+$visible_slugs = sidrena_visible_submenu_slugs();
+sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Sidrena UX normalization must remove duplicate submenu slugs without hiding registered pages.' );
+sidrena_menu_assert( count( $visible_slugs ) === count( array_unique( $visible_slugs ) ), 'Simplified Sidrena submenu must not contain duplicate slugs.' );
 
 $_GET['post_type'] = 'sidrena_service';
 sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Service screens must stay visually grouped under Sidrena.' );
-sidrena_menu_assert( Sidrena_Admin_UX::SERVICE_MENU_SLUG === Sidrena_Admin_UX::instance()->submenu_file( Sidrena_Admin_UX::SERVICE_MENU_SLUG ), 'Service screens must highlight Usluge instead of a hidden technical item.' );
+sidrena_menu_assert( Sidrena_Admin_UX::SERVICE_MENU_SLUG === Sidrena_Admin_UX::instance()->submenu_file( Sidrena_Admin_UX::SERVICE_MENU_SLUG ), 'Service screens must highlight Usluge.' );
 
 $_GET = array( 'post' => 123 );
 sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Editing a service must keep the Sidrena menu parent active.' );
 
-fwrite( STDOUT, "Sidrena administrator menu access and strict legal sidebar smoke test passed.\n" );
+fwrite( STDOUT, "Sidrena clean admin menu registration and sidebar normalization smoke test passed.\n" );
