@@ -12,6 +12,21 @@ Support: sidrena@brendigo.com
 
 > Screenshot se automatski snima iz aktivnog WordPress + WooCommerce admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.
 
+## Galerija stvarnog sučelja
+
+<table>
+<tr>
+<td width="50%"><img src="media/screenshot-woocommerce-1.png" alt="Sidrena WooCommerce pregled"></td>
+<td width="50%"><img src="media/screenshot-woocommerce-2.png" alt="Sidrena WooCommerce proizvodi"></td>
+</tr>
+<tr>
+<td width="50%"><img src="media/screenshot-woocommerce-3.png" alt="Sidrena WooCommerce cjenici"></td>
+<td width="50%"><img src="media/screenshot-woocommerce-4.png" alt="Sidrena WooCommerce lokacije"></td>
+</tr>
+</table>
+
+Sve četiri slike snimaju se iz aktivnog WordPress + WooCommerce okruženja. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
+
 ## Vizualni sustav 0.9.0
 
 Sidrena 0.9.0 koristi novi produkcijski UI/UX izrađen od nule: tamno plavu navigaciju, lokalni svjetionik vizual, Sidrena S + sidro identitet, responzivne statusne kartice, čiste tablice i jasne akcije. WordPress izdanje koristi plavi akcent, a WooCommerce izdanje uz osnovni Sidrena plavi koristi ljubičasti WooCommerce akcent.
@@ -83,7 +98,7 @@ Sidrena usluge rade i u WooCommerce izdanju kao zaseban katalog usluga. Shortcod
 
 ## Objava cjenika na web stranici
 
-U **Sidrena > Objava cjenika** kliknite **Izradi stranicu Objava cjenika**.
+U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
 
 Kompletni javni prikaz koristi:
 

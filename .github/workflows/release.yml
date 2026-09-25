@@ -106,12 +106,14 @@ jobs:
           cat > "$RUNNER_TEMP/sidrena-release-body.md" <<EOF
           ## Sidrena $VERSION
 
-          Sidrena $VERSION isporučuje dva odvojena WordPress plugina:
+          Sidrena $VERSION donosi potpuno novi produkcijski UI/UX i jedinstven Sidrena branding za dva odvojena WordPress plugina:
 
-          - **Sidrena WordPress** — za WordPress web bez WooCommercea.
-          - **Sidrena WooCommerce** — za WordPress + WooCommerce.
+          - **Sidrena WordPress** — za postojeći WordPress sadržaj i vlastiti katalog.
+          - **Sidrena WooCommerce** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
 
-          Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
+          Oba paketa uključuju novi Sidrena 0.9 vizualni sustav, lokalnu S + sidro menu ikonu, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, stvarne runtime screenshotove u dokumentaciji i edition-specific branding paket.
+
+          WordPress.org screenshotovi snimaju se iz stvarnog aktivnog wp-admin okruženja, a release objavljuje samo dva instalacijska ZIP-a.
 
           Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.

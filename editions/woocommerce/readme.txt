@@ -43,11 +43,11 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 1. Instalirajte i aktivirajte WooCommerce.
 2. Prenesite `sidrena-woocommerce-0.9.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
-4. Otvorite postojeći WooCommerce proizvod ili varijaciju i unesite Sidrena podatke.
-5. Provjerite Usluge ako ih objavljujete.
-6. Unesite Lokacije / webshop.
-7. Provjerite Zakonske postavke.
-8. U Objavi cjenika generirajte prvu objavu i provjerite javni prikaz.
+4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
+5. Provjerite Sidrena > Usluge ako ih objavljujete.
+6. Unesite Sidrena > Lokacije.
+7. Provjerite Sidrena > Postavke.
+8. U Sidrena > Cjenici generirajte prvu objavu i provjerite javni prikaz.
 
 Detaljne upute nalaze se u `docs/UPUTE.md`, a PDF podrška u `docs/SIDRENA-PODRSKA.pdf`.
 
@@ -80,7 +80,8 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * WooCommerce izdanje koristi ljubičasti edition akcent uz osnovni Sidrena plavi identitet.
 * WordPress admin meni koristi kompaktno lokalno sidro bez vanjskih asseta.
 * WordPress.org banneri generiraju se iz službenog Sidrena brandinga, a screenshotovi iz stvarnog WordPress + WooCommerce wp-admin sučelja.
-* Dodan je kompletan brand vodič i produkcijski branding paket.
+* Dodan je kompletan brand vodič i produkcijski branding paket koji ulazi i u instalacijski ZIP.
+* Dokumentacija u ZIP-u sadrži četiri stvarna runtime screenshota novog 0.9.0 sučelja.
 * Službena stranica: https://brendigo.com/sidrene-cijene/.
 
 = 0.8.1 =

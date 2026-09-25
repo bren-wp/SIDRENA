@@ -12,6 +12,21 @@ Support: sidrena@brendigo.com
 
 > Screenshot se automatski snima iz aktivnog WordPress admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.
 
+## Galerija stvarnog sučelja
+
+<table>
+<tr>
+<td width="50%"><img src="media/screenshot-wordpress-1.png" alt="Sidrena WordPress pregled"></td>
+<td width="50%"><img src="media/screenshot-wordpress-2.png" alt="Sidrena WordPress katalog"></td>
+</tr>
+<tr>
+<td width="50%"><img src="media/screenshot-wordpress-3.png" alt="Sidrena WordPress cjenici"></td>
+<td width="50%"><img src="media/screenshot-wordpress-4.png" alt="Sidrena WordPress postavke"></td>
+</tr>
+</table>
+
+Sve četiri slike snimaju se iz aktivnog plugina. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
+
 ## Vizualni sustav 0.9.0
 
 Sidrena 0.9.0 koristi novi produkcijski UI/UX izrađen od nule: tamno plavu navigaciju, lokalni svjetionik vizual, Sidrena S + sidro identitet, responzivne statusne kartice, čiste tablice i jasne akcije. WordPress izdanje koristi plavi akcent, a WooCommerce izdanje uz osnovni Sidrena plavi koristi ljubičasti WooCommerce akcent.
@@ -27,13 +42,13 @@ Sidrena WordPress namijenjena je WordPress web stranicama koje **ne koriste WooC
 1. Prenesite `sidrena-wordpress-0.9.0.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte **Sidrena WordPress**.
 3. Otvorite **Sidrena** u lijevom admin meniju.
-4. Otvorite **Sidrena > Proizvodi**.
+4. Otvorite **Sidrena > Katalog**.
 
 ## Najbrži način za postojeću web stranicu
 
 Ako na stranici već imate proizvode ili drugi tip sadržaja koji predstavlja proizvode:
 
-1. U **Sidrena > Proizvodi** otvorite karticu za automatsko povezivanje.
+1. U **Sidrena > Katalog** otvorite karticu za automatsko povezivanje.
 2. Odaberite postojeći javni tip sadržaja.
 3. Ako znate meta ključ cijene, unesite ga; inače polje ostavite prazno.
 4. Kliknite **Pokreni sinkronizaciju**.
@@ -79,7 +94,7 @@ Za svaku aktivnu lokaciju/webshop Sidrena generira zasebnu objavu prema konfigur
 
 ## Objava cjenika na web stranici
 
-U **Sidrena > Objava cjenika** kliknite **Izradi stranicu Objava cjenika**.
+U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
 
 Plugin objavljuje WordPress stranicu sa shortcodeom:
 
