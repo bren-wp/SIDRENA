@@ -359,3 +359,85 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 @media (prefers-reduced-motion:reduce) {
 	.sidrena-app *, .sidrena-app *::before,.sidrena-app *::after { transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important; }
 }
+
+
+/* Complete coverage for Sidrena production screens. */
+.sid-toolbar__rule { color:var(--sid-muted);font-size:10px;font-weight:750; }
+.sid-grid-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.sid-grid-main { grid-template-columns:minmax(0,1.45fr) minmax(320px,.75fr); }
+.sid-page-head--compact { margin-bottom:10px; }
+.sid-price-card,.sid-readiness-card,.sid-changes-card,.sid-archive-summary,.sid-archive-settings-card,.sid-public-page-card,.sid-contact-card,.sid-bulk-card,.sid-source-sync { min-width:0; }
+.sid-dashboard-metrics--archive { grid-template-columns:repeat(4,minmax(0,1fr));margin-top:14px; }
+.sid-archive-top { display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,.75fr);gap:14px;margin-bottom:14px; }
+.sid-retention-box { display:grid;grid-template-columns:minmax(180px,.8fr) minmax(240px,1.2fr);gap:12px;margin:13px 0;padding:13px;border:1px solid #dce7f1;border-radius:11px;background:#f6fafe; }
+.sid-retention-box>div { min-width:0; }
+.sid-retention-box>div:first-child { padding-right:12px;border-right:1px solid #dce7f1; }
+.sid-retention-box span:not(.dashicons) { display:block;color:var(--sid-muted);font-size:10px;font-weight:750; }
+.sid-retention-box strong { display:block;margin-top:4px;color:var(--sid-ink);font-size:22px; }
+.sid-retention-box p { margin:0;font-size:11px; }
+
+.sid-health { display:grid;gap:7px;margin:12px 0; }
+.sid-health-row { display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #edf2f7; }
+.sid-health-row:last-child { border-bottom:0; }
+.sid-health-icon { display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sid-green-soft);color:var(--sid-green); }
+.sid-health-row.is-warn .sid-health-icon { background:var(--sid-amber-soft);color:var(--sid-amber); }
+.sid-health-row strong { color:#385875;font-size:11px; }
+.sid-health-row small { color:var(--sid-muted);font-size:10px; }
+
+.sid-rule-card { display:grid;grid-template-columns:auto minmax(0,1fr);gap:13px;align-items:start; }
+.sid-rule-number { display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--sid-accent-soft);color:var(--sid-accent);font-size:15px;font-weight:850; }
+.sid-rule-tag { display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;background:#eef5ff;color:#1765c8;font-size:9px;font-weight:850; }
+.sid-rule-future { border-color:#f1dfb8;background:#fffaf0; }
+.sid-rule-future .sid-rule-tag { background:#fff0cf;color:#a65b08; }
+
+.sid-tool-card { min-height:176px;display:flex;flex-direction:column;align-items:flex-start; }
+.sid-tool-icon { display:grid;place-items:center;width:42px;height:42px;margin-bottom:10px;border-radius:12px;background:var(--sid-accent-soft);color:var(--sid-accent); }
+.sid-tool-card h2 { margin:0 0 6px;font-size:15px; }
+.sid-tool-card p { flex:1;margin:0 0 11px; }
+.sid-support-button { margin-top:8px!important; }
+
+.sid-inline-form { display:grid;grid-template-columns:minmax(220px,.9fr) minmax(260px,1.1fr) auto;gap:11px;align-items:end; }
+.sid-inline-form label { display:grid;gap:6px; }
+.sid-inline-form label>span { color:#47617a;font-size:11px;font-weight:800; }
+.sid-inline-form small { color:var(--sid-muted);font-size:10px; }
+.sid-standalone-form,.sid-service-details,.sid-service-locations { min-width:0; }
+.sid-standalone-import { border-color:#d5e7f7;background:#f7fbff; }
+
+.sid-file-input { display:flex;align-items:center;gap:9px;flex-wrap:wrap; }
+.sid-file-pill { display:inline-flex;align-items:center;gap:5px;min-height:27px;padding:4px 9px;border-radius:999px;background:#edf5ff;color:#1d5f9f;font-size:10px;font-weight:800; }
+.sid-hash { max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;color:#587189; }
+.sid-cell-sub { display:block;margin-top:3px;color:var(--sid-muted);font-size:9px; }
+.sid-errors { margin:8px 0 0;padding-left:18px;color:#b43d3d;font-size:11px; }
+
+.sid-location-icon { display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#eaf5ff;color:var(--sid-blue); }
+.sid-location-actions { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+.sid-location-enabled { display:inline-flex;align-items:center;gap:6px;color:#48637d;font-size:11px;font-weight:750; }
+.sid-fields-location { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.sid-add-location,.sid-remove-location { white-space:nowrap; }
+.sid-location-template { display:none; }
+
+.sid-switch { position:relative;display:inline-flex;align-items:center;width:38px;height:22px;border-radius:999px;background:#c7d4e0; }
+.sid-switch::after { content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.16); }
+
+.sid-history-stack { display:grid;gap:10px; }
+.sid-compliance-history { display:grid;gap:8px; }
+.sid-check-card { display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #dfe8f1;border-radius:10px;background:#fbfdff; }
+.sid-coverage { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+.sid-archive-coverage { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px; }
+.sid-legend { display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--sid-muted);font-size:10px; }
+.sid-day-strip { display:flex;gap:5px;align-items:center;overflow:auto;padding:5px 0; }
+.sid-day { flex:0 0 24px;height:24px;border-radius:7px;background:#e8eef4;color:#5d7388;font-size:9px;display:grid;place-items:center; }
+.sid-day.is-covered { background:var(--sid-green-soft);color:#087a55; }
+.sid-log-table { width:100%;border-collapse:separate;border-spacing:0;font-size:10px; }
+
+@media (max-width:1180px) {
+	.sid-grid-4,.sid-dashboard-metrics--archive { grid-template-columns:repeat(2,minmax(0,1fr)); }
+	.sid-grid-main,.sid-archive-top { grid-template-columns:1fr; }
+	.sid-fields-location { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:782px) {
+	.sid-grid-4,.sid-dashboard-metrics--archive,.sid-archive-coverage,.sid-fields-location { grid-template-columns:1fr; }
+	.sid-inline-form { grid-template-columns:1fr; }
+	.sid-retention-box { grid-template-columns:1fr; }
+	.sid-retention-box>div:first-child { padding-right:0;padding-bottom:10px;border-right:0;border-bottom:1px solid #dce7f1; }
+}
