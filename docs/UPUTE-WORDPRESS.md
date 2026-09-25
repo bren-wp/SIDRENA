@@ -21,11 +21,15 @@ Support: sidrena@brendigo.com
 </tr>
 <tr>
 <td width="50%"><img src="media/screenshot-wordpress-3.png" alt="Sidrena WordPress cjenici"></td>
-<td width="50%"><img src="media/screenshot-wordpress-4.png" alt="Sidrena WordPress postavke"></td>
+<td width="50%"><img src="media/screenshot-wordpress-4.png" alt="Sidrena WordPress lokacije"></td>
+</tr>
+<tr>
+<td width="50%"><img src="media/screenshot-wordpress-5.png" alt="Sidrena WordPress postavke"></td>
+<td width="50%"><img src="media/screenshot-wordpress-6.png" alt="Sidrena WordPress pomoć"></td>
 </tr>
 </table>
 
-Sve četiri slike snimaju se iz aktivnog plugina. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
+Svih šest slika snima se iz aktivnog plugina. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
 
 ## Vizualni sustav 0.9.0
 

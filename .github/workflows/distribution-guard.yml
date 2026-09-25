@@ -102,7 +102,7 @@ jobs:
           test -s wporg-assets/sidrena-wordpress/assets/icon-256x256.png
           test -s wporg-assets/sidrena-wordpress/assets/banner-772x250.png
           test -s wporg-assets/sidrena-wordpress/assets/banner-1544x500.png
-          for index in 1 2 3 4; do
+          for index in 1 2 3 4 5 6; do
             test -s "wporg-assets/sidrena-wordpress/assets/screenshot-$index.png"
           done
 
@@ -110,7 +110,7 @@ jobs:
           test -s wporg-assets/sidrena-woocommerce/assets/icon-256x256.png
           test -s wporg-assets/sidrena-woocommerce/assets/banner-772x250.png
           test -s wporg-assets/sidrena-woocommerce/assets/banner-1544x500.png
-          for index in 1 2 3 4; do
+          for index in 1 2 3 4 5 6; do
             test -s "wporg-assets/sidrena-woocommerce/assets/screenshot-$index.png"
           done
 
@@ -177,7 +177,7 @@ jobs:
           grep -q '^sidrena-woocommerce/assets/images/menu-anchor.svg$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/docs/images/screenshot-admin.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/docs/images/screenshot-admin.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          for index in 1 2 3 4; do
+          for index in 1 2 3 4 5 6; do
             grep -q "^sidrena-wordpress/docs/images/screenshot-$index.png$" "$RUNNER_TEMP/sidrena-wordpress-files.txt"
             grep -q "^sidrena-woocommerce/docs/images/screenshot-$index.png$" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           done

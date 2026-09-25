@@ -23,9 +23,13 @@ Support: sidrena@brendigo.com
 <td width="50%"><img src="media/screenshot-woocommerce-3.png" alt="Sidrena WooCommerce cjenici"></td>
 <td width="50%"><img src="media/screenshot-woocommerce-4.png" alt="Sidrena WooCommerce lokacije"></td>
 </tr>
+<tr>
+<td width="50%"><img src="media/screenshot-woocommerce-5.png" alt="Sidrena WooCommerce postavke"></td>
+<td width="50%"><img src="media/screenshot-woocommerce-6.png" alt="Sidrena WooCommerce pomoć"></td>
+</tr>
 </table>
 
-Sve četiri slike snimaju se iz aktivnog WordPress + WooCommerce okruženja. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
+Svih šest slika snima se iz aktivnog WordPress + WooCommerce okruženja. Ne koriste se dizajnerski mockupovi kao dokaz stvarnog administratorskog sučelja.
 
 ## Vizualni sustav 0.9.0
 

@@ -14,19 +14,14 @@ if (!outputDir) {
 	throw new Error('SIDRENA_SCREENSHOT_DIR is required.');
 }
 
-const screens = edition === 'woocommerce'
-	? [
-		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-app'],
-		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-app'],
-		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-app'],
-		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-locations', '.sidrena-app'],
-	]
-	: [
-		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-app'],
-		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-app'],
-		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-app'],
-		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-settings', '.sidrena-app'],
-	];
+const screens = [
+	['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-app'],
+	['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-app'],
+	['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-app'],
+	['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-locations', '.sidrena-app'],
+	['screenshot-5.png', '/wp-admin/admin.php?page=sidrena-settings', '.sidrena-app'],
+	['screenshot-6.png', '/wp-admin/admin.php?page=sidrena-support', '.sidrena-app'],
+];
 
 await fs.mkdir(outputDir, { recursive: true });
 

@@ -66,12 +66,16 @@ Slike ispod nisu dizajnerski mockupovi. Automatski se snimaju iz stvarnog aktivn
 
 <table>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-1.png" alt="Sidrena WordPress — nadzorna ploča"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-1.png" alt="Sidrena WordPress — pregled"></td>
 <td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-2.png" alt="Sidrena WordPress — katalog"></td>
 </tr>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-3.png" alt="Sidrena WordPress — cjenici i objava"></td>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-4.png" alt="Sidrena WordPress — postavke"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-3.png" alt="Sidrena WordPress — cjenici"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-4.png" alt="Sidrena WordPress — lokacije"></td>
+</tr>
+<tr>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-5.png" alt="Sidrena WordPress — postavke"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-6.png" alt="Sidrena WordPress — pomoć"></td>
 </tr>
 </table>
 
@@ -79,12 +83,16 @@ Slike ispod nisu dizajnerski mockupovi. Automatski se snimaju iz stvarnog aktivn
 
 <table>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-1.png" alt="Sidrena WooCommerce — nadzorna ploča"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-1.png" alt="Sidrena WooCommerce — pregled"></td>
 <td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-2.png" alt="Sidrena WooCommerce — proizvodi"></td>
 </tr>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-3.png" alt="Sidrena WooCommerce — cjenici i objava"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-3.png" alt="Sidrena WooCommerce — cjenici"></td>
 <td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-4.png" alt="Sidrena WooCommerce — lokacije"></td>
+</tr>
+<tr>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-5.png" alt="Sidrena WooCommerce — postavke"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-6.png" alt="Sidrena WooCommerce — pomoć"></td>
 </tr>
 </table>
 
@@ -112,7 +120,7 @@ Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i
 - redizajnirani katalog, cjenici, lokacije, arhiva, postavke i pomoć
 - lokalni logo, app icon, favicon, hero i edition-specific asseti
 - stvarni WordPress.org screenshotovi snimljeni iz aktivnog wp-admin okruženja
-- CI provjera desktop i mobilnog overflowa prije objave screenshotova
+- CI provjera runtime grešaka, ključnih preklapanja i horizontalnog overflowa na desktop, tablet i mobilnim širinama
 - WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
 
 ## Glavne mogućnosti
@@ -159,7 +167,7 @@ Za oba izdanja repozitorij održava zaseban WordPress.org set:
 - `wporg-assets/sidrena-wordpress/assets/`
 - `wporg-assets/sidrena-woocommerce/assets/`
 
-Svaki set uključuje stvarne runtime screenshotove, ikone 128×128 i 256×256 te bannere. Screenshot pipeline podiže pravi WordPress, a za WooCommerce izdanje i pravi WooCommerce, aktivira Sidrena plugin i tek tada snima sučelje.
+Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana, ikone 128×128 i 256×256 te bannere. Screenshot pipeline podiže pravi WordPress, a za WooCommerce izdanje i pravi WooCommerce, aktivira Sidrena plugin i tek tada snima sučelje.
 
 ## Dokumentacija i branding
 
