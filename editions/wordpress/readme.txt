@@ -66,7 +66,10 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Screenshots ==
 
-1. Stvarni Sidrena WordPress administracijski ekran s kompaktnim zaglavljem, pregledom statusa i sidro ikonicom u WordPress meniju.
+1. Stvarni Sidrena WordPress početni ekran snimljen iz aktivnog wp-admin sučelja.
+2. Stvarni prikaz kataloga proizvoda u Sidrena WordPress izdanju.
+3. Stvarni prikaz Objave cjenika i javnih datoteka.
+4. Stvarni prikaz Zakonskih postavki i tehničke konfiguracije.
 
 == Changelog ==
 
@@ -75,7 +78,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Uklonjen mrtvi legacy admin menu i popravljeni linkovi prema sekundarnim prikazima.
 * Admin zaglavlje pojednostavljeno je na mali Sidrena logo i jasan edition badge.
 * Službeni Plugin URI promijenjen je na https://brendigo.com/sidrene-cijene/.
-* Dokumentacija, WP.org readme i stvarni screenshotovi usklađeni su s trenutačnim sučeljem.
+* Dokumentacija, WP.org readme i stvarni runtime screenshotovi usklađeni su s trenutačnim sučeljem.
 * Licenca je usklađena na GPLv2 ili noviju za WordPress.org distribuciju.
 * WP.org tagovi ograničeni su na pet i uklonjen je GitHub Update URI iz plugin headera.
 
