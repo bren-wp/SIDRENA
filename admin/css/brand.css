@@ -69,6 +69,8 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 #adminmenu .toplevel_page_sidrena .wp-menu-image img { width:20px;height:20px;padding:7px 0 0;opacity:1; }
 #adminmenu .toplevel_page_sidrena .wp-submenu a.current { color:#fff;font-weight:700; }
 
+.sidrena-app,.sidrena-app *,.sidrena-app *::before,.sidrena-app *::after { box-sizing:border-box; }
+
 .sidrena-app {
 	--sid-accent:var(--sid-blue);
 	--sid-accent-soft:#eef5ff;
