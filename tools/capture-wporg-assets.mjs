@@ -50,6 +50,39 @@ async function assertNoRuntimeError(targetPage, route) {
 	}
 }
 
+async function assertNoKeyOverlaps(targetPage, route) {
+	const result = await targetPage.evaluate(() => {
+		const overlaps = [];
+		const visibleRect = (selector, root = document) => {
+			const node = root.querySelector(selector);
+			if (!node) return null;
+			const style = window.getComputedStyle(node);
+			const rect = node.getBoundingClientRect();
+			if (style.display === 'none' || style.visibility === 'hidden' || rect.width < 2 || rect.height < 2) return null;
+			return { selector, left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
+		};
+		const intersects = (a, b) => a && b && Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
+		const pairs = [
+			['.sidrena-brandbar__identity', '.sidrena-brandbar__copy'],
+			['.sidrena-brandbar__copy', '.sidrena-brandbar__actions'],
+		];
+		for (const [aSelector, bSelector] of pairs) {
+			const a = visibleRect(aSelector);
+			const b = visibleRect(bSelector);
+			if (intersects(a, b)) overlaps.push([aSelector, bSelector]);
+		}
+		for (const head of document.querySelectorAll('.sid-location-head')) {
+			const a = visibleRect(':scope > div:first-child', head);
+			const b = visibleRect('.sid-location-actions', head);
+			if (intersects(a, b)) overlaps.push(['.sid-location-head identity', '.sid-location-actions']);
+		}
+		return overlaps;
+	});
+	if (result.length) {
+		throw new Error(`Key UI overlap detected on ${route}: ${JSON.stringify(result)}`);
+	}
+}
+
 try {
 	await page.goto(`${baseUrl}/wp-login.php`, { waitUntil: 'domcontentloaded' });
 	await page.locator('#user_login').fill('admin');
@@ -63,6 +96,7 @@ try {
 		await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 		await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
 		await assertNoRuntimeError(page, route);
+		await assertNoKeyOverlaps(page, route);
 		const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 		if (overflow > 4) {
 			throw new Error(`Horizontal layout overflow on ${route}: ${overflow}px`);
@@ -78,6 +112,7 @@ try {
 	await page.goto(`${baseUrl}/wp-admin/admin.php?page=sidrena`, { waitUntil: 'networkidle' });
 	await page.locator('.sidrena-app').first().waitFor({ state: 'visible', timeout: 30000 });
 	await assertNoRuntimeError(page, '/wp-admin/admin.php?page=sidrena @390px');
+	await assertNoKeyOverlaps(page, '/wp-admin/admin.php?page=sidrena @390px');
 	const mobileOverflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 	if (mobileOverflow > 4) {
 		throw new Error(`Horizontal layout overflow at 390px: ${mobileOverflow}px`);
