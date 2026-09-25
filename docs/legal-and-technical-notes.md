@@ -2,7 +2,7 @@
 Sidrena source file.
 Author: Brendigo
 Author URI: https://brendigo.com/
-Plugin URI: https://sidrene-cijene.com.hr/
+Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
@@ -61,7 +61,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 0.6.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 0.8.1 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -92,15 +92,15 @@ Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o
 
 ## Produkcijski i release guardovi
 
-Sidrena 0.6.0 release linija koristi zasebne provjere za:
+Sidrena 0.8.1 release linija koristi zasebne provjere za:
 
 - stvarni build dvaju ZIP paketa,
 - zabranu generičkog/root/static PHP paketa,
 - referentne datume i automation/legal obveze,
-- neutralan WordPress admin menu bez vizualne custom SVG ikonice,
+- kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i smije objaviti samo `sidrena-wordpress-0.6.0.zip` i `sidrena-woocommerce-0.6.0.zip`.
+Službeni release smije nastati samo kroz GitHub release workflow i smije objaviti samo `sidrena-wordpress-0.8.1.zip` i `sidrena-woocommerce-0.8.1.zip`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 
@@ -117,4 +117,4 @@ Plugin korisnik može instalirati, postaviti i održavati sam. Brendigo usluge n
 
 Dobrovoljna donacija za razvoj otvara se izravno preko Revolut gumba u Sidrena administraciji. Donacija nije naknada za instalaciju ili održavanje i ne predstavlja narudžbu usluge.
 
-Sidrena se distribuira prema Sidrena Software License 1.0. Prodaja, preprodaja, sublicenciranje, redistribucija, white-label i rebrandiranje plugina nisu dopušteni bez pisanog odobrenja Brendigo.
+Sidrena se distribuira pod licencom GPLv2 ili novijom. Kod, dokumentacija i originalni projektni asseti uključeni u WordPress.org distribuciju moraju ostati GPL-kompatibilni.
