@@ -282,6 +282,10 @@ jobs:
           WOO="$VERIFY_DIR/woo/sidrena-woocommerce"
 
           test -f "$WP/sidrena-wordpress.php"
+          test -s "$WP/assets/images/logo-wordpress.svg"
+          test -s "$WP/assets/images/logo-wordpress-light.svg"
+          test ! -e "$WP/assets/images/logo-woocommerce.svg"
+          test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
           test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
@@ -289,6 +293,10 @@ jobs:
           test ! -d "$WP/static-php"
 
           test -f "$WOO/sidrena-woocommerce.php"
+          test -s "$WOO/assets/images/logo-woocommerce.svg"
+          test -s "$WOO/assets/images/logo-woocommerce-light.svg"
+          test ! -e "$WOO/assets/images/logo-wordpress.svg"
+          test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
