@@ -104,10 +104,7 @@ jobs:
           set -euo pipefail
           cat > .wp-env.json <<'JSON'
           {
-            "plugins": [
-              "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
-              "./.wp-env-runtime/sidrena-woocommerce"
-            ],
+            "plugins": ["./.wp-env-runtime/sidrena-woocommerce"],
             "config": {
               "WP_DEBUG": false,
               "SCRIPT_DEBUG": false
@@ -117,7 +114,7 @@ jobs:
           JSON
 
           npx wp-env start
-          npx wp-env run cli wp plugin activate woocommerce
+          npx wp-env run cli wp plugin install woocommerce --activate
           npx wp-env run cli wp plugin activate sidrena-woocommerce
 
           rm -rf "$RUNNER_TEMP/sidrena-woocommerce-assets"
