@@ -108,8 +108,8 @@ $visible_labels = array_map(
 	},
 	$GLOBALS['submenu']['sidrena']
 );
-$expected_slugs  = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
-$expected_labels = array( 'Početak', 'Proizvodi i usluge', 'Objava cjenika', 'Lokacije / webshop', 'Zakonske postavke', 'Pomoć' );
+$expected_slugs  = array( 'sidrena', 'sidrena-catalog', 'edit.php?post_type=sidrena_service', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
+$expected_labels = array( 'Početak', 'Proizvodi', 'Usluge', 'Objava cjenika', 'Lokacije / webshop', 'Zakonske postavke', 'Pomoć' );
 sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Simplified Sidrena submenu must keep only the legal task-based pages in order.' );
 sidrena_menu_assert( $expected_labels === $visible_labels, 'Simplified Sidrena submenu labels must be clear and legal-workflow focused.' );
 
@@ -119,9 +119,9 @@ foreach ( Sidrena_Admin_UX::hidden_menu_slugs() as $hidden_slug ) {
 
 $_GET['post_type'] = 'sidrena_service';
 sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Service screens must stay visually grouped under Sidrena.' );
-sidrena_menu_assert( 'sidrena-catalog' === Sidrena_Admin_UX::instance()->submenu_file( 'edit.php?post_type=sidrena_service' ), 'Service screens must highlight Proizvodi i usluge instead of a separate sidebar item.' );
+sidrena_menu_assert( 'edit.php?post_type=sidrena_service' === Sidrena_Admin_UX::instance()->submenu_file( 'edit.php?post_type=sidrena_service' ), 'Service screens must highlight Usluge instead of a hidden technical item.' );
 
 $_GET = array( 'post' => 123 );
 sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Editing a service must keep the Sidrena menu parent active.' );
 
-fwrite( STDOUT, "Sidrena administrator menu access and strict simplified menu smoke test passed.\n" );
+fwrite( STDOUT, "Sidrena administrator menu access and strict legal sidebar smoke test passed.\n" );
