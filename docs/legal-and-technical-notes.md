@@ -18,11 +18,12 @@ Zbog toga oznake u administraciji predstavljaju **tehničku spremnost/pokrivenos
 
 ## Službeni izvori
 
-- **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.**
-- **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.**
+- **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.** — https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html
+- **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.** — https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html
 - **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja za dodatnu cijenu i objavu cjenika.
 - **NN 59/2026, 728** — relevantne izmjene Zakona o zaštiti potrošača, uključujući najnižu cijenu u prethodnih 30 dana kod posebnih oblika prodaje.
-- **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026., stupa na snagu **26.09.2026.**
+- **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026., stupa na snagu **26.09.2026.** — https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html
+- **MINGO, pojašnjenja 22.09.2026.** — operativna pojašnjenja za dodatnu cijenu i objavu cjenika od 1. listopada — https://mingo.gov.hr/print.aspx?id=10440&url=print
 
 Službeni URL-ovi nalaze se i u Sidrena → Propisi.
 
@@ -43,9 +44,9 @@ Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put 
 
 ## Digitalni cjenici
 
-Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javne strojno obradive CSV/XML cjenike. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu.
+Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javni strojno obradivi cjenik u **CSV ili XML** obliku. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu. MINGO pojašnjava da nije potrebno objaviti oba formata; dovoljan je jedan od ta dva strojno obradiva formata.
 
-Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti automatizirano prikupljanje podataka o aktualnim maloprodajnim cijenama.
+Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti uporabu softverskih alata i automatiziranih programa za dohvat aktualnih maloprodajnih cijena u realnom vremenu. Sidrena za to koristi javni REST indeks; javni HTML prikaz ostaje dodatni prezentacijski sloj i nije zamjena za CSV/XML.
 
 Odluka ne propisuje točan redoslijed CSV stupaca, naziv XML elemenata, razdjelnik ni XSD shemu. Sidrena zato ne tvrdi da postoji jedinstveni službeni CSV/XML predložak, nego čuva obvezni skup podataka i stabilnu vlastitu strukturu.
 
