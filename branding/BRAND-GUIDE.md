@@ -51,6 +51,11 @@ Primarni UI font je Inter. Plugin ne učitava font s vanjske mreže; koristi lok
 - `branding/docs-cover-woocommerce.svg`
 - `branding/cta-wordpress.svg`
 - `branding/cta-woocommerce.svg`
+- `branding/app-card-wordpress.svg`
+- `branding/app-card-woocommerce.svg`
+- `branding/compact-wordpress.svg`
+- `branding/compact-woocommerce.svg`
+- `branding/support-cover.svg`
 
 - `branding/wporg-banner-wordpress.svg`
 - `branding/wporg-banner-woocommerce.svg`
