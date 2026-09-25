@@ -15,11 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Registers the small WordPress.org-friendly Sidrena admin sidebar.
  *
- * The legacy Sidrena_Admin::menu() method is intentionally not used for the
- * visible sidebar because it registers diagnostic and documentation pages as
- * first-class menu items. Those screens can still be reached through explicit
- * support flows when needed, but the main WordPress sidebar starts from the
- * legal operating workflow only.
+ * Only task-oriented pages are registered in the WordPress sidebar. Secondary
+ * diagnostics and documentation are rendered as sections inside those pages,
+ * so the plugin does not register hidden or duplicate admin menu screens.
  */
 final class Sidrena_Admin_Menu {
 	private static $instance;
@@ -32,7 +30,7 @@ final class Sidrena_Admin_Menu {
 	}
 
 	public function hooks() {
-		add_action( 'admin_menu', array( $this, 'replace_legacy_menu' ), 9 );
+		add_action( 'admin_menu', array( $this, 'register_menu' ), 9 );
 	}
 
 	public static function items() {
@@ -45,11 +43,6 @@ final class Sidrena_Admin_Menu {
 			array( 'sidrena-settings', __( 'Zakonske postavke', 'sidrena' ), __( 'Zakonske postavke', 'sidrena' ) ),
 			array( 'sidrena-support', __( 'Pomoć', 'sidrena' ), __( 'Pomoć', 'sidrena' ) ),
 		);
-	}
-
-	public function replace_legacy_menu() {
-		remove_action( 'admin_menu', array( Sidrena_Admin::instance(), 'menu' ) );
-		$this->register_menu();
 	}
 
 	public function register_menu() {
