@@ -39,12 +39,13 @@ final class Sidrena_Admin_UX {
 
 	public static function primary_menu_labels() {
 		return array(
-			'sidrena'           => __( 'Početak', 'sidrena' ),
-			'sidrena-catalog'   => __( 'Proizvodi i usluge', 'sidrena' ),
-			'sidrena-files'     => __( 'Objava cjenika', 'sidrena' ),
-			'sidrena-locations' => __( 'Lokacije / webshop', 'sidrena' ),
-			'sidrena-settings'  => __( 'Zakonske postavke', 'sidrena' ),
-			'sidrena-support'   => __( 'Pomoć', 'sidrena' ),
+			'sidrena'                            => __( 'Početak', 'sidrena' ),
+			'sidrena-catalog'                    => __( 'Proizvodi', 'sidrena' ),
+			'edit.php?post_type=sidrena_service' => __( 'Usluge', 'sidrena' ),
+			'sidrena-files'                      => __( 'Objava cjenika', 'sidrena' ),
+			'sidrena-locations'                  => __( 'Lokacije / webshop', 'sidrena' ),
+			'sidrena-settings'                   => __( 'Zakonske postavke', 'sidrena' ),
+			'sidrena-support'                    => __( 'Pomoć', 'sidrena' ),
 		);
 	}
 
@@ -57,7 +58,6 @@ final class Sidrena_Admin_UX {
 			'sidrena-rules',
 			'sidrena-about',
 			'sidrena-help',
-			'edit.php?post_type=sidrena_service',
 			'post-new.php?post_type=sidrena_service',
 		);
 	}
@@ -112,8 +112,11 @@ final class Sidrena_Admin_UX {
 	}
 
 	public function submenu_file( $submenu_file ) {
-		if ( $this->is_sidrena_service_screen() || in_array( (string) $submenu_file, self::hidden_menu_slugs(), true ) ) {
-			return 'sidrena-catalog';
+		if ( $this->is_sidrena_service_screen() ) {
+			return 'edit.php?post_type=sidrena_service';
+		}
+		if ( in_array( (string) $submenu_file, self::hidden_menu_slugs(), true ) ) {
+			return 'sidrena';
 		}
 		return $submenu_file;
 	}
