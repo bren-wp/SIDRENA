@@ -38,24 +38,32 @@ final class Sidrena_Compliance {
 	public static function legal_sources() {
 		return array(
 			'nn_101_2026_anchor_price' => array(
-				'label' => 'NN 101/2026, Odluka o isticanju dodatne cijene kao mjera izravne kontrole cijena',
-				'date'  => '2026-09-11',
-				'note'  => 'Dodatna odnosno sidrena cijena za proizvode i usluge s referentnim datumom 10.09.2026.; za ranije obuhvaćene FMCG kategorije zadržava se 02.05.2025.',
+				'label'          => 'NN 101/2026, Odluka o isticanju dodatne cijene kao mjera izravne kontrole cijena',
+				'date'           => '2026-09-11',
+				'effective_date' => '2026-10-01',
+				'url'            => 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html',
+				'note'           => 'Dodatna cijena primjenjiva je uz aktualnu cijenu; za novoobuhvaćene proizvode i usluge referentni datum je 10.09.2026., a za ranije obuhvaćene FMCG kategorije ostaje 02.05.2025.',
 			),
 			'nn_101_2026_public_pricelist' => array(
-				'label' => 'NN 101/2026, Odluka o objavi cjenika proizvoda i usluga kao mjera izravne kontrole cijena',
-				'date'  => '2026-09-11',
-				'note'  => 'Objava važećih cjenika proizvoda i usluga na mrežnim stranicama trgovca odnosno pružatelja usluge.',
+				'label'          => 'NN 101/2026, Odluka o objavi cjenika proizvoda i usluga kao mjera izravne kontrole cijena',
+				'date'           => '2026-09-11',
+				'effective_date' => '2026-10-01',
+				'url'            => 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html',
+				'note'           => 'Za subjekte s mrežnom stranicom propisana je objava strojno obradivog CSV ili XML cjenika, dnevno ažuriranje proizvoda do 08:00 radnim danom, ažuriranje usluga pri promjeni do 08:00 te javna dostupnost prethodnih cjenika najmanje 30 dana.',
 			),
 			'nn_105_2026_retail_unit_price' => array(
-				'label' => 'NN 105/2026, Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda',
-				'date'  => '2026-09-18',
-				'note'  => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute jasno, vidljivo, čitljivo i lako uočljivo.',
+				'label'          => 'NN 105/2026, Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda',
+				'date'           => '2026-09-18',
+				'effective_date' => '2026-09-26',
+				'url'            => 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html',
+				'note'           => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute nedvosmisleno, jasno, vidljivo, čitljivo, lako uočljivo i u službenoj valuti.',
 			),
 			'mingo_2026_09_22_clarifications' => array(
-				'label' => 'Ministarstvo gospodarstva, pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada',
-				'date'  => '2026-09-22',
-				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
+				'label'          => 'Ministarstvo gospodarstva, pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada',
+				'date'           => '2026-09-22',
+				'effective_date' => '2026-10-01',
+				'url'            => 'https://mingo.gov.hr/print.aspx?id=10440&url=print',
+				'note'           => 'Pojašnjenja potvrđuju da je dovoljna CSV ili XML objava, da se profil na društvenoj mreži ne smatra mrežnom stranicom te da se promjena cijene tijekom dana ne mora ponovno objaviti istoga dana.',
 			),
 		);
 	}
@@ -70,6 +78,8 @@ final class Sidrena_Compliance {
 			'public_html_enabled'    => 'yes' === $settings['enable_public_html'],
 			'csv_enabled'            => 'yes' === $settings['generate_csv'],
 			'xml_enabled'            => 'yes' === $settings['generate_xml'],
+			'machine_readable'       => 'yes' === $settings['generate_csv'] || 'yes' === $settings['generate_xml'],
+			'real_time_index'        => 'yes' === $settings['enable_rest_index'],
 			'strict_publication'     => 'yes' === $settings['strict_publication'],
 			'failure_notifications'  => 'yes' === $settings['failure_notifications'],
 			'publication_watch'      => (bool) wp_next_scheduled( 'sidrena_publication_watch' ),
@@ -87,8 +97,11 @@ final class Sidrena_Compliance {
 		if ( '2025-05-02' !== $profile['fmcg_reference_date'] ) {
 			$issues[] = 'FMCG referentni datum nije 02.05.2025.';
 		}
-		if ( ! $profile['csv_enabled'] || ! $profile['xml_enabled'] || ! $profile['public_html_enabled'] ) {
-			$issues[] = 'CSV, XML i javni HTML cjenik trebaju biti uključeni za potpunu digitalnu objavu.';
+		if ( ! $profile['machine_readable'] ) {
+			$issues[] = 'Za strojno obradivu objavu mora biti uključen barem CSV ili XML format.';
+		}
+		if ( ! $profile['real_time_index'] ) {
+			$issues[] = 'REST indeks za automatizirano dohvaćanje cijena nije uključen.';
 		}
 		if ( ! $profile['strict_publication'] ) {
 			$issues[] = 'Strict publication način treba biti uključen kako neuspjeli novi fajl ne bi zamijenio zadnju ispravnu objavu.';
@@ -130,9 +143,7 @@ final class Sidrena_Compliance {
 		$required = array(
 			'default_ref_date'      => '2026-09-10',
 			'fmcg_ref_date'         => '2025-05-02',
-			'generate_csv'          => 'yes',
-			'generate_xml'          => 'yes',
-			'enable_public_html'    => 'yes',
+			'enable_rest_index'     => 'yes',
 			'strict_publication'    => 'yes',
 			'failure_notifications' => 'yes',
 		);
@@ -142,6 +153,11 @@ final class Sidrena_Compliance {
 				$settings[ $key ] = $value;
 				$repairs[]        = 'settings:' . $key;
 			}
+		}
+
+		if ( 'yes' !== ( $settings['generate_csv'] ?? 'no' ) && 'yes' !== ( $settings['generate_xml'] ?? 'no' ) ) {
+			$settings['generate_csv'] = 'yes';
+			$repairs[]                = 'settings:generate_csv';
 		}
 
 		$retention = max( 30, absint( $settings['retention_days'] ) );
