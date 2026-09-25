@@ -6,6 +6,19 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.0 =
+* Stabilno 1.0.0 izdanje objedinjuje sve završne promjene iz 0.9 razvojne linije u produkcijsku release bazu.
+* Završeno je 1:1 poliranje WordPress i WooCommerce administratorskog sučelja s odvojenim edition akcentima i logotipima.
+* Tehnička spremnost na dashboardu usklađena je sa stvarnim detaljnim checklistom kako statusi više ne bi bili kontradiktorni.
+* Poboljšani su file inputi, prazna stanja, sticky akcije, tablice i responzivno ponašanje na desktop, tablet i mobilnim širinama.
+* Stvarni WordPress/WooCommerce screenshot pipeline ponovno je potvrđen bez critical/fatal zaslona, ključnih preklapanja i horizontalnog overflowa.
+* Finalni 1.0.0 WordPress.org i README screenshotovi ponovno su snimljeni iz stvarnog WordPress/WooCommerce runtimea nakon verzijskog prijelaza.
+* Distribucijski ZIP-ovi strogo odvajaju WordPress i WooCommerce runtime logotipe te edition-specific marketinške assete.
+* Release guard potvrđuje SHA-256, ZIP integritet, sadržaj paketa i šest stvarnih runtime screenshotova po izdanju prije objave.
+* Uninstall zaštite i smoke testovi dodatno su usklađeni za očuvanje zajedničkih poslovnih podataka i sigurno čišćenje runtime rasporeda.
+* README, upute, brand vodič, tehničke bilješke i instalacijski nazivi usklađeni su na 1.0.0.
+* Službena stranica: https://brendigo.com/sidrene-cijene/.
+
 = 0.9.0 =
 * Potpuni rebranding i novi administratorski UI/UX izrađeni su od nule prema Sidrena pomorskom vizualnom sustavu.
 * Dodani su novi transparentni Sidrena znak, app ikona, light/dark horizontalni logotipi i zasebni WordPress/WooCommerce logotipi.
