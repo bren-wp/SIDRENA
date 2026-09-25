@@ -64,6 +64,8 @@ Primarni UI font je Inter. Plugin ne učitava font s vanjske mreže; koristi lok
 - `branding/social-wordpress.svg`
 - `branding/social-woocommerce.svg`
 
+Renderirane PNG varijante marketinških asseta nalaze se u `branding/rendered/`, uključujući edition-specific `social-*.png` i `wporg-banner-*.png`. WordPress.org banneri renderiraju se iz namjenskih `wporg-banner-*.svg` izvora, a ne iz runtime screenshotova.
+
 WordPress.org screenshotovi se ne crtaju: CI podiže stvarni WordPress/WooCommerce, aktivira odgovarajuće Sidrena izdanje i snima stvarne wp-admin ekrane.
 
 ## Pravila upotrebe
