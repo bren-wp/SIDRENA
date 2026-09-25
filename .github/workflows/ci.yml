@@ -1,7 +1,7 @@
 # Sidrena source file.
 # Author: Brendigo
 # Author URI: https://brendigo.com/
-# Plugin URI: https://sidrene-cijene.com.hr/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 
 name: Sidrena CI
@@ -168,13 +168,14 @@ jobs:
           grep -q 'Author: Brendigo' "$WOO_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WP_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WOO_MAIN"
-          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WP_MAIN"
-          grep -Fq 'Plugin URI: https://sidrene-cijene.com.hr/' "$WOO_MAIN"
-          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WP_MAIN"
-          grep -Fq 'License URI: https://github.com/bren-wp/SIDRENA/blob/main/LICENSE' "$WOO_MAIN"
+          grep -Fq 'Plugin URI: https://brendigo.com/sidrene-cijene/' "$WP_MAIN"
+          grep -Fq 'Plugin URI: https://brendigo.com/sidrene-cijene/' "$WOO_MAIN"
+          grep -Fq 'License: GPLv2 or later' "$WP_MAIN"
+          grep -Fq 'License URI: https://www.gnu.org/licenses/gpl-2.0.html' "$WP_MAIN"
+          grep -Fq 'License: GPLv2 or later' "$WOO_MAIN"
+          grep -Fq 'License URI: https://www.gnu.org/licenses/gpl-2.0.html' "$WOO_MAIN"
           grep -Fq 'Brendigo' LICENSE
-          grep -Fq 'https://brendigo.com/' LICENSE
-          grep -Fq 'https://sidrene-cijene.com.hr/' LICENSE
+          grep -Fq 'GNU General Public License v2 or later' LICENSE
           test -s docs/UPUTE-WORDPRESS.md
           test -s docs/UPUTE-WOOCOMMERCE.md
           test -x tools/build-editions.sh
@@ -246,6 +247,17 @@ jobs:
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/editions"
+          test -f "$WP/assets/images/menu-anchor.svg"
+          test -f "$WOO/assets/images/menu-anchor.svg"
+          test -f "$WP/docs/images/screenshot-admin.png"
+          test -f "$WOO/docs/images/screenshot-admin.png"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          test -f "$WP/languages/sidrena-wordpress.pot"
+          test -f "$WOO/languages/sidrena-woocommerce.pot"
+          test ! -f "$WP/languages/sidrena.pot"
+          test ! -f "$WOO/languages/sidrena.pot"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
           # Boot the exact staged packages after edition-specific classes have
           # physically been removed.
@@ -285,8 +297,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq 'License: Sidrena Software License 1.0' editions/wordpress/sidrena-wordpress.php
-          grep -Fq 'License: Sidrena Software License 1.0' editions/woocommerce/sidrena-woocommerce.php
+          grep -Fq 'License: GPLv2 or later' editions/wordpress/sidrena-wordpress.php
+          grep -Fq 'License: GPLv2 or later' editions/woocommerce/sidrena-woocommerce.php
           grep -Fq 'Brendigo' README.md
           grep -Fq 'sidrena@brendigo.com' README.md
           grep -Fq '+385 91 901 0092' README.md
@@ -306,7 +318,7 @@ jobs:
           ! grep -q 'sidrena-wporg-assets' .github/workflows/release.yml
           ASSET_LINES="$(awk '/^[[:space:]]+files: \|/{flag=1;next} flag && /^[[:space:]]+\$\{\{ runner.temp \}\}\//{count++} END{print count+0}' .github/workflows/release.yml)"
           test "$ASSET_LINES" -eq 2
-          if grep -RIniE 'bez telemetrije|Pro paywall|100% FREE|OPEN SOURCE · GPL|GPLv2\+|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
+          if grep -RIniE 'Pro paywall|100% FREE|sidrene-cijene\.com\.hr/#donirajte'             --include='*.php' --include='*.md' --include='*.txt' --include='*.svg' .             --exclude-dir=.git --exclude='LICENSE'; then
             echo 'Retired product/distribution wording detected.' >&2
             exit 1
           fi
