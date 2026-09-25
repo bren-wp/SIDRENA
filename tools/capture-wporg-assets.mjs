@@ -16,16 +16,16 @@ if (!outputDir) {
 
 const screens = edition === 'woocommerce'
 	? [
-		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-wrap'],
-		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-wrap'],
-		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-wrap'],
-		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-locations', '.sidrena-wrap'],
+		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-app'],
+		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-app'],
+		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-app'],
+		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-locations', '.sidrena-app'],
 	]
 	: [
-		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-wrap'],
-		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-wrap'],
-		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-wrap'],
-		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-settings', '.sidrena-wrap'],
+		['screenshot-1.png', '/wp-admin/admin.php?page=sidrena', '.sidrena-app'],
+		['screenshot-2.png', '/wp-admin/admin.php?page=sidrena-catalog', '.sidrena-app'],
+		['screenshot-3.png', '/wp-admin/admin.php?page=sidrena-files', '.sidrena-app'],
+		['screenshot-4.png', '/wp-admin/admin.php?page=sidrena-settings', '.sidrena-app'],
 	];
 
 await fs.mkdir(outputDir, { recursive: true });
