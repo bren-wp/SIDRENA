@@ -452,3 +452,74 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	.sid-retention-box { grid-template-columns:1fr; }
 	.sid-retention-box>div:first-child { padding-right:0;padding-bottom:10px;border-right:0;border-bottom:1px solid #dce7f1; }
 }
+
+
+/* 0.9.0 final visual polish: edition lockups and dense admin ergonomics. */
+.sidrena-brandbar__identity{min-height:72px}
+.sidrena-brandbar__logo{width:min(390px,100%);height:76px}
+.sidrena-edition-wordpress .sidrena-brandbar{background:linear-gradient(90deg,rgba(5,28,53,.97),rgba(7,51,96,.76) 52%,rgba(6,26,51,.55)),url("../../assets/images/brand-hero.svg") center/cover no-repeat}
+.sidrena-edition-woocommerce .sidrena-brandbar{background:linear-gradient(90deg,rgba(5,28,53,.97),rgba(42,20,82,.78) 55%,rgba(6,26,51,.55)),url("../../assets/images/brand-hero.svg") center/cover no-repeat}
+.sidrena-brandbar__actions a,.sid-head-inline-actions .button{white-space:nowrap}
+.sid-location-head>div:first-child{min-width:0}
+.sid-location-head strong,.sid-location-head small{overflow-wrap:anywhere}
+.sid-location-actions{flex:0 0 auto}
+.sid-switch{white-space:nowrap}
+.sid-card,.sid-dashboard-metric,.sid-action{min-width:0}
+.sid-fields input,.sid-fields select,.sid-fields textarea{max-width:100%}
+@media (max-width:1180px){
+ .sidrena-brandbar{grid-template-columns:minmax(260px,.9fr) minmax(260px,1.1fr);gap:16px}
+ .sidrena-brandbar__actions{grid-column:1/-1;justify-content:flex-start}
+ .sidrena-brandbar__logo{width:min(360px,100%)}
+}
+@media (max-width:782px){
+ .sidrena-app{padding:12px 12px 28px}
+ .sidrena-brandbar{grid-template-columns:1fr;padding:17px;min-height:0}
+ .sidrena-brandbar__logo{width:min(420px,100%);height:auto;max-height:78px}
+ .sidrena-brandbar__copy{max-width:none}
+ .sidrena-brandbar__actions{grid-column:auto;justify-content:flex-start}
+ .sid-page-head{align-items:flex-start;flex-direction:column}
+ .sid-head-inline-actions{justify-content:flex-start;width:100%}
+ .sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sid-dashboard-main,.sid-dashboard-bottom,.sid-grid-2{grid-template-columns:1fr}
+ .sid-location-head{align-items:flex-start}
+}
+@media (max-width:480px){
+ .sidrena-app{padding:10px 8px 24px}
+ .sidrena-brandbar{border-radius:14px;padding:14px}
+ .sidrena-brandbar__copy strong{font-size:20px}
+ .sidrena-brandbar__actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+ .sidrena-brandbar__actions a{justify-content:center}
+ .sidrena-contextbar{align-items:flex-start;flex-direction:column}
+ .sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3{grid-template-columns:1fr}
+ .sid-page-head h2{font-size:23px}
+ .sid-location-head{display:grid;grid-template-columns:1fr;gap:12px}
+ .sid-location-actions{justify-content:space-between;width:100%}
+ .sid-form-actions{position:static}
+ .sid-card{padding:14px}
+}
+
+
+/* 0.9.0 reference-aligned component polish */
+.sidrena-app{max-width:none}
+.sidrena-page-head{margin-bottom:18px}
+.sidrena-page-head h2{letter-spacing:-.025em}
+.sidrena-card,.sid-card,.sid-dashboard-metric,.sid-action{border:1px solid #dce8f2;box-shadow:0 8px 24px rgba(8,45,91,.06)}
+.sidrena-card:hover,.sid-card:hover{border-color:#c8ddec}
+.sid-dashboard-metric__value{letter-spacing:-.035em}
+.sid-dashboard-metric__icon{box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}
+.sidrena-edition-woocommerce .sid-dashboard-metric__icon,
+.sidrena-edition-woocommerce .sid-action__icon{background:#f3e8ff;color:#7c3aed}
+.sidrena-edition-woocommerce .sidrena-tabs .is-active,
+.sidrena-edition-woocommerce .sid-tabs .is-active{border-color:#7c3aed;color:#6d28d9}
+.sidrena-edition-woocommerce .button-primary{background:#7c3aed;border-color:#7c3aed}
+.sidrena-edition-woocommerce .button-primary:hover{background:#6d28d9;border-color:#6d28d9}
+.sidrena-table-wrap{border:1px solid #dce8f2;border-radius:14px;overflow:auto;background:#fff}
+.sidrena-table-wrap table{margin:0;border:0;box-shadow:none}
+.sidrena-table-wrap thead th{background:#f5f9fc;color:#173a5e;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.035em}
+.sidrena-table-wrap tbody tr:hover{background:#f8fbfe}
+.sidrena-status,.sid-badge{font-weight:750}
+.sidrena-brandbar__actions .button{min-height:40px;border-radius:10px}
+.sidrena-contextbar{border:1px solid #dce8f2;box-shadow:0 4px 16px rgba(8,45,91,.04)}
+.sidrena-app input[type=text],.sidrena-app input[type=url],.sidrena-app input[type=email],.sidrena-app input[type=number],.sidrena-app input[type=time],.sidrena-app select,.sidrena-app textarea{border-color:#cddce9;border-radius:9px;min-height:40px}
+.sidrena-app input:focus,.sidrena-app select:focus,.sidrena-app textarea:focus{border-color:#2563eb;box-shadow:0 0 0 1px #2563eb}
+.sidrena-edition-woocommerce input:focus,.sidrena-edition-woocommerce select:focus,.sidrena-edition-woocommerce textarea:focus{border-color:#7c3aed;box-shadow:0 0 0 1px #7c3aed}
