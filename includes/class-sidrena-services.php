@@ -135,17 +135,17 @@ final class Sidrena_Services {
 					<option value="distance" <?php selected( $fields['exception'], 'distance' ); ?>><?php esc_html_e( 'Ugovor na daljinu', 'sidrena' ); ?></option>
 					<option value="off_premises" <?php selected( $fields['exception'], 'off_premises' ); ?>><?php esc_html_e( 'Ugovor izvan poslovnih prostorija', 'sidrena' ); ?></option>
 				</select>
-				<small><?php esc_html_e( 'Koristite samo kada ste provjerili da se iznimka iz čl. 19. st. 8. Zakona o zaštiti potrošača stvarno primjenjuje na konkretan slučaj.', 'sidrena' ); ?></small>
+				<small><?php esc_html_e( 'Koristite samo kada ste provjerili da se odabrana zakonska iznimka stvarno primjenjuje na konkretan slučaj; Sidrena ne određuje pravnu kvalifikaciju usluge.', 'sidrena' ); ?></small>
 			</p>
 		</div>
 		<div class="sid-service-details">
 			<h3><?php esc_html_e( 'Podaci za javni cjenik usluga', 'sidrena' ); ?></h3>
-			<p class="description"><?php esc_html_e( 'Pravilnik NN 105/2026 traži da uz cijenu usluge budu navedeni naziv, vrsta i opseg usluge te da cijena obuhvati pripadajuće troškove. Ovdje evidentirajte te podatke za javni prikaz.', 'sidrena' ); ?></p>
+			<p class="description"><?php esc_html_e( 'NN 105/2026 uređuje i cjenike usluga: uz cijenu treba navesti naziv, vrstu i opseg usluge, a u cijeni moraju biti uključeni pripadajući troškovi. Sidrena ova polja vodi odvojeno radi jasnog javnog prikaza i provjere podataka.', 'sidrena' ); ?></p>
 			<div class="sidrena-service-grid">
 				<p><label for="sidrena_service_type"><strong><?php esc_html_e( 'Vrsta usluge', 'sidrena' ); ?></strong></label><br><input class="regular-text" type="text" id="sidrena_service_type" name="sidrena_service_type" value="<?php echo esc_attr( $fields['service_type'] ); ?>" placeholder="<?php esc_attr_e( 'npr. servisna usluga', 'sidrena' ); ?>"></p>
 				<p><label for="sidrena_service_scope"><strong><?php esc_html_e( 'Opseg usluge', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_scope" name="sidrena_service_scope" placeholder="<?php esc_attr_e( 'Što točno usluga uključuje', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_scope'] ); ?></textarea></p>
 				<p><label for="sidrena_service_costs"><strong><?php esc_html_e( 'Pripadajući troškovi / napomena o cijeni', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_costs" name="sidrena_service_costs" placeholder="<?php esc_attr_e( 'Navedite što je uključeno u cijenu i relevantne troškove', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_costs'] ); ?></textarea></p>
-				<p><label for="sidrena_service_goods"><strong><?php esc_html_e( 'Ugradbena / zamjenska roba i cijena', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_goods" name="sidrena_service_goods" placeholder="<?php esc_attr_e( 'Ako je roba sastavni dio usluge, navedite robu i njezinu cijenu uz uslugu', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_goods'] ); ?></textarea><small><?php esc_html_e( 'NN 105/2026 čl. 11. traži isticanje cijene ugradbene ili zamjenske robe uz pripadajuću uslugu kada je roba sastavni dio usluge.', 'sidrena' ); ?></small></p>
+				<p><label for="sidrena_service_goods"><strong><?php esc_html_e( 'Ugradbena / zamjenska roba i cijena', 'sidrena' ); ?></strong></label><br><textarea class="large-text" rows="3" id="sidrena_service_goods" name="sidrena_service_goods" placeholder="<?php esc_attr_e( 'Ako je roba sastavni dio usluge, navedite robu i njezinu cijenu uz uslugu', 'sidrena' ); ?>"><?php echo esc_textarea( $fields['service_goods'] ); ?></textarea><small><?php esc_html_e( 'Ako je ugradbena ili zamjenska roba sastavni dio usluge, NN 105/2026 čl. 11. traži da njezina cijena bude istaknuta uz cijenu pripadajuće usluge.', 'sidrena' ); ?></small></p>
 			</div>
 		</div>
 		<?php
