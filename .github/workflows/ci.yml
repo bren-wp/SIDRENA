@@ -251,6 +251,14 @@ jobs:
           test -f "$WOO/assets/images/menu-anchor.svg"
           test -f "$WP/docs/images/screenshot-admin.png"
           test -f "$WOO/docs/images/screenshot-admin.png"
+          for index in 1 2 3 4; do
+            test -f "$WP/docs/images/screenshot-$index.png"
+            test -f "$WOO/docs/images/screenshot-$index.png"
+          done
+          test -f "$WP/branding/BRAND-GUIDE.md"
+          test -f "$WOO/branding/BRAND-GUIDE.md"
+          test -f "$WP/branding/website-hero-wordpress.svg"
+          test -f "$WOO/branding/website-hero-woocommerce.svg"
           grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
           grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
           test -f "$WP/languages/sidrena-wordpress.pot"

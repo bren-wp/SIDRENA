@@ -41,12 +41,12 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 
 1. Prenesite `sidrena-wordpress-0.9.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
-3. Otvorite Sidrena > Proizvodi i povežite postojeći sadržaj ili unesite/uvezite katalog.
-4. Provjerite Usluge ako ih objavljujete.
-5. Unesite Lokacije / webshop.
-6. Provjerite Zakonske postavke.
-7. U Objavi cjenika generirajte prvu objavu i provjerite javni prikaz.
-8. Na Početku provjerite tehničku spremnost i raspored.
+3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
+4. Provjerite Sidrena > Usluge ako ih objavljujete.
+5. Unesite Sidrena > Lokacije.
+6. Provjerite Sidrena > Postavke.
+7. U Sidrena > Cjenici generirajte prvu objavu i provjerite javni prikaz.
+8. Na Sidrena > Pregled provjerite tehničku spremnost i raspored.
 
 Detaljne upute nalaze se u `docs/UPUTE.md`, a PDF podrška u `docs/SIDRENA-PODRSKA.pdf`.
 
@@ -79,7 +79,8 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * WordPress izdanje koristi plavi edition akcent, lokalne logotipe i novu Sidrena app ikonu.
 * WordPress admin meni koristi kompaktno lokalno sidro bez vanjskih asseta.
 * WordPress.org banneri generiraju se iz službenog Sidrena brandinga, a screenshotovi iz stvarnog aktivnog wp-admin sučelja.
-* Dodan je kompletan brand vodič i produkcijski branding paket.
+* Dodan je kompletan brand vodič i produkcijski branding paket koji ulazi i u instalacijski ZIP.
+* Dokumentacija u ZIP-u sadrži četiri stvarna runtime screenshota novog 0.9.0 sučelja.
 * Službena stranica: https://brendigo.com/sidrene-cijene/.
 
 = 0.8.1 =

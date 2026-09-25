@@ -144,6 +144,10 @@ jobs:
 
           cp "$WP_ASSETS/screenshot-1.png" docs/media/screenshot-wordpress.png
           cp "$WOO_ASSETS/screenshot-1.png" docs/media/screenshot-woocommerce.png
+          for index in 1 2 3 4; do
+            cp "$WP_ASSETS/screenshot-$index.png" "docs/media/screenshot-wordpress-$index.png"
+            cp "$WOO_ASSETS/screenshot-$index.png" "docs/media/screenshot-woocommerce-$index.png"
+          done
 
           rsvg-convert -w 128 -h 128 assets/images/app-icon.svg > "$WP_ASSETS/icon-128x128.png"
           rsvg-convert -w 256 -h 256 assets/images/app-icon.svg > "$WP_ASSETS/icon-256x256.png"
@@ -193,6 +197,8 @@ jobs:
             wporg-assets/
             docs/media/screenshot-wordpress.png
             docs/media/screenshot-woocommerce.png
+            docs/media/screenshot-wordpress-*.png
+            docs/media/screenshot-woocommerce-*.png
             branding/rendered/
           if-no-files-found: error
 
@@ -204,7 +210,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -u
-          git add wporg-assets docs/media/screenshot-wordpress.png docs/media/screenshot-woocommerce.png branding/rendered
+          git add wporg-assets docs/media branding/rendered
 
           if git diff --cached --quiet; then
             echo "WordPress.org assets are already current."

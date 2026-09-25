@@ -57,6 +57,23 @@ copy_common() {
   python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$stage/docs/SIDRENA-PODRSKA.pdf"
 }
 
+copy_branding_bundle() {
+  local stage="$1"
+  local edition="$2"
+
+  mkdir -p "$stage/branding"
+  cp "$ROOT/branding/BRAND-GUIDE.md" "$stage/branding/"
+  cp "$ROOT/branding/email-header.svg" "$stage/branding/"
+  cp "$ROOT/branding/support-cover.svg" "$stage/branding/"
+  cp "$ROOT/branding/website-hero-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/plugin-cover-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/social-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/docs-cover-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/compact-$edition.svg" "$stage/branding/"
+}
+
 prepare_wporg_package() {
   local stage="$1"
   local domain="$2"
@@ -92,23 +109,33 @@ PY
 
 WP_STAGE="$WORK/sidrena-wordpress"
 copy_common "$WP_STAGE"
+copy_branding_bundle "$WP_STAGE" "wordpress"
 cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
 cp "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
 mkdir -p "$WP_STAGE/docs/images"
 cp "$ROOT/docs/media/screenshot-wordpress.png" "$WP_STAGE/docs/images/screenshot-admin.png"
+cp "$ROOT/wporg-assets/sidrena-wordpress/assets/"screenshot-*.png "$WP_STAGE/docs/images/"
 sed -i 's#media/screenshot-wordpress.png#images/screenshot-admin.png#g' "$WP_STAGE/docs/UPUTE.md"
+for index in 1 2 3 4; do
+  sed -i "s#media/screenshot-wordpress-$index.png#images/screenshot-$index.png#g" "$WP_STAGE/docs/UPUTE.md"
+done
 prepare_wporg_package "$WP_STAGE" "sidrena-wordpress"
 rm -f   "$WP_STAGE/includes/class-sidrena-bulk.php"   "$WP_STAGE/includes/class-sidrena-history.php"   "$WP_STAGE/includes/class-sidrena-location-data.php"   "$WP_STAGE/includes/class-sidrena-location-history.php"   "$WP_STAGE/includes/class-sidrena-products.php"   "$WP_STAGE/includes/class-sidrena-woo-import-export.php"   "$WP_STAGE/includes/class-sidrena-compatibility.php"
 
 WOO_STAGE="$WORK/sidrena-woocommerce"
 copy_common "$WOO_STAGE"
+copy_branding_bundle "$WOO_STAGE" "woocommerce"
 cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 cp "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 mkdir -p "$WOO_STAGE/docs/images"
 cp "$ROOT/docs/media/screenshot-woocommerce.png" "$WOO_STAGE/docs/images/screenshot-admin.png"
+cp "$ROOT/wporg-assets/sidrena-woocommerce/assets/"screenshot-*.png "$WOO_STAGE/docs/images/"
 sed -i 's#media/screenshot-woocommerce.png#images/screenshot-admin.png#g' "$WOO_STAGE/docs/UPUTE.md"
+for index in 1 2 3 4; do
+  sed -i "s#media/screenshot-woocommerce-$index.png#images/screenshot-$index.png#g" "$WOO_STAGE/docs/UPUTE.md"
+done
 prepare_wporg_package "$WOO_STAGE" "sidrena-woocommerce"
 rm -f "$WOO_STAGE/includes/class-sidrena-standalone.php"
 
