@@ -2,11 +2,13 @@
 Sidrena source file.
 Author: Brendigo
 Author URI: https://brendigo.com/
-Plugin URI: https://sidrene-cijene.com.hr/
+Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WooCommerce 0.6.0 - Upute za korištenje
+# Sidrena WooCommerce 0.8.1 - Upute za korištenje
+
+![Stvarni Sidrena WooCommerce admin prikaz](images/screenshot-admin.png)
 
 ## Namjena
 
@@ -15,7 +17,7 @@ Sidrena WooCommerce namijenjena je WordPress trgovinama s aktivnim WooCommerceom
 ## Instalacija
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-0.6.0.zip`.
+2. Prenesite `sidrena-woocommerce-0.8.1.zip`.
 3. Aktivirajte **Sidrena WooCommerce**.
 4. Otvorite **Sidrena** u lijevom admin meniju.
 
@@ -73,7 +75,7 @@ Sidrena usluge rade i u WooCommerce izdanju kao zaseban katalog usluga. Shortcod
 
 ## Objava cjenika na web stranici
 
-U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
+U **Sidrena > Objava cjenika** kliknite **Izradi stranicu Objava cjenika**.
 
 Kompletni javni prikaz koristi:
 
@@ -81,7 +83,7 @@ Kompletni javni prikaz koristi:
 
 Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
-Javni cjenik u 0.6.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik u 0.8.1 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
 
 Dostupni su i:
 
@@ -115,13 +117,13 @@ Za pouzdano izvršavanje prije poslovno kritičnog roka koristite server cron ko
 
 ## Arhiva
 
-Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.6.0 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
+Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.8.1 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
 
-## Produkcijsko poliranje 0.6.0
+## Produkcijsko poliranje 0.8.1
 
-- Sidrena neutralizira vlastitu SVG ikonicu u WordPress admin meniju nakon registracije menija, pa bočni WordPress izbornik ostaje čist i bez vizualnog dupliranja brenda.
+- Sidrena prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-0.6.0.zip` i `sidrena-woocommerce-0.6.0.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-0.8.1.zip` i `sidrena-woocommerce-0.8.1.zip`.
 
 ## WP-CLI
 
@@ -162,7 +164,7 @@ Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
 
 ## Licenca
 
-Sidrena se koristi prema **Sidrena Software License 1.0**. Plugin se ne smije prodavati, preprodavati, sublicencirati, redistribuirati, white-labelati ili rebrandirati bez pisanog odobrenja Brendigo.
+Sidrena se distribuira pod licencom **GPLv2 ili novijom**, u skladu sa zahtjevima WordPress.org direktorija. Autorski i projektni identitet Brendiga ne smije se lažno predstavljati.
 
 Puni tekst licence nalazi se u datoteci `LICENSE`.
 
@@ -177,10 +179,10 @@ Provjerite:
 - javni HTML prikaz
 - CSV/XML datoteke
 - arhivu
-- Dnevnik
+- Pomoć → Dnevnik
 
 Sidrena tehnički podržava provjerene zahtjeve za podatke i objavu cjenika, ali softver sam po sebi nije pravna potvrda poslovanja. Povijesne i referentne cijene moraju odgovarati stvarnoj poslovnoj evidenciji, a korisnik mora provjeriti primjenjivost važećih obveza na svoje konkretne proizvode, usluge i prodajna mjesta.
 
 ## Uvoz velikih kataloga
 
-Sidrena 0.6.0 provjerava maksimalan broj redaka prije poslovnih promjena. CSV/XML import podržava najviše 50.000 zapisa po datoteci. CSV obrađuje se streaming pristupom, a XML koristi XMLReader kada je dostupan uz NONET i zabranu DOCTYPE/ENTITY deklaracija. Prevelika datoteka odbija se prije djelomičnog unosa.
+Sidrena 0.8.1 provjerava maksimalan broj redaka prije poslovnih promjena. CSV/XML import podržava najviše 50.000 zapisa po datoteci. CSV obrađuje se streaming pristupom, a XML koristi XMLReader kada je dostupan uz NONET i zabranu DOCTYPE/ENTITY deklaracija. Prevelika datoteka odbija se prije djelomičnog unosa.
