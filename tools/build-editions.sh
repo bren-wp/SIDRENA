@@ -68,6 +68,7 @@ copy_branding_bundle() {
   cp "$ROOT/branding/website-hero-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/plugin-cover-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/social-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/wporg-banner-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/docs-cover-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
@@ -82,6 +83,8 @@ copy_branding_bundle() {
   cp "$ROOT/branding/rendered/cta-$edition.png" "$stage/branding/rendered/"
   cp "$ROOT/branding/rendered/app-card-$edition.png" "$stage/branding/rendered/"
   cp "$ROOT/branding/rendered/compact-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/social-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/wporg-banner-$edition.png" "$stage/branding/rendered/"
 }
 
 prepare_wporg_package() {
