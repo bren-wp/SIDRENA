@@ -46,6 +46,22 @@ jobs:
       - name: Sidrena source metadata
         run: python3 tools/apply-source-metadata.py --check
 
+      - name: Admin renderer self-call guard
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          path = Path('includes/class-sidrena-admin.php')
+          source = path.read_text(encoding='utf-8')
+          calls = set(re.findall(r'\$this->([A-Za-z_][A-Za-z0-9_]*)\s*\(', source))
+          definitions = set(re.findall(r'(?:public|protected|private)\s+function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(', source))
+          missing = sorted(calls - definitions)
+          if missing:
+              raise SystemExit('Undefined Sidrena_Admin self calls: ' + ', '.join(missing))
+          PY
+
       - name: Install PDF build dependency
         if: matrix.php == '8.3'
         run: python3 -m pip install --disable-pip-version-check --quiet reportlab
