@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena brand system 0.9.0
+# Sidrena brand system 1.0.0
 
 Ovaj direktorij je izvorni branding paket za Sidrena WordPress i Sidrena WooCommerce. Vizualni sustav prati produkcijske reference: tamno plava pomorska baza, svjetionik kao signal sigurnosti, Sidrena znak (S + sidro), plavi WordPress akcent i ljubičasti WooCommerce akcent.
 
@@ -74,4 +74,4 @@ Ne rastezati logo, ne mijenjati odnos boja znaka i wordmarka, ne koristiti Woo l
 
 ## Runtime screenshot pravilo
 
-Glavni `README.md`, upute i instalacijski ZIP-ovi za dokaz stvarnog sučelja smiju koristiti samo slike koje proizvodi `tools/capture-wporg-assets.mjs` iz aktivnog WordPress okruženja. Marketinški SVG/PNG hero, cover i social asseti ne smiju se predstavljati kao screenshot plugina. Za izdanje 0.9.0 obvezno je šest stvarnih ekrana po izdanju: Pregled, Katalog/Proizvodi, Cjenici, Lokacije, Postavke i Pomoć.
+Glavni `README.md`, upute i instalacijski ZIP-ovi za dokaz stvarnog sučelja smiju koristiti samo slike koje proizvodi `tools/capture-wporg-assets.mjs` iz aktivnog WordPress okruženja. Marketinški SVG/PNG hero, cover i social asseti ne smiju se predstavljati kao screenshot plugina. Za izdanje 1.0.0 obvezno je šest stvarnih ekrana po izdanju: Pregled, Katalog/Proizvodi, Cjenici, Lokacije, Postavke i Pomoć.
