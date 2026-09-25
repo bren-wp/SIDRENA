@@ -75,6 +75,15 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 == Changelog ==
 
 = 0.9.0 =
+* Potpuno novo Sidrena administracijsko sučelje izrađeno od nule prema službenom pomorskom brand sustavu.
+* Novi tamno-plavi brand header sa svjetionikom, responzivne statusne kartice, tablice, obrasci i jasne akcije.
+* WooCommerce izdanje koristi ljubičasti edition akcent uz osnovni Sidrena plavi identitet.
+* WordPress admin meni koristi kompaktno lokalno sidro bez vanjskih asseta.
+* WordPress.org banneri generiraju se iz službenog Sidrena brandinga, a screenshotovi iz stvarnog WordPress + WooCommerce wp-admin sučelja.
+* Dodan je kompletan brand vodič i produkcijski branding paket.
+* Službena stranica: https://brendigo.com/sidrene-cijene/.
+
+= 0.8.1 =
 * Dodana lokalna sidro ikonica u WordPress bočni meni.
 * Uklonjen mrtvi legacy admin menu i popravljeni linkovi prema sekundarnim prikazima.
 * Admin zaglavlje pojednostavljeno je na mali Sidrena logo i jasan edition badge.
