@@ -42,6 +42,7 @@ if ( 'wordpress' === SIDRENA_EDITION ) {
 }
 
 require_once SIDRENA_DIR . 'includes/class-sidrena-admin.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-admin-ux.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-plugin.php';
 
 if ( ! function_exists( 'sidrena_cijena' ) ) {
