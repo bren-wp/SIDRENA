@@ -164,10 +164,10 @@ jobs:
           cp "$WP_ASSETS/icon-256x256.png" "$WOO_ASSETS/icon-256x256.png"
           cp "$WP_ASSETS/icon.svg" "$WOO_ASSETS/icon.svg"
 
-          rsvg-convert -w 772 -h 250 branding/website-hero-wordpress.svg > "$WP_ASSETS/banner-772x250.png"
-          rsvg-convert -w 1544 -h 500 branding/website-hero-wordpress.svg > "$WP_ASSETS/banner-1544x500.png"
-          rsvg-convert -w 772 -h 250 branding/website-hero-woocommerce.svg > "$WOO_ASSETS/banner-772x250.png"
-          rsvg-convert -w 1544 -h 500 branding/website-hero-woocommerce.svg > "$WOO_ASSETS/banner-1544x500.png"
+          rsvg-convert -w 772 -h 250 branding/wporg-banner-wordpress.svg > "$WP_ASSETS/banner-772x250.png"
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-wordpress.svg > "$WP_ASSETS/banner-1544x500.png"
+          rsvg-convert -w 772 -h 250 branding/wporg-banner-woocommerce.svg > "$WOO_ASSETS/banner-772x250.png"
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-woocommerce.svg > "$WOO_ASSETS/banner-1544x500.png"
 
           identify "$WP_ASSETS/"*.png "$WOO_ASSETS/"*.png docs/media/screenshot-*.png
           test "$(identify -format '%wx%h' "$WP_ASSETS/icon-128x128.png")" = "128x128"
@@ -193,6 +193,10 @@ jobs:
           rsvg-convert -w 920 -h 560 branding/app-card-woocommerce.svg > branding/rendered/app-card-woocommerce.png
           rsvg-convert -w 1100 -h 380 branding/compact-wordpress.svg > branding/rendered/compact-wordpress.png
           rsvg-convert -w 1100 -h 380 branding/compact-woocommerce.svg > branding/rendered/compact-woocommerce.png
+          rsvg-convert -w 1080 -h 1080 branding/social-wordpress.svg > branding/rendered/social-wordpress.png
+          rsvg-convert -w 1080 -h 1080 branding/social-woocommerce.svg > branding/rendered/social-woocommerce.png
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-wordpress.svg > branding/rendered/wporg-banner-wordpress.png
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-woocommerce.svg > branding/rendered/wporg-banner-woocommerce.png
           rsvg-convert -w 1200 -h 1600 branding/support-cover.svg > branding/rendered/support-cover.png
           identify branding/rendered/*.png
 
