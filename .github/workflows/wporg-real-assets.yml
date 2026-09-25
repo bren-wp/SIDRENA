@@ -1,0 +1,185 @@
+# Sidrena source file.
+# Author: Brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
+# Support: sidrena@brendigo.com
+
+name: Build real WordPress.org assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop/**'
+      - main
+    paths:
+      - 'admin/**'
+      - 'assets/**'
+      - 'includes/**'
+      - 'public/**'
+      - 'editions/**'
+      - 'tools/capture-wporg-assets.mjs'
+      - '.github/workflows/wporg-real-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assets:
+    name: Capture real wp-admin screenshots
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install runtime tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save @wordpress/env playwright
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin imagemagick
+
+      - name: Prepare runtime plugin copies
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .wp-env-runtime
+          mkdir -p .wp-env-runtime/sidrena-wordpress .wp-env-runtime/sidrena-woocommerce
+
+          for edition in sidrena-wordpress sidrena-woocommerce; do
+            rsync -a admin/ ".wp-env-runtime/${edition}/admin/"
+            rsync -a assets/ ".wp-env-runtime/${edition}/assets/"
+            rsync -a includes/ ".wp-env-runtime/${edition}/includes/"
+            rsync -a languages/ ".wp-env-runtime/${edition}/languages/"
+            rsync -a public/ ".wp-env-runtime/${edition}/public/"
+            cp LICENSE uninstall.php ".wp-env-runtime/${edition}/"
+          done
+
+          cp editions/wordpress/sidrena-wordpress.php .wp-env-runtime/sidrena-wordpress/
+          cp editions/woocommerce/sidrena-woocommerce.php .wp-env-runtime/sidrena-woocommerce/
+
+      - name: Capture Sidrena WordPress
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .wp-env.json <<'JSON'
+          {
+            "plugins": ["./.wp-env-runtime/sidrena-wordpress"],
+            "config": {
+              "WP_DEBUG": false,
+              "SCRIPT_DEBUG": false
+            }
+          }
+          JSON
+
+          npx wp-env start
+          npx wp-env run cli wp plugin activate sidrena-wordpress
+
+          rm -rf "$RUNNER_TEMP/sidrena-wordpress-assets"
+          mkdir -p "$RUNNER_TEMP/sidrena-wordpress-assets"
+          SIDRENA_SCREENSHOT_EDITION=wordpress \
+          SIDRENA_SCREENSHOT_DIR="$RUNNER_TEMP/sidrena-wordpress-assets" \
+          node tools/capture-wporg-assets.mjs
+
+          npx wp-env destroy
+
+      - name: Capture Sidrena WooCommerce
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .wp-env.json <<'JSON'
+          {
+            "plugins": [
+              "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
+              "./.wp-env-runtime/sidrena-woocommerce"
+            ],
+            "config": {
+              "WP_DEBUG": false,
+              "SCRIPT_DEBUG": false
+            }
+          }
+          JSON
+
+          npx wp-env start
+          npx wp-env run cli wp plugin activate woocommerce
+          npx wp-env run cli wp plugin activate sidrena-woocommerce
+
+          rm -rf "$RUNNER_TEMP/sidrena-woocommerce-assets"
+          mkdir -p "$RUNNER_TEMP/sidrena-woocommerce-assets"
+          SIDRENA_SCREENSHOT_EDITION=woocommerce \
+          SIDRENA_SCREENSHOT_DIR="$RUNNER_TEMP/sidrena-woocommerce-assets" \
+          node tools/capture-wporg-assets.mjs
+
+          npx wp-env destroy
+
+      - name: Build WordPress.org asset directories
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          WP_ASSETS="wporg-assets/sidrena-wordpress/assets"
+          WOO_ASSETS="wporg-assets/sidrena-woocommerce/assets"
+          rm -rf "$WP_ASSETS" "$WOO_ASSETS"
+          mkdir -p "$WP_ASSETS" "$WOO_ASSETS" docs/media
+
+          cp "$RUNNER_TEMP/sidrena-wordpress-assets/"screenshot-*.png "$WP_ASSETS/"
+          cp "$RUNNER_TEMP/sidrena-woocommerce-assets/"screenshot-*.png "$WOO_ASSETS/"
+
+          cp "$WP_ASSETS/screenshot-1.png" docs/media/screenshot-wordpress.png
+          cp "$WOO_ASSETS/screenshot-1.png" docs/media/screenshot-woocommerce.png
+
+          rsvg-convert -w 128 -h 128 assets/images/logo-mark.svg > "$WP_ASSETS/icon-128x128.png"
+          rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > "$WP_ASSETS/icon-256x256.png"
+          cp assets/images/logo-mark.svg "$WP_ASSETS/icon.svg"
+
+          cp "$WP_ASSETS/icon-128x128.png" "$WOO_ASSETS/icon-128x128.png"
+          cp "$WP_ASSETS/icon-256x256.png" "$WOO_ASSETS/icon-256x256.png"
+          cp "$WP_ASSETS/icon.svg" "$WOO_ASSETS/icon.svg"
+
+          convert "$WP_ASSETS/screenshot-1.png" -resize '772x250^' -gravity center -extent 772x250 "$WP_ASSETS/banner-772x250.png"
+          convert "$WP_ASSETS/screenshot-1.png" -resize '1544x500^' -gravity center -extent 1544x500 "$WP_ASSETS/banner-1544x500.png"
+          convert "$WOO_ASSETS/screenshot-1.png" -resize '772x250^' -gravity center -extent 772x250 "$WOO_ASSETS/banner-772x250.png"
+          convert "$WOO_ASSETS/screenshot-1.png" -resize '1544x500^' -gravity center -extent 1544x500 "$WOO_ASSETS/banner-1544x500.png"
+
+          identify "$WP_ASSETS/"*.png "$WOO_ASSETS/"*.png docs/media/screenshot-*.png
+          test "$(identify -format '%wx%h' "$WP_ASSETS/icon-128x128.png")" = "128x128"
+          test "$(identify -format '%wx%h' "$WP_ASSETS/icon-256x256.png")" = "256x256"
+          test "$(identify -format '%wx%h' "$WP_ASSETS/banner-772x250.png")" = "772x250"
+          test "$(identify -format '%wx%h' "$WP_ASSETS/banner-1544x500.png")" = "1544x500"
+
+      - name: Upload generated assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidrena-real-wordpress-org-assets-${{ github.sha }}
+          path: |
+            wporg-assets/
+            docs/media/screenshot-wordpress.png
+            docs/media/screenshot-woocommerce.png
+          if-no-files-found: error
+
+      - name: Commit generated assets on development branches
+        if: startsWith(github.ref, 'refs/heads/develop/')
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wporg-assets docs/media/screenshot-wordpress.png docs/media/screenshot-woocommerce.png
+
+          if git diff --cached --quiet; then
+            echo "WordPress.org assets are already current."
+            exit 0
+          fi
+
+          git commit -m "Generate real WordPress.org screenshots and assets"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
