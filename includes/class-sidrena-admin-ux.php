@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Keeps the Sidrena admin area focused for non-technical users.
+ * Keeps the Sidrena admin area focused on the legally required workflow.
  *
- * The original internal pages remain registered by Sidrena_Admin so existing
- * bookmarked URLs, legacy links and support diagnostics continue to work.
- * This layer only rebuilds the visible WordPress sidebar submenu into a short
- * task-based menu for both plugin editions.
+ * Internal pages remain registered by Sidrena_Admin so existing bookmarks,
+ * legacy links and support diagnostics continue to work. This layer only
+ * rebuilds the visible WordPress sidebar submenu into a short task-based menu
+ * for both plugin editions.
  */
 final class Sidrena_Admin_UX {
 	private static $instance;
@@ -31,16 +31,19 @@ final class Sidrena_Admin_UX {
 	}
 
 	public function hooks() {
-		add_action( 'admin_menu', array( $this, 'simplify_menu' ), 1000 );
+		add_action( 'admin_menu', array( $this, 'simplify_menu' ), 9999 );
+		add_action( 'admin_head', array( $this, 'simplify_menu' ), 1 );
+		add_filter( 'parent_file', array( $this, 'parent_file' ) );
+		add_filter( 'submenu_file', array( $this, 'submenu_file' ) );
 	}
 
 	public static function primary_menu_labels() {
 		return array(
 			'sidrena'           => __( 'Početak', 'sidrena' ),
-			'sidrena-catalog'   => __( 'Proizvodi', 'sidrena' ),
-			'sidrena-files'     => __( 'Cjenici i objava', 'sidrena' ),
-			'sidrena-locations' => __( 'Lokacije', 'sidrena' ),
-			'sidrena-settings'  => __( 'Postavke', 'sidrena' ),
+			'sidrena-catalog'   => __( 'Proizvodi i usluge', 'sidrena' ),
+			'sidrena-files'     => __( 'Objava cjenika', 'sidrena' ),
+			'sidrena-locations' => __( 'Lokacije / webshop', 'sidrena' ),
+			'sidrena-settings'  => __( 'Zakonske postavke', 'sidrena' ),
 			'sidrena-support'   => __( 'Pomoć', 'sidrena' ),
 		);
 	}
@@ -54,6 +57,8 @@ final class Sidrena_Admin_UX {
 			'sidrena-rules',
 			'sidrena-about',
 			'sidrena-help',
+			'edit.php?post_type=sidrena_service',
+			'post-new.php?post_type=sidrena_service',
 		);
 	}
 
@@ -100,5 +105,27 @@ final class Sidrena_Admin_UX {
 		if ( $ordered ) {
 			$submenu['sidrena'] = $ordered;
 		}
+	}
+
+	public function parent_file( $parent_file ) {
+		return $this->is_sidrena_service_screen() ? 'sidrena' : $parent_file;
+	}
+
+	public function submenu_file( $submenu_file ) {
+		if ( $this->is_sidrena_service_screen() || in_array( (string) $submenu_file, self::hidden_menu_slugs(), true ) ) {
+			return 'sidrena-catalog';
+		}
+		return $submenu_file;
+	}
+
+	private function is_sidrena_service_screen() {
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post      = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 'sidrena_service' === $post_type ) {
+			return true;
+		}
+
+		return $post && function_exists( 'get_post_type' ) && 'sidrena_service' === get_post_type( $post );
 	}
 }
