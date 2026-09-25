@@ -68,6 +68,7 @@ copy_branding_bundle() {
   cp "$ROOT/branding/website-hero-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/plugin-cover-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/social-$edition.svg" "$stage/branding/"
+  cp "$ROOT/branding/wporg-banner-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/docs-cover-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
   cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
@@ -82,6 +83,8 @@ copy_branding_bundle() {
   cp "$ROOT/branding/rendered/cta-$edition.png" "$stage/branding/rendered/"
   cp "$ROOT/branding/rendered/app-card-$edition.png" "$stage/branding/rendered/"
   cp "$ROOT/branding/rendered/compact-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/social-$edition.png" "$stage/branding/rendered/"
+  cp "$ROOT/branding/rendered/wporg-banner-$edition.png" "$stage/branding/rendered/"
 }
 
 prepare_wporg_package() {
@@ -131,7 +134,16 @@ for index in 1 2 3 4 5 6; do
   sed -i "s#media/screenshot-wordpress-$index.png#images/screenshot-$index.png#g" "$WP_STAGE/docs/UPUTE.md"
 done
 prepare_wporg_package "$WP_STAGE" "sidrena-wordpress"
-rm -f   "$WP_STAGE/includes/class-sidrena-bulk.php"   "$WP_STAGE/includes/class-sidrena-history.php"   "$WP_STAGE/includes/class-sidrena-location-data.php"   "$WP_STAGE/includes/class-sidrena-location-history.php"   "$WP_STAGE/includes/class-sidrena-products.php"   "$WP_STAGE/includes/class-sidrena-woo-import-export.php"   "$WP_STAGE/includes/class-sidrena-compatibility.php"
+rm -f \
+  "$WP_STAGE/assets/images/logo-woocommerce.svg" \
+  "$WP_STAGE/assets/images/logo-woocommerce-light.svg" \
+  "$WP_STAGE/includes/class-sidrena-bulk.php" \
+  "$WP_STAGE/includes/class-sidrena-history.php" \
+  "$WP_STAGE/includes/class-sidrena-location-data.php" \
+  "$WP_STAGE/includes/class-sidrena-location-history.php" \
+  "$WP_STAGE/includes/class-sidrena-products.php" \
+  "$WP_STAGE/includes/class-sidrena-woo-import-export.php" \
+  "$WP_STAGE/includes/class-sidrena-compatibility.php"
 
 WOO_STAGE="$WORK/sidrena-woocommerce"
 copy_common "$WOO_STAGE"
@@ -147,7 +159,10 @@ for index in 1 2 3 4 5 6; do
   sed -i "s#media/screenshot-woocommerce-$index.png#images/screenshot-$index.png#g" "$WOO_STAGE/docs/UPUTE.md"
 done
 prepare_wporg_package "$WOO_STAGE" "sidrena-woocommerce"
-rm -f "$WOO_STAGE/includes/class-sidrena-standalone.php"
+rm -f \
+  "$WOO_STAGE/assets/images/logo-wordpress.svg" \
+  "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \
+  "$WOO_STAGE/includes/class-sidrena-standalone.php"
 
 python3 - "$NORMALIZED_EPOCH" "$WP_STAGE" "$WOO_STAGE" <<'PY'
 import os

@@ -16,6 +16,7 @@ Sidrena changelog
 * WordPress.org ikone generiraju se iz službene Sidrena app ikone, a banneri iz edition-specific brand asseta.
 * Svaki instalacijski ZIP sada sadrži vlastiti branding paket i svih šest stvarnih runtime screenshotova glavnih administratorskih ekrana.
 * Screenshot pipeline blokira WordPress critical/fatal zaslone, ključna preklapanja i horizontalni overflow na desktop, tablet i mobilnim širinama.
+* Finalni 0.9.0 release guard provjerava SHA-256, ZIP integritet, šest stvarnih screenshotova po izdanju i edition-specific branding bez miješanja WordPress/WooCommerce lockupa.
 * Službena stranica: https://brendigo.com/sidrene-cijene/.
 
 = 0.8.1 =

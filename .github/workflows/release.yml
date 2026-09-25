@@ -44,7 +44,20 @@ jobs:
           test "$VERSION" = "$WOO_STABLE"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
+          echo "REFRESH_RELEASE=false" >> "$GITHUB_ENV"
 
+      - name: Require final 0.9.0 release branch to match main
+        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '0.9.0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --no-tags
+          MAIN_SHA="$(git rev-parse origin/main)"
+          if [[ "$GITHUB_SHA" != "$MAIN_SHA" ]]; then
+            echo "release/0.9.0 must point at the final main commit before publishing." >&2
+            echo "release=$GITHUB_SHA main=$MAIN_SHA" >&2
+            exit 1
+          fi
       - name: Refresh first public 0.1.0 release when rebuilding from release branch
         if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '0.1.0'
         env:
@@ -66,16 +79,27 @@ jobs:
             git tag -d "$TAG_NAME"
           fi
 
-      - name: Create release tag from release branch
+      - name: Resolve or create release tag from release branch
         if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
         run: |
           set -euo pipefail
-          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --tags --force
+
+          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            EXISTING_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
+            if [[ "$EXISTING_TAG_TARGET" == "$GITHUB_SHA" ]]; then
+              echo "Tag $TAG_NAME already points at the release commit."
+            elif [[ "$VERSION" == "0.9.0" ]]; then
+              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled refresh is required."
+              echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
+            else
+              echo "Tag $TAG_NAME already exists at a different commit; refusing implicit retarget." >&2
+              exit 1
+            fi
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git tag -a "$TAG_NAME" "$GITHUB_SHA" -m "Sidrena $VERSION"
             git push origin "$TAG_NAME"
           fi
@@ -87,7 +111,11 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --tags --force
-          RELEASE_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
+          if [[ "${REFRESH_RELEASE:-false}" == "true" ]]; then
+            RELEASE_TARGET="$GITHUB_SHA"
+          else
+            RELEASE_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
+          fi
           test -n "$RELEASE_TARGET"
           echo "RELEASE_TARGET=$RELEASE_TARGET" >> "$GITHUB_ENV"
 
@@ -124,15 +152,40 @@ jobs:
           EOF
 
       - name: Install PDF build dependency
-        if: env.RELEASE_EXISTS != 'true'
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         run: python3 -m pip install --disable-pip-version-check --quiet reportlab
 
       - name: Build WordPress and WooCommerce ZIPs
-        if: env.RELEASE_EXISTS != 'true'
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
+
+      - name: Verify fresh release build before publishing
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          (
+            cd "$RUNNER_TEMP"
+            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
+            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+          )
+          unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
+          unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
+
+      - name: Retarget stale 0.9.0 tag before a new release
+        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$VERSION" = "0.9.0"
+          test "$RELEASE_TARGET" = "$GITHUB_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git push --force origin "refs/tags/$TAG_NAME"
 
       - name: Publish new GitHub release
         if: env.RELEASE_EXISTS != 'true'
@@ -151,13 +204,24 @@ jobs:
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
 
-      - name: Refresh existing release metadata without replacing assets
+      - name: Refresh existing release metadata and final 0.9.0 assets when required
         if: env.RELEASE_EXISTS == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+
+          if [[ "${REFRESH_RELEASE:-false}" == "true" ]]; then
+            test "$VERSION" = "0.9.0"
+            gh release upload "$TAG_NAME" \
+              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" \
+              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" \
+              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" \
+              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" \
+              --clobber --repo "$GITHUB_REPOSITORY"
+          fi
+
           jq -n \
             --arg tag "$TAG_NAME" \
             --arg target "$RELEASE_TARGET" \
@@ -168,6 +232,18 @@ jobs:
 
           gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${EXISTING_RELEASE_ID}" \
             --input "$RUNNER_TEMP/release-update.json" >/dev/null
+
+      - name: Retarget refreshed existing 0.9.0 tag
+        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$VERSION" = "0.9.0"
+          test "$RELEASE_TARGET" = "$GITHUB_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git push --force origin "refs/tags/$TAG_NAME"
 
       - name: Verify published GitHub release assets
         env:
@@ -206,6 +282,10 @@ jobs:
           WOO="$VERIFY_DIR/woo/sidrena-woocommerce"
 
           test -f "$WP/sidrena-wordpress.php"
+          test -s "$WP/assets/images/logo-wordpress.svg"
+          test -s "$WP/assets/images/logo-wordpress-light.svg"
+          test ! -e "$WP/assets/images/logo-woocommerce.svg"
+          test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
           test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
@@ -213,6 +293,10 @@ jobs:
           test ! -d "$WP/static-php"
 
           test -f "$WOO/sidrena-woocommerce.php"
+          test -s "$WOO/assets/images/logo-woocommerce.svg"
+          test -s "$WOO/assets/images/logo-woocommerce-light.svg"
+          test ! -e "$WOO/assets/images/logo-wordpress.svg"
+          test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
@@ -228,14 +312,26 @@ jobs:
           test -s "$WP/branding/website-hero-wordpress.svg"
           test -s "$WP/branding/rendered/website-hero-wordpress.png"
           test -s "$WP/branding/rendered/plugin-cover-wordpress.png"
+          test -s "$WP/branding/social-wordpress.svg"
+          test -s "$WP/branding/wporg-banner-wordpress.svg"
+          test -s "$WP/branding/rendered/social-wordpress.png"
+          test -s "$WP/branding/rendered/wporg-banner-wordpress.png"
           test ! -e "$WP/branding/website-hero-woocommerce.svg"
+          test ! -e "$WP/branding/wporg-banner-woocommerce.svg"
+          test ! -e "$WP/branding/rendered/social-woocommerce.png"
           test ! -e "$WP/branding/rendered/website-hero-woocommerce.png"
 
           test -s "$WOO/branding/BRAND-GUIDE.md"
           test -s "$WOO/branding/website-hero-woocommerce.svg"
           test -s "$WOO/branding/rendered/website-hero-woocommerce.png"
           test -s "$WOO/branding/rendered/plugin-cover-woocommerce.png"
+          test -s "$WOO/branding/social-woocommerce.svg"
+          test -s "$WOO/branding/wporg-banner-woocommerce.svg"
+          test -s "$WOO/branding/rendered/social-woocommerce.png"
+          test -s "$WOO/branding/rendered/wporg-banner-woocommerce.png"
           test ! -e "$WOO/branding/website-hero-wordpress.svg"
+          test ! -e "$WOO/branding/wporg-banner-wordpress.svg"
+          test ! -e "$WOO/branding/rendered/social-wordpress.png"
           test ! -e "$WOO/branding/rendered/website-hero-wordpress.png"
 
           if grep -RIniE 'Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then

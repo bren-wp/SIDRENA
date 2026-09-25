@@ -69,12 +69,14 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 #adminmenu .toplevel_page_sidrena .wp-menu-image img { width:20px;height:20px;padding:7px 0 0;opacity:1; }
 #adminmenu .toplevel_page_sidrena .wp-submenu a.current { color:#fff;font-weight:700; }
 
+.sidrena-app,.sidrena-app *,.sidrena-app *::before,.sidrena-app *::after { box-sizing:border-box; }
+
 .sidrena-app {
 	--sid-accent:var(--sid-blue);
 	--sid-accent-soft:#eef5ff;
 	margin:0;
 	padding:18px 20px 34px;
-	max-width:1640px;
+	max-width:none;
 	font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 	color:var(--sid-ink);
 }
@@ -104,8 +106,10 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	background:linear-gradient(90deg,var(--sid-cyan),var(--sid-blue),var(--sid-accent));
 	opacity:.9;
 }
-.sidrena-brandbar__identity { position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-width:0; }
-.sidrena-brandbar__logo { display:block;width:min(290px,100%);height:70px;object-fit:contain;object-position:left center; }
+.sidrena-brandbar__identity { position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-width:0;min-height:72px; }
+.sidrena-brandbar__logo { display:block;width:min(390px,100%);height:76px;object-fit:contain;object-position:left center; }
+.sidrena-edition-wordpress .sidrena-brandbar { background:linear-gradient(90deg,rgba(5,28,53,.97),rgba(7,51,96,.76) 52%,rgba(6,26,51,.55)),url("../../assets/images/brand-hero.svg") center/cover no-repeat; }
+.sidrena-edition-woocommerce .sidrena-brandbar { background:linear-gradient(90deg,rgba(5,28,53,.97),rgba(42,20,82,.78) 55%,rgba(6,26,51,.55)),url("../../assets/images/brand-hero.svg") center/cover no-repeat; }
 .sidrena-brandbar__edition {
 	display:inline-flex;align-items:center;min-height:30px;padding:5px 11px;border:1px solid rgba(255,255,255,.22);
 	border-radius:999px;background:rgba(255,255,255,.10);color:#fff;font-size:12px;font-weight:800;white-space:nowrap;backdrop-filter:blur(6px);
@@ -116,7 +120,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-brandbar__actions { position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap; }
 .sidrena-brandbar__actions a {
 	display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:7px 12px;border:1px solid rgba(255,255,255,.24);
-	border-radius:10px;background:rgba(255,255,255,.10);color:#fff;text-decoration:none;font-size:12px;font-weight:750;backdrop-filter:blur(8px);
+	border-radius:10px;background:rgba(255,255,255,.10);color:#fff;text-decoration:none;font-size:12px;font-weight:750;backdrop-filter:blur(8px);white-space:nowrap;
 }
 .sidrena-brandbar__actions a:hover { background:#fff;color:var(--sid-navy); }
 
@@ -146,7 +150,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-head-inline-actions { display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap; }
 
 .sid-card {
-	position:relative;margin:0 0 14px;padding:18px;border:1px solid var(--sid-line);border-radius:var(--sid-radius);background:#fff;box-shadow:var(--sid-shadow);
+	position:relative;min-width:0;margin:0 0 14px;padding:18px;border:1px solid #dce8f2;border-radius:var(--sid-radius);background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
 }
 .sid-card h2,.sid-card h3 { color:var(--sid-ink); }
 .sid-card p { color:var(--sid-muted);line-height:1.5; }
@@ -156,7 +160,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 .sid-dashboard-metrics { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px; }
 .sid-dashboard-metric {
-	display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center;min-height:108px;padding:16px;border:1px solid var(--sid-line);border-radius:14px;background:#fff;box-shadow:var(--sid-shadow);
+	display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center;min-width:0;min-height:108px;padding:16px;border:1px solid #dce8f2;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
 }
 .sid-dashboard-metric__icon { display:grid;place-items:center;width:48px;height:48px;border-radius:13px;background:var(--sid-accent-soft);color:var(--sid-accent);font-size:24px;line-height:48px; }
 .sid-dashboard-metric span:not(.sid-dashboard-metric__icon) { display:block;color:#4f6a82;font-size:11px;font-weight:750; }
@@ -170,7 +174,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 .sid-dashboard-actions { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px; }
 .sid-action {
-	display:flex;align-items:center;gap:10px;min-height:56px;padding:13px 15px;border:1px solid var(--sid-line);border-radius:12px;background:#fff;color:var(--sid-navy);
+	display:flex;align-items:center;gap:10px;min-width:0;min-height:56px;padding:13px 15px;border:1px solid #dce8f2;border-radius:12px;background:#fff;color:var(--sid-navy);
 	text-decoration:none;box-shadow:0 4px 15px rgba(8,45,91,.04);transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
 }
 .sid-action:hover { transform:translateY(-1px);border-color:#bfd4e8;box-shadow:0 9px 24px rgba(8,45,91,.09);color:var(--sid-accent); }
@@ -224,6 +228,8 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-table-wrap { width:100%;overflow:auto;border:1px solid #e0eaf3;border-radius:11px;scrollbar-gutter:stable; }
 .sid-table-wrap table { border:0!important; }
 .sid-table-empty { padding:22px;text-align:center;color:var(--sid-muted);background:#f8fbfd;border:1px dashed #d5e1ec;border-radius:10px; }
+.sid-table-empty-cell { padding:26px!important;text-align:center!important;color:var(--sid-muted);background:#f8fbfd; }
+.sid-table-empty-cell strong { display:block;margin-bottom:4px;color:var(--sid-ink);font-size:12px; }
 .sid-bulk-meta { display:block;margin-top:4px;color:var(--sid-muted);font-size:10px; }
 
 .sid-mini-stat { min-height:96px;display:grid;align-content:center;gap:6px; }
@@ -259,9 +265,16 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-price-guide__item p { margin:0;font-size:11px; }
 
 .sidrena-app input[type="text"],.sidrena-app input[type="email"],.sidrena-app input[type="number"],.sidrena-app input[type="date"],.sidrena-app input[type="time"],.sidrena-app input[type="url"],.sidrena-app select,.sidrena-app textarea {
-	min-height:39px;border:1px solid #cfdce8;border-radius:8px;background:#fff;color:var(--sid-ink);box-shadow:none;
+	min-height:40px;max-width:100%;border:1px solid #cddce9;border-radius:9px;background:#fff;color:var(--sid-ink);box-shadow:none;
 }
 .sidrena-app input:focus,.sidrena-app select:focus,.sidrena-app textarea:focus { border-color:var(--sid-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--sid-accent) 14%,transparent);outline:none; }
+.sidrena-app input[type="file"] {
+	max-width:100%;padding:6px;border:1px solid #cddce9;border-radius:9px;background:#fff;color:#47617a;font:inherit;
+}
+.sidrena-app input[type="file"]::file-selector-button {
+	min-height:34px;margin-right:10px;padding:6px 12px;border:1px solid #cad8e6;border-radius:8px;background:#f4f8fc;color:var(--sid-navy);font:inherit;font-weight:750;cursor:pointer;
+}
+.sidrena-app input[type="file"]::file-selector-button:hover { border-color:#aac5de;background:#eef5fb;color:var(--sid-accent); }
 
 .sid-fields { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px; }
 .sid-fields label { display:grid;gap:6px;min-width:0; }
@@ -289,7 +302,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-toggle-card small { margin-top:3px;color:var(--sid-muted);font-size:10px;line-height:1.4; }
 
 .sid-form-actions,.sid-bulk-actions,.sid-pagination { display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px; }
-.sid-sticky-actions { position:sticky;bottom:12px;z-index:8;padding:10px;border:1px solid #d9e6f2;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(6,26,51,.12);backdrop-filter:blur(12px); }
+.sid-sticky-actions { position:sticky;bottom:12px;z-index:8;width:max-content;max-width:100%;margin-left:auto;padding:8px;border:1px solid #d9e6f2;border-radius:12px;background:rgba(255,255,255,.94);box-shadow:0 10px 30px rgba(6,26,51,.12);backdrop-filter:blur(12px); }
 .sidrena-app .button,.sid-link-button {
 	display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:6px 13px;border:1px solid #cad8e6;border-radius:9px;background:#fff;color:var(--sid-navy);box-shadow:none;font-size:12px;font-weight:750;line-height:1.2;text-decoration:none;
 }
@@ -329,9 +342,10 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 }
 .sidrena-footer a { color:var(--sid-navy);font-weight:750;text-decoration:none; }
 
-@media (max-width:1280px) {
-	.sidrena-brandbar { grid-template-columns:minmax(250px,.8fr) 1fr; }
+@media (max-width:1180px) {
+	.sidrena-brandbar { grid-template-columns:minmax(260px,.9fr) minmax(260px,1.1fr);gap:16px; }
 	.sidrena-brandbar__actions { grid-column:1/-1;justify-content:flex-start; }
+	.sidrena-brandbar__logo { width:min(360px,100%); }
 	.sid-dashboard-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
 	.sid-dashboard-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
@@ -340,23 +354,34 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	.sid-grid-3 { grid-template-columns:1fr; }
 }
 @media (max-width:782px) {
-	.sidrena-app { padding:10px 10px 26px; }
-	.sidrena-brandbar { grid-template-columns:1fr;min-height:0;padding:16px; }
-	.sidrena-brandbar__logo { width:240px;height:58px; }
+	.sidrena-app { padding:12px 12px 28px; }
+	.sidrena-brandbar { grid-template-columns:1fr;min-height:0;padding:17px; }
+	.sidrena-brandbar__logo { width:min(420px,100%);height:auto;max-height:78px; }
 	.sidrena-brandbar__copy { display:none; }
-	.sidrena-brandbar__actions { grid-column:auto; }
+	.sidrena-brandbar__actions { grid-column:auto;justify-content:flex-start; }
 	.sidrena-contextbar { align-items:flex-start;flex-direction:column; }
 	.sid-page-head { align-items:flex-start;flex-direction:column; }
-	.sid-head-inline-actions { justify-content:flex-start; }
-	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-2,.sid-toggle-grid,.sid-fields,.sid-price-guide { grid-template-columns:1fr; }
+	.sid-head-inline-actions { justify-content:flex-start;width:100%; }
+	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+	.sid-grid-2,.sid-toggle-grid,.sid-fields,.sid-price-guide { grid-template-columns:1fr; }
+	.sid-dashboard-main,.sid-dashboard-bottom { grid-template-columns:1fr; }
 	.sid-fields .sid-wide { grid-column:auto; }
 	.sid-code-row { grid-template-columns:1fr; }
-	.sid-sticky-actions { bottom:6px; }
+	.sid-sticky-actions { bottom:6px;width:100%; }
+	.sid-sticky-actions .button { width:100%; }
 	.sidrena-app .button,.sid-link-button { min-height:44px; }
 }
 @media (max-width:480px) {
-	.sid-dashboard-metrics { grid-template-columns:1fr; }
-	.sidrena-brandbar__actions a { flex:1; }
+	.sidrena-app { padding:10px 8px 24px; }
+	.sidrena-brandbar { border-radius:14px;padding:14px; }
+	.sidrena-brandbar__copy strong { font-size:20px; }
+	.sidrena-brandbar__actions { display:grid;grid-template-columns:1fr 1fr;width:100%; }
+	.sidrena-brandbar__actions a { justify-content:center; }
+	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:1fr; }
+	.sid-page-head h2 { font-size:23px; }
+	.sid-location-head { display:grid;grid-template-columns:1fr;gap:12px; }
+	.sid-location-actions { justify-content:space-between;width:100%; }
+	.sid-card { padding:14px; }
 	.sidrena-footer { align-items:flex-start;flex-direction:column; }
 }
 @media (prefers-reduced-motion:reduce) {

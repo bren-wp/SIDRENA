@@ -115,7 +115,7 @@ final class Sidrena_Admin {
 		$is_woo       = Sidrena_Utils::is_woocommerce_edition();
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'WooCommerce', 'sidrena' ) : __( 'WordPress', 'sidrena' );
-		$edition_logo = SIDRENA_URL . 'assets/images/logo-horizontal-light.svg';
+		$edition_logo = SIDRENA_URL . ( $is_woo ? 'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg' );
 		$donation_url = Sidrena_Utils::donation_url();
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
@@ -123,7 +123,7 @@ final class Sidrena_Admin {
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
 					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" alt="<?php esc_attr_e( 'Sidrena', 'sidrena' ); ?>">
-					<span class="sidrena-brandbar__edition"><?php echo esc_html( $edition_name ); ?></span>
+					
 				</div>
 				<div class="sidrena-brandbar__copy">
 					<strong><?php esc_html_e( 'Vaš pouzdan signal u svijetu propisa o cijenama.', 'sidrena' ); ?></strong>
@@ -439,7 +439,9 @@ final class Sidrena_Admin {
 		$history_total    = $product_history + $service_history + $location_history;
 		$total_items      = max( 0, absint( $stats['products'] ) + absint( $stats['services'] ) );
 		$anchor_ready     = max( 0, $total_items - absint( $stats['missing_total'] ) );
-		$is_ready         = 0 === absint( $stats['issues'] ) && $integrity['ok'];
+		$health_checks    = $this->health_checks( $stats, $last, $settings );
+		$health_issues    = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
+		$is_ready         = 0 === $health_issues;
 
 		$series = class_exists( 'Sidrena_History' ) ? Sidrena_History::latest_series( 30 ) : array();
 		if ( empty( $series ) ) {
@@ -463,7 +465,7 @@ final class Sidrena_Admin {
 				<p><?php esc_html_e( 'Stvarno stanje kataloga, objava, povijesti i tehničke spremnosti bez izmišljenih podataka.', 'sidrena' ); ?></p>
 			</div>
 			<div class="sid-head-inline-actions">
-				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-products"></span><?php esc_html_e( 'Proizvodi', 'sidrena' ); ?></a>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-products"></span><?php echo esc_html( $is_woo ? __( 'Proizvodi', 'sidrena' ) : __( 'Katalog', 'sidrena' ) ); ?></a>
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><?php esc_html_e( 'Generiraj cjenik', 'sidrena' ); ?></a>
 			</div>
 		</div>
@@ -472,13 +474,13 @@ final class Sidrena_Admin {
 			<?php $this->dashboard_metric( __( 'Stavke u katalogu', 'sidrena' ), $total_items, 'dashicons-products', sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $anchor_ready ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Aktualni cjenici', 'sidrena' ), $integrity['current_entries'], 'dashicons-media-spreadsheet', __( 'javno dostupne datoteke', 'sidrena' ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Povijest cijena', 'sidrena' ), $history_total, 'dashicons-chart-line', __( 'evidentirani zapisi', 'sidrena' ), 'teal' ); ?>
-			<?php $this->dashboard_metric( __( 'Tehnička spremnost', 'sidrena' ), $is_ready ? __( 'Uredno', 'sidrena' ) : __( 'Provjera', 'sidrena' ), 'dashicons-shield-alt', $is_ready ? __( 'bez tehničkih upozorenja', 'sidrena' ) : sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $stats['issues'], 'sidrena' ), $stats['issues'] ), $is_ready ? 'ok' : 'warn' ); ?>
+			<?php $this->dashboard_metric( __( 'Tehnička spremnost', 'sidrena' ), $is_ready ? __( 'Uredno', 'sidrena' ) : __( 'Provjera', 'sidrena' ), 'dashicons-shield-alt', $is_ready ? __( 'bez tehničkih upozorenja', 'sidrena' ) : sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ), $health_issues ), $is_ready ? 'ok' : 'warn' ); ?>
 		</div>
 
 		<div class="sid-dashboard-actions">
 			<a class="sid-action sid-action--primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><strong><?php esc_html_e( 'Objavi cjenik', 'sidrena' ); ?></strong><span class="dashicons dashicons-arrow-right-alt2"></span></a>
 			<a class="sid-action sid-action--soft-blue" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><span class="dashicons dashicons-media-spreadsheet"></span><strong><?php esc_html_e( 'Cjenici i izvoz', 'sidrena' ); ?></strong></a>
-			<a class="sid-action sid-action--soft-orange" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-locations' ) ); ?>"><span class="dashicons dashicons-location"></span><strong><?php esc_html_e( 'Lokacije / webshop', 'sidrena' ); ?></strong></a>
+			<a class="sid-action sid-action--soft-orange" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-locations' ) ); ?>"><span class="dashicons dashicons-location"></span><strong><?php esc_html_e( 'Lokacije', 'sidrena' ); ?></strong></a>
 			<a class="sid-action sid-action--soft-purple" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><span class="dashicons dashicons-search"></span><strong><?php esc_html_e( 'Provjeri spremnost', 'sidrena' ); ?></strong></a>
 		</div>
 
@@ -669,6 +671,8 @@ final class Sidrena_Admin {
 		$sales_total    = $stats['active_sales'] + $this->active_service_sales();
 		$sales_pending  = $stats['sale_incomplete'] + $stats['service_sale_incomplete'];
 		$sales_ready    = max( 0, $sales_total - $sales_pending );
+		$health_checks  = $this->health_checks( $stats, $last, $settings );
+		$health_issues  = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
 		?>
 		<div class="sid-page-head">
 			<div>
@@ -690,7 +694,7 @@ final class Sidrena_Admin {
 			<section class="sid-card">
 				<div class="sid-section-head">
 					<div><span class="sid-kicker"><?php esc_html_e( 'Automatske provjere', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Kontrolna lista spremnosti', 'sidrena' ); ?></h2></div>
-					<span class="sid-status-pill <?php echo 0 === $stats['issues'] && 0 === $file_coverage['missing'] && $integrity['ok'] ? 'is-ok' : 'is-warn'; ?>"><?php echo 0 === $stats['issues'] && 0 === $file_coverage['missing'] && $integrity['ok'] ? esc_html__( 'Nema tehničkih upozorenja', 'sidrena' ) : esc_html__( 'Potrebna provjera', 'sidrena' ); ?></span>
+					<span class="sid-status-pill <?php echo 0 === $health_issues ? 'is-ok' : 'is-warn'; ?>"><?php echo 0 === $health_issues ? esc_html__( 'Nema tehničkih upozorenja', 'sidrena' ) : esc_html( sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ), $health_issues ) ); ?></span>
 				</div>
 				<?php $this->health_list( $stats, $last, $settings ); ?>
 			</section>
@@ -798,7 +802,7 @@ final class Sidrena_Admin {
 		return absint( $query->found_posts );
 	}
 
-	private function health_list( $stats, $last, $settings ) {
+	private function health_checks( $stats, $last, $settings ) {
 		$locations       = Sidrena_Utils::locations();
 		$missing_address = 0;
 		$coverage_issue  = false;
@@ -854,6 +858,11 @@ final class Sidrena_Admin {
 			array( $integrity['ok'], __( 'Indeksirane arhivske datoteke postoje i provjereni SHA-256 zapisi se podudaraju', 'sidrena' ), __( 'Otvorite Arhiva 30+ dana i provjerite nedostajuće ili promijenjene datoteke.', 'sidrena' ) ),
 			array( empty( $last['errors'] ), __( 'Zadnje generiranje je završilo bez grešaka', 'sidrena' ), __( 'Pregledajte upozorenja zadnjeg generiranja.', 'sidrena' ) ),
 		);
+		return $checks;
+	}
+
+	private function health_list( $stats, $last, $settings ) {
+		$checks = $this->health_checks( $stats, $last, $settings );
 
 		echo '<div class="sid-health">';
 		foreach ( $checks as $check ) {

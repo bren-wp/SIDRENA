@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
@@ -33,13 +24,32 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 
 $active_plugins = (array) get_option( 'active_plugins', array() );
-foreach ( $active_plugins as $active_plugin ) {
+if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+	$network_active = (array) get_site_option( 'active_sitewide_plugins', array() );
+	$active_plugins = array_merge( $active_plugins, array_keys( $network_active ) );
+}
+foreach ( array_unique( $active_plugins ) as $active_plugin ) {
 	$active_plugin = (string) $active_plugin;
 	if ( $active_plugin === (string) WP_UNINSTALL_PLUGIN ) {
 		continue;
 	}
 	if ( preg_match( '#(^|/)(sidrena-wordpress|sidrena-woocommerce)\.php$#', $active_plugin ) ) {
 		return;
+	}
+}
+
+// Runtime hooks and capabilities must not outlive the final installed edition.
+// Business records remain preserved unless explicit destructive cleanup is enabled.
+wp_clear_scheduled_hook( 'sidrena_daily_generation' );
+wp_clear_scheduled_hook( 'sidrena_queued_generation' );
+wp_clear_scheduled_hook( 'sidrena_history_seed' );
+
+$roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
+if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects ) ) {
+	foreach ( $roles->role_objects as $role ) {
+		if ( is_object( $role ) && is_callable( array( $role, 'remove_cap' ) ) ) {
+			$role->remove_cap( 'manage_sidrena' );
+		}
 	}
 }
 
@@ -55,19 +65,6 @@ delete_option( 'sidrena_last_run' );
 delete_option( 'sidrena_db_version' );
 delete_option( 'sidrena_history_seeded_at' );
 delete_option( 'sidrena_public_page_id' );
-
-wp_clear_scheduled_hook( 'sidrena_daily_generation' );
-wp_clear_scheduled_hook( 'sidrena_queued_generation' );
-wp_clear_scheduled_hook( 'sidrena_history_seed' );
-
-$roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
-if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects ) ) {
-	foreach ( $roles->role_objects as $role ) {
-		if ( is_object( $role ) && is_callable( array( $role, 'remove_cap' ) ) ) {
-			$role->remove_cap( 'manage_sidrena' );
-		}
-	}
-}
 
 global $wpdb;
 $tables = array(
