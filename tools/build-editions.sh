@@ -57,11 +57,40 @@ copy_common() {
   python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$stage/docs/SIDRENA-PODRSKA.pdf"
 }
 
+prepare_wporg_text_domain() {
+  local stage="$1"
+  local domain="$2"
+
+  python3 - "$stage" "$domain" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+domain = sys.argv[2]
+
+for path in root.rglob('*.php'):
+    text = path.read_text(encoding='utf-8')
+    text = text.replace(", 'sidrena' )", f", '{domain}' )")
+    text = text.replace("load_plugin_textdomain( 'sidrena',", f"load_plugin_textdomain( '{domain}',")
+    path.write_text(text, encoding='utf-8')
+
+pot = root / 'languages' / 'sidrena.pot'
+if pot.exists():
+    target = root / 'languages' / f'{domain}.pot'
+    target.write_text(
+        pot.read_text(encoding='utf-8').replace('Text Domain: sidrena', f'Text Domain: {domain}'),
+        encoding='utf-8'
+    )
+    pot.unlink()
+PY
+}
+
 WP_STAGE="$WORK/sidrena-wordpress"
 copy_common "$WP_STAGE"
 cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
 cp "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
+prepare_wporg_text_domain "$WP_STAGE" "sidrena-wordpress"
 rm -f   "$WP_STAGE/includes/class-sidrena-bulk.php"   "$WP_STAGE/includes/class-sidrena-history.php"   "$WP_STAGE/includes/class-sidrena-location-data.php"   "$WP_STAGE/includes/class-sidrena-location-history.php"   "$WP_STAGE/includes/class-sidrena-products.php"   "$WP_STAGE/includes/class-sidrena-woo-import-export.php"   "$WP_STAGE/includes/class-sidrena-compatibility.php"
 
 WOO_STAGE="$WORK/sidrena-woocommerce"
@@ -69,6 +98,7 @@ copy_common "$WOO_STAGE"
 cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 cp "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
+prepare_wporg_text_domain "$WOO_STAGE" "sidrena-woocommerce"
 rm -f "$WOO_STAGE/includes/class-sidrena-standalone.php"
 
 python3 - "$NORMALIZED_EPOCH" "$WP_STAGE" "$WOO_STAGE" <<'PY'
