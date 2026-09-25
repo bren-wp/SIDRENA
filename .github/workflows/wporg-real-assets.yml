@@ -15,6 +15,8 @@ on:
     paths:
       - 'admin/**'
       - 'assets/**'
+      - 'branding/**'
+      - '!branding/rendered/**'
       - 'includes/**'
       - 'public/**'
       - 'editions/**'
@@ -162,6 +164,22 @@ jobs:
           test "$(identify -format '%wx%h' "$WP_ASSETS/banner-772x250.png")" = "772x250"
           test "$(identify -format '%wx%h' "$WP_ASSETS/banner-1544x500.png")" = "1544x500"
 
+      - name: Render complete branding PNG set
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p branding/rendered
+          rsvg-convert -w 1600 -h 700 branding/website-hero-wordpress.svg > branding/rendered/website-hero-wordpress.png
+          rsvg-convert -w 1600 -h 700 branding/website-hero-woocommerce.svg > branding/rendered/website-hero-woocommerce.png
+          rsvg-convert -w 1200 -h 900 branding/plugin-cover-wordpress.svg > branding/rendered/plugin-cover-wordpress.png
+          rsvg-convert -w 1200 -h 900 branding/plugin-cover-woocommerce.svg > branding/rendered/plugin-cover-woocommerce.png
+          rsvg-convert -w 1400 -h 360 branding/email-header.svg > branding/rendered/email-header.png
+          rsvg-convert -w 1200 -h 1600 branding/docs-cover-wordpress.svg > branding/rendered/docs-cover-wordpress.png
+          rsvg-convert -w 1200 -h 1600 branding/docs-cover-woocommerce.svg > branding/rendered/docs-cover-woocommerce.png
+          rsvg-convert -w 1600 -h 320 branding/cta-wordpress.svg > branding/rendered/cta-wordpress.png
+          rsvg-convert -w 1600 -h 320 branding/cta-woocommerce.svg > branding/rendered/cta-woocommerce.png
+          identify branding/rendered/*.png
+
       - name: Upload generated assets
         uses: actions/upload-artifact@v4
         with:
@@ -170,6 +188,7 @@ jobs:
             wporg-assets/
             docs/media/screenshot-wordpress.png
             docs/media/screenshot-woocommerce.png
+            branding/rendered/
           if-no-files-found: error
 
       - name: Commit generated assets on development branches
@@ -180,7 +199,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -u
-          git add wporg-assets docs/media/screenshot-wordpress.png docs/media/screenshot-woocommerce.png
+          git add wporg-assets docs/media/screenshot-wordpress.png docs/media/screenshot-woocommerce.png branding/rendered
 
           if git diff --cached --quiet; then
             echo "WordPress.org assets are already current."
