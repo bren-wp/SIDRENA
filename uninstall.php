@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
@@ -43,19 +34,8 @@ foreach ( $active_plugins as $active_plugin ) {
 	}
 }
 
-if ( ! defined( 'SIDRENA_DELETE_DATA_ON_UNINSTALL' ) || true !== SIDRENA_DELETE_DATA_ON_UNINSTALL ) {
-	return;
-}
-
-delete_option( 'sidrena_settings' );
-delete_option( 'sidrena_locations' );
-delete_option( 'sidrena_public_index' );
-delete_option( 'sidrena_archive_index' );
-delete_option( 'sidrena_last_run' );
-delete_option( 'sidrena_db_version' );
-delete_option( 'sidrena_history_seeded_at' );
-delete_option( 'sidrena_public_page_id' );
-
+// Runtime hooks and capabilities must not outlive the final installed edition.
+// Business records remain preserved unless explicit destructive cleanup is enabled.
 wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 wp_clear_scheduled_hook( 'sidrena_history_seed' );
@@ -68,6 +48,19 @@ if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects
 		}
 	}
 }
+
+if ( ! defined( 'SIDRENA_DELETE_DATA_ON_UNINSTALL' ) || true !== SIDRENA_DELETE_DATA_ON_UNINSTALL ) {
+	return;
+}
+
+delete_option( 'sidrena_settings' );
+delete_option( 'sidrena_locations' );
+delete_option( 'sidrena_public_index' );
+delete_option( 'sidrena_archive_index' );
+delete_option( 'sidrena_last_run' );
+delete_option( 'sidrena_db_version' );
+delete_option( 'sidrena_history_seeded_at' );
+delete_option( 'sidrena_public_page_id' );
 
 global $wpdb;
 $tables = array(
