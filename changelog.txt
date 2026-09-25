@@ -6,6 +6,11 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.1 =
+* Otvorena je produkcijska maintenance linija 1.0.1 za čišćenje duplog, mrtvog i nepotrebnog HTML/CSS/JS/PHP koda.
+* Pravna tehnička spremnost ponovno se provjerava prema aktualnim službenim izvorima NN 101/2026 i NN 105/2026, bez tvrdnje da softver jamči pravnu usklađenost konkretnog poslovanja.
+* UI/UX, edition-specific branding i logo nastavljaju se polirati prema službenim SIDRENA vizualnim referencama uz obavezne stvarne runtime screenshotove.
+
 = 1.0.0 =
 * Stabilno 1.0.0 izdanje objedinjuje sve završne promjene iz 0.9 razvojne linije u produkcijsku release bazu.
 * Završeno je 1:1 poliranje WordPress i WooCommerce administratorskog sučelja s odvojenim edition akcentima i logotipima.
