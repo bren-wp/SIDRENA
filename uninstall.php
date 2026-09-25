@@ -24,7 +24,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 
 $active_plugins = (array) get_option( 'active_plugins', array() );
-if ( is_multisite() ) {
+if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 	$network_active = (array) get_site_option( 'active_sitewide_plugins', array() );
 	$active_plugins = array_merge( $active_plugins, array_keys( $network_active ) );
 }
