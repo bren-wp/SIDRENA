@@ -46,15 +46,15 @@ jobs:
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
           echo "REFRESH_RELEASE=false" >> "$GITHUB_ENV"
 
-      - name: Require final 0.9.0 release branch to match main
-        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '0.9.0'
+      - name: Require stable 1.0.0 release branch to match main
+        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0'
         shell: bash
         run: |
           set -euo pipefail
           git fetch origin main --no-tags
           MAIN_SHA="$(git rev-parse origin/main)"
           if [[ "$GITHUB_SHA" != "$MAIN_SHA" ]]; then
-            echo "release/0.9.0 must point at the final main commit before publishing." >&2
+            echo "release/1.0.0 must point at the final main commit before publishing." >&2
             echo "release=$GITHUB_SHA main=$MAIN_SHA" >&2
             exit 1
           fi
@@ -134,12 +134,12 @@ jobs:
           cat > "$RUNNER_TEMP/sidrena-release-body.md" <<EOF
           ## Sidrena $VERSION
 
-          Sidrena $VERSION donosi potpuno novi produkcijski UI/UX i jedinstven Sidrena branding za dva odvojena WordPress plugina:
+          Sidrena $VERSION je stabilno 1.0 izdanje koje objedinjuje završni produkcijski UI/UX, sigurnosno i release poliranje te jedinstven Sidrena branding za dva odvojena WordPress plugina:
 
           - **Sidrena WordPress** — za postojeći WordPress sadržaj i vlastiti katalog.
           - **Sidrena WooCommerce** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
 
-          Oba paketa uključuju novi Sidrena 0.9 vizualni sustav, lokalnu S + sidro menu ikonu, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, stvarne runtime screenshotove u dokumentaciji i edition-specific branding paket.
+          Oba paketa uključuju Sidrena 1.0 vizualni sustav, lokalnu S + sidro menu ikonu, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, stvarne runtime screenshotove u dokumentaciji, edition-specific branding paket te finalne runtime i distribucijske guardove.
 
           WordPress.org screenshotovi snimaju se iz stvarnog aktivnog wp-admin okruženja, a release objavljuje samo dva instalacijska ZIP-a.
 
