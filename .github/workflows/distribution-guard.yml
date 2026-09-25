@@ -205,7 +205,6 @@ jobs:
           grep -q '^sidrena-wordpress/branding/rendered/app-card-wordpress.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/app-card-woocommerce.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/compact-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -243,7 +242,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -282,7 +280,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -321,7 +318,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -360,7 +356,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -399,7 +394,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -438,7 +432,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -477,7 +470,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -516,7 +508,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -555,7 +546,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -593,7 +583,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -665,7 +692,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -704,7 +730,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -743,7 +768,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -782,7 +806,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -821,7 +844,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -860,7 +882,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -899,7 +920,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -938,7 +958,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -977,7 +996,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1015,7 +1033,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1087,7 +1142,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1126,7 +1180,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1165,7 +1218,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1204,7 +1256,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1243,7 +1294,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1282,7 +1332,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1321,7 +1370,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1360,7 +1408,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1399,7 +1446,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1437,7 +1483,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1509,7 +1592,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1548,7 +1630,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1587,7 +1668,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1626,7 +1706,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1665,7 +1744,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1704,7 +1782,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1743,7 +1820,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1782,7 +1858,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1821,7 +1896,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1859,7 +1933,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1931,7 +2042,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -1970,7 +2080,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2009,7 +2118,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2048,7 +2156,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2087,7 +2194,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2126,7 +2232,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2165,7 +2270,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2204,7 +2308,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2243,7 +2346,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2281,7 +2383,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2353,7 +2492,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2392,7 +2530,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2431,7 +2568,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2470,7 +2606,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2509,7 +2644,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2548,7 +2682,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2587,7 +2720,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2626,7 +2758,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2665,7 +2796,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2703,7 +2833,944 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-woocommerce.png
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/social-wordpress.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-wordpress.png
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/social-wordpress.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2774,7 +3841,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/compact-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2813,7 +3879,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/social-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2852,7 +3917,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/social-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2891,7 +3955,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/wporg-banner-wordpress.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2930,7 +3993,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/wporg-banner-woocommerce.svg
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -2969,7 +4031,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/social-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -3008,7 +4069,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/social-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -3047,7 +4107,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/wporg-banner-wordpress.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -3086,7 +4145,6 @@ jobs:
           fi
  "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/wporg-banner-woocommerce.png
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -3124,7 +4182,44 @@ jobs:
             exit 1
           fi
  "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -q '^sidrena-wordpress/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/email-header.png
+          grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/branding/rendered/website-hero-woocommerce.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/branding/rendered/website-hero-wordpress.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          ! grep -q '^sidrena-wordpress/sidrena.php$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/sidrena.php$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^sidrena-wordpress/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          WP="$OUT/.sidrena-build/sidrena-wordpress"
+          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
+
+          if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
+            echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
+            exit 1
+          fi
+          if grep -v '^sidrena-woocommerce/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+            echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
+            exit 1
+          fi
+ "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/email-header.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -q '^sidrena-wordpress/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -q '^sidrena-woocommerce/branding/rendered/support-cover.png$' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
