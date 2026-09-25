@@ -10,11 +10,15 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="Sidrena — usklađene cijene, sigurno poslovanje" width="560">
 </p>
 
-<h1 align="center">Sidrena 0.9.0</h1>
+<h1 align="center">SIDRENA 0.9.0</h1>
 
 <p align="center">
-  <strong>Dva produkcijska WordPress dodatka za upravljanje cijenama, javnim cjenicima, lokacijama, poviješću i arhivom objava.</strong><br>
-  WordPress izdanje radi s postojećim WordPress sadržajem i vlastitim katalogom, a WooCommerce izdanje nadograđuje postojeće WooCommerce proizvode i varijacije — bez dupliciranja kataloga.
+  <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
+  Profesionalni WordPress sustav za katalog, povijest cijena, javne cjenike, lokacije i automatiziranu objavu — dostupan kao zasebno WordPress i WooCommerce izdanje.
+</p>
+
+<p align="center">
+  <strong>Jedan Sidrena identitet. Dva namjenska plugina. Bez nepotrebnog dupliciranja vašeg postojećeg sadržaja.</strong>
 </p>
 
 <p align="center">
@@ -25,7 +29,7 @@ Support: sidrena@brendigo.com
 
 ---
 
-## Dva izdanja. Jedan Sidrena sustav.
+## Odaberite izdanje koje odgovara vašem WordPress sustavu
 
 <table>
 <tr>
@@ -58,9 +62,9 @@ Support: sidrena@brendigo.com
 
 > Istodobno smije biti aktivno samo jedno Sidrena izdanje. Ugrađeni edition-conflict guard sprječava dvostruke hookove, duplicirane procese i paralelnu objavu iz oba izdanja.
 
-## Stvarni izgled plugina
+## Pogledajte SIDRENA 0.9.0 u stvarnom WordPress okruženju
 
-Slike ispod nisu dizajnerski mockupovi. Automatski se snimaju iz stvarnog aktivnog WordPress administratorskog sučelja tijekom CI procesa.
+Ovo su stvarni ekrani aktivnih pluginova, a ne dizajnerski mockupovi. Galerija se automatski snima iz pravog WordPress administratorskog sučelja; WooCommerce izdanje snima se uz aktivan WooCommerce.
 
 ### Sidrena WordPress
 
@@ -109,9 +113,11 @@ Slike ispod nisu dizajnerski mockupovi. Automatski se snimaju iz stvarnog aktivn
 
 Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 0.9.0 sada nosi i vlastiti edition-specific SVG branding te gotove PNG hero, cover, CTA, dokumentacijske, app-card i kompaktne assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
 
-## Što donosi 0.9.0
+## Zašto SIDRENA 0.9.0
 
-**0.9.0** je veliko produkcijsko izdanje usmjereno na potpuno novi Sidrena UI/UX i jedinstven branding oba dodatka:
+**SIDRENA 0.9.0** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
+
+Izdanje 0.9.0 donosi:
 
 - novi navy/cyan Sidrena administratorski sustav izrađen od nule
 - kompaktna S + sidro ikona u WordPress bočnom meniju
@@ -124,7 +130,7 @@ Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i
 - WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
 - kompletan edition-specific SVG + PNG branding paket prenesen je u oba instalacijska plugina
 
-## Glavne mogućnosti
+## Sve bitno za rad s cijenama na jednom mjestu
 
 - aktualna, referentna i povijesna cijena
 - najniža cijena u prethodnom razdoblju kada je primjenjiva i dostupna u evidenciji
@@ -193,11 +199,11 @@ Build proizvodi dva službena instalacijska ZIP paketa:
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda.
 
-## Privatnost
+## Privatnost bez ugrađenog praćenja
 
 Sidrena nema ugrađenu telemetriju. Vanjske poveznice prema službenoj stranici, podršci, WhatsAppu i dobrovoljnoj donaciji otvaraju se samo nakon korisničke akcije. Provjera vlastitih javnih datoteka koristi WordPress HTTP API.
 
-## Napomena o propisima
+## Tehnička pomoć bez lažnih pravnih obećanja
 
 Sidrena tehnički pomaže voditi, provjeravati i objavljivati podatke o cijenama prema pravilima koja projekt prati. Plugin nije automatska pravna potvrda konkretnog poslovanja. Povijesne i referentne cijene moraju odgovarati stvarnoj poslovnoj evidenciji, a korisnik mora provjeriti primjenjivost obveza na svoj poslovni model.
 
