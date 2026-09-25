@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Keeps the Sidrena admin area focused on the legally required workflow.
+ * Keeps the Sidrena admin sidebar deterministic and easy to scan.
  *
- * Internal pages remain registered by Sidrena_Admin so existing bookmarks,
- * legacy links and support diagnostics continue to work. This layer only
- * rebuilds the visible WordPress sidebar submenu into a short task-based menu
- * for both plugin editions.
+ * This class no longer hides legacy pages after they are registered. The clean
+ * sidebar is registered up front by Sidrena_Admin_Menu; this layer only
+ * normalizes labels, removes duplicate slugs and keeps service edit screens
+ * visually grouped under Sidrena.
  */
 final class Sidrena_Admin_UX {
 	const SERVICE_MENU_SLUG = 'edit.php?post_type=sidrena_service';
@@ -51,19 +51,6 @@ final class Sidrena_Admin_UX {
 		);
 	}
 
-	public static function hidden_menu_slugs() {
-		return array(
-			'sidrena-compliance',
-			'sidrena-archive',
-			'sidrena-tools',
-			'sidrena-log',
-			'sidrena-rules',
-			'sidrena-about',
-			'sidrena-help',
-			'post-new.php?post_type=sidrena_service',
-		);
-	}
-
 	public function simplify_menu() {
 		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return;
@@ -77,6 +64,7 @@ final class Sidrena_Admin_UX {
 
 		$labels  = self::primary_menu_labels();
 		$visible = array();
+		$extra   = array();
 
 		foreach ( $submenu['sidrena'] as $item ) {
 			if ( ! is_array( $item ) || empty( $item[2] ) ) {
@@ -84,16 +72,20 @@ final class Sidrena_Admin_UX {
 			}
 
 			$slug = (string) $item[2];
-			if ( ! isset( $labels[ $slug ] ) || isset( $visible[ $slug ] ) ) {
+			if ( isset( $visible[ $slug ] ) ) {
 				continue;
 			}
 
-			$item[0] = $labels[ $slug ];
-			if ( 'sidrena-support' === $slug && isset( $item[3] ) ) {
-				$item[3] = __( 'Pomoć i podrška', 'sidrena' );
+			if ( isset( $labels[ $slug ] ) ) {
+				$item[0] = $labels[ $slug ];
+				if ( 'sidrena-support' === $slug && isset( $item[3] ) ) {
+					$item[3] = __( 'Pomoć i podrška', 'sidrena' );
+				}
+				$visible[ $slug ] = $item;
+				continue;
 			}
 
-			$visible[ $slug ] = $item;
+			$extra[ $slug ] = $item;
 		}
 
 		$ordered = array();
@@ -104,7 +96,7 @@ final class Sidrena_Admin_UX {
 		}
 
 		if ( $ordered ) {
-			$submenu['sidrena'] = $ordered;
+			$submenu['sidrena'] = array_merge( $ordered, array_values( $extra ) );
 		}
 	}
 
@@ -115,9 +107,6 @@ final class Sidrena_Admin_UX {
 	public function submenu_file( $submenu_file ) {
 		if ( $this->is_sidrena_service_screen() ) {
 			return self::SERVICE_MENU_SLUG;
-		}
-		if ( in_array( (string) $submenu_file, self::hidden_menu_slugs(), true ) ) {
-			return 'sidrena';
 		}
 		return $submenu_file;
 	}
