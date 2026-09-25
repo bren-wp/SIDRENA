@@ -7,6 +7,16 @@ Support: sidrena@brendigo.com
 Sidrena changelog
 
 = 0.9.0 =
+* Potpuni rebranding i novi administratorski UI/UX izrađeni su od nule prema Sidrena pomorskom vizualnom sustavu.
+* Dodani su novi transparentni Sidrena znak, app ikona, light/dark horizontalni logotipi i zasebni WordPress/WooCommerce logotipi.
+* Dodan je lokalni svjetionik/sea hero asset i produkcijski brand CSS bez vanjskih UI ovisnosti.
+* WordPress admin navigacija, dashboard, kartice, tablice, obrasci, cjenici, lokacije, arhiva i postavke vizualno su usklađeni.
+* Dodan je kompletan branding direktorij s brand vodičem, WP.org bannerima i promo/social assetima.
+* WP.org screenshot pipeline podiže stvarni WordPress i WooCommerce te snima stvarne Sidrena ekrane.
+* WordPress.org ikone generiraju se iz službene Sidrena app ikone, a banneri iz edition-specific brand asseta.
+* Službena stranica: https://brendigo.com/sidrene-cijene/.
+
+= 0.8.1 =
 * Dodana je lokalna sidro ikonica u WordPress bočni meni i provjera da ikonica ulazi u oba instalacijska paketa.
 * Admin zaglavlje koristi mali lokalni Sidrena logo od 36 px bez vanjskih asseta.
 * Službena stranica plugina usklađena je na https://brendigo.com/sidrene-cijene/.
