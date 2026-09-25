@@ -18,6 +18,7 @@ $GLOBALS['sidrena_test_caps'] = array(
 	'manage_sidrena'     => false,
 );
 $GLOBALS['sidrena_test_menu'] = array();
+$GLOBALS['submenu']           = array();
 
 function apply_filters( $hook, $value ) {
 	unset( $hook );
@@ -51,16 +52,18 @@ function add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $call
 	);
 }
 function add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '' ) {
-	unset( $page_title, $menu_title, $callback );
+	unset( $callback );
 	$GLOBALS['sidrena_test_menu']['sub'][] = array(
 		'parent'     => $parent_slug,
 		'capability' => $capability,
 		'slug'       => $menu_slug,
 	);
+	$GLOBALS['submenu'][ $parent_slug ][] = array( $menu_title, $capability, $menu_slug, $page_title );
 }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php';
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin-ux.php';
 
 function sidrena_menu_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -81,5 +84,20 @@ sidrena_menu_assert( isset( $GLOBALS['sidrena_test_menu']['top'] ), 'Sidrena top
 sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'Sidrena top-level menu slug is incorrect.' );
 sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['capability'], 'Sidrena menu must use administrator fallback capability when needed.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
+sidrena_menu_assert( count( $GLOBALS['submenu']['sidrena'] ) >= 10, 'Baseline Sidrena submenu should expose the full internal page set before UX simplification.' );
 
-fwrite( STDOUT, "Sidrena administrator menu access smoke test passed.\n" );
+Sidrena_Admin_UX::instance()->simplify_menu();
+$visible_slugs = array_map(
+	static function ( $item ) {
+		return $item[2];
+	},
+	$GLOBALS['submenu']['sidrena']
+);
+$expected_slugs = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
+sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Simplified Sidrena submenu must keep only the task-based pages in order.' );
+
+foreach ( Sidrena_Admin_UX::hidden_menu_slugs() as $hidden_slug ) {
+	sidrena_menu_assert( ! in_array( $hidden_slug, $visible_slugs, true ), 'Hidden technical/support page leaked into simplified menu: ' . $hidden_slug );
+}
+
+fwrite( STDOUT, "Sidrena administrator menu access and simplified menu smoke test passed.\n" );
