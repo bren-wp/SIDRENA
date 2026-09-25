@@ -12,6 +12,8 @@ Sidrena changelog
 * Barkod proizvoda tretira se kao obvezan samo kada je primjenjiv, a vrsta/opseg usluge ostaju opcionalni opisni podaci i više ne blokiraju strogu objavu.
 * Zadana javna oznaka dodatne cijene pojednostavljena je na "Cijena na DD.MM.GGGG." radi jasnijeg prikaza uz aktualnu cijenu.
 * Uklonjeni su duplicirani source headeri, zastarjeli sidrene-cijene.com.hr metapodaci i stari razvojni version komentari iz produkcijskog CSS/JS sloja.
+* Refinirana je jedinstvena geometrija S + sidro znaka i edition lockupa te je admin brand header približen službenim vizualnim referencama.
+* Donacija je uklonjena iz primarnog brand headera i ostavljena kao sekundarna opcija na stranici Pomoć; uklonjena je i duplicirana ponuda početnog postavljanja.
 * Zadržani su referentni datumi 10.09.2026. i 02.05.2025., čuvanje arhive najmanje 30 dana te automatska objava prije 08:00.
 * Verzija oba odvojena plugina i distribucijska dokumentacija podignuti su na 1.0.1.
 

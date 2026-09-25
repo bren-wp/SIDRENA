@@ -116,14 +116,12 @@ final class Sidrena_Admin {
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'WooCommerce', 'sidrena' ) : __( 'WordPress', 'sidrena' );
 		$edition_logo = SIDRENA_URL . ( $is_woo ? 'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg' );
-		$donation_url = Sidrena_Utils::donation_url();
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" alt="<?php esc_attr_e( 'Sidrena', 'sidrena' ); ?>">
-					
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" alt="<?php echo esc_attr( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?>">
 				</div>
 				<div class="sidrena-brandbar__copy">
 					<strong><?php esc_html_e( 'Vaš pouzdan signal u svijetu propisa o cijenama.', 'sidrena' ); ?></strong>
@@ -132,9 +130,6 @@ final class Sidrena_Admin {
 				<div class="sidrena-brandbar__actions">
 					<a href="<?php echo esc_url( $official_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Web stranica', 'sidrena' ); ?></a>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><span class="dashicons dashicons-sos"></span><?php esc_html_e( 'Pomoć', 'sidrena' ); ?></a>
-					<?php if ( $donation_url ) : ?>
-						<a href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-heart"></span><?php esc_html_e( 'Donacija', 'sidrena' ); ?></a>
-					<?php endif; ?>
 				</div>
 			</header>
 
@@ -267,11 +262,6 @@ final class Sidrena_Admin {
 				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=log' ) ); ?>"><?php esc_html_e( 'Dnevnik', 'sidrena' ); ?></a>
 			</div>
 		</div>
-
-		<section class="sid-card sid-note">
-			<div class="sid-note-icon"><span class="dashicons dashicons-admin-tools"></span></div>
-			<div><h2><?php esc_html_e( 'Jednokratna instalacija i početno postavljanje', 'sidrena' ); ?></h2><p><?php echo esc_html( sprintf( __( 'Ako želite da Brendigo instalira i početno postavi plugin, cijena usluge je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p></div>
-		</section>
 
 		<div class="sid-grid sid-grid-2">
 			<section class="sid-card sid-tool-card">
