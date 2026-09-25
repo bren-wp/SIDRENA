@@ -24,7 +24,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 
 $active_plugins = (array) get_option( 'active_plugins', array() );
-foreach ( $active_plugins as $active_plugin ) {
+if ( is_multisite() ) {
+	$network_active = (array) get_site_option( 'active_sitewide_plugins', array() );
+	$active_plugins = array_merge( $active_plugins, array_keys( $network_active ) );
+}
+foreach ( array_unique( $active_plugins ) as $active_plugin ) {
 	$active_plugin = (string) $active_plugin;
 	if ( $active_plugin === (string) WP_UNINSTALL_PLUGIN ) {
 		continue;
