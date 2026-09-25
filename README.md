@@ -119,7 +119,7 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 0.9.0 sada nosi i vlastiti edition-specific SVG branding te gotove PNG hero, cover, CTA, dokumentacijske, app-card i kompaktne assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
+Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 0.9.0 nosi vlastiti edition-specific SVG branding te renderirane PNG hero, cover, CTA, dokumentacijske, app-card, compact, social i WordPress.org banner assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
 
 ## Zašto SIDRENA 0.9.0
 
