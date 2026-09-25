@@ -80,6 +80,13 @@
 		return found;
 	}
 
+	function replaceMarkup(existing, html) {
+		if (!existing || existing.outerHTML === html) {
+			return;
+		}
+		existing.outerHTML = html;
+	}
+
 	function applyMarkup(html, root, variationMode) {
 		if (!html) {
 			return;
@@ -91,14 +98,35 @@
 			}
 			var existing = target.querySelector(".sidrena-reference-prices");
 			if (existing) {
-				existing.outerHTML = html;
+				replaceMarkup(existing, html);
 				return;
 			}
-			if (target.parentElement && target.parentElement.querySelector(":scope > .sidrena-reference-prices")) {
-				target.parentElement.querySelector(":scope > .sidrena-reference-prices").outerHTML = html;
-				return;
+			if (target.parentElement) {
+				var sibling = target.parentElement.querySelector(":scope > .sidrena-reference-prices");
+				if (sibling) {
+					replaceMarkup(sibling, html);
+					return;
+				}
 			}
 			target.insertAdjacentHTML("beforeend", html);
+		});
+	}
+
+	function isOwnMarkupNode(node) {
+		return !!(node && node.nodeType === 1 && (
+			(node.matches && node.matches(".sidrena-reference-prices")) ||
+			(node.closest && node.closest(".sidrena-reference-prices"))
+		));
+	}
+
+	function mutationNeedsHydration(mutation) {
+		var nodes = Array.prototype.slice.call(mutation.addedNodes || [])
+			.concat(Array.prototype.slice.call(mutation.removedNodes || []));
+		if (!nodes.length) {
+			return true;
+		}
+		return nodes.some(function (node) {
+			return !isOwnMarkupNode(node);
 		});
 	}
 
@@ -131,7 +159,10 @@
 		if (typeof MutationObserver !== "undefined") {
 			var root = document.querySelector(".single-product, .product, main") || document.body;
 			if (root) {
-				var observer = new MutationObserver(function () {
+				var observer = new MutationObserver(function (mutations) {
+					if (!mutations.some(mutationNeedsHydration)) {
+						return;
+					}
 					window.clearTimeout(observerTimer);
 					observerTimer = window.setTimeout(function () {
 						hydrate(activeId, root, activeId !== productId);
