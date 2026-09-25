@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -412,7 +403,6 @@ final class Sidrena_Pricelist {
 			'marka'               => __( 'marka', 'sidrena' ),
 			'maloprodajna_cijena' => __( 'maloprodajna cijena', 'sidrena' ),
 			'sidrena_cijena'      => __( 'sidrena cijena', 'sidrena' ),
-			'barkod'              => __( 'barkod', 'sidrena' ),
 			'dostupnost'          => __( 'dostupnost', 'sidrena' ),
 		);
 		if ( '' === $name ) {
@@ -457,12 +447,6 @@ final class Sidrena_Pricelist {
 		}
 		if ( '' === trim( (string) ( $row['sidrena_cijena'] ?? '' ) ) ) {
 			$issues[] = sprintf( __( '%s: nedostaje sidrena cijena', 'sidrena' ), $label );
-		}
-		if ( '' === trim( (string) ( $row['vrsta_usluge'] ?? '' ) ) ) {
-			$issues[] = sprintf( __( '%s: nedostaje vrsta usluge', 'sidrena' ), $label );
-		}
-		if ( '' === trim( (string) ( $row['opseg_usluge'] ?? '' ) ) ) {
-			$issues[] = sprintf( __( '%s: nedostaje opseg usluge', 'sidrena' ), $label );
 		}
 		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
 			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );

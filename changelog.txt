@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.1 =
+* Tehničke provjere objave cjenika usklađene su s NN 101/2026 i službenim MINGO pojašnjenjima od 22./24.09.2026.
+* Za strojno čitljivu javnu objavu dovoljan je najmanje jedan podržani format, CSV ili XML; javni HTML i manifest više se ne prisilno uključuju.
+* Barkod proizvoda tretira se kao obvezan samo kada je primjenjiv, a vrsta/opseg usluge ostaju opcionalni opisni podaci i više ne blokiraju strogu objavu.
+* Zadana javna oznaka dodatne cijene pojednostavljena je na "Cijena na DD.MM.GGGG." radi jasnijeg prikaza uz aktualnu cijenu.
+* Uklonjeni su duplicirani source headeri, zastarjeli sidrene-cijene.com.hr metapodaci i stari razvojni version komentari iz produkcijskog CSS/JS sloja.
+* Zadržani su referentni datumi 10.09.2026. i 02.05.2025., čuvanje arhive najmanje 30 dana te automatska objava prije 08:00.
+* Verzija oba odvojena plugina i distribucijska dokumentacija podignuti su na 1.0.1.
+
 = 1.0.0 =
 * Stabilno 1.0.0 izdanje objedinjuje sve završne promjene iz 0.9 razvojne linije u produkcijsku release bazu.
 * Završeno je 1:1 poliranje WordPress i WooCommerce administratorskog sučelja s odvojenim edition akcentima i logotipima.

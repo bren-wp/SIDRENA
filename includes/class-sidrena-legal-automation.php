@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -56,6 +47,12 @@ final class Sidrena_Legal_Automation {
 		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
 		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 45 ) );
 
+		$csv_enabled = 'yes' === ( $settings['generate_csv'] ?? 'no' );
+		$xml_enabled = 'yes' === ( $settings['generate_xml'] ?? 'no' );
+		if ( ! $csv_enabled && ! $xml_enabled ) {
+			$settings['generate_csv'] = 'yes';
+		}
+
 		foreach ( self::required_publication_flags() as $key ) {
 			$settings[ $key ] = 'yes';
 		}
@@ -89,10 +86,6 @@ final class Sidrena_Legal_Automation {
 
 	public static function required_publication_flags() {
 		return array(
-			'generate_csv',
-			'generate_xml',
-			'enable_public_html',
-			'publish_manifest',
 			'strict_publication',
 			'failure_notifications',
 		);

@@ -31,7 +31,7 @@ final class Sidrena_Utils {
 			'label_mode'           => 'date_only',
 			'label_custom'         => 'Sidrena cijena (%s)',
 			'anchor_tooltip_enabled' => 'yes',
-			'anchor_tooltip_text'    => 'Sidrena cijena je referentna redovna cijena proizvoda ili usluge na prikazani datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
+			'anchor_tooltip_text'    => 'Dodatna (sidrena) cijena je redovna cijena proizvoda ili usluge koja je vrijedila na prikazani referentni datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
 			'default_ref_date'     => '2026-09-10',
 			'fmcg_ref_date'        => '2025-05-02',
 			'generate_csv'         => 'yes',
@@ -346,7 +346,7 @@ final class Sidrena_Utils {
 		if ( 'date_only' === $settings['label_mode'] ) {
 			return sprintf(
 				/* translators: %s is a date. */
-				__( 'Sidrena cijena (%s)', 'sidrena' ),
+				__( 'Cijena na %s', 'sidrena' ),
 				$display
 			);
 		}

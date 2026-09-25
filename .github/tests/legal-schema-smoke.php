@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 
 if ( ! function_exists( 'sanitize_text_field' ) ) {
@@ -94,8 +85,9 @@ sidrena_schema_assert( false !== strpos( $utils_source, "'retention_days'       
 sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
 $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
-sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Strict service preflight must require service type.' );
-sidrena_schema_assert( false !== strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Strict service preflight must require service scope.' );
+sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Service type must remain optional in strict NN 101/2026 publication preflight.' );
+sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Service scope must remain optional in strict NN 101/2026 publication preflight.' );
+sidrena_schema_assert( false === strpos( $pricelist_source, "'barkod'              => __( 'barkod'" ), 'Barcode must not block publication when it is not applicable.' );
 
 sidrena_schema_assert( '06:30' === Sidrena_Legal_Automation::normalize_generation_time( '08:00' ), 'Generation at 08:00 or later must be clamped before the publication deadline.' );
 sidrena_schema_assert( '06:30' === Sidrena_Legal_Automation::normalize_generation_time( '09:15' ), 'Generation after the publication deadline must be clamped.' );
@@ -118,7 +110,11 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
 sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
-	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication automation flag not hardened: ' . $required_flag );
+	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication safety flag not hardened: ' . $required_flag );
 }
+sidrena_schema_assert( 'yes' === $hardened['generate_csv'], 'At least one machine-readable format must be enabled when both CSV and XML are disabled.' );
+sidrena_schema_assert( 'no' === $hardened['generate_xml'], 'XML must remain a user choice when CSV already satisfies the machine-readable publication requirement.' );
+sidrena_schema_assert( 'no' === $hardened['enable_public_html'], 'Public HTML is optional and must not be forced by legal automation.' );
+sidrena_schema_assert( 'no' === $hardened['publish_manifest'], 'Manifest publication is optional and must not be forced by legal automation.' );
 
 fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema and automation smoke test passed.\n" );

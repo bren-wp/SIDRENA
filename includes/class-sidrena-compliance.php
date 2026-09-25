@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -96,8 +87,8 @@ final class Sidrena_Compliance {
 		if ( '2025-05-02' !== $profile['fmcg_reference_date'] ) {
 			$issues[] = 'FMCG referentni datum nije 02.05.2025.';
 		}
-		if ( ! $profile['csv_enabled'] || ! $profile['xml_enabled'] || ! $profile['public_html_enabled'] ) {
-			$issues[] = 'CSV, XML i javni HTML cjenik trebaju biti uključeni za potpunu digitalnu objavu.';
+		if ( ! $profile['csv_enabled'] && ! $profile['xml_enabled'] ) {
+			$issues[] = 'Barem jedan strojno čitljiv format cjenika (CSV ili XML) mora biti uključen.';
 		}
 		if ( ! $profile['strict_publication'] ) {
 			$issues[] = 'Strict publication način treba biti uključen kako neuspjeli novi fajl ne bi zamijenio zadnju ispravnu objavu.';
@@ -139,9 +130,6 @@ final class Sidrena_Compliance {
 		$required = array(
 			'default_ref_date'      => '2026-09-10',
 			'fmcg_ref_date'         => '2025-05-02',
-			'generate_csv'          => 'yes',
-			'generate_xml'          => 'yes',
-			'enable_public_html'    => 'yes',
 			'strict_publication'    => 'yes',
 			'failure_notifications' => 'yes',
 		);
@@ -151,6 +139,11 @@ final class Sidrena_Compliance {
 				$settings[ $key ] = $value;
 				$repairs[]        = 'settings:' . $key;
 			}
+		}
+
+		if ( 'yes' !== ( $settings['generate_csv'] ?? 'no' ) && 'yes' !== ( $settings['generate_xml'] ?? 'no' ) ) {
+			$settings['generate_csv'] = 'yes';
+			$repairs[]                = 'settings:generate_csv';
 		}
 
 		$retention = max( 30, absint( $settings['retention_days'] ) );

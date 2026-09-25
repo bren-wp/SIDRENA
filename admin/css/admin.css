@@ -6,14 +6,6 @@
  * Support: sidrena@brendigo.com
  */
 
-/**
- * Sidrena source file.
- * Author: Brendigo
- * Author URI: https://brendigo.com/
- * Plugin URI: https://sidrene-cijene.com.hr/
- * Support: sidrena@brendigo.com
- */
-
 :root {
 	--sid-bg: #f5f7fb;
 	--sid-surface: #ffffff;
@@ -845,7 +837,7 @@ body.sidrena_page_sidrena {
 }
 
 
-/* Sidrena 1.2 — archive assurance and dense modern admin polish */
+/* Archive assurance and dense editor polish */
 .sid-integrity-card {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr) auto;
@@ -1023,7 +1015,7 @@ body.sidrena_page_sidrena {
 	}
 }
 
-/* Sidrena 1.4 — compliance center, public page and history polish */
+/* Compliance center, public page and history polish */
 .sid-head-inline-actions {
 	display: flex;
 	align-items: center;
@@ -1144,7 +1136,7 @@ body.sidrena_page_sidrena {
 }
 
 
-/* 1.5.0 catalog + audit */
+/* Catalog and audit table polish */
 .sid-bulk-card { padding: 0; overflow: hidden; }
 .sid-table-wrap { overflow-x: auto; }
 .sid-bulk-table { border: 0; box-shadow: none; min-width: 980px; }

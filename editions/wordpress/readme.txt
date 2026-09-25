@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici i arhiva objava za Wor
 
 == Description ==
 
-Sidrena WordPress 1.0.0 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
+Sidrena WordPress 1.0.1 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
 * vlastiti katalog proizvoda i usluga ili povezivanje postojećeg javnog WordPress sadržaja
 * sidrena/referentna cijena, aktualna cijena i jedinična cijena kada je primjenjiva
@@ -39,7 +39,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.1.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.1 =
+* Usklađena je tehnička provjera s NN 101/2026 i službenim MINGO pojašnjenjima: dovoljan je CSV ili XML, dok javni HTML i manifest ostaju opcionalni.
+* Barkod proizvoda više ne blokira objavu kada nije primjenjiv, a dodatni opisni podaci usluge ostaju korisni ali nisu obvezni za strogi cjenik.
+* Zadana oznaka dodatne cijene prikazuje se kao "Cijena na datum", uz zadržavanje podrške za prilagođeni naziv.
+* Očišćeni su duplicirani source headeri, zastarjeli URL-ovi i razvojni version komentari u produkcijskom CSS/JS kodu.
+* Zadržane su zaštite za referentne datume 10.09.2026. i 02.05.2025., arhivu najmanje 30 dana i generiranje prije 08:00.
 
 = 1.0.0 =
 * Stabilno 1.0 izdanje objedinjuje završeni Sidrena produkcijski UI/UX, stvarne runtime screenshotove i kompletan branding paket.
