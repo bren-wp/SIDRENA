@@ -4,7 +4,7 @@
  *
  * @package Sidrena
  * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
+ * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
 
@@ -79,29 +79,8 @@ if ( ! function_exists( 'sidrena_cijena' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sidrena_neutralize_admin_menu_icon' ) ) {
-	/**
-	 * Keep the WordPress admin menu visually neutral and avoid showing the custom Sidrena SVG there.
-	 */
-	function sidrena_neutralize_admin_menu_icon() {
-		global $menu;
-
-		if ( ! is_array( $menu ) ) {
-			return;
-		}
-
-		foreach ( $menu as $index => $item ) {
-			if ( isset( $item[2] ) && 'sidrena' === $item[2] ) {
-				$menu[ $index ][6] = 'none';
-				break;
-			}
-		}
-	}
-}
-
 register_activation_hook( SIDRENA_FILE, array( 'Sidrena_Activator', 'activate' ) );
 register_deactivation_hook( SIDRENA_FILE, array( 'Sidrena_Activator', 'deactivate' ) );
-add_action( 'admin_menu', 'sidrena_neutralize_admin_menu_icon', 999 );
 
 if ( Sidrena_Utils::is_woocommerce_edition() ) {
 	add_action(
