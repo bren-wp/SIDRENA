@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.9.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici i arhiva objava za Wor
 
 == Description ==
 
-Sidrena WordPress 0.9.0 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
+Sidrena WordPress 1.0.0 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
 * vlastiti katalog proizvoda i usluga ili povezivanje postojećeg javnog WordPress sadržaja
 * sidrena/referentna cijena, aktualna cijena i jedinična cijena kada je primjenjiva
@@ -39,7 +39,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-0.9.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.0.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,15 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.0 =
+* Stabilno 1.0 izdanje objedinjuje završeni Sidrena produkcijski UI/UX, stvarne runtime screenshotove i kompletan branding paket.
+* Dashboard tehnička spremnost sada koristi isti stvarni checklist kao detaljna kontrola, bez kontradiktornih statusa.
+* Dodatno su ispolirani responzivni obrasci, file inputi, prazna stanja, sticky akcije i prikaz kataloga.
+* Runtime i distribucijski paketi strogo odvajaju WordPress i WooCommerce edition-specific logotipe i marketinške assete.
+* Release ZIP-ovi provjeravaju SHA-256, integritet arhive, stvarne screenshotove i sadržaj paketa prije objave.
+* Uninstall zaštite i smoke testovi usklađeni su sa sigurnim čišćenjem runtime rasporeda i očuvanjem zajedničkih poslovnih podataka.
+* Stvarni wp-admin capture prolazi desktop, tablet i mobilne provjere bez ključnih preklapanja i horizontalnog overflowa.
 
 = 0.9.0 =
 * Potpuno novo Sidrena administracijsko sučelje izrađeno od nule prema službenom pomorskom brand sustavu.
