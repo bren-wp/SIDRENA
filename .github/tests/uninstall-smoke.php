@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 $scenario = isset( $argv[1] ) ? (string) $argv[1] : 'preserve';
 if ( ! in_array( $scenario, array( 'preserve', 'other-active', 'destroy' ), true ) ) {
 	fwrite( STDERR, "Unknown scenario.\n" );
@@ -79,10 +70,14 @@ if ( 'destroy' === $scenario ) {
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_deleted_options'] ), 'Explicit destructive uninstall did not remove options.' );
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Explicit destructive uninstall did not clear schedules.' );
 	sidrena_uninstall_assert( 5 === count( $GLOBALS['sidrena_queries'] ), 'Explicit destructive uninstall did not drop all plugin tables.' );
+} elseif ( 'other-active' === $scenario ) {
+	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_deleted_options'] ), 'Sibling edition uninstall unexpectedly removed shared options.' );
+	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Sibling edition uninstall unexpectedly cleared shared schedules.' );
+	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_queries'] ), 'Sibling edition uninstall unexpectedly dropped shared tables.' );
 } else {
-	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_deleted_options'] ), 'Safe uninstall unexpectedly removed options.' );
-	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Safe uninstall unexpectedly cleared shared schedules.' );
-	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_queries'] ), 'Safe uninstall unexpectedly dropped shared tables.' );
+	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_deleted_options'] ), 'Safe uninstall unexpectedly removed business data.' );
+	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Safe uninstall did not clear runtime schedules for the final installed edition.' );
+	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_queries'] ), 'Safe uninstall unexpectedly dropped business tables.' );
 }
 
 fwrite( STDOUT, "Sidrena uninstall {$scenario} smoke test passed.\n" );
