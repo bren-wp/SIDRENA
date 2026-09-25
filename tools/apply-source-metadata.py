@@ -2,7 +2,7 @@
 # Sidrena source metadata manager.
 # Author: Brendigo
 # Author URI: https://brendigo.com/
-# Plugin URI: https://sidrene-cijene.com.hr/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 AUTHOR = "Brendigo"
 AUTHOR_URI = "https://brendigo.com/"
-PLUGIN_URI = "https://sidrene-cijene.com.hr/"
+PLUGIN_URI = "https://brendigo.com/sidrene-cijene/"
 SUPPORT = "sidrena@brendigo.com"
 
 SKIP_DIRS = {".git"}
@@ -35,7 +35,7 @@ PHP_HEADER = """/**
  *
  * @package Sidrena
  * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
+ * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
 """
@@ -44,7 +44,7 @@ BLOCK_HEADER = """/**
  * Sidrena source file.
  * Author: Brendigo
  * Author URI: https://brendigo.com/
- * Plugin URI: https://sidrene-cijene.com.hr/
+ * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Support: sidrena@brendigo.com
  */
 """
@@ -52,7 +52,7 @@ BLOCK_HEADER = """/**
 HASH_HEADER = """# Sidrena source file.
 # Author: Brendigo
 # Author URI: https://brendigo.com/
-# Plugin URI: https://sidrene-cijene.com.hr/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 """
 
@@ -60,12 +60,12 @@ MD_HEADER = """<!--
 Sidrena source file.
 Author: Brendigo
 Author URI: https://brendigo.com/
-Plugin URI: https://sidrene-cijene.com.hr/
+Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 """
 
-SVG_HEADER = """<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://sidrene-cijene.com.hr/ | Support: sidrena@brendigo.com -->"""
+SVG_HEADER = """<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->"""
 
 
 def relative(path: pathlib.Path) -> pathlib.Path:
@@ -94,7 +94,7 @@ def apply_entrypoint(text: str) -> str:
     replacements = {
         r"(?m)^ \* Author:.*$": " * Author: Brendigo",
         r"(?m)^ \* Author URI:.*$": " * Author URI: https://brendigo.com/",
-        r"(?m)^ \* Plugin URI:.*$": " * Plugin URI: https://sidrene-cijene.com.hr/",
+        r"(?m)^ \* Plugin URI:.*$": " * Plugin URI: https://brendigo.com/sidrene-cijene/",
     }
     for pattern, value in replacements.items():
         text = re.sub(pattern, value, text, count=1)
@@ -103,7 +103,7 @@ def apply_entrypoint(text: str) -> str:
         raise RuntimeError("Plugin entrypoint is missing its Author field.")
     if " * Author URI: https://brendigo.com/" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Author URI field.")
-    if " * Plugin URI: https://sidrene-cijene.com.hr/" not in text:
+    if " * Plugin URI: https://brendigo.com/sidrene-cijene/" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Plugin URI field.")
     return text
 
@@ -154,7 +154,7 @@ def apply_metadata(path: pathlib.Path, text: str) -> str:
             "Sidrena source file\n"
             "Author: Brendigo\n"
             "Author URI: https://brendigo.com/\n"
-            "Plugin URI: https://sidrene-cijene.com.hr/\n"
+            "Plugin URI: https://brendigo.com/sidrene-cijene/\n"
             "Support: sidrena@brendigo.com\n\n"
             + text
         )
