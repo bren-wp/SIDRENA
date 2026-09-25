@@ -4,7 +4,7 @@
  *
  * @package Sidrena
  * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
+ * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
 
