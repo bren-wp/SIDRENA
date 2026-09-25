@@ -178,6 +178,11 @@ jobs:
           rsvg-convert -w 1200 -h 1600 branding/docs-cover-woocommerce.svg > branding/rendered/docs-cover-woocommerce.png
           rsvg-convert -w 1600 -h 320 branding/cta-wordpress.svg > branding/rendered/cta-wordpress.png
           rsvg-convert -w 1600 -h 320 branding/cta-woocommerce.svg > branding/rendered/cta-woocommerce.png
+          rsvg-convert -w 920 -h 560 branding/app-card-wordpress.svg > branding/rendered/app-card-wordpress.png
+          rsvg-convert -w 920 -h 560 branding/app-card-woocommerce.svg > branding/rendered/app-card-woocommerce.png
+          rsvg-convert -w 1100 -h 380 branding/compact-wordpress.svg > branding/rendered/compact-wordpress.png
+          rsvg-convert -w 1100 -h 380 branding/compact-woocommerce.svg > branding/rendered/compact-woocommerce.png
+          rsvg-convert -w 1200 -h 1600 branding/support-cover.svg > branding/rendered/support-cover.png
           identify branding/rendered/*.png
 
       - name: Upload generated assets
