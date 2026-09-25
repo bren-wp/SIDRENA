@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena/' );
 
@@ -50,7 +41,7 @@ sidrena_support_assert( 'Brendigo' === Sidrena_Utils::developer_label(), 'Author
 $admin  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 
-foreach ( array( 'sidrena-support', 'sidrena-about', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratna instalacija i početno postavljanje', 'Dobrovoljna donacija za razvoj' ) as $needle ) {
+foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratna instalacija i početno postavljanje', 'Dobrovoljna donacija za razvoj', 'logo-horizontal-light.svg', 'admin/css/brand.css' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
 }
 foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 === $group_index' ) as $needle ) {
