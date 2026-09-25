@@ -1,16 +1,28 @@
 Sidrena source file
 Author: Brendigo
 Author URI: https://brendigo.com/
-Plugin URI: https://sidrene-cijene.com.hr/
+Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 0.8.1 =
+* Dodana je lokalna sidro ikonica u WordPress bočni meni i provjera da ikonica ulazi u oba instalacijska paketa.
+* Admin zaglavlje koristi mali lokalni Sidrena logo od 36 px bez vanjskih asseta.
+* Službena stranica plugina usklađena je na https://brendigo.com/sidrene-cijene/.
+* Dokumentacija i WordPress.org opis koriste stvarne screenshotove snimljene iz aktivnog WordPress admin sučelja.
+* WordPress.org icon, banner i screenshot asseti generiraju se iz stvarnog plugina i lokalnog Sidrena brendinga.
+* Popravljen je source-metadata validator i očišćen distribution guard kako bi release bio blokiran na neispravnom buildu.
+* Distribucija ostaje isključivo na dva plugina: Sidrena WordPress i Sidrena WooCommerce.
+
+= 0.8.0 =
+* Izdvojena su dva službena plugin paketa: Sidrena WordPress i Sidrena WooCommerce.
+* Ojačane su provjere izdanja, sigurnosti i stabilnosti.
+
 = 0.7.0 =
-* Dodana je nativna Windows aplikacija pod /windows kao premium desktop temelj za lokalnu pripremu i provjeru sidrenih cijena.
-* Windows aplikacija koristi WinUI 3 / Windows App SDK i ima CI guard koji blokira Electron, Tauri, WebView2 shell i legacy desktop pristup.
-* Release automatizacija sada priprema i provjerava Windows portable.exe i setup.exe assete uz dva službena plugin ZIP paketa.
-* Dokumentacija je proširena za Windows smjer, lokalni export i buduću sigurnu WordPress/WooCommerce sinkronizaciju.
+* Distribucija je zadržana isključivo kroz dva WordPress plugin ZIP paketa.
+* Uklonjena je desktop/Windows distribucijska linija iz službenog projekta i release asseta.
+* Dokumentacija i release pravila usklađeni su s plugin-only isporukom.
 
 = 0.6.0 =
 * Dodan je reference readiness sloj s centralnim NN/MINGO source URL markerima, datumom početka primjene 01.10.2026. i odvojenim referentnim grupama 10.09.2026. / 02.05.2025.
@@ -85,5 +97,5 @@ Sidrena changelog
 * Instalacija i početno postavljanje dostupni su po cijeni od 80 EUR jednokratno.
 * Izravna Revolut donacija nalazi se u Sidrena administraciji.
 * Autor: Brendigo.
-* Sidrena Software License 1.0 dopušta korištenje prema uvjetima licence, ali zabranjuje prodaju/preprodaju, sublicenciranje, redistribuciju, white-label i rebrandiranje bez pisanog odobrenja Brendigo.
+* Distribucija koristi GPLv2 ili noviju licencu.
 * GitHub Release objavljuje samo dva instalacijska ZIP-a: Sidrena WordPress i Sidrena WooCommerce.
