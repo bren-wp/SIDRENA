@@ -25,7 +25,7 @@ Support: sidrena@brendigo.com
 
 ![Stvarni Sidrena WooCommerce administracijski ekran](docs/media/screenshot-woocommerce.png)
 
-## Izdanje 0.8.1
+## Izdanje 0.9.0
 
 Projekt isporučuje dva odvojena instalacijska paketa:
 
@@ -35,6 +35,16 @@ Projekt isporučuje dva odvojena instalacijska paketa:
 | **Sidrena WooCommerce** | WordPress + WooCommerce | postojeći WooCommerce proizvodi i varijacije |
 
 Istodobno smije biti aktivno samo jedno Sidrena izdanje. Ugrađeni conflict guard sprječava dvostruke hookove i objave.
+
+## Branding 0.9.0
+
+Sidrena 0.9.0 uvodi novi produkcijski vizualni sustav izrađen od nule prema službenim referencama: navy/cyan pomorski identitet, svjetionik, S + sidro znak, plavi WordPress akcent i ljubičasti WooCommerce akcent.
+
+- kompletan brand vodič: `branding/BRAND-GUIDE.md`
+- lokalni logo i app icon asseti: `assets/images/`
+- WordPress.org banneri: `branding/wporg-banner-*.svg`
+- promo/social asseti: `branding/social-*.svg`
+- stvarni runtime screenshotovi: `wporg-assets/*/assets/screenshot-*.png`
 
 ## Administracija
 
@@ -87,13 +97,13 @@ Readme datoteke imaju najviše pet tagova, Stable tag odgovara verziji plugina, 
 ## Build
 
 ```bash
-./tools/build-editions.sh 0.8.1 /tmp/sidrena-build
+./tools/build-editions.sh 0.9.0 /tmp/sidrena-build
 ```
 
 Build stvara samo:
 
-- `sidrena-wordpress-0.8.1.zip`
-- `sidrena-woocommerce-0.8.1.zip`
+- `sidrena-wordpress-0.9.0.zip`
+- `sidrena-woocommerce-0.9.0.zip`
 
 ## Privatnost
 

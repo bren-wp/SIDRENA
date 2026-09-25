@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 0.8.1\n"
+"Project-Id-Version: Sidrena 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"

@@ -4,7 +4,7 @@
 # Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 
-name: Build real WordPress.org assets
+name: Build Sidrena branded WordPress.org assets
 
 on:
   workflow_dispatch:
@@ -143,18 +143,18 @@ jobs:
           cp "$WP_ASSETS/screenshot-1.png" docs/media/screenshot-wordpress.png
           cp "$WOO_ASSETS/screenshot-1.png" docs/media/screenshot-woocommerce.png
 
-          rsvg-convert -w 128 -h 128 assets/images/logo-mark.svg > "$WP_ASSETS/icon-128x128.png"
-          rsvg-convert -w 256 -h 256 assets/images/logo-mark.svg > "$WP_ASSETS/icon-256x256.png"
-          cp assets/images/logo-mark.svg "$WP_ASSETS/icon.svg"
+          rsvg-convert -w 128 -h 128 assets/images/app-icon.svg > "$WP_ASSETS/icon-128x128.png"
+          rsvg-convert -w 256 -h 256 assets/images/app-icon.svg > "$WP_ASSETS/icon-256x256.png"
+          cp assets/images/app-icon.svg "$WP_ASSETS/icon.svg"
 
           cp "$WP_ASSETS/icon-128x128.png" "$WOO_ASSETS/icon-128x128.png"
           cp "$WP_ASSETS/icon-256x256.png" "$WOO_ASSETS/icon-256x256.png"
           cp "$WP_ASSETS/icon.svg" "$WOO_ASSETS/icon.svg"
 
-          convert "$WP_ASSETS/screenshot-1.png" -resize '772x250^' -gravity center -extent 772x250 "$WP_ASSETS/banner-772x250.png"
-          convert "$WP_ASSETS/screenshot-1.png" -resize '1544x500^' -gravity center -extent 1544x500 "$WP_ASSETS/banner-1544x500.png"
-          convert "$WOO_ASSETS/screenshot-1.png" -resize '772x250^' -gravity center -extent 772x250 "$WOO_ASSETS/banner-772x250.png"
-          convert "$WOO_ASSETS/screenshot-1.png" -resize '1544x500^' -gravity center -extent 1544x500 "$WOO_ASSETS/banner-1544x500.png"
+          rsvg-convert -w 772 -h 250 branding/wporg-banner-wordpress.svg > "$WP_ASSETS/banner-772x250.png"
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-wordpress.svg > "$WP_ASSETS/banner-1544x500.png"
+          rsvg-convert -w 772 -h 250 branding/wporg-banner-woocommerce.svg > "$WOO_ASSETS/banner-772x250.png"
+          rsvg-convert -w 1544 -h 500 branding/wporg-banner-woocommerce.svg > "$WOO_ASSETS/banner-1544x500.png"
 
           identify "$WP_ASSETS/"*.png "$WOO_ASSETS/"*.png docs/media/screenshot-*.png
           test "$(identify -format '%wx%h' "$WP_ASSETS/icon-128x128.png")" = "128x128"

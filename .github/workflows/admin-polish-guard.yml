@@ -20,14 +20,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify compact Sidrena admin branding
+      - name: Verify complete Sidrena 0.9 admin branding
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
           php -l includes/class-sidrena-admin-menu.php
           test -s assets/images/menu-anchor.svg
+          test -s assets/images/app-icon.svg
+          test -s assets/images/logo-horizontal-light.svg
+          test -s assets/images/brand-hero.svg
+          test -s admin/css/brand.css
+          test -s branding/BRAND-GUIDE.md
           grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
-          grep -Fq "SIDRENA_URL . 'assets/images/logo-mark.svg'" includes/class-sidrena-admin.php
+          grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
           if grep -RInF 'sidrena_neutralize_admin_menu_icon' includes; then
             echo "Obsolete menu icon neutralizer must not return."
             exit 1

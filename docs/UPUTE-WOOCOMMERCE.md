@@ -6,11 +6,17 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WooCommerce 0.8.1 - Upute za korištenje
+# Sidrena WooCommerce 0.9.0 - Upute za korištenje
 
 ![Stvarni Sidrena WooCommerce admin prikaz](media/screenshot-woocommerce.png)
 
 > Screenshot se automatski snima iz aktivnog WordPress + WooCommerce admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.
+
+## Vizualni sustav 0.9.0
+
+Sidrena 0.9.0 koristi novi produkcijski UI/UX izrađen od nule: tamno plavu navigaciju, lokalni svjetionik vizual, Sidrena S + sidro identitet, responzivne statusne kartice, čiste tablice i jasne akcije. WordPress izdanje koristi plavi akcent, a WooCommerce izdanje uz osnovni Sidrena plavi koristi ljubičasti WooCommerce akcent.
+
+Sve slike u ovoj dokumentaciji dolaze iz stvarnog aktivnog WordPress administratorskog sučelja koje automatski snima CI.
 
 ## Namjena
 
@@ -19,7 +25,7 @@ Sidrena WooCommerce namijenjena je WordPress trgovinama s aktivnim WooCommerceom
 ## Instalacija
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-0.8.1.zip`.
+2. Prenesite `sidrena-woocommerce-0.9.0.zip`.
 3. Aktivirajte **Sidrena WooCommerce**.
 4. Otvorite **Sidrena** u lijevom admin meniju.
 
@@ -85,7 +91,7 @@ Kompletni javni prikaz koristi:
 
 Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
 
-Javni cjenik u 0.8.1 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik u 0.9.0 koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
 
 Dostupni su i:
 
@@ -119,13 +125,13 @@ Za pouzdano izvršavanje prije poslovno kritičnog roka koristite server cron ko
 
 ## Arhiva
 
-Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.8.1 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
+Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. U 0.9.0 javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
 
-## Produkcijsko poliranje 0.8.1
+## Produkcijsko poliranje 0.9.0
 
 - Sidrena prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-0.8.1.zip` i `sidrena-woocommerce-0.8.1.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-0.9.0.zip` i `sidrena-woocommerce-0.9.0.zip`.
 
 ## WP-CLI
 
@@ -187,4 +193,4 @@ Sidrena tehnički podržava provjerene zahtjeve za podatke i objavu cjenika, ali
 
 ## Uvoz velikih kataloga
 
-Sidrena 0.8.1 provjerava maksimalan broj redaka prije poslovnih promjena. CSV/XML import podržava najviše 50.000 zapisa po datoteci. CSV obrađuje se streaming pristupom, a XML koristi XMLReader kada je dostupan uz NONET i zabranu DOCTYPE/ENTITY deklaracija. Prevelika datoteka odbija se prije djelomičnog unosa.
+Sidrena 0.9.0 provjerava maksimalan broj redaka prije poslovnih promjena. CSV/XML import podržava najviše 50.000 zapisa po datoteci. CSV obrađuje se streaming pristupom, a XML koristi XMLReader kada je dostupan uz NONET i zabranu DOCTYPE/ENTITY deklaracija. Prevelika datoteka odbija se prije djelomičnog unosa.

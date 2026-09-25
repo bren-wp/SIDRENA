@@ -6,7 +6,7 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
-= 0.8.1 =
+= 0.9.0 =
 * Dodana je lokalna sidro ikonica u WordPress bočni meni i provjera da ikonica ulazi u oba instalacijska paketa.
 * Admin zaglavlje koristi mali lokalni Sidrena logo od 36 px bez vanjskih asseta.
 * Službena stranica plugina usklađena je na https://brendigo.com/sidrene-cijene/.
