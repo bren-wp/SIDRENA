@@ -186,7 +186,7 @@ final class Sidrena_Products {
 				'id'          => '_sidrena_unit_price_status',
 				'label'       => __( 'Jedinična cijena — primjenjivost', 'sidrena' ),
 				'desc_tip'    => true,
-				'description' => __( 'Provjerite primjenjivost čl. 8. NN 105/2026. Jedinična cijena obvezna je za propisane skupine robe, uz propisane iznimke. Sidrena ne zaključuje automatski pravni status proizvoda.', 'sidrena' ),
+				'description' => __( 'Provjerite primjenjivost NN 105/2026 na konkretan proizvod. Članak 8. propisuje skupine robe za koje se ističe cijena za jedinicu mjere i njihove iznimke; Sidrena ne zaključuje automatski pravni status proizvoda.', 'sidrena' ),
 				'options'     => array(
 					'review'       => __( 'Potrebna provjera', 'sidrena' ),
 					'required'     => __( 'Jedinična cijena je obvezna', 'sidrena' ),
