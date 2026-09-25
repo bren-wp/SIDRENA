@@ -12,6 +12,7 @@ on:
     branches:
       - 'develop/**'
       - 'polish/**'
+      - 'release-prep/**'
       - main
     paths:
       - 'admin/**'
