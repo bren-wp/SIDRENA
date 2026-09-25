@@ -23,7 +23,6 @@ final class Sidrena_Admin {
 	}
 
 	public function hooks() {
-		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
@@ -41,47 +40,6 @@ final class Sidrena_Admin {
 		}
 
 		add_filter( 'plugin_action_links_' . plugin_basename( SIDRENA_FILE ), array( $this, 'action_links' ) );
-	}
-
-	public function menu() {
-		$capability = Sidrena_Utils::admin_menu_capability();
-
-		add_menu_page(
-			'Sidrena',
-			'Sidrena',
-			$capability,
-			'sidrena',
-			array( $this, 'page' ),
-			SIDRENA_URL . 'assets/images/logo-mark.svg',
-			58
-		);
-
-		$items = array(
-			array( 'sidrena', __( 'Pregled', 'sidrena' ), __( 'Pregled', 'sidrena' ) ),
-			array( 'sidrena-compliance', __( 'Tehnička spremnost', 'sidrena' ), __( 'Usklađenost', 'sidrena' ) ),
-			array( 'sidrena-catalog', __( 'Katalog', 'sidrena' ), __( 'Katalog', 'sidrena' ) ),
-			array( 'sidrena-files', __( 'Digitalni cjenici', 'sidrena' ), __( 'Cjenici', 'sidrena' ) ),
-			array( 'sidrena-archive', __( 'Arhiva 30+ dana', 'sidrena' ), __( 'Arhiva 30+ dana', 'sidrena' ) ),
-			array( 'sidrena-locations', __( 'Lokacije', 'sidrena' ), __( 'Lokacije', 'sidrena' ) ),
-			array( 'sidrena-settings', __( 'Postavke', 'sidrena' ), __( 'Postavke', 'sidrena' ) ),
-			array( 'sidrena-tools', __( 'Alati', 'sidrena' ), __( 'Alati', 'sidrena' ) ),
-			array( 'sidrena-log', __( 'Dnevnik', 'sidrena' ), __( 'Dnevnik', 'sidrena' ) ),
-			array( 'sidrena-rules', __( 'Propisi', 'sidrena' ), __( 'Propisi', 'sidrena' ) ),
-			array( 'sidrena-support', __( 'Podrška i usluge', 'sidrena' ), __( 'Podrška', 'sidrena' ) ),
-			array( 'sidrena-about', __( 'O nama', 'sidrena' ), __( 'O nama', 'sidrena' ) ),
-			array( 'sidrena-help', __( 'Upute za korištenje', 'sidrena' ), __( 'Upute', 'sidrena' ) ),
-		);
-
-		foreach ( $items as $item ) {
-			add_submenu_page(
-				'sidrena',
-				$item[1],
-				$item[2],
-				$capability,
-				$item[0],
-				array( $this, 'page' )
-			);
-		}
 	}
 
 	public function assets( $hook ) {
@@ -130,27 +88,24 @@ final class Sidrena_Admin {
 
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : 'sidrena'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page_map = array(
-			'sidrena'            => 'dashboard',
-			'sidrena-compliance' => 'compliance',
-			'sidrena-catalog'    => 'catalog',
-			'sidrena-files'      => 'files',
-			'sidrena-archive'    => 'archive',
-			'sidrena-locations'  => 'locations',
-			'sidrena-settings'   => 'settings',
-			'sidrena-tools'      => 'tools',
-			'sidrena-log'        => 'log',
-			'sidrena-rules'      => 'rules',
-			'sidrena-support'    => 'support',
-			'sidrena-about'      => 'about',
-			'sidrena-help'       => 'help',
+			'sidrena'           => 'dashboard',
+			'sidrena-catalog'   => 'catalog',
+			'sidrena-files'     => 'files',
+			'sidrena-locations' => 'locations',
+			'sidrena-settings'  => 'settings',
+			'sidrena-support'   => 'support',
 		);
 		$tab = isset( $page_map[ $page ] ) ? $page_map[ $page ] : 'dashboard';
 
-		$legacy_tabs = array( 'dashboard', 'compliance', 'catalog', 'files', 'archive', 'locations', 'settings', 'tools', 'log', 'rules', 'support', 'about', 'help' );
-		if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$legacy_tab = sanitize_key( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( in_array( $legacy_tab, $legacy_tabs, true ) ) {
-				$tab = $legacy_tab;
+		$section_map = array(
+			'sidrena'         => array( 'dashboard', 'compliance' ),
+			'sidrena-files'   => array( 'files', 'archive' ),
+			'sidrena-support' => array( 'support', 'help', 'rules', 'tools', 'log', 'about' ),
+		);
+		if ( isset( $_GET['sidrena_section'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$section = sanitize_key( wp_unslash( $_GET['sidrena_section'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $section_map[ $page ] ) && in_array( $section, $section_map[ $page ], true ) ) {
+				$tab = $section;
 			}
 		}
 
@@ -287,8 +242,14 @@ final class Sidrena_Admin {
 		<div class="sid-page-head">
 			<div>
 				<span class="sid-kicker"><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></span>
-				<h2><?php esc_html_e( 'Podrška i instalacija', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Za tehničku pomoć koristite e-mail ili WhatsApp. Po želji možete naručiti jednokratnu instalaciju i početno postavljanje.', 'sidrena' ); ?></p>
+				<h2><?php esc_html_e( 'Pomoć', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Upute, propisi, dijagnostika i tehnička podrška nalaze se na jednom mjestu.', 'sidrena' ); ?></p>
+			</div>
+			<div class="sid-head-inline-actions">
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=help' ) ); ?>"><?php esc_html_e( 'Upute', 'sidrena' ); ?></a>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=rules' ) ); ?>"><?php esc_html_e( 'Propisi', 'sidrena' ); ?></a>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=tools' ) ); ?>"><?php esc_html_e( 'Dijagnostika', 'sidrena' ); ?></a>
+				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=log' ) ); ?>"><?php esc_html_e( 'Dnevnik', 'sidrena' ); ?></a>
 			</div>
 		</div>
 
@@ -416,7 +377,7 @@ final class Sidrena_Admin {
 				<span class="sid-kicker"><?php esc_html_e( '4. Uvoz i lokacije', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Masovne izmjene bez ručnog otvaranja svake stavke', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Alati prihvaćaju UTF-8 te pokušavaju normalizirati Windows-1250 i ISO-8859-2. Hrvatska zaglavlja, decimalni zarez i tipični zapisi količine podržani su u uvozu.', 'sidrena' ); ?></p>
-				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-tools' ) ); ?>"><?php esc_html_e( 'Otvori Alate', 'sidrena' ); ?></a>
+				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=tools' ) ); ?>"><?php esc_html_e( 'Otvori Alate', 'sidrena' ); ?></a>
 			</section>
 
 			<section class="sid-card">
@@ -487,9 +448,9 @@ final class Sidrena_Admin {
 
 		<div class="sid-dashboard-actions">
 			<a class="sid-action sid-action--primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-media-spreadsheet"></span><strong><?php esc_html_e( 'Generiraj cjenik', 'sidrena' ); ?></strong><span class="dashicons dashicons-arrow-right-alt2"></span></a>
-			<a class="sid-action sid-action--soft-blue" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-archive' ) ); ?>"><span class="dashicons dashicons-calendar-alt"></span><strong><?php esc_html_e( 'Pregledaj arhivu 30+ dana', 'sidrena' ); ?></strong></a>
+			<a class="sid-action sid-action--soft-blue" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files&sidrena_section=archive' ) ); ?>"><span class="dashicons dashicons-calendar-alt"></span><strong><?php esc_html_e( 'Pregledaj arhivu 30+ dana', 'sidrena' ); ?></strong></a>
 			<a class="sid-action sid-action--soft-orange" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><span class="dashicons dashicons-download"></span><strong><?php esc_html_e( 'CSV/XML i javni cjenici', 'sidrena' ); ?></strong></a>
-			<a class="sid-action sid-action--soft-purple" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-compliance' ) ); ?>"><span class="dashicons dashicons-search"></span><strong><?php esc_html_e( 'Provjeri tehničku spremnost', 'sidrena' ); ?></strong></a>
+			<a class="sid-action sid-action--soft-purple" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><span class="dashicons dashicons-search"></span><strong><?php esc_html_e( 'Provjeri tehničku spremnost', 'sidrena' ); ?></strong></a>
 		</div>
 
 		<div class="sid-dashboard-main">
@@ -510,18 +471,18 @@ final class Sidrena_Admin {
 					<div><strong><?php echo $is_ready ? esc_html__( 'Bez tehničkih upozorenja', 'sidrena' ) : esc_html__( 'Potrebna je provjera podataka', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Status je tehnička provjera, ne pravna potvrda usklađenosti.', 'sidrena' ); ?></small></div>
 				</div>
 				<?php $this->health_list( $stats, $last, $settings ); ?>
-				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-compliance' ) ); ?>"><?php esc_html_e( 'Otvori detaljnu provjeru', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a>
+				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><?php esc_html_e( 'Otvori detaljnu provjeru', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a>
 			</section>
 		</div>
 
 		<div class="sid-dashboard-bottom">
 			<section class="sid-card sid-changes-card">
-				<div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Najnovije promjene cijena', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-log' ) ); ?>"><?php esc_html_e( 'Dnevnik', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a></div>
+				<div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Najnovije promjene cijena', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=log' ) ); ?>"><?php esc_html_e( 'Dnevnik', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a></div>
 				<?php $this->recent_changes_table( $changes ); ?>
 			</section>
 
 			<section class="sid-card sid-archive-summary">
-				<div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Javna arhiva', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Arhiva 30+ dana', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-archive' ) ); ?>"><?php esc_html_e( 'Pregledaj arhivu', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a></div>
+				<div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Javna arhiva', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Arhiva 30+ dana', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files&sidrena_section=archive' ) ); ?>"><?php esc_html_e( 'Pregledaj arhivu', 'sidrena' ); ?><span class="dashicons dashicons-arrow-right-alt2"></span></a></div>
 				<div class="sid-archive-count"><span class="dashicons dashicons-calendar-alt"></span><div><strong><?php echo esc_html( number_format_i18n( $archive_stats['files'] ) ); ?></strong><small><?php esc_html_e( 'arhiviranih CSV/XML objava', 'sidrena' ); ?></small></div></div>
 				<div class="sid-progress"><span class="<?php echo $settings['retention_days'] >= 30 ? 'is-ok' : 'is-warn'; ?>"></span></div>
 				<ul class="sid-check-list">
@@ -2160,21 +2121,27 @@ final class Sidrena_Admin {
 
 	private function redirect( $tab, $notice ) {
 		$pages = array(
-			'dashboard'  => 'sidrena',
-			'compliance' => 'sidrena-compliance',
-			'catalog'    => 'sidrena-catalog',
-			'extra'      => 'sidrena-extra',
-			'files'      => 'sidrena-files',
-			'archive'    => 'sidrena-archive',
-			'locations'  => 'sidrena-locations',
-			'settings'   => 'sidrena-settings',
-			'tools'      => 'sidrena-tools',
-			'log'        => 'sidrena-log',
-			'rules'      => 'sidrena-rules',
+			'dashboard'  => array( 'sidrena', '' ),
+			'compliance' => array( 'sidrena', 'compliance' ),
+			'catalog'    => array( 'sidrena-catalog', '' ),
+			'files'      => array( 'sidrena-files', '' ),
+			'archive'    => array( 'sidrena-files', 'archive' ),
+			'locations'  => array( 'sidrena-locations', '' ),
+			'settings'   => array( 'sidrena-settings', '' ),
+			'tools'      => array( 'sidrena-support', 'tools' ),
+			'log'        => array( 'sidrena-support', 'log' ),
+			'rules'      => array( 'sidrena-support', 'rules' ),
 		);
-		$tab  = sanitize_key( $tab );
-		$page = isset( $pages[ $tab ] ) ? $pages[ $tab ] : 'sidrena';
-		$url  = add_query_arg( array( 'page' => $page, 'sid_notice' => sanitize_key( $notice ) ), admin_url( 'admin.php' ) );
+		$tab    = sanitize_key( $tab );
+		$target = isset( $pages[ $tab ] ) ? $pages[ $tab ] : $pages['dashboard'];
+		$args   = array(
+			'page'       => $target[0],
+			'sid_notice' => sanitize_key( $notice ),
+		);
+		if ( $target[1] ) {
+			$args['sidrena_section'] = $target[1];
+		}
+		$url = add_query_arg( $args, admin_url( 'admin.php' ) );
 		wp_safe_redirect( $url );
 		exit;
 	}
