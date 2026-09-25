@@ -1,0 +1,12 @@
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 320" role="img" aria-labelledby="t"><title id="t">Sidrena WordPress CTA</title><defs>
+<linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0B4C8D"/><stop offset=".48" stop-color="#082D5B"/><stop offset="1" stop-color="#061A33"/></linearGradient>
+<linearGradient id="sea" x1="0" y1=".2" x2="0" y2="1"><stop stop-color="#0B5B98"/><stop offset="1" stop-color="#041B33"/></linearGradient>
+<linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#62EBFF"/><stop offset=".5" stop-color="#0EA5E9"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
+<radialGradient id="glow" cx=".78" cy=".22" r=".34"><stop stop-color="#A8F3FF" stop-opacity=".6"/><stop offset=".35" stop-color="#4CCBEA" stop-opacity=".14"/><stop offset="1" stop-color="#4CCBEA" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1600" height="320" rx="24" fill="url(#sky)"/><path d="M1180 320c86-62 145-72 210-122 64-49 124-57 210-8v130z" fill="#03162A" opacity=".92"/><g transform="translate(40 42) scale(0.58)"><g fill="none" stroke="url(#cyan)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M87 25c-11-8-24-11-38-9-15 2-26 9-31 20-4 10 0 21 11 27 8 4 17 5 27 6 13 1 21 4 23 9 3 5-1 10-8 14-8 5-19 5-29 0-7-3-13-8-18-13" stroke-width="14"/>
+<circle cx="64" cy="31" r="9" stroke-width="6"/><path d="M64 40v52M48 55h32M31 82c5 20 17 31 33 31s28-11 33-31M31 82l-12 7 10 10m68-17 12 7-10 10" stroke-width="6"/></g><text x="132" y="78" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="56" font-weight="800" letter-spacing="2">SIDRENA</text><text x="134" y="107" fill="#C6DFEF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="4">USKLAĐENE CIJENE. SIGURNO POSLOVANJE.</text></g>
+<text x="430" y="132" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="34" font-weight="850">SIDRENA WordPress</text><text x="430" y="177" fill="#C8DDEA" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="20">Usklađene cijene i jasan javni cjenik za WordPress.</text><rect x="1140" y="112" width="350" height="72" rx="15" fill="#2563EB"/><text x="1193" y="158" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="24" font-weight="800">brendigo.com/sidrene-cijene</text>
+</svg>
