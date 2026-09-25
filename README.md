@@ -6,9 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-<p align="center">
-  <img src="assets/images/logo-horizontal.svg" alt="Sidrena — usklađene cijene, sigurno poslovanje" width="560">
-</p>
+<p align="center">\n  <img src="assets/images/logo-horizontal.svg" alt="SIDRENA — usklađene cijene, sigurno poslovanje" width="560">\n</p>\n\n<p align="center">\n  <img src="branding/rendered/website-hero-wordpress.png" alt="SIDRENA WordPress — službeni vizual iz branding paketa" width="49%">\n  <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce — službeni vizual iz branding paketa" width="49%">\n</p>
 
 <h1 align="center">SIDRENA 0.9.0</h1>
 
@@ -62,11 +60,11 @@ Support: sidrena@brendigo.com
 
 > Istodobno smije biti aktivno samo jedno Sidrena izdanje. Ugrađeni edition-conflict guard sprječava dvostruke hookove, duplicirane procese i paralelnu objavu iz oba izdanja.
 
-## Pogledajte SIDRENA 0.9.0 u stvarnom WordPress okruženju
+## Stvarni ekrani plugina — bez mockupova
 
-Ovo su stvarni ekrani aktivnih pluginova, a ne dizajnerski mockupovi. Galerija se automatski snima iz pravog WordPress administratorskog sučelja; WooCommerce izdanje snima se uz aktivan WooCommerce.
+Slike ispod nisu marketinški prikazi niti generirani UI. To su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz aktivnog WordPress administratorskog sučelja. WooCommerce galerija snima se s aktivnim WooCommerceom. Marketinški branding iznad namjerno je odvojen od ove galerije.
 
-### Sidrena WordPress
+### SIDRENA WordPress — stvarni wp-admin
 
 <table>
 <tr>
@@ -83,7 +81,7 @@ Ovo su stvarni ekrani aktivnih pluginova, a ne dizajnerski mockupovi. Galerija s
 </tr>
 </table>
 
-### Sidrena WooCommerce
+### SIDRENA WooCommerce — stvarni wp-admin
 
 <table>
 <tr>
@@ -100,7 +98,7 @@ Ovo su stvarni ekrani aktivnih pluginova, a ne dizajnerski mockupovi. Galerija s
 </tr>
 </table>
 
-## Stvarne ikone i identitet
+## Produkcijski identitet i ikone
 
 <table>
 <tr>
