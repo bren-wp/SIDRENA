@@ -26,6 +26,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sidrena-wporg-assets-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   assets:
     name: Capture real wp-admin screenshots
