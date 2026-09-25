@@ -7,7 +7,7 @@
  */
 
 
-/* Sidrena 1.6 production interface — local-only, no external UI dependencies. */
+/* Sidrena 0.8.1 production interface — local-only, no external UI dependencies. */
 
 :root {
 	--sid160-navy: #082d4f;
@@ -70,9 +70,9 @@ body[class*="sidrena_page_sidrena-"] {
 
 .sid-brand-banner__logo {
 	display: block;
-	width: 48px;
-	height: 48px;
-	flex: 0 0 48px;
+	width: 36px;
+	height: 36px;
+	flex: 0 0 36px;
 	object-fit: contain;
 }
 
