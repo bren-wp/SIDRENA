@@ -40,9 +40,15 @@ function get_userdata( $user_id ) {
 function absint( $value ) {
 	return abs( (int) $value );
 }
+function wp_unslash( $value ) {
+	return $value;
+}
 function __( $text, $domain = null ) {
 	unset( $domain );
 	return $text;
+}
+function get_post_type( $post_id ) {
+	return 123 === (int) $post_id ? 'sidrena_service' : 'post';
 }
 function add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url = '', $position = null ) {
 	unset( $page_title, $menu_title, $callback, $icon_url, $position );
@@ -80,11 +86,14 @@ $mapped = Sidrena_Utils::map_admin_capability( array( 'manage_sidrena' ), 'manag
 sidrena_menu_assert( array( 'exist' ) === $mapped, 'manage_sidrena must map for an administrator even when the custom capability is missing.' );
 
 Sidrena_Admin::instance()->menu();
+$GLOBALS['submenu']['sidrena'][] = array( 'Usluge', 'manage_options', 'edit.php?post_type=sidrena_service', 'Usluge' );
+$GLOBALS['submenu']['sidrena'][] = array( 'Nova usluga', 'manage_options', 'post-new.php?post_type=sidrena_service', 'Nova usluga' );
+
 sidrena_menu_assert( isset( $GLOBALS['sidrena_test_menu']['top'] ), 'Sidrena top-level menu was not registered.' );
 sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'Sidrena top-level menu slug is incorrect.' );
 sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['capability'], 'Sidrena menu must use administrator fallback capability when needed.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
-sidrena_menu_assert( count( $GLOBALS['submenu']['sidrena'] ) >= 10, 'Baseline Sidrena submenu should expose the full internal page set before UX simplification.' );
+sidrena_menu_assert( count( $GLOBALS['submenu']['sidrena'] ) >= 12, 'Baseline Sidrena submenu should expose the full internal page set before UX simplification.' );
 
 Sidrena_Admin_UX::instance()->simplify_menu();
 $visible_slugs = array_map(
@@ -93,11 +102,26 @@ $visible_slugs = array_map(
 	},
 	$GLOBALS['submenu']['sidrena']
 );
-$expected_slugs = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
-sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Simplified Sidrena submenu must keep only the task-based pages in order.' );
+$visible_labels = array_map(
+	static function ( $item ) {
+		return $item[0];
+	},
+	$GLOBALS['submenu']['sidrena']
+);
+$expected_slugs  = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
+$expected_labels = array( 'Početak', 'Proizvodi i usluge', 'Objava cjenika', 'Lokacije / webshop', 'Zakonske postavke', 'Pomoć' );
+sidrena_menu_assert( $expected_slugs === $visible_slugs, 'Simplified Sidrena submenu must keep only the legal task-based pages in order.' );
+sidrena_menu_assert( $expected_labels === $visible_labels, 'Simplified Sidrena submenu labels must be clear and legal-workflow focused.' );
 
 foreach ( Sidrena_Admin_UX::hidden_menu_slugs() as $hidden_slug ) {
 	sidrena_menu_assert( ! in_array( $hidden_slug, $visible_slugs, true ), 'Hidden technical/support page leaked into simplified menu: ' . $hidden_slug );
 }
 
-fwrite( STDOUT, "Sidrena administrator menu access and simplified menu smoke test passed.\n" );
+$_GET['post_type'] = 'sidrena_service';
+sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Service screens must stay visually grouped under Sidrena.' );
+sidrena_menu_assert( 'sidrena-catalog' === Sidrena_Admin_UX::instance()->submenu_file( 'edit.php?post_type=sidrena_service' ), 'Service screens must highlight Proizvodi i usluge instead of a separate sidebar item.' );
+
+$_GET = array( 'post' => 123 );
+sidrena_menu_assert( 'sidrena' === Sidrena_Admin_UX::instance()->parent_file( 'edit.php' ), 'Editing a service must keep the Sidrena menu parent active.' );
+
+fwrite( STDOUT, "Sidrena administrator menu access and strict simplified menu smoke test passed.\n" );
