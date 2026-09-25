@@ -1,10 +1,9 @@
-<!-- Sidrena source file | Author: Brendigo | Plugin URI: https://brendigo.com/sidrene-cijene/ -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" role="img" aria-label="Sidrena">
-	<g fill="none" stroke="#f0f0f1" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-		<circle cx="10" cy="4" r="2"/>
-		<path d="M10 6v8"/>
-		<path d="M6.5 8.5h7"/>
-		<path d="M4 12.25c.75 3.1 2.75 4.75 6 4.75s5.25-1.65 6-4.75"/>
-		<path d="m4 12.25-2 1 1.75 1.75m12.25-2.75 2 1L16.25 15"/>
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" role="img" aria-labelledby="title">
+	<title id="title">Sidrena</title>
+	<g fill="none" stroke="#f0f0f1" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M13.7 3.6c-1.2-.9-2.8-1.3-4.4-1.1-1.8.2-3.1 1-3.7 2.2-.5 1.1 0 2.3 1.3 3 1 .5 2 .6 3.2.7 1.5.1 2.4.5 2.7 1 .3.6-.1 1.2-.9 1.7-1 .6-2.2.6-3.4.1-.8-.3-1.5-.9-2.1-1.5" stroke-width="2.05"/>
+		<circle cx="10" cy="4.2" r="1.5" stroke-width="1.45"/>
+		<path d="M10 5.7v8M7.5 8h5M4.8 12c.8 3.1 2.6 4.7 5.2 4.7s4.4-1.6 5.2-4.7M4.8 12l-2 1.1 1.7 1.6m10.7-2.7 2 1.1-1.7 1.6" stroke-width="1.45"/>
 	</g>
 </svg>
