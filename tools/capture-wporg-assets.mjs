@@ -108,14 +108,19 @@ try {
 		});
 	}
 
-	await page.setViewportSize({ width: 390, height: 844 });
-	await page.goto(`${baseUrl}/wp-admin/admin.php?page=sidrena`, { waitUntil: 'networkidle' });
-	await page.locator('.sidrena-app').first().waitFor({ state: 'visible', timeout: 30000 });
-	await assertNoRuntimeError(page, '/wp-admin/admin.php?page=sidrena @390px');
-	await assertNoKeyOverlaps(page, '/wp-admin/admin.php?page=sidrena @390px');
-	const mobileOverflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
-	if (mobileOverflow > 4) {
-		throw new Error(`Horizontal layout overflow at 390px: ${mobileOverflow}px`);
+	for (const width of [1180, 782, 390]) {
+		await page.setViewportSize({ width, height: 900 });
+		for (const [, route, selector] of screens) {
+			const responsiveRoute = `${route} @${width}px`;
+			await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
+			await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
+			await assertNoRuntimeError(page, responsiveRoute);
+			await assertNoKeyOverlaps(page, responsiveRoute);
+			const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
+			if (overflow > 4) {
+				throw new Error(`Horizontal layout overflow on ${responsiveRoute}: ${overflow}px`);
+			}
+		}
 	}
 } finally {
 	await browser.close();
