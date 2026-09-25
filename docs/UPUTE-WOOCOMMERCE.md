@@ -8,7 +8,9 @@ Support: sidrena@brendigo.com
 
 # Sidrena WooCommerce 0.8.1 - Upute za korištenje
 
-![Stvarni Sidrena WooCommerce admin prikaz](images/screenshot-admin.png)
+![Stvarni Sidrena WooCommerce admin prikaz](media/screenshot-woocommerce.png)
+
+> Screenshot se automatski snima iz aktivnog WordPress + WooCommerce admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.
 
 ## Namjena
 
