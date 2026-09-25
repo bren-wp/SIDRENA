@@ -82,7 +82,8 @@ jobs:
             "config": {
               "WP_DEBUG": false,
               "SCRIPT_DEBUG": false
-            }
+            },
+            "testsEnvironment": false
           }
           JSON
 
@@ -95,7 +96,7 @@ jobs:
           SIDRENA_SCREENSHOT_DIR="$RUNNER_TEMP/sidrena-wordpress-assets" \
           node tools/capture-wporg-assets.mjs
 
-          npx wp-env destroy
+          printf 'y\n' | npx wp-env destroy
 
       - name: Capture Sidrena WooCommerce
         shell: bash
@@ -110,7 +111,8 @@ jobs:
             "config": {
               "WP_DEBUG": false,
               "SCRIPT_DEBUG": false
-            }
+            },
+            "testsEnvironment": false
           }
           JSON
 
@@ -124,7 +126,7 @@ jobs:
           SIDRENA_SCREENSHOT_DIR="$RUNNER_TEMP/sidrena-woocommerce-assets" \
           node tools/capture-wporg-assets.mjs
 
-          npx wp-env destroy
+          printf 'y\n' | npx wp-env destroy
 
       - name: Build WordPress.org asset directories
         shell: bash
