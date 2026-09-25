@@ -54,6 +54,9 @@ jobs:
           test ! -d static-php
           test ! -d editions/static-php
           test ! -d editions/generic
+          test ! -d windows
+          test ! -f .github/workflows/windows-release-assets.yml
+          test ! -f .github/workflows/windows-app-guard.yml
 
           find editions -maxdepth 2 -type f -name 'sidrena-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
           cat > "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" <<'EOF'
@@ -64,6 +67,11 @@ jobs:
 
           if find . -path './.git' -prune -o -type f -name 'sidrena.php' -print | grep -q .; then
             echo 'Generic root sidrena.php entrypoint detected.' >&2
+            exit 1
+          fi
+
+          if find . -path './.git' -prune -o -type f \( -iname 'portable.exe' -o -iname 'setup.exe' -o -iname '*.msi' -o -iname '*.appx' -o -iname '*.pdb' \) -print | grep -q .; then
+            echo 'Retired Windows/setup/debug artifact detected in source tree.' >&2
             exit 1
           fi
 
@@ -103,6 +111,13 @@ jobs:
           ! grep -q '^sidrena-woocommerce/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+            ! grep -Eiq '(^|/)(portable|setup)\.exe$' "$files"
+            ! grep -Eiq '(^|/)windows/' "$files"
+            ! grep -Eiq '\.(exe|msi|appx|pdb|map)$' "$files"
+            ! grep -Eiq '^sidrena-[^/]+/(\.github|tools|editions|docs/media)/' "$files"
+          done
 
           if grep -v '^sidrena-wordpress/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"; then
             echo 'WordPress ZIP contains files outside sidrena-wordpress root.' >&2
