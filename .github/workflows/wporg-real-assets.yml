@@ -229,4 +229,7 @@ jobs:
           fi
 
           git commit -m "Normalize metadata and generate real WordPress.org assets"
+          # A non-UI commit may land while the real WordPress capture is running.
+          # Rebase generated assets onto the latest branch head before publishing.
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
