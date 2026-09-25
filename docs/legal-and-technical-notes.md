@@ -61,7 +61,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.0.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 1.0.1 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -92,7 +92,7 @@ Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o
 
 ## Produkcijski i release guardovi
 
-Sidrena 1.0.0 stabilna release linija koristi zasebne provjere za:
+Sidrena 1.0.1 stabilna release linija koristi zasebne provjere za:
 
 - stvarni build dvaju ZIP paketa,
 - zabranu generičkog/root/static PHP paketa,
@@ -100,7 +100,7 @@ Sidrena 1.0.0 stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.0.zip`, `sidrena-wordpress-1.0.0.zip.sha256`, `sidrena-woocommerce-1.0.0.zip` i `sidrena-woocommerce-1.0.0.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.1.zip`, `sidrena-wordpress-1.0.1.zip.sha256`, `sidrena-woocommerce-1.0.1.zip` i `sidrena-woocommerce-1.0.1.zip.sha256`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 
