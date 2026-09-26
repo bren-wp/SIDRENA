@@ -18,6 +18,7 @@ Sidrena changelog
 * Dodan je trajni admin-form-ux regression test u glavni CI i zasebni admin-polish guard.
 * Servisni editor sada svako po-lokacijsko polje aktualne i sidrene cijene povezuje s vlastitom labelom i responzivnim rasporedom, umjesto dva neoznačena inputa u istoj kartici.
 * Postavke poslovnog identiteta sada provjeravaju hrvatski OIB i u browseru i na serveru te odbijaju neispravan OIB ili e-mail jasnom porukom umjesto tihog spremanja loših podataka.
+* Stvarni WordPress i WooCommerce wp-admin capture ponovno je generiran nakon UI/UX dorada i prošao runtime JavaScript, ključna preklapanja, horizontalni overflow i form-control viewport provjere na 1440, 1180, 782 i 390 px.
 * Oba plugina podignuta su na 1.0.12.
 
 = 1.0.11 =
