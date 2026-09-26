@@ -760,8 +760,8 @@ final class Sidrena_Utils {
 				'post_status'    => array( 'publish', 'private', 'draft' ),
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
-				'meta_key'       => '_sidrena_code',
-				'meta_value'     => $code,
+				'meta_key'       => '_sidrena_code', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Single-result fallback lookup by Sidrena product code.
+				'meta_value'     => $code, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Exact code lookup, bounded to one ID.
 				'no_found_rows'  => true,
 			)
 		);

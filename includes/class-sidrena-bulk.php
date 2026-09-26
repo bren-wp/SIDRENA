@@ -83,7 +83,7 @@ final class Sidrena_Bulk {
 				</tbody>
 			</table>
 			</div>
-			<div class="sid-bulk-actions"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi ovu stranicu kataloga', 'sidrena' ); ?></button><span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $pages ) ); ?></span></div>
+			<div class="sid-bulk-actions"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi ovu stranicu kataloga', 'sidrena' ); ?></button><span><?php /* translators: 1: current catalog page number, 2: total catalog pages. */ echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $pages ) ); ?></span></div>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija kataloga', 'sidrena' ); ?>">
@@ -99,7 +99,8 @@ final class Sidrena_Bulk {
 			wp_die( esc_html__( 'Nemate dopuštenje za ovu radnju.', 'sidrena' ) );
 		}
 		check_admin_referer( 'sidrena_bulk_save' );
-		$items = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? wp_unslash( $_POST['items'] ) : array();
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- check_admin_referer() verified this form submission immediately above.
+		$items = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? map_deep( wp_unslash( $_POST['items'] ), 'sanitize_text_field' ) : array();
 		$updated = 0;
 
 		foreach ( $items as $id => $row ) {
@@ -185,6 +186,7 @@ final class Sidrena_Bulk {
 
 		Sidrena_Audit::log( 'bulk_catalog_save', 'success', sprintf( 'Masovno spremljeno %d proizvoda.', $updated ), array( 'count' => $updated ) );
 		Sidrena_Pricelist::queue_regeneration();
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Same verified sidrena_bulk_save form submission.
 		$page = max( 1, isset( $_POST['catalog_page'] ) ? absint( $_POST['catalog_page'] ) : 1 );
 		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&catalog_page=' . $page . '&sid_notice=bulk_saved' ) );
 		exit;

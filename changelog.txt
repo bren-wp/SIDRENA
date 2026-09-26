@@ -7,6 +7,8 @@ Support: sidrena@brendigo.com
 Sidrena changelog
 
 = 1.0.10 =
+* Upgrade/repair lifecycle premješten je na `init` prije javnog-page repaira, čime se uklanja stvarni WP-CLI/Plugin Check fatal pri preranoj izradi stranice i prerano učitavanje prijevoda.
+* Dodan je službeni WordPress Plugin Check workflow za oba stvarna produkcijska paketa; provjera koristi stvarne edition slugove, a jedino je svjesno izuzet policy-only trademark upozorenje za postojeće kompatibilne folder slugove.
 * Obradjen je dostavljeni Plugin Check izvještaj: dodani su translators komentari, ispravljen escaping javnih URL-ova, pojačana sanitizacija GET/POST ulaza i uvedeni sigurniji SQL identifier placeholderi za plugin tablice.
 * Uklonjen je zastarjeli ručni load_plugin_textdomain poziv; WordPress automatski učitava prijevode za instalacijski text domain.
 * WPML integracijski hookovi ostaju nepromijenjeni kao vanjski API hookovi, uz precizne PHPCS napomene.
@@ -15,6 +17,10 @@ Sidrena changelog
 * WordPress.org short description i Description dio readmea prebačeni su na standardni engleski; runtime sučelje ostaje hrvatsko.
 * README sada prikazuje obnovljene hero assete uz stvarne wp-admin screenshotove.
 * Dodan je Plugin Check regression guard za prijevode, escaping, zastarjeli translation loader i SQL uninstall identifikatore.
+* Uklonjen je zastarjeli razvojni 0.1.0 komentar iz produkcijskog frontend CSS-a; runtime sloj više ne sadrži takve razvojne version markere.
+* Dodan je regresijski test koji čuva upgrade repair na `init` i sprječava povratak prerane `plugins_loaded` migracije.
+* Službeni WordPress Plugin Check potvrđen je uspješnim za oba stvarna 1.0.10 produkcijska paketa nakon popravaka dostavljenog izvještaja.
+* Stvarni WordPress i WooCommerce screenshot/branding pipeline ponovno je prošao na finalnom 1.0.10 UI sloju.
 * Oba plugina podignuta su na 1.0.10.
 
 = 1.0.9 =

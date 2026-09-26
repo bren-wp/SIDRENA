@@ -126,9 +126,10 @@ final class Sidrena_Compatibility {
 		}
 
 		if ( ! $product instanceof WC_Product ) {
-			global $product;
+			$global_product = isset( $GLOBALS['product'] ) && $GLOBALS['product'] instanceof WC_Product ? $GLOBALS['product'] : null;
+			$product        = $global_product;
 			if ( ! $product instanceof WC_Product ) {
-				$id = get_queried_object_id();
+				$id      = get_queried_object_id();
 				$product = $id ? wc_get_product( $id ) : null;
 			}
 		}

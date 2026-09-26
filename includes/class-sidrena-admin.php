@@ -868,8 +868,8 @@ final class Sidrena_Admin {
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
 				'no_found_rows'  => false,
-				'meta_key'       => '_sidrena_service_sale',
-				'meta_value'     => 'yes',
+				'meta_key'       => '_sidrena_service_sale', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Bounded existence/count query for one Sidrena boolean meta key.
+				'meta_value'     => 'yes', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Exact boolean value paired with the Sidrena meta key.
 			)
 		);
 		return absint( $query->found_posts );
@@ -1660,10 +1660,11 @@ final class Sidrena_Admin {
 	}
 
 	private function open_uploaded_csv( $field ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Every caller verifies its action nonce before entering this upload helper.
 		if ( empty( $_FILES[ $field ] ) || ! is_array( $_FILES[ $field ] ) ) {
 			return new WP_Error( 'upload_missing' );
 		}
-		$file = $_FILES[ $field ]; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated before use.
+		$file = $_FILES[ $field ]; // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified by caller; file members are validated before use.
 		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			return new WP_Error( 'upload_error' );
 		}
@@ -2182,7 +2183,7 @@ final class Sidrena_Admin {
 
 	private function post_value( $key, $default = '' ) {
 		// Callers invoke guard_post() before reading mutable form data.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the action-specific guard before this helper is used.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified by action guard; each caller applies field-specific sanitization immediately after retrieval.
 		return isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
 	}
 

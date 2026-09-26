@@ -102,7 +102,9 @@ final class Sidrena_Products {
 				'description' => __( 'FMCG koji je već bio obuhvaćen mjerom zadržava 02.05.2025.; za novobuhvaćene proizvode mjerodavan je 10.09.2026.; novouvedeni proizvod koristi datum prvog uvrštenja.', 'sidrena' ),
 				'desc_tip'    => true,
 				'options'     => array(
+					/* translators: %s: formatted reference date. */
 					'standard' => sprintf( __( 'Standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( $settings['default_ref_date'] ) ),
+					/* translators: %s: formatted FMCG reference date. */
 					'fmcg'     => sprintf( __( 'FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( $settings['fmcg_ref_date'] ) ),
 					'custom'   => __( 'Vlastiti datum / novouvedeni proizvod', 'sidrena' ),
 				),
