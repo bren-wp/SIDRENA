@@ -66,6 +66,7 @@ foreach (
 		'input[aria-invalid="true"]',
 		'.sid-table-wrap:focus-within',
 		'.sid-file-control',
+		'.sid-file-input { display:block;width:100%;min-width:0; }',
 		'.sid-inline-form .sid-form-status',
 	) as $needle
 ) {
