@@ -161,10 +161,14 @@ final class Sidrena_Services {
 			<div class="sidrena-service-grid">
 			<?php foreach ( $locations as $location ) : ?>
 				<?php if ( 'yes' !== ( $location['enabled'] ?? '' ) ) { continue; } $location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ); ?>
-				<p>
-					<label><strong><?php echo esc_html( ( $location['code'] ?? $location_id ) . ' · ' . ( $location['address'] ?? '' ) ); ?></strong></label><br>
-					<input class="regular-text" type="number" min="0" step="0.01" name="sidrena_service_location_price[<?php echo esc_attr( $location_id ); ?>]" value="<?php echo esc_attr( $location_prices[ $location_id ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Aktualna — koristi osnovnu', 'sidrena' ); ?>"><br>
-					<input class="regular-text" type="number" min="0" step="0.01" name="sidrena_service_location_anchor_price[<?php echo esc_attr( $location_id ); ?>]" value="<?php echo esc_attr( $location_anchor_prices[ $location_id ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Sidrena — koristi osnovnu', 'sidrena' ); ?>">
+				<p class="sid-service-location-card">
+					<strong class="sid-service-location-title"><?php echo esc_html( ( $location['code'] ?? $location_id ) . ' · ' . ( $location['address'] ?? '' ) ); ?></strong>
+					<span class="sid-service-location-fields">
+						<label for="sidrena_service_location_price_<?php echo esc_attr( $location_id ); ?>"><?php esc_html_e( 'Aktualna cijena (€)', 'sidrena' ); ?></label>
+						<input class="regular-text" type="number" min="0" step="0.01" inputmode="decimal" id="sidrena_service_location_price_<?php echo esc_attr( $location_id ); ?>" name="sidrena_service_location_price[<?php echo esc_attr( $location_id ); ?>]" value="<?php echo esc_attr( $location_prices[ $location_id ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Koristi osnovnu cijenu', 'sidrena' ); ?>">
+						<label for="sidrena_service_location_anchor_price_<?php echo esc_attr( $location_id ); ?>"><?php esc_html_e( 'Sidrena cijena (€)', 'sidrena' ); ?></label>
+						<input class="regular-text" type="number" min="0" step="0.01" inputmode="decimal" id="sidrena_service_location_anchor_price_<?php echo esc_attr( $location_id ); ?>" name="sidrena_service_location_anchor_price[<?php echo esc_attr( $location_id ); ?>]" value="<?php echo esc_attr( $location_anchor_prices[ $location_id ] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Koristi osnovnu sidrenu cijenu', 'sidrena' ); ?>">
+					</span>
 				</p>
 			<?php endforeach; ?>
 			</div>
