@@ -75,11 +75,12 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 == Changelog ==
 
 = 1.0.11 =
-* Hardened the release pipeline so a new version tag is created only after package integrity checks and both official WordPress Plugin Check gates pass.
-* Plugin Check now runs directly against the exact production-shaped WordPress and WooCommerce builds staged for release publication.
-* Release branches and v* tags are also covered by the standalone Plugin Check workflow for additional CI visibility.
-* Added a permanent regression test that fails CI if release publication can bypass Plugin Check or create a new tag before the validation gates.
-* Runtime UI and business logic are unchanged from the verified 1.0.10 baseline; existing real wp-admin screenshots remain representative of the shipped interface.
+* Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
+* New version tags are created only after package integrity verification and both release Plugin Check gates succeed.
+* Added a permanent regression test that protects the release ordering from build through Plugin Check, tag creation and publication.
+* Prepared remaining service-history and standalone table identifiers with WordPress %i placeholders instead of SQL string interpolation.
+* Removed obsolete PreparedSQL.InterpolatedNotPrepared suppression comments from already-prepared custom-table queries.
+* Added regression coverage for service-history and standalone SQL identifier handling.
 
 = 1.0.10 =
 * Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.
