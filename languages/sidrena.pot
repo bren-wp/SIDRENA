@@ -1512,3 +1512,19 @@ msgstr ""
 msgid "Koristi osnovnu sidrenu cijenu"
 msgstr ""
 
+#: includes/class-sidrena-admin.php
+msgid "Postavke nisu spremljene. Uneseni OIB nema valjanu kontrolnu znamenku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Postavke nisu spremljene. Provjerite e-mail adresu poslovnog subjekta."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Ako ga unosite, mora imati 11 znamenki i valjanu kontrolnu znamenku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom."
+msgstr ""
+
