@@ -105,13 +105,8 @@ jobs:
               exit 1
             fi
           else
-            if [[ "$VERSION" == "1.0.0" ]]; then
-              echo "Tag $TAG_NAME does not exist; it will be created only after the fresh build passes verification."
-              echo "CREATE_RELEASE_TAG=true" >> "$GITHUB_ENV"
-            else
-              git tag -a "$TAG_NAME" "$GITHUB_SHA" -m "Sidrena $VERSION"
-              git push origin "$TAG_NAME"
-            fi
+            echo "Tag $TAG_NAME does not exist; it will be created only after the fresh build and Plugin Check gates pass."
+            echo "CREATE_RELEASE_TAG=true" >> "$GITHUB_ENV"
           fi
 
       - name: Resolve tag target and release state
@@ -185,11 +180,23 @@ jobs:
           unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
           unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
 
+      - name: Stage exact release builds for Plugin Check
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/release-plugin-check
+          mkdir -p build/release-plugin-check
+          cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-wordpress" build/release-plugin-check/
+          cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-woocommerce" build/release-plugin-check/
+          test -f build/release-plugin-check/sidrena-wordpress/sidrena-wordpress.php
+          test -f build/release-plugin-check/sidrena-woocommerce/sidrena-woocommerce.php
+
       - name: Plugin Check release gate — WordPress edition
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: ${{ runner.temp }}/.sidrena-build/sidrena-wordpress
+          build-dir: build/release-plugin-check/sidrena-wordpress
           slug: sidrena-wordpress
           # Backward-compatible install-folder slug; all runtime/security/i18n/performance findings remain strict.
           ignore-codes: trademarked_term
@@ -201,7 +208,7 @@ jobs:
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: ${{ runner.temp }}/.sidrena-build/sidrena-woocommerce
+          build-dir: build/release-plugin-check/sidrena-woocommerce
           slug: sidrena-woocommerce
           # Backward-compatible install-folder slug; all runtime/security/i18n/performance findings remain strict.
           ignore-codes: trademarked_term
@@ -209,8 +216,8 @@ jobs:
           ignore-errors: 'false'
           ignore-warnings: 'false'
 
-      - name: Create verified 1.0.0 release tag
-        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0' && env.CREATE_RELEASE_TAG == 'true'
+      - name: Create verified release tag
+        if: startsWith(github.ref, 'refs/heads/release/') && env.CREATE_RELEASE_TAG == 'true'
         shell: bash
         run: |
           set -euo pipefail
