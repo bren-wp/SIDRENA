@@ -1121,7 +1121,7 @@ final class Sidrena_Standalone {
 	private function code_index() {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded read across WordPress posts/postmeta for the standalone code index.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID, pm.meta_value
