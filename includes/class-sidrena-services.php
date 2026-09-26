@@ -194,7 +194,7 @@ final class Sidrena_Services {
 		);
 
 		foreach ( $map as $field => $meta ) {
-			$value = isset( $_POST[ $field ] ) ? wp_unslash( $_POST[ $field ] ) : '';
+			$value = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
 			if ( false !== strpos( $field, 'price' ) ) {
 				$value = Sidrena_Utils::decimal( $value );
 			} elseif ( false !== strpos( $field, 'date' ) ) {
@@ -232,7 +232,7 @@ final class Sidrena_Services {
 		}
 
 		$location_prices = array();
-		$posted_prices   = isset( $_POST['sidrena_service_location_price'] ) && is_array( $_POST['sidrena_service_location_price'] ) ? wp_unslash( $_POST['sidrena_service_location_price'] ) : array();
+		$posted_prices   = isset( $_POST['sidrena_service_location_price'] ) && is_array( $_POST['sidrena_service_location_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_price'] ), 'sanitize_text_field' ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified at method entry.
 		foreach ( $posted_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
 			$location_price = Sidrena_Utils::decimal( $location_price );
@@ -247,7 +247,7 @@ final class Sidrena_Services {
 		}
 
 		$location_anchor_prices = array();
-		$posted_anchor_prices   = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? wp_unslash( $_POST['sidrena_service_location_anchor_price'] ) : array();
+		$posted_anchor_prices   = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_anchor_price'] ), 'sanitize_text_field' ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified at method entry.
 		foreach ( $posted_anchor_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
 			$location_price = Sidrena_Utils::decimal( $location_price );
@@ -353,7 +353,9 @@ final class Sidrena_Services {
 		$total_pages = max( 1, absint( $query->max_num_pages ) );
 		$first       = ( ( $page - 1 ) * $per_page ) + 1;
 		$last        = min( $total, $first + count( $query->posts ) - 1 );
+		/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 		$out         = '<div class="sidrena-services" role="region" aria-label="' . esc_attr__( 'Cjenik usluga', 'sidrena' ) . '">';
+		/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 		$out        .= '<p class="sidrena-services__summary">' . esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d usluga.', 'sidrena' ), $first, $last, $total ) ) . '</p>';
 		$out        .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table"><thead><tr>';
 		$out        .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
@@ -410,10 +412,13 @@ final class Sidrena_Services {
 
 		if ( $total_pages > 1 ) {
 			$base_url = remove_query_arg( 'sidrena_usluge_stranica' );
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			$out .= '<nav class="sidrena-services__pagination" aria-label="' . esc_attr__( 'Stranice cjenika usluga', 'sidrena' ) . '">';
 			if ( $page > 1 ) {
+				/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 				$out .= '<a rel="prev" href="' . esc_url( add_query_arg( 'sidrena_usluge_stranica', $page - 1, $base_url ) ) . '">' . esc_html__( 'Prethodna stranica', 'sidrena' ) . '</a>';
 			}
+			/* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */
 			$out .= '<span>' . esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $total_pages ) ) . '</span>';
 			if ( $page < $total_pages ) {
 				$out .= '<a rel="next" href="' . esc_url( add_query_arg( 'sidrena_usluge_stranica', $page + 1, $base_url ) ) . '">' . esc_html__( 'Sljedeća stranica', 'sidrena' ) . '</a>';

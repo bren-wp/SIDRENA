@@ -58,9 +58,11 @@ final class Sidrena_Service_History {
 	private function insert_if_changed( $service_id, $price, $source ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$last  = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT price FROM {$table} WHERE service_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				"SELECT price FROM %i WHERE service_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				$table,
 				$service_id
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
@@ -73,6 +75,7 @@ final class Sidrena_Service_History {
 			return;
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$wpdb->insert(
 			$table,
 			array(
@@ -154,18 +157,22 @@ final class Sidrena_Service_History {
 		$start_sql    = $start->format( 'Y-m-d H:i:s' );
 		$window_sql   = $window_start->format( 'Y-m-d H:i:s' );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM {$table} WHERE service_id = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				"SELECT price, recorded_at FROM %i WHERE service_id = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				$table,
 				$service_id,
 				$window_sql
 			),
 			ARRAY_A
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$first = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT MIN(recorded_at) FROM {$table} WHERE service_id = %d",
+				"SELECT MIN(recorded_at) FROM %i WHERE service_id = %d",
+				$table,
 				$service_id
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
@@ -178,9 +185,11 @@ final class Sidrena_Service_History {
 			);
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$rows = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT price FROM {$table} WHERE service_id = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				"SELECT price FROM %i WHERE service_id = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				$table,
 				$service_id,
 				$window_sql,
 				$start_sql
@@ -238,13 +247,15 @@ final class Sidrena_Service_History {
 		$limit = min( 20, max( 1, absint( $limit ) ) );
 		$scan  = max( 120, $limit * 30 );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, service_id, price, recorded_at
-				FROM {$table}
+				FROM %i
 				WHERE price IS NOT NULL
 				ORDER BY id DESC
 				LIMIT %d",
+				$table,
 				$scan
 			),
 			ARRAY_A
@@ -295,11 +306,15 @@ final class Sidrena_Service_History {
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
 		$days  = min( 90, max( 7, absint( $days ) ) );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$latest = $wpdb->get_row(
-			"SELECT service_id, price, recorded_at
-			FROM {$table}
-			WHERE price IS NOT NULL
-			ORDER BY id DESC LIMIT 1",
+			$wpdb->prepare(
+				"SELECT service_id, price, recorded_at
+				FROM %i
+				WHERE price IS NOT NULL
+				ORDER BY id DESC LIMIT 1",
+				$table
+			),
 			ARRAY_A
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 
@@ -310,11 +325,13 @@ final class Sidrena_Service_History {
 		$service_id = absint( $latest['service_id'] );
 		$cutoff_dt  = new DateTimeImmutable( '-' . $days . ' days', wp_timezone() );
 		$cutoff     = $cutoff_dt->format( 'Y-m-d H:i:s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM {$table}
+				"SELECT price, recorded_at FROM %i
 				WHERE service_id = %d AND price IS NOT NULL AND recorded_at >= %s
 				ORDER BY recorded_at ASC, id ASC",
+				$table,
 				$service_id,
 				$cutoff
 			),
@@ -353,7 +370,8 @@ final class Sidrena_Service_History {
 	public static function count_rows() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
-		return absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned service history table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
 	}
 
 	public function daily_snapshot() {
@@ -402,9 +420,11 @@ final class Sidrena_Service_History {
 		global $wpdb;
 		$table  = $wpdb->prefix . 'sidrena_service_price_history';
 		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( 400 * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned service history table requires direct CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE recorded_at < %s",
+				"DELETE FROM %i WHERE recorded_at < %s",
+				$table,
 				$cutoff
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.

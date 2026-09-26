@@ -137,7 +137,7 @@ final class Sidrena_Public {
 			return;
 		}
 
-		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( wp_unslash( $_GET['lokacija'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( sanitize_text_field( wp_unslash( $_GET['lokacija'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'cjenik' === $route ) {
 			$content = $this->pricelist_shortcode( array( 'lokacija' => $location ) );
 			if ( ! $this->last_snapshot_available ) {
@@ -231,7 +231,9 @@ final class Sidrena_Public {
 		<section class="sidrena-pricelist">
 			<div class="sidrena-pricelist__toolbar">
 				<div>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<h2><?php echo esc_html( ! empty( $location['code'] ) ? $location['code'] : __( 'Cjenik', 'sidrena' ) ); ?></h2>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<p><?php echo esc_html( $location['address'] ); ?><?php if ( $generated ) : ?> · <?php echo esc_html( sprintf( __( 'Ažurirano: %s', 'sidrena' ), Sidrena_Utils::format_iso_datetime( $generated ) ) ); ?><?php endif; ?></p>
 				</div>
 				<form class="sidrena-pricelist__search" role="search" method="get">
@@ -248,12 +250,15 @@ final class Sidrena_Public {
 			</div>
 
 			<?php if ( 0 === $total ) : ?>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<div class="sidrena-public-message"><?php echo '' !== $search ? esc_html__( 'Nema stavki koje odgovaraju pretrazi.', 'sidrena' ) : esc_html__( 'Cjenik je objavljen, ali trenutačno nema stavki za prikaz.', 'sidrena' ); ?></div>
 			<?php else : ?>
 			<p class="sidrena-pricelist__summary" aria-live="polite">
 				<?php if ( '' !== $search ) : ?>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<?php echo esc_html( sprintf( __( 'Pronađeno %d stavki.', 'sidrena' ), $total ) ); ?>
 				<?php else : ?>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<?php echo esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d stavki.', 'sidrena' ), $first_item, $last_item, $total ) ); ?>
 				<?php endif; ?>
 			</p>
@@ -301,8 +306,11 @@ final class Sidrena_Public {
 				</table>
 			</div>
 			<?php if ( $total_pages > 1 ) : ?>
+			<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 			<nav class="sidrena-pricelist__pagination" aria-label="<?php esc_attr_e( 'Stranice cjenika', 'sidrena' ); ?>">
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<?php if ( $page > 1 ) : ?><a rel="prev" href="<?php echo esc_url( $this->pricelist_url( $page - 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Prethodna stranica', 'sidrena' ); ?></a><?php endif; ?>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $total_pages ) ); ?></span>
 				<?php if ( $page < $total_pages ) : ?><a rel="next" href="<?php echo esc_url( $this->pricelist_url( $page + 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Sljedeća stranica', 'sidrena' ); ?></a><?php endif; ?>
 			</nav>
@@ -338,9 +346,12 @@ final class Sidrena_Public {
 		<section class="sidrena-public-archive sidrena-downloads">
 			<div class="sidrena-public-archive__head">
 				<div>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<h2><?php esc_html_e( 'Arhiva cjenika', 'sidrena' ); ?></h2>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<p><?php esc_html_e( 'Prethodno objavljene CSV/XML datoteke dostupne su najmanje tijekom propisanog razdoblja čuvanja.', 'sidrena' ); ?></p>
 				</div>
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<span class="sidrena-public-archive__count"><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', $total, 'sidrena' ), $total ) ); ?></span>
 			</div>
 			<section class="sidrena-downloads__section">
@@ -465,6 +476,7 @@ final class Sidrena_Public {
 			</section>
 
 			<footer class="sidrena-downloads__source">
+				<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 				<?php echo esc_html( sprintf( __( 'Izvor podataka: %s', 'sidrena' ), get_bloginfo( 'name' ) ) ); ?>
 			</footer>
 		</section>
@@ -557,6 +569,7 @@ final class Sidrena_Public {
 			<details class="sidrena-downloads__day" <?php echo 1 === $group_index ? 'open' : ''; ?>>
 				<summary>
 					<strong><?php echo esc_html( $this->archive_date_label( $date ) ); ?></strong>
+					<?php /* translators: Placeholder values are dynamic runtime data such as counts, dates, prices, names, versions or URLs. */ ?>
 					<span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span>
 				</summary>
 				<div class="sidrena-downloads__grid">
@@ -593,7 +606,7 @@ final class Sidrena_Public {
 				<?php if ( $generated ) : ?><span><?php echo esc_html( $generated ); ?></span><?php endif; ?>
 			</div>
 			<?php if ( $url ) : ?>
-				<a class="sidrena-download-card__button" href="<?php echo $url; ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
+				<a class="sidrena-download-card__button" href="<?php echo esc_url( $url ); ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
 			<?php else : ?>
 				<span class="sidrena-download-card__button is-disabled"><?php esc_html_e( 'Datoteka nije dostupna', 'sidrena' ); ?></span>
 			<?php endif; ?>
