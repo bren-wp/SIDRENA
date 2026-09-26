@@ -15,6 +15,7 @@ Sidrena changelog
 * Menu ikona ima vlastite dimenzije, poravnanje i active-state tretman kako više ne bi izlazila iz WordPress menu retka.
 * CI i distribution guard sada provjeravaju brand.css, admin.js i edition-specific runtime logo assete unutar stvarnog instalacijskog ZIP-a.
 * Dodan je admin-assets smoke test za page-query fallback, screen-id fallback i service editor asset routing.
+* Stvarni wp-env screenshot pipeline sada na svih šest glavnih SIDRENA ekrana i na 1440/1180/782/390 px provjerava da su brand.css i admin.js stvarno učitani, da hero/kartice imaju produkcijski computed-style te da menu ikona ne prelazi 20 px.
 * Oba odvojena plugina podignuta su na 1.0.9.
 
 = 1.0.8 =
