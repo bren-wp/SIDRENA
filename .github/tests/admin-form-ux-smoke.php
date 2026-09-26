@@ -15,6 +15,8 @@ $admin      = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
 $standalone = file_get_contents( $root . '/includes/class-sidrena-standalone.php' );
 $script     = file_get_contents( $root . '/admin/js/admin.js' );
 $style      = file_get_contents( $root . '/admin/css/brand.css' );
+$editor     = file_get_contents( $root . '/admin/css/admin.css' );
+$services   = file_get_contents( $root . '/includes/class-sidrena-services.php' );
 
 function sidrena_form_ux_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -23,7 +25,7 @@ function sidrena_form_ux_assert( $condition, $message ) {
 	}
 }
 
-foreach ( array( $admin, $standalone, $script, $style ) as $contents ) {
+foreach ( array( $admin, $standalone, $script, $style, $editor, $services ) as $contents ) {
 	sidrena_form_ux_assert( false !== $contents, 'Unable to read an admin UX source file.' );
 }
 
@@ -72,6 +74,17 @@ foreach (
 sidrena_form_ux_assert(
 	false !== strpos( $admin, "'savingForm'" ) && false !== strpos( $admin, "'invalidField'" ),
 	'Localized form feedback strings must remain available to admin.js.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $services, 'for="sidrena_service_location_price_' )
+	&& false !== strpos( $services, 'for="sidrena_service_location_anchor_price_' )
+	&& false !== strpos( $services, 'id="sidrena_service_location_price_' )
+	&& false !== strpos( $services, 'id="sidrena_service_location_anchor_price_' ),
+	'Service per-location price controls must retain explicit labels.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $editor, '.sid-service-location-fields' ),
+	'Service per-location form layout must remain responsive.'
 );
 
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );
