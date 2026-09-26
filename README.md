@@ -135,29 +135,15 @@ Izdanje 1.0.10 donosi:
 - dodatno zbijene kartice, metrike, tablice i razmake prema referentnim SIDRENA ekranima
 - standardni engleski WordPress.org short description i Description sekciju
 - stroži Plugin Check i runtime CI
-- ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
-- obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
-- kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
-- filemtime cache-busting kako stari CSS iz cachea ne bi razbio izgled nakon nadogradnje
-- CI/distribution provjeru da se brand.css, admin.js i runtime logo asseti obvezno nalaze u svakom instalacijskom ZIP-u
-- znatno manji instalacijski ZIP bez WordPress.org screenshotova i marketinških asseta koji nisu potrebni za rad plugina
-- release limit od 1,5 MiB po instalacijskom ZIP-u radi lakše instalacije na shared hostingu s čestim PHP upload limitom od 2 MiB
-- cross-version repair/migration put za sigurnu nadogradnju 1.0.10 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
-- automatski popravak nedostajuće baze, postavki, upload direktorija i cron rasporeda pri nadogradnji
-- ispravan first-publish lifecycle za nove usluge, tako da se sidrena cijena snima nakon stvarno unesene aktualne cijene
-- jednu izvornu stavku Usluge u WordPress admin meniju bez dvostruke registracije
-- zaštitu od slučajnog dvostrukog slanja administratorskih obrazaca i jasnije stanje spremanja
-- pojačane NN 101/2026 i NN 105/2026 regresijske provjere
-- novi navy/cyan Sidrena administratorski sustav izrađen od nule
-- kompaktna S + sidro ikona u WordPress bočnom meniju
-- zasebni WordPress plavi i WooCommerce ljubičasti edition akcent
-- responzivne nadzorne ploče, tablice, statusne kartice i obrasci
-- redizajnirani katalog, cjenici, lokacije, arhiva, postavke i pomoć
-- lokalni logo, app icon, favicon, hero i edition-specific asseti
-- stvarni WordPress.org screenshotovi snimljeni iz aktivnog wp-admin okruženja
-- CI provjera runtime grešaka, ključnih preklapanja i horizontalnog overflowa na desktop, tablet i mobilnim širinama
-- WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
-- kompletan edition-specific SVG + PNG branding paket prenesen je u oba instalacijska plugina
+- pouzdano učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uz cache-busting nakon nadogradnje
+- jedan usklađen S + sidro sustav za glavni logo, edition lockupe, app/fav ikonu i kompaktnu WordPress menu ikonu
+- kompaktniji hero, kartice, metrike, tablice i obrasce usklađene s referentnim SIDRENA prikazima
+- WordPress plavi/cyan i WooCommerce ljubičasti edition akcent bez dupliciranih stilskih sustava
+- responzivne prikaze i stvarne browser provjere na desktop, tablet i mobilnim širinama
+- lean instalacijske ZIP-ove bez marketinških screenshotova, uz tvrdi limit od 1,5 MiB
+- cross-version repair/migration put za nadogradnju preko starijih SIDRENA izdanja iste edicije
+- first-publish zaštitu za usluge, sigurnije obrasce i pojačane NN 101/2026 / NN 105/2026 regresijske provjere
+- stvarne WordPress.org screenshotove, ikone i bannere generirane iz aktualnog runtimea i službenih brand izvora
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 

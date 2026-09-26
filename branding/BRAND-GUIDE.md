@@ -36,9 +36,9 @@ Primarni UI font je Inter. Plugin ne učitava font s vanjske mreže; koristi lok
 - `assets/images/logo-horizontal.svg` — logo za svijetlu podlogu.
 - `assets/images/logo-horizontal-light.svg` — logo za tamnu podlogu.
 - `assets/images/logo-wordpress.svg` — WordPress izdanje za svijetlu podlogu.
-- `assets/images/logo-wordpress-light.svg` — WordPress izdanje za tamni admin header.
+- `assets/images/logo-wordpress-light.svg` — WordPress edition lockup za tamne promotivne i dokumentacijske površine.
 - `assets/images/logo-woocommerce.svg` — WooCommerce izdanje za svijetlu podlogu.
-- `assets/images/logo-woocommerce-light.svg` — WooCommerce izdanje za tamni admin header.
+- `assets/images/logo-woocommerce-light.svg` — WooCommerce edition lockup za tamne promotivne i dokumentacijske površine.
 - `assets/images/menu-anchor.svg` — kompaktna WP admin menu ikona.
 - `assets/images/brand-hero.svg` — lokalni morski/svjetionik vizual za admin i dokumentaciju.
 
