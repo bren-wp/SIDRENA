@@ -9,9 +9,13 @@ Sidrena changelog
 = 1.0.12 =
 * Javni REST indeks sada iz sourcea vraća kanonski URL https://brendigo.com/sidrene-cijene/ umjesto umirovljene sidrene-cijene.com.hr adrese.
 * Build više ne prepisuje zastarjelu domenu tijekom pakiranja, pa produkcijski source mora biti ispravan prije izrade ZIP-a.
-* Dodan je izvršni canonical-url source-integrity smoke test koji provjerava runtime kod, edition datoteke, assete, prijevode i build ulaz.
+* Dodan je izvršni canonical-url source-integrity smoke test koji provjerava runtime kod, edition datoteke, assete, prijevode, dokumentaciju i sve ulaze koji završavaju u release paketima.
 * CI sada izravno blokira obje povijesne varijante SIDRENA domene u produkcijskom sourceu umjesto provjere pogrešne singularne varijante.
-* Produkcijski UI i poslovna logika ostaju nepromijenjeni u odnosu na 1.0.11; stvarni wp-admin screenshotovi ostaju reprezentativni.
+* REST cijene više ne vraćaju podatke prve aktivne lokacije kada klijent zatraži nepoznatu ili isključenu lokaciju; eksplicitno nevažeći location sada vraća 404 location_not_found.
+* Sve SIDRENA import/sync forme koriste isti zaštićeni submit lifecycle s blokadom dvostrukog slanja, aria-busy stanjem i resetom nakon browser Back/bfcache povratka.
+* Dodani su jasni invalid/focus stateovi, keyboard-focus za custom toggle kontrole, pristupačne labele/pomoć za CSV/XML upload te aria-live status spremanja.
+* Tablični editori dobili su ujednačenije širine kontrola i focus-within stanje radi preglednijeg rada na desktopu i manjim ekranima.
+* Dodan je trajni admin-form-ux regression test u glavni CI i zasebni admin-polish guard.
 * Oba plugina podignuta su na 1.0.12.
 
 = 1.0.11 =
