@@ -149,9 +149,9 @@ jobs:
           - **Sidrena WordPress** — za postojeći WordPress sadržaj i vlastiti katalog.
           - **Sidrena WooCommerce** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
 
-          Oba paketa uključuju Sidrena 1.0 vizualni sustav, lokalnu S + sidro menu ikonu, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, stvarne runtime screenshotove u dokumentaciji, edition-specific branding paket te finalne runtime i distribucijske guardove.
+          Oba instalacijska paketa uključuju samo runtime potreban za rad, lokalni SIDRENA identitet, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, tekstualne upute i PDF podršku. Teški WordPress.org screenshotovi i marketinški branding asseti ostaju u izvornom repozitoriju i nisu dio instalacijskog ZIP-a.
 
-          WordPress.org screenshotovi snimaju se iz stvarnog aktivnog wp-admin okruženja, a release objavljuje dva instalacijska ZIP-a i njihove SHA-256 kontrolne datoteke.
+          Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
 
           Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
@@ -278,13 +278,21 @@ jobs:
 
           gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --dir "$VERIFY_DIR"
 
-          test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
+          WP_ZIP="$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
+          WOO_ZIP="$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          test -f "$WP_ZIP"
           test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip.sha256"
-          test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          test -f "$WOO_ZIP"
           test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip.sha256"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.zip' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.sha256' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "4"
+
+          for ZIP in "$WP_ZIP" "$WOO_ZIP"; do
+            SIZE="$(stat -c%s "$ZIP")"
+            echo "$(basename "$ZIP"): $SIZE bytes"
+            test "$SIZE" -le 1572864
+          done
 
           (
             cd "$VERIFY_DIR"
@@ -292,12 +300,12 @@ jobs:
             sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
           )
 
-          unzip -t "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip" >/dev/null
-          unzip -t "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip" >/dev/null
+          unzip -t "$WP_ZIP" >/dev/null
+          unzip -t "$WOO_ZIP" >/dev/null
 
           mkdir -p "$VERIFY_DIR/wp" "$VERIFY_DIR/woo"
-          unzip -q "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip" -d "$VERIFY_DIR/wp"
-          unzip -q "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip" -d "$VERIFY_DIR/woo"
+          unzip -q "$WP_ZIP" -d "$VERIFY_DIR/wp"
+          unzip -q "$WOO_ZIP" -d "$VERIFY_DIR/woo"
 
           WP="$VERIFY_DIR/wp/sidrena-wordpress"
           WOO="$VERIFY_DIR/woo/sidrena-woocommerce"
@@ -307,9 +315,12 @@ jobs:
           test -s "$WP/assets/images/logo-wordpress-light.svg"
           test ! -e "$WP/assets/images/logo-woocommerce.svg"
           test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
+          test -s "$WP/docs/UPUTE.md"
           test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
+          test ! -d "$WP/branding"
+          test ! -d "$WP/docs/images"
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/static-php"
 
@@ -318,49 +329,19 @@ jobs:
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           test ! -e "$WOO/assets/images/logo-wordpress.svg"
           test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
+          test -s "$WOO/docs/UPUTE.md"
           test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
+          test ! -d "$WOO/branding"
+          test ! -d "$WOO/docs/images"
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/static-php"
-
-          for index in 1 2 3 4 5 6; do
-            test -s "$WP/docs/images/screenshot-$index.png"
-            test -s "$WOO/docs/images/screenshot-$index.png"
-          done
-
-          test -s "$WP/branding/BRAND-GUIDE.md"
-          test -s "$WP/branding/website-hero-wordpress.svg"
-          test -s "$WP/branding/rendered/website-hero-wordpress.png"
-          test -s "$WP/branding/rendered/plugin-cover-wordpress.png"
-          test -s "$WP/branding/social-wordpress.svg"
-          test -s "$WP/branding/wporg-banner-wordpress.svg"
-          test -s "$WP/branding/rendered/social-wordpress.png"
-          test -s "$WP/branding/rendered/wporg-banner-wordpress.png"
-          test ! -e "$WP/branding/website-hero-woocommerce.svg"
-          test ! -e "$WP/branding/wporg-banner-woocommerce.svg"
-          test ! -e "$WP/branding/rendered/social-woocommerce.png"
-          test ! -e "$WP/branding/rendered/website-hero-woocommerce.png"
-
-          test -s "$WOO/branding/BRAND-GUIDE.md"
-          test -s "$WOO/branding/website-hero-woocommerce.svg"
-          test -s "$WOO/branding/rendered/website-hero-woocommerce.png"
-          test -s "$WOO/branding/rendered/plugin-cover-woocommerce.png"
-          test -s "$WOO/branding/social-woocommerce.svg"
-          test -s "$WOO/branding/wporg-banner-woocommerce.svg"
-          test -s "$WOO/branding/rendered/social-woocommerce.png"
-          test -s "$WOO/branding/rendered/wporg-banner-woocommerce.png"
-          test ! -e "$WOO/branding/website-hero-wordpress.svg"
-          test ! -e "$WOO/branding/wporg-banner-wordpress.svg"
-          test ! -e "$WOO/branding/rendered/social-wordpress.png"
-          test ! -e "$WOO/branding/rendered/website-hero-wordpress.png"
 
           if grep -RIniE 'Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
             echo 'Retired branding detected inside published ZIP asset.' >&2
             exit 1
           fi
-
-
       - name: Verify and normalize stable release metadata
         if: startsWith(github.ref, 'refs/heads/release/')
         env:
