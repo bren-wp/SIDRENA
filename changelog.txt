@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.7 =
+* Ispravljena je prva objava usluge: sidrena cijena za novu uslugu sada se snima tek nakon spremanja stvarno unesene aktualne cijene, pa izravna objava novog zapisa više ne može preskočiti sidrenu vrijednost.
+* Regeneriranje cjenika usluga premješteno je na završni post-save lifecycle kako bi naslov, status i spremljena meta bili konzistentni prije izrade javnih datoteka.
+* Uklonjena je dvostruka registracija stavke Usluge u WordPress admin meniju; CPT sada daje jedinu izvornu stavku, a Sidrena je samo pozicionira i deduplicira.
+* Uklonjen je preostali duplicirani/stari source header iz service scalability testa.
+* Pojačani su legal/schema i admin-menu regresijski testovi za NN 101/2026, NN 105/2026 i first-publish service lifecycle.
+* Admin obrasci sada blokiraju slučajni dvostruki submit, označavaju stanje aria-busy te imaju ujednačeniji keyboard focus i submitting UX.
+* Oba odvojena plugina podignuta su na 1.0.7.
+
 = 1.0.6 =
 * Službeni datum MINGO pojašnjenja ispravljen je na datum objave 22.09.2026. u rulesetu, adminu, dokumentaciji i CI provjerama.
 * Compliance watchdog koristi zajednički Sidrena_Legal_Automation normalizer umjesto duplicirane logike za objavu, arhivu i sigurnosne postavke.

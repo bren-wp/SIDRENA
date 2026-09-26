@@ -155,7 +155,13 @@
 		if (!form || !form.matches || !form.matches('.sid-form, .sid-bulk-card, .sid-standalone-form, .sid-standalone-import')) {
 			return;
 		}
+		if (form.dataset.sidrenaSubmitting === '1') {
+			event.preventDefault();
+			return;
+		}
+		form.dataset.sidrenaSubmitting = '1';
 		form.classList.add('is-submitting');
+		form.setAttribute('aria-busy', 'true');
 		window.setTimeout(function () {
 			form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(function (button) {
 				button.disabled = true;
