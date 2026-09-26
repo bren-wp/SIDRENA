@@ -78,6 +78,7 @@ final class Sidrena_Activator {
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 		wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
+		wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
 		flush_rewrite_rules( false );
 	}
 

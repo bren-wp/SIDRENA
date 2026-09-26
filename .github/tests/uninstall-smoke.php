@@ -66,6 +66,21 @@ function sidrena_uninstall_assert( $condition, $message ) {
 	}
 }
 
+$expected_runtime_hooks = array(
+	'sidrena_daily_generation',
+	'sidrena_queued_generation',
+	'sidrena_publication_watch',
+	'sidrena_history_seed',
+	'sidrena_standalone_sync_batch',
+);
+
+if ( 'other-active' !== $scenario ) {
+	foreach ( $expected_runtime_hooks as $hook ) {
+		sidrena_uninstall_assert( in_array( $hook, $GLOBALS['sidrena_cleared_hooks'], true ), 'Final-edition uninstall did not clear runtime hook: ' . $hook );
+	}
+	sidrena_uninstall_assert( count( $expected_runtime_hooks ) === count( array_unique( $GLOBALS['sidrena_cleared_hooks'] ) ), 'Runtime hooks were cleared more than once or an unknown hook was cleared.' );
+}
+
 if ( 'destroy' === $scenario ) {
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_deleted_options'] ), 'Explicit destructive uninstall did not remove options.' );
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Explicit destructive uninstall did not clear schedules.' );

@@ -13,6 +13,7 @@ Sidrena changelog
 * Upgrade repair provjerava shemu baze, postavke, upload direktorije, cron rasporede i javnu stranicu bez brisanja postojećih poslovnih podataka.
 * Dodan je cross-version upgrade smoke test.
 * Uklonjeni su preostali duplicirani legacy source headeri iz package/edition/conflict testova.
+* Deaktivacija i konačni uninstall sada čiste i publication watchdog te nedovršene WordPress batch-sync cron događaje, pa nakon uklanjanja ne ostaju mrtvi zakazani hookovi.
 * Oba odvojena plugina podignuta su na 1.0.8.
 
 = 1.0.7 =
