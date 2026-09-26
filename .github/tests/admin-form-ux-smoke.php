@@ -1,0 +1,77 @@
+<?php
+/**
+ * Sidrena source file.
+ *
+ * @package Sidrena
+ * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
+ */
+
+declare( strict_types=1 );
+
+$root       = dirname( __DIR__, 2 );
+$admin      = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
+$standalone = file_get_contents( $root . '/includes/class-sidrena-standalone.php' );
+$script     = file_get_contents( $root . '/admin/js/admin.js' );
+$style      = file_get_contents( $root . '/admin/css/brand.css' );
+
+function sidrena_form_ux_assert( $condition, $message ) {
+	if ( ! $condition ) {
+		fwrite( STDERR, $message . PHP_EOL );
+		exit( 1 );
+	}
+}
+
+foreach ( array( $admin, $standalone, $script, $style ) as $contents ) {
+	sidrena_form_ux_assert( false !== $contents, 'Unable to read an admin UX source file.' );
+}
+
+sidrena_form_ux_assert(
+	2 === substr_count( $admin, 'class="sid-card sid-tool-card sid-form"' ),
+	'Both WooCommerce CSV import forms must use the managed Sidrena form lifecycle.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $standalone, 'class="sid-form sid-inline-form"' ),
+	'Standalone source sync must use the managed Sidrena form lifecycle.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $standalone, 'aria-describedby="sid-standalone-file-help"' ),
+	'Standalone import file input must expose its help text to assistive technology.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $admin, 'aria-describedby="sid-anchor-csv-help"' )
+	&& false !== strpos( $admin, 'aria-describedby="sid-location-csv-help"' ),
+	'WooCommerce import file inputs must expose their help text to assistive technology.'
+);
+
+foreach (
+	array(
+		"document.addEventListener('invalid'",
+		"window.addEventListener('pageshow'",
+		"setFormStatus(form, message('savingForm'",
+		"form.setAttribute('aria-busy', 'true')",
+		"button.removeAttribute('aria-disabled')",
+	) as $needle
+) {
+	sidrena_form_ux_assert( false !== strpos( $script, $needle ), 'Admin form lifecycle regression: ' . $needle );
+}
+
+foreach (
+	array(
+		'.sid-toggle-card input:focus-visible+.sid-toggle-ui',
+		'.sid-form-status',
+		'input[aria-invalid="true"]',
+		'.sid-table-wrap:focus-within',
+		'.sid-file-control',
+	) as $needle
+) {
+	sidrena_form_ux_assert( false !== strpos( $style, $needle ), 'Admin form style regression: ' . $needle );
+}
+
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "'savingForm'" ) && false !== strpos( $admin, "'invalidField'" ),
+	'Localized form feedback strings must remain available to admin.js.'
+);
+
+fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );
