@@ -1,6 +1,10 @@
-// Sidrena WordPress.org real screenshot capture.
-// Author: Brendigo
-// Plugin URI: https://brendigo.com/sidrene-cijene/
+/**
+ * Sidrena source file.
+ * Author: Brendigo
+ * Author URI: https://brendigo.com/
+ * Plugin URI: https://brendigo.com/sidrene-cijene/
+ * Support: sidrena@brendigo.com
+ */
 
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
@@ -42,6 +46,60 @@ async function assertNoRuntimeError(targetPage, route) {
 	];
 	if (fatalPatterns.some((pattern) => pattern.test(bodyText))) {
 		throw new Error(`Runtime error detected while capturing ${route}`);
+	}
+}
+
+async function assertBrandRuntime(targetPage, route) {
+	const result = await targetPage.evaluate(() => {
+		const styleLink = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).find((link) =>
+			(link.href || '').includes('/admin/css/brand.css')
+		);
+		const adminScript = Array.from(document.scripts).find((script) =>
+			(script.src || '').includes('/admin/js/admin.js')
+		);
+		const brandbar = document.querySelector('.sidrena-brandbar');
+		const logo = document.querySelector('.sidrena-brandbar__logo');
+		const card = document.querySelector('.sid-card, .sid-dashboard-metric');
+		const menuIcon = document.querySelector('#adminmenu .toplevel_page_sidrena .wp-menu-image img');
+
+		const read = (node) => node ? window.getComputedStyle(node) : null;
+		const brandStyle = read(brandbar);
+		const cardStyle = read(card);
+		const logoRect = logo ? logo.getBoundingClientRect() : null;
+		const menuRect = menuIcon ? menuIcon.getBoundingClientRect() : null;
+
+		return {
+			styleLoaded: !!styleLink,
+			scriptLoaded: !!adminScript,
+			brandDisplay: brandStyle ? brandStyle.display : '',
+			brandRadius: brandStyle ? parseFloat(brandStyle.borderRadius) || 0 : 0,
+			brandBackground: brandStyle ? brandStyle.backgroundImage : '',
+			cardRadius: cardStyle ? parseFloat(cardStyle.borderRadius) || 0 : 0,
+			cardBackground: cardStyle ? cardStyle.backgroundColor : '',
+			logoWidth: logoRect ? logoRect.width : 0,
+			logoHeight: logoRect ? logoRect.height : 0,
+			menuWidth: menuRect ? menuRect.width : 0,
+			menuHeight: menuRect ? menuRect.height : 0,
+		};
+	});
+
+	if (!result.styleLoaded) {
+		throw new Error(`SIDRENA brand.css is missing on ${route}`);
+	}
+	if (!result.scriptLoaded) {
+		throw new Error(`SIDRENA admin.js is missing on ${route}`);
+	}
+	if (result.brandDisplay !== 'grid' || result.brandRadius < 10 || !result.brandBackground.includes('brand-hero.svg')) {
+		throw new Error(`SIDRENA hero styles are not applied on ${route}: ${JSON.stringify(result)}`);
+	}
+	if (result.cardRadius < 8 || result.cardBackground !== 'rgb(255, 255, 255)') {
+		throw new Error(`SIDRENA card design is not applied on ${route}: ${JSON.stringify(result)}`);
+	}
+	if (result.logoWidth < 180 || result.logoWidth > 520 || result.logoHeight < 48 || result.logoHeight > 100) {
+		throw new Error(`SIDRENA hero logo is outside the production bounds on ${route}: ${JSON.stringify(result)}`);
+	}
+	if (result.menuWidth > 20.5 || result.menuHeight > 20.5) {
+		throw new Error(`SIDRENA WordPress menu icon is oversized on ${route}: ${JSON.stringify(result)}`);
 	}
 }
 
@@ -91,6 +149,7 @@ try {
 		await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 		await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
 		await assertNoRuntimeError(page, route);
+		await assertBrandRuntime(page, route);
 		await assertNoKeyOverlaps(page, route);
 		const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 		if (overflow > 4) {
@@ -110,6 +169,7 @@ try {
 			await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 			await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
 			await assertNoRuntimeError(page, responsiveRoute);
+			await assertBrandRuntime(page, responsiveRoute);
 			await assertNoKeyOverlaps(page, responsiveRoute);
 			const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 			if (overflow > 4) {
