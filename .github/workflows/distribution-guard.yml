@@ -218,8 +218,8 @@ jobs:
 
           WP="$OUT/.sidrena-build/sidrena-wordpress"
           WOO="$OUT/.sidrena-build/sidrena-woocommerce"
-          grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'Text Domain: sidrena-price-compliance' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: sidrena-for-woocommerce' "$WOO/sidrena-woocommerce.php"
           grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
           grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
