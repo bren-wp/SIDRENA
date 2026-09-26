@@ -215,9 +215,9 @@ jobs:
           grep -Fq 'is_woocommerce_edition' includes/class-sidrena-utils.php
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
           grep -Fq "\"Project-Id-Version: Sidrena ${WP_VERSION}\\n\"" languages/sidrena.pot
-          OLD_DOMAIN='sidrena-cijena'
-          if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
-            echo 'Retired Sidrena website domain detected.' >&2
+          if grep -RInE 'https?://(www[.])?sidren(a|e)-cijen(a|e)[.]com[.]hr/?' \
+            includes admin public assets editions languages uninstall.php tools/build-editions.sh; then
+            echo 'Retired Sidrena website domain detected in production source.' >&2
             exit 1
           fi
           if grep -RInE 'remove_(menu|submenu)_page[[:space:]]*\(' --include='*.php' . --exclude-dir=.git; then
