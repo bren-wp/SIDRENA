@@ -134,7 +134,11 @@ Izdanje 1.0.12 donosi:
 
 - ispravan kanonski Brendigo URL u javnom REST indeksu, bez zastarjele SIDRENA domene u produkcijskom sourceu
 - build više ne skriva zastarjeli URL automatskim prepisivanjem tijekom pakiranja
-- canonical URL source-integrity regression test i stroži CI guard za obje povijesne varijante domene
+- canonical URL source-integrity regression test i stroži CI guard za obje povijesne varijante domene, uključujući dokumentaciju i generator PDF podrške
+- strogo REST ponašanje za lokacije: nepoznat ili isključen eksplicitni location vraća 404 umjesto cijena druge poslovnice
+- ujednačen submit lifecycle na svim import/sync formama s blokadom dvostrukog slanja, aria-busy stanjem i sigurnim resetom nakon browser Back povratka
+- jasne invalid/focus stateove, keyboard-focus za custom toggle kontrole i pristupačne CSV/XML file input labele s uputom o ograničenju od 5 MB
+- zaseban admin-form-ux regression test u glavnom CI-ju i admin-polish guardu
 - release gate koji pokreće strogi službeni Plugin Check nad oba production-shaped paketa prije objave
 - novi Git tag za izdanje stvara se tek nakon builda, SHA/integrity provjere i oba Plugin Check gatea
 - trajni CI regression test čuva redoslijed build → provjera integriteta → Plugin Check → tag → GitHub Release
@@ -146,7 +150,7 @@ Izdanje 1.0.12 donosi:
 - uklonjen zastarjeli ručni `load_plugin_textdomain()` poziv
 - dodatno precrtan SIDRENA S + sidro znak te svi runtime lockupi, favicon, app icon i menu ikona prema dostavljenom brand-boardu
 - jedan kanonski SIDRENA logo u admin hero području i zasebna WordPress/WooCommerce edition oznaka
-- README hero vizuale i stvarne runtime screenshotove aktualnog WordPress/WooCommerce sučelja; 1.0.12 ne mijenja UI pa postojeći stvarni screenshotovi ostaju reprezentativni
+- README hero vizuale i stvarne runtime screenshotove aktualnog WordPress/WooCommerce sučelja; asset pipeline ih ponovno snima nakon 1.0.12 UI/UX dorada
 - ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
 - obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
 - kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
