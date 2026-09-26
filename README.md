@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.10</h1>
+<h1 align="center">SIDRENA 1.0.11</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -130,7 +130,7 @@ Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom 
 
 **SIDRENA 1.0.10** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
 
-Izdanje 1.0.10 donosi:
+Izdanje 1.0.11 donosi:
 
 - obradu dostavljenog Plugin Check izvještaja: translators komentari, escaping javnih URL-ova, sanitizacija ulaza i sigurniji SQL identifikatori
 - službeni WordPress Plugin Check prolazi za oba stvarna 1.0.10 produkcijska paketa nakon uklanjanja runtime fatala, i18n grešaka i prijavljenih sigurnosnih problema
