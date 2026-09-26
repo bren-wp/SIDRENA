@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.12 =
+* Javni REST indeks sada iz sourcea vraća kanonski URL https://brendigo.com/sidrene-cijene/ umjesto umirovljene sidrene-cijene.com.hr adrese.
+* Build više ne prepisuje zastarjelu domenu tijekom pakiranja, pa produkcijski source mora biti ispravan prije izrade ZIP-a.
+* Dodan je izvršni canonical-url source-integrity smoke test koji provjerava runtime kod, edition datoteke, assete, prijevode i build ulaz.
+* CI sada izravno blokira obje povijesne varijante SIDRENA domene u produkcijskom sourceu umjesto provjere pogrešne singularne varijante.
+* Produkcijski UI i poslovna logika ostaju nepromijenjeni u odnosu na 1.0.11; stvarni wp-admin screenshotovi ostaju reprezentativni.
+* Oba plugina podignuta su na 1.0.12.
+
 = 1.0.11 =
 * GitHub release workflow sada prije objave obvezno pokreće strogi službeni WordPress Plugin Check nad oba stvarna production-shaped paketa; release više ne može zaobići tu provjeru.
 * Novi Git tag više se ne stvara prije validacije; stvaranje taga odgođeno je dok ne prođu build, SHA/integrity provjera i oba Plugin Check gatea.
