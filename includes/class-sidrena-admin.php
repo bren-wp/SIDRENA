@@ -180,14 +180,14 @@ final class Sidrena_Admin {
 		$is_woo       = Sidrena_Utils::is_woocommerce_edition();
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'WooCommerce', 'sidrena' ) : __( 'WordPress', 'sidrena' );
-		$edition_logo = SIDRENA_URL . ( $is_woo ? 'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg' );
+		$brand_logo   = SIDRENA_URL . 'assets/images/logo-horizontal-light.svg';
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?>">
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="620" height="120" loading="eager" decoding="async" alt="<?php esc_attr_e( 'SIDRENA — usklađene cijene, sigurno poslovanje', 'sidrena' ); ?>">
+					<span class="sidrena-brandbar__edition"><span class="dashicons <?php echo $is_woo ? 'dashicons-cart' : 'dashicons-wordpress'; ?>"></span><?php echo esc_html( $edition_name ); ?></span>
 				</div>
 				<div class="sidrena-brandbar__copy">
 					<strong><?php esc_html_e( 'Vaš pouzdan signal u svijetu propisa o cijenama.', 'sidrena' ); ?></strong>

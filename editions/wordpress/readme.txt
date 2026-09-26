@@ -1,45 +1,44 @@
-=== Sidrena WordPress ===
+=== SIDRENA ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
 Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici i arhiva objava za WordPress bez WooCommercea.
+Price history, products and services, public CSV/XML price lists, locations and publication archives for standard WordPress sites.
 
 == Description ==
 
-Sidrena WordPress 1.0.9 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
+SIDRENA 1.0.10 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
-* vlastiti katalog proizvoda i usluga ili povezivanje postojećeg javnog WordPress sadržaja
-* sidrena/referentna cijena, aktualna cijena i jedinična cijena kada je primjenjiva
-* javni CSV/XML cjenici i pretraživi HTML prikaz
-* najmanje 30 dana javne arhive prethodnih objava
-* zasebne lokacije i webshop
-* dnevno automatsko generiranje, zadano u 06:30
-* sigurnosna provjera propuštene objave
-* lokalni audit zapis s ograničenjem rasta i bez telemetrije
-* kompaktan WordPress admin meni sa Sidrena sidro ikonicom
+* manage products and services in a dedicated catalogue or connect existing public WordPress content
+* record current, reference and unit prices when applicable
+* generate public CSV/XML price lists and searchable HTML output
+* keep at least 30 days of public publication archives
+* maintain separate physical locations and webshop channels
+* run scheduled daily generation, with 06:30 as the default time
+* keep a bounded local audit log without telemetry
+* use a compact, responsive WordPress admin interface with the SIDRENA visual system
 
-Službena stranica: https://brendigo.com/sidrene-cijene/
-Podrška: sidrena@brendigo.com
-Autor: Brendigo
+Official website: https://brendigo.com/sidrene-cijene/
+Support: sidrena@brendigo.com
+Author: Brendigo
 
-= Privatnost i vanjske veze =
+= Privacy and external links =
 
-Sidrena ne šalje telemetriju i ne prati korištenje plugina. Provjera javne dostupnosti koristi WordPress HTTP API samo prema javnim Sidrena datotekama na istoj web stranici. E-mail, WhatsApp, službena stranica i donacija otvaraju se samo nakon korisničke akcije.
+SIDRENA does not include telemetry or usage tracking. Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same site.
 
-= Važna napomena =
+= Important note =
 
-Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja. Povijesni i referentni podaci moraju odgovarati stvarnoj poslovnoj evidenciji.
+SIDRENA provides technical tools for recording, checking and publishing price data. It is not an automatic legal certification of a specific business.
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.9.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.10.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +73,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.10 =
+* Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.
+* Removed the discouraged manual translation loader and documented intentional external WPML hooks.
+* Refined the SIDRENA logo geometry, admin hero, menu icon, spacing, cards, tables and edition badges to follow the supplied brand references more closely.
+* WordPress.org description copy is now in standard English while the Croatian runtime interface remains unchanged.
+* README and WordPress.org runtime screenshots are regenerated from the real 1.0.10 plugin UI.
 
 = 1.0.9 =
 * Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.
