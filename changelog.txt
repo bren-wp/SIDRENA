@@ -13,6 +13,7 @@ Sidrena changelog
 * Brand header layering, overflow zaštite, dodirno skrolanje tablica i tablet/mobilne akcije dodatno su ispolirani.
 * Admin menu cleanup je pojednostavljen bez promjene finalne produkcijske navigacije.
 * Oba odvojena plugina podignuta su na 1.0.6.
+* Stvarni WordPress i WooCommerce runtime screenshotovi ponovno su snimljeni nakon 1.0.6 UI izmjena i WordPress.org asset pipeline je prošao.
 
 = 1.0.5 =
 * Službeni MINGO izvor usklađen je s dokumentom pojašnjenja objavljenim 22.09.2026.; ruleset, dokumentacija i CI provjere koriste isti datum.
