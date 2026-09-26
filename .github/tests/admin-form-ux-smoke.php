@@ -91,12 +91,12 @@ sidrena_form_ux_assert(
 
 sidrena_form_ux_assert(
 	false !== strpos( $admin, 'data-sidrena-oib' )
-	&& false !== strpos( $admin, "Sidrena_Utils::is_valid_oib( $business_oib )" )
+	&& false !== strpos( $admin, 'Sidrena_Utils::is_valid_oib( $business_oib )' )
 	&& false !== strpos( $admin, "settings_invalid_oib" ),
 	'OIB must be validated in the settings form and on the server.'
 );
 sidrena_form_ux_assert(
-	false !== strpos( $admin, "is_email( $business_email )" )
+	false !== strpos( $admin, 'is_email( $business_email )' )
 	&& false !== strpos( $admin, "settings_invalid_email" ),
 	'Business email must retain server-side validation.'
 );
