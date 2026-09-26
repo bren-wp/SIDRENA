@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 
 class WP_Error {
@@ -100,6 +91,9 @@ $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class
 $admin_source      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_csv_rows(' ), 'Legacy array-accumulating CSV parser must be removed.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_xml_rows(' ), 'Legacy array-accumulating XML parser must be removed.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' ), 'Standalone code index must prepare the posts table identifier.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
+sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );
 sidrena_import_stream_assert( false === strpos( $admin_source, 'if ( $processed > 50000 )' ), 'Woo imports must not partially import then silently stop at the row limit.' );
 
 fwrite( STDOUT, "Sidrena streaming import smoke test passed.\n" );
