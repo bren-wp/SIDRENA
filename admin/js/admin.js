@@ -65,6 +65,38 @@
 		field.removeAttribute('aria-invalid');
 	}
 
+	function isValidOib(value) {
+		var oib = String(value || '').replace(/\D+/g, '');
+		if (oib.length !== 11) {
+			return false;
+		}
+		var a = 10;
+		for (var i = 0; i < 10; i += 1) {
+			a = (a + Number(oib.charAt(i))) % 10;
+			if (a === 0) {
+				a = 10;
+			}
+			a = (2 * a) % 11;
+		}
+		var control = 11 - a;
+		if (control === 10) {
+			control = 0;
+		}
+		return control === Number(oib.charAt(10));
+	}
+
+	function validateOibField(field) {
+		if (!field || !field.matches || !field.matches('[data-sidrena-oib]')) {
+			return;
+		}
+		var value = String(field.value || '').trim();
+		if (!value) {
+			field.setCustomValidity('');
+			return;
+		}
+		field.setCustomValidity(isValidOib(value) ? '' : message('invalidOib', 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.'));
+	}
+
 	function setLocationState(row) {
 		if (!row) {
 			return;
@@ -184,6 +216,7 @@
 		if (!target) {
 			return;
 		}
+		validateOibField(target);
 		clearInvalidState(target);
 		var changedForm = target.form;
 		if (changedForm && changedForm.matches && changedForm.matches(managedFormSelector)) {
@@ -233,6 +266,7 @@
 	}, true);
 
 	document.addEventListener('input', function (event) {
+		validateOibField(event.target);
 		clearInvalidState(event.target);
 		var form = event.target && event.target.form;
 		if (form && form.matches && form.matches(managedFormSelector)) {
@@ -244,6 +278,7 @@
 		document.querySelectorAll(managedFormSelector).forEach(resetSubmittingState);
 	});
 
+	document.querySelectorAll('[data-sidrena-oib]').forEach(validateOibField);
 	initLocations();
 	syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 }());
