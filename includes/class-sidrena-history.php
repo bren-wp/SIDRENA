@@ -389,6 +389,7 @@ final class Sidrena_History {
 			$name    = $product ? $product->get_name() : get_the_title( $item_id );
 			$changes[] = array(
 				'item_id'     => $item_id,
+				/* translators: %d: WooCommerce product or variation ID. */
 				'name'        => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
 				'old_price'   => (float) $row['price'],
 				'new_price'   => (float) $new['price'],
@@ -479,6 +480,7 @@ final class Sidrena_History {
 
 		return array(
 			'item_id'    => $item_id,
+			/* translators: %d: WooCommerce product or variation ID. */
 			'name'       => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
 			'current'    => (float) $current,
 			'minimum'    => (float) min( $prices ),

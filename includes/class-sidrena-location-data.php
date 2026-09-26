@@ -113,6 +113,7 @@ final class Sidrena_Location_Data {
 		global $wpdb;
 		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
 		$table       = self::table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Explicit deletion from the plugin-owned per-location table.
 		$wpdb->delete( $table, array( 'location_id' => $location_id ), array( '%s' ) );
 		unset( self::$cache[ $location_id ] );
 	}
