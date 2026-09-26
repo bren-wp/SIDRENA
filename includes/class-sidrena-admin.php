@@ -24,6 +24,10 @@ final class Sidrena_Admin {
 
 	public function hooks() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+		// Defensive second chance: some admin routers/plugins alter the hook suffix.
+		// admin_print_styles runs before WordPress prints the style queue, so the
+		// Sidrena runtime CSS can still be enqueued without inline CSS.
+		add_action( 'admin_print_styles', array( $this, 'ensure_assets' ), 1 );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
@@ -43,9 +47,9 @@ final class Sidrena_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( SIDRENA_FILE ), array( $this, 'action_links' ) );
 	}
 
-	public function assets( $hook ) {
+	public function assets( $hook = '' ) {
 		$screen         = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		$is_plugin_page = false !== strpos( (string) $hook, 'sidrena' );
+		$is_plugin_page = $this->is_sidrena_admin_screen( $hook, $screen );
 		$is_service     = $screen && 'sidrena_service' === $screen->post_type;
 		$is_product     = Sidrena_Utils::is_woocommerce_edition() && $screen && 'product' === $screen->post_type;
 
@@ -54,8 +58,14 @@ final class Sidrena_Admin {
 		}
 
 		if ( $is_plugin_page ) {
-			wp_enqueue_style( 'sidrena-brand', SIDRENA_URL . 'admin/css/brand.css', array(), SIDRENA_VERSION );
-			wp_enqueue_script( 'sidrena-admin', SIDRENA_URL . 'admin/js/admin.js', array(), SIDRENA_VERSION, true );
+			$brand_file = SIDRENA_DIR . 'admin/css/brand.css';
+			$admin_file = SIDRENA_DIR . 'admin/js/admin.js';
+			$brand_ver  = is_file( $brand_file ) ? SIDRENA_VERSION . '-' . filemtime( $brand_file ) : SIDRENA_VERSION;
+			$admin_ver  = is_file( $admin_file ) ? SIDRENA_VERSION . '-' . filemtime( $admin_file ) : SIDRENA_VERSION;
+
+			wp_enqueue_style( 'dashicons' );
+			wp_enqueue_style( 'sidrena-brand', plugins_url( 'admin/css/brand.css', SIDRENA_FILE ), array(), $brand_ver );
+			wp_enqueue_script( 'sidrena-admin', plugins_url( 'admin/js/admin.js', SIDRENA_FILE ), array(), $admin_ver, true );
 			wp_localize_script(
 				'sidrena-admin',
 				'SidrenaAdmin',
@@ -69,12 +79,41 @@ final class Sidrena_Admin {
 			return;
 		}
 
-		wp_enqueue_style( 'sidrena-admin-editor', SIDRENA_URL . 'admin/css/admin.css', array(), SIDRENA_VERSION );
+		$editor_file = SIDRENA_DIR . 'admin/css/admin.css';
+		$editor_ver  = is_file( $editor_file ) ? SIDRENA_VERSION . '-' . filemtime( $editor_file ) : SIDRENA_VERSION;
+		wp_enqueue_style( 'sidrena-admin-editor', plugins_url( 'admin/css/admin.css', SIDRENA_FILE ), array(), $editor_ver );
+	}
+
+	public function ensure_assets() {
+		$this->assets( '' );
+	}
+
+	private function is_sidrena_admin_screen( $hook = '', $screen = null ) {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( 'sidrena' === $page || 0 === strpos( $page, 'sidrena-' ) ) {
+			return true;
+		}
+
+		$hook = (string) $hook;
+		if ( '' !== $hook && false !== strpos( $hook, 'sidrena' ) ) {
+			return true;
+		}
+
+		$screen_id = is_object( $screen ) && isset( $screen->id ) ? (string) $screen->id : '';
+		return '' !== $screen_id && false !== strpos( $screen_id, 'sidrena' );
 	}
 
 	public function admin_body_class( $classes ) {
+		$screen     = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$is_service = $screen && 'sidrena_service' === $screen->post_type;
+		$is_product = Sidrena_Utils::is_woocommerce_edition() && $screen && 'product' === $screen->post_type;
+
+		if ( ! $this->is_sidrena_admin_screen( '', $screen ) && ! $is_service && ! $is_product ) {
+			return $classes;
+		}
+
 		$edition = Sidrena_Utils::is_woocommerce_edition() ? 'woocommerce' : 'wordpress';
-		return trim( $classes . ' sidrena-edition-body-' . $edition );
+		return trim( $classes . ' sidrena-admin-screen sidrena-edition-body-' . $edition );
 	}
 
 	
@@ -127,7 +166,7 @@ final class Sidrena_Admin {
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" alt="<?php echo esc_attr( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?>">
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?>">
 				</div>
 				<div class="sidrena-brandbar__copy">
 					<strong><?php esc_html_e( 'Vaš pouzdan signal u svijetu propisa o cijenama.', 'sidrena' ); ?></strong>

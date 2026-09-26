@@ -195,6 +195,13 @@ jobs:
           grep -Fxq 'sidrena-woocommerce/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -Fxq 'sidrena-wordpress/assets/images/logo-wordpress.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -Fxq 'sidrena-woocommerce/assets/images/logo-woocommerce.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'sidrena-wordpress/admin/css/brand.css' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'sidrena-woocommerce/admin/css/brand.css' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'sidrena-wordpress/admin/js/admin.js' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'sidrena-woocommerce/admin/js/admin.js' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'sidrena-wordpress/assets/images/logo-wordpress-light.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'sidrena-woocommerce/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+
 
           ! grep -q '^sidrena-wordpress/branding/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           ! grep -q '^sidrena-woocommerce/branding/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"

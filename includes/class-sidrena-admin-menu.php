@@ -56,7 +56,7 @@ final class Sidrena_Admin_Menu {
 			$capability,
 			'sidrena',
 			array( Sidrena_Admin::instance(), 'page' ),
-			SIDRENA_URL . 'assets/images/menu-anchor.svg',
+			plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE ),
 			58
 		);
 

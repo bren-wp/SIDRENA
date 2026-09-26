@@ -93,6 +93,9 @@ jobs:
       - name: Admin menu capability smoke test
         run: php .github/tests/admin-menu-access-smoke.php
 
+      - name: Admin asset routing smoke test
+        run: php .github/tests/admin-assets-smoke.php
+
       - name: Edition conflict guard smoke tests
         shell: bash
         run: |
@@ -288,8 +291,14 @@ jobs:
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/editions"
 
-          test -f "$WP/assets/images/menu-anchor.svg"
-          test -f "$WOO/assets/images/menu-anchor.svg"
+          test -s "$WP/admin/css/brand.css"
+          test -s "$WOO/admin/css/brand.css"
+          test -s "$WP/admin/js/admin.js"
+          test -s "$WOO/admin/js/admin.js"
+          test -s "$WP/assets/images/menu-anchor.svg"
+          test -s "$WOO/assets/images/menu-anchor.svg"
+          test -s "$WP/assets/images/logo-wordpress-light.svg"
+          test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
           grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
           test -f "$WP/languages/sidrena-wordpress.pot"
