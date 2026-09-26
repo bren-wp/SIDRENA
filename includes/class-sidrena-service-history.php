@@ -65,7 +65,7 @@ final class Sidrena_Service_History {
 				$table,
 				$service_id
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$price = Sidrena_Utils::decimal( $price );
 		if ( '' === $price ) {
@@ -166,7 +166,7 @@ final class Sidrena_Service_History {
 				$window_sql
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$first = $wpdb->get_var(
@@ -175,7 +175,7 @@ final class Sidrena_Service_History {
 				$table,
 				$service_id
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		if ( ! $baseline || null === $baseline['price'] || '' === $baseline['price'] ) {
 			return array(
@@ -194,7 +194,7 @@ final class Sidrena_Service_History {
 				$window_sql,
 				$start_sql
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$values = array( (float) $baseline['price'] );
 		foreach ( is_array( $rows ) ? $rows : array() as $value ) {
@@ -259,7 +259,7 @@ final class Sidrena_Service_History {
 				$scan
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$newest  = array();
 		$changes = array();
@@ -333,7 +333,7 @@ final class Sidrena_Service_History {
 				$cutoff
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		if ( empty( $rows ) ) {
 			$rows = array( $latest );
@@ -367,8 +367,8 @@ final class Sidrena_Service_History {
 	public static function count_rows() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
-		return absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned service price-history table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
 	}
 
 	public function daily_snapshot() {
@@ -424,6 +424,6 @@ final class Sidrena_Service_History {
 				$table,
 				$cutoff
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 	}
 }

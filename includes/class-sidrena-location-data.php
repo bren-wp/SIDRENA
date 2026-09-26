@@ -40,7 +40,7 @@ final class Sidrena_Location_Data {
 				$location_id
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$data = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
@@ -100,7 +100,7 @@ final class Sidrena_Location_Data {
 				$availability,
 				current_time( 'mysql' )
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		unset( self::$cache[ $location_id ] );
 		if ( false !== $result && class_exists( 'Sidrena_Location_History' ) ) {
@@ -130,7 +130,7 @@ final class Sidrena_Location_Data {
 					$table,
 					$location_id
 				)
-			) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			)
 		);
 	}
 }

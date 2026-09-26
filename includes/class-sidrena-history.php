@@ -124,7 +124,7 @@ final class Sidrena_History {
 				$id
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column names.
+		);
 
 		$price   = '' === $price ? null : (float) $price;
 		$regular = '' === $regular ? null : (float) $regular;
@@ -262,7 +262,7 @@ final class Sidrena_History {
 				$window_sql
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column name.
+		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$first = $wpdb->get_var(
@@ -272,7 +272,7 @@ final class Sidrena_History {
 				$key,
 				$id
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column name.
+		);
 
 		if ( ! $baseline || null === $baseline['price'] || '' === $baseline['price'] ) {
 			return array(
@@ -292,7 +292,7 @@ final class Sidrena_History {
 				$window_sql,
 				$start_sql
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column name.
+		);
 
 		$values = array( (float) $baseline['price'] );
 		foreach ( is_array( $rows ) ? $rows : array() as $value ) {
@@ -363,7 +363,7 @@ final class Sidrena_History {
 				$scan
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$newest  = array();
 		$changes = array();
@@ -422,7 +422,7 @@ final class Sidrena_History {
 				$table
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		if ( ! $latest ) {
 			return array();
@@ -444,7 +444,7 @@ final class Sidrena_History {
 					$cutoff
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
@@ -457,7 +457,7 @@ final class Sidrena_History {
 					$cutoff
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 		}
 
 		if ( empty( $rows ) ) {
@@ -559,6 +559,6 @@ final class Sidrena_History {
 				$table,
 				$cutoff
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 	}
 }

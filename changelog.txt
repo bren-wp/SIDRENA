@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.11 =
+* GitHub release workflow sada prije objave obvezno pokreće strogi službeni WordPress Plugin Check nad oba stvarna production-shaped paketa; release više ne može zaobići tu provjeru.
+* Plugin Check workflow dodatno prati release grane i v* tagove radi potpune vidljivosti CI stanja.
+* Preostali service-history COUNT upit više ne interpolira naziv vlastite tablice, nego koristi WordPress %i identifier placeholder.
+* Standalone code-index upit sada priprema i WordPress posts/postmeta identifikatore pomoću %i umjesto interpolacije u SQL string.
+* Uklonjeni su zastarjeli PreparedSQL.InterpolatedNotPrepared suppression komentari iz upita koji već koriste pripremljene identifier placeholdere.
+* Dodani su regresijski testovi koji sprječavaju povratak raw interpolacije SQL identifikatora.
+* Oba plugina podignuta su na 1.0.11.
+
 = 1.0.10 =
 * Upgrade/repair lifecycle premješten je na `init` prije javnog-page repaira, čime se uklanja stvarni WP-CLI/Plugin Check fatal pri preranoj izradi stranice i prerano učitavanje prijevoda.
 * Dodan je službeni WordPress Plugin Check workflow za oba stvarna produkcijska paketa; provjera koristi stvarne edition slugove, a jedino je svjesno izuzet policy-only trademark upozorenje za postojeće kompatibilne folder slugove.

@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.10 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.11 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.10.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.11.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,12 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.11 =
+* Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
+* Prepared remaining service-history and standalone table identifiers with WordPress %i placeholders instead of SQL string interpolation.
+* Removed obsolete PreparedSQL.InterpolatedNotPrepared suppression comments from already-prepared custom-table queries.
+* Added regression coverage for service-history and standalone SQL identifier handling.
 
 = 1.0.10 =
 * Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.

@@ -10,6 +10,7 @@
 
 
 $services = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
+$history  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-service-history.php' );
 $admin    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $css      = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
@@ -33,5 +34,7 @@ sidrena_service_scale_assert( false !== strpos( $css, '.sidrena-services__pagina
 sidrena_service_scale_assert( false === strpos( $services, "add_action( 'transition_post_status'" ), 'Service anchor snapshot must not run before submitted service price metadata is saved.' );
 sidrena_service_scale_assert( false !== strpos( $services, "add_action( 'wp_after_insert_post'" ), 'Service post-save finalization hook is missing.' );
 sidrena_service_scale_assert( false !== strpos( $services, 'private function snapshot_newly_published' ), 'Service first-publication anchor snapshot helper is missing.' );
+sidrena_service_scale_assert( false !== strpos( $history, "\$wpdb->prepare( 'SELECT COUNT(*) FROM %i', \$table )" ), 'Service history count query must prepare the custom table identifier.' );
+sidrena_service_scale_assert( false === strpos( $history, 'SELECT COUNT(*) FROM {$table}' ), 'Service history count query must not interpolate the custom table identifier.' );
 
 fwrite( STDOUT, "Sidrena service scalability smoke test passed.\n" );
