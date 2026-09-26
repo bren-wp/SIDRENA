@@ -105,7 +105,6 @@ for path in root.rglob('*'):
     if not path.is_file() or path.suffix.lower() not in text_suffixes:
         continue
     text = path.read_text(encoding='utf-8')
-    text = text.replace('https://sidrene-cijene.com.hr/', 'https://brendigo.com/sidrene-cijene/')
     if path.suffix.lower() == '.php':
         text = text.replace(", 'sidrena' )", f", '{domain}' )")
         text = text.replace("load_plugin_textdomain( 'sidrena',", f"load_plugin_textdomain( '{domain}',")

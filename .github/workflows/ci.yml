@@ -87,6 +87,9 @@ jobs:
       - name: Woo REST flattened pagination smoke test
         run: php .github/tests/rest-woocommerce-pagination-smoke.php
 
+      - name: REST location resolution smoke test
+        run: php .github/tests/rest-location-resolution-smoke.php
+
       - name: Location history batching smoke test
         run: php .github/tests/location-history-batching-smoke.php
 
@@ -95,6 +98,9 @@ jobs:
 
       - name: Admin asset routing smoke test
         run: php .github/tests/admin-assets-smoke.php
+
+      - name: Admin form UX smoke test
+        run: php .github/tests/admin-form-ux-smoke.php
 
       - name: Edition conflict guard smoke tests
         shell: bash
@@ -156,6 +162,9 @@ jobs:
       - name: Support and public surface smoke test
         run: php .github/tests/support-surface-smoke.php
 
+      - name: Canonical URL source-integrity smoke test
+        run: php .github/tests/canonical-url-smoke.php
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
@@ -212,9 +221,9 @@ jobs:
           grep -Fq 'is_woocommerce_edition' includes/class-sidrena-utils.php
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
           grep -Fq "\"Project-Id-Version: Sidrena ${WP_VERSION}\\n\"" languages/sidrena.pot
-          OLD_DOMAIN='sidrena-cijena'
-          if grep -RInF "${OLD_DOMAIN}.com.hr" . --exclude-dir=.git; then
-            echo 'Retired Sidrena website domain detected.' >&2
+          if grep -RInE 'https?://(www[.])?sidren(a|e)-cijen(a|e)[.]com[.]hr/?' \
+            includes admin public assets editions languages docs uninstall.php tools/build-editions.sh tools/build-support-pdf.py; then
+            echo 'Retired Sidrena website domain detected in production source.' >&2
             exit 1
           fi
           if grep -RInE 'remove_(menu|submenu)_page[[:space:]]*\(' --include='*.php' . --exclude-dir=.git; then

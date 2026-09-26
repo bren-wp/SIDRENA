@@ -81,6 +81,9 @@ final class Sidrena_Admin {
 					'keepOneLocation'      => __( 'Mora ostati barem jedna lokacija. Možete je isključiti ako je trenutačno ne želite objavljivati.', 'sidrena' ),
 					'removeUnsavedProduct' => __( 'Ukloniti ovaj nespremljeni proizvod?', 'sidrena' ),
 					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
+					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
+					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
+					'invalidOib'            => __( 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.', 'sidrena' ),
 				)
 			);
 			return;
@@ -292,6 +295,8 @@ final class Sidrena_Admin {
 			'locations_required'           => array( 'error', __( 'Mora postojati barem jedna lokacija. Ako je trenutačno ne želite objavljivati, ostavite je spremljenu i isključite opciju Aktivna.', 'sidrena' ) ),
 			'locations_invalid'            => array( 'error', __( 'Lokacije nisu spremljene. Aktivna lokacija mora imati jedinstveni ID, vrstu objekta, oznaku i adresu.', 'sidrena' ) ),
 			'settings_saved_cron_warning'  => array( 'warning', __( 'Postavke su spremljene, ali WordPress nije uspio ponovno zakazati dnevno generiranje. Provjerite WP-Cron ili konfigurirajte server cron.', 'sidrena' ) ),
+			'settings_invalid_oib'          => array( 'error', __( 'Postavke nisu spremljene. Uneseni OIB nema valjanu kontrolnu znamenku.', 'sidrena' ) ),
+			'settings_invalid_email'        => array( 'error', __( 'Postavke nisu spremljene. Provjerite e-mail adresu poslovnog subjekta.', 'sidrena' ) ),
 			'standalone_imported'          => array( 'success', __( 'Uvoz WordPress kataloga je dovršen.', 'sidrena' ) ),
 			'standalone_import_failed'     => array( 'error', __( 'WordPress katalog nije moguće uvesti. Provjerite CSV/XML format, veličinu, zaglavlja i obvezne podatke.', 'sidrena' ) ),
 			'standalone_saved_with_errors' => array( 'warning', __( 'Katalog je djelomično spremljen. Neke stavke nije bilo moguće zapisati; provjerite Dnevnik i pokušajte ponovno.', 'sidrena' ) ),
@@ -1216,8 +1221,8 @@ final class Sidrena_Admin {
 				<div class="sid-fields">
 					<label><span><?php esc_html_e( 'Naziv obrta / tvrtke', 'sidrena' ); ?></span><input type="text" maxlength="190" name="business_name" value="<?php echo esc_attr( $settings['business_name'] ); ?>" autocomplete="organization"></label>
 					<label class="sid-wide"><span><?php esc_html_e( 'Sjedište / poslovna adresa', 'sidrena' ); ?></span><input type="text" maxlength="250" name="business_address" value="<?php echo esc_attr( $settings['business_address'] ); ?>" autocomplete="street-address"></label>
-					<label><span>OIB</span><input type="text" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" name="business_oib" value="<?php echo esc_attr( $settings['business_oib'] ); ?>"><small><?php esc_html_e( 'Ako ga unosite, Sidrena provjerava kontrolnu znamenku.', 'sidrena' ); ?></small></label>
-					<label><span><?php esc_html_e( 'E-mail poslovnog subjekta', 'sidrena' ); ?></span><input type="email" maxlength="190" name="business_email" value="<?php echo esc_attr( $settings['business_email'] ); ?>" autocomplete="email"></label>
+					<label for="sidrena-business-oib"><span>OIB</span><input type="text" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" id="sidrena-business-oib" name="business_oib" value="<?php echo esc_attr( $settings['business_oib'] ); ?>" aria-describedby="sidrena-business-oib-help" data-sidrena-oib><small id="sidrena-business-oib-help"><?php esc_html_e( 'Ako ga unosite, mora imati 11 znamenki i valjanu kontrolnu znamenku.', 'sidrena' ); ?></small></label>
+					<label for="sidrena-business-email"><span><?php esc_html_e( 'E-mail poslovnog subjekta', 'sidrena' ); ?></span><input type="email" maxlength="190" id="sidrena-business-email" name="business_email" value="<?php echo esc_attr( $settings['business_email'] ); ?>" autocomplete="email"></label>
 					<label><span><?php esc_html_e( 'Telefon', 'sidrena' ); ?></span><input type="text" maxlength="40" name="business_phone" value="<?php echo esc_attr( $settings['business_phone'] ); ?>" autocomplete="tel"></label>
 					<label><span><?php esc_html_e( 'Naziv registra', 'sidrena' ); ?></span><input type="text" maxlength="190" name="business_registry" value="<?php echo esc_attr( $settings['business_registry'] ); ?>" placeholder="<?php esc_attr_e( 'npr. Sudski registar ili Obrtni registar', 'sidrena' ); ?>"></label>
 					<label><span><?php esc_html_e( 'Broj upisa u registar', 'sidrena' ); ?></span><input type="text" maxlength="100" name="business_registry_number" value="<?php echo esc_attr( $settings['business_registry_number'] ); ?>"></label>
@@ -1259,13 +1264,13 @@ final class Sidrena_Admin {
 
 		<?php if ( $woo ) : ?>
 			<div class="sid-grid sid-grid-2">
-				<form class="sid-card sid-tool-card" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_anchor"><?php wp_nonce_field( 'sidrena_import_anchor' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB.', 'sidrena' ); ?></p><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" required><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
 				</form>
-				<form class="sid-card sid-tool-card" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_location_data"><?php wp_nonce_field( 'sidrena_import_location_data' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-location-alt"></span></div><h2><?php esc_html_e( 'Raspoloživost i cijena po lokaciji', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: location_id, product_id ili sku, price, anchor_price, availability. Prazna cijena za lokaciju koristi osnovnu WooCommerce vrijednost.', 'sidrena' ); ?></p><input class="sid-file-input" type="file" name="location_csv" accept=".csv,text/csv,text/plain" required><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi lokacijske podatke', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-location-alt"></span></div><h2><?php esc_html_e( 'Raspoloživost i cijena po lokaciji', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: location_id, product_id ili sku, price, anchor_price, availability. Prazna cijena za lokaciju koristi osnovnu WooCommerce vrijednost.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="location_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-location-csv-help" required><small id="sid-location-csv-help"><?php esc_html_e( 'Najviše 5 MB. Datoteka mora sadržavati lokaciju i identifikator proizvoda ili SKU.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi lokacijske podatke', 'sidrena' ); ?></button>
 				</form>
 			</div>
 			<div class="sid-grid sid-grid-2">
@@ -1372,12 +1377,24 @@ final class Sidrena_Admin {
 		}
 		$tooltip_text = sanitize_textarea_field( $this->post_value( 'anchor_tooltip_text', $old['anchor_tooltip_text'] ?? '' ) );
 
+		$business_oib_raw = trim( sanitize_text_field( $this->post_value( 'business_oib', '' ) ) );
+		$business_oib     = Sidrena_Utils::sanitize_oib( $business_oib_raw );
+		if ( '' !== $business_oib_raw && ! Sidrena_Utils::is_valid_oib( $business_oib ) ) {
+			$this->redirect( 'settings', 'settings_invalid_oib' );
+		}
+
+		$business_email_raw = trim( sanitize_text_field( $this->post_value( 'business_email', '' ) ) );
+		$business_email     = sanitize_email( $business_email_raw );
+		if ( '' !== $business_email_raw && ( '' === $business_email || ! is_email( $business_email ) ) ) {
+			$this->redirect( 'settings', 'settings_invalid_email' );
+		}
+
 		$new = array(
 			'business_mode'       => $business_mode,
 			'business_name'       => sanitize_text_field( $this->post_value( 'business_name', '' ) ),
 			'business_address'    => sanitize_text_field( $this->post_value( 'business_address', '' ) ),
-			'business_oib'        => Sidrena_Utils::sanitize_oib( $this->post_value( 'business_oib', '' ) ),
-			'business_email'      => sanitize_email( $this->post_value( 'business_email', '' ) ),
+			'business_oib'        => $business_oib,
+			'business_email'      => $business_email,
 			'business_phone'      => Sidrena_Utils::sanitize_business_phone( $this->post_value( 'business_phone', '' ) ),
 			'business_registry'   => sanitize_text_field( $this->post_value( 'business_registry', '' ) ),
 			'business_registry_number' => sanitize_text_field( $this->post_value( 'business_registry_number', '' ) ),

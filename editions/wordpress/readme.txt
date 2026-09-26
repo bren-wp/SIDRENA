@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.11 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.12 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.11.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.12.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,18 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.12 =
+* Corrected the public REST index plugin URL so source and packaged runtime both expose the canonical Brendigo SIDRENA page.
+* Removed the build-time legacy-domain rewrite that could hide stale production source during packaging.
+* Added source-integrity regression coverage for retired SIDRENA domain variants across runtime code, documentation and every input copied into release packages.
+* Strengthened CI so retired production URLs fail before packaging instead of being silently normalized.
+* Explicitly unknown or disabled REST location IDs now return a 404 error instead of silently falling back to another active location.
+* Unified import and sync forms under the same double-submit protection, browser-back recovery and accessible form status lifecycle.
+* Added visible invalid/focus states, keyboard focus for custom toggles and labelled CSV/XML upload controls with file-size guidance.
+* Added permanent admin-form UX regression coverage to the main CI and dedicated admin-polish guard.
+* Service per-location current/reference price inputs now have explicit labels and a responsive editor layout.
+* Business identity settings now validate Croatian OIB checksums client-side and server-side, and reject invalid business e-mail values with clear feedback.
 
 = 1.0.11 =
 * Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.

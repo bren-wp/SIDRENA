@@ -116,7 +116,7 @@ final class Sidrena_REST {
 			array(
 				'schema'          => 3,
 				'generator'       => 'Sidrena ' . SIDRENA_VERSION,
-				'plugin_url'      => 'https://sidrene-cijene.com.hr/',
+				'plugin_url'      => 'https://brendigo.com/sidrene-cijene/',
 				'ruleset'         => SIDRENA_RULESET,
 				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
 				'catalog_mode'    => Sidrena_Utils::runtime_mode(),
@@ -137,10 +137,14 @@ final class Sidrena_REST {
 			return new WP_Error( 'disabled', __( 'Javni dohvat cijena u realnom vremenu je isključen.', 'sidrena' ), array( 'status' => 404 ) );
 		}
 
-		$type     = sanitize_key( (string) $request->get_param( 'type' ) );
-		$page     = max( 1, absint( $request->get_param( 'page' ) ) );
-		$per_page = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
-		$location = $this->resolve_location( (string) $request->get_param( 'location' ) );
+		$type               = sanitize_key( (string) $request->get_param( 'type' ) );
+		$page               = max( 1, absint( $request->get_param( 'page' ) ) );
+		$per_page           = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
+		$requested_location = Sidrena_Utils::sanitize_location_id( (string) $request->get_param( 'location' ) );
+		$location           = $this->resolve_location( $requested_location );
+		if ( $requested_location && null === $location ) {
+			return new WP_Error( 'location_not_found', __( 'Tražena lokacija nije pronađena ili nije uključena.', 'sidrena' ), array( 'status' => 404 ) );
+		}
 
 		$data = array(
 			'schema'       => 1,
@@ -203,6 +207,7 @@ final class Sidrena_REST {
 		);
 	}
 	private function resolve_location( $requested ) {
+		$requested = Sidrena_Utils::sanitize_location_id( $requested );
 		$locations = Sidrena_Utils::locations();
 		if ( $requested ) {
 			foreach ( $locations as $location ) {
@@ -210,6 +215,7 @@ final class Sidrena_REST {
 					return $location;
 				}
 			}
+			return null;
 		}
 		foreach ( $locations as $location ) {
 			if ( 'yes' === ( $location['enabled'] ?? '' ) ) {

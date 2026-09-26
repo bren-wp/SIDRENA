@@ -173,6 +173,30 @@
 	margin:0 0 14px;
 }
 
+.sid-service-location-card {
+	display:grid;
+	gap:10px;
+}
+.sid-service-location-title {
+	display:block;
+	color:var(--sid-editor-navy);
+	font-size:13px;
+	line-height:1.4;
+}
+.sid-service-location-fields {
+	display:grid;
+	grid-template-columns:repeat(2,minmax(0,1fr));
+	gap:7px 10px;
+}
+.sid-service-location-fields label {
+	margin:0;
+	font-size:12px;
+	font-weight:700;
+}
+.sid-service-location-fields input {
+	min-width:0;
+}
+
 /* Front-facing service preview helpers can also appear in editor previews. */
 .sidrena-public-message {
 	padding:12px 14px;
@@ -235,6 +259,10 @@
 	}
 
 	.sidrena-service-grid {
+		grid-template-columns:1fr;
+	}
+
+	.sid-service-location-fields {
 		grid-template-columns:1fr;
 	}
 

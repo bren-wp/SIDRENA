@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.11\n"
+"Project-Id-Version: Sidrena 1.0.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1463,3 +1463,68 @@ msgstr ""
 #: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
 msgid "Status “obvezna”, “nije primjenjiva” ili “iznimka” služi kao evidencija odluke administratora. Sidrena provjerava jesu li potrebni podaci uneseni, ali ne klasificira proizvod umjesto odgovorne osobe."
 msgstr ""
+
+#: includes/class-sidrena-rest.php
+msgid "Tražena lokacija nije pronađena ili nije uključena."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Spremanje…"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Provjerite označeno polje i pokušajte ponovno."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "CSV datoteka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Najviše 5 MB. Datoteka mora sadržavati lokaciju i identifikator proizvoda ili SKU."
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "CSV ili XML datoteka"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Najviše 5 MB. Podržani su CSV i XML formati bez izvršnog sadržaja."
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Aktualna cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Sidrena cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Koristi osnovnu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Koristi osnovnu sidrenu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Postavke nisu spremljene. Uneseni OIB nema valjanu kontrolnu znamenku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Postavke nisu spremljene. Provjerite e-mail adresu poslovnog subjekta."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Ako ga unosite, mora imati 11 znamenki i valjanu kontrolnu znamenku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom."
+msgstr ""
+
