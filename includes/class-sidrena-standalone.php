@@ -1125,18 +1125,20 @@ final class Sidrena_Standalone {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID, pm.meta_value
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
+				FROM %i p
+				INNER JOIN %i pm ON pm.post_id = p.ID
 				WHERE p.post_type = %s
 					AND p.post_status IN ('publish','draft','pending','private')
 					AND pm.meta_key = %s
 					AND pm.meta_value <> ''
 				ORDER BY p.ID ASC",
+				$wpdb->posts,
+				$wpdb->postmeta,
 				self::POST_TYPE,
 				'_sidrena_standalone_code'
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- WordPress-owned table names; dynamic values are prepared.
+		);
 
 		$index = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
