@@ -184,6 +184,11 @@
 		if (!target) {
 			return;
 		}
+		clearInvalidState(target);
+		var changedForm = target.form;
+		if (changedForm && changedForm.matches && changedForm.matches(managedFormSelector)) {
+			setFormStatus(changedForm, '');
+		}
 		if (target.matches && target.matches('.sid-location-enabled')) {
 			setLocationState(closest(target, '.sid-location'));
 			return;
