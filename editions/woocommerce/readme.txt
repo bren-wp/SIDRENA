@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.10 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.11 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.10.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.11.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.11 =
+* Hardened the release pipeline so a new version tag is created only after package integrity checks and both official WordPress Plugin Check gates pass.
+* Plugin Check now runs directly against the exact production-shaped WordPress and WooCommerce builds staged for release publication.
+* Release branches and v* tags are also covered by the standalone Plugin Check workflow for additional CI visibility.
+* Added a permanent regression test that fails CI if release publication can bypass Plugin Check or create a new tag before the validation gates.
+* Runtime UI and business logic are unchanged from the verified 1.0.10 baseline; existing real wp-admin screenshots remain representative of the shipped interface.
 
 = 1.0.10 =
 * Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.
