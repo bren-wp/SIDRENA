@@ -35,6 +35,21 @@ const context = await browser.newContext({
 	deviceScaleFactor: 1,
 });
 const page = await context.newPage();
+let pageErrors = [];
+
+page.on('pageerror', (error) => {
+	pageErrors.push(error && error.message ? error.message : String(error));
+});
+
+function resetPageErrors() {
+	pageErrors = [];
+}
+
+function assertNoClientErrors(route) {
+	if (pageErrors.length) {
+		throw new Error(`JavaScript runtime error on ${route}: ${pageErrors.join(' | ')}`);
+	}
+}
 
 async function assertNoRuntimeError(targetPage, route) {
 	const bodyText = await targetPage.locator('body').innerText();
@@ -136,6 +151,55 @@ async function assertNoKeyOverlaps(targetPage, route) {
 	}
 }
 
+async function assertFormRuntime(targetPage, route) {
+	const issues = await targetPage.evaluate(() => {
+		const out = [];
+		const viewportWidth = document.documentElement.clientWidth;
+		const forms = document.querySelectorAll('.sid-form, .sid-bulk-card, .sid-standalone-form, .sid-standalone-import');
+
+		for (const form of forms) {
+			const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+			if (submit) {
+				const rect = submit.getBoundingClientRect();
+				const style = window.getComputedStyle(submit);
+				if (submit.disabled || style.display === 'none' || style.visibility === 'hidden' || rect.width < 2 || rect.height < 34) {
+					out.push('submit control is disabled, hidden or too small');
+				}
+			}
+
+			for (const file of form.querySelectorAll('input[type="file"]')) {
+				const label = file.closest('label');
+				const describedBy = file.getAttribute('aria-describedby');
+				if (!label) {
+					out.push('file input has no wrapping label');
+				}
+				if (!describedBy || !document.getElementById(describedBy)) {
+					out.push('file input has no valid aria-describedby help text');
+				}
+			}
+
+			for (const control of form.querySelectorAll('input:not([type="hidden"]), select, textarea, button')) {
+				if (control.closest('.sid-table-wrap')) continue;
+				const style = window.getComputedStyle(control);
+				if (style.display === 'none' || style.visibility === 'hidden') continue;
+				const rect = control.getBoundingClientRect();
+				if (rect.width < 2 || rect.height < 2) {
+					out.push('visible form control has zero layout size');
+					continue;
+				}
+				if (rect.left < -4 || rect.right > viewportWidth + 4) {
+					out.push(`form control escapes viewport: ${Math.round(rect.left)}..${Math.round(rect.right)} of ${viewportWidth}`);
+				}
+			}
+		}
+		return out;
+	});
+
+	if (issues.length) {
+		throw new Error(`Form UI regression on ${route}: ${JSON.stringify(issues)}`);
+	}
+}
+
 try {
 	await page.goto(`${baseUrl}/wp-login.php`, { waitUntil: 'domcontentloaded' });
 	await page.locator('#user_login').fill('admin');
@@ -146,11 +210,14 @@ try {
 	]);
 
 	for (const [filename, route, selector] of screens) {
+		resetPageErrors();
 		await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 		await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
 		await assertNoRuntimeError(page, route);
+		assertNoClientErrors(route);
 		await assertBrandRuntime(page, route);
 		await assertNoKeyOverlaps(page, route);
+		await assertFormRuntime(page, route);
 		const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 		if (overflow > 4) {
 			throw new Error(`Horizontal layout overflow on ${route}: ${overflow}px`);
@@ -166,11 +233,14 @@ try {
 		await page.setViewportSize({ width, height: 900 });
 		for (const [, route, selector] of screens) {
 			const responsiveRoute = `${route} @${width}px`;
+			resetPageErrors();
 			await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
 			await page.locator(selector).first().waitFor({ state: 'visible', timeout: 30000 });
 			await assertNoRuntimeError(page, responsiveRoute);
+			assertNoClientErrors(responsiveRoute);
 			await assertBrandRuntime(page, responsiveRoute);
 			await assertNoKeyOverlaps(page, responsiveRoute);
+			await assertFormRuntime(page, responsiveRoute);
 			const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
 			if (overflow > 4) {
 				throw new Error(`Horizontal layout overflow on ${responsiveRoute}: ${overflow}px`);
