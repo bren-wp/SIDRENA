@@ -139,6 +139,7 @@ Izdanje 1.0.12 donosi:
 - ujednačen submit lifecycle na svim import/sync formama s blokadom dvostrukog slanja, aria-busy stanjem i sigurnim resetom nakon browser Back povratka
 - jasne invalid/focus stateove, keyboard-focus za custom toggle kontrole i pristupačne CSV/XML file input labele s uputom o ograničenju od 5 MB
 - zaseban admin-form-ux regression test u glavnom CI-ju i admin-polish guardu
+- eksplicitne labele i responzivni raspored za aktualnu i sidrenu cijenu po lokaciji u editoru usluga
 - release gate koji pokreće strogi službeni Plugin Check nad oba production-shaped paketa prije objave
 - novi Git tag za izdanje stvara se tek nakon builda, SHA/integrity provjere i oba Plugin Check gatea
 - trajni CI regression test čuva redoslijed build → provjera integriteta → Plugin Check → tag → GitHub Release
