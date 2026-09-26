@@ -84,6 +84,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Unified import and sync forms under the same double-submit protection, browser-back recovery and accessible form status lifecycle.
 * Added visible invalid/focus states, keyboard focus for custom toggles and labelled CSV/XML upload controls with file-size guidance.
 * Added permanent admin-form UX regression coverage to the main CI and dedicated admin-polish guard.
+* Service per-location current/reference price inputs now have explicit labels and a responsive editor layout.
 
 = 1.0.11 =
 * Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
