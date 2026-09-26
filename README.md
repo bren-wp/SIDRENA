@@ -10,7 +10,7 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="SIDRENA — usklađene cijene, sigurno poslovanje" width="560">
 </p>
 
-<h1 align="center">SIDRENA 1.0.8</h1>
+<h1 align="center">SIDRENA 1.0.9</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -119,17 +119,22 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.8 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.9 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.8
+## Zašto SIDRENA 1.0.9
 
-**SIDRENA 1.0.8** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
+**SIDRENA 1.0.9** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
 
-Izdanje 1.0.8 donosi:
+Izdanje 1.0.9 donosi:
 
+- ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
+- obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
+- kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
+- filemtime cache-busting kako stari CSS iz cachea ne bi razbio izgled nakon nadogradnje
+- CI/distribution provjeru da se brand.css, admin.js i runtime logo asseti obvezno nalaze u svakom instalacijskom ZIP-u
 - znatno manji instalacijski ZIP bez WordPress.org screenshotova i marketinških asseta koji nisu potrebni za rad plugina
 - release limit od 1,5 MiB po instalacijskom ZIP-u radi lakše instalacije na shared hostingu s čestim PHP upload limitom od 2 MiB
-- cross-version repair/migration put za sigurnu nadogradnju 1.0.8 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
+- cross-version repair/migration put za sigurnu nadogradnju 1.0.9 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
 - automatski popravak nedostajuće baze, postavki, upload direktorija i cron rasporeda pri nadogradnji
 - ispravan first-publish lifecycle za nove usluge, tako da se sidrena cijena snima nakon stvarno unesene aktualne cijene
 - jednu izvornu stavku Usluge u WordPress admin meniju bez dvostruke registracije
@@ -205,19 +210,19 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.8 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.9 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.8.zip`
-- `sidrena-woocommerce-1.0.8.zip`
+- `sidrena-wordpress-1.0.9.zip`
+- `sidrena-woocommerce-1.0.9.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
 ## Nadogradnja sa starijih SIDRENA verzija
 
-SIDRENA 1.0.8 uvodi zaseban marker instalirane verzije. Ako se 1.0.8 instalira preko bilo kojeg ranijeg SIDRENA WordPress izdanja ili preko bilo kojeg ranijeg SIDRENA WooCommerce izdanja, plugin pokreće idempotentni repair/migration prolaz: provjerava i po potrebi obnavlja tablice, postavke, upload direktorije, cron rasporede i javnu stranicu, bez brisanja postojećih poslovnih podataka. WordPress i WooCommerce izdanje i dalje se ne smiju istodobno aktivirati.
+SIDRENA 1.0.9 uvodi zaseban marker instalirane verzije. Ako se 1.0.9 instalira preko bilo kojeg ranijeg SIDRENA WordPress izdanja ili preko bilo kojeg ranijeg SIDRENA WooCommerce izdanja, plugin pokreće idempotentni repair/migration prolaz: provjerava i po potrebi obnavlja tablice, postavke, upload direktorije, cron rasporede i javnu stranicu, bez brisanja postojećih poslovnih podataka. WordPress i WooCommerce izdanje i dalje se ne smiju istodobno aktivirati.
 
 ## Privatnost bez ugrađenog praćenja
 

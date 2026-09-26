@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Sidrena_Admin {
 	private static $instance;
+	private $main_assets_enqueued = false;
+	private $editor_assets_enqueued = false;
 
 	public static function instance() {
 		if ( ! self::$instance ) {
@@ -58,6 +60,11 @@ final class Sidrena_Admin {
 		}
 
 		if ( $is_plugin_page ) {
+			if ( $this->main_assets_enqueued ) {
+				return;
+			}
+			$this->main_assets_enqueued = true;
+
 			$brand_file = SIDRENA_DIR . 'admin/css/brand.css';
 			$admin_file = SIDRENA_DIR . 'admin/js/admin.js';
 			$brand_ver  = is_file( $brand_file ) ? SIDRENA_VERSION . '-' . filemtime( $brand_file ) : SIDRENA_VERSION;
@@ -78,6 +85,11 @@ final class Sidrena_Admin {
 			);
 			return;
 		}
+
+		if ( $this->editor_assets_enqueued ) {
+			return;
+		}
+		$this->editor_assets_enqueued = true;
 
 		$editor_file = SIDRENA_DIR . 'admin/css/admin.css';
 		$editor_ver  = is_file( $editor_file ) ? SIDRENA_VERSION . '-' . filemtime( $editor_file ) : SIDRENA_VERSION;
