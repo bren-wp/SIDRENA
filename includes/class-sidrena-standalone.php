@@ -529,7 +529,7 @@ final class Sidrena_Standalone {
 				<div><span class="sid-kicker"><?php esc_html_e( 'Automatsko povezivanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Povuci postojeće proizvode / sadržaj', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Odaberite postojeći tip sadržaja. Sidrena će povući nazive, povezati zapise i pokušati prepoznati postojeće polje cijene. Nakon toga u pravilu trebate dopuniti samo sidrenu cijenu i ostale obvezne podatke koji nedostaju.', 'sidrena' ); ?></p></div>
 				<?php if ( ! empty( $sync_state['status'] ) ) : ?><span class="sid-status-pill <?php echo 'complete' === $sync_state['status'] ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( ucfirst( (string) $sync_state['status'] ) ); ?></span><?php endif; ?>
 			</div>
-			<form class="sid-inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<form class="sid-form sid-inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="sidrena_standalone_sync_source">
 				<?php wp_nonce_field( 'sidrena_standalone_sync_source' ); ?>
 				<label><span><?php esc_html_e( 'Tip sadržaja', 'sidrena' ); ?></span><select name="source_post_type" required><option value=""><?php esc_html_e( 'Odaberite…', 'sidrena' ); ?></option><?php foreach ( $source_types as $source_name => $source_label ) : ?><option value="<?php echo esc_attr( $source_name ); ?>"><?php echo esc_html( $source_label . ' (' . $source_name . ')' ); ?></option><?php endforeach; ?></select></label>
@@ -546,7 +546,7 @@ final class Sidrena_Standalone {
 				<div><span class="sid-kicker"><?php esc_html_e( 'Masovni uvoz', 'sidrena' ); ?></span><h2><?php esc_html_e( 'CSV/XML katalog', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Podržani su hrvatski i tehnički nazivi stupaca/čvorova. Postojeće stavke povezuju se po šifri; nove zahtijevaju naziv, cijenu i sidrenu cijenu.', 'sidrena' ); ?></p></div>
 			</div>
 			<div class="sid-form-actions">
-				<input class="sid-file-input" type="file" name="standalone_file" accept=".csv,.xml,text/csv,text/xml,application/xml" required>
+				<label class="sid-file-control"><span><?php esc_html_e( 'CSV ili XML datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="standalone_file" accept=".csv,.xml,text/csv,text/xml,application/xml" aria-describedby="sid-standalone-file-help" required><small id="sid-standalone-file-help"><?php esc_html_e( 'Najviše 5 MB. Podržani su CSV i XML formati bez izvršnog sadržaja.', 'sidrena' ); ?></small></label>
 				<button type="submit" class="button sid-secondary"><?php esc_html_e( 'Uvezi katalog', 'sidrena' ); ?></button>
 			</div>
 		</form>
