@@ -89,4 +89,22 @@ sidrena_form_ux_assert(
 	'Service per-location form layout must remain responsive.'
 );
 
+sidrena_form_ux_assert(
+	false !== strpos( $admin, 'data-sidrena-oib' )
+	&& false !== strpos( $admin, "Sidrena_Utils::is_valid_oib( $business_oib )" )
+	&& false !== strpos( $admin, "settings_invalid_oib" ),
+	'OIB must be validated in the settings form and on the server.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "is_email( $business_email )" )
+	&& false !== strpos( $admin, "settings_invalid_email" ),
+	'Business email must retain server-side validation.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $script, 'function isValidOib(value)' )
+	&& false !== strpos( $script, 'function validateOibField(field)' )
+	&& false !== strpos( $script, "message('invalidOib'" ),
+	'Client-side OIB checksum feedback must remain available.'
+);
+
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );
