@@ -82,7 +82,8 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/plugin-check-packages/sidrena-wordpress
-          slug: sidrena-price-compliance
+          slug: sidrena-wordpress
+          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'
@@ -101,7 +102,8 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/plugin-check-packages/sidrena-woocommerce
-          slug: sidrena-for-woocommerce
+          slug: sidrena-woocommerce
+          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'

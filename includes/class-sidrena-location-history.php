@@ -56,9 +56,11 @@ final class Sidrena_Location_History {
 			return;
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 		$last = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, anchor_price, availability FROM {$table} WHERE location_id = %s AND product_id = %d AND variation_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				"SELECT price, anchor_price, availability FROM %i WHERE location_id = %s AND product_id = %d AND variation_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				$table,
 				$location_id,
 				$product_id,
 				$variation_id
@@ -75,10 +77,12 @@ final class Sidrena_Location_History {
 			return;
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"INSERT INTO {$table} (location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source)
+				"INSERT INTO %i (location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source)
 				 VALUES (%s, %d, %d, NULLIF(%s, ''), NULLIF(%s, ''), %s, %s, %s)",
+				$table,
 				$location_id,
 				$product_id,
 				$variation_id,
@@ -102,13 +106,15 @@ final class Sidrena_Location_History {
 		$last_id       = 0;
 
 		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT id, location_id, product_id, variation_id, price, anchor_price, availability
-					FROM {$current_table}
+					FROM %i
 					WHERE id > %d
 					ORDER BY id ASC
 					LIMIT %d",
+					$current_table,
 					$last_id,
 					$batch_size
 				),
@@ -144,7 +150,8 @@ final class Sidrena_Location_History {
 	public static function count_rows() {
 		global $wpdb;
 		$table = self::table_name();
-		return absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned per-location history table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
 	}
 
 	private static function same_numeric_value( $stored, $current ) {
@@ -161,9 +168,11 @@ final class Sidrena_Location_History {
 		global $wpdb;
 		$table  = self::table_name();
 		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( 400 * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE recorded_at < %s",
+				"DELETE FROM %i WHERE recorded_at < %s",
+				$table,
 				$cutoff
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.

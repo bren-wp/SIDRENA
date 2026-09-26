@@ -108,8 +108,15 @@ add_action(
 			return;
 		}
 
-		Sidrena_Activator::maybe_upgrade();
 		Sidrena_Plugin::instance()->run();
 	},
 	20
+);
+
+add_action(
+	'init',
+	static function () {
+		Sidrena_Activator::maybe_upgrade();
+	},
+	1
 );

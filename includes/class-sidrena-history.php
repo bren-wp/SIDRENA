@@ -115,9 +115,12 @@ final class Sidrena_History {
 		$table = $wpdb->prefix . 'sidrena_price_history';
 		$key   = $variation_id ? 'variation_id' : 'product_id';
 		$id    = $variation_id ? $variation_id : $product_id;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$last  = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, regular_price, sale_price FROM {$table} WHERE {$key} = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				"SELECT price, regular_price, sale_price FROM %i WHERE %i = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				$table,
+				$key,
 				$id
 			),
 			ARRAY_A
@@ -135,6 +138,7 @@ final class Sidrena_History {
 			return;
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$wpdb->insert(
 			$table,
 			array(
@@ -248,18 +252,24 @@ final class Sidrena_History {
 		$start_sql    = $start->format( 'Y-m-d H:i:s' );
 		$window_sql   = $window_start->format( 'Y-m-d H:i:s' );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM {$table} WHERE {$key} = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				"SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				$table,
+				$key,
 				$id,
 				$window_sql
 			),
 			ARRAY_A
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column name.
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$first = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT MIN(recorded_at) FROM {$table} WHERE {$key} = %d",
+				"SELECT MIN(recorded_at) FROM %i WHERE %i = %d",
+				$table,
+				$key,
 				$id
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table and fixed column name.
@@ -272,9 +282,12 @@ final class Sidrena_History {
 			);
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$rows = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT price FROM {$table} WHERE {$key} = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				"SELECT price FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				$table,
+				$key,
 				$id,
 				$window_sql,
 				$start_sql
@@ -338,13 +351,15 @@ final class Sidrena_History {
 		$limit = min( 20, max( 1, absint( $limit ) ) );
 		$scan  = max( 120, $limit * 30 );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, product_id, variation_id, price, recorded_at
-				FROM {$table}
+				FROM %i
 				WHERE price IS NOT NULL
 				ORDER BY id DESC
 				LIMIT %d",
+				$table,
 				$scan
 			),
 			ARRAY_A
@@ -374,6 +389,7 @@ final class Sidrena_History {
 			$name    = $product ? $product->get_name() : get_the_title( $item_id );
 			$changes[] = array(
 				'item_id'     => $item_id,
+				/* translators: %d: WooCommerce product or variation ID. */
 				'name'        => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
 				'old_price'   => (float) $row['price'],
 				'new_price'   => (float) $new['price'],
@@ -396,11 +412,15 @@ final class Sidrena_History {
 		$table = $wpdb->prefix . 'sidrena_price_history';
 		$days  = min( 90, max( 7, absint( $days ) ) );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$latest = $wpdb->get_row(
-			"SELECT product_id, variation_id, price, recorded_at
-			FROM {$table}
-			WHERE price IS NOT NULL
-			ORDER BY id DESC LIMIT 1",
+			$wpdb->prepare(
+				"SELECT product_id, variation_id, price, recorded_at
+				FROM %i
+				WHERE price IS NOT NULL
+				ORDER BY id DESC LIMIT 1",
+				$table
+			),
 			ARRAY_A
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 
@@ -413,22 +433,26 @@ final class Sidrena_History {
 		$cutoff    = $cutoff_dt->format( 'Y-m-d H:i:s' );
 
 		if ( absint( $latest['variation_id'] ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT price, recorded_at FROM {$table}
+					"SELECT price, recorded_at FROM %i
 					WHERE variation_id = %d AND price IS NOT NULL AND recorded_at >= %s
 					ORDER BY recorded_at ASC, id ASC",
+					$table,
 					absint( $latest['variation_id'] ),
 					$cutoff
 				),
 				ARRAY_A
 			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT price, recorded_at FROM {$table}
+					"SELECT price, recorded_at FROM %i
 					WHERE product_id = %d AND variation_id = 0 AND price IS NOT NULL AND recorded_at >= %s
 					ORDER BY recorded_at ASC, id ASC",
+					$table,
 					absint( $latest['product_id'] ),
 					$cutoff
 				),
@@ -456,6 +480,7 @@ final class Sidrena_History {
 
 		return array(
 			'item_id'    => $item_id,
+			/* translators: %d: WooCommerce product or variation ID. */
 			'name'       => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
 			'current'    => (float) $current,
 			'minimum'    => (float) min( $prices ),
@@ -469,7 +494,8 @@ final class Sidrena_History {
 	public static function count_rows() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
-		return absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned WooCommerce price-history table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
 	}
 
 	public function daily_snapshot() {
@@ -526,9 +552,11 @@ final class Sidrena_History {
 		global $wpdb;
 		$table  = $wpdb->prefix . 'sidrena_price_history';
 		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( 400 * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE recorded_at < %s",
+				"DELETE FROM %i WHERE recorded_at < %s",
+				$table,
 				$cutoff
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
