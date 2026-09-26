@@ -51,6 +51,13 @@ function wp_roles() {
 
 $wpdb = new class {
 	public $prefix = 'wp_';
+	public function prepare( $query, ...$args ) {
+		foreach ( $args as $arg ) {
+			$replacement = is_int( $arg ) ? (string) $arg : (string) $arg;
+			$query = preg_replace( '/%[idsf]/', $replacement, $query, 1 );
+		}
+		return $query;
+	}
 	public function query( $sql ) {
 		$GLOBALS['sidrena_queries'][] = $sql;
 		return 1;
