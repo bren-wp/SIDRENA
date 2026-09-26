@@ -1,19 +1,10 @@
 <!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="t">
-<title id="t">SIDRENA</title>
-<defs><linearGradient id="bg" x1="24" y1="16" x2="232" y2="240"><stop stop-color="#0B4C8D"/><stop offset=".56" stop-color="#082D5B"/><stop offset="1" stop-color="#061A33"/></linearGradient></defs>
-<rect x="8" y="8" width="240" height="240" rx="54" fill="url(#bg)"/>
-<rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#58DDF5" stroke-opacity=".26" stroke-width="3"/>
-<g transform="translate(48 45) scale(1.25)"><defs>
-<linearGradient id="sidMark" x1="24" y1="12" x2="104" y2="118" gradientUnits="userSpaceOnUse">
-<stop stop-color="#76F0FF"/><stop offset=".34" stop-color="#24C6F5"/><stop offset=".7" stop-color="#1887EA"/><stop offset="1" stop-color="#1557D6"/>
-</linearGradient>
-</defs>
-<g fill="none" stroke="url(#sidMark)" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="64" cy="14" r="5.5" stroke-width="5.5"/>
-<path d="M64 21V106" stroke-width="7"/>
-<path d="M84 31C76 24 62 23 50 27C39 31 35 39 38 47C41 55 51 58 63 60C76 62 85 66 87 74C89 82 82 89 72 92C58 96 44 91 36 83" stroke-width="11.5"/>
-<path d="M44 46H84" stroke-width="6.5"/>
-<path d="M26 82C30 104 44 116 64 116C84 116 98 104 102 82M26 82L15 89L26 100M102 82L113 89L102 100" stroke-width="6.5"/>
-</g></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="t"><title id="t">SIDRENA</title>
+<defs><linearGradient id="bg" x1="20" y1="12" x2="238" y2="244"><stop stop-color="#0B4F91"/><stop offset=".55" stop-color="#082D5B"/><stop offset="1" stop-color="#061A33"/></linearGradient></defs><rect x="8" y="8" width="240" height="240" rx="54" fill="url(#bg)"/><rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#61E4FF" stroke-opacity=".25" stroke-width="3"/><g transform="translate(48 44) scale(1.25)"><defs><linearGradient id="appA" x1="18" y1="16" x2="108" y2="118" gradientUnits="userSpaceOnUse"><stop stop-color="#5EE7FF"/><stop offset=".38" stop-color="#19BDF1"/><stop offset=".72" stop-color="#1688EC"/><stop offset="1" stop-color="#1557D6"/></linearGradient></defs>
+<g fill="none" stroke="url(#appA)" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="64" cy="13" r="6" stroke-width="5"/>
+<path d="M64 20V104" stroke-width="8"/>
+<path d="M44 48H84" stroke-width="7"/>
+<path d="M24 81C28 103 43 115 64 115C85 115 100 103 104 81M24 81L13 89L25 101M104 81L115 89L103 101" stroke-width="7"/>
+</g>
+<path d="M83 30C75 24 63 22 52 25C41 28 36 36 39 44C42 52 52 55 64 58C77 61 86 65 88 74C90 83 82 90 71 93C57 97 44 92 36 84" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
