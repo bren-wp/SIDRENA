@@ -95,9 +95,9 @@ jobs:
           test -s docs/media/screenshot-wordpress.png
           test -s docs/media/screenshot-woocommerce.png
 
-          grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
+          grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
           grep -Fq "'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg'" includes/class-sidrena-admin.php
-          grep -Fq "SIDRENA_URL . 'admin/css/brand.css'" includes/class-sidrena-admin.php
+          grep -Fq "plugins_url( 'admin/css/brand.css', SIDRENA_FILE )" includes/class-sidrena-admin.php
           ! grep -Fq "admin/css/admin-160.css" includes/class-sidrena-admin.php
 
           test -s wporg-assets/sidrena-wordpress/assets/icon-128x128.png

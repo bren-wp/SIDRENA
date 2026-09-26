@@ -1,8 +1,11 @@
 <?php
 /**
- * Sidrena admin asset routing smoke test.
+ * Sidrena source file.
  *
  * @package Sidrena
+ * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
  */
 
 define( 'ABSPATH', __DIR__ . '/' );

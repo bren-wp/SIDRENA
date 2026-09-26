@@ -1,4 +1,4 @@
-<!-- Sidrena 1.0.9 production app icon | Author: Brendigo -->
+<!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="t">
 <title id="t">SIDRENA</title>
 <defs><linearGradient id="bg" x1="24" y1="16" x2="232" y2="240"><stop stop-color="#0B4C8D"/><stop offset=".56" stop-color="#082D5B"/><stop offset="1" stop-color="#061A33"/></linearGradient></defs>
