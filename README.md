@@ -128,43 +128,16 @@ Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom 
 
 ## Zašto SIDRENA 1.0.11
 
-**SIDRENA 1.0.11** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
+**SIDRENA 1.0.11** fokusira se na integritet isporuke: produkcijski ZIP više se ne može objaviti kroz standardni release workflow prije nego što isti build prođe provjeru integriteta i službeni WordPress Plugin Check za oba izdanja.
 
 Izdanje 1.0.11 donosi:
 
-- release gate koji pokreće strogi službeni Plugin Check nad oba production-shaped paketa prije objave
-- `%i` identifier placeholdere za preostali service-history COUNT i standalone posts/postmeta SQL
-- uklanjanje zastarjelih `PreparedSQL.InterpolatedNotPrepared` suppression komentara iz već pripremljenih upita
-- regresijske testove koji blokiraju povratak raw SQL interpolacije identifikatora
-- obradu dostavljenog Plugin Check izvještaja: translators komentari, escaping javnih URL-ova, sanitizacija ulaza i sigurniji SQL identifikatori
-- release objava je blokirana dok službeni WordPress Plugin Check ne završi bez errora i warninga nad oba stvarna production-shaped paketa
-- uklonjen zastarjeli ručni `load_plugin_textdomain()` poziv
-- dodatno precrtan SIDRENA S + sidro znak te svi runtime lockupi, favicon, app icon i menu ikona prema dostavljenom brand-boardu
-- jedan kanonski SIDRENA logo u admin hero području i zasebna WordPress/WooCommerce edition oznaka
-- README hero vizuale i stvarne runtime screenshotove aktualnog WordPress/WooCommerce sučelja; 1.0.11 ne mijenja UI pa postojeći stvarni screenshotovi ostaju reprezentativni
-- ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
-- obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
-- kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
-- filemtime cache-busting kako stari CSS iz cachea ne bi razbio izgled nakon nadogradnje
-- CI/distribution provjeru da se brand.css, admin.js i runtime logo asseti obvezno nalaze u svakom instalacijskom ZIP-u
-- znatno manji instalacijski ZIP bez WordPress.org screenshotova i marketinških asseta koji nisu potrebni za rad plugina
-- release limit od 1,5 MiB po instalacijskom ZIP-u radi lakše instalacije na shared hostingu s čestim PHP upload limitom od 2 MiB
-- cross-version repair/migration put za sigurnu nadogradnju 1.0.11 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
-- automatski popravak nedostajuće baze, postavki, upload direktorija i cron rasporeda pri nadogradnji
-- ispravan first-publish lifecycle za nove usluge, tako da se sidrena cijena snima nakon stvarno unesene aktualne cijene
-- jednu izvornu stavku Usluge u WordPress admin meniju bez dvostruke registracije
-- zaštitu od slučajnog dvostrukog slanja administratorskih obrazaca i jasnije stanje spremanja
-- pojačane NN 101/2026 i NN 105/2026 regresijske provjere
-- novi navy/cyan Sidrena administratorski sustav izrađen od nule
-- kompaktna S + sidro ikona u WordPress bočnom meniju
-- zasebni WordPress plavi i WooCommerce ljubičasti edition akcent
-- responzivne nadzorne ploče, tablice, statusne kartice i obrasci
-- redizajnirani katalog, cjenici, lokacije, arhiva, postavke i pomoć
-- lokalni logo, app icon, favicon, hero i edition-specific asseti
-- stvarni WordPress.org screenshotovi snimljeni iz aktivnog wp-admin okruženja
-- CI provjera runtime grešaka, ključnih preklapanja i horizontalnog overflowa na desktop, tablet i mobilnim širinama
-- WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
-- puni marketinški SVG/PNG branding ostaje u repozitoriju i README/WP.org assetima, dok instalacijski ZIP sadrži samo runtime vizuale potrebne stvarnom plugin sučelju
+- novi release gate koji pokreće službeni WordPress Plugin Check nad točno onim production-shaped WordPress i WooCommerce buildovima koji se pripremaju za objavu
+- odgođeno stvaranje novog Git taga dok ne prođu build, SHA/integrity provjera i oba Plugin Check gatea
+- dodatno pokretanje zasebnog Plugin Check workflowa na `release/**` granama i `v*` tagovima
+- trajni CI regression test koji provjerava da Plugin Check ostaje ispred kreiranja taga i objave GitHub Releasea
+- zadržan strogi tretman Plugin Check errora i warninga; jedini dokumentirani policy izuzetak ostaje postojeći `trademarked_term` za kompatibilne instalacijske slugove
+- nepromijenjen produkcijski UI i poslovna logika u odnosu na provjereni 1.0.10 runtime, pa postojeći stvarni wp-admin screenshotovi i dalje prikazuju isporučeno sučelje
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
