@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify Sidrena 1.0.3 brand and cleanup invariants
+      - name: Verify Sidrena 1.0.4 brand and cleanup invariants
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php

@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.4 =
+* WordPress katalog više ne prikazuje prazni uređivački red kao sadržaj; umjesto toga koristi jasno prazno stanje i stvarni gumb za dodavanje proizvoda.
+* Admin JS održava prazno stanje kataloga pri dinamičkom dodavanju i uklanjanju nespremljenih redaka.
+* Dodan je sažeti NN 105/2026 vodič za obuhvaćene skupine robe i propisane iznimke za cijenu za jedinicu mjere, uz jasnu zabranu automatskog pravnog klasificiranja.
+* Brand header bolje kadrira lokalni svjetionik/sea asset i ostaje edition-specific za WordPress i WooCommerce.
+* Legal schema smoke test sada čuva datum primjene NN 105/2026 i ključne elemente vodiča jedinične cijene.
+* Verzija oba odvojena plugina podignuta je na 1.0.4 uz očuvanu povijest izdanja.
+
 = 1.0.3 =
 * Ispravljeni su failing CI, admin polish i legal-copy guardovi nakon 1.0.2 refaktora bez zaobilaženja provjera.
 * Responzivna pravila konsolidirana su na kraj brand CSS-a kako desktop definicije više ne bi poništavale tablet i mobilne breakpointe.

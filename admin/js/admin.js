@@ -49,6 +49,16 @@
 		}
 	}
 
+	function syncStandaloneEmptyState(wrap) {
+		if (!wrap) {
+			return;
+		}
+		var empty = wrap.querySelector('.sid-catalog-empty-row');
+		if (empty) {
+			empty.hidden = !!wrap.querySelector('.sidrena-standalone-row');
+		}
+	}
+
 	document.addEventListener('click', function (event) {
 		var target = event.target;
 		if (!target) {
@@ -83,6 +93,7 @@
 			var key = 'new-' + Date.now().toString(36) + '-' + standaloneWrap.querySelectorAll('.sidrena-standalone-row').length;
 			var standaloneHtml = standaloneTemplate.innerHTML.split('__KEY__').join(key);
 			standaloneWrap.insertAdjacentHTML('beforeend', standaloneHtml);
+			syncStandaloneEmptyState(standaloneWrap);
 			var standaloneRows = standaloneWrap.querySelectorAll('.sidrena-standalone-row');
 			focusFirstField(standaloneRows.length ? standaloneRows[standaloneRows.length - 1] : null);
 			return;
@@ -94,6 +105,7 @@
 			var standaloneRow = closest(removeStandalone, '.sidrena-standalone-row');
 			if (standaloneRow && window.confirm(message('removeUnsavedProduct', 'Ukloniti ovaj nespremljeni proizvod?'))) {
 				standaloneRow.remove();
+				syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 				var addStandaloneButton = document.getElementById('sidrena-add-standalone');
 				if (addStandaloneButton) {
 					addStandaloneButton.focus();
@@ -153,4 +165,5 @@
 	});
 
 	initLocations();
+	syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 }());

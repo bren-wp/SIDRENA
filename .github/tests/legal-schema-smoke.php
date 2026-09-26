@@ -84,6 +84,12 @@ sidrena_schema_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        
 sidrena_schema_assert( false !== strpos( $utils_source, "'retention_days'       => 45" ), 'Default archive retention should preserve an operational margin above 30 days.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
+$admin_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'NN 105/2026 · primjena od 26.09.2026.' ), 'NN 105/2026 effective-date guide missing from admin rules.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Hrana i hrana za životinje' ), 'Unit-price applicability guide is missing required product categories.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g ili 50 ml' ), 'Unit-price exceptions guide is missing threshold exceptions.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
+
 $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Service type must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Service scope must remain optional in strict NN 101/2026 publication preflight.' );
