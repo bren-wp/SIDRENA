@@ -52,9 +52,9 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-18',
 				'note'  => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute jasno, vidljivo, čitljivo i lako uočljivo.',
 			),
-			'mingo_2026_09_22_clarifications' => array(
-				'label' => 'Ministarstvo gospodarstva, pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada',
-				'date'  => '2026-09-22',
+			'mingo_2026_09_24_clarifications' => array(
+				'label' => 'Ministarstvo gospodarstva, službena pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada (24.09.2026.)',
+				'date'  => '2026-09-24',
 				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
 			),
 		);
