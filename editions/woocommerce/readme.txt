@@ -85,6 +85,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Added visible invalid/focus states, keyboard focus for custom toggles and labelled CSV/XML upload controls with file-size guidance.
 * Added permanent admin-form UX regression coverage to the main CI and dedicated admin-polish guard.
 * Service per-location current/reference price inputs now have explicit labels and a responsive editor layout.
+* Business identity settings now validate Croatian OIB checksums client-side and server-side, and reject invalid business e-mail values with clear feedback.
 
 = 1.0.11 =
 * Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
