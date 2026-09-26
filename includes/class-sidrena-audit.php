@@ -98,7 +98,7 @@ final class Sidrena_Audit {
 				$limit
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 	}
 
 	public static function count_rows() {
@@ -128,7 +128,7 @@ final class Sidrena_Audit {
 				$table,
 				$cutoff
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		$row_count = self::count_rows();
 		if ( $row_count <= self::MAX_ROWS ) {
@@ -145,7 +145,7 @@ final class Sidrena_Audit {
 					$offset
 				)
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		if ( $keep_id > 0 ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
@@ -155,7 +155,7 @@ final class Sidrena_Audit {
 					$table,
 					$keep_id
 				)
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 		}
 	}
 
