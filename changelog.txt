@@ -7,11 +7,14 @@ Support: sidrena@brendigo.com
 Sidrena changelog
 
 = 1.0.11 =
-* Release pipeline više ne stvara novi Git tag prije završetka builda, SHA/integrity provjere i oba službena WordPress Plugin Check gatea.
-* Plugin Check u release workflowu izvršava se nad istim production-shaped WordPress i WooCommerce buildovima iz kojih nastaju objavljeni ZIP-ovi.
-* Samostalni Plugin Check workflow proširen je na release/** grane i v* tagove radi dodatne vidljivosti i provjere istog release commita.
-* Dodan je trajni release-plugin-check-gate regression test koji ruši CI ako se ponovno uvede mogućnost objave ili kreiranja taga prije Plugin Checka.
-* 1.0.11 ne mijenja produkcijski UI niti poslovnu logiku 1.0.10; postojeći stvarni wp-admin screenshotovi i dalje odgovaraju isporučenom sučelju.
+* GitHub release workflow sada prije objave obvezno pokreće strogi službeni WordPress Plugin Check nad oba stvarna production-shaped paketa; release više ne može zaobići tu provjeru.
+* Novi Git tag više se ne stvara prije validacije; stvaranje taga odgođeno je dok ne prođu build, SHA/integrity provjera i oba Plugin Check gatea.
+* Dodan je trajni regression test koji ruši CI ako se ponovno uvede mogućnost kreiranja taga ili objave prije Plugin Checka.
+* Plugin Check workflow dodatno prati release grane i v* tagove radi potpune vidljivosti CI stanja.
+* Preostali service-history COUNT upit više ne interpolira naziv vlastite tablice, nego koristi WordPress %i identifier placeholder.
+* Standalone code-index upit sada priprema i WordPress posts/postmeta identifikatore pomoću %i umjesto interpolacije u SQL string.
+* Uklonjeni su zastarjeli PreparedSQL.InterpolatedNotPrepared suppression komentari iz upita koji već koriste pripremljene identifier placeholdere.
+* Dodani su regresijski testovi koji sprječavaju povratak raw interpolacije SQL identifikatora.
 * Oba plugina podignuta su na 1.0.11.
 
 = 1.0.10 =
