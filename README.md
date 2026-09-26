@@ -10,7 +10,7 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="SIDRENA — usklađene cijene, sigurno poslovanje" width="560">
 </p>
 
-<h1 align="center">SIDRENA 1.0.6</h1>
+<h1 align="center">SIDRENA 1.0.7</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -119,14 +119,18 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 1.0.6 nosi vlastiti edition-specific SVG branding te renderirane PNG hero, cover, CTA, dokumentacijske, app-card, compact, social i WordPress.org banner assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
+Kompletan vizualni sustav nalazi se u `branding/`, dok su svi runtime logotipi i ikone lokalno u `assets/images/`. Svaki instalacijski ZIP 1.0.7 nosi vlastiti edition-specific SVG branding te renderirane PNG hero, cover, CTA, dokumentacijske, app-card, compact, social i WordPress.org banner assete u `branding/rendered/`. Plugin ne ovisi o vanjskom CDN-u za svoj administratorski identitet.
 
-## Zašto SIDRENA 1.0.6
+## Zašto SIDRENA 1.0.7
 
-**SIDRENA 1.0.6** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
+**SIDRENA 1.0.7** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
 
-Izdanje 1.0.6 donosi:
+Izdanje 1.0.7 donosi:
 
+- ispravan first-publish lifecycle za nove usluge, tako da se sidrena cijena snima nakon stvarno unesene aktualne cijene
+- jednu izvornu stavku Usluge u WordPress admin meniju bez dvostruke registracije
+- zaštitu od slučajnog dvostrukog slanja administratorskih obrazaca i jasnije stanje spremanja
+- pojačane NN 101/2026 i NN 105/2026 regresijske provjere
 - novi navy/cyan Sidrena administratorski sustav izrađen od nule
 - kompaktna S + sidro ikona u WordPress bočnom meniju
 - zasebni WordPress plavi i WooCommerce ljubičasti edition akcent
@@ -197,13 +201,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.6 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.7 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.6.zip`
-- `sidrena-woocommerce-1.0.6.zip`
+- `sidrena-wordpress-1.0.7.zip`
+- `sidrena-woocommerce-1.0.7.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda.
 
