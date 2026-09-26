@@ -19,6 +19,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUTDIR="$(mkdir -p "$OUTDIR" && cd "$OUTDIR" && pwd)"
 WORK="$OUTDIR/.sidrena-build"
 NORMALIZED_EPOCH="${SOURCE_DATE_EPOCH:-946684800}"
+MAX_ZIP_BYTES="${SIDRENA_MAX_ZIP_BYTES:-1572864}"
 rm -rf "$WORK"
 mkdir -p "$WORK"
 
@@ -57,37 +58,38 @@ copy_common() {
   python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$stage/docs/SIDRENA-PODRSKA.pdf"
 }
 
-copy_branding_bundle() {
-  local stage="$1"
-  local edition="$2"
+prepare_install_docs() {
+  local source="$1"
+  local target="$2"
 
-  mkdir -p "$stage/branding"
-  cp "$ROOT/branding/BRAND-GUIDE.md" "$stage/branding/"
-  cp "$ROOT/branding/email-header.svg" "$stage/branding/"
-  cp "$ROOT/branding/support-cover.svg" "$stage/branding/"
-  cp "$ROOT/branding/website-hero-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/plugin-cover-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/social-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/wporg-banner-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/docs-cover-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/cta-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/app-card-$edition.svg" "$stage/branding/"
-  cp "$ROOT/branding/compact-$edition.svg" "$stage/branding/"
+  python3 - "$source" "$target" <<'PY'
+from pathlib import Path
+import re
+import sys
 
-  mkdir -p "$stage/branding/rendered"
-  cp "$ROOT/branding/rendered/email-header.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/support-cover.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/website-hero-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/plugin-cover-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/docs-cover-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/cta-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/app-card-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/compact-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/social-$edition.png" "$stage/branding/rendered/"
-  cp "$ROOT/branding/rendered/wporg-banner-$edition.png" "$stage/branding/rendered/"
+source = Path(sys.argv[1])
+target = Path(sys.argv[2])
+text = source.read_text(encoding='utf-8')
+
+# Runtime screenshots and WordPress.org marketing assets stay in the source
+# repository. They are deliberately excluded from the install ZIP so common
+# shared-hosting upload limits do not block plugin installation.
+text = re.sub(r'^!\[[^\n]*\]\([^\n]*\)\s*$', '', text, flags=re.MULTILINE)
+text = re.sub(
+    r'\n## Galerija stvarnog sučelja\n.*?(?=\n## )',
+    '\n',
+    text,
+    flags=re.DOTALL,
+)
+text = text.replace(
+    '> Screenshot se automatski snima iz aktivnog WordPress admin sučelja pri pripremi WordPress.org asseta. U instalacijskom ZIP-u nalazi se kao `docs/images/screenshot-admin.png`.\n',
+    ''
+)
+target.write_text(text.strip() + '\n', encoding='utf-8')
+PY
 }
 
-prepare_wporg_package() {
+prepare_package() {
   local stage="$1"
   local domain="$2"
 
@@ -122,18 +124,10 @@ PY
 
 WP_STAGE="$WORK/sidrena-wordpress"
 copy_common "$WP_STAGE"
-copy_branding_bundle "$WP_STAGE" "wordpress"
 cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
-cp "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
-mkdir -p "$WP_STAGE/docs/images"
-cp "$ROOT/docs/media/screenshot-wordpress.png" "$WP_STAGE/docs/images/screenshot-admin.png"
-cp "$ROOT/wporg-assets/sidrena-wordpress/assets/"screenshot-*.png "$WP_STAGE/docs/images/"
-sed -i 's#media/screenshot-wordpress.png#images/screenshot-admin.png#g' "$WP_STAGE/docs/UPUTE.md"
-for index in 1 2 3 4 5 6; do
-  sed -i "s#media/screenshot-wordpress-$index.png#images/screenshot-$index.png#g" "$WP_STAGE/docs/UPUTE.md"
-done
-prepare_wporg_package "$WP_STAGE" "sidrena-wordpress"
+prepare_install_docs "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
+prepare_package "$WP_STAGE" "sidrena-wordpress"
 rm -f \
   "$WP_STAGE/assets/images/logo-woocommerce.svg" \
   "$WP_STAGE/assets/images/logo-woocommerce-light.svg" \
@@ -147,18 +141,10 @@ rm -f \
 
 WOO_STAGE="$WORK/sidrena-woocommerce"
 copy_common "$WOO_STAGE"
-copy_branding_bundle "$WOO_STAGE" "woocommerce"
 cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
-cp "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
-mkdir -p "$WOO_STAGE/docs/images"
-cp "$ROOT/docs/media/screenshot-woocommerce.png" "$WOO_STAGE/docs/images/screenshot-admin.png"
-cp "$ROOT/wporg-assets/sidrena-woocommerce/assets/"screenshot-*.png "$WOO_STAGE/docs/images/"
-sed -i 's#media/screenshot-woocommerce.png#images/screenshot-admin.png#g' "$WOO_STAGE/docs/UPUTE.md"
-for index in 1 2 3 4 5 6; do
-  sed -i "s#media/screenshot-woocommerce-$index.png#images/screenshot-$index.png#g" "$WOO_STAGE/docs/UPUTE.md"
-done
-prepare_wporg_package "$WOO_STAGE" "sidrena-woocommerce"
+prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
+prepare_package "$WOO_STAGE" "sidrena-woocommerce"
 rm -f \
   "$WOO_STAGE/assets/images/logo-wordpress.svg" \
   "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \
@@ -183,6 +169,15 @@ rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VER
   LC_ALL=C find sidrena-wordpress -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
   LC_ALL=C find sidrena-woocommerce -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
 )
+
+for zip_path in "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"; do
+  zip_size="$(stat -c%s "$zip_path")"
+  echo "$(basename "$zip_path"): $zip_size bytes"
+  if (( zip_size > MAX_ZIP_BYTES )); then
+    echo "Install ZIP exceeds the $MAX_ZIP_BYTES byte shared-hosting safety limit: $zip_path" >&2
+    exit 1
+  fi
+done
 
 (
   cd "$OUTDIR"

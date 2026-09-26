@@ -63,6 +63,7 @@ delete_option( 'sidrena_public_index' );
 delete_option( 'sidrena_archive_index' );
 delete_option( 'sidrena_last_run' );
 delete_option( 'sidrena_db_version' );
+delete_option( 'sidrena_plugin_version' );
 delete_option( 'sidrena_history_seeded_at' );
 delete_option( 'sidrena_public_page_id' );
 

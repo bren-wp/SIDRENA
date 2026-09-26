@@ -8,14 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
 
 $target = isset( $argv[1] ) ? (string) $argv[1] : '';
 $mode   = isset( $argv[2] ) ? (string) $argv[2] : 'edition';
