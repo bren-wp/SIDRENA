@@ -116,7 +116,7 @@ final class Sidrena_REST {
 			array(
 				'schema'          => 3,
 				'generator'       => 'Sidrena ' . SIDRENA_VERSION,
-				'plugin_url'      => 'https://sidrene-cijene.com.hr/',
+				'plugin_url'      => 'https://brendigo.com/sidrene-cijene/',
 				'ruleset'         => SIDRENA_RULESET,
 				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
 				'catalog_mode'    => Sidrena_Utils::runtime_mode(),
