@@ -136,7 +136,7 @@ Izdanje 1.0.10 donosi:
 - uklonjen zastarjeli ručni `load_plugin_textdomain()` poziv
 - dodatno precrtan SIDRENA S + sidro znak te svi runtime lockupi, favicon, app icon i menu ikona prema dostavljenom brand-boardu
 - jedan kanonski SIDRENA logo u admin hero području i zasebna WordPress/WooCommerce edition oznaka
-- README hero vizuale i stvarne runtime screenshotove koji se automatski osvježavaju iz 1.0.10 plugina
+- README hero vizuale i stvarne runtime screenshotove koji se automatski osvježavaju iz finalnog 1.0.10 WordPress/WooCommerce sučelja
 - ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
 - obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
 - kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
