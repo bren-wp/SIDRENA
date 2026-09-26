@@ -880,7 +880,7 @@ final class Sidrena_Pricelist {
 
 		if ( ! $this->write_stream_all( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće započeti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
@@ -892,7 +892,7 @@ final class Sidrena_Pricelist {
 			}
 			if ( ! $this->write_stream_all( $handle, "  <{$item}>\n" ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
-				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 			}
 			foreach ( $headers as $header ) {
@@ -900,20 +900,20 @@ final class Sidrena_Pricelist {
 				$chunk = '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n";
 				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
 					$this->discard_atomic_writer( $handle, $temp );
-					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 				}
 			}
 			if ( ! $this->write_stream_all( $handle, "  </{$item}>\n" ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
-				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 			}
 			++$count;
 		}
 		if ( ! $this->write_stream_all( $handle, "</{$root}>\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće dovršiti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
@@ -926,7 +926,7 @@ final class Sidrena_Pricelist {
 		$temp      = trailingslashit( $directory ) . '.' . basename( $filepath ) . '.' . $suffix . '.tmp';
 		$handle    = fopen( $temp, 'xb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $handle ) {
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti privremenu datoteku za zapis: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		return array( $handle, $temp );
@@ -958,12 +958,12 @@ final class Sidrena_Pricelist {
 	private function commit_atomic_writer( $handle, $temp, $filepath ) {
 		if ( ! fflush( $handle ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_flush', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		if ( function_exists( 'fsync' ) && ! fsync( $handle ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_sync', sprintf( __( 'Nije moguće sinkronizirati datoteku na disk: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -971,7 +971,7 @@ final class Sidrena_Pricelist {
 			if ( is_file( $temp ) ) {
 				unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			}
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće atomski objaviti datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		return true;
