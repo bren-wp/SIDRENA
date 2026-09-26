@@ -17,6 +17,7 @@ Sidrena changelog
 * Tablični editori dobili su ujednačenije širine kontrola i focus-within stanje radi preglednijeg rada na desktopu i manjim ekranima.
 * Dodan je trajni admin-form-ux regression test u glavni CI i zasebni admin-polish guard.
 * Servisni editor sada svako po-lokacijsko polje aktualne i sidrene cijene povezuje s vlastitom labelom i responzivnim rasporedom, umjesto dva neoznačena inputa u istoj kartici.
+* Postavke poslovnog identiteta sada provjeravaju hrvatski OIB i u browseru i na serveru te odbijaju neispravan OIB ili e-mail jasnom porukom umjesto tihog spremanja loših podataka.
 * Oba plugina podignuta su na 1.0.12.
 
 = 1.0.11 =
