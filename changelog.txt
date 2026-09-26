@@ -6,8 +6,17 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.6 =
+* Službeni datum MINGO pojašnjenja ispravljen je na datum objave 22.09.2026. u rulesetu, adminu, dokumentaciji i CI provjerama.
+* Compliance watchdog koristi zajednički Sidrena_Legal_Automation normalizer umjesto duplicirane logike za objavu, arhivu i sigurnosne postavke.
+* Legal guard provjerava regeneriranje cjenika nakon promjena usluga i prisutnost službenog MINGO izvora.
+* Brand header layering, overflow zaštite, dodirno skrolanje tablica i tablet/mobilne akcije dodatno su ispolirani.
+* Admin menu cleanup je pojednostavljen bez promjene finalne produkcijske navigacije.
+* Oba odvojena plugina podignuta su na 1.0.6.
+* Stvarni WordPress i WooCommerce runtime screenshotovi ponovno su snimljeni nakon 1.0.6 UI izmjena i WordPress.org asset pipeline je prošao.
+
 = 1.0.5 =
-* Službeni MINGO izvor usklađen je s dokumentom pojašnjenja objavljenim 24.09.2026.; ruleset, dokumentacija i CI provjere koriste isti datum.
+* Službeni MINGO izvor usklađen je s dokumentom pojašnjenja objavljenim 22.09.2026.; ruleset, dokumentacija i CI provjere koriste isti datum.
 * Uklonjeni su preostali duplicirani source headeri i zastarjeli sidrene-cijene.com.hr metapodaci iz produkcijskog PHP/CSS koda.
 * Sidrena admin navigacija više ne izvršava isti cleanup dvaput i ne zadržava neočekivane legacy podizbornike.
 * Legal automation guard sada se izvršava i na polish granama prije mergea.
@@ -41,7 +50,7 @@ Sidrena changelog
 * Verzija oba odvojena plugina i distribucijska dokumentacija podignuti su na 1.0.2.
 
 = 1.0.1 =
-* Tehničke provjere objave cjenika usklađene su s NN 101/2026 i službenim MINGO pojašnjenjima od 22./24.09.2026.
+* Tehničke provjere objave cjenika usklađene su s NN 101/2026 i službenim MINGO pojašnjenjima od 22.09.2026.
 * Za strojno čitljivu javnu objavu dovoljan je najmanje jedan podržani format, CSV ili XML; javni HTML i manifest više se ne prisilno uključuju.
 * Barkod proizvoda tretira se kao obvezan samo kada je primjenjiv, a vrsta/opseg usluge ostaju opcionalni opisni podaci i više ne blokiraju strogu objavu.
 * Zadana javna oznaka dodatne cijene pojednostavljena je na "Cijena na DD.MM.GGGG." radi jasnijeg prikaza uz aktualnu cijenu.

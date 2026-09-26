@@ -15,10 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Keeps the Sidrena admin sidebar deterministic and easy to scan.
  *
- * This class no longer hides legacy pages after they are registered. The clean
- * sidebar is registered up front by Sidrena_Admin_Menu; this layer only
- * normalizes labels, removes duplicate slugs and keeps service edit screens
- * visually grouped under Sidrena.
+ * The clean sidebar is registered up front by Sidrena_Admin_Menu. This layer
+ * normalizes labels, removes duplicate or stale legacy slugs and keeps service
+ * edit screens visually grouped under Sidrena.
  */
 final class Sidrena_Admin_UX {
 	const SERVICE_MENU_SLUG = 'edit.php?post_type=sidrena_service';
@@ -80,9 +79,7 @@ final class Sidrena_Admin_UX {
 					$item[3] = __( 'Pomoć i podrška', 'sidrena' );
 				}
 				$visible[ $slug ] = $item;
-				continue;
 			}
-
 		}
 
 		$ordered = array();

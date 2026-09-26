@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijes
 
 == Description ==
 
-Sidrena WooCommerce 1.0.5 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+Sidrena WooCommerce 1.0.6 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
 
 * nema dupliciranja WooCommerce kataloga
 * automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
@@ -41,7 +41,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.5.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.6.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -76,8 +76,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Changelog ==
 
+= 1.0.6 =
+* Službeni datum MINGO pojašnjenja usklađen je s datumom objave 22.09.2026.
+* Uklonjena je duplicirana normalizacija pravno relevantnih postavki iz compliance watchdog sloja.
+* Dodatno su ispolirani SIDRENA brand header, responzivni prikaz i zaštite od overflowa.
+
 = 1.0.5 =
-* Ispravljena je službena oznaka MINGO pojašnjenja na dokument od 24.09.2026. i usklađen je ruleset prikaz.
+* Ispravljena je službena oznaka MINGO pojašnjenja na dokument objavljen 22.09.2026. i usklađen je ruleset prikaz.
 * Uklonjeni su preostali duplicirani source headeri i zastarjeli URL-ovi iz produkcijskog PHP/CSS koda.
 * Dodatno je poliran Sidrena brand sustav prema službenim vizualnim referencama, uz zadržavanje stvarnih runtime podataka.
 * WordPress i WooCommerce izdanje ostaju strogo odvojeni, bez telemetrije i bez paralelnog kataloga u WooCommerce izdanju.

@@ -8,6 +8,6 @@ Support: sidrena@brendigo.com
 
 # Sidrena legal automation notes
 
-Sidrena 1.0.5 development line hardens publication settings so automated cjenik generation remains before the operational 08:00 publication deadline, archive retention stays at least 30 days, and machine-readable/public publication outputs remain enabled.
+Sidrena 1.0.6 development line keeps retail daily generation scheduled before the operational 08:00 publication deadline, queues service cjenik regeneration after price changes, preserves at least 30 days of public archive history, and keeps machine-readable publication safeguards enabled.
 
 This engineering note is CI-visible context, not end-user legal advice.
