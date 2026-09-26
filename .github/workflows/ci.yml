@@ -405,44 +405,7 @@ jobs:
 
       - name: Plugin Check regression guard
         if: matrix.php == '8.3'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if grep -RInF 'load_plugin_textdomain(' includes editions uninstall.php --include='*.php'; then
-            echo 'Discouraged manual translation loader detected.' >&2
-            exit 1
-          fi
-          if grep -RInF 'href="<?php echo $url; ?>"' includes public --include='*.php'; then
-            echo 'Unescaped public URL output detected.' >&2
-            exit 1
-          fi
-          grep -Fq 'esc_url( $url )' includes/class-sidrena-public.php
-          grep -Fq 'DROP TABLE IF EXISTS %i' uninstall.php
-          python3 - <<'PY'
-          from pathlib import Path
-          bad = []
-          for path in Path('includes').glob('*.php'):
-              lines = path.read_text(encoding='utf-8').splitlines()
-              in_php = True
-              for no, line in enumerate(lines, 1):
-                  s = line.strip()
-                  if s.startswith('/* translators:') and not in_php:
-                      bad.append(f'{path}:{no}')
-                  pos = 0
-                  while pos < len(line):
-                      op = line.find('<?php', pos)
-                      cl = line.find('?>', pos)
-                      if op < 0 and cl < 0:
-                          break
-                      if op >= 0 and (cl < 0 or op < cl):
-                          in_php = True
-                          pos = op + 5
-                      else:
-                          in_php = False
-                          pos = cl + 2
-          if bad:
-              raise SystemExit('Translator comments rendered outside PHP: ' + ', '.join(bad))
-          PY
+        run: python3 .github/tests/plugin-check-regression.py
 
       - name: Dangerous PHP primitive guard
         if: matrix.php == '8.3'
