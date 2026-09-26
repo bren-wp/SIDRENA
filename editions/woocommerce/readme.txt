@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.11 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.12 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.11.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.12.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.12 =
+* Corrected the public REST index plugin URL so source and packaged runtime both expose the canonical Brendigo SIDRENA page.
+* Removed the build-time legacy-domain rewrite that could hide stale production source during packaging.
+* Added source-integrity regression coverage for retired SIDRENA domain variants across runtime code and distribution inputs.
+* Strengthened CI so retired production URLs fail before packaging instead of being silently normalized.
+* Runtime UI is unchanged from 1.0.11; the existing real wp-admin screenshots remain representative.
 
 = 1.0.11 =
 * Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
