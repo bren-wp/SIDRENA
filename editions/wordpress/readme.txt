@@ -80,6 +80,8 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Refined the SIDRENA logo geometry, admin hero, menu icon, spacing, cards, tables and edition badges to follow the supplied brand references more closely.
 * WordPress.org description copy is now in standard English while the Croatian runtime interface remains unchanged.
 * README and WordPress.org runtime screenshots are regenerated from the real 1.0.10 plugin UI.
+* Fixed the early upgrade/bootstrap order that could trigger a WP-CLI fatal before rewrite globals were ready.
+* Official WordPress Plugin Check passes against the production-shaped 1.0.10 package.
 
 = 1.0.9 =
 * Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.

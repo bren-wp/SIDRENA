@@ -133,6 +133,7 @@ Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom 
 Izdanje 1.0.10 donosi:
 
 - obradu dostavljenog Plugin Check izvještaja: translators komentari, escaping javnih URL-ova, sanitizacija ulaza i sigurniji SQL identifikatori
+- službeni WordPress Plugin Check prolazi za oba stvarna 1.0.10 produkcijska paketa nakon uklanjanja runtime fatala, i18n grešaka i prijavljenih sigurnosnih problema
 - uklonjen zastarjeli ručni `load_plugin_textdomain()` poziv
 - dodatno precrtan SIDRENA S + sidro znak te svi runtime lockupi, favicon, app icon i menu ikona prema dostavljenom brand-boardu
 - jedan kanonski SIDRENA logo u admin hero području i zasebna WordPress/WooCommerce edition oznaka
@@ -159,7 +160,7 @@ Izdanje 1.0.10 donosi:
 - stvarni WordPress.org screenshotovi snimljeni iz aktivnog wp-admin okruženja
 - CI provjera runtime grešaka, ključnih preklapanja i horizontalnog overflowa na desktop, tablet i mobilnim širinama
 - WordPress.org ikone i banneri pripremljeni zasebno za oba izdanja
-- kompletan edition-specific SVG + PNG branding paket prenesen je u oba instalacijska plugina
+- puni marketinški SVG/PNG branding ostaje u repozitoriju i README/WP.org assetima, dok instalacijski ZIP sadrži samo runtime vizuale potrebne stvarnom plugin sučelju
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 

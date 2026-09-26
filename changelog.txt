@@ -17,6 +17,10 @@ Sidrena changelog
 * WordPress.org short description i Description dio readmea prebačeni su na standardni engleski; runtime sučelje ostaje hrvatsko.
 * README sada prikazuje obnovljene hero assete uz stvarne wp-admin screenshotove.
 * Dodan je Plugin Check regression guard za prijevode, escaping, zastarjeli translation loader i SQL uninstall identifikatore.
+* Uklonjen je zastarjeli razvojni 0.1.0 komentar iz produkcijskog frontend CSS-a; runtime sloj više ne sadrži takve razvojne version markere.
+* Dodan je regresijski test koji čuva upgrade repair na `init` i sprječava povratak prerane `plugins_loaded` migracije.
+* Službeni WordPress Plugin Check potvrđen je uspješnim za oba stvarna 1.0.10 produkcijska paketa nakon popravaka dostavljenog izvještaja.
+* Stvarni WordPress i WooCommerce screenshot/branding pipeline ponovno je prošao na finalnom 1.0.10 UI sloju.
 * Oba plugina podignuta su na 1.0.10.
 
 = 1.0.9 =
