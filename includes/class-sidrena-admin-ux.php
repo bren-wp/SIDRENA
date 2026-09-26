@@ -34,7 +34,6 @@ final class Sidrena_Admin_UX {
 
 	public function hooks() {
 		add_action( 'admin_menu', array( $this, 'simplify_menu' ), 9999 );
-		add_action( 'admin_head', array( $this, 'simplify_menu' ), 1 );
 		add_filter( 'parent_file', array( $this, 'parent_file' ) );
 		add_filter( 'submenu_file', array( $this, 'submenu_file' ) );
 	}
@@ -64,7 +63,6 @@ final class Sidrena_Admin_UX {
 
 		$labels  = self::primary_menu_labels();
 		$visible = array();
-		$extra   = array();
 
 		foreach ( $submenu['sidrena'] as $item ) {
 			if ( ! is_array( $item ) || empty( $item[2] ) ) {
@@ -85,7 +83,6 @@ final class Sidrena_Admin_UX {
 				continue;
 			}
 
-			$extra[ $slug ] = $item;
 		}
 
 		$ordered = array();
@@ -96,7 +93,7 @@ final class Sidrena_Admin_UX {
 		}
 
 		if ( $ordered ) {
-			$submenu['sidrena'] = array_merge( $ordered, array_values( $extra ) );
+			$submenu['sidrena'] = $ordered;
 		}
 	}
 
