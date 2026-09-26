@@ -294,6 +294,8 @@ final class Sidrena_Admin {
 			'locations_required'           => array( 'error', __( 'Mora postojati barem jedna lokacija. Ako je trenutačno ne želite objavljivati, ostavite je spremljenu i isključite opciju Aktivna.', 'sidrena' ) ),
 			'locations_invalid'            => array( 'error', __( 'Lokacije nisu spremljene. Aktivna lokacija mora imati jedinstveni ID, vrstu objekta, oznaku i adresu.', 'sidrena' ) ),
 			'settings_saved_cron_warning'  => array( 'warning', __( 'Postavke su spremljene, ali WordPress nije uspio ponovno zakazati dnevno generiranje. Provjerite WP-Cron ili konfigurirajte server cron.', 'sidrena' ) ),
+			'settings_invalid_oib'          => array( 'error', __( 'Postavke nisu spremljene. Uneseni OIB nema valjanu kontrolnu znamenku.', 'sidrena' ) ),
+			'settings_invalid_email'        => array( 'error', __( 'Postavke nisu spremljene. Provjerite e-mail adresu poslovnog subjekta.', 'sidrena' ) ),
 			'standalone_imported'          => array( 'success', __( 'Uvoz WordPress kataloga je dovršen.', 'sidrena' ) ),
 			'standalone_import_failed'     => array( 'error', __( 'WordPress katalog nije moguće uvesti. Provjerite CSV/XML format, veličinu, zaglavlja i obvezne podatke.', 'sidrena' ) ),
 			'standalone_saved_with_errors' => array( 'warning', __( 'Katalog je djelomično spremljen. Neke stavke nije bilo moguće zapisati; provjerite Dnevnik i pokušajte ponovno.', 'sidrena' ) ),
@@ -1218,8 +1220,8 @@ final class Sidrena_Admin {
 				<div class="sid-fields">
 					<label><span><?php esc_html_e( 'Naziv obrta / tvrtke', 'sidrena' ); ?></span><input type="text" maxlength="190" name="business_name" value="<?php echo esc_attr( $settings['business_name'] ); ?>" autocomplete="organization"></label>
 					<label class="sid-wide"><span><?php esc_html_e( 'Sjedište / poslovna adresa', 'sidrena' ); ?></span><input type="text" maxlength="250" name="business_address" value="<?php echo esc_attr( $settings['business_address'] ); ?>" autocomplete="street-address"></label>
-					<label><span>OIB</span><input type="text" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" name="business_oib" value="<?php echo esc_attr( $settings['business_oib'] ); ?>"><small><?php esc_html_e( 'Ako ga unosite, Sidrena provjerava kontrolnu znamenku.', 'sidrena' ); ?></small></label>
-					<label><span><?php esc_html_e( 'E-mail poslovnog subjekta', 'sidrena' ); ?></span><input type="email" maxlength="190" name="business_email" value="<?php echo esc_attr( $settings['business_email'] ); ?>" autocomplete="email"></label>
+					<label for="sidrena-business-oib"><span>OIB</span><input type="text" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" id="sidrena-business-oib" name="business_oib" value="<?php echo esc_attr( $settings['business_oib'] ); ?>" aria-describedby="sidrena-business-oib-help" data-sidrena-oib><small id="sidrena-business-oib-help"><?php esc_html_e( 'Ako ga unosite, mora imati 11 znamenki i valjanu kontrolnu znamenku.', 'sidrena' ); ?></small></label>
+					<label for="sidrena-business-email"><span><?php esc_html_e( 'E-mail poslovnog subjekta', 'sidrena' ); ?></span><input type="email" maxlength="190" id="sidrena-business-email" name="business_email" value="<?php echo esc_attr( $settings['business_email'] ); ?>" autocomplete="email"></label>
 					<label><span><?php esc_html_e( 'Telefon', 'sidrena' ); ?></span><input type="text" maxlength="40" name="business_phone" value="<?php echo esc_attr( $settings['business_phone'] ); ?>" autocomplete="tel"></label>
 					<label><span><?php esc_html_e( 'Naziv registra', 'sidrena' ); ?></span><input type="text" maxlength="190" name="business_registry" value="<?php echo esc_attr( $settings['business_registry'] ); ?>" placeholder="<?php esc_attr_e( 'npr. Sudski registar ili Obrtni registar', 'sidrena' ); ?>"></label>
 					<label><span><?php esc_html_e( 'Broj upisa u registar', 'sidrena' ); ?></span><input type="text" maxlength="100" name="business_registry_number" value="<?php echo esc_attr( $settings['business_registry_number'] ); ?>"></label>
@@ -1374,12 +1376,24 @@ final class Sidrena_Admin {
 		}
 		$tooltip_text = sanitize_textarea_field( $this->post_value( 'anchor_tooltip_text', $old['anchor_tooltip_text'] ?? '' ) );
 
+		$business_oib_raw = trim( sanitize_text_field( $this->post_value( 'business_oib', '' ) ) );
+		$business_oib     = Sidrena_Utils::sanitize_oib( $business_oib_raw );
+		if ( '' !== $business_oib_raw && ! Sidrena_Utils::is_valid_oib( $business_oib ) ) {
+			$this->redirect( 'settings', 'settings_invalid_oib' );
+		}
+
+		$business_email_raw = trim( sanitize_text_field( $this->post_value( 'business_email', '' ) ) );
+		$business_email     = sanitize_email( $business_email_raw );
+		if ( '' !== $business_email_raw && ( '' === $business_email || ! is_email( $business_email ) ) ) {
+			$this->redirect( 'settings', 'settings_invalid_email' );
+		}
+
 		$new = array(
 			'business_mode'       => $business_mode,
 			'business_name'       => sanitize_text_field( $this->post_value( 'business_name', '' ) ),
 			'business_address'    => sanitize_text_field( $this->post_value( 'business_address', '' ) ),
-			'business_oib'        => Sidrena_Utils::sanitize_oib( $this->post_value( 'business_oib', '' ) ),
-			'business_email'      => sanitize_email( $this->post_value( 'business_email', '' ) ),
+			'business_oib'        => $business_oib,
+			'business_email'      => $business_email,
 			'business_phone'      => Sidrena_Utils::sanitize_business_phone( $this->post_value( 'business_phone', '' ) ),
 			'business_registry'   => sanitize_text_field( $this->post_value( 'business_registry', '' ) ),
 			'business_registry_number' => sanitize_text_field( $this->post_value( 'business_registry_number', '' ) ),
