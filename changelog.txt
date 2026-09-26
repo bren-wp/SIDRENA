@@ -6,6 +6,17 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.10 =
+* Obradjen je dostavljeni Plugin Check izvještaj: dodani su translators komentari, ispravljen escaping javnih URL-ova, pojačana sanitizacija GET/POST ulaza i uvedeni sigurniji SQL identifier placeholderi za plugin tablice.
+* Uklonjen je zastarjeli ručni load_plugin_textdomain poziv; WordPress automatski učitava prijevode za instalacijski text domain.
+* WPML integracijski hookovi ostaju nepromijenjeni kao vanjski API hookovi, uz precizne PHPCS napomene.
+* SIDRENA S + sidro znak, WordPress/WooCommerce lockupi, favicon, app icon i menu icon dodatno su precrtani prema dostavljenom brand-boardu.
+* Admin hero sada koristi jedan kanonski SIDRENA logo i zasebnu edition oznaku radi dosljednog identiteta u oba plugina.
+* WordPress.org short description i Description dio readmea prebačeni su na standardni engleski; runtime sučelje ostaje hrvatsko.
+* README sada prikazuje obnovljene hero assete uz stvarne wp-admin screenshotove.
+* Dodan je Plugin Check regression guard za prijevode, escaping, zastarjeli translation loader i SQL uninstall identifikatore.
+* Oba plugina podignuta su na 1.0.10.
+
 = 1.0.9 =
 * Ispravljen je glavni uzrok raspadnutog admin prikaza: SIDRENA brand CSS i admin JS sada se učitavaju i kada hook suffix nije standardan, uz sigurni admin_print_styles fallback bez inline CSS/JS.
 * Asset URL-ovi više ne ovise o krhkom ručnom spajanju SIDRENA_URL putanje nego koriste plugins_url() uz stvarnu plugin ulaznu datoteku.
