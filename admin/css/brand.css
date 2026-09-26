@@ -1,5 +1,5 @@
 /**
- * Sidrena 1.0.9 brand UI.
+ * Sidrena 1.0.10 brand UI.
  * Author: Brendigo
  * Author URI: https://brendigo.com/
  * Plugin URI: https://brendigo.com/sidrene-cijene/
@@ -85,7 +85,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	--sid-accent:var(--sid-blue);
 	--sid-accent-soft:#eef5ff;
 	margin:0;
-	padding:14px 18px 34px;
+	padding:12px 18px 34px;
 	max-width:none;
 	font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 	color:var(--sid-ink);
@@ -95,14 +95,14 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-brandbar {
 	position:relative;
 	display:grid;
-	grid-template-columns:minmax(360px,500px) minmax(280px,1fr) auto;
+	grid-template-columns:minmax(360px,520px) minmax(260px,1fr) auto;
 	align-items:center;
-	gap:22px;
-	min-height:124px;
-	padding:16px 22px;
+	gap:20px;
+	min-height:112px;
+	padding:14px 20px;
 	overflow:hidden;
 	border:1px solid rgba(126,211,255,.22);
-	border-radius:18px;
+	border-radius:14px;
 	background:
 		linear-gradient(90deg,rgba(3,22,45,.99) 0%,rgba(5,45,88,.93) 40%,rgba(4,34,69,.54) 68%,rgba(3,20,42,.16) 100%),
 		url("../../assets/images/brand-hero.svg") right center/cover no-repeat;
@@ -126,13 +126,15 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	background:linear-gradient(90deg,var(--sid-cyan),var(--sid-blue),var(--sid-accent));
 	opacity:.95;
 }
-.sidrena-brandbar__identity { position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-width:0;min-height:72px; }
-.sidrena-brandbar__logo { display:block;width:min(470px,100%);height:94px;max-width:100%;object-fit:contain;object-position:left center;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12)); }
+.sidrena-brandbar__identity { position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-width:0;min-height:78px; }
+.sidrena-brandbar__logo { display:block;width:min(440px,100%);height:76px;max-width:100%;object-fit:contain;object-position:left center;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12)); }
+.sidrena-brandbar__edition { display:inline-flex;align-items:center;gap:7px;margin-left:82px;padding:4px 9px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.08);color:#dceaf5;font-size:10px;font-weight:800;letter-spacing:.04em; }
+.sidrena-brandbar__edition-dot { width:7px;height:7px;border-radius:50%;background:var(--sid-accent);box-shadow:0 0 0 3px rgba(255,255,255,.08); }
 .sidrena-edition-wordpress .sidrena-brandbar { background:linear-gradient(90deg,rgba(4,25,49,.98) 0%,rgba(5,54,101,.86) 46%,rgba(5,31,62,.40) 74%,rgba(4,24,47,.16) 100%),url("../../assets/images/brand-hero.svg") right 30%/cover no-repeat; }
 .sidrena-edition-woocommerce .sidrena-brandbar { background:linear-gradient(90deg,rgba(4,25,49,.98) 0%,rgba(37,22,82,.88) 48%,rgba(20,25,66,.42) 74%,rgba(4,24,47,.16) 100%),url("../../assets/images/brand-hero.svg") right 30%/cover no-repeat; }
 .sidrena-brandbar__copy { position:relative;z-index:1;min-width:0;max-width:510px; }
-.sidrena-brandbar__copy strong { display:block;color:#fff;font-size:clamp(19px,1.45vw,25px);line-height:1.18;letter-spacing:-.02em;text-wrap:balance; }
-.sidrena-brandbar__copy span { display:block;margin-top:7px;max-width:520px;color:#d3e7f4;font-size:12px;line-height:1.5; }
+.sidrena-brandbar__copy strong { display:block;color:#fff;font-size:clamp(18px,1.35vw,24px);line-height:1.18;letter-spacing:-.018em;text-wrap:balance; }
+.sidrena-brandbar__copy span { display:block;margin-top:6px;max-width:520px;color:#cde1ef;font-size:11px;line-height:1.5; }
 .sidrena-brandbar__actions { position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-end;gap:9px;min-width:0;flex-wrap:wrap; }
 .sidrena-brandbar__actions a {
 	display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 13px;border:1px solid rgba(255,255,255,.28);
@@ -167,7 +169,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-head-inline-actions { display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap; }
 
 .sid-card {
-	position:relative;min-width:0;margin:0 0 14px;padding:17px;border:1px solid #dce8f2;border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
+	position:relative;min-width:0;margin:0 0 13px;padding:16px;border:1px solid #dce8f2;border-radius:11px;background:#fff;box-shadow:0 7px 22px rgba(8,45,91,.055);
 }
 .sid-card h2,.sid-card h3 { color:var(--sid-ink); }
 .sid-card p { color:var(--sid-muted);line-height:1.5; }
@@ -175,13 +177,13 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .sid-grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
 
-.sid-dashboard-metrics { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px; }
+.sid-dashboard-metrics { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 13px; }
 .sid-dashboard-metric {
-	display:grid;grid-template-columns:46px minmax(0,1fr);gap:11px;align-items:center;min-width:0;min-height:98px;padding:14px;border:1px solid #dce8f2;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
+	display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;min-width:0;min-height:92px;padding:13px;border:1px solid #dce8f2;border-radius:11px;background:#fff;box-shadow:0 7px 22px rgba(8,45,91,.055);
 }
-.sid-dashboard-metric__icon { display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--sid-accent-soft);color:var(--sid-accent);font-size:23px;line-height:46px; }
+.sid-dashboard-metric__icon { display:grid;place-items:center;width:44px;height:44px;border-radius:11px;background:var(--sid-accent-soft);color:var(--sid-accent);font-size:22px;line-height:44px; }
 .sid-dashboard-metric span:not(.sid-dashboard-metric__icon) { display:block;color:#4f6a82;font-size:11px;font-weight:750; }
-.sid-dashboard-metric strong { display:block;margin:3px 0;color:var(--sid-ink);font-size:25px;line-height:1;font-weight:850;letter-spacing:-.03em;overflow-wrap:anywhere; }
+.sid-dashboard-metric strong { display:block;margin:3px 0;color:var(--sid-ink);font-size:23px;line-height:1;font-weight:850;letter-spacing:-.03em;overflow-wrap:anywhere; }
 .sid-dashboard-metric small { color:var(--sid-muted);font-size:10px;line-height:1.35; }
 .sid-dashboard-metric--ok { border-color:#cfeee2;background:linear-gradient(145deg,#fff,#f2fcf8); }
 .sid-dashboard-metric--ok .sid-dashboard-metric__icon { background:#e5f9f0;color:var(--sid-green); }

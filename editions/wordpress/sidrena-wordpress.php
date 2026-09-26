@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Sidrena WordPress
+ * Plugin Name: Sidrena — Price Compliance
  * Plugin URI: https://brendigo.com/sidrene-cijene/
- * Description: Sidrene cijene za običan WordPress bez WooCommercea: vlastiti katalog proizvoda i usluga, CSV/XML cjenici i arhiva 30+ dana.
- * Version: 1.0.9
+ * Description: Price records, products and services, CSV/XML public price lists, history and a 30+ day publication archive.
+ * Version: 1.0.10
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Brendigo
@@ -28,7 +28,7 @@ if ( require $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) {
 }
 unset( $sidrena_entry_file, $sidrena_guard_root );
 
-define( 'SIDRENA_VERSION', '1.0.9' );
+define( 'SIDRENA_VERSION', '1.0.10' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 105/2026 · MINGO 22.09.2026' );
 define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );

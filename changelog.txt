@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.10 =
+* Ispravljeni su WordPress Plugin Check ERROR nalazi iz dostavljenog izvještaja: i18n placeholder komentari, escaping izlaza, sanitizacija ulaza i sigurnije pripremljeni identifikatori vlastitih tablica.
+* Središnji admin hero sada koristi kanonski SIDRENA horizontalni logo kao na brand referenci, uz odvojenu WordPress/WooCommerce edition oznaku.
+* S + sidro znak, app ikona, WordPress/WooCommerce lockupi i mala menu ikona koriste jednu usklađenu geometriju i paletu.
+* Dodatno su ispolirani razmaci, kartice, metrike i proporcije cijelog admin sučelja prema dostavljenim referentnim slikama.
+* WordPress.org short description i Description sekcije prebačene su na standardni engleski jezik radi Plugin Check kompatibilnosti.
+* README i brand guide ažurirani su na 1.0.10 i ostaju vezani uz stvarne runtime screenshotove.
+* Oba odvojena plugina podignuta su na 1.0.10.
+
 = 1.0.9 =
 * Ispravljen je glavni uzrok raspadnutog admin prikaza: SIDRENA brand CSS i admin JS sada se učitavaju i kada hook suffix nije standardan, uz sigurni admin_print_styles fallback bez inline CSS/JS.
 * Asset URL-ovi više ne ovise o krhkom ručnom spajanju SIDRENA_URL putanje nego koriste plugins_url() uz stvarnu plugin ulaznu datoteku.

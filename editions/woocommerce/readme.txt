@@ -1,42 +1,42 @@
-=== Sidrena WooCommerce ===
+=== Sidrena for WooCommerce ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WooCommerce%20plugin%20-%20donacija
 Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijest cijena i arhiva objava.
+Manage WooCommerce price records, public CSV/XML price lists, history, locations and publication archives without duplicating the product catalog.
 
 == Description ==
 
-Sidrena WooCommerce 1.0.9 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+Sidrena for WooCommerce 1.0.10 uses the existing WooCommerce catalog as the source of products and variations.
 
-* nema dupliciranja WooCommerce kataloga
-* automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
-* proizvodi, varijacije, usluge i lokacijski podaci
-* povijest cijena i 30-dnevna referenca kada postoji dovoljna evidencija
-* javni CSV/XML cjenici i pretraživi HTML prikaz
-* najmanje 30 dana javne arhive prethodnih objava
-* zasebna objava po aktivnoj lokaciji/webshopu
-* dnevno automatsko generiranje, zadano u 06:30
-* lokalni audit zapis s ograničenjem rasta i bez telemetrije
-* kompaktan WordPress admin meni sa Sidrena sidro ikonicom
+* no duplicate WooCommerce product catalog
+* current and reference-price display alongside WooCommerce pricing
+* products, variations, services and location-specific information
+* price history and 30-day reference support when sufficient records exist
+* public CSV/XML price lists and searchable HTML output
+* at least 30 days of public publication history
+* separate publications for active physical locations and webshop channels
+* scheduled generation and post-change regeneration
+* local audit history with bounded growth and no built-in telemetry
+* responsive SIDRENA administration with WooCommerce-specific accent styling
 
-Službena stranica: https://brendigo.com/sidrene-cijene/
-Podrška: sidrena@brendigo.com
-Autor: Brendigo
+Official site: https://brendigo.com/sidrene-cijene/
+Support: sidrena@brendigo.com
+Author: Brendigo
 
-= Privatnost i vanjske veze =
+= Privacy and external links =
 
-Sidrena ne šalje telemetriju i ne prati korištenje plugina. Provjera javne dostupnosti koristi WordPress HTTP API samo prema javnim Sidrena datotekama na istoj web stranici. E-mail, WhatsApp, službena stranica i donacija otvaraju se samo nakon korisničke akcije.
+Sidrena does not include telemetry or user tracking. Public-availability checks use the WordPress HTTP API only for Sidrena files published on the same website. Email, WhatsApp, official website and donation links open only after an explicit user action.
 
-= Važna napomena =
+= Important =
 
-Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja. Povijesni i referentni podaci moraju odgovarati stvarnoj poslovnoj evidenciji.
+Sidrena provides technical tools for recording and publishing price information. It does not constitute automatic legal certification of a specific business. Historical and reference data must match the merchant's actual business records.
 
 == Installation ==
 
@@ -75,6 +75,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.10 =
+* Fixed Plugin Check internationalization, escaping, input-sanitization and custom-table identifier findings from the supplied audit report.
+* Reworked the admin hero around the canonical SIDRENA wordmark with a separate edition badge for more consistent branding.
+* Rebuilt the anchor-S logo family and menu icon geometry so all runtime variants share one visual construction.
+* Tightened cards, metrics, spacing and responsive proportions to match the supplied SIDRENA dashboard references more closely.
+* Updated the WordPress.org readme description to standard English while preserving the Croatian runtime interface.
+* Added stricter real-runtime and Plugin Check CI coverage.
 
 = 1.0.9 =
 * Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.
