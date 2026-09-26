@@ -156,6 +156,9 @@ jobs:
       - name: Support and public surface smoke test
         run: php .github/tests/support-surface-smoke.php
 
+      - name: Canonical URL source-integrity smoke test
+        run: php .github/tests/canonical-url-smoke.php
+
       - name: Set up Node
         if: matrix.php == '8.3'
         uses: actions/setup-node@v4
