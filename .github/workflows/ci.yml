@@ -216,7 +216,7 @@ jobs:
           grep -Fq 'SIDRENA_EDITION' includes/sidrena-bootstrap.php
           grep -Fq "\"Project-Id-Version: Sidrena ${WP_VERSION}\\n\"" languages/sidrena.pot
           if grep -RInE 'https?://(www[.])?sidren(a|e)-cijen(a|e)[.]com[.]hr/?' \
-            includes admin public assets editions languages uninstall.php tools/build-editions.sh; then
+            includes admin public assets editions languages docs uninstall.php tools/build-editions.sh tools/build-support-pdf.py; then
             echo 'Retired Sidrena website domain detected in production source.' >&2
             exit 1
           fi
