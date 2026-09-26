@@ -101,6 +101,14 @@ final class Sidrena_Admin {
 	}
 
 	private function is_sidrena_admin_screen( $hook = '', $screen = null ) {
+		// Post editors use the compact editor stylesheet, not the full SIDRENA app shell.
+		// In particular, the sidrena_service screen id itself contains "sidrena" and
+		// must not be mistaken for a top-level SIDRENA application page.
+		$post_type = is_object( $screen ) && isset( $screen->post_type ) ? (string) $screen->post_type : '';
+		if ( 'sidrena_service' === $post_type || ( Sidrena_Utils::is_woocommerce_edition() && 'product' === $post_type ) ) {
+			return false;
+		}
+
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'sidrena' === $page || 0 === strpos( $page, 'sidrena-' ) ) {
 			return true;
