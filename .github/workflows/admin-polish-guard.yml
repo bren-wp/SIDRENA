@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify Sidrena 1.0.8 brand and cleanup invariants
+      - name: Verify Sidrena 1.0.9 brand and cleanup invariants
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
@@ -35,7 +35,7 @@ jobs:
           test -s assets/images/brand-hero.svg
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
-          grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
+          grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
           grep -Fq "'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
           grep -Fq "sidrena-edition-body-' . \$edition" includes/class-sidrena-admin.php
@@ -43,6 +43,10 @@ jobs:
           grep -Fq "pending = {}" public/js/compat.js
           grep -Fq "Sidrena_Admin_UX::SERVICE_MENU_SLUG === \$item[0]" includes/class-sidrena-admin-menu.php
           grep -Fq "dataset.sidrenaSubmitting" admin/js/admin.js
+          grep -Fq "admin_print_styles" includes/class-sidrena-admin.php
+          grep -Fq "plugins_url( 'admin/css/brand.css', SIDRENA_FILE )" includes/class-sidrena-admin.php
+          grep -Fq "width=\"560\" height=\"112\"" includes/class-sidrena-admin.php
+
           if grep -q '\.sidrena-wrap' admin/css/admin.css; then
             echo "Legacy .sidrena-wrap CSS must not return to the editor-only stylesheet."
             exit 1

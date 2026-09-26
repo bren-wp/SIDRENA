@@ -6,6 +6,18 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.9 =
+* Ispravljen je glavni uzrok raspadnutog admin prikaza: SIDRENA brand CSS i admin JS sada se učitavaju i kada hook suffix nije standardan, uz sigurni admin_print_styles fallback bez inline CSS/JS.
+* Asset URL-ovi više ne ovise o krhkom ručnom spajanju SIDRENA_URL putanje nego koriste plugins_url() uz stvarnu plugin ulaznu datoteku.
+* CSS i JS dobivaju filemtime cache-busting uz verziju plugina, pa nadogradnja ne ostavlja zastarjeli 1.0.8 izgled u browser/proxy cacheu.
+* Obnovljen je cijeli runtime logo sustav: S + sidro znak, WordPress i WooCommerce lockupi, svijetle/tamne varijante, app ikona i zaseban 20×20 admin-menu znak.
+* Admin hero je smanjen i usklađen s referentnim prikazima; kartice, metrike, tipografija i razmaci dodatno su ispolirani bez paralelnog override CSS sloja.
+* Menu ikona ima vlastite dimenzije, poravnanje i active-state tretman kako više ne bi izlazila iz WordPress menu retka.
+* CI i distribution guard sada provjeravaju brand.css, admin.js i edition-specific runtime logo assete unutar stvarnog instalacijskog ZIP-a.
+* Dodan je admin-assets smoke test za page-query fallback, screen-id fallback i service editor asset routing.
+* Stvarni wp-env screenshot pipeline sada na svih šest glavnih SIDRENA ekrana i na 1440/1180/782/390 px provjerava da su brand.css i admin.js stvarno učitani, da hero/kartice imaju produkcijski computed-style te da menu ikona ne prelazi 20 px.
+* Oba odvojena plugina podignuta su na 1.0.9.
+
 = 1.0.8 =
 * Instalacijski paketi su očišćeni od WordPress.org screenshotova i marketinških SVG/PNG asseta koji nisu potrebni za runtime; zadržani su lokalni runtime logotipi, kod, prijevodi, tekstualne upute i PDF podrška.
 * Build, CI, distribution guard i release verifier ograničavaju svaki instalacijski ZIP na najviše 1,5 MiB radi kompatibilnosti s čestim shared-hosting upload_max_filesize limitom od 2 MiB.

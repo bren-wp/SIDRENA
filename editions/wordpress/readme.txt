@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici i arhiva objava za Wor
 
 == Description ==
 
-Sidrena WordPress 1.0.8 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
+Sidrena WordPress 1.0.9 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
 * vlastiti katalog proizvoda i usluga ili povezivanje postojećeg javnog WordPress sadržaja
 * sidrena/referentna cijena, aktualna cijena i jedinična cijena kada je primjenjiva
@@ -39,7 +39,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.8.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.9.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.9 =
+* Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.
+* Runtime asset URL-ovi koriste plugins_url() vezan uz stvarnu SIDRENA ulaznu datoteku, a filemtime cache-busting sprječava prikaz zastarjelog CSS-a nakon nadogradnje.
+* Potpuno je obnovljen SIDRENA logo sustav: glavni znak, WordPress/WooCommerce lockupi, svijetle varijante, app ikona i posebna mala admin-menu ikona.
+* Admin hero, kartice, metrike, razmaci i responzivne dimenzije dodatno su usklađeni s referentnim SIDRENA prikazima.
+* CI i distribution guard sada izričito provjeravaju da instalacijski ZIP sadrži brand.css, admin.js i edition-specific runtime logotipe.
+* Dodan je izvršni admin asset-routing regresijski test.
 
 = 1.0.8 =
 * Instalacijski ZIP je radikalno smanjen uklanjanjem WordPress.org screenshotova i marketinških PNG/SVG asseta koji nisu potrebni za runtime.

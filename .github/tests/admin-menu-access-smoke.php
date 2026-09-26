@@ -11,6 +11,7 @@
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'SIDRENA_EDITION', 'wordpress' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena/' );
+define( 'SIDRENA_FILE', '/srv/wordpress/wp-content/plugins/sidrena-wordpress/sidrena-wordpress.php' );
 
 $GLOBALS['sidrena_test_caps'] = array(
 	'manage_options'     => true,
@@ -23,6 +24,10 @@ $GLOBALS['submenu']           = array();
 function apply_filters( $hook, $value ) {
 	unset( $hook );
 	return $value;
+}
+function plugins_url( $path = '', $plugin = '' ) {
+	unset( $plugin );
+	return SIDRENA_URL . ltrim( (string) $path, '/' );
 }
 function sanitize_key( $key ) {
 	$key = strtolower( (string) $key );
