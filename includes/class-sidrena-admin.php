@@ -81,6 +81,8 @@ final class Sidrena_Admin {
 					'keepOneLocation'      => __( 'Mora ostati barem jedna lokacija. Možete je isključiti ako je trenutačno ne želite objavljivati.', 'sidrena' ),
 					'removeUnsavedProduct' => __( 'Ukloniti ovaj nespremljeni proizvod?', 'sidrena' ),
 					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
+					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
+					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
 				)
 			);
 			return;
@@ -1259,13 +1261,13 @@ final class Sidrena_Admin {
 
 		<?php if ( $woo ) : ?>
 			<div class="sid-grid sid-grid-2">
-				<form class="sid-card sid-tool-card" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_anchor"><?php wp_nonce_field( 'sidrena_import_anchor' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB.', 'sidrena' ); ?></p><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" required><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
 				</form>
 				<form class="sid-card sid-tool-card" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_location_data"><?php wp_nonce_field( 'sidrena_import_location_data' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-location-alt"></span></div><h2><?php esc_html_e( 'Raspoloživost i cijena po lokaciji', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: location_id, product_id ili sku, price, anchor_price, availability. Prazna cijena za lokaciju koristi osnovnu WooCommerce vrijednost.', 'sidrena' ); ?></p><input class="sid-file-input" type="file" name="location_csv" accept=".csv,text/csv,text/plain" required><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi lokacijske podatke', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-location-alt"></span></div><h2><?php esc_html_e( 'Raspoloživost i cijena po lokaciji', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: location_id, product_id ili sku, price, anchor_price, availability. Prazna cijena za lokaciju koristi osnovnu WooCommerce vrijednost.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="location_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-location-csv-help" required><small id="sid-location-csv-help"><?php esc_html_e( 'Najviše 5 MB. Datoteka mora sadržavati lokaciju i identifikator proizvoda ili SKU.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi lokacijske podatke', 'sidrena' ); ?></button>
 				</form>
 			</div>
 			<div class="sid-grid sid-grid-2">
