@@ -13,6 +13,7 @@ Sidrena changelog
 * Uklonjen je preostali duplicirani/stari source header iz service scalability testa.
 * Pojačani su legal/schema i admin-menu regresijski testovi za NN 101/2026, NN 105/2026 i first-publish service lifecycle.
 * Dodan je izvršni smoke test koji simulira novu objavu, kasnije uređivanje i pre-referentnu uslugu te provjerava da se sidrena cijena ne prepisuje.
+* Stvarni WordPress i WooCommerce runtime screenshotovi ponovno su snimljeni nakon 1.0.7 lifecycle i UI izmjena; WordPress.org asset pipeline je prošao.
 * Admin obrasci sada blokiraju slučajni dvostruki submit, označavaju stanje aria-busy te imaju ujednačeniji keyboard focus i submitting UX.
 * Oba odvojena plugina podignuta su na 1.0.7.
 
