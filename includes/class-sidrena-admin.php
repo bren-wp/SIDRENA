@@ -1694,10 +1694,12 @@ final class Sidrena_Admin {
 	}
 
 	private function open_uploaded_csv( $field ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Every upload handler calls guard_post() before this helper.
 		if ( empty( $_FILES[ $field ] ) || ! is_array( $_FILES[ $field ] ) ) {
 			return new WP_Error( 'upload_missing' );
 		}
-		$file = $_FILES[ $field ]; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated before use.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Request nonce is verified by guard_post(); the file is validated below before it is read.
+		$file = $_FILES[ $field ];
 		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			return new WP_Error( 'upload_error' );
 		}

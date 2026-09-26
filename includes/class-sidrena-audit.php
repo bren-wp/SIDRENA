@@ -164,6 +164,7 @@ final class Sidrena_Audit {
 		global $wpdb;
 		$table = self::table_name();
 		$like  = $wpdb->esc_like( $table );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One schema-presence check for the plugin-owned audit table.
 		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $like ) );
 	}
 
