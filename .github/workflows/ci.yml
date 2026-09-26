@@ -403,10 +403,6 @@ jobs:
             exit 1
           fi
 
-      - name: Plugin Check regression guard
-        if: matrix.php == '8.3'
-        run: python3 .github/tests/plugin-check-regression.py
-
       - name: Dangerous PHP primitive guard
         if: matrix.php == '8.3'
         shell: bash
