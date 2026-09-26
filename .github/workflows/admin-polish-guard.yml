@@ -20,10 +20,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify complete Sidrena 1.0 admin branding
+      - name: Verify Sidrena 1.0.2 brand and cleanup invariants
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
+          php -l includes/sidrena-edition-guard.php
+          test -s includes/sidrena-edition-guard.php
           php -l includes/class-sidrena-admin-menu.php
           test -s assets/images/menu-anchor.svg
           test -s assets/images/app-icon.svg
@@ -36,6 +38,13 @@ jobs:
           grep -Fq "SIDRENA_URL . 'assets/images/menu-anchor.svg'" includes/class-sidrena-admin-menu.php
           grep -Fq "'assets/images/logo-woocommerce-light.svg' : 'assets/images/logo-wordpress-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
+          grep -Fq "sidrena-edition-body-woocommerce" includes/class-sidrena-admin.php
+          grep -Fq "Sidrena_Admin_Menu::items()" includes/class-sidrena-admin-ux.php
+          grep -Fq "pending = {}" public/js/compat.js
+          if grep -q '\.sidrena-wrap' admin/css/admin.css; then
+            echo "Legacy .sidrena-wrap CSS must not return to the editor-only stylesheet."
+            exit 1
+          fi
           if grep -RInF 'sidrena_neutralize_admin_menu_icon' includes; then
             echo "Obsolete menu icon neutralizer must not return."
             exit 1

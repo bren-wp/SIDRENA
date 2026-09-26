@@ -6,6 +6,16 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.2 =
+* Uklonjen je legacy administratorski CSS sa starih .sidrena-wrap ekrana; editor CSS sada je ograničen na stvarne WooCommerce product i Sidrena service površine.
+* WordPress i WooCommerce entrypointi koriste zajednički edition-conflict guard umjesto dupliciranog PHP bloka.
+* Admin navigacija koristi jedan izvor oznaka kroz Sidrena_Admin_Menu, bez paralelne kopije naziva u UX sloju.
+* WooCommerce kompatibilni frontend prikaz kešira dohvat, deduplicira paralelne zahtjeve i ignorira vlastite DOM mutacije kako bi smanjio nepotreban rad.
+* WordPress izdanje zadržava plavi/cyan, a WooCommerce dobiva eksplicitni ljubičasti admin-menu akcent uz zajednički SIDRENA navy/cyan identitet.
+* Brand CSS media pravila za 1180 px i 782 px konsolidirana su bez promjene produkcijskih breakpointa.
+* Zadržane su tehničke provjere digitalnih cjenika, 08:00 roka, 30-dnevne arhive, jediničnih cijena i stvarne raspoloživosti, bez tvrdnji o automatskoj pravnoj potvrdi.
+* Verzija oba odvojena plugina i distribucijska dokumentacija podignuti su na 1.0.2.
+
 = 1.0.1 =
 * Tehničke provjere objave cjenika usklađene su s NN 101/2026 i službenim MINGO pojašnjenjima od 22./24.09.2026.
 * Za strojno čitljivu javnu objavu dovoljan je najmanje jedan podržani format, CSV ili XML; javni HTML i manifest više se ne prisilno uključuju.

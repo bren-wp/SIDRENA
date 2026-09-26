@@ -24,6 +24,7 @@ final class Sidrena_Admin {
 
 	public function hooks() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
 		add_action( 'admin_post_sidrena_generate', array( $this, 'generate' ) );
@@ -69,6 +70,11 @@ final class Sidrena_Admin {
 		}
 
 		wp_enqueue_style( 'sidrena-admin-editor', SIDRENA_URL . 'admin/css/admin.css', array(), SIDRENA_VERSION );
+	}
+
+	public function admin_body_class( $classes ) {
+		$edition = Sidrena_Utils::is_woocommerce_edition() ? 'woocommerce' : 'wordpress';
+		return trim( $classes . ' sidrena-edition-body-' . $edition );
 	}
 
 	

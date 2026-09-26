@@ -40,17 +40,15 @@ final class Sidrena_Admin_UX {
 	}
 
 	public static function primary_menu_labels() {
-		$catalog_label = Sidrena_Utils::is_woocommerce_edition() ? __( 'Proizvodi', 'sidrena' ) : __( 'Katalog', 'sidrena' );
+		$labels = array();
 
-		return array(
-			'sidrena'               => __( 'Pregled', 'sidrena' ),
-			'sidrena-catalog'       => $catalog_label,
-			self::SERVICE_MENU_SLUG => __( 'Usluge', 'sidrena' ),
-			'sidrena-files'         => __( 'Cjenici', 'sidrena' ),
-			'sidrena-locations'     => __( 'Lokacije', 'sidrena' ),
-			'sidrena-settings'      => __( 'Postavke', 'sidrena' ),
-			'sidrena-support'       => __( 'Pomoć', 'sidrena' ),
-		);
+		foreach ( Sidrena_Admin_Menu::items() as $item ) {
+			if ( isset( $item[0], $item[1] ) ) {
+				$labels[ (string) $item[0] ] = $item[1];
+			}
+		}
+
+		return $labels;
 	}
 
 	public function simplify_menu() {
