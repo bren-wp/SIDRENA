@@ -66,6 +66,7 @@ final class Sidrena_Audit {
 		$encoded = self::encode_context( $context );
 		$message = self::trim_bytes( sanitize_textarea_field( (string) $message ), self::MAX_MESSAGE_BYTES );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		return false !== $wpdb->insert(
 			$table,
 			array(
@@ -89,9 +90,11 @@ final class Sidrena_Audit {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, event_type, status, message, context, user_id, created_at FROM {$table} ORDER BY id DESC LIMIT %d",
+				"SELECT id, event_type, status, message, context, user_id, created_at FROM %i ORDER BY id DESC LIMIT %d",
+				$table,
 				$limit
 			),
 			ARRAY_A
@@ -106,7 +109,7 @@ final class Sidrena_Audit {
 			return 0;
 		}
 
-		return absint( $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned audit table.
 	}
 
 	public function prune() {
@@ -118,9 +121,11 @@ final class Sidrena_Audit {
 		}
 
 		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( self::RETENTION_DAYS * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE created_at < %s",
+				"DELETE FROM %i WHERE created_at < %s",
+				$table,
 				$cutoff
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
@@ -132,18 +137,22 @@ final class Sidrena_Audit {
 
 		$offset  = self::MAX_ROWS - 1;
 		$keep_id = absint(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM {$table} ORDER BY id DESC LIMIT 1 OFFSET %d",
+					"SELECT id FROM %i ORDER BY id DESC LIMIT 1 OFFSET %d",
+					$table,
 					$offset
 				)
 			)
 		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
 
 		if ( $keep_id > 0 ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM {$table} WHERE id < %d",
+					"DELETE FROM %i WHERE id < %d",
+					$table,
 					$keep_id
 				)
 			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
@@ -154,6 +163,7 @@ final class Sidrena_Audit {
 		global $wpdb;
 		$table = self::table_name();
 		$like  = $wpdb->esc_like( $table );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $like ) );
 	}
 

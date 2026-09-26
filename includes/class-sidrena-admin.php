@@ -186,6 +186,7 @@ final class Sidrena_Admin {
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $edition_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?>">
 				</div>
 				<div class="sidrena-brandbar__copy">
@@ -201,6 +202,7 @@ final class Sidrena_Admin {
 			<div class="sidrena-contextbar">
 				<div class="sidrena-contextbar__left">
 					<span class="sid-context-chip"><?php esc_html_e( 'Produkcijsko okruženje', 'sidrena' ); ?></span>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?></span>
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
 				</div>
@@ -353,7 +355,9 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-tool-card">
 				<div class="sid-tool-icon"><span class="dashicons dashicons-admin-tools"></span></div>
 				<h2><?php esc_html_e( 'Jednokratno početno postavljanje', 'sidrena' ); ?></h2>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<p><?php echo esc_html( sprintf( __( 'Samo ako želite da Brendigo odradi instalaciju i početno postavljanje: %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( $install_url ); ?>"><?php echo esc_html( sprintf( __( 'Zatraži postavljanje - %s', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></a>
 			</section>
 
@@ -526,9 +530,11 @@ final class Sidrena_Admin {
 		</div>
 
 		<div class="sid-dashboard-metrics">
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->dashboard_metric( __( 'Stavke u katalogu', 'sidrena' ), $total_items, 'dashicons-products', sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $anchor_ready ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Aktualni cjenici', 'sidrena' ), $integrity['current_entries'], 'dashicons-media-spreadsheet', __( 'javno dostupne datoteke', 'sidrena' ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Povijest cijena', 'sidrena' ), $history_total, 'dashicons-chart-line', __( 'evidentirani zapisi', 'sidrena' ), 'teal' ); ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->dashboard_metric( __( 'Tehnička spremnost', 'sidrena' ), $is_ready ? __( 'Uredno', 'sidrena' ) : __( 'Provjera', 'sidrena' ), 'dashicons-shield-alt', $is_ready ? __( 'bez tehničkih upozorenja', 'sidrena' ) : sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ), $health_issues ), $is_ready ? 'ok' : 'warn' ); ?>
 		</div>
 
@@ -569,6 +575,7 @@ final class Sidrena_Admin {
 			<div class="sid-price-guide">
 				<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-tag"></span><h3><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja se trenutno prikazuje kupcu i koristi za prodaju.', 'sidrena' ); ?></p></div>
 				<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-clock"></span><h3><?php esc_html_e( 'Najniža cijena u 30 dana', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Prikazuje se kada je primjenjiva i kada postoji provjerljiva povijest.', 'sidrena' ); ?></p></div>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></h3><p><?php echo esc_html( sprintf( __( 'Dodatna referentna cijena uz datum, zadano %s.', 'sidrena' ), wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) ) ) ); ?></p></div>
 			</div>
 		</section>
@@ -584,10 +591,13 @@ final class Sidrena_Admin {
 				<div class="sid-archive-count"><span class="dashicons dashicons-database"></span><div><strong><?php echo esc_html( number_format_i18n( $archive_stats['files'] ) ); ?></strong><small><?php esc_html_e( 'arhiviranih objava', 'sidrena' ); ?></small></div></div>
 				<div class="sid-progress"><span class="<?php echo $settings['retention_days'] >= 30 ? 'is-ok' : 'is-warn'; ?>"></span></div>
 				<ul class="sid-check-list">
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<li><span class="dashicons dashicons-yes-alt"></span><?php echo esc_html( sprintf( __( 'Čuvanje: %d dana', 'sidrena' ), $settings['retention_days'] ) ); ?></li>
 					<li><span class="dashicons <?php echo $integrity['ok'] ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><?php echo $integrity['ok'] ? esc_html__( 'Integritet arhive uredan', 'sidrena' ) : esc_html__( 'Integritet zahtijeva provjeru', 'sidrena' ); ?></li>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<li><span class="dashicons <?php echo $next_run ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><?php echo $next_run ? esc_html( sprintf( __( 'Sljedeća objava: %s', 'sidrena' ), wp_date( 'd.m. H:i', $next_run ) ) ) : esc_html__( 'Dnevni raspored nije aktivan', 'sidrena' ); ?></li>
 				</ul>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<p class="description"><?php echo esc_html( sprintf( __( 'Operativna rezerva iznad minimuma: +%d dana.', 'sidrena' ), $retention['buffer_days'] ) ); ?></p>
 			</section>
 		</div>
@@ -691,6 +701,7 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Podrška po izboru korisnika', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati Brendigo', 'sidrena' ); ?></h2>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da Brendigo odradi instalaciju i početno postavljanje, cijena je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
 				<div class="sid-head-inline-actions">
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
@@ -739,9 +750,13 @@ final class Sidrena_Admin {
 		</div>
 
 		<div class="sid-grid sid-grid-4">
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->metric_card( __( 'Sidrene cijene', 'sidrena' ), $anchor_ready . '/' . $total_items, 'dashicons-tag', $stats['missing_total'] ? sprintf( __( '%d stavki traži provjeru', 'sidrena' ), $stats['missing_total'] ) : __( 'sve evidentirane', 'sidrena' ), $stats['missing_total'] ? 'warn' : 'ok' ); ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->metric_card( __( 'Aktivna sniženja', 'sidrena' ), $sales_ready . '/' . $sales_total, 'dashicons-chart-line', $sales_pending ? sprintf( __( '%d bez pune reference', 'sidrena' ), $sales_pending ) : __( 'bez otvorenih upozorenja', 'sidrena' ), $sales_pending ? 'warn' : 'ok' ); ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->metric_card( __( 'Aktualni cjenici', 'sidrena' ), $file_coverage['ready'] . '/' . $file_coverage['expected'], 'dashicons-media-spreadsheet', $file_coverage['missing'] ? sprintf( __( '%d kombinacija nedostaje', 'sidrena' ), $file_coverage['missing'] ) : __( 'očekivane datoteke postoje', 'sidrena' ), $file_coverage['missing'] ? 'warn' : 'ok' ); ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->metric_card( __( 'Javna arhiva', 'sidrena' ), $archive_stats['distinct_days'] . ' d', 'dashicons-backup', sprintf( __( '%d indeksiranih datoteka', 'sidrena' ), $archive_stats['files'] ), $integrity['ok'] ? 'ok' : 'warn' ); ?>
 		</div>
 
@@ -749,6 +764,7 @@ final class Sidrena_Admin {
 			<section class="sid-card">
 				<div class="sid-section-head">
 					<div><span class="sid-kicker"><?php esc_html_e( 'Automatske provjere', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Kontrolna lista spremnosti', 'sidrena' ); ?></h2></div>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<span class="sid-status-pill <?php echo 0 === $health_issues ? 'is-ok' : 'is-warn'; ?>"><?php echo 0 === $health_issues ? esc_html__( 'Nema tehničkih upozorenja', 'sidrena' ) : esc_html( sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ), $health_issues ) ); ?></span>
 				</div>
 				<?php $this->health_list( $stats, $last, $settings ); ?>
@@ -771,6 +787,7 @@ final class Sidrena_Admin {
 		<div class="sid-grid sid-grid-3">
 			<section class="sid-card sid-check-card <?php echo 0 === $stats['missing_brand'] ? 'is-ok' : 'is-warn'; ?>">
 				<span class="dashicons dashicons-awards"></span>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<div><h3><?php esc_html_e( 'Marka proizvoda', 'sidrena' ); ?></h3><p><?php echo 0 === $stats['missing_brand'] ? esc_html__( 'Sve stavke proizvoda imaju prepoznatu marku.', 'sidrena' ) : esc_html( sprintf( __( '%d stavki nema prepoznatu marku. Dopunite podatak u Sidrena katalogu ili WooCommerce proizvodu kada je integracija aktivna.', 'sidrena' ), $stats['missing_brand'] ) ); ?></p></div>
 			</section>
 			<section class="sid-card sid-check-card <?php echo $integrity['ok'] ? 'is-ok' : 'is-warn'; ?>">
@@ -779,6 +796,7 @@ final class Sidrena_Admin {
 			</section>
 			<section class="sid-card sid-check-card <?php echo 0 === $file_coverage['missing'] ? 'is-ok' : 'is-warn'; ?>">
 				<span class="dashicons dashicons-admin-site-alt3"></span>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<div><h3><?php esc_html_e( 'Lokacije × katalog × format', 'sidrena' ); ?></h3><p><?php echo esc_html( sprintf( __( 'Očekivano %1$d, aktualno %2$d. Svaka aktivna lokacija i webshop vode se kao zaseban izlaz.', 'sidrena' ), $file_coverage['expected'], $file_coverage['ready'] ) ); ?></p></div>
 			</section>
 		</div>
@@ -991,6 +1009,7 @@ final class Sidrena_Admin {
 					<p><?php esc_html_e( 'Ponovno spremite Postavke. Ako WordPress i dalje ne može zakazati događaj, provjerite cron konfiguraciju poslužitelja.', 'sidrena' ); ?></p>
 				<?php else : ?>
 					<h2><?php esc_html_e( 'Automatsko generiranje je zakazano', 'sidrena' ); ?></h2>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<p><?php echo esc_html( sprintf( __( 'Sljedeći WordPress cron događaj: %s. Za poslovno kritičan termin preporučuje se pouzdan server cron.', 'sidrena' ), wp_date( 'd.m.Y. H:i', $next_cron ) ) ); ?></p>
 				<?php endif; ?>
 			</div>
@@ -1048,7 +1067,9 @@ final class Sidrena_Admin {
 				<div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Postavke arhive', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Čuvanje prethodnih cjenika', 'sidrena' ); ?></h2></div><span class="sid-status-pill is-ok"><?php esc_html_e( 'Arhiva je aktivna', 'sidrena' ); ?></span></div>
 				<p><?php esc_html_e( 'Postavljeno razdoblje čuvanja ne može biti kraće od 30 dana. Aktualna datoteka dodatno se ne uklanja samo zato što je starija od arhivskog prozora.', 'sidrena' ); ?></p>
 				<div class="sid-retention-box">
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<div><span><?php esc_html_e( 'Trajanje arhive', 'sidrena' ); ?></span><strong><?php echo esc_html( sprintf( __( '%d dana', 'sidrena' ), $settings['retention_days'] ) ); ?></strong></div>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<div><span class="dashicons dashicons-info-outline"></span><p><?php echo esc_html( sprintf( __( 'Minimum je 30 dana. Trenutačna rezerva iznad minimuma iznosi +%d dana.', 'sidrena' ), $retention['buffer_days'] ) ); ?></p></div>
 				</div>
 				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-settings' ) ); ?>"><?php esc_html_e( 'Uredi postavke arhive', 'sidrena' ); ?></a>
@@ -1059,6 +1080,7 @@ final class Sidrena_Admin {
 		<div class="sid-dashboard-metrics sid-dashboard-metrics--archive">
 			<?php $this->dashboard_metric( __( 'Datoteke u arhivi', 'sidrena' ), $stats['files'], 'dashicons-database', __( 'CSV/XML objave', 'sidrena' ), 'blue' ); ?>
 			<?php $this->dashboard_metric( __( 'Dani s objavama', 'sidrena' ), $stats['distinct_days'], 'dashicons-calendar-alt', __( 'evidentirani dani', 'sidrena' ), 'teal' ); ?>
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			<?php $this->dashboard_metric( __( 'Politika čuvanja', 'sidrena' ), $settings['retention_days'] . ' d', 'dashicons-lock', sprintf( __( '+%d dana rezerve', 'sidrena' ), $retention['buffer_days'] ), 'ok' ); ?>
 			<?php $this->dashboard_metric( __( 'Integritet', 'sidrena' ), $integrity['ok'] ? __( 'U redu', 'sidrena' ) : __( 'Provjera', 'sidrena' ), $integrity['ok'] ? 'dashicons-yes-alt' : 'dashicons-warning', $integrity['ok'] ? __( 'datoteke i SHA-256', 'sidrena' ) : __( 'potrebna tehnička provjera', 'sidrena' ), $integrity['ok'] ? 'ok' : 'warn' ); ?>
 		</div>
@@ -1097,6 +1119,7 @@ final class Sidrena_Admin {
 			<div class="sid-day-strip" role="list" aria-label="<?php esc_attr_e( 'Kalendar arhive', 'sidrena' ); ?>">
 				<?php for ( $offset = 34; $offset >= 0; --$offset ) : ?>
 					<?php $date = $today->modify( '-' . $offset . ' days' ); $key = $date->format( 'Y-m-d' ); $count = $days[ $key ] ?? 0; ?>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<div class="sid-day <?php echo $count ? 'has-files' : ''; ?>" role="listitem" title="<?php echo esc_attr( $date->format( 'd.m.Y.' ) . ' · ' . sprintf( _n( '%d datoteka', '%d datoteka', $count, 'sidrena' ), $count ) ); ?>">
 						<span><?php echo esc_html( $date->format( 'd' ) ); ?></span>
 						<i></i>
@@ -1205,6 +1228,7 @@ final class Sidrena_Admin {
 
 			<section class="sid-card sid-settings-section"><div class="sid-settings-title"><span class="dashicons dashicons-tag"></span><div><h2><?php esc_html_e( 'Referentne cijene na webu', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Dodatna cijena prikazuje se uz aktualnu cijenu proizvoda. Tijekom akcije može se prikazati i provjerena najniža cijena iz prethodnih 30 dana kada je taj podatak dostupan.', 'sidrena' ); ?></p></div></div>
 				<div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="display_anchor" value="yes" <?php checked( $settings['display_anchor'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prikaži sidrenu cijenu', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Uz aktualnu cijenu proizvoda u aktivnom katalogu.', 'sidrena' ); ?></small></span></label><label class="sid-toggle-card"><input type="checkbox" name="display_lowest_30" value="yes" <?php checked( $settings['display_lowest_30'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Prikaži najnižu cijenu 30 dana', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Samo kod aktivnog sniženja i kada je podatak provjerljiv.', 'sidrena' ); ?></small></span></label></div>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<div class="sid-fields"><label><span><?php esc_html_e( 'Standardni referentni datum', 'sidrena' ); ?></span><input type="date" name="default_ref_date" value="<?php echo esc_attr( $settings['default_ref_date'] ); ?>"></label><label><span><?php esc_html_e( 'FMCG referentni datum', 'sidrena' ); ?></span><input type="date" name="fmcg_ref_date" value="<?php echo esc_attr( $settings['fmcg_ref_date'] ); ?>"></label><label><span><?php esc_html_e( 'Format oznake', 'sidrena' ); ?></span><select name="label_mode"><option value="date_only" <?php selected( $settings['label_mode'], 'date_only' ); ?>><?php esc_html_e( 'Cijena na 10.09.2026.', 'sidrena' ); ?></option><option value="custom" <?php selected( $settings['label_mode'], 'custom' ); ?>><?php esc_html_e( 'Vlastiti tekst', 'sidrena' ); ?></option></select></label><label><span><?php esc_html_e( 'Vlastita oznaka', 'sidrena' ); ?></span><input type="text" name="label_custom" value="<?php echo esc_attr( $settings['label_custom'] ); ?>" placeholder="Sidrena cijena (%s)"><small><?php esc_html_e( 'Koristite %s na mjestu datuma.', 'sidrena' ); ?></small></label></div><div class="sid-toggle-grid"><label class="sid-toggle-card"><input type="checkbox" name="anchor_tooltip_enabled" value="yes" <?php checked( $settings['anchor_tooltip_enabled'], 'yes' ); ?>><span class="sid-toggle-ui"></span><span><strong><?php esc_html_e( 'Objašnjenje na hover/fokus', 'sidrena' ); ?></strong><small><?php esc_html_e( 'Pristupačan tooltip uz sidrenu cijenu.', 'sidrena' ); ?></small></span></label></div><div class="sid-fields"><label class="sid-wide"><span><?php esc_html_e( 'Tekst objašnjenja', 'sidrena' ); ?></span><textarea name="anchor_tooltip_text" rows="3"><?php echo esc_textarea( $settings['anchor_tooltip_text'] ); ?></textarea><small><?php esc_html_e( 'Može se prevoditi kroz Polylang/WPML registrirane stringove.', 'sidrena' ); ?></small></label></div>
 			</section>
 
@@ -1359,26 +1383,26 @@ final class Sidrena_Admin {
 			'business_registry_number' => sanitize_text_field( $this->post_value( 'business_registry_number', '' ) ),
 			'business_vat_id'     => sanitize_text_field( $this->post_value( 'business_vat_id', '' ) ),
 			'business_supervisory_authority' => sanitize_text_field( $this->post_value( 'business_supervisory_authority', '' ) ),
-			'show_business_identity' => isset( $_POST['show_business_identity'] ) ? 'yes' : 'no',
-			'display_anchor'      => isset( $_POST['display_anchor'] ) ? 'yes' : 'no',
-			'display_lowest_30'   => isset( $_POST['display_lowest_30'] ) ? 'yes' : 'no',
+			'show_business_identity' => $this->post_checkbox( 'show_business_identity' ) ? 'yes' : 'no',
+			'display_anchor'      => $this->post_checkbox( 'display_anchor' ) ? 'yes' : 'no',
+			'display_lowest_30'   => $this->post_checkbox( 'display_lowest_30' ) ? 'yes' : 'no',
 			'label_mode'          => $label_mode,
 			'label_custom'        => $label_custom,
-			'anchor_tooltip_enabled' => isset( $_POST['anchor_tooltip_enabled'] ) ? 'yes' : 'no',
+			'anchor_tooltip_enabled' => $this->post_checkbox( 'anchor_tooltip_enabled' ) ? 'yes' : 'no',
 			'anchor_tooltip_text' => $tooltip_text,
 			'default_ref_date'    => $this->date( $this->post_value( 'default_ref_date', '2026-09-10' ), '2026-09-10' ),
 			'fmcg_ref_date'       => $this->date( $this->post_value( 'fmcg_ref_date', '2025-05-02' ), '2025-05-02' ),
-			'generate_csv'        => isset( $_POST['generate_csv'] ) ? 'yes' : 'no',
-			'generate_xml'        => isset( $_POST['generate_xml'] ) ? 'yes' : 'no',
+			'generate_csv'        => $this->post_checkbox( 'generate_csv' ) ? 'yes' : 'no',
+			'generate_xml'        => $this->post_checkbox( 'generate_xml' ) ? 'yes' : 'no',
 			'csv_delimiter'       => $csv_delimiter,
 			'generation_time'     => $generation_time,
 			'retention_days'      => max( 30, min( 3650, absint( $this->post_value( 'retention_days', 45 ) ) ) ),
-			'enable_rest_index'   => isset( $_POST['enable_rest_index'] ) ? 'yes' : 'no',
-			'publish_manifest'    => isset( $_POST['publish_manifest'] ) ? 'yes' : 'no',
-			'enable_public_html'   => isset( $_POST['enable_public_html'] ) ? 'yes' : 'no',
-			'strict_publication'   => isset( $_POST['strict_publication'] ) ? 'yes' : 'no',
-			'track_price_history' => isset( $_POST['track_price_history'] ) ? 'yes' : 'no',
-			'failure_notifications' => isset( $_POST['failure_notifications'] ) ? 'yes' : 'no',
+			'enable_rest_index'   => $this->post_checkbox( 'enable_rest_index' ) ? 'yes' : 'no',
+			'publish_manifest'    => $this->post_checkbox( 'publish_manifest' ) ? 'yes' : 'no',
+			'enable_public_html'   => $this->post_checkbox( 'enable_public_html' ) ? 'yes' : 'no',
+			'strict_publication'   => $this->post_checkbox( 'strict_publication' ) ? 'yes' : 'no',
+			'track_price_history' => $this->post_checkbox( 'track_price_history' ) ? 'yes' : 'no',
+			'failure_notifications' => $this->post_checkbox( 'failure_notifications' ) ? 'yes' : 'no',
 			'failure_email'       => sanitize_email( $this->post_value( 'failure_email', '' ) ),
 		);
 
@@ -1397,7 +1421,7 @@ final class Sidrena_Admin {
 
 	public function save_locations() {
 		$this->guard_post( 'sidrena_save_locations' );
-		$input = isset( $_POST['locations'] ) && is_array( $_POST['locations'] ) ? wp_unslash( $_POST['locations'] ) : array();
+		$input = $this->post_array( 'locations' );
 		if ( empty( $input ) ) {
 			$this->redirect( 'locations', 'locations_required' );
 		}
@@ -1454,6 +1478,7 @@ final class Sidrena_Admin {
 		}
 		update_option( 'sidrena_locations', $out, false );
 		Sidrena_Pricelist::queue_regeneration();
+		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 		Sidrena_Audit::log( 'locations_save', 'success', sprintf( __( 'Spremljeno lokacija: %d.', 'sidrena' ), count( $out ) ), array( 'count' => count( $out ) ) );
 		$this->redirect( 'locations', 'saved' );
 	}
@@ -1550,6 +1575,7 @@ final class Sidrena_Admin {
 		Sidrena_Audit::log(
 			'anchor_import',
 			'success',
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			sprintf( __( 'Uvoz sidrenih cijena: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno.', 'sidrena' ), $processed, $updated, $skipped ),
 			array( 'processed' => $processed, 'updated' => $updated, 'skipped' => $skipped )
 		);
@@ -1626,6 +1652,7 @@ final class Sidrena_Admin {
 		Sidrena_Audit::log(
 			'location_import',
 			'success',
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			sprintf( __( 'Uvoz lokacijskih podataka: %1$d obrađeno, %2$d ažurirano, %3$d preskočeno.', 'sidrena' ), $processed, $updated, $skipped ),
 			array( 'processed' => $processed, 'updated' => $updated, 'skipped' => $skipped )
 		);
@@ -1778,9 +1805,11 @@ final class Sidrena_Admin {
 			$product_table = $wpdb->prefix . 'sidrena_price_history';
 			$offset        = 0;
 			do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM {$product_table} ORDER BY id ASC LIMIT %d OFFSET %d",
+					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					$product_table,
 					1000,
 					$offset
 				),
@@ -1818,9 +1847,11 @@ final class Sidrena_Admin {
 		$service_table = $wpdb->prefix . 'sidrena_service_price_history';
 		$offset        = 0;
 		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT service_id, price, recorded_at, source FROM {$service_table} ORDER BY id ASC LIMIT %d OFFSET %d",
+					"SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					$service_table,
 					1000,
 					$offset
 				),
@@ -1856,9 +1887,11 @@ final class Sidrena_Admin {
 			$location_table = Sidrena_Location_History::table_name();
 			$offset         = 0;
 			do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM {$location_table} ORDER BY id ASC LIMIT %d OFFSET %d",
+					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					$location_table,
 					1000,
 					$offset
 				),
@@ -2148,7 +2181,24 @@ final class Sidrena_Admin {
 	}
 
 	private function post_value( $key, $default = '' ) {
+		// Callers invoke guard_post() before reading mutable form data.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the action-specific guard before this helper is used.
 		return isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
+	}
+
+	private function post_checkbox( $key ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the action-specific guard before this helper is used.
+		return isset( $_POST[ $key ] );
+	}
+
+	private function post_array( $key ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the action-specific guard before this helper is used.
+		if ( ! isset( $_POST[ $key ] ) || ! is_array( $_POST[ $key ] ) ) {
+			return array();
+		}
+		// Every scalar is sanitized here; domain-specific validation follows in the caller.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- map_deep sanitizes every scalar after wp_unslash().
+		return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
 	}
 
 
@@ -2201,6 +2251,7 @@ final class Sidrena_Admin {
 			Sidrena_Audit::log(
 				'public_access_check',
 				'error',
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				sprintf( __( 'HTTP provjera javnih cjenika nije prošla: %1$d provjereno, %2$d problema.', 'sidrena' ), $checked, count( $failed ) ),
 				array( 'checked' => $checked, 'failed' => array_slice( $failed, 0, 20 ) )
 			);
@@ -2210,6 +2261,7 @@ final class Sidrena_Admin {
 		Sidrena_Audit::log(
 			'public_access_check',
 			'success',
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			sprintf( __( 'HTTP provjera javnih cjenika uspješna: %d datoteka.', 'sidrena' ), $checked ),
 			array( 'checked' => $checked )
 		);

@@ -380,7 +380,7 @@ final class Sidrena_Utils {
 			if ( function_exists( 'pll_register_string' ) ) {
 				pll_register_string( 'Sidrena ' . $name, $value, 'Sidrena', false );
 			}
-			do_action( 'wpml_register_single_string', 'Sidrena', $name, $value );
+			do_action( 'wpml_register_single_string', 'Sidrena', $name, $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook.
 		}
 	}
 
@@ -392,7 +392,7 @@ final class Sidrena_Utils {
 		if ( function_exists( 'pll__' ) ) {
 			$value = pll__( $value );
 		}
-		return (string) apply_filters( 'wpml_translate_single_string', $value, 'Sidrena', $name );
+		return (string) apply_filters( 'wpml_translate_single_string', $value, 'Sidrena', $name ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook.
 	}
 
 	public static function upload_paths() {

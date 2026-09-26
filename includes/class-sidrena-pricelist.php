@@ -62,6 +62,7 @@ final class Sidrena_Pricelist {
 				$this->maybe_send_publication_alert(
 					'late',
 					__( 'Današnji cjenik još nije uspješno objavljen.', 'sidrena' ),
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					array( sprintf( __( 'Planirano vrijeme generiranja: %s', 'sidrena' ), $target ) )
 				);
 			}
@@ -122,6 +123,7 @@ final class Sidrena_Pricelist {
 				$address = trim( isset( $location['address'] ) ? $location['address'] : '' );
 				if ( '' === $address ) {
 					$errors[] = sprintf(
+						/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 						__( 'Lokacija "%s" nema upisanu adresu potrebnu za naziv datoteke cjenika.', 'sidrena' ),
 						isset( $location['code'] ) ? $location['code'] : ( $location_index + 1 )
 					);
@@ -279,11 +281,14 @@ final class Sidrena_Pricelist {
 			return false;
 		}
 
+		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 		$subject = sprintf( '[%s] %s', wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), __( 'Sidrena - provjerite objavu cjenika', 'sidrena' ) );
 		$lines   = array(
 			wp_strip_all_tags( (string) $summary ),
 			'',
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			sprintf( __( 'Web stranica: %s', 'sidrena' ), home_url( '/' ) ),
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			sprintf( __( 'Vrijeme provjere: %s', 'sidrena' ), wp_date( 'd.m.Y. H:i:s' ) ),
 		);
 		foreach ( array_slice( array_values( (array) $details ), 0, 10 ) as $detail ) {
@@ -384,6 +389,7 @@ final class Sidrena_Pricelist {
 		return new WP_Error(
 			'sidrena_preflight_failed',
 			sprintf(
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				__( 'Cjenik za lokaciju %1$s (%2$s) nije objavljen jer stroga provjera nije prošla: %3$s', 'sidrena' ),
 				$code,
 				'products' === $catalog_type ? __( 'proizvodi', 'sidrena' ) : __( 'usluge', 'sidrena' ),
@@ -396,6 +402,7 @@ final class Sidrena_Pricelist {
 		$issues = array();
 		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
 		$name   = trim( (string) ( $row['naziv'] ?? '' ) );
+		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 		$label  = $name ? $name : sprintf( __( 'proizvod #%d', 'sidrena' ), $id );
 
 		$required = array(
@@ -406,28 +413,34 @@ final class Sidrena_Pricelist {
 			'dostupnost'          => __( 'dostupnost', 'sidrena' ),
 		);
 		if ( '' === $name ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: nedostaje naziv', 'sidrena' ), $label );
 		}
 		foreach ( $required as $key => $field_label ) {
 			if ( '' === trim( (string) ( $row[ $key ] ?? '' ) ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				$issues[] = sprintf( __( '%1$s: nedostaje %2$s', 'sidrena' ), $label, $field_label );
 			}
 		}
 
 		if ( 'webshop' !== $location_kind && 'yes' !== ( $row['_sidrena_location_explicit'] ?? 'no' ) ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: fizička lokacija nema unesenu stvarnu raspoloživost', 'sidrena' ), $label );
 		}
 
 		$unit_status = sanitize_key( (string) ( $row['_sidrena_unit_status'] ?? 'review' ) );
 		if ( ! $unit_status || 'review' === $unit_status ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: primjenjivost jedinične cijene nije pregledana', 'sidrena' ), $label );
 		} elseif ( 'required' === $unit_status ) {
 			if ( '' === trim( (string) ( $row['jedinica_mjere'] ?? '' ) ) || '' === trim( (string) ( $row['cijena_za_jedinicu_mjere'] ?? '' ) ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				$issues[] = sprintf( __( '%s: obvezna jedinična cijena nije potpuno unesena', 'sidrena' ), $label );
 			}
 		}
 
 		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
 		}
 		return $issues;
@@ -437,18 +450,23 @@ final class Sidrena_Pricelist {
 		$issues = array();
 		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
 		$name   = trim( (string) ( $row['naziv_usluge'] ?? '' ) );
+		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 		$label  = $name ? $name : sprintf( __( 'usluga #%d', 'sidrena' ), $id );
 
 		if ( '' === $name ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: nedostaje naziv usluge', 'sidrena' ), $label );
 		}
 		if ( '' === trim( (string) ( $row['maloprodajna_cijena'] ?? '' ) ) ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: nedostaje maloprodajna cijena', 'sidrena' ), $label );
 		}
 		if ( '' === trim( (string) ( $row['sidrena_cijena'] ?? '' ) ) ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: nedostaje sidrena cijena', 'sidrena' ), $label );
 		}
 		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
 		}
 		return $issues;
@@ -828,6 +846,7 @@ final class Sidrena_Pricelist {
 
 		if ( ! $this->write_stream_all( $handle, "\xEF\xBB\xBF" ) || false === fputcsv( $handle, $headers, $delimiter ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati zaglavlje datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
@@ -843,6 +862,7 @@ final class Sidrena_Pricelist {
 			}
 			if ( false === fputcsv( $handle, $line, $delimiter ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati redak datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 			}
 			++$count;
@@ -860,6 +880,7 @@ final class Sidrena_Pricelist {
 
 		if ( ! $this->write_stream_all( $handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<{$root}>\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće započeti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
@@ -871,6 +892,7 @@ final class Sidrena_Pricelist {
 			}
 			if ( ! $this->write_stream_all( $handle, "  <{$item}>\n" ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 			}
 			foreach ( $headers as $header ) {
@@ -878,17 +900,20 @@ final class Sidrena_Pricelist {
 				$chunk = '    <' . $header . '>' . esc_xml( $value ) . '</' . $header . ">\n";
 				if ( ! $this->write_stream_all( $handle, $chunk ) ) {
 					$this->discard_atomic_writer( $handle, $temp );
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 				}
 			}
 			if ( ! $this->write_stream_all( $handle, "  </{$item}>\n" ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 			}
 			++$count;
 		}
 		if ( ! $this->write_stream_all( $handle, "</{$root}>\n" ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće dovršiti XML datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 
@@ -901,6 +926,7 @@ final class Sidrena_Pricelist {
 		$temp      = trailingslashit( $directory ) . '.' . basename( $filepath ) . '.' . $suffix . '.tmp';
 		$handle    = fopen( $temp, 'xb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $handle ) {
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_open', sprintf( __( 'Nije moguće otvoriti privremenu datoteku za zapis: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		return array( $handle, $temp );
@@ -932,10 +958,12 @@ final class Sidrena_Pricelist {
 	private function commit_atomic_writer( $handle, $temp, $filepath ) {
 		if ( ! fflush( $handle ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_flush', sprintf( __( 'Nije moguće dovršiti zapis datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		if ( function_exists( 'fsync' ) && ! fsync( $handle ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_sync', sprintf( __( 'Nije moguće sinkronizirati datoteku na disk: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -943,6 +971,7 @@ final class Sidrena_Pricelist {
 			if ( is_file( $temp ) ) {
 				unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			}
+			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće atomski objaviti datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		return true;

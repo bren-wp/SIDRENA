@@ -96,8 +96,6 @@ if ( Sidrena_Utils::is_woocommerce_edition() ) {
 add_action(
 	'plugins_loaded',
 	static function () {
-		load_plugin_textdomain( 'sidrena', false, dirname( plugin_basename( SIDRENA_FILE ) ) . '/languages' );
-
 		if ( Sidrena_Utils::is_woocommerce_edition() && ! Sidrena_Utils::woocommerce_runtime_available() ) {
 			add_action(
 				'admin_notices',

@@ -137,7 +137,7 @@ final class Sidrena_Public {
 			return;
 		}
 
-		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( wp_unslash( $_GET['lokacija'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( sanitize_text_field( wp_unslash( $_GET['lokacija'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'cjenik' === $route ) {
 			$content = $this->pricelist_shortcode( array( 'lokacija' => $location ) );
 			if ( ! $this->last_snapshot_available ) {
@@ -232,6 +232,7 @@ final class Sidrena_Public {
 			<div class="sidrena-pricelist__toolbar">
 				<div>
 					<h2><?php echo esc_html( ! empty( $location['code'] ) ? $location['code'] : __( 'Cjenik', 'sidrena' ) ); ?></h2>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<p><?php echo esc_html( $location['address'] ); ?><?php if ( $generated ) : ?> · <?php echo esc_html( sprintf( __( 'Ažurirano: %s', 'sidrena' ), Sidrena_Utils::format_iso_datetime( $generated ) ) ); ?><?php endif; ?></p>
 				</div>
 				<form class="sidrena-pricelist__search" role="search" method="get">
@@ -252,8 +253,10 @@ final class Sidrena_Public {
 			<?php else : ?>
 			<p class="sidrena-pricelist__summary" aria-live="polite">
 				<?php if ( '' !== $search ) : ?>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<?php echo esc_html( sprintf( __( 'Pronađeno %d stavki.', 'sidrena' ), $total ) ); ?>
 				<?php else : ?>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<?php echo esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d stavki.', 'sidrena' ), $first_item, $last_item, $total ) ); ?>
 				<?php endif; ?>
 			</p>
@@ -303,6 +306,7 @@ final class Sidrena_Public {
 			<?php if ( $total_pages > 1 ) : ?>
 			<nav class="sidrena-pricelist__pagination" aria-label="<?php esc_attr_e( 'Stranice cjenika', 'sidrena' ); ?>">
 				<?php if ( $page > 1 ) : ?><a rel="prev" href="<?php echo esc_url( $this->pricelist_url( $page - 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Prethodna stranica', 'sidrena' ); ?></a><?php endif; ?>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $total_pages ) ); ?></span>
 				<?php if ( $page < $total_pages ) : ?><a rel="next" href="<?php echo esc_url( $this->pricelist_url( $page + 1, $search, $location['id'] ?? '' ) ); ?>"><?php esc_html_e( 'Sljedeća stranica', 'sidrena' ); ?></a><?php endif; ?>
 			</nav>
@@ -341,6 +345,7 @@ final class Sidrena_Public {
 					<h2><?php esc_html_e( 'Arhiva cjenika', 'sidrena' ); ?></h2>
 					<p><?php esc_html_e( 'Prethodno objavljene CSV/XML datoteke dostupne su najmanje tijekom propisanog razdoblja čuvanja.', 'sidrena' ); ?></p>
 				</div>
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<span class="sidrena-public-archive__count"><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', $total, 'sidrena' ), $total ) ); ?></span>
 			</div>
 			<section class="sidrena-downloads__section">
@@ -465,6 +470,7 @@ final class Sidrena_Public {
 			</section>
 
 			<footer class="sidrena-downloads__source">
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				<?php echo esc_html( sprintf( __( 'Izvor podataka: %s', 'sidrena' ), get_bloginfo( 'name' ) ) ); ?>
 			</footer>
 		</section>
@@ -557,6 +563,7 @@ final class Sidrena_Public {
 			<details class="sidrena-downloads__day" <?php echo 1 === $group_index ? 'open' : ''; ?>>
 				<summary>
 					<strong><?php echo esc_html( $this->archive_date_label( $date ) ); ?></strong>
+					/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 					<span><?php echo esc_html( sprintf( _n( '%d datoteka', '%d datoteka', count( $entries ), 'sidrena' ), count( $entries ) ) ); ?></span>
 				</summary>
 				<div class="sidrena-downloads__grid">
@@ -593,7 +600,7 @@ final class Sidrena_Public {
 				<?php if ( $generated ) : ?><span><?php echo esc_html( $generated ); ?></span><?php endif; ?>
 			</div>
 			<?php if ( $url ) : ?>
-				<a class="sidrena-download-card__button" href="<?php echo $url; ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
+				<a class="sidrena-download-card__button" href="<?php echo esc_url( $url ); ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
 			<?php else : ?>
 				<span class="sidrena-download-card__button is-disabled"><?php esc_html_e( 'Datoteka nije dostupna', 'sidrena' ); ?></span>
 			<?php endif; ?>
