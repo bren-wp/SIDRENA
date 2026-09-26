@@ -1496,3 +1496,19 @@ msgstr ""
 msgid "Najviše 5 MB. Podržani su CSV i XML formati bez izvršnog sadržaja."
 msgstr ""
 
+#: includes/class-sidrena-services.php
+msgid "Aktualna cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Sidrena cijena (€)"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Koristi osnovnu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Koristi osnovnu sidrenu cijenu"
+msgstr ""
+
