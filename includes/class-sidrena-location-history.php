@@ -66,7 +66,7 @@ final class Sidrena_Location_History {
 				$variation_id
 			),
 			ARRAY_A
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 
 		if (
 			$last
@@ -92,7 +92,7 @@ final class Sidrena_Location_History {
 				current_time( 'mysql' ),
 				sanitize_key( $source )
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 	}
 
 	public function daily_snapshot() {
@@ -119,7 +119,7 @@ final class Sidrena_Location_History {
 					$batch_size
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 
 			if ( empty( $rows ) ) {
 				break;
@@ -175,6 +175,6 @@ final class Sidrena_Location_History {
 				$table,
 				$cutoff
 			)
-		); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+		);
 	}
 }
