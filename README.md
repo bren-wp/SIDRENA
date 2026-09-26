@@ -124,20 +124,24 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.10 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.11 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.10
+## Zašto SIDRENA 1.0.11
 
-**SIDRENA 1.0.10** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
+**SIDRENA 1.0.11** spaja svakodnevni rad s cijenama i produkcijski administratorski UX u jedan pregledan sustav. Umjesto paralelnih tablica, ručnih izvoza i odvojenih evidencija, Sidrena koristi podatke vašeg odabranog izdanja i daje vam jasnije mjesto za upravljanje objavom i poviješću cijena.
 
 Izdanje 1.0.11 donosi:
 
+- release gate koji pokreće strogi službeni Plugin Check nad oba production-shaped paketa prije objave
+- `%i` identifier placeholdere za preostali service-history COUNT i standalone posts/postmeta SQL
+- uklanjanje zastarjelih `PreparedSQL.InterpolatedNotPrepared` suppression komentara iz već pripremljenih upita
+- regresijske testove koji blokiraju povratak raw SQL interpolacije identifikatora
 - obradu dostavljenog Plugin Check izvještaja: translators komentari, escaping javnih URL-ova, sanitizacija ulaza i sigurniji SQL identifikatori
-- službeni WordPress Plugin Check prolazi za oba stvarna 1.0.10 produkcijska paketa nakon uklanjanja runtime fatala, i18n grešaka i prijavljenih sigurnosnih problema
+- release objava je blokirana dok službeni WordPress Plugin Check ne završi bez errora i warninga nad oba stvarna production-shaped paketa
 - uklonjen zastarjeli ručni `load_plugin_textdomain()` poziv
 - dodatno precrtan SIDRENA S + sidro znak te svi runtime lockupi, favicon, app icon i menu ikona prema dostavljenom brand-boardu
 - jedan kanonski SIDRENA logo u admin hero području i zasebna WordPress/WooCommerce edition oznaka
-- README hero vizuale i stvarne runtime screenshotove koji se automatski osvježavaju iz finalnog 1.0.10 WordPress/WooCommerce sučelja
+- README hero vizuale i stvarne runtime screenshotove aktualnog WordPress/WooCommerce sučelja; 1.0.11 ne mijenja UI pa postojeći stvarni screenshotovi ostaju reprezentativni
 - ispravljeno učitavanje SIDRENA admin CSS/JS sloja na svim SIDRENA ekranima, uključujući fallback kada drugi plugin promijeni hook suffix
 - obnovljen 1:1 SIDRENA runtime branding: glavni logo, WordPress/WooCommerce lockupi, app ikona i zasebna mala menu ikona
 - kompaktniji hero, kartice i metrike usklađene s referentnim admin prikazima
@@ -145,7 +149,7 @@ Izdanje 1.0.11 donosi:
 - CI/distribution provjeru da se brand.css, admin.js i runtime logo asseti obvezno nalaze u svakom instalacijskom ZIP-u
 - znatno manji instalacijski ZIP bez WordPress.org screenshotova i marketinških asseta koji nisu potrebni za rad plugina
 - release limit od 1,5 MiB po instalacijskom ZIP-u radi lakše instalacije na shared hostingu s čestim PHP upload limitom od 2 MiB
-- cross-version repair/migration put za sigurnu nadogradnju 1.0.10 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
+- cross-version repair/migration put za sigurnu nadogradnju 1.0.11 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije
 - automatski popravak nedostajuće baze, postavki, upload direktorija i cron rasporeda pri nadogradnji
 - ispravan first-publish lifecycle za nove usluge, tako da se sidrena cijena snima nakon stvarno unesene aktualne cijene
 - jednu izvornu stavku Usluge u WordPress admin meniju bez dvostruke registracije
