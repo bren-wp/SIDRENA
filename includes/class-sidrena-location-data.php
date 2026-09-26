@@ -32,9 +32,11 @@ final class Sidrena_Location_Data {
 
 		global $wpdb;
 		$table = self::table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location price/availability table requires direct bounded CRUD.
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT product_id, variation_id, price, anchor_price, availability, updated_at FROM {$table} WHERE location_id = %s",
+				"SELECT product_id, variation_id, price, anchor_price, availability, updated_at FROM %i WHERE location_id = %s",
+				$table,
 				$location_id
 			),
 			ARRAY_A
@@ -83,11 +85,13 @@ final class Sidrena_Location_Data {
 
 		// NULLIF preserves an intentionally blank per-location price as SQL NULL
 		// instead of converting it to 0.00 through a %f placeholder.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location price/availability table requires direct bounded CRUD.
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				"INSERT INTO {$table} (location_id, product_id, variation_id, price, anchor_price, availability, updated_at)
+				"INSERT INTO %i (location_id, product_id, variation_id, price, anchor_price, availability, updated_at)
 				 VALUES (%s, %d, %d, NULLIF(%s, ''), NULLIF(%s, ''), %s, %s)
 				 ON DUPLICATE KEY UPDATE price = VALUES(price), anchor_price = VALUES(anchor_price), availability = VALUES(availability), updated_at = VALUES(updated_at)",
+				$table,
 				$location_id,
 				$product_id,
 				$variation_id,
@@ -118,9 +122,11 @@ final class Sidrena_Location_Data {
 		$table       = self::table_name();
 		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
 		return absint(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location price/availability table requires direct bounded CRUD.
 			$wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$table} WHERE location_id = %s AND availability IN ('dostupno','nedostupno')",
+					"SELECT COUNT(*) FROM %i WHERE location_id = %s AND availability IN ('dostupno','nedostupno')",
+					$table,
 					$location_id
 				)
 			) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
