@@ -1074,7 +1074,7 @@ final class Sidrena_Pricelist {
 		$data = array(
 			'schema'         => 3,
 			'generator'      => 'Sidrena ' . SIDRENA_VERSION,
-			'plugin_url'     => 'https://sidrene-cijene.com.hr/',
+			'plugin_url'     => 'https://brendigo.com/sidrene-cijene/',
 			'ruleset'        => SIDRENA_RULESET,
 			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
 			'generated_at'   => current_time( DATE_ATOM ),

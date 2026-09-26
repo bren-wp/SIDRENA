@@ -583,9 +583,9 @@ final class Sidrena_Standalone {
 							<?php $this->row( $post->ID ); ?>
 						<?php endforeach; ?>
 						<?php if ( 0 === $total ) : ?>
-							<?php $this->row( 0, 'new-0' ); ?>
+							<tr class="sid-catalog-empty-row"><td colspan="10" class="sid-table-empty-cell"><strong><?php esc_html_e( 'Katalog je spreman za prvi stvarni proizvod.', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Povežite postojeći WordPress sadržaj, uvezite CSV/XML ili kliknite “Dodaj proizvod”. Sidrena ne umeće demo ni izmišljene podatke.', 'sidrena' ); ?></span></td></tr>
 						<?php elseif ( empty( $items ) ) : ?>
-							<tr><td colspan="10"><?php esc_html_e( 'Na ovoj stranici nema proizvoda. Vratite se na prethodnu stranicu kataloga.', 'sidrena' ); ?></td></tr>
+							<tr><td colspan="10" class="sid-table-empty-cell"><strong><?php esc_html_e( 'Na ovoj stranici nema proizvoda.', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Vratite se na prethodnu stranicu kataloga ili dodajte novi stvarni proizvod.', 'sidrena' ); ?></span></td></tr>
 						<?php endif; ?>
 					</tbody>
 				</table>

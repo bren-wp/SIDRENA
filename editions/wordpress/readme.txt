@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici i arhiva objava za Wor
 
 == Description ==
 
-Sidrena WordPress 1.0.1 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
+Sidrena WordPress 1.0.4 namijenjena je web stranicama koje ne koriste WooCommerce kao izvor proizvoda.
 
 * vlastiti katalog proizvoda i usluga ili povezivanje postojećeg javnog WordPress sadržaja
 * sidrena/referentna cijena, aktualna cijena i jedinična cijena kada je primjenjiva
@@ -39,7 +39,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.1.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.4.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,27 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.4 =
+* WordPress katalog dobio je jasno produkcijsko prazno stanje bez lažnog ili nedovršenog retka proizvoda.
+* Admin JavaScript sinkronizira prazno stanje pri dodavanju i uklanjanju prvog nespremljenog proizvoda.
+* Propisi sada sadrže praktičan NN 105/2026 vodič za kategorije jedinične cijene i propisane iznimke, bez automatskog pravnog klasificiranja proizvoda.
+* Vizual svjetionika u brand headeru bolje je kadriran prema službenim SIDRENA referencama.
+* Legal smoke test čuva datum primjene 26.09.2026., vodič kategorija/iznimaka i pravilo ljudske provjere primjenjivosti.
+
+= 1.0.3 =
+* Ispravljeni su CI guardovi nakon legitimnog refaktora admin body klase i površine podrške.
+* Mobilni CSS breakpointi premješteni su iza produkcijskih komponenti kako kasnija desktop pravila više ne bi poništavala 782/390 px raspored.
+* WordPress katalog na uskim ekranima koristi lokalno skrolanje tablice bez horizontalnog overflowa cijele wp-admin stranice.
+* Uklonjen je preostali zastarjeli URL iz javnog manifesta i dokumentacija je usklađena sa službenim Brendigo SIDRENA URL-om.
+* Pravna formulacija dodatno je pooštrena: tehničke provjere ne zamjenjuju individualnu pravnu procjenu.
+
+= 1.0.2 =
+* Uklonjen legacy/mrtvi administratorski CSS koji se više ne koristi na glavnim Sidrena ekranima.
+* Smanjeno je dupliciranje PHP navigacije i edition-conflict zaštite.
+* Optimiziran je WooCommerce kompatibilni frontend DOM/AJAX sloj kako bi izbjegao redundantne zahtjeve i vlastite mutation cikluse.
+* WordPress i WooCommerce zadržavaju jasno odvojene edition akcente uz zajednički SIDRENA brand sustav.
+* Produkcijske pravne provjere ostaju tehničke provjere podataka, objave, arhive i raspoloživosti te ne zamjenjuju individualnu pravnu procjenu.
 
 = 1.0.1 =
 * Usklađena je tehnička provjera s NN 101/2026 i službenim MINGO pojašnjenjima: dovoljan je CSV ili XML, dok javni HTML i manifest ostaju opcionalni.

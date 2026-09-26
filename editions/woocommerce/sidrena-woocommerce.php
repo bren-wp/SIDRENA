@@ -3,7 +3,7 @@
  * Plugin Name: Sidrena WooCommerce
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene za WooCommerce proizvode i usluge, CSV/XML cjenici, povijest cijena i arhiva 30+ dana.
- * Version: 1.0.1
+ * Version: 1.0.4
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
@@ -21,49 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( defined( 'SIDRENA_EDITION' ) || class_exists( 'Sidrena_Plugin', false ) || class_exists( 'Sidrena_Utils', false ) ) {
-	$sidrena_conflicting_file = __FILE__;
-
-	// During an activation request WordPress loads already active plugins first.
-	// Abort before the target plugin is added to active_plugins.
-	register_activation_hook(
-		__FILE__,
-		static function () {
-			wp_die(
-				esc_html__( 'Drugo ili starije Sidrena izdanje je već aktivno. Deaktivirajte ga prije aktivacije ovog plugina.', 'sidrena' ),
-				esc_html__( 'Sidrena — sukob izdanja', 'sidrena' ),
-				array( 'back_link' => true )
-			);
-		}
-	);
-
-	// Repair an older installation where both editions were already marked as
-	// active: the later-loaded copy deactivates itself on the next admin request.
-	add_action(
-		'admin_init',
-		static function () use ( $sidrena_conflicting_file ) {
-			if ( ! function_exists( 'deactivate_plugins' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-			if ( function_exists( 'deactivate_plugins' ) ) {
-				deactivate_plugins( plugin_basename( $sidrena_conflicting_file ), true );
-			}
-		},
-		1
-	);
-
-	add_action(
-		'admin_notices',
-		static function () {
-			if ( current_user_can( 'activate_plugins' ) ) {
-				echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Drugo ili starije izdanje je blokirano/deaktivirano kako bi se spriječili dvostruki hookovi, klase i objave.', 'sidrena' ) . '</p></div>';
-			}
-		}
-	);
+$sidrena_guard_root = dirname( __DIR__, 2 );
+if ( ! is_file( $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) ) {
+	$sidrena_guard_root = __DIR__;
+}
+$sidrena_entry_file = __FILE__;
+if ( require $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) {
 	return;
 }
+unset( $sidrena_entry_file, $sidrena_guard_root );
 
-define( 'SIDRENA_VERSION', '1.0.1' );
+define( 'SIDRENA_VERSION', '1.0.4' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
 define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 105/2026 · MINGO 22.09.2026' );
 define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );

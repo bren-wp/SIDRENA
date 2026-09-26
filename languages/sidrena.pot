@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.1\n"
+"Project-Id-Version: Sidrena 1.0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1419,3 +1419,47 @@ msgstr ""
 msgid "XML ima više od dopuštenih 50.000 zapisa."
 msgstr ""
 
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Katalog je spreman za prvi stvarni proizvod."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Povežite postojeći WordPress sadržaj, uvezite CSV/XML ili kliknite “Dodaj proizvod”. Sidrena ne umeće demo ni izmišljene podatke."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Na ovoj stranici nema proizvoda."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Vratite se na prethodnu stranicu kataloga ili dodajte novi stvarni proizvod."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "NN 105/2026 · primjena od 26.09.2026."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Brza provjera cijene za jedinicu mjere"
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Sidrena ne zaključuje automatski pravnu kategoriju proizvoda samo iz naziva ili WooCommerce kategorije. Administrator označava primjenjivost prema stvarnom proizvodu i službenom Pravilniku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Kategorije za koje se ističe jedinična cijena"
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Propisane iznimke"
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Tehnička provjera, ne automatska pravna odluka"
+msgstr ""
+
+#: includes/class-sidrena-admin.php includes/class-sidrena-standalone.php
+msgid "Status “obvezna”, “nije primjenjiva” ili “iznimka” služi kao evidencija odluke administratora. Sidrena provjerava jesu li potrebni podaci uneseni, ali ne klasificira proizvod umjesto odgovorne osobe."
+msgstr ""

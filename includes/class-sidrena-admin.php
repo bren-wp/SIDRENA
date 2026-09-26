@@ -24,6 +24,7 @@ final class Sidrena_Admin {
 
 	public function hooks() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
 		add_action( 'admin_post_sidrena_generate', array( $this, 'generate' ) );
@@ -69,6 +70,11 @@ final class Sidrena_Admin {
 		}
 
 		wp_enqueue_style( 'sidrena-admin-editor', SIDRENA_URL . 'admin/css/admin.css', array(), SIDRENA_VERSION );
+	}
+
+	public function admin_body_class( $classes ) {
+		$edition = Sidrena_Utils::is_woocommerce_edition() ? 'woocommerce' : 'wordpress';
+		return trim( $classes . ' sidrena-edition-body-' . $edition );
 	}
 
 	
@@ -1235,6 +1241,12 @@ final class Sidrena_Admin {
 			<?php $this->rule_card( '05', __( 'Maloprodajna, jedinična i cijena usluge', 'sidrena' ), __( 'NN 105/2026 objavljen je 18.09.2026. i stupa na snagu osmoga dana od objave. Uređuje jasan prikaz maloprodajne i jedinične cijene te iznimke. Za usluge traži lako dostupan cjenik, naziv, vrstu i opseg usluge te uključivanje pripadajućih troškova u cijenu; cijena ugradbene ili zamjenske robe prikazuje se uz pripadajuću uslugu.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html', 'NN 105/2026, 1270' ); ?>
 			<section class="sid-card sid-rule-card sid-rule-future"><div class="sid-rule-number">06</div><div><span class="sid-rule-tag"><?php esc_html_e( 'Praćenje promjena', 'sidrena' ); ?></span><h3><?php esc_html_e( 'Bazna cijena u Zakonu od 17.11.2026.', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Članak 7. stavci 1. do 9. izmijenjenog Zakona počinju se primjenjivati 17.11.2026. i uvode obvezu isticanja bazne cijene te objave važećih cjenika proizvoda na mrežnim stranicama. Način isticanja i objave uređuje se pravilnicima, pa Sidrena te kasnije obveze prikazuje odvojeno od mjera iz NN 101/2026.', 'sidrena' ); ?></p><a href="https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori službeni izvor', 'sidrena' ); ?><span class="dashicons dashicons-external"></span></a></div></section>
 		</div>
+		<div class="sid-page-head sid-page-head--compact"><div><span class="sid-kicker"><?php esc_html_e( 'NN 105/2026 · primjena od 26.09.2026.', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Brza provjera cijene za jedinicu mjere', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena ne zaključuje automatski pravnu kategoriju proizvoda samo iz naziva ili WooCommerce kategorije. Administrator označava primjenjivost prema stvarnom proizvodu i službenom Pravilniku.', 'sidrena' ); ?></p></div></div>
+		<div class="sid-grid sid-grid-2">
+			<section class="sid-card sid-rule-guide"><div class="sid-rule-guide__head"><span class="sid-rule-guide__icon dashicons dashicons-yes-alt"></span><div><h3><?php esc_html_e( 'Kategorije za koje se ističe jedinična cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Članak 8. stavak 1. NN 105/2026.', 'sidrena' ); ?></p></div></div><ul class="sid-rule-list"><li><?php esc_html_e( 'Hrana i hrana za životinje, osim kada je drukčije propisano.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Deterdženti, dječje pelene, boje i lakovi osim slikarskih boja.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Ulja i tekućine za motore i motorna vozila te destilirana voda.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Proizvodi za njegu, pranje i čišćenje lica i tijela, njegu kose te oralnu higijenu.', 'sidrena' ); ?></li></ul></section>
+			<section class="sid-card sid-rule-guide"><div class="sid-rule-guide__head"><span class="sid-rule-guide__icon dashicons dashicons-info-outline"></span><div><h3><?php esc_html_e( 'Propisane iznimke', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Članak 8. stavak 2. NN 105/2026.', 'sidrena' ); ?></p></div></div><ul class="sid-rule-list"><li><?php esc_html_e( 'Pakiranja ispod 50 g ili 50 ml, poklon-paketi i kompleti te roba u posebnom obliku prodaje.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Poslastice za kućne ljubimce, kolači i alkoholna pića u pakiranjima do 100 ml.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Smrznuti deserti do 500 ml te voće i povrće koje se prodaje komadno ili u svežnju.', 'sidrena' ); ?></li><li><?php esc_html_e( 'Za tekući medij mjerodavna je ocijeđena masa; za glaziranu hranu neto masa bez glazure.', 'sidrena' ); ?></li></ul></section>
+		</div>
+		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-shield"></span></div><div><h2><?php esc_html_e( 'Tehnička provjera, ne automatska pravna odluka', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Status “obvezna”, “nije primjenjiva” ili “iznimka” služi kao evidencija odluke administratora. Sidrena provjerava jesu li potrebni podaci uneseni, ali ne klasificira proizvod umjesto odgovorne osobe.', 'sidrena' ); ?></p></div></section>
 		<div class="sid-page-head sid-page-head--compact"><div><span class="sid-kicker"><?php esc_html_e( 'Praktična pojašnjenja', 'sidrena' ); ?></span><h2><?php esc_html_e( 'HOK i Državni inspektorat', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Ovi izvori pomažu u primjeni i transparentnosti, ali ne zamjenjuju primarni tekst propisa u Narodnim novinama.', 'sidrena' ); ?></p></div></div>
 		<div class="sid-grid sid-grid-2">
 			<?php $this->rule_card( 'A', __( 'HOK — informacije za obrtnike', 'sidrena' ), __( 'HOK sažima obvezu isticanja dodatne/sidrene cijene od 1.10.2026., uključujući isticanje na mrežnim stranicama i referentne datume za novobuhvaćene te ranije obuhvaćene kategorije.', 'sidrena' ), 'https://www.hok.hr/novosti-iz-hok/dodatna-cijena-i-objava-cjenika-od-1-listopada-2026-najvaznije-informacije', 'Hrvatska obrtnička komora · 18.09.2026.' ); ?>

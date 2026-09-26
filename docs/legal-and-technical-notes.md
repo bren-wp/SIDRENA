@@ -61,9 +61,13 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.0.0 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 1.0.4 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
+
+U praktičnom vodiču unutar **Sidrena → Pomoć → Propisi** navedene su skupine iz članka 8. Pravilnika: hrana i hrana za životinje, deterdženti, dječje pelene, određene boje i lakovi, ulja i tekućine za motorna vozila, destilirana voda te navedene skupine proizvoda za njegu i higijenu. Vodič navodi i iznimke, uključujući pakiranja ispod 50 g/50 ml, poklon-pakete/komplete, robu u posebnom obliku prodaje i druge iznimke iz članka 8.
+
+Sidrena **ne klasificira automatski** proizvod u pravnu kategoriju na temelju naziva ili WooCommerce kategorije. Administrator označava je li jedinična cijena obvezna, nije primjenjiva ili postoji iznimka; plugin zatim provjerava potpunost potrebnih podataka.
 
 ## Usluge
 
@@ -92,7 +96,7 @@ Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o
 
 ## Produkcijski i release guardovi
 
-Sidrena 1.0.0 stabilna release linija koristi zasebne provjere za:
+Sidrena 1.0.4 stabilna release linija koristi zasebne provjere za:
 
 - stvarni build dvaju ZIP paketa,
 - zabranu generičkog/root/static PHP paketa,
@@ -100,7 +104,7 @@ Sidrena 1.0.0 stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.0.zip`, `sidrena-wordpress-1.0.0.zip.sha256`, `sidrena-woocommerce-1.0.0.zip` i `sidrena-woocommerce-1.0.0.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.4.zip`, `sidrena-wordpress-1.0.4.zip.sha256`, `sidrena-woocommerce-1.0.4.zip` i `sidrena-woocommerce-1.0.4.zip.sha256`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 
