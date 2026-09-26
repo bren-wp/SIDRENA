@@ -432,7 +432,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-standalone-form,.sid-service-details,.sid-service-locations { min-width:0; }
 .sid-standalone-import { border-color:#d5e7f7;background:#f7fbff; }
 
-.sid-file-input { display:flex;align-items:center;gap:9px;flex-wrap:wrap; }
+.sid-file-input { display:block;width:100%;min-width:0; }
 .sid-file-pill { display:inline-flex;align-items:center;gap:5px;min-height:27px;padding:4px 9px;border-radius:999px;background:#edf5ff;color:#1d5f9f;font-size:10px;font-weight:800; }
 .sid-hash { max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;color:#587189; }
 .sid-cell-sub { display:block;margin-top:3px;color:var(--sid-muted);font-size:9px; }
