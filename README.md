@@ -133,6 +133,8 @@ Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom 
 Izdanje 1.0.11 donosi:
 
 - release gate koji pokreće strogi službeni Plugin Check nad oba production-shaped paketa prije objave
+- novi Git tag za izdanje stvara se tek nakon builda, SHA/integrity provjere i oba Plugin Check gatea
+- trajni CI regression test čuva redoslijed build → provjera integriteta → Plugin Check → tag → GitHub Release
 - `%i` identifier placeholdere za preostali service-history COUNT i standalone posts/postmeta SQL
 - uklanjanje zastarjelih `PreparedSQL.InterpolatedNotPrepared` suppression komentara iz već pripremljenih upita
 - regresijske testove koji blokiraju povratak raw SQL interpolacije identifikatora

@@ -77,6 +77,8 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 = 1.0.11 =
 * Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
+* New version tags are created only after package integrity verification and both release Plugin Check gates succeed.
+* Added a permanent regression test that protects the release ordering from build through Plugin Check, tag creation and publication.
 * Prepared remaining service-history and standalone table identifiers with WordPress %i placeholders instead of SQL string interpolation.
 * Removed obsolete PreparedSQL.InterpolatedNotPrepared suppression comments from already-prepared custom-table queries.
 * Added regression coverage for service-history and standalone SQL identifier handling.
