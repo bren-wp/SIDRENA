@@ -12,6 +12,9 @@ on:
       - main
       - 'develop/**'
       - 'polish/**'
+      - 'release/**'
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
