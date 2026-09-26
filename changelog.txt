@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.8 =
+* Instalacijski paketi su očišćeni od WordPress.org screenshotova i marketinških SVG/PNG asseta koji nisu potrebni za runtime; zadržani su lokalni runtime logotipi, kod, prijevodi, tekstualne upute i PDF podrška.
+* Build, CI, distribution guard i release verifier ograničavaju svaki instalacijski ZIP na najviše 1,5 MiB radi kompatibilnosti s čestim shared-hosting upload_max_filesize limitom od 2 MiB.
+* Uveden je sidrena_plugin_version marker i idempotentni cross-version repair/migration put za nadogradnju 1.0.8 preko bilo kojeg ranijeg SIDRENA izdanja iste edicije.
+* Upgrade repair provjerava shemu baze, postavke, upload direktorije, cron rasporede i javnu stranicu bez brisanja postojećih poslovnih podataka.
+* Dodan je cross-version upgrade smoke test.
+* Uklonjeni su preostali duplicirani legacy source headeri iz package/edition/conflict testova.
+* Oba odvojena plugina podignuta su na 1.0.8.
+
 = 1.0.7 =
 * Ispravljena je prva objava usluge: sidrena cijena za novu uslugu sada se snima tek nakon spremanja stvarno unesene aktualne cijene, pa izravna objava novog zapisa više ne može preskočiti sidrenu vrijednost.
 * Regeneriranje cjenika usluga premješteno je na završni post-save lifecycle kako bi naslov, status i spremljena meta bili konzistentni prije izrade javnih datoteka.
