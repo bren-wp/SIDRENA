@@ -12,10 +12,12 @@ on:
       - main
       - 'develop/**'
       - 'feature/**'
+      - 'polish/**'
   pull_request:
     branches:
       - main
       - 'develop/**'
+      - 'polish/**'
 
 permissions:
   contents: read

@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.5 =
+* Službeni MINGO izvor usklađen je s dokumentom pojašnjenja objavljenim 24.09.2026.; ruleset, dokumentacija i CI provjere koriste isti datum.
+* Uklonjeni su preostali duplicirani source headeri i zastarjeli sidrene-cijene.com.hr metapodaci iz produkcijskog PHP/CSS koda.
+* Sidrena admin navigacija više ne izvršava isti cleanup dvaput i ne zadržava neočekivane legacy podizbornike.
+* Legal automation guard sada se izvršava i na polish granama prije mergea.
+* Brand header dodatno je približen službenim referencama: dublji navy/cyan morski vizual, detaljniji svjetionik, jasniji lockup i profinjeniji glass/actions sloj.
+* Verzija oba fizički odvojena plugina i pripadajuće dokumentacije podignuta je na 1.0.5.
+
 = 1.0.4 =
 * WordPress katalog više ne prikazuje prazni uređivački red kao sadržaj; umjesto toga koristi jasno prazno stanje i stvarni gumb za dodavanje proizvoda.
 * Admin JS održava prazno stanje kataloga pri dinamičkom dodavanju i uklanjanju nespremljenih redaka.

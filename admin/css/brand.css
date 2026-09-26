@@ -1,5 +1,5 @@
 /**
- * Sidrena 1.0.4 brand UI.
+ * Sidrena 1.0.5 brand UI.
  * Author: Brendigo
  * Author URI: https://brendigo.com/
  * Plugin URI: https://brendigo.com/sidrene-cijene/
@@ -92,18 +92,27 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-brandbar {
 	position:relative;
 	display:grid;
-	grid-template-columns:minmax(330px,.95fr) minmax(330px,1.05fr) auto;
+	grid-template-columns:minmax(350px,.95fr) minmax(330px,1.05fr) auto;
 	align-items:center;
-	gap:28px;
-	min-height:132px;
-	padding:19px 26px;
+	gap:30px;
+	min-height:154px;
+	padding:22px 30px;
 	overflow:hidden;
-	border:1px solid rgba(126,211,255,.16);
-	border-radius:20px;
+	border:1px solid rgba(126,211,255,.22);
+	border-radius:22px;
 	background:
-		linear-gradient(90deg,rgba(4,25,49,.98) 0%,rgba(6,46,88,.87) 44%,rgba(5,31,62,.42) 72%,rgba(4,24,47,.18) 100%),
-		url("../../assets/images/brand-hero.svg") right 30%/cover no-repeat;
-	box-shadow:0 18px 42px rgba(6,26,51,.17);
+		linear-gradient(90deg,rgba(3,22,45,.99) 0%,rgba(5,45,88,.93) 40%,rgba(4,34,69,.54) 68%,rgba(3,20,42,.16) 100%),
+		url("../../assets/images/brand-hero.svg") right center/cover no-repeat;
+	box-shadow:0 20px 48px rgba(6,26,51,.20);
+	isolation:isolate;
+}
+.sidrena-brandbar::before {
+	content:"";
+	position:absolute;
+	inset:0;
+	z-index:-1;
+	background:linear-gradient(115deg,rgba(255,255,255,.055),transparent 28%,transparent 72%,rgba(14,165,233,.07));
+	pointer-events:none;
 }
 .sidrena-brandbar::after {
 	content:"";
@@ -111,24 +120,24 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	inset:auto 0 0;
 	height:3px;
 	background:linear-gradient(90deg,var(--sid-cyan),var(--sid-blue),var(--sid-accent));
-	opacity:.9;
+	opacity:.95;
 }
 .sidrena-brandbar__identity { position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-width:0;min-height:72px; }
-.sidrena-brandbar__logo { display:block;width:min(445px,100%);height:92px;object-fit:contain;object-position:left center;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12)); }
+.sidrena-brandbar__logo { display:block;width:min(480px,100%);height:100px;object-fit:contain;object-position:left center;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12)); }
 .sidrena-edition-wordpress .sidrena-brandbar { background:linear-gradient(90deg,rgba(4,25,49,.98) 0%,rgba(5,54,101,.86) 46%,rgba(5,31,62,.40) 74%,rgba(4,24,47,.16) 100%),url("../../assets/images/brand-hero.svg") right 30%/cover no-repeat; }
 .sidrena-edition-woocommerce .sidrena-brandbar { background:linear-gradient(90deg,rgba(4,25,49,.98) 0%,rgba(37,22,82,.88) 48%,rgba(20,25,66,.42) 74%,rgba(4,24,47,.16) 100%),url("../../assets/images/brand-hero.svg") right 30%/cover no-repeat; }
 .sidrena-brandbar__copy { position:relative;z-index:1;max-width:510px; }
-.sidrena-brandbar__copy strong { display:block;color:#fff;font-size:clamp(21px,1.65vw,29px);line-height:1.16;letter-spacing:-.025em;text-wrap:balance; }
-.sidrena-brandbar__copy span { display:block;margin-top:8px;max-width:500px;color:#c9dfef;font-size:13px;line-height:1.5; }
+.sidrena-brandbar__copy strong { display:block;color:#fff;font-size:clamp(23px,1.72vw,31px);line-height:1.16;letter-spacing:-.025em;text-wrap:balance; }
+.sidrena-brandbar__copy span { display:block;margin-top:9px;max-width:520px;color:#d3e7f4;font-size:13px;line-height:1.55; }
 .sidrena-brandbar__actions { position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap; }
 .sidrena-brandbar__actions a {
-	display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:7px 12px;border:1px solid rgba(255,255,255,.24);
-	border-radius:11px;background:rgba(255,255,255,.11);color:#fff;text-decoration:none;font-size:12px;font-weight:750;backdrop-filter:blur(8px);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+	display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 13px;border:1px solid rgba(255,255,255,.28);
+	border-radius:11px;background:rgba(255,255,255,.13);color:#fff;text-decoration:none;font-size:12px;font-weight:750;backdrop-filter:blur(8px);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
 }
 .sidrena-brandbar__actions a:hover { background:#fff;color:var(--sid-navy); }
 
 .sidrena-contextbar {
-	display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 16px;padding:10px 13px;
+	display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 20px;padding:10px 13px;
 	border:1px solid var(--sid-line);border-radius:12px;background:#fff;box-shadow:0 5px 20px rgba(8,45,91,.04);
 }
 .sidrena-contextbar__left,.sidrena-contextbar__right { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
@@ -153,7 +162,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-head-inline-actions { display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap; }
 
 .sid-card {
-	position:relative;min-width:0;margin:0 0 14px;padding:18px;border:1px solid #dce8f2;border-radius:var(--sid-radius);background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
+	position:relative;min-width:0;margin:0 0 14px;padding:18px;border:1px solid #dce8f2;border-radius:var(--sid-radius);background:#fff;box-shadow:0 10px 28px rgba(8,45,91,.065);
 }
 .sid-card h2,.sid-card h3 { color:var(--sid-ink); }
 .sid-card p { color:var(--sid-muted);line-height:1.5; }
@@ -163,7 +172,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 .sid-dashboard-metrics { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px; }
 .sid-dashboard-metric {
-	display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center;min-width:0;min-height:108px;padding:16px;border:1px solid #dce8f2;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
+	display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center;min-width:0;min-height:112px;padding:16px;border:1px solid #dce8f2;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(8,45,91,.06);
 }
 .sid-dashboard-metric__icon { display:grid;place-items:center;width:48px;height:48px;border-radius:13px;background:var(--sid-accent-soft);color:var(--sid-accent);font-size:24px;line-height:48px; }
 .sid-dashboard-metric span:not(.sid-dashboard-metric__icon) { display:block;color:#4f6a82;font-size:11px;font-weight:750; }
