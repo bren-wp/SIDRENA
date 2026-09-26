@@ -44,7 +44,8 @@ function sidrena_asset_assert( $condition, $message ) {
 	}
 }
 
-$admin = Sidrena_Admin::instance();
+$admin_factory = new ReflectionClass( 'Sidrena_Admin' );
+$admin         = $admin_factory->newInstanceWithoutConstructor();
 
 // The real regression: even when another plugin/router changes the hook suffix,
 // the Sidrena page query must still load the complete UI assets.
@@ -61,6 +62,7 @@ $_GET = array();
 $GLOBALS['sidrena_styles'] = array();
 $GLOBALS['sidrena_scripts'] = array();
 $GLOBALS['sidrena_screen'] = (object) array( 'id' => 'sidrena_page_sidrena-files', 'post_type' => '' );
+$admin = $admin_factory->newInstanceWithoutConstructor();
 $admin->ensure_assets();
 sidrena_asset_assert( isset( $GLOBALS['sidrena_styles']['sidrena-brand'] ), 'Brand CSS was not enqueued from the screen-id fallback.' );
 
@@ -68,6 +70,7 @@ sidrena_asset_assert( isset( $GLOBALS['sidrena_styles']['sidrena-brand'] ), 'Bra
 $GLOBALS['sidrena_styles'] = array();
 $GLOBALS['sidrena_scripts'] = array();
 $GLOBALS['sidrena_screen'] = (object) array( 'id' => 'sidrena_service', 'post_type' => 'sidrena_service' );
+$admin = $admin_factory->newInstanceWithoutConstructor();
 $admin->assets( 'post.php' );
 sidrena_asset_assert( isset( $GLOBALS['sidrena_styles']['sidrena-admin-editor'] ), 'Service editor stylesheet was not enqueued.' );
 sidrena_asset_assert( ! isset( $GLOBALS['sidrena_styles']['sidrena-brand'] ), 'Full Sidrena brand UI must not leak into the service editor.' );
