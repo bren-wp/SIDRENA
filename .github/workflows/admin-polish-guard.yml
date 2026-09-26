@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Verify Sidrena 1.0.6 brand and cleanup invariants
+      - name: Verify Sidrena 1.0.7 brand and cleanup invariants
         run: |
           set -euo pipefail
           php -l includes/sidrena-bootstrap.php
@@ -41,6 +41,8 @@ jobs:
           grep -Fq "sidrena-edition-body-' . \$edition" includes/class-sidrena-admin.php
           grep -Fq "Sidrena_Admin_Menu::items()" includes/class-sidrena-admin-ux.php
           grep -Fq "pending = {}" public/js/compat.js
+          grep -Fq "Sidrena_Admin_UX::SERVICE_MENU_SLUG === \$item[0]" includes/class-sidrena-admin-menu.php
+          grep -Fq "dataset.sidrenaSubmitting" admin/js/admin.js
           if grep -q '\.sidrena-wrap' admin/css/admin.css; then
             echo "Legacy .sidrena-wrap CSS must not return to the editor-only stylesheet."
             exit 1

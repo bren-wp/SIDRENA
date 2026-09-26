@@ -120,6 +120,9 @@ jobs:
       - name: Service scalability smoke test
         run: php .github/tests/service-scalability-smoke.php
 
+      - name: Service first-publish anchor smoke test
+        run: php .github/tests/service-first-publish-smoke.php
+
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
 

@@ -61,6 +61,10 @@ final class Sidrena_Admin_Menu {
 		);
 
 		foreach ( self::items() as $item ) {
+			if ( Sidrena_Admin_UX::SERVICE_MENU_SLUG === $item[0] ) {
+				continue;
+			}
+
 			add_submenu_page(
 				'sidrena',
 				$item[1],

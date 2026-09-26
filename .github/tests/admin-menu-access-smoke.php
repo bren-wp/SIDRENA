@@ -113,11 +113,14 @@ sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['
 sidrena_menu_assert( SIDRENA_URL . 'assets/images/menu-anchor.svg' === $GLOBALS['sidrena_test_menu']['top']['icon'], 'Sidrena top-level menu must use the local anchor icon.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
 
-$expected_slugs  = array( 'sidrena', 'sidrena-catalog', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
-$expected_labels = array( 'Pregled', 'Katalog', 'Usluge', 'Cjenici', 'Lokacije', 'Postavke', 'Pomoć' );
+$registered_slugs  = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
+$registered_labels = array( 'Pregled', 'Katalog', 'Cjenici', 'Lokacije', 'Postavke', 'Pomoć' );
+$expected_slugs     = array( 'sidrena', 'sidrena-catalog', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
+$expected_labels    = array( 'Pregled', 'Katalog', 'Usluge', 'Cjenici', 'Lokacije', 'Postavke', 'Pomoć' );
 
-sidrena_menu_assert( $expected_slugs === sidrena_visible_submenu_slugs(), 'Clean Sidrena submenu must register only the legal task-based pages in order.' );
-sidrena_menu_assert( $expected_labels === sidrena_visible_submenu_labels(), 'Clean Sidrena submenu labels must be clear and legal-workflow focused.' );
+sidrena_menu_assert( $registered_slugs === sidrena_visible_submenu_slugs(), 'Sidrena must not explicitly register the service CPT submenu a second time.' );
+sidrena_menu_assert( $registered_labels === sidrena_visible_submenu_labels(), 'Explicit Sidrena submenu labels must stay task focused.' );
+sidrena_menu_assert( ! in_array( Sidrena_Admin_UX::SERVICE_MENU_SLUG, sidrena_visible_submenu_slugs(), true ), 'Service CPT submenu must be supplied only by WordPress post-type registration.' );
 
 $retired_slugs = array(
 	'sidrena-compliance',
@@ -133,7 +136,9 @@ foreach ( $retired_slugs as $retired_slug ) {
 	sidrena_menu_assert( ! in_array( $retired_slug, sidrena_visible_submenu_slugs(), true ), 'Retired technical/support page was registered in clean menu: ' . $retired_slug );
 }
 
+// Simulate the native submenu that WordPress creates for show_in_menu => sidrena.
 $GLOBALS['submenu']['sidrena'][] = array( 'Usluge', 'manage_options', Sidrena_Admin_UX::SERVICE_MENU_SLUG, 'Usluge' );
+// Also inject a stale duplicate to verify the normalizer remains defensive.
 $GLOBALS['submenu']['sidrena'][] = array( 'Cjenici', 'manage_options', 'sidrena-files', 'Cjenici' );
 Sidrena_Admin_UX::instance()->simplify_menu();
 

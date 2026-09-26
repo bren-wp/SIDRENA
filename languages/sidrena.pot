@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.6\n"
+"Project-Id-Version: Sidrena 1.0.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -767,7 +767,7 @@ msgid "Pravila koja Sidrena tehnički podržava"
 msgstr ""
 
 #: includes/class-sidrena-services.php:131
-msgid "Pravilnik NN 105/2026 traži da uz cijenu usluge budu navedeni naziv, vrsta i opseg usluge te da cijena obuhvati pripadajuće troškove. Ovdje evidentirajte te podatke za javni prikaz."
+msgid "NN 105/2026 čl. 9.–11. uređuje prikaz cijena usluga: uz cijenu se navode naziv, vrsta i opseg usluge, cijena obuhvaća pripadajuće troškove, a cijena ugradbene ili zamjenske robe ističe se kada je roba sastavni dio usluge. Ova opisna polja dopunjuju javni prikaz; strojno čitljivi CSV/XML cjenik slijedi zasebna polja iz NN 101/2026."
 msgstr ""
 
 #: includes/class-sidrena-admin.php:532
