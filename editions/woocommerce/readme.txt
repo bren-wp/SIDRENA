@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijes
 
 == Description ==
 
-Sidrena WooCommerce 1.0.2 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+Sidrena WooCommerce 1.0.3 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
 
 * nema dupliciranja WooCommerce kataloga
 * automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
@@ -41,7 +41,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.2.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.3.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -76,12 +76,19 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Changelog ==
 
+= 1.0.3 =
+* Ispravljeni su CI guardovi nakon legitimnog refaktora admin body klase i površine podrške.
+* Mobilni CSS breakpointi premješteni su iza produkcijskih komponenti kako kasnija desktop pravila više ne bi poništavala 782/390 px raspored.
+* WordPress katalog na uskim ekranima koristi lokalno skrolanje tablice bez horizontalnog overflowa cijele wp-admin stranice.
+* Uklonjen je preostali zastarjeli URL iz javnog manifesta i dokumentacija je usklađena sa službenim Brendigo SIDRENA URL-om.
+* Pravna formulacija dodatno je pooštrena: tehničke provjere ne zamjenjuju individualnu pravnu procjenu.
+
 = 1.0.2 =
 * Uklonjen legacy/mrtvi administratorski CSS koji se više ne koristi na glavnim Sidrena ekranima.
 * Smanjeno je dupliciranje PHP navigacije i edition-conflict zaštite.
 * Optimiziran je WooCommerce kompatibilni frontend DOM/AJAX sloj kako bi izbjegao redundantne zahtjeve i vlastite mutation cikluse.
 * WordPress i WooCommerce zadržavaju jasno odvojene edition akcente uz zajednički SIDRENA brand sustav.
-* Produkcijske pravne provjere ostaju tehničke provjere podataka, objave, arhive i raspoloživosti, a ne pravna garancija.
+* Produkcijske pravne provjere ostaju tehničke provjere podataka, objave, arhive i raspoloživosti te ne zamjenjuju individualnu pravnu procjenu.
 
 = 1.0.1 =
 * Usklađena je tehnička provjera s NN 101/2026 i službenim MINGO pojašnjenjima: dovoljan je CSV ili XML, dok javni HTML i manifest ostaju opcionalni.

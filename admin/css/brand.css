@@ -1,5 +1,5 @@
 /**
- * Sidrena 1.0.2 brand UI.
+ * Sidrena 1.0.3 brand UI.
  * Author: Brendigo
  * Author URI: https://brendigo.com/
  * Plugin URI: https://brendigo.com/sidrene-cijene/
@@ -228,7 +228,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-modern-table thead th,.sid-bulk-table thead th,.sid-service-table thead th,.sid-standalone-table thead th {
 	position:sticky;top:32px;z-index:2;background:#f3f7fb;color:#48637d;font-size:10px;font-weight:800;text-transform:none;
 }
-.sid-table-wrap { width:100%;overflow:auto;border:1px solid #e0eaf3;border-radius:11px;scrollbar-gutter:stable; }
+.sid-table-wrap { width:100%;max-width:100%;min-width:0;overflow:auto;border:1px solid #e0eaf3;border-radius:11px;scrollbar-gutter:stable;overscroll-behavior-inline:contain; }
 .sid-table-wrap table { border:0!important; }
 .sid-table-empty { padding:22px;text-align:center;color:var(--sid-muted);background:#f8fbfd;border:1px dashed #d5e1ec;border-radius:10px; }
 .sid-table-empty-cell { padding:26px!important;text-align:center!important;color:var(--sid-muted);background:#f8fbfd; }
@@ -345,52 +345,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 }
 .sidrena-footer a { color:var(--sid-navy);font-weight:750;text-decoration:none; }
 
-@media (max-width:1180px) {
-	.sidrena-brandbar { grid-template-columns:minmax(300px,.95fr) minmax(280px,1.05fr);gap:18px; }
-	.sidrena-brandbar__actions { grid-column:1/-1;justify-content:flex-start; }
-	.sidrena-brandbar__logo { width:min(410px,100%);height:86px; }
-	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-4,.sid-dashboard-metrics--archive { grid-template-columns:repeat(2,minmax(0,1fr)); }
-	.sid-grid-main,.sid-archive-top { grid-template-columns:1fr; }
-	.sid-fields-location { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-@media (max-width:1040px) {
-	.sid-dashboard-main,.sid-dashboard-bottom { grid-template-columns:1fr; }
-	.sid-grid-3 { grid-template-columns:1fr; }
-}
-@media (max-width:782px) {
-	.sidrena-app { padding:12px 12px 28px; }
-	.sidrena-brandbar { grid-template-columns:1fr;min-height:0;padding:17px; }
-	.sidrena-brandbar__logo { width:min(430px,100%);height:auto;max-height:86px; }
-	.sidrena-brandbar__copy { display:none; }
-	.sidrena-brandbar__actions { grid-column:auto;justify-content:flex-start; }
-	.sidrena-contextbar,.sid-page-head,.sid-location-head { align-items:flex-start;flex-direction:column; }
-	.sid-head-inline-actions,.sid-location-actions { justify-content:flex-start;width:100%; }
-	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); }
-	.sid-grid-2,.sid-toggle-grid,.sid-fields,.sid-price-guide,.sid-grid-4,.sid-dashboard-metrics--archive,.sid-archive-coverage,.sid-fields-location,.sid-inline-form,.sid-retention-box { grid-template-columns:1fr; }
-	.sid-dashboard-main,.sid-dashboard-bottom { grid-template-columns:1fr; }
-	.sid-fields .sid-wide { grid-column:auto; }
-	.sid-code-row { grid-template-columns:1fr; }
-	.sid-sticky-actions { bottom:6px;width:100%; }
-	.sid-sticky-actions .button { width:100%; }
-	.sidrena-app .button,.sid-link-button { min-height:44px; }
-	.sid-retention-box>div:first-child { padding-right:0;padding-bottom:10px;border-right:0;border-bottom:1px solid #dce7f1; }
-}
-@media (max-width:480px) {
-	.sidrena-app { padding:10px 8px 24px; }
-	.sidrena-brandbar { border-radius:15px;padding:14px;min-height:112px;background-position:66% center; }
-	.sidrena-brandbar__copy strong { font-size:20px; }
-	.sidrena-brandbar__actions { display:grid;grid-template-columns:1fr 1fr;width:100%; }
-	.sidrena-brandbar__actions a { justify-content:center; }
-	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:1fr; }
-	.sid-page-head h2 { font-size:23px; }
-	.sid-location-head { display:grid;grid-template-columns:1fr;gap:12px; }
-	.sid-location-actions { justify-content:space-between;width:100%; }
-	.sid-card { padding:14px; }
-	.sidrena-footer { align-items:flex-start;flex-direction:column; }
-}
-@media (prefers-reduced-motion:reduce) {
-	.sidrena-app *, .sidrena-app *::before,.sidrena-app *::after { transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important; }
-}
+
 
 
 /* Complete coverage for Sidrena production screens. */
@@ -468,3 +423,56 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sid-day.is-covered { background:var(--sid-green-soft);color:#087a55; }
 .sid-log-table { width:100%;border-collapse:separate;border-spacing:0;font-size:10px; }
 
+/* Responsive rules intentionally live after all component declarations. */
+@media (max-width:1180px) {
+	.sidrena-brandbar { grid-template-columns:minmax(300px,.95fr) minmax(280px,1.05fr);gap:18px; }
+	.sidrena-brandbar__actions { grid-column:1/-1;justify-content:flex-start; }
+	.sidrena-brandbar__logo { width:min(410px,100%);height:86px; }
+	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-4,.sid-dashboard-metrics--archive { grid-template-columns:repeat(2,minmax(0,1fr)); }
+	.sid-grid-main,.sid-archive-top { grid-template-columns:1fr; }
+	.sid-fields-location { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:1040px) {
+	.sid-dashboard-main,.sid-dashboard-bottom { grid-template-columns:1fr; }
+	.sid-grid-3 { grid-template-columns:1fr; }
+}
+@media (max-width:782px) {
+	.sidrena-app { padding:12px 12px 28px; }
+	.sidrena-brandbar { grid-template-columns:1fr;min-height:0;padding:17px; }
+	.sidrena-brandbar__logo { width:min(430px,100%);height:auto;max-height:86px; }
+	.sidrena-brandbar__copy { display:none; }
+	.sidrena-brandbar__actions { grid-column:auto;justify-content:flex-start; }
+	.sidrena-contextbar,.sid-page-head,.sid-location-head { align-items:flex-start;flex-direction:column; }
+	.sid-head-inline-actions,.sid-location-actions { justify-content:flex-start;width:100%; }
+	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+	.sid-grid-2,.sid-toggle-grid,.sid-fields,.sid-price-guide,.sid-grid-4,.sid-dashboard-metrics--archive,.sid-archive-coverage,.sid-fields-location,.sid-inline-form,.sid-retention-box { grid-template-columns:1fr; }
+	.sid-dashboard-main,.sid-dashboard-bottom { grid-template-columns:1fr; }
+	.sid-fields .sid-wide { grid-column:auto; }
+	.sid-code-row { grid-template-columns:1fr; }
+	.sid-table-wrap { max-width:100%;min-width:0; }
+	.sid-standalone-table { min-width:980px; }
+	.sid-form-actions,.sid-bulk-actions { align-items:stretch; }
+	.sid-sticky-actions { bottom:6px;width:100%; }
+	.sid-sticky-actions .button { width:100%; }
+	.sidrena-app .button,.sid-link-button { min-height:44px; }
+	.sid-retention-box>div:first-child { padding-right:0;padding-bottom:10px;border-right:0;border-bottom:1px solid #dce7f1; }
+}
+@media (max-width:480px) {
+	.sidrena-app { padding:10px 8px 24px; }
+	.sidrena-brandbar { border-radius:15px;padding:14px;min-height:112px;background-position:66% center; }
+	.sidrena-brandbar__copy strong { font-size:20px; }
+	.sidrena-brandbar__actions { display:grid;grid-template-columns:1fr 1fr;width:100%; }
+	.sidrena-brandbar__actions a { justify-content:center; }
+	.sid-dashboard-metrics,.sid-dashboard-actions,.sid-grid-3 { grid-template-columns:1fr; }
+	.sid-page-head h2 { font-size:23px; }
+	.sid-location-head { display:grid;grid-template-columns:1fr;gap:12px; }
+	.sid-location-actions { justify-content:space-between;width:100%; }
+	.sid-card { padding:14px; }
+	.sid-form-actions>.button,.sid-bulk-actions>.button { width:100%;justify-content:center; }
+	.sidrena-contextbar__left,.sidrena-contextbar__right { width:100%; }
+	.sidrena-contextbar__right { justify-content:flex-start; }
+	.sidrena-footer { align-items:flex-start;flex-direction:column; }
+}
+@media (prefers-reduced-motion:reduce) {
+	.sidrena-app *, .sidrena-app *::before,.sidrena-app *::after { transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important; }
+}

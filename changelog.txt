@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.3 =
+* Ispravljeni su failing CI, admin polish i legal-copy guardovi nakon 1.0.2 refaktora bez zaobilaženja provjera.
+* Responzivna pravila konsolidirana su na kraj brand CSS-a kako desktop definicije više ne bi poništavale tablet i mobilne breakpointe.
+* WordPress katalog više ne širi cijeli wp-admin na 390 px; široka tablica ostaje skrolabilna unutar vlastitog kontejnera.
+* Uklonjen je zastarjeli sidrene-cijene.com.hr URL iz JSON manifesta i zamijenjen službenim Brendigo URL-om.
+* Upute, pravne/tehničke bilješke i distribucijski nazivi usklađeni su na 1.0.3 uz očuvanu povijest 1.0.2 i starijih verzija.
+* Pravna terminologija ostaje tehnička i ne predstavlja individualnu pravnu potvrdu konkretnog poslovanja.
+
 = 1.0.2 =
 * Uklonjen je legacy administratorski CSS sa starih .sidrena-wrap ekrana; editor CSS sada je ograničen na stvarne WooCommerce product i Sidrena service površine.
 * WordPress i WooCommerce entrypointi koriste zajednički edition-conflict guard umjesto dupliciranog PHP bloka.
