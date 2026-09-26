@@ -129,6 +129,9 @@ jobs:
       - name: Cross-version upgrade compatibility smoke test
         run: php .github/tests/upgrade-compat-smoke.php
 
+      - name: Release Plugin Check gate regression test
+        run: php .github/tests/release-plugin-check-gate-smoke.php
+
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
 
