@@ -51,6 +51,18 @@ function wp_roles() {
 
 $wpdb = new class {
 	public $prefix = 'wp_';
+	public function prepare( $query, ...$args ) {
+		foreach ( $args as $arg ) {
+			if ( false !== strpos( $query, '%i' ) ) {
+				$query = preg_replace( '/%i/', (string) $arg, $query, 1 );
+			} elseif ( false !== strpos( $query, '%d' ) ) {
+				$query = preg_replace( '/%d/', (string) (int) $arg, $query, 1 );
+			} else {
+				$query = preg_replace( '/%s/', "'" . addslashes( (string) $arg ) . "'", $query, 1 );
+			}
+		}
+		return $query;
+	}
 	public function query( $sql ) {
 		$GLOBALS['sidrena_queries'][] = $sql;
 		return 1;
