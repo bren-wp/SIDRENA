@@ -79,8 +79,13 @@ Admin brand header koristi lokalni `brand-hero.svg` s kadriranjem koje prioritet
 Glavni `README.md`, upute i instalacijski ZIP-ovi za dokaz stvarnog sučelja smiju koristiti samo slike koje proizvodi `tools/capture-wporg-assets.mjs` iz aktivnog WordPress okruženja. Marketinški SVG/PNG hero, cover i social asseti ne smiju se predstavljati kao screenshot plugina. Za izdanje 1.0.5 obvezno je šest stvarnih ekrana po izdanju: Pregled, Katalog/Proizvodi, Cjenici, Lokacije, Postavke i Pomoć.
 
 
-## 1.0.5 lockup pravilo
+## 1.0.5 lockup i hero pravilo
 
 Službeni znak koristi jedinstvenu geometriju **S + sidro** u svim varijantama: samostalni znak, app ikona, favicon, WordPress/WooCommerce lockup i admin menu ikona. Znak se ne smije rastezati niti ponovno crtati drugim anchor simbolom. Edition lockupi u tamnom admin headeru koriste `logo-wordpress-light.svg` odnosno `logo-woocommerce-light.svg`; generički horizontalni logo nije zamjena za edition identitet.
 
 Donacija je sekundarna podrška razvoju i ne pripada primarnoj navigaciji ili glavnom brand headeru. Runtime screenshotovi i dalje su isključivo stvarni snimljeni wp-admin ekrani.
+
+
+### Referentni pomorski hero
+
+Admin hero koristi isključivo lokalni `assets/images/brand-hero.svg`: duboki navy horizont, cijan/plavi morski sloj, stijene, bijeli svjetionik i svjetlosni snop. WordPress ostaje plavo/cijan, WooCommerce dodaje ljubičasti edition akcent. Vizual je branding element; ne smije se predstavljati kao runtime screenshot niti sadržavati izmišljene statistike, korisnike ili ocjene.
