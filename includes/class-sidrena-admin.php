@@ -1815,7 +1815,7 @@ final class Sidrena_Admin {
 					$offset
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
@@ -1857,7 +1857,7 @@ final class Sidrena_Admin {
 					$offset
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$this->safe_fputcsv(
 					$out,
@@ -1897,7 +1897,7 @@ final class Sidrena_Admin {
 					$offset
 				),
 				ARRAY_A
-			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Plugin-owned table.
+			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
