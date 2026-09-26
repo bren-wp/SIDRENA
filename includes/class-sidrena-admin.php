@@ -83,6 +83,7 @@ final class Sidrena_Admin {
 					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
 					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
 					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
+					'invalidOib'            => __( 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.', 'sidrena' ),
 				)
 			);
 			return;
