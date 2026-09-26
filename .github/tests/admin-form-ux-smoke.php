@@ -66,6 +66,7 @@ foreach (
 		'input[aria-invalid="true"]',
 		'.sid-table-wrap:focus-within',
 		'.sid-file-control',
+		'.sid-inline-form .sid-form-status',
 	) as $needle
 ) {
 	sidrena_form_ux_assert( false !== strpos( $style, $needle ), 'Admin form style regression: ' . $needle );
