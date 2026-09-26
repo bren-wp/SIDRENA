@@ -40,10 +40,12 @@ $targets = array(
 	$root . '/assets',
 	$root . '/editions',
 	$root . '/languages',
+	$root . '/docs',
 );
 $single_files = array(
 	$root . '/uninstall.php',
 	$root . '/tools/build-editions.sh',
+	$root . '/tools/build-support-pdf.py',
 );
 
 $violations = array();
