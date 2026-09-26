@@ -123,6 +123,9 @@ jobs:
       - name: Service first-publish anchor smoke test
         run: php .github/tests/service-first-publish-smoke.php
 
+      - name: Cross-version upgrade compatibility smoke test
+        run: php .github/tests/upgrade-compat-smoke.php
+
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
 
@@ -220,27 +223,40 @@ jobs:
           set -euo pipefail
           VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
           OUT="$RUNNER_TEMP/sidrena-editions"
-          mkdir -p "$OUT"
-          ./tools/build-editions.sh "$VERSION" "$OUT"
-
           REPEAT_OUT="$RUNNER_TEMP/sidrena-editions-repeat"
-          mkdir -p "$REPEAT_OUT"
+          mkdir -p "$OUT" "$REPEAT_OUT"
+
+          ./tools/build-editions.sh "$VERSION" "$OUT"
           ./tools/build-editions.sh "$VERSION" "$REPEAT_OUT"
+
           cmp "$OUT/sidrena-wordpress-$VERSION.zip" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip"
           cmp "$OUT/sidrena-woocommerce-$VERSION.zip" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip"
           cmp "$OUT/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
           cmp "$OUT/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
 
+          WP_ZIP="$OUT/sidrena-wordpress-$VERSION.zip"
+          WOO_ZIP="$OUT/sidrena-woocommerce-$VERSION.zip"
           WP="$OUT/.sidrena-build/sidrena-wordpress"
           WOO="$OUT/.sidrena-build/sidrena-woocommerce"
 
-          test -f "$OUT/sidrena-wordpress-$VERSION.zip"
-          test -f "$OUT/sidrena-wordpress-$VERSION.zip.sha256"
-          test -f "$OUT/sidrena-woocommerce-$VERSION.zip"
-          test -f "$OUT/sidrena-woocommerce-$VERSION.zip.sha256"
+          for ZIP in "$WP_ZIP" "$WOO_ZIP"; do
+            test -s "$ZIP"
+            SIZE="$(stat -c%s "$ZIP")"
+            echo "$(basename "$ZIP"): $SIZE bytes"
+            test "$SIZE" -le 1572864
+          done
+
+          (
+            cd "$OUT"
+            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
+            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+          )
+          unzip -t "$WP_ZIP" >/dev/null
+          unzip -t "$WOO_ZIP" >/dev/null
 
           test -f "$WP/sidrena-wordpress.php"
           test -f "$WP/readme.txt"
+          test -s "$WP/docs/UPUTE.md"
           test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
@@ -250,11 +266,14 @@ jobs:
           test ! -f "$WP/includes/class-sidrena-bulk.php"
           test ! -f "$WP/includes/class-sidrena-woo-import-export.php"
           test ! -f "$WP/includes/class-sidrena-compatibility.php"
+          test ! -d "$WP/branding"
+          test ! -d "$WP/docs/images"
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/editions"
 
           test -f "$WOO/sidrena-woocommerce.php"
           test -f "$WOO/readme.txt"
+          test -s "$WOO/docs/UPUTE.md"
           test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test -f "$WOO/includes/class-sidrena-history.php"
@@ -264,38 +283,13 @@ jobs:
           test -f "$WOO/includes/class-sidrena-woo-import-export.php"
           test -f "$WOO/includes/class-sidrena-compatibility.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
+          test ! -d "$WOO/branding"
+          test ! -d "$WOO/docs/images"
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/editions"
+
           test -f "$WP/assets/images/menu-anchor.svg"
           test -f "$WOO/assets/images/menu-anchor.svg"
-          test -f "$WP/docs/images/screenshot-admin.png"
-          test -f "$WOO/docs/images/screenshot-admin.png"
-          for index in 1 2 3 4 5 6; do
-            test -f "$WP/docs/images/screenshot-$index.png"
-            test -f "$WOO/docs/images/screenshot-$index.png"
-          done
-          test -f "$WP/branding/BRAND-GUIDE.md"
-          test -f "$WOO/branding/BRAND-GUIDE.md"
-          test -f "$WP/branding/website-hero-wordpress.svg"
-          test -f "$WOO/branding/website-hero-woocommerce.svg"
-          test -f "$WP/branding/rendered/website-hero-wordpress.png"
-          test -f "$WOO/branding/rendered/website-hero-woocommerce.png"
-          test -f "$WP/branding/rendered/plugin-cover-wordpress.png"
-          test -f "$WOO/branding/rendered/plugin-cover-woocommerce.png"
-          test -f "$WP/branding/rendered/docs-cover-wordpress.png"
-          test -f "$WOO/branding/rendered/docs-cover-woocommerce.png"
-          test -f "$WP/branding/rendered/cta-wordpress.png"
-          test -f "$WOO/branding/rendered/cta-woocommerce.png"
-          test -f "$WP/branding/rendered/app-card-wordpress.png"
-          test -f "$WOO/branding/rendered/app-card-woocommerce.png"
-          test -f "$WP/branding/rendered/compact-wordpress.png"
-          test -f "$WOO/branding/rendered/compact-woocommerce.png"
-          test -f "$WP/branding/rendered/email-header.png"
-          test -f "$WOO/branding/rendered/email-header.png"
-          test -f "$WP/branding/rendered/support-cover.png"
-          test -f "$WOO/branding/rendered/support-cover.png"
-          test ! -f "$WP/branding/rendered/website-hero-woocommerce.png"
-          test ! -f "$WOO/branding/rendered/website-hero-wordpress.png"
           grep -Fq 'Text Domain: sidrena-wordpress' "$WP/sidrena-wordpress.php"
           grep -Fq 'Text Domain: sidrena-woocommerce' "$WOO/sidrena-woocommerce.php"
           test -f "$WP/languages/sidrena-wordpress.pot"
@@ -304,15 +298,10 @@ jobs:
           test ! -f "$WOO/languages/sidrena.pot"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
-          # Boot the exact staged packages after edition-specific classes have
-          # physically been removed.
           php .github/tests/wordpress-edition-smoke.php "$WP"
           php .github/tests/woocommerce-edition-smoke.php "$WOO"
           php .github/tests/package-entrypoint-smoke.php "$WP" wordpress
           php .github/tests/package-entrypoint-smoke.php "$WOO" woocommerce
-
-          unzip -l "$OUT/sidrena-wordpress-$VERSION.zip" > "$OUT/wordpress-files.txt"
-          unzip -l "$OUT/sidrena-woocommerce-$VERSION.zip" > "$OUT/woocommerce-files.txt"
 
       - name: Guard against inline PHP script/style blocks
         if: matrix.php == '8.3'

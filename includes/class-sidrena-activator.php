@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Sidrena_Activator {
 	const DB_VERSION = '0.1.0';
+	const PLUGIN_VERSION_OPTION = 'sidrena_plugin_version';
 
 	public static function activate() {
 		self::install_schema();
@@ -27,12 +28,7 @@ final class Sidrena_Activator {
 			add_option( 'sidrena_locations', Sidrena_Utils::locations(), '', false );
 		}
 
-		$paths = Sidrena_Utils::upload_paths();
-		wp_mkdir_p( $paths['archive_dir'] );
-		wp_mkdir_p( $paths['snapshot_dir'] );
-		self::protect_upload_directory( $paths['base_dir'] );
-		self::protect_upload_directory( $paths['archive_dir'] );
-		self::protect_upload_directory( $paths['snapshot_dir'] );
+		self::ensure_storage();
 
 		self::ensure_schedules();
 		if ( class_exists( 'Sidrena_Public' ) ) {
@@ -42,20 +38,39 @@ final class Sidrena_Activator {
 		}
 
 		update_option( 'sidrena_db_version', self::DB_VERSION, false );
+		update_option( self::PLUGIN_VERSION_OPTION, SIDRENA_VERSION, false );
 	}
 
 	public static function maybe_upgrade() {
-		$current = (string) get_option( 'sidrena_db_version', '' );
+		$current_db     = (string) get_option( 'sidrena_db_version', '' );
+		$current_plugin = (string) get_option( self::PLUGIN_VERSION_OPTION, '' );
+
 		self::ensure_capabilities();
-		if ( self::DB_VERSION === $current ) {
-			self::migrate_options();
-			self::ensure_schedules();
+		self::migrate_options();
+		self::ensure_storage();
+		self::ensure_schedules();
+
+		if ( ! self::needs_upgrade( $current_db, $current_plugin ) ) {
 			return;
 		}
+
+		// dbDelta is idempotent and repairs missing tables/indexes from any older
+		// Sidrena release without deleting existing business records.
 		self::install_schema();
-		self::migrate_options();
-		self::ensure_schedules();
+		if ( class_exists( 'Sidrena_Public' ) ) {
+			Sidrena_Public::ensure_public_page();
+		}
+
 		update_option( 'sidrena_db_version', self::DB_VERSION, false );
+		update_option( self::PLUGIN_VERSION_OPTION, SIDRENA_VERSION, false );
+	}
+
+	private static function needs_upgrade( $db_version, $plugin_version ) {
+		if ( ! defined( 'SIDRENA_VERSION' ) ) {
+			return true;
+		}
+
+		return self::DB_VERSION !== (string) $db_version || SIDRENA_VERSION !== (string) $plugin_version;
 	}
 
 	public static function deactivate() {
@@ -63,6 +78,7 @@ final class Sidrena_Activator {
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
 		wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
+		wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
 		flush_rewrite_rules( false );
 	}
 
@@ -94,6 +110,16 @@ final class Sidrena_Activator {
 				$role->add_cap( 'manage_sidrena' );
 			}
 		}
+	}
+
+	private static function ensure_storage() {
+		$paths = Sidrena_Utils::upload_paths();
+		wp_mkdir_p( $paths['base_dir'] );
+		wp_mkdir_p( $paths['archive_dir'] );
+		wp_mkdir_p( $paths['snapshot_dir'] );
+		self::protect_upload_directory( $paths['base_dir'] );
+		self::protect_upload_directory( $paths['archive_dir'] );
+		self::protect_upload_directory( $paths['snapshot_dir'] );
 	}
 
 	private static function ensure_schedules() {

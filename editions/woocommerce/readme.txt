@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijes
 
 == Description ==
 
-Sidrena WooCommerce 1.0.7 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+Sidrena WooCommerce 1.0.8 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
 
 * nema dupliciranja WooCommerce kataloga
 * automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
@@ -41,7 +41,7 @@ Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja a
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.7.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.8.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -75,6 +75,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.8 =
+* Instalacijski ZIP je radikalno smanjen uklanjanjem WordPress.org screenshotova i marketinških PNG/SVG asseta koji nisu potrebni za runtime.
+* Build i release guard odbijaju instalacijski ZIP veći od 1,5 MiB, čime se izbjegava čest shared-hosting upload_max_filesize problem od 2 MiB.
+* Dodan je cross-version upgrade marker i idempotentni repair put koji omogućuje 1.0.8 nadogradnju preko bilo kojeg ranijeg SIDRENA izdanja iste edicije bez brisanja poslovnih podataka.
+* Upgrade automatski obnavlja shemu, postavke, direktorije za objavu, rasporede i javnu stranicu kada nedostaju.
+* Uklonjeni su preostali duplicirani/stari source headeri iz runtime testova.
 
 = 1.0.7 =
 * Ispravljena je prva objava nove usluge: sidrena vrijednost finalizira se nakon spremanja stvarno unesene aktualne cijene.

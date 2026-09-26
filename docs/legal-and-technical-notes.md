@@ -61,7 +61,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.0.7 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena 1.0.8 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -73,7 +73,7 @@ Sidrena **ne klasificira automatski** proizvod u pravnu kategoriju na temelju na
 
 NN 105/2026 čl. 9.–11. zahtijeva lako dostupan cjenik usluga, jasan prikaz cijena te naziv, vrstu i opseg usluge; cijena mora obuhvatiti pripadajuće troškove, a cijena ugradbene ili zamjenske robe mora biti istaknuta kada je roba sastavni dio usluge. Zasebno, NN 101/2026 za strojno čitljivi cjenik usluga propisuje naziv usluge, maloprodajnu cijenu s informacijom o posebnom obliku prodaje i sidrenu cijenu.
 
-Sidrena zato vodi oba sloja podataka: obvezna polja digitalnog NN 101/2026 cjenika te detalje javnog prikaza iz NN 105/2026. U 1.0.7 first-publish finalizacija nove usluge odvija se nakon spremanja meta podataka kako se referentna cijena ne bi računala prije stvarno unesene aktualne cijene.
+Sidrena zato vodi oba sloja podataka: obvezna polja digitalnog NN 101/2026 cjenika te detalje javnog prikaza iz NN 105/2026. U 1.0.8 first-publish finalizacija nove usluge odvija se nakon spremanja meta podataka kako se referentna cijena ne bi računala prije stvarno unesene aktualne cijene.
 
 ## Dvije različite evidencije “30 dana”
 
@@ -96,7 +96,10 @@ Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o
 
 ## Produkcijski i release guardovi
 
-Sidrena 1.0.7 stabilna release linija koristi zasebne provjere za:
+Sidrena 1.0.8 stabilna release linija koristi zasebne provjere za:
+
+- cross-version nadogradnju i idempotentni repair postojećih instalacija
+- instalacijski ZIP do 1,5 MiB bez nepotrebnih screenshot/marketing asseta
 
 - stvarni build dvaju ZIP paketa,
 - zabranu generičkog/root/static PHP paketa,
@@ -104,7 +107,7 @@ Sidrena 1.0.7 stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.7.zip`, `sidrena-wordpress-1.0.7.zip.sha256`, `sidrena-woocommerce-1.0.7.zip` i `sidrena-woocommerce-1.0.7.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.8.zip`, `sidrena-wordpress-1.0.8.zip.sha256`, `sidrena-woocommerce-1.0.8.zip` i `sidrena-woocommerce-1.0.8.zip.sha256`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 

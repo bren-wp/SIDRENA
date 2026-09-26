@@ -42,7 +42,9 @@ foreach ( array_unique( $active_plugins ) as $active_plugin ) {
 // Business records remain preserved unless explicit destructive cleanup is enabled.
 wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 wp_clear_scheduled_hook( 'sidrena_queued_generation' );
+wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 wp_clear_scheduled_hook( 'sidrena_history_seed' );
+wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
 
 $roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
 if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects ) ) {
@@ -63,6 +65,7 @@ delete_option( 'sidrena_public_index' );
 delete_option( 'sidrena_archive_index' );
 delete_option( 'sidrena_last_run' );
 delete_option( 'sidrena_db_version' );
+delete_option( 'sidrena_plugin_version' );
 delete_option( 'sidrena_history_seeded_at' );
 delete_option( 'sidrena_public_page_id' );
 

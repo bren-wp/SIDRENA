@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena brand system 1.0.7
+# Sidrena brand system 1.0.8
 
 Ovaj direktorij je izvorni branding paket za Sidrena WordPress i Sidrena WooCommerce. Vizualni sustav prati produkcijske reference: tamno plava pomorska baza, svjetionik kao signal sigurnosti, Sidrena znak (S + sidro), plavi WordPress akcent i ljubičasti WooCommerce akcent.
 
@@ -76,14 +76,14 @@ Admin brand header koristi lokalni `brand-hero.svg` s kadriranjem koje prioritet
 
 ## Runtime screenshot pravilo
 
-Glavni `README.md`, upute i instalacijski ZIP-ovi za dokaz stvarnog sučelja smiju koristiti samo slike koje proizvodi `tools/capture-wporg-assets.mjs` iz aktivnog WordPress okruženja. Marketinški SVG/PNG hero, cover i social asseti ne smiju se predstavljati kao screenshot plugina. Za izdanje 1.0.7 obvezno je šest stvarnih ekrana po izdanju: Pregled, Katalog/Proizvodi, Cjenici, Lokacije, Postavke i Pomoć.
+Glavni `README.md`, upute i instalacijski ZIP-ovi za dokaz stvarnog sučelja smiju koristiti samo slike koje proizvodi `tools/capture-wporg-assets.mjs` iz aktivnog WordPress okruženja. Marketinški SVG/PNG hero, cover i social asseti ne smiju se predstavljati kao screenshot plugina. Za izdanje 1.0.8 obvezno je šest stvarnih ekrana po izdanju: Pregled, Katalog/Proizvodi, Cjenici, Lokacije, Postavke i Pomoć.
 
 
-## 1.0.7 lockup, fokus i hero pravilo
+## 1.0.8 lockup, fokus i hero pravilo
 
 Službeni znak koristi jedinstvenu geometriju **S + sidro** u svim varijantama: samostalni znak, app ikona, favicon, WordPress/WooCommerce lockup i admin menu ikona. Znak se ne smije rastezati niti ponovno crtati drugim anchor simbolom. Edition lockupi u tamnom admin headeru koriste `logo-wordpress-light.svg` odnosno `logo-woocommerce-light.svg`; generički horizontalni logo nije zamjena za edition identitet.
 
-Donacija je sekundarna podrška razvoju i ne pripada primarnoj navigaciji ili glavnom brand headeru. Runtime screenshotovi i dalje su isključivo stvarni snimljeni wp-admin ekrani. Interaktivni elementi moraju zadržati vidljiv keyboard focus, a obrasci moraju jasno označiti stanje slanja bez dvostrukog submitanja.
+Donacija je sekundarna podrška razvoju i ne pripada primarnoj navigaciji ili glavnom brand headeru. Runtime screenshotovi i dalje su isključivo stvarni snimljeni wp-admin ekrani. Oni i marketinški branding ostaju u source/WP.org asset sloju, a od 1.0.8 se više ne kopiraju u instalacijske ZIP-ove jer nisu potrebni za runtime. Interaktivni elementi moraju zadržati vidljiv keyboard focus, a obrasci moraju jasno označiti stanje slanja bez dvostrukog submitanja.
 
 
 ### Referentni pomorski hero
