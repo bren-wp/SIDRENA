@@ -1,9 +1,2 @@
 <!-- Sidrena source file | Author: Brendigo | Author URI: https://brendigo.com/ | Plugin URI: https://brendigo.com/sidrene-cijene/ | Support: sidrena@brendigo.com -->
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-<g fill="none" stroke="#a7aaad" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="3.1" r="1.55" stroke-width="1.7"/>
-<path d="M12 4.8v14.1" stroke-width="1.8"/>
-<path d="M15.5 6.7c-1.4-1.3-4.2-1.5-5.7-.4-1.4 1-.9 2.5.8 3 2.7.8 4.8.8 4.9 2.8.1 1.8-2 2.8-3.9 2.8-1.7 0-3.1-.6-4-1.5" stroke-width="2.15"/>
-<path d="M8.8 8.9h6.4M5.3 14.6c.8 4 3.2 6.1 6.7 6.1s5.9-2.1 6.7-6.1M5.3 14.6l-2.2 1.5 2.1 2m13.5-3.5 2.2 1.5-2.1 2" stroke-width="1.65"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><g fill="none" stroke="#a7aaad" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="2.4" r="1.25" stroke-width="1.5"/><path d="M10 3.9v12.6M13.2 5.3c-1.2-1.1-3.5-1.2-4.8-.3-1.2.9-.7 2.1.7 2.5 2.3.7 4 .7 4.1 2.4.1 1.6-1.7 2.4-3.3 2.4-1.5 0-2.6-.5-3.4-1.3M7.2 7.2h5.5M4.3 12.1c.7 3.4 2.7 5.2 5.7 5.2s5-1.8 5.7-5.2M4.3 12.1l-1.8 1.3 1.7 1.7m11.5-3 1.8 1.3-1.7 1.7" stroke-width="1.45"/></g></svg>

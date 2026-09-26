@@ -23,17 +23,17 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * define( 'SIDRENA_DELETE_DATA_ON_UNINSTALL', true );
  */
 
-$active_plugins = (array) get_option( 'active_plugins', array() );
+$sidrena_active_plugins = (array) get_option( 'active_plugins', array() );
 if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-	$network_active = (array) get_site_option( 'active_sitewide_plugins', array() );
-	$active_plugins = array_merge( $active_plugins, array_keys( $network_active ) );
+	$sidrena_network_active = (array) get_site_option( 'active_sitewide_plugins', array() );
+	$sidrena_active_plugins = array_merge( $sidrena_active_plugins, array_keys( $sidrena_network_active ) );
 }
-foreach ( array_unique( $active_plugins ) as $active_plugin ) {
-	$active_plugin = (string) $active_plugin;
-	if ( $active_plugin === (string) WP_UNINSTALL_PLUGIN ) {
+foreach ( array_unique( $sidrena_active_plugins ) as $sidrena_active_plugin ) {
+	$sidrena_active_plugin = (string) $sidrena_active_plugin;
+	if ( $sidrena_active_plugin === (string) WP_UNINSTALL_PLUGIN ) {
 		continue;
 	}
-	if ( preg_match( '#(^|/)(sidrena-wordpress|sidrena-woocommerce)\.php$#', $active_plugin ) ) {
+	if ( preg_match( '#(^|/)(sidrena-wordpress|sidrena-woocommerce)\.php$#', $sidrena_active_plugin ) ) {
 		return;
 	}
 }
@@ -46,9 +46,9 @@ wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 wp_clear_scheduled_hook( 'sidrena_history_seed' );
 wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
 
-$roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
-if ( $roles && ! empty( $roles->role_objects ) && is_array( $roles->role_objects ) ) {
-	foreach ( $roles->role_objects as $role ) {
+$sidrena_roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
+if ( $sidrena_roles && ! empty( $sidrena_roles->role_objects ) && is_array( $sidrena_roles->role_objects ) ) {
+	foreach ( $sidrena_roles->role_objects as $role ) {
 		if ( is_object( $role ) && is_callable( array( $role, 'remove_cap' ) ) ) {
 			$role->remove_cap( 'manage_sidrena' );
 		}
@@ -70,15 +70,15 @@ delete_option( 'sidrena_history_seeded_at' );
 delete_option( 'sidrena_public_page_id' );
 
 global $wpdb;
-$tables = array(
+$sidrena_tables = array(
 	$wpdb->prefix . 'sidrena_price_history',
 	$wpdb->prefix . 'sidrena_service_price_history',
 	$wpdb->prefix . 'sidrena_location_products',
 	$wpdb->prefix . 'sidrena_location_price_history',
 	$wpdb->prefix . 'sidrena_audit_log',
 );
-foreach ( $tables as $table ) {
-	$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed plugin-owned table names.
+foreach ( $sidrena_tables as $sidrena_table ) {
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $sidrena_table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- Explicit destructive uninstall of fixed plugin-owned tables.
 }
 
 // Public CSV/XML archives, Sidrena service posts and product/service reference

@@ -1,47 +1,46 @@
-=== Sidrena WooCommerce ===
+=== SIDRENA for WooCommerce ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WooCommerce%20plugin%20-%20donacija
 Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sidrene cijene za WooCommerce proizvode i usluge, javni CSV/XML cjenici, povijest cijena i arhiva objava.
+Price history, public CSV/XML price lists, locations and publication archives for existing WooCommerce products and variations.
 
 == Description ==
 
-Sidrena WooCommerce 1.0.9 koristi postojeće WooCommerce proizvode i varijacije kao izvor proizvoda.
+SIDRENA for WooCommerce 1.0.10 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
-* nema dupliciranja WooCommerce kataloga
-* automatski prikaz sidrene/referentne cijene uz WooCommerce cijenu
-* proizvodi, varijacije, usluge i lokacijski podaci
-* povijest cijena i 30-dnevna referenca kada postoji dovoljna evidencija
-* javni CSV/XML cjenici i pretraživi HTML prikaz
-* najmanje 30 dana javne arhive prethodnih objava
-* zasebna objava po aktivnoj lokaciji/webshopu
-* dnevno automatsko generiranje, zadano u 06:30
-* lokalni audit zapis s ograničenjem rasta i bez telemetrije
-* kompaktan WordPress admin meni sa Sidrena sidro ikonicom
+* keep WooCommerce as the canonical product and variation source
+* display reference-price information alongside existing WooCommerce prices when configured
+* record price history and location-specific data
+* generate public CSV/XML price lists and searchable HTML output
+* keep at least 30 days of public publication archives
+* publish separate outputs for active locations and webshop channels
+* run scheduled daily generation, with 06:30 as the default time
+* keep a bounded local audit log without telemetry
+* use a compact, responsive WordPress admin interface with WooCommerce-specific accents
 
-Službena stranica: https://brendigo.com/sidrene-cijene/
-Podrška: sidrena@brendigo.com
-Autor: Brendigo
+Official website: https://brendigo.com/sidrene-cijene/
+Support: sidrena@brendigo.com
+Author: Brendigo
 
-= Privatnost i vanjske veze =
+= Privacy and external links =
 
-Sidrena ne šalje telemetriju i ne prati korištenje plugina. Provjera javne dostupnosti koristi WordPress HTTP API samo prema javnim Sidrena datotekama na istoj web stranici. E-mail, WhatsApp, službena stranica i donacija otvaraju se samo nakon korisničke akcije.
+SIDRENA does not include telemetry or usage tracking. Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same site.
 
-= Važna napomena =
+= Important note =
 
-Sidrena tehnički pomaže voditi i objaviti podatke o cijenama. Ne predstavlja automatsku pravnu potvrdu konkretnog poslovanja. Povijesni i referentni podaci moraju odgovarati stvarnoj poslovnoj evidenciji.
+SIDRENA provides technical tools for recording, checking and publishing price data. It is not an automatic legal certification of a specific business.
 
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.9.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.10.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -75,6 +74,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.10 =
+* Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.
+* Removed the discouraged manual translation loader and documented intentional external WPML hooks.
+* Refined the SIDRENA logo geometry, admin hero, menu icon, spacing, cards, tables and edition badges to follow the supplied brand references more closely.
+* WordPress.org description copy is now in standard English while the Croatian runtime interface remains unchanged.
+* README and WordPress.org runtime screenshots are regenerated from the real 1.0.10 plugin UI.
 
 = 1.0.9 =
 * Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.
