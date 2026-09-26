@@ -22,6 +22,7 @@ $compliance_source = file_get_contents( $root . '/includes/class-sidrena-complia
 $audit_source      = file_get_contents( $root . '/includes/class-sidrena-audit.php' );
 $bootstrap_source  = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
 $plugin_source     = file_get_contents( $root . '/includes/class-sidrena-plugin.php' );
+$services_source   = file_get_contents( $root . '/includes/class-sidrena-services.php' );
 $utils_source      = file_get_contents( $root . '/includes/class-sidrena-utils.php' );
 $changelog_source  = file_get_contents( $root . '/changelog.txt' );
 
@@ -33,8 +34,10 @@ sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Public::ens
 sidrena_legal_assert( false !== strpos( $compliance_source, "array( 'archive_dir', 'snapshot_dir' )" ), 'Archive/snapshot directory self-heal list is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[ $path_key ] );' ), 'Looped directory self-heal is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'legal_automation_watchdog' ), 'Audit log event for legal automation watchdog is missing.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Legal_Automation::normalize_settings' ), 'Compliance repair must reuse centralized legal setting normalization.' );
+sidrena_legal_assert( false !== strpos( $services_source, 'Sidrena_Pricelist::queue_regeneration();' ), 'Service price changes must queue cjenik regeneration.' );
 
-foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_24_clarifications' ) as $source_key ) {
+foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $source_key ), 'Legal source marker missing: ' . $source_key );
 }
 foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'enable_public_html', 'strict_publication', 'publication_watch', 'daily_generation', 'Barem jedan strojno čitljiv format cjenika' ) as $profile_key ) {

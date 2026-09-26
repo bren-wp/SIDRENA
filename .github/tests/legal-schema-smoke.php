@@ -90,8 +90,9 @@ sidrena_schema_assert( false !== strpos( $admin_source, 'NN 105/2026 · primjena
 sidrena_schema_assert( false !== strpos( $admin_source, 'Hrana i hrana za životinje' ), 'Unit-price applicability guide is missing required product categories.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g ili 50 ml' ), 'Unit-price exceptions guide is missing threshold exceptions.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
-sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 24.09.2026.' ), 'Official MINGO clarification date must remain 24.09.2026.' );
-sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_24_clarifications' ), 'Official MINGO clarification source key must remain aligned to 24.09.2026.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 22.09.2026.' ), 'Official MINGO clarification date must remain 22.09.2026.' );
+sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_22_clarifications' ), 'Official MINGO clarification source key must remain aligned to 22.09.2026.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'https://mingo.gov.hr/print.aspx?id=10440&url=print' ), 'Official MINGO clarification URL must remain linked from the rules screen.' );
 
 $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Service type must remain optional in strict NN 101/2026 publication preflight.' );

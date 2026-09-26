@@ -52,9 +52,9 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-18',
 				'note'  => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute jasno, vidljivo, čitljivo i lako uočljivo.',
 			),
-			'mingo_2026_09_24_clarifications' => array(
-				'label' => 'Ministarstvo gospodarstva, službena pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada (24.09.2026.)',
-				'date'  => '2026-09-24',
+			'mingo_2026_09_22_clarifications' => array(
+				'label' => 'Ministarstvo gospodarstva, službena pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada (objavljeno 22.09.2026.)',
+				'date'  => '2026-09-22',
 				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
 			),
 		);
@@ -97,7 +97,7 @@ final class Sidrena_Compliance {
 			$issues[] = 'Javna arhiva mora imati najmanje 30 dana čuvanja.';
 		}
 		if ( ! $profile['daily_generation'] ) {
-			$issues[] = 'Dnevno automatsko generiranje nije zakazano.';
+			$issues[] = 'Automatsko generiranje nije zakazano; provjerite dnevnu objavu proizvoda i regeneriranje cjenika nakon promjena usluga.';
 		}
 		if ( ! $profile['publication_watch'] ) {
 			$issues[] = 'Publication watchdog nije zakazan.';
@@ -127,41 +127,25 @@ final class Sidrena_Compliance {
 		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$repairs  = array();
 
-		$required = array(
-			'default_ref_date'      => '2026-09-10',
-			'fmcg_ref_date'         => '2025-05-02',
-			'strict_publication'    => 'yes',
-			'failure_notifications' => 'yes',
-		);
-
-		foreach ( $required as $key => $value ) {
+		foreach ( array( 'default_ref_date' => '2026-09-10', 'fmcg_ref_date' => '2025-05-02' ) as $key => $value ) {
 			if ( ! isset( $settings[ $key ] ) || $value !== $settings[ $key ] ) {
 				$settings[ $key ] = $value;
 				$repairs[]        = 'settings:' . $key;
 			}
 		}
 
-		if ( 'yes' !== ( $settings['generate_csv'] ?? 'no' ) && 'yes' !== ( $settings['generate_xml'] ?? 'no' ) ) {
-			$settings['generate_csv'] = 'yes';
-			$repairs[]                = 'settings:generate_csv';
+		$before_normalize = $settings;
+		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
+		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'strict_publication', 'failure_notifications' ) as $key ) {
+			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
+				$repairs[] = 'settings:' . $key;
+			}
 		}
 
-		$retention = max( 30, absint( $settings['retention_days'] ) );
-		if ( $retention !== absint( $settings['retention_days'] ) ) {
-			$settings['retention_days'] = $retention;
-			$repairs[]                  = 'settings:retention_days';
-		}
-
-		$time = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '';
-		if ( ! preg_match( '/^(0[0-7]):[0-5][0-9]$/', $time ) ) {
-			$settings['generation_time'] = '06:30';
-			$repairs[]                   = 'settings:generation_time';
-		}
-
+		$repairs = array_values( array_unique( $repairs ) );
 		if ( $repairs ) {
 			update_option( 'sidrena_settings', $settings, false );
 		}
-
 		return $repairs;
 	}
 

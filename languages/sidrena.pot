@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.5\n"
+"Project-Id-Version: Sidrena 1.0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -507,7 +507,7 @@ msgid "Masovno dopunite povijesne sidrene cijene i lokacijsku raspoloživost bez
 msgstr ""
 
 #: includes/class-sidrena-admin.php:530
-msgid "Ministarstvo gospodarstva · 24.09.2026."
+msgid "Ministarstvo gospodarstva · 22.09.2026."
 msgstr ""
 
 #: includes/class-sidrena-products.php:229
