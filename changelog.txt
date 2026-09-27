@@ -14,6 +14,7 @@ Sidrena changelog
 * Ispravljen je distribution guard koji je nakon promjene domena još očekivao stare install-folder aliase.
 * Ispravljena je privremeno oštećena CI YAML definicija nastala tijekom patchanja; workflow je obnovljen iz zadnje zelene main definicije i ponovno prošao cijelu PHP 7.4/8.3/8.4 matricu.
 * Oba produkcijski oblikovana paketa prošla su strogi službeni Plugin Check s javnim slugovima te stvarni WordPress i WooCommerce browser capture prije verzijskog bumpa.
+* Nakon verzijskog bumpa ponovno su snimljeni i commitani stvarni WordPress i WooCommerce 1.0.18 screenshotovi za glavni README, dokumentaciju i WordPress.org assete.
 * 1.0.18 se objavljuje kao novo izdanje jer je v1.0.17 već bio javno objavljen prije ovog hotfixa; postojeći tag i release nisu prepisivani.
 
 = 1.0.17 =
