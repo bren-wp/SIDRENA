@@ -159,6 +159,9 @@ async function assertNoKeyOverlaps(targetPage, route) {
 			'.sid-reference-grid',
 			'.sid-reference-files-grid',
 			'.sid-fields-location',
+			'.sid-inline-form',
+			'.sid-fields',
+			'.sid-toggle-grid',
 			'.sid-row-details__grid',
 		];
 		for (const selector of gridSelectors) {
@@ -216,7 +219,6 @@ async function assertFormRuntime(targetPage, route) {
 			}
 
 			for (const control of form.querySelectorAll('input:not([type="hidden"]), select, textarea, button')) {
-				if (control.closest('.sid-table-wrap')) continue;
 				const style = window.getComputedStyle(control);
 				if (style.display === 'none' || style.visibility === 'hidden') continue;
 				const rect = control.getBoundingClientRect();
@@ -224,7 +226,25 @@ async function assertFormRuntime(targetPage, route) {
 					out.push('visible form control has zero layout size');
 					continue;
 				}
-				if (rect.left < -4 || rect.right > viewportWidth + 4) {
+
+				const type = String(control.getAttribute('type') || '').toLowerCase();
+				const isCompactChoice = type === 'checkbox' || type === 'radio';
+				if (!isCompactChoice && rect.height < 34) {
+					out.push(`form control is too short: ${control.tagName.toLowerCase()} ${Math.round(rect.height)}px`);
+				}
+
+				const labelledBy = control.getAttribute('aria-labelledby');
+				const hasAriaLabel = Boolean(String(control.getAttribute('aria-label') || '').trim());
+				const hasLabelledBy = Boolean(labelledBy && document.getElementById(labelledBy));
+				const hasNativeLabel = Boolean(control.labels && control.labels.length);
+				const hasWrappingLabel = Boolean(control.closest('label'));
+				const hasButtonText = control.tagName === 'BUTTON' && Boolean(String(control.textContent || '').trim());
+				const hasSubmitValue = control.tagName === 'INPUT' && ['submit', 'button'].includes(type) && Boolean(String(control.value || '').trim());
+				if (!(hasAriaLabel || hasLabelledBy || hasNativeLabel || hasWrappingLabel || hasButtonText || hasSubmitValue)) {
+					out.push(`form control has no accessible label: ${control.tagName.toLowerCase()}[${type || 'default'}]`);
+				}
+
+				if (!control.closest('.sid-table-wrap') && (rect.left < -4 || rect.right > viewportWidth + 4)) {
 					out.push(`form control escapes viewport: ${Math.round(rect.left)}..${Math.round(rect.right)} of ${viewportWidth}`);
 				}
 			}
