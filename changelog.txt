@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.16 =
+* Konsolidiran je hero/page-head production CSS u kanonski component sloj i uklonjen zastarjeli 1.0.14 override blok bez gubitka responzivnih breakpointa.
+* Vraćeno je eksplicitno skaliranje Dashicons ikone u edition badgeu nakon CSS konsolidacije.
+* WooCommerce storefront hydration sada odbacuje zakašnjele asinkrone odgovore koji više ne odgovaraju trenutno odabranoj varijaciji.
+* Uklonjen je zastarjeli “Sidrena 1.0.10 brand UI” marker iz produkcijskog CSS-a.
+* Prošireni su trajni regression guardovi za kanonski hero sloj, edition-badge ikonu i stale variation REST odgovor.
+* Funkcionalni 1.0.16 kod prije verzijskog bumpa prošao je CI za PHP 7.4/8.3/8.4, admin-polish, distribution, legal, oba staged Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture.
+* Oba plugina podignuta su na 1.0.16.
+
 = 1.0.15 =
 * Admin tablice dobile su skrivene čitljive naslove, scope="col" zaglavlja i jasnu semantiku akcijskog stupca za čitače zaslona.
 * Gumbi Otvori uz generirane datoteke dobili su kontekstualne aria-label oznake s nazivom konkretne datoteke.
