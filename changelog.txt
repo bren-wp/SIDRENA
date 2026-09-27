@@ -16,6 +16,7 @@ Sidrena changelog
 * Plugin Check workflow više ne duplicira push i PR provjere za polish/* grane te ima vremenski ograničene build, WordPress i WooCommerce jobove.
 * Prošireni su regression testovi za release-source integritet, audit UTF-8/JSON, atomic manifest, Woo import state i Plugin Check workflow.
 * Funkcionalni 1.0.17 kod prije verzijskog bumpa prošao je CI, admin-polish, distribution, legal, oba Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture.
+* Nakon verzijskog bumpa ponovno su snimljeni i commitani stvarni WordPress i WooCommerce 1.0.17 screenshotovi za README, dokumentaciju i WordPress.org assete.
 * Oba plugina podignuta su na 1.0.17.
 
 = 1.0.16 =
