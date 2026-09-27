@@ -1580,3 +1580,7 @@ msgstr ""
 msgid "Spremi SIDRENA podatke"
 msgstr ""
 
+#: includes/class-sidrena-admin.php
+msgid "Tehnička spremnost: %d posto"
+msgstr ""
+
