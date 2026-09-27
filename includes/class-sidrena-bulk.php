@@ -58,6 +58,17 @@ final class Sidrena_Bulk {
 		$items  = is_object( $result ) && isset( $result->products ) ? $result->products : array();
 		$pages  = is_object( $result ) && isset( $result->max_num_pages ) ? max( 1, absint( $result->max_num_pages ) ) : 1;
 		$total  = is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items );
+		$product_count_caption = sprintf(
+			/* translators: %d: total number of WooCommerce products. */
+			_n( '%d proizvod', '%d proizvoda', $total, 'sidrena' ),
+			$total
+		);
+		$page_caption = sprintf(
+			/* translators: 1: current catalog page, 2: total number of catalog pages. */
+			__( 'Stranica %1$d od %2$d', 'sidrena' ),
+			$page,
+			$pages
+		);
 		?>
 		<div class="sid-page-head sid-reference-page-head">
 			<div>
@@ -65,7 +76,7 @@ final class Sidrena_Bulk {
 				<h2><?php esc_html_e( 'WooCommerce proizvodi', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Sidrena koristi postojeći WooCommerce katalog kao izvor istine. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
 			</div>
-			<div class="sid-head-inline-actions"><span class="sid-status-pill is-ok"><?php echo esc_html( sprintf( _n( '%d proizvod', '%d proizvoda', $total, 'sidrena' ), $total ) ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori WooCommerce proizvode', 'sidrena' ); ?></a></div>
+			<div class="sid-head-inline-actions"><span class="sid-status-pill is-ok"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori WooCommerce proizvode', 'sidrena' ); ?></a></div>
 		</div>
 
 		<section class="sid-card sid-reference-panel sid-woo-catalog-summary">
@@ -140,7 +151,7 @@ final class Sidrena_Bulk {
 					</tbody>
 				</table>
 			</div>
-			<div class="sid-bulk-actions"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi SIDRENA podatke', 'sidrena' ); ?></button><span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), $page, $pages ) ); ?></span></div>
+			<div class="sid-bulk-actions"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi SIDRENA podatke', 'sidrena' ); ?></button><span><?php echo esc_html( $page_caption ); ?></span></div>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija kataloga', 'sidrena' ); ?>">
