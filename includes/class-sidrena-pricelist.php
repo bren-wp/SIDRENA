@@ -364,7 +364,7 @@ final class Sidrena_Pricelist {
 		foreach ( $rows as $row ) {
 			$row_issues = 'products' === $catalog_type
 				? $this->validate_product_row( $row, $kind )
-				: $this->validate_service_row( $row );
+				: $this->validate_service_row( $row, $kind );
 
 			if ( empty( $row_issues ) ) {
 				yield $row;
@@ -458,7 +458,7 @@ final class Sidrena_Pricelist {
 		return $issues;
 	}
 
-	private function validate_service_row( $row ) {
+	private function validate_service_row( $row, $location_kind = 'objekt' ) {
 		$issues = array();
 		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
 		$name   = trim( (string) ( $row['naziv_usluge'] ?? '' ) );
@@ -483,9 +483,14 @@ final class Sidrena_Pricelist {
 				$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
 			}
 			$reference_status = sanitize_key( (string) ( $row['_sidrena_sale_reference_status'] ?? 'incomplete' ) );
-			if ( ! in_array( $reference_status, array( 'ready', 'exempt' ), true ) ) {
+			$reference_source = sanitize_key( (string) ( $row['_sidrena_sale_reference_source'] ?? '' ) );
+			$reference_ready  = 'ready' === $reference_status;
+			if ( 'webshop' === sanitize_key( (string) $location_kind ) && 'exempt' === $reference_status && in_array( $reference_source, array( 'advertising', 'distance', 'off_premises' ), true ) ) {
+				$reference_ready = true;
+			}
+			if ( ! $reference_ready ) {
 				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
-				$issues[] = sprintf( __( '%s: posebni oblik prodaje usluge nema provjerljivu najnižu cijenu u prethodnih 30 dana niti evidentiranu iznimku', 'sidrena' ), $label );
+				$issues[] = sprintf( __( '%s: posebni oblik prodaje usluge za ovu lokaciju nema provjerljivu najnižu cijenu u prethodnih 30 dana', 'sidrena' ), $label );
 			}
 		}
 		return $issues;
