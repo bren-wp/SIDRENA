@@ -102,7 +102,9 @@ final class Sidrena_Bulk {
 						$anchor      = get_post_meta( $id, '_sidrena_anchor_price', true );
 						$anchor_date = get_post_meta( $id, '_sidrena_anchor_date', true );
 						$reference   = class_exists( 'Sidrena_History' ) ? Sidrena_History::sale_reference( $product ) : array( 'status' => 'not_applicable', 'price' => '' );
-						$visibility  = get_post_meta( $id, '_sidrena_cjenik_visibility', true ) ?: 'auto';
+						$visibility         = get_post_meta( $id, '_sidrena_cjenik_visibility', true ) ?: 'auto';
+						$catalog_visibility = is_callable( array( $product, 'get_catalog_visibility' ) ) ? $product->get_catalog_visibility() : 'visible';
+						$public_included    = 'include' === $visibility || ( 'exclude' !== $visibility && 'hidden' !== $catalog_visibility );
 						$sku         = $product->get_sku();
 						$price       = $product->get_price();
 						?>
@@ -113,7 +115,7 @@ final class Sidrena_Bulk {
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
 							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
 							<td><?php if ( 'ready' === ( $reference['status'] ?? '' ) && '' !== ( $reference['price'] ?? '' ) ) : ?><strong><?php echo esc_html( Sidrena_Utils::money( $reference['price'] ) . ' €' ); ?></strong><?php elseif ( 'incomplete' === ( $reference['status'] ?? '' ) ) : ?><span class="sid-status-pill is-warn"><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></span><?php else : ?>—<?php endif; ?></td>
-							<td><span class="sid-status-pill <?php echo 'exclude' === $visibility ? 'is-warn' : 'is-ok'; ?>"><?php echo 'exclude' === $visibility ? esc_html__( 'Isključen', 'sidrena' ) : esc_html__( 'Uključen', 'sidrena' ); ?></span></td>
+							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span><?php if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) : ?><small class="sid-cell-sub"><?php esc_html_e( 'WooCommerce: hidden', 'sidrena' ); ?></small><?php endif; ?></td>
 						</tr>
 						<tr class="sid-woo-product-details-row">
 							<td colspan="7">
