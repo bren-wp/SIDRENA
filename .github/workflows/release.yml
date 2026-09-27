@@ -51,15 +51,15 @@ jobs:
           echo "REFRESH_RELEASE=false" >> "$GITHUB_ENV"
           echo "CREATE_RELEASE_TAG=false" >> "$GITHUB_ENV"
 
-      - name: Require stable 1.0.0 release branch to match main
-        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0'
+      - name: Require stable release branch to match main
+        if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
         run: |
           set -euo pipefail
           git fetch origin main --no-tags
           MAIN_SHA="$(git rev-parse origin/main)"
           if [[ "$GITHUB_SHA" != "$MAIN_SHA" ]]; then
-            echo "release/1.0.0 must point at the final main commit before publishing." >&2
+            echo "$GITHUB_REF_NAME must point at the current main commit before publishing." >&2
             echo "release=$GITHUB_SHA main=$MAIN_SHA" >&2
             exit 1
           fi
