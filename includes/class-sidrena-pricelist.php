@@ -808,6 +808,8 @@ final class Sidrena_Pricelist {
 			'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
 			'posebni_oblik_prodaje'         => $product->is_on_sale() ? 'da' : 'ne',
 			'naziv_posebnog_oblika_prodaje' => $product->is_on_sale() ? $sale_name : '',
+			'najniza_cijena_30_dana'         => $product->is_on_sale() && 'ready' === ( $sale_reference['status'] ?? '' ) ? Sidrena_Utils::money( $sale_reference['price'] ?? '' ) : '',
+			'krajnji_rok_uporabe'            => $product->is_on_sale() && 'exempt' === ( $sale_reference['status'] ?? '' ) ? $expiry_date : '',
 			'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
 			'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( Sidrena_Utils::current_reference_date( $product->get_id() ) ),
 			'barkod'                         => Sidrena_Utils::get_barcode( $product ),
@@ -865,6 +867,7 @@ final class Sidrena_Pricelist {
 					'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
 					'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
 					'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
+					'najniza_cijena_30_dana'         => $sale && 'ready' === ( $sale_reference['status'] ?? '' ) ? Sidrena_Utils::money( $sale_reference['price'] ?? '' ) : '',
 					'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
 					'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
 				);
