@@ -290,7 +290,7 @@ final class Sidrena_Public {
 							$availability = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
 							?>
 							<tr>
-								<td data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></td>
+								<th scope="row" data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></th>
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong></td>
