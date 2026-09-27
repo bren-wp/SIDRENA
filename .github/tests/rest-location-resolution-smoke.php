@@ -28,9 +28,11 @@ class WP_Error {
 class WP_REST_Server {
 	const READABLE = 'GET';
 }
+$GLOBALS['sidrena_rest_enabled'] = 'yes';
+
 class Sidrena_Utils {
 	public static function settings() {
-		return array( 'enable_rest_index' => 'yes', 'retention_days' => 30 );
+		return array( 'enable_rest_index' => $GLOBALS['sidrena_rest_enabled'], 'retention_days' => 30 );
 	}
 	public static function locations() {
 		return array(
@@ -100,5 +102,11 @@ $response = $rest->prices( $request );
 sidrena_rest_location_assert( $response instanceof WP_Error, 'Unknown explicit location must return WP_Error.' );
 sidrena_rest_location_assert( 'location_not_found' === $response->code, 'Unknown explicit location must return location_not_found.' );
 sidrena_rest_location_assert( 404 === ( $response->data['status'] ?? 0 ), 'Unknown explicit location must return HTTP 404.' );
+
+$GLOBALS['sidrena_rest_enabled'] = 'no';
+$display_response = $rest->display( new WP_REST_Request( array( 'id' => '1' ) ) );
+sidrena_rest_location_assert( $display_response instanceof WP_Error, 'Display endpoint must not remain public when REST API is disabled.' );
+sidrena_rest_location_assert( 'disabled' === $display_response->code, 'Disabled display endpoint must return the shared disabled error code.' );
+sidrena_rest_location_assert( 404 === ( $display_response->data['status'] ?? 0 ), 'Disabled display endpoint must return HTTP 404.' );
 
 fwrite( STDOUT, "Sidrena REST location resolution smoke test passed.\n" );
