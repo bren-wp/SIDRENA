@@ -31,6 +31,7 @@
 			status.className = 'sid-form-status';
 			status.setAttribute('role', 'status');
 			status.setAttribute('aria-live', 'polite');
+			status.setAttribute('aria-atomic', 'true');
 			form.appendChild(status);
 		}
 		return status;
@@ -358,6 +359,7 @@
 		document.querySelectorAll(managedFormSelector).forEach(resetSubmittingState);
 	});
 
+	document.querySelectorAll(managedFormSelector).forEach(ensureFormStatus);
 	document.querySelectorAll('[data-sidrena-oib]').forEach(validateOibField);
 	document.querySelectorAll('.sid-file-input').forEach(validateFileField);
 	initLocations();
