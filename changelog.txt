@@ -16,6 +16,7 @@ Sidrena changelog
 * Browser QA sada ruši build ako se pojavi vidljivi PHP/source fragment, stvarni hero child overlap, neoznačena forma, premala interaktivna kontrola, horizontalni overflow ili preklapanje ključnih gridova.
 * Source-leak audit kroz production PHP nije pronašao drugi primjer prerano zatvorenog PHP bloka iste vrste.
 * Završni WordPress i WooCommerce wp-admin capture prošao je JavaScript runtime, source-leak, hero/card, overlap, overflow, accessible-label i form-control provjere na 1440, 1180, 782 i 390 px.
+* Versioned 1.0.14 capture ponovljen je nakon usklađivanja entrypointa, readmea i POT metapodataka; oba aktivna plugina ponovno su prošla stvarni WordPress/WooCommerce browser QA i generirala svježe WordPress.org assete.
 * Oba plugina podignuta su na 1.0.14.
 
 = 1.0.13 =
