@@ -201,6 +201,11 @@ async function assertFormRuntime(targetPage, route) {
 			const status = form.querySelector('.sid-form-status[role="status"][aria-live="polite"][aria-atomic="true"]');
 			if (!status) {
 				out.push('managed form has no preinitialized atomic live region');
+			} else {
+				const statusStyle = window.getComputedStyle(status);
+				if (statusStyle.display === 'none' || statusStyle.visibility === 'hidden') {
+					out.push('preinitialized form live region is removed from the accessibility tree');
+				}
 			}
 			const submit = form.querySelector('button[type="submit"], input[type="submit"]');
 			if (submit) {
