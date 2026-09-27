@@ -159,6 +159,11 @@ sidrena_reference_ui_assert(
 );
 
 sidrena_reference_ui_assert(
+	false === strpos( $style, 'Sidrena 1.0.10 brand UI' ),
+	'Production admin CSS must not retain obsolete release-specific branding comments.'
+);
+
+sidrena_reference_ui_assert(
 	false !== strpos( $style, '.sidrena-admin-screen .sidrena-brandbar__edition .dashicons,' ),
 	'Edition badge icon sizing must remain in the canonical production icon group.'
 );
