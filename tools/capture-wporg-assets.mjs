@@ -198,6 +198,10 @@ async function assertFormRuntime(targetPage, route) {
 		const forms = document.querySelectorAll('.sid-form, .sid-bulk-card, .sid-standalone-form, .sid-standalone-import');
 
 		for (const form of forms) {
+			const status = form.querySelector('.sid-form-status[role="status"][aria-live="polite"][aria-atomic="true"]');
+			if (!status) {
+				out.push('managed form has no preinitialized atomic live region');
+			}
 			const submit = form.querySelector('button[type="submit"], input[type="submit"]');
 			if (submit) {
 				const rect = submit.getBoundingClientRect();
