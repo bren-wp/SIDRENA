@@ -74,7 +74,7 @@ async function assertBrandRuntime(targetPage, route) {
 		);
 		const brandbar = document.querySelector('.sidrena-brandbar');
 		const logo = document.querySelector('.sidrena-brandbar__logo');
-		const card = document.querySelector('.sid-card, .sid-dashboard-metric');
+		const card = document.querySelector('.sid-reference-panel, .sid-dashboard-metric, .sid-settings-section, .sid-card');
 		const menuIcon = document.querySelector('#adminmenu .toplevel_page_sidrena .wp-menu-image img');
 
 		const read = (node) => node ? window.getComputedStyle(node) : null;
