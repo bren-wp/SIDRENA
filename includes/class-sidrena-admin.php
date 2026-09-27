@@ -837,7 +837,8 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-table-scroll">
 			<table class="sid-modern-table">
-				<thead><tr><th><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th><?php esc_html_e( 'Stara cijena', 'sidrena' ); ?></th><th><?php esc_html_e( 'Nova cijena', 'sidrena' ); ?></th><th><?php esc_html_e( 'Promjena', 'sidrena' ); ?></th><th><?php esc_html_e( 'Datum', 'sidrena' ); ?></th></tr></thead>
+				<caption class="screen-reader-text"><?php esc_html_e( 'Nedavne promjene cijena proizvoda', 'sidrena' ); ?></caption>
+				<thead><tr><th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Stara cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Nova cijena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Promjena', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Datum', 'sidrena' ); ?></th></tr></thead>
 				<tbody>
 				<?php foreach ( $changes as $change ) : $pct = (float) $change['change_pct']; ?>
 					<tr>
@@ -858,7 +859,7 @@ final class Sidrena_Admin {
 		$donation_url = Sidrena_Utils::donation_url();
 		?>
 		<section class="sid-card sid-support-card">
-			<div class="sid-support-card__icon"><span class="dashicons dashicons-sos"></span></div>
+			<div class="sid-support-card__icon"><span class="dashicons dashicons-editor-help"></span></div>
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Podrška po izboru korisnika', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati Brendigo', 'sidrena' ); ?></h2>
@@ -1357,7 +1358,8 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-table-wrap">
 			<table class="widefat striped sid-table">
-				<thead><tr><?php if ( $show_location ) : ?><th><?php esc_html_e( 'Lokacija', 'sidrena' ); ?></th><?php endif; ?><th><?php esc_html_e( 'Vrsta', 'sidrena' ); ?></th><th><?php esc_html_e( 'Format', 'sidrena' ); ?></th><th><?php esc_html_e( 'Redaka', 'sidrena' ); ?></th><th><?php esc_html_e( 'Objavljeno', 'sidrena' ); ?></th><th><?php esc_html_e( 'Čuvati do', 'sidrena' ); ?></th><th>SHA-256</th><th></th></tr></thead>
+				<caption class="screen-reader-text"><?php esc_html_e( 'Generirane datoteke javnog cjenika', 'sidrena' ); ?></caption>
+				<thead><tr><?php if ( $show_location ) : ?><th scope="col"><?php esc_html_e( 'Lokacija', 'sidrena' ); ?></th><?php endif; ?><th scope="col"><?php esc_html_e( 'Vrsta', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Format', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Redaka', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Objavljeno', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Čuvati do', 'sidrena' ); ?></th><th scope="col">SHA-256</th><th scope="col"><span class="screen-reader-text"><?php esc_html_e( 'Radnje', 'sidrena' ); ?></span></th></tr></thead>
 				<tbody>
 				<?php if ( empty( $files ) ) : ?><tr><td colspan="<?php echo esc_attr( $show_location ? 8 : 7 ); ?>"><?php esc_html_e( 'Još nema generiranih datoteka.', 'sidrena' ); ?></td></tr><?php else : ?>
 					<?php foreach ( $files as $file ) : ?>
@@ -1369,7 +1371,16 @@ final class Sidrena_Admin {
 							<td><?php echo esc_html( $file['generated_at'] ?? '' ); ?><small class="sid-cell-sub"><?php echo esc_html( $file['filename'] ?? '' ); ?></small></td>
 							<td><?php echo ! empty( $file['retain_until_ts'] ) ? esc_html( wp_date( 'd.m.Y. H:i', absint( $file['retain_until_ts'] ) ) ) : '—'; ?></td>
 							<td><code class="sid-hash" title="<?php echo esc_attr( $file['sha256'] ?? '' ); ?>"><?php echo esc_html( ! empty( $file['sha256'] ) ? substr( $file['sha256'], 0, 12 ) . '…' : '—' ); ?></code></td>
-							<td><?php if ( ! empty( $file['url'] ) ) : ?><a class="button button-small" href="<?php echo esc_url( $file['url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori', 'sidrena' ); ?></a><?php else : ?><span class="sid-status-pill is-warn"><?php esc_html_e( 'URL nedostaje', 'sidrena' ); ?></span><?php endif; ?></td>
+							<td><?php if ( ! empty( $file['url'] ) ) : ?><?php
+								$file_name = (string) ( $file['filename'] ?? '' );
+								$open_label = $file_name
+									? sprintf(
+										/* translators: %s: generated public price-list filename. */
+										__( 'Otvori datoteku %s', 'sidrena' ),
+										$file_name
+									)
+									: __( 'Otvori datoteku cjenika', 'sidrena' );
+								?><a class="button button-small" href="<?php echo esc_url( $file['url'] ); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( $open_label ); ?>"><?php esc_html_e( 'Otvori', 'sidrena' ); ?></a><?php else : ?><span class="sid-status-pill is-warn"><?php esc_html_e( 'URL nedostaje', 'sidrena' ); ?></span><?php endif; ?></td>
 						</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
@@ -1524,7 +1535,7 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Dnevnik važnih događaja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Generiranje cjenika i administrativne promjene bilježe se u Dnevniku radi provjere rada i lakšeg otklanjanja pogrešaka.', 'sidrena' ); ?></p></div></div>
 		<section class="sid-card">
-			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><thead><tr><th><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
+			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><caption class="screen-reader-text"><?php esc_html_e( 'Dnevnik važnih SIDRENA događaja', 'sidrena' ); ?></caption><thead><tr><th scope="col"><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
 			<?php if ( empty( $rows ) ) : ?><tr><td colspan="4"><?php esc_html_e( 'Dnevnik je zasad prazan.', 'sidrena' ); ?></td></tr><?php endif; ?>
 			<?php foreach ( $rows as $row ) : ?>
 			<?php $status_labels = array( 'success' => __( 'Uspješno', 'sidrena' ), 'warning' => __( 'Upozorenje', 'sidrena' ), 'error' => __( 'Greška', 'sidrena' ) ); $status = sanitize_key( $row['status'] ?? '' ); ?>
