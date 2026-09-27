@@ -552,6 +552,10 @@ final class Sidrena_Admin {
 		$last_ts       = ! empty( $data['last']['generated_at'] ) ? strtotime( (string) $data['last']['generated_at'] ) : 0;
 		$published_pct = $data['total_items'] > 0 ? (int) round( ( $data['anchor_ready'] / $data['total_items'] ) * 100 ) : 0;
 		?>
+		/* translators: %d: number of catalog items with an anchor price. */
+		$anchor_caption = sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $data['anchor_ready'] );
+		/* translators: 1: number of ready catalog items, 2: total number of catalog items. */
+		$published_caption = sprintf( __( '%1$d / %2$d stavki', 'sidrena' ), $data['anchor_ready'], $data['total_items'] );
 		<div class="sid-reference-dashboard sid-reference-dashboard--wordpress">
 			<div class="sid-page-head sid-reference-page-head">
 				<div>
@@ -566,8 +570,8 @@ final class Sidrena_Admin {
 			</div>
 
 			<div class="sid-reference-metrics">
-				<?php $this->dashboard_metric( __( 'Ukupno stavki', 'sidrena' ), $data['total_items'], 'dashicons-media-document', sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $data['anchor_ready'] ), 'blue' ); ?>
-				<?php $this->dashboard_metric( __( 'Objavljeno s cijenama', 'sidrena' ), $published_pct . '%', 'dashicons-money-alt', sprintf( __( '%d / %d stavki', 'sidrena' ), $data['anchor_ready'], $data['total_items'] ), 'ok' ); ?>
+				<?php $this->dashboard_metric( __( 'Ukupno stavki', 'sidrena' ), $data['total_items'], 'dashicons-media-document', $anchor_caption, 'blue' ); ?>
+				<?php $this->dashboard_metric( __( 'Objavljeno s cijenama', 'sidrena' ), $published_pct . '%', 'dashicons-money-alt', $published_caption, 'ok' ); ?>
 				<?php $this->dashboard_metric( __( 'Posljednja objava', 'sidrena' ), $last_ts ? wp_date( 'd.m.Y.', $last_ts ) : '—', 'dashicons-calendar-alt', $last_ts ? wp_date( 'H:i', $last_ts ) : __( 'još nema objave', 'sidrena' ), 'purple' ); ?>
 				<?php $this->dashboard_metric( __( 'Cijene ažurirane', 'sidrena' ), $data['history_total'], 'dashicons-chart-line', __( 'zapisa u povijesti', 'sidrena' ), 'teal' ); ?>
 			</div>
@@ -627,6 +631,22 @@ final class Sidrena_Admin {
 
 	private function woocommerce_dashboard( $data ) {
 		$last_ts = ! empty( $data['last']['generated_at'] ) ? strtotime( (string) $data['last']['generated_at'] ) : 0;
+		if ( $data['is_ready'] ) {
+			$health_caption = __( 'sve provjere uredne', 'sidrena' );
+		} else {
+			/* translators: %d: number of technical checks that require attention. */
+			$health_caption = sprintf(
+				_n( '%d stavka za provjeru', '%d stavki za provjeru', $data['health_issues'], 'sidrena' ),
+				$data['health_issues']
+			);
+		}
+		/* translators: %d: technical readiness percentage. */
+		$health_aria_label = sprintf( __( 'Tehnička spremnost: %d posto', 'sidrena' ), $data['health_score'] );
+		/* translators: %d: number of currently published public files. */
+		$published_files_caption = sprintf(
+			_n( '%d aktualna datoteka', '%d aktualnih datoteka', absint( $data['integrity']['current_entries'] ), 'sidrena' ),
+			absint( $data['integrity']['current_entries'] )
+		);
 		?>
 		<div class="sid-reference-dashboard sid-reference-dashboard--woocommerce">
 			<div class="sid-page-head sid-reference-page-head">
@@ -645,7 +665,7 @@ final class Sidrena_Admin {
 				<?php $this->dashboard_metric( __( 'Ukupno proizvoda', 'sidrena' ), absint( $data['stats']['products'] ), 'dashicons-products', __( 'postojeći WooCommerce katalog', 'sidrena' ), 'blue' ); ?>
 				<?php $this->dashboard_metric( __( 'Zapisa povijesti', 'sidrena' ), $data['history_total'], 'dashicons-chart-line', __( 'promjene cijena i lokacija', 'sidrena' ), 'teal' ); ?>
 				<?php $this->dashboard_metric( __( 'Aktualni cjenici', 'sidrena' ), $data['integrity']['current_entries'], 'dashicons-media-spreadsheet', __( 'javno dostupne datoteke', 'sidrena' ), 'purple' ); ?>
-				<?php $this->dashboard_metric( __( 'Spremnost provjera', 'sidrena' ), $data['health_score'] . '%', 'dashicons-shield-alt', $data['is_ready'] ? __( 'sve provjere uredne', 'sidrena' ) : sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $data['health_issues'], 'sidrena' ), $data['health_issues'] ), $data['is_ready'] ? 'ok' : 'warn' ); ?>
+				<?php $this->dashboard_metric( __( 'Spremnost provjera', 'sidrena' ), $data['health_score'] . '%', 'dashicons-shield-alt', $health_caption, $data['is_ready'] ? 'ok' : 'warn' ); ?>
 			</div>
 
 			<div class="sid-reference-grid sid-reference-grid--woo-main">
@@ -661,7 +681,7 @@ final class Sidrena_Admin {
 
 				<section class="sid-card sid-reference-panel sid-reference-compliance">
 					<div class="sid-section-head"><div><h2><?php esc_html_e( 'Status usklađenosti', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><?php esc_html_e( 'Detalji', 'sidrena' ); ?></a></div>
-					<div class="sid-reference-ring" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Tehnička spremnost: %d posto', 'sidrena' ), $data['health_score'] ) ); ?>">
+					<div class="sid-reference-ring" role="img" aria-label="<?php echo esc_attr( $health_aria_label ); ?>">
 						<svg viewBox="0 0 42 42" aria-hidden="true" focusable="false">
 							<circle class="sid-reference-ring__track" cx="21" cy="21" r="15.9155"></circle>
 							<circle class="sid-reference-ring__value" cx="21" cy="21" r="15.9155" pathLength="100" stroke-dasharray="<?php echo esc_attr( $data['health_score'] . ' 100' ); ?>"></circle>
@@ -692,7 +712,7 @@ final class Sidrena_Admin {
 
 				<section class="sid-card sid-reference-panel">
 					<div class="sid-section-head"><div><h2><?php esc_html_e( 'Zadnje objavljeno', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><?php esc_html_e( 'Pogledaj sve', 'sidrena' ); ?></a></div>
-					<div class="sid-reference-published"><span class="dashicons dashicons-media-spreadsheet"></span><div><strong><?php echo $last_ts ? esc_html( wp_date( 'd.m.Y. H:i', $last_ts ) ) : esc_html__( 'Još nema objave', 'sidrena' ); ?></strong><small><?php echo esc_html( sprintf( _n( '%d aktualna datoteka', '%d aktualnih datoteka', absint( $data['integrity']['current_entries'] ), 'sidrena' ), absint( $data['integrity']['current_entries'] ) ) ); ?></small></div></div>
+					<div class="sid-reference-published"><span class="dashicons dashicons-media-spreadsheet"></span><div><strong><?php echo $last_ts ? esc_html( wp_date( 'd.m.Y. H:i', $last_ts ) ) : esc_html__( 'Još nema objave', 'sidrena' ); ?></strong><small><?php echo esc_html( $published_files_caption ); ?></small></div></div>
 				</section>
 			</div>
 		</div>
@@ -722,11 +742,16 @@ final class Sidrena_Admin {
 	}
 
 	private function dashboard_price_education( $settings ) {
+		/* translators: %s: configured reference date. */
+		$dated_price_caption = sprintf(
+			__( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ),
+			wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) )
+		);
 		?>
 		<div class="sid-price-guide sid-price-guide--reference">
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-cart"></span><h3><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja se trenutno prikazuje kupcu i koristi za prodaju.', 'sidrena' ); ?></p></div>
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-clock"></span><h3><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Najniža provjerljiva cijena u prethodnom razdoblju kada je primjenjivo.', 'sidrena' ); ?></p></div>
-			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></h3><p><?php echo esc_html( sprintf( __( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ), wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) ) ) ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></h3><p><?php echo esc_html( $dated_price_caption ); ?></p></div>
 		</div>
 		<?php
 	}
@@ -1105,6 +1130,16 @@ final class Sidrena_Admin {
 		$next_cron        = wp_next_scheduled( 'sidrena_daily_generation' );
 		$rest_enabled     = 'yes' === $settings['enable_rest_index'];
 		$html_enabled     = 'yes' === $settings['enable_public_html'];
+		/* translators: %d: number of currently published public files. */
+		$current_files_caption = sprintf(
+			_n( '%d aktualna datoteka', '%d aktualnih datoteka', count( $current ), 'sidrena' ),
+			count( $current )
+		);
+		$next_cron_caption = '';
+		if ( $next_cron ) {
+			/* translators: %s: date and time of the next scheduled WordPress cron run. */
+			$next_cron_caption = sprintf( __( 'Sljedeći WordPress cron događaj: %s.', 'sidrena' ), wp_date( 'd.m.Y. H:i', $next_cron ) );
+		}
 		$formats          = array();
 		if ( 'yes' === $settings['generate_csv'] ) {
 			$formats[] = 'CSV';
@@ -1165,7 +1200,7 @@ final class Sidrena_Admin {
 						<div class="sid-reference-public-preview__brand"><img src="<?php echo esc_url( SIDRENA_URL . 'assets/images/logo-horizontal-light.svg' ); ?>" alt="" width="180" height="35"></div>
 						<div class="sid-reference-public-preview__body">
 							<strong><?php esc_html_e( 'Cjenik proizvoda i usluga', 'sidrena' ); ?></strong>
-							<span><?php echo esc_html( sprintf( _n( '%d aktualna datoteka', '%d aktualnih datoteka', count( $current ), 'sidrena' ), count( $current ) ) ); ?></span>
+							<span><?php echo esc_html( $current_files_caption ); ?></span>
 							<div class="sid-reference-preview-list">
 								<?php if ( empty( $current ) ) : ?><span><?php esc_html_e( 'Cjenik još nije generiran.', 'sidrena' ); ?></span><?php else : ?>
 									<?php foreach ( array_slice( $current, 0, 4 ) as $file ) : ?><span><b><?php echo esc_html( strtoupper( $file['format'] ?? '' ) ); ?></b><?php echo esc_html( $file['filename'] ?? '' ); ?></span><?php endforeach; ?>
@@ -1190,7 +1225,7 @@ final class Sidrena_Admin {
 						<p><?php esc_html_e( 'Ponovno spremite Postavke ili provjerite cron konfiguraciju poslužitelja.', 'sidrena' ); ?></p>
 					<?php else : ?>
 						<h2><?php esc_html_e( 'Automatsko generiranje je zakazano', 'sidrena' ); ?></h2>
-						<p><?php echo esc_html( sprintf( __( 'Sljedeći WordPress cron događaj: %s.', 'sidrena' ), wp_date( 'd.m.Y. H:i', $next_cron ) ) ); ?></p>
+						<p><?php echo esc_html( $next_cron_caption ); ?></p>
 					<?php endif; ?>
 				</div>
 			</section>
@@ -2381,9 +2416,11 @@ final class Sidrena_Admin {
 	}
 
 	private function post_value( $key, $default = '' ) {
-		// Callers invoke guard_post() before reading mutable form data.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified by action guard; each caller applies field-specific sanitization immediately after retrieval.
-		return isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
+		// Callers invoke guard_post() before reading mutable form data and apply field-specific sanitization after retrieval.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce is verified by the action-specific guard before this helper is called.
+		$value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		return $value;
 	}
 
 	private function post_checkbox( $key ) {
