@@ -1,9 +1,15 @@
 /**
+ * Sidrena source file.
+ *
  * SIDRENA Woo compatibility hydration behavior regression.
  *
  * Executes the production compatibility script in a minimal browser-like VM
  * and verifies that server-rendered parent markup avoids an initial REST call,
  * a selected variation hydrates dynamically, and reset restores the parent.
+ *
+ * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
  */
 
 "use strict";
@@ -12,7 +18,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 
-function assert(condition, message) {
+function check(condition, message) {
 	if (!condition) {
 		process.stderr.write(message + "\n");
 		process.exit(1);
@@ -43,7 +49,7 @@ const target = {
 		return ".sidrena-reference-prices" === selector && renderedHtml ? markupNode : null;
 	},
 	insertAdjacentHTML(position, html) {
-		assert("beforeend" === position, "Compatibility markup must append with beforeend.");
+		check("beforeend" === position, "Compatibility markup must append with beforeend.");
 		renderedHtml = html;
 	},
 	parentElement: {
@@ -89,7 +95,7 @@ const documentMock = {
 function jQueryMock() {
 	return {
 		on(events, selector, callback) {
-			assert(".variations_form" === selector, "Compatibility lifecycle must stay scoped to variation forms.");
+			check(".variations_form" === selector, "Compatibility lifecycle must stay scoped to variation forms.");
 			events.split(/\s+/).forEach((eventName) => {
 				handlers[eventName] = callback;
 			});
@@ -145,10 +151,10 @@ async function flushPromises() {
 (async () => {
 	await flushPromises();
 
-	assert(0 === fetches.length, "Server-rendered parent SIDRENA markup must avoid the redundant initial REST request.");
-	assert("function" === typeof handlers.found_variation, "found_variation handler must be registered.");
-	assert("function" === typeof handlers.reset_data, "reset_data handler must be registered.");
-	assert("function" === typeof handlers.hide_variation, "hide_variation handler must be registered.");
+	check(0 === fetches.length, "Server-rendered parent SIDRENA markup must avoid the redundant initial REST request.");
+	check("function" === typeof handlers.found_variation, "found_variation handler must be registered.");
+	check("function" === typeof handlers.reset_data, "reset_data handler must be registered.");
+	check("function" === typeof handlers.hide_variation, "hide_variation handler must be registered.");
 
 	handlers.found_variation(
 		{ currentTarget: form },
@@ -156,20 +162,20 @@ async function flushPromises() {
 	);
 	await flushPromises();
 
-	assert(1 === fetches.length && /\/20$/.test(fetches[0]), "Selected variation must fetch its own SIDRENA markup.");
-	assert(variationHtml === renderedHtml, "Selected variation must replace the parent reference markup.");
+	check(1 === fetches.length && /\/20$/.test(fetches[0]), "Selected variation must fetch its own SIDRENA markup.");
+	check(variationHtml === renderedHtml, "Selected variation must replace the parent reference markup.");
 
 	handlers.reset_data({ currentTarget: form });
 	await flushPromises();
 
-	assert(2 === fetches.length && /\/10$/.test(fetches[1]), "Variation reset must force a parent-product REST refresh.");
-	assert(parentHtml === renderedHtml, "Variation reset must restore the parent product reference markup.");
+	check(2 === fetches.length && /\/10$/.test(fetches[1]), "Variation reset must force a parent-product REST refresh.");
+	check(parentHtml === renderedHtml, "Variation reset must restore the parent product reference markup.");
 
 	renderedHtml = variationHtml;
 	handlers.hide_variation({ currentTarget: form });
 	await flushPromises();
 
-	assert(parentHtml === renderedHtml, "hide_variation must also restore the parent product reference markup.");
+	check(parentHtml === renderedHtml, "hide_variation must also restore the parent product reference markup.");
 
 	process.stdout.write("SIDRENA Woo compatibility hydration behavior smoke test passed.\n");
 })().catch((error) => {
