@@ -566,6 +566,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	font-size:28px;
 	font-weight:700;
 	letter-spacing:-.03em;
+	overflow-wrap:anywhere;
 }
 .sidrena-admin-screen .sid-page-head p {
 	font-size:12px;
@@ -692,6 +693,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	align-self:end;
 	font-size:12px;
 	font-weight:700;
+	line-height:1.25;
 }
 .sidrena-admin-screen .sid-reference-action small {
 	align-self:start;
@@ -795,7 +797,8 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	box-shadow:0 0 0 3px rgba(16,185,129,.12);
 }
 .sidrena-admin-screen .sid-reference-checks li {
-	display:flex;
+	display:grid;
+	grid-template-columns:22px minmax(0,1fr);
 	align-items:center;
 	gap:8px;
 	padding:9px 0;
@@ -964,6 +967,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	border-bottom:1px solid #edf2f6;
 	color:#213f61;
 	font-size:10px;
+	line-height:1.35;
 	vertical-align:middle;
 }
 .sidrena-admin-screen .sid-modern-table tbody tr:hover,
@@ -1039,6 +1043,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-admin-screen .sid-form-actions,
 .sidrena-admin-screen .sid-bulk-actions {
 	padding-top:4px;
+	gap:12px;
 }
 .sidrena-admin-screen .sid-sticky-actions {
 	bottom:10px;
@@ -1047,8 +1052,8 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 }
 .sidrena-admin-screen .sidrena-app .button,
 .sidrena-admin-screen .sid-link-button {
-	min-height:40px;
-	padding:7px 13px;
+	min-height:42px;
+	padding:8px 13px;
 	border-radius:8px;
 	font-size:11px;
 }
@@ -1063,6 +1068,10 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	background:#fff;
 }
 .sidrena-admin-screen .sid-location-head {
+	display:grid;
+	grid-template-columns:minmax(0,1fr) auto;
+	align-items:center;
+	gap:12px;
 	margin-bottom:11px;
 }
 .sidrena-admin-screen .sid-code-row {
@@ -1399,18 +1408,19 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 /* WordPress catalog alignment with the reference table/editor. */
 .sidrena-admin-screen .sid-source-sync,
-.sidrena-admin-screen .sid-standalone-import,
+.sidrena-admin-screen .sid-standalone-import {
+	border-radius:10px;
+	box-shadow:none;
+}
 .sidrena-admin-screen .sid-standalone-form {
+	padding:0;
+	overflow:hidden;
 	border-radius:10px;
 	box-shadow:none;
 }
 .sidrena-admin-screen .sid-source-sync .sid-inline-form {
 	grid-template-columns:minmax(180px,.8fr) minmax(220px,1fr) auto;
 	align-items:end;
-}
-.sidrena-admin-screen .sid-standalone-form {
-	padding:0;
-	overflow:hidden;
 }
 .sidrena-admin-screen .sid-standalone-form .sid-table-wrap {
 	border:0;
@@ -1452,12 +1462,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 
 /* Location/form overlap prevention. */
-.sidrena-admin-screen .sid-location-head {
-	display:grid;
-	grid-template-columns:minmax(0,1fr) auto;
-	align-items:center;
-	gap:12px;
-}
 .sidrena-admin-screen .sid-location-actions {
 	display:flex;
 	align-items:center;
@@ -1553,11 +1557,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 
 /* Per-price audit states. */
-.sidrena-admin-screen .sid-reference-checks li {
-	display:grid;
-	grid-template-columns:22px minmax(0,1fr);
-	align-items:center;
-}
 .sidrena-admin-screen .sid-reference-checks li small {
 	grid-column:2;
 	display:block;
@@ -1704,14 +1703,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-admin-screen .sid-page-head>div:first-child {
 	min-width:0;
 }
-.sidrena-admin-screen .sid-page-head h2 {
-	overflow-wrap:anywhere;
-}
-.sidrena-admin-screen .sidrena-app .button,
-.sidrena-admin-screen .sid-link-button {
-	min-height:42px;
-	padding:8px 13px;
-}
 .sidrena-admin-screen .sidrena-app input[type="text"],
 .sidrena-admin-screen .sidrena-app input[type="email"],
 .sidrena-admin-screen .sidrena-app input[type="number"],
@@ -1724,10 +1715,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-admin-screen .sidrena-app textarea {
 	min-height:108px;
 }
-.sidrena-admin-screen .sid-form-actions,
-.sidrena-admin-screen .sid-bulk-actions {
-	gap:12px;
-}
 .sidrena-admin-screen .sid-form-actions .button,
 .sidrena-admin-screen .sid-bulk-actions .button {
 	min-width:132px;
@@ -1738,9 +1725,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-admin-screen .sid-source-sync,
 .sidrena-admin-screen .sid-standalone-import {
 	scroll-margin-top:48px;
-}
-.sidrena-admin-screen .sid-reference-action strong {
-	line-height:1.25;
 }
 .sidrena-admin-screen .sid-inline-link {
 	min-height:28px;
@@ -1762,12 +1746,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 }
 .sidrena-admin-screen .sid-table-wrap {
 	overscroll-behavior:contain;
-}
-.sidrena-admin-screen .sid-modern-table td,
-.sidrena-admin-screen .sid-bulk-table td,
-.sidrena-admin-screen .sid-standalone-table td,
-.sidrena-admin-screen .sid-service-table td {
-	line-height:1.35;
 }
 .sidrena-admin-screen .sid-status-pill {
 	white-space:nowrap;
