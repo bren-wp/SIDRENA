@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.16</h1>
+<h1 align="center">SIDRENA 1.0.17</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,22 +150,23 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.16 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.17 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.16
+## Zašto SIDRENA 1.0.17
 
-**SIDRENA 1.0.16** prenosi odobreni vizualni smjer iz referentnih SIDRENA prikaza u stvarno WordPress administratorsko sučelje, bez demo podataka i bez paralelnog WooCommerce kataloga.
+**SIDRENA 1.0.17** dodatno učvršćuje integritet objave, lokalnog audita, WooCommerce uvoza i release procesa, uz glavni README koji sada prikazuje stvarne produkcijske vizuale i runtime screenshotove.
 
-Izdanje 1.0.16 donosi:
+Izdanje 1.0.17 donosi:
 
-- konsolidiran hero i page-head production CSS u jedan kanonski component sloj bez zastarjelog 1.0.14 override duplikata
-- stabilno edition badge pozicioniranje i eksplicitno 18 px Dashicons skaliranje kroz WordPress i WooCommerce izdanje
-- zaštitu WooCommerce storefront hydrationa od race conditiona: zakašnjeli REST odgovor više ne može prepisati prikaz trenutno odabrane varijacije
-- uklonjen zastarjeli release-specifični version marker iz produkcijskog admin CSS-a
-- proširene regression guardove za kanonski hero layout, edition badge ikone i stale async variation odgovore
-- stvarne WordPress i WooCommerce wp-admin browser capture provjere na funkcionalnom 1.0.16 kodu prije verzijskog bumpa
-- zadržane lokalne CSS/JS ovisnosti, bez vanjskog Tailwind/CDN sloja
-
+- svaki stabilni `release/*` branch mora pokazivati na trenutačni `main` commit prije objave, čime se sprječava slučajno izdavanje zastarjelog koda
+- audit zapis više ne reže UTF-8 tekst usred znaka, a preveliki audit context ostaje valjan JSON s eksplicitnim podacima o skraćivanju
+- javni JSON manifest koristi isti jedinstveni durable atomic-writer sloj kao CSV/XML i javni snapshot, uključujući short-write provjeru i fsync prije zamjene datoteke
+- WooCommerce CSV uvoz eksplicitno prazne jedinice pakiranja sada uklanja stari meta podatak umjesto ostavljanja zastarjelog stanja
+- glavni README izravno prikazuje stvarne SIDRENA logotipe, ikone, WordPress.org bannere, plugin-cover vizuale i obje runtime screenshot galerije
+- dodan je trajni CI guard koji ruši build ako se stvarni README brand/runtime asseti uklone ili putanje više ne postoje
+- Plugin Check na `polish/*` granama više ne pokreće duplicirani push i pull-request run; build i oba edition checka imaju definirane timeout granice
+- dodani su trajni regression testovi za release-source integritet, audit UTF-8/JSON obradu, atomic manifest, Woo import state, README real-assets pravilo i Plugin Check workflow politiku
+- funkcionalni 1.0.17 kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture prije završnog verzijskog bumpa
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -226,13 +227,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.16 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.17 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.16.zip`
-- `sidrena-woocommerce-1.0.16.zip`
+- `sidrena-wordpress-1.0.17.zip`
+- `sidrena-woocommerce-1.0.17.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 

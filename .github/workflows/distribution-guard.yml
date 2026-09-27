@@ -203,6 +203,24 @@ jobs:
           grep -Fxq 'sidrena-wordpress/assets/images/logo-wordpress-light.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -Fxq 'sidrena-woocommerce/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
 
+          for asset in \
+            assets/images/logo-horizontal.svg \
+            assets/images/logo-horizontal-light.svg \
+            assets/images/logo-mark.svg \
+            assets/images/app-icon.svg \
+            assets/images/favicon.svg \
+            assets/images/menu-anchor.svg \
+            assets/images/brand-hero.svg \
+            includes/class-sidrena-audit.php \
+            includes/class-sidrena-pricelist.php; do
+            grep -Fxq "sidrena-wordpress/$asset" "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+            grep -Fxq "sidrena-woocommerce/$asset" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          done
+
+          grep -Fq "private static function cut_utf8_bytes" "$OUT/.sidrena-build/sidrena-wordpress/includes/class-sidrena-audit.php"
+          grep -Fq "private static function cut_utf8_bytes" "$OUT/.sidrena-build/sidrena-woocommerce/includes/class-sidrena-audit.php"
+          grep -Fq "open_atomic_writer( \$paths['manifest'] )" "$OUT/.sidrena-build/sidrena-wordpress/includes/class-sidrena-pricelist.php"
+          grep -Fq "open_atomic_writer( \$paths['manifest'] )" "$OUT/.sidrena-build/sidrena-woocommerce/includes/class-sidrena-pricelist.php"
 
           ! grep -q '^sidrena-wordpress/branding/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           ! grep -q '^sidrena-woocommerce/branding/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
