@@ -112,12 +112,15 @@ for path in root.rglob('*'):
 
 pot = root / 'languages' / 'sidrena.pot'
 if pot.exists():
-    target = root / 'languages' / f'{domain}.pot'
-    target.write_text(
-        pot.read_text(encoding='utf-8').replace('Text Domain: sidrena', f'Text Domain: {domain}'),
-        encoding='utf-8'
-    )
-    pot.unlink()
+    pot_text = pot.read_text(encoding='utf-8')
+    pot_text = pot_text.replace('Text Domain: sidrena', f'Text Domain: {domain}')
+    pot_text = pot_text.replace('X-Domain: sidrena', f'X-Domain: {domain}')
+    if domain == 'sidrena':
+        pot.write_text(pot_text, encoding='utf-8')
+    else:
+        target = root / 'languages' / f'{domain}.pot'
+        target.write_text(pot_text, encoding='utf-8')
+        pot.unlink()
 PY
 }
 
@@ -126,7 +129,7 @@ copy_common "$WP_STAGE"
 cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
-prepare_package "$WP_STAGE" "sidrena-wordpress"
+prepare_package "$WP_STAGE" "sidrena"
 rm -f \
   "$WP_STAGE/assets/images/logo-woocommerce.svg" \
   "$WP_STAGE/assets/images/logo-woocommerce-light.svg" \
@@ -143,7 +146,7 @@ copy_common "$WOO_STAGE"
 cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
-prepare_package "$WOO_STAGE" "sidrena-woocommerce"
+prepare_package "$WOO_STAGE" "sidrena-for-woocommerce"
 rm -f \
   "$WOO_STAGE/assets/images/logo-wordpress.svg" \
   "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \

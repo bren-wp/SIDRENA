@@ -7,6 +7,7 @@ Support: sidrena@brendigo.com
 Sidrena changelog
 
 = 1.0.17 =
+* Ispravljeni su javni WordPress text domaini: WordPress izdanje koristi `sidrena`, a WooCommerce izdanje `sidrena-for-woocommerce`; instalacijski folderi ostaju nepromijenjeni radi kompatibilnih nadogradnji.
 * Svi stabilni release/* branchovi sada moraju pokazivati na trenutačni main commit prije objave izdanja.
 * Audit poruke režu se UTF-8 sigurno, a preveliki audit context ostaje valjan JSON s oznakom skraćivanja i izvornom veličinom.
 * JSON manifest javnog cjenika prebačen je na postojeći jedinstveni durable atomic writer sa short-write provjerom i fsync korakom.

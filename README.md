@@ -158,6 +158,7 @@ Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom 
 
 Izdanje 1.0.17 donosi:
 
+- WordPress paket koristi javni text domain `sidrena`, a WooCommerce paket `sidrena-for-woocommerce`; Plugin Check i release gateovi sada provjeravaju upravo te javne slugove, dok instalacijski folderi ostaju kompatibilni sa starijim nadogradnjama
 - svaki stabilni `release/*` branch mora pokazivati na trenutačni `main` commit prije objave, čime se sprječava slučajno izdavanje zastarjelog koda
 - audit zapis više ne reže UTF-8 tekst usred znaka, a preveliki audit context ostaje valjan JSON s eksplicitnim podacima o skraćivanju
 - javni JSON manifest koristi isti jedinstveni durable atomic-writer sloj kao CSV/XML i javni snapshot, uključujući short-write provjeru i fsync prije zamjene datoteke

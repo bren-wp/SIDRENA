@@ -76,6 +76,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 == Changelog ==
 
 = 1.0.17 =
+* Aligned the WooCommerce package with the public `sidrena-for-woocommerce` text domain expected by WordPress Plugin Check while keeping the existing install folder for upgrade compatibility.
 * Hardened stable release-source verification so every release branch must match the current main commit before publication.
 * Preserved valid UTF-8 and JSON structure when local audit messages or context exceed storage limits.
 * Reused the durable atomic writer for the public JSON manifest, including short-write handling and fsync before commit.

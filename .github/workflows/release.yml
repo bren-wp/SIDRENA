@@ -197,8 +197,8 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-wordpress
-          slug: sidrena-wordpress
-          # Backward-compatible install-folder slug; all runtime/security/i18n/performance findings remain strict.
+          slug: sidrena
+          # Public WordPress slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
           ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
@@ -209,8 +209,8 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-woocommerce
-          slug: sidrena-woocommerce
-          # Backward-compatible install-folder slug; all runtime/security/i18n/performance findings remain strict.
+          slug: sidrena-for-woocommerce
+          # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
           ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'

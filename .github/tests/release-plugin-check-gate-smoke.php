@@ -86,4 +86,15 @@ sidrena_release_gate_assert(
 	'Plugin Check workflow must also observe release branches and version tags.'
 );
 
+sidrena_release_gate_assert(
+	false !== strpos( $release, 'slug: sidrena' )
+	&& false !== strpos( $release, 'slug: sidrena-for-woocommerce' ),
+	'Release Plugin Check gates must validate the public plugin slugs/text domains.'
+);
+sidrena_release_gate_assert(
+	false === strpos( $release, 'slug: sidrena-wordpress' )
+	&& false === strpos( $release, 'slug: sidrena-woocommerce' ),
+	'Release Plugin Check must not validate against install-folder aliases.'
+);
+
 fwrite( STDOUT, "Sidrena release Plugin Check gate smoke test passed.\n" );
