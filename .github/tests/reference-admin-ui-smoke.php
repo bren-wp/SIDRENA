@@ -91,8 +91,15 @@ sidrena_reference_ui_assert(
 );
 
 sidrena_reference_ui_assert(
-	false !== strpos( $standalone, 'sid-standalone-table' ),
-	'WordPress catalog table must remain part of the reference UI surface.'
+	false !== strpos( $standalone, 'sid-standalone-table' )
+	&& false !== strpos( $standalone, 'sid-standalone-details-row' )
+	&& false !== strpos( $standalone, 'sid-row-details__grid--wordpress' ),
+	'WordPress catalog must retain compact expandable product rows.'
+);
+sidrena_reference_ui_assert(
+	false !== strpos( $script, "closest(removeStandalone, '.sid-standalone-details-row')" )
+	&& false !== strpos( $script, 'detailsRow.remove()' ),
+	'Removing an unsaved WordPress catalog row must also remove its detail row.'
 );
 
 sidrena_reference_ui_assert(
