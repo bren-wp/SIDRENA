@@ -119,4 +119,28 @@ sidrena_form_ux_assert(
 	'Localized upload validation feedback must remain available.'
 );
 
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "'locationAdded'" )
+	&& false !== strpos( $admin, "'locationRemoved'" )
+	&& false !== strpos( $admin, "'removeLocationLabel'" )
+	&& false !== strpos( $admin, 'class="sid-location-title"' )
+	&& false !== strpos( $admin, 'class="sid-location-address"' ),
+	'Dynamic location cards must retain contextual labels and localized feedback.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $script, 'function updateLocationSummary(row)' )
+	&& false !== strpos( $script, "remove.setAttribute('aria-label'" )
+	&& false !== strpos( $script, 'var nextRow = row.nextElementSibling' )
+	&& false !== strpos( $script, 'focusFirstField(nextRow || previousRow)' ),
+	'Dynamic location summaries, removal labels and focus recovery must remain synchronized.'
+);
+
+sidrena_form_ux_assert(
+	3 <= substr_count( $admin, '<caption class="screen-reader-text">' )
+	&& 17 <= substr_count( $admin, 'scope="col"' )
+	&& false !== strpos( $admin, "esc_html_e( 'Radnje', 'sidrena' )" )
+	&& false !== strpos( $admin, 'aria-label="<?php echo esc_attr( $open_label ); ?>"' ),
+	'Admin data tables must retain captions, scoped headers and contextual action labels.'
+);
+
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );

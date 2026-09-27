@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.14\n"
+"Project-Id-Version: Sidrena 1.0.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1646,5 +1646,49 @@ msgstr ""
 
 #: includes/class-sidrena-standalone.php
 msgid "Ukloni nespremljeni proizvod"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Nedavne promjene cijena proizvoda"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Generirane datoteke javnog cjenika"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Radnje"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Otvori datoteku %s"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Otvori datoteku cjenika"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Dnevnik važnih SIDRENA događaja"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Nova lokacija je dodana. Unesite podatke i spremite promjene."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Ukloni lokaciju %s"
+msgstr ""
+
+#: includes/class-sidrena-public.php
+msgid "Aktualni Sidrena cjenik"
+msgstr ""
+
+#: includes/class-sidrena-services.php
+msgid "Aktualni cjenik usluga"
 msgstr ""
 

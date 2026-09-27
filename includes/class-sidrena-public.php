@@ -262,17 +262,17 @@ final class Sidrena_Public {
 			</p>
 			<div class="sidrena-pricelist__table-wrap">
 				<table class="sidrena-pricelist__table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
+					<caption class="sidrena-visually-hidden"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Marka', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Cijena', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Dostupnost', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Marka', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Cijena', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Dostupnost', 'sidrena' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -290,7 +290,7 @@ final class Sidrena_Public {
 							$availability = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
 							?>
 							<tr>
-								<td data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></td>
+								<th scope="row" data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></th>
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong></td>

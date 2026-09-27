@@ -124,6 +124,37 @@
 		}
 	}
 
+	function formatMessage(template, value) {
+		return String(template || '').replace('%s', value);
+	}
+
+	function updateLocationSummary(row) {
+		if (!row) {
+			return;
+		}
+		var codeField = row.querySelector('input[name$="[code]"]');
+		var addressField = row.querySelector('input[name$="[address]"]');
+		var title = row.querySelector('.sid-location-title');
+		var address = row.querySelector('.sid-location-address');
+		var remove = row.querySelector('.sid-remove-location');
+		var code = codeField && String(codeField.value || '').trim()
+			? String(codeField.value).trim()
+			: message('newLocation', 'Nova lokacija');
+		var addressText = addressField && String(addressField.value || '').trim()
+			? String(addressField.value).trim()
+			: message('emptyLocationAddress', 'Adresa nije upisana');
+
+		if (title) {
+			title.textContent = code;
+		}
+		if (address) {
+			address.textContent = addressText;
+		}
+		if (remove) {
+			remove.setAttribute('aria-label', formatMessage(message('removeLocationLabel', 'Ukloni lokaciju %s'), code));
+		}
+	}
+
 	function setLocationState(row) {
 		if (!row) {
 			return;
@@ -135,6 +166,7 @@
 			field.required = active;
 			field.setAttribute('aria-required', active ? 'true' : 'false');
 		});
+		updateLocationSummary(row);
 	}
 
 	function initLocations() {
@@ -183,6 +215,8 @@
 			var last = rows.length ? rows[rows.length - 1] : null;
 			setLocationState(last);
 			focusFirstField(last);
+			var locationForm = last ? last.closest('form') : null;
+			setFormStatus(locationForm, message('locationAdded', 'Nova lokacija je dodana. Unesite podatke i spremite promjene.'));
 			return;
 		}
 
@@ -235,11 +269,19 @@
 				return;
 			}
 			if (row && window.confirm(message('removeLocation', 'Ukloniti ovu lokaciju iz konfiguracije?'))) {
+				var nextRow = row.nextElementSibling && row.nextElementSibling.matches('.sid-location') ? row.nextElementSibling : null;
+				var previousRow = row.previousElementSibling && row.previousElementSibling.matches('.sid-location') ? row.previousElementSibling : null;
+				var locationForm = row.closest('form');
 				row.remove();
-				var addLocationButton = document.getElementById('sid-add-location');
-				if (addLocationButton) {
-					addLocationButton.focus();
+				if (nextRow || previousRow) {
+					focusFirstField(nextRow || previousRow);
+				} else {
+					var addLocationButton = document.getElementById('sid-add-location');
+					if (addLocationButton) {
+						addLocationButton.focus();
+					}
 				}
+				setFormStatus(locationForm, message('locationRemoved', 'Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu.'));
 			}
 		}
 	});
@@ -259,6 +301,9 @@
 		if (target.matches && target.matches('.sid-location-enabled')) {
 			setLocationState(closest(target, '.sid-location'));
 			return;
+		}
+		if (target.matches && target.matches('.sid-location input[name$="[code]"], .sid-location input[name$="[address]"]')) {
+			updateLocationSummary(closest(target, '.sid-location'));
 		}
 		if (target.matches && target.matches('.sid-inline-delete input[type="checkbox"]') && target.checked) {
 			if (!window.confirm(message('deleteProduct', 'Označiti ovaj proizvod za brisanje nakon spremanja?'))) {
