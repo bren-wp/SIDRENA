@@ -1418,6 +1418,11 @@ final class Sidrena_Standalone {
 		if ( $sale_name && '' !== $lowest_30 ) {
 			$out .= '<span class="sidrena-lowest"><span class="sidrena-lowest__label">' . esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . ':</span> <span class="sidrena-lowest__value">' . esc_html( Sidrena_Utils::money( $lowest_30 ) . ' ' . $currency ) . '</span></span>';
 		}
+		$reference_exemption = sanitize_key( (string) get_post_meta( $id, '_sidrena_standalone_sale_reference_exemption', true ) );
+		$expiry_date         = Sidrena_Utils::sanitize_date( get_post_meta( $id, '_sidrena_standalone_expiry_date', true ) );
+		if ( $sale_name && in_array( $reference_exemption, array( 'perishable', 'fast_expiry' ), true ) && $expiry_date ) {
+			$out .= '<span class="sidrena-expiry"><span class="sidrena-expiry__label">' . esc_html__( 'Krajnji rok uporabe', 'sidrena' ) . ':</span> <span class="sidrena-expiry__value">' . esc_html( Sidrena_Utils::date_display( $expiry_date ) ) . '</span></span>';
+		}
 		if ( '' !== $anchor ) {
 			$date       = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'];
 			$tooltip    = Sidrena_Utils::anchor_tooltip();
