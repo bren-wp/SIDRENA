@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.15</h1>
+<h1 align="center">SIDRENA 1.0.16</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -124,23 +124,22 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.15 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.16 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.15
+## Zašto SIDRENA 1.0.16
 
-**SIDRENA 1.0.15** prenosi odobreni vizualni smjer iz referentnih SIDRENA prikaza u stvarno WordPress administratorsko sučelje, bez demo podataka i bez paralelnog WooCommerce kataloga.
+**SIDRENA 1.0.16** dodatno učvršćuje oba produkcijska izdanja bez mijenjanja njihovog podatkovnog modela ili stvaranja paralelnog WooCommerce kataloga.
 
-Izdanje 1.0.14 donosi:
+Izdanje 1.0.16 donosi:
 
-- zaseban WordPress dashboard s rasporedom Brze akcije, Tehnička spremnost, Zdravlje arhive, Lokacije/Poslovnice i Status oznake cijene
-- zaseban WooCommerce dashboard s Nedavnim promjenama cijena, edukacijom cijena, tehničkim statusom provjera, Brzim radnjama, Lokacijama i Zadnje objavljenim cjenikom
-- potpuno preuređen **Digitalni cjenici** ekran s realnim statusima publikacije, sljedećim rasporedom, distribucijom/integracijama, javnim previewem i aktualnim datotekama
-- kompaktni WooCommerce product editor koji više ne pokušava prikazati 13 editabilnih stupaca odjednom; napredna SIDRENA polja ostaju dostupna u proširivom detalju proizvoda
-- lokalni SIDRENA reference UI sustav bez vanjskog Tailwind/CDN-a, s WordPress plavo/cyan i WooCommerce ljubičastim edition akcentom
-- responzivne tablice, kartice, lokacijske forme, upload forme i akcijske grupe projektirane za 1440, 1180, 782 i 390 px provjere
-- browser provjeru CSV/XML vrste datoteke i limita od 5 MB prije slanja, uz postojeću server-side validaciju
-- trajni reference-admin-ui regression test u glavnom CI-ju i admin-polish guardu
-- stvarne wp-admin screenshotove oba izdanja koji se ponovno generiraju iz aktivnog plugina nakon UI izmjena i moraju proći JS, overlap, overflow i form viewport provjere prije releasea
+- preinicijalizirane `role="status"`, `aria-live="polite"` i `aria-atomic="true"` regije na svim upravljanim admin formama, tako da je prvi status spremanja ili validacije pouzdano dostupan assistive-tech korisnicima
+- stroži stvarni browser QA koji ruši build ako forma nema pripremljenu live-regiju prije interakcije
+- konsolidirane top-level CSS komponente za page header, quick actions, lokacije, tablice, gumbe i form labele bez oslanjanja na slučajni redoslijed overrideova
+- uklanjanje zastarjele WordPress katalog širine od 1320 px koja se ranije kasnije prepisivala na kompaktnih 920 px
+- jednu kanonsku baznu vrijednost za quick-action visinu, row-detail kontrole, gumbe i tablični line-height
+- trajne regression guardove koji sprječavaju povratak stale CSS vrijednosti i kasno stvorenih live-regiona
+- zadržane sve accessibility dorade iz 1.0.15: scoped tablice, row-headere, kontekstualne file action labele, dinamičke Lokacije i theme-independent screen-reader utility
+- obvezan CI, Plugin Check i stvarni WordPress/WooCommerce browser capture prije objave novog izdanja
 
 
 ## Sve bitno za rad s cijenama na jednom mjestu
@@ -207,8 +206,8 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.15.zip`
-- `sidrena-woocommerce-1.0.15.zip`
+- `sidrena-wordpress-1.0.16.zip`
+- `sidrena-woocommerce-1.0.16.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 

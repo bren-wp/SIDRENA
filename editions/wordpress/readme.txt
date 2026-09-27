@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.15 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.16 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.15.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.16.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.16 =
+* Managed admin forms now preinitialize role=status, aria-live=polite and aria-atomic=true regions before any user interaction.
+* Real browser QA now fails if a managed form is missing its preinitialized atomic live region.
+* Consolidated stale top-level admin CSS overrides so page headers, quick actions, location headers, buttons, table rows and compact catalogue widths no longer depend on cascade order.
+* Removed the obsolete 1320px WordPress catalogue width that was later overwritten by the compact 920px production rule.
+* Added permanent regression coverage for canonical CSS values and the form live-region lifecycle.
+* WordPress and WooCommerce functional runtime, Plugin Check and real-browser capture passed before the version bump.
 
 = 1.0.15 =
 * Added screen-reader captions and scoped column headers to SIDRENA admin data tables.

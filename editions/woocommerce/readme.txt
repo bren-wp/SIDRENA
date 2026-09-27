@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.15 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.16 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.15.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.16.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.16 =
+* Managed admin forms now preinitialize role=status, aria-live=polite and aria-atomic=true regions before any user interaction.
+* Real browser QA now fails if a managed form is missing its preinitialized atomic live region.
+* Consolidated stale top-level admin CSS overrides so shared WordPress/WooCommerce components no longer depend on cascade order.
+* Normalized canonical quick-action, button, location-header, table-row and form-label component sizing without changing WooCommerce as the canonical catalogue source.
+* Added permanent regression coverage for canonical CSS values and the form live-region lifecycle.
+* WordPress and WooCommerce functional runtime, Plugin Check and real-browser capture passed before the version bump.
 
 = 1.0.15 =
 * Added screen-reader captions and scoped column headers to SIDRENA admin data tables.
