@@ -1467,6 +1467,27 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	flex-wrap:wrap;
 	min-width:max-content;
 }
+.sidrena-admin-screen .sid-remove-location {
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	min-height:38px;
+	padding:7px 10px;
+	border:1px solid #f0c7c9;
+	border-radius:9px;
+	background:#fff7f7;
+	color:#b4232b;
+	font-size:11px;
+	font-weight:700;
+	line-height:1.2;
+	text-decoration:none;
+}
+.sidrena-admin-screen .sid-remove-location:hover,
+.sidrena-admin-screen .sid-remove-location:focus-visible {
+	border-color:#e59da1;
+	background:#fff0f0;
+	color:#941c23;
+}
 .sidrena-admin-screen .sid-fields-location {
 	grid-template-columns:repeat(3,minmax(0,1fr));
 }
