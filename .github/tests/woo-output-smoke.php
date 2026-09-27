@@ -79,6 +79,7 @@ sidrena_woo_output_assert( false !== strpos( $frontend_css, 'position: fixed;' )
 sidrena_woo_output_assert( false !== strpos( $compat_php, "enable_rest_index" ), 'Woo compatibility hydration must honor the public REST API setting.' );
 sidrena_woo_output_assert( false !== strpos( $compat_js, 'targetsAlreadyHydrated' ), 'Woo compatibility JavaScript must avoid a redundant base-product REST fetch when server-rendered Sidrena markup is already present.' );
 sidrena_woo_output_assert( false !== strpos( $compat_js, '!variationMode && targetsAlreadyHydrated' ), 'Variation hydration optimization must only skip redundant base-product requests, not dynamic variation requests.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'hydrate(productId, root, false, true);' ), 'Variation reset must force restoration of the parent product reference markup.' );
 
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );
