@@ -551,11 +551,18 @@ final class Sidrena_Admin {
 	private function wordpress_dashboard( $data ) {
 		$last_ts       = ! empty( $data['last']['generated_at'] ) ? strtotime( (string) $data['last']['generated_at'] ) : 0;
 		$published_pct = $data['total_items'] > 0 ? (int) round( ( $data['anchor_ready'] / $data['total_items'] ) * 100 ) : 0;
+		$anchor_caption = sprintf(
+			/* translators: %d: number of catalog items with an anchor price. */
+			__( '%d sa sidrenom cijenom', 'sidrena' ),
+			$data['anchor_ready']
+		);
+		$published_caption = sprintf(
+			/* translators: 1: number of ready catalog items, 2: total number of catalog items. */
+			__( '%1$d / %2$d stavki', 'sidrena' ),
+			$data['anchor_ready'],
+			$data['total_items']
+		);
 		?>
-		/* translators: %d: number of catalog items with an anchor price. */
-		$anchor_caption = sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $data['anchor_ready'] );
-		/* translators: 1: number of ready catalog items, 2: total number of catalog items. */
-		$published_caption = sprintf( __( '%1$d / %2$d stavki', 'sidrena' ), $data['anchor_ready'], $data['total_items'] );
 		<div class="sid-reference-dashboard sid-reference-dashboard--wordpress">
 			<div class="sid-page-head sid-reference-page-head">
 				<div>
