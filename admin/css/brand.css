@@ -1624,6 +1624,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 
 
 /* SIDRENA production controls and responsive hardening. */
+.sidrena-admin-screen .sidrena-brandbar__edition .dashicons,
 .sidrena-admin-screen .sidrena-brandbar__actions .dashicons,
 .sidrena-admin-screen .sid-head-inline-actions .dashicons,
 .sidrena-admin-screen .sidrena-app .button .dashicons {

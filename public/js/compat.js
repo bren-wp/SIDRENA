@@ -131,7 +131,14 @@
 	}
 
 	function hydrate(id, root, variationMode) {
+		id = parseInt(id || 0, 10);
+		if (!id) {
+			return;
+		}
 		fetchMarkup(id).then(function (html) {
+			if (id !== activeId) {
+				return;
+			}
 			applyMarkup(html, root, variationMode);
 		});
 	}
