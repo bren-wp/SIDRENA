@@ -364,7 +364,7 @@ final class Sidrena_Pricelist {
 		foreach ( $rows as $row ) {
 			$row_issues = 'products' === $catalog_type
 				? $this->validate_product_row( $row, $kind )
-				: $this->validate_service_row( $row );
+				: $this->validate_service_row( $row, $kind );
 
 			if ( empty( $row_issues ) ) {
 				yield $row;
@@ -439,14 +439,26 @@ final class Sidrena_Pricelist {
 			}
 		}
 
-		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
-			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
-			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) ) {
+			if ( '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
+				$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+			}
+			$reference_status = sanitize_key( (string) ( $row['_sidrena_sale_reference_status'] ?? 'incomplete' ) );
+			if ( ! in_array( $reference_status, array( 'ready', 'exempt' ), true ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
+				$issues[] = sprintf( __( '%s: posebni oblik prodaje nema provjerljivu najnižu cijenu u prethodnih 30 dana niti evidentiranu iznimku', 'sidrena' ), $label );
+			}
+			$reference_source = sanitize_key( (string) ( $row['_sidrena_sale_reference_source'] ?? '' ) );
+			if ( 'exempt' === $reference_status && in_array( $reference_source, array( 'perishable', 'fast_expiry' ), true ) && '' === trim( (string) ( $row['_sidrena_expiry_date'] ?? '' ) ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
+				$issues[] = sprintf( __( '%s: iznimka za lako pokvarljivu robu ili robu s kratkim rokom nema krajnji rok uporabe', 'sidrena' ), $label );
+			}
 		}
 		return $issues;
 	}
 
-	private function validate_service_row( $row ) {
+	private function validate_service_row( $row, $location_kind = 'objekt' ) {
 		$issues = array();
 		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
 		$name   = trim( (string) ( $row['naziv_usluge'] ?? '' ) );
@@ -465,9 +477,21 @@ final class Sidrena_Pricelist {
 			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			$issues[] = sprintf( __( '%s: nedostaje sidrena cijena', 'sidrena' ), $label );
 		}
-		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) && '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
-			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
-			$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+		if ( 'da' === ( $row['posebni_oblik_prodaje'] ?? '' ) ) {
+			if ( '' === trim( (string) ( $row['naziv_posebnog_oblika_prodaje'] ?? '' ) ) ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
+				$issues[] = sprintf( __( '%s: aktivni posebni oblik prodaje nema naziv', 'sidrena' ), $label );
+			}
+			$reference_status = sanitize_key( (string) ( $row['_sidrena_sale_reference_status'] ?? 'incomplete' ) );
+			$reference_source = sanitize_key( (string) ( $row['_sidrena_sale_reference_source'] ?? '' ) );
+			$reference_ready  = 'ready' === $reference_status;
+			if ( 'webshop' === sanitize_key( (string) $location_kind ) && 'exempt' === $reference_status && in_array( $reference_source, array( 'advertising', 'distance', 'off_premises' ), true ) ) {
+				$reference_ready = true;
+			}
+			if ( ! $reference_ready ) {
+				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
+				$issues[] = sprintf( __( '%s: posebni oblik prodaje usluge za ovu lokaciju nema provjerljivu najnižu cijenu u prethodnih 30 dana', 'sidrena' ), $label );
+			}
 		}
 		return $issues;
 	}
@@ -740,6 +764,18 @@ final class Sidrena_Pricelist {
 		if ( ! $sale_name && $product->is_on_sale() ) {
 			$sale_name = __( 'Akcija', 'sidrena' );
 		}
+		$sale_reference = $product->is_on_sale() && class_exists( 'Sidrena_History' )
+			? Sidrena_History::sale_reference( $product )
+			: array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
+		$reference_exemption = sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_reference_exemption' ) );
+		if ( $product->is_on_sale() && in_array( $reference_exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
+			$sale_reference = array(
+				'status' => 'exempt',
+				'price'  => '',
+				'source' => $reference_exemption,
+			);
+		}
+		$expiry_date = Sidrena_Utils::sanitize_date( Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_expiry_date' ) );
 
 		$name = $product->get_name();
 		if ( $product->is_type( 'variation' ) ) {
@@ -758,9 +794,12 @@ final class Sidrena_Pricelist {
 			$unit_price = '';
 		}
 		return array(
-			'_sidrena_item_id'          => $product->get_id(),
-			'_sidrena_unit_status'      => $unit_status,
-			'_sidrena_location_explicit' => $has_location_availability ? 'yes' : 'no',
+			'_sidrena_item_id'               => $product->get_id(),
+			'_sidrena_unit_status'           => $unit_status,
+			'_sidrena_location_explicit'     => $has_location_availability ? 'yes' : 'no',
+			'_sidrena_sale_reference_status' => sanitize_key( (string) ( $sale_reference['status'] ?? 'incomplete' ) ),
+			'_sidrena_sale_reference_source' => sanitize_key( (string) ( $sale_reference['source'] ?? '' ) ),
+			'_sidrena_expiry_date'           => $expiry_date,
 			'naziv'                         => $name,
 			'sifra'                         => Sidrena_Utils::get_product_code( $product ),
 			'marka'                         => Sidrena_Utils::get_brand( $brand_product ),
@@ -769,6 +808,8 @@ final class Sidrena_Pricelist {
 			'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
 			'posebni_oblik_prodaje'         => $product->is_on_sale() ? 'da' : 'ne',
 			'naziv_posebnog_oblika_prodaje' => $product->is_on_sale() ? $sale_name : '',
+			'najniza_cijena_30_dana'         => $product->is_on_sale() && 'ready' === ( $sale_reference['status'] ?? '' ) ? Sidrena_Utils::money( $sale_reference['price'] ?? '' ) : '',
+			'krajnji_rok_uporabe'            => $product->is_on_sale() && 'exempt' === ( $sale_reference['status'] ?? '' ) ? $expiry_date : '',
 			'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
 			'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( Sidrena_Utils::current_reference_date( $product->get_id() ) ),
 			'barkod'                         => Sidrena_Utils::get_barcode( $product ),
@@ -811,8 +852,13 @@ final class Sidrena_Pricelist {
 
 				$current = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
 				$sale    = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
+				$sale_reference = $sale && class_exists( 'Sidrena_Service_History' )
+					? Sidrena_Service_History::sale_reference( $service->ID )
+					: array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
 				yield array(
 					'_sidrena_item_id'                   => $service->ID,
+					'_sidrena_sale_reference_status'     => sanitize_key( (string) ( $sale_reference['status'] ?? 'incomplete' ) ),
+					'_sidrena_sale_reference_source'     => sanitize_key( (string) ( $sale_reference['source'] ?? '' ) ),
 					'naziv_usluge'                  => get_the_title( $service ),
 					'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
 					'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
@@ -821,6 +867,7 @@ final class Sidrena_Pricelist {
 					'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
 					'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
 					'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
+					'najniza_cijena_30_dana'         => $sale && 'ready' === ( $sale_reference['status'] ?? '' ) ? Sidrena_Utils::money( $sale_reference['price'] ?? '' ) : '',
 					'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
 					'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
 				);

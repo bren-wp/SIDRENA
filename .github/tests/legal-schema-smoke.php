@@ -21,6 +21,18 @@ if ( ! function_exists( 'absint' ) ) {
 	}
 }
 
+if ( ! function_exists( 'sanitize_key' ) ) {
+	function sanitize_key( $value ) {
+		return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $value ) );
+	}
+}
+if ( ! function_exists( '__' ) ) {
+	function __( $text, $domain = null ) {
+		unset( $domain );
+		return $text;
+	}
+}
+
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-legal-automation.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 
@@ -74,6 +86,9 @@ sidrena_schema_assert( count( $product_headers ) === count( array_unique( $produ
 sidrena_schema_assert( count( $service_headers ) === count( array_unique( $service_headers ) ), 'Duplicate service headers detected.' );
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $product_headers, true ), 'Reference date traceability missing from product output.' );
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $service_headers, true ), 'Reference date traceability missing from service output.' );
+sidrena_schema_assert( ! in_array( 'najniza_cijena_30_dana', $product_headers, true ), 'HTML-only 30-day reference must not silently change the NN 101/2026 product CSV/XML header set.' );
+sidrena_schema_assert( ! in_array( 'krajnji_rok_uporabe', $product_headers, true ), 'HTML-only expiry detail must not silently change the NN 101/2026 product CSV/XML header set.' );
+sidrena_schema_assert( ! in_array( 'najniza_cijena_30_dana', $service_headers, true ), 'HTML-only service sale reference must not silently change the machine-readable service header set.' );
 foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi', 'ugradbena_zamjenska_roba' ) as $service_detail ) {
 	sidrena_schema_assert( in_array( $service_detail, $service_headers, true ), 'NN 105/2026 service display field missing: ' . $service_detail );
 }
@@ -92,6 +107,8 @@ sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g il
 sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 22.09.2026.' ), 'Official MINGO clarification date must remain 22.09.2026.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_22_clarifications' ), 'Official MINGO clarification source key must remain aligned to 22.09.2026.' );
+sidrena_schema_assert( false !== strpos( $compliance_source, 'nn_59_2026_base_price_future' ), 'Future bazna-cijena source must remain separate from the NN 101/2026 sidrena-price layer.' );
+sidrena_schema_assert( false !== strpos( $compliance_source, '17.11.2026' ), 'Bazna-price readiness must retain the statutory 17.11.2026 application marker.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'https://mingo.gov.hr/print.aspx?id=10440&url=print' ), 'Official MINGO clarification URL must remain linked from the rules screen.' );
 
 $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
@@ -99,6 +116,11 @@ $services_source  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Service type must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Service scope must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, "'barkod'              => __( 'barkod'" ), 'Barcode must not block publication when it is not applicable.' );
+sidrena_schema_assert(
+	false !== strpos( $pricelist_source, "product_meta_with_parent( \$product, '_sidrena_sale_reference_exemption' )" )
+	&& false !== strpos( $pricelist_source, "array( 'perishable', 'fast_expiry' )" ),
+	'WooCommerce variation rows must honor a perishable/fast-expiry sale-reference exemption inherited from the parent product.'
+);
 sidrena_schema_assert( false === strpos( $services_source, "add_action( 'transition_post_status'" ), 'Service anchor snapshot must not run before service meta is saved.' );
 sidrena_schema_assert( false !== strpos( $services_source, "add_action( 'wp_after_insert_post'" ), 'Service finalization must run after custom meta save hooks.' );
 sidrena_schema_assert( false !== strpos( $services_source, '$this->snapshot_newly_published( $post_id, $post );' ), 'First publication must snapshot the submitted current price after meta save.' );
@@ -130,5 +152,73 @@ sidrena_schema_assert( 'yes' === $hardened['generate_csv'], 'At least one machin
 sidrena_schema_assert( 'no' === $hardened['generate_xml'], 'XML must remain a user choice when CSV already satisfies the machine-readable publication requirement.' );
 sidrena_schema_assert( 'no' === $hardened['enable_public_html'], 'Public HTML is optional and must not be forced by legal automation.' );
 sidrena_schema_assert( 'no' === $hardened['publish_manifest'], 'Manifest publication is optional and must not be forced by legal automation.' );
+
+sidrena_schema_assert( 'yes' === $hardened['display_anchor'], 'Public sidrena-price display must remain enabled by the safe legal profile.' );
+sidrena_schema_assert( 'yes' === $hardened['display_lowest_30'], '30-day reference display must remain enabled by the safe legal profile.' );
+sidrena_schema_assert( 'yes' === $hardened['track_price_history'], 'Price history must remain enabled so 30-day references stay auditable.' );
+
+$validate_product = new ReflectionMethod( 'Sidrena_Pricelist', 'validate_product_row' );
+$validate_product->setAccessible( true );
+$base_product = array(
+	'_sidrena_item_id'               => 1,
+	'_sidrena_unit_status'           => 'not_required',
+	'_sidrena_location_explicit'     => 'yes',
+	'_sidrena_sale_reference_status' => 'ready',
+	'_sidrena_sale_reference_source' => 'manual',
+	'_sidrena_expiry_date'           => '',
+	'naziv'                          => 'Test proizvod',
+	'sifra'                          => 'TEST-1',
+	'marka'                          => 'Test',
+	'maloprodajna_cijena'            => '10.00',
+	'sidrena_cijena'                 => '12.00',
+	'dostupnost'                     => 'dostupno',
+	'posebni_oblik_prodaje'          => 'da',
+	'naziv_posebnog_oblika_prodaje'  => 'Akcija',
+);
+sidrena_schema_assert( array() === $validate_product->invoke( $instance, $base_product, 'objekt' ), 'Complete physical-location product sale must pass strict publication preflight.' );
+
+$incomplete_product = $base_product;
+$incomplete_product['_sidrena_sale_reference_status'] = 'incomplete';
+sidrena_schema_assert( ! empty( $validate_product->invoke( $instance, $incomplete_product, 'objekt' ) ), 'Product sale without a 30-day reference must fail strict publication preflight.' );
+
+$perishable_product = $base_product;
+$perishable_product['_sidrena_sale_reference_status'] = 'exempt';
+$perishable_product['_sidrena_sale_reference_source'] = 'perishable';
+sidrena_schema_assert( ! empty( $validate_product->invoke( $instance, $perishable_product, 'objekt' ) ), 'Perishable-sale exemption without expiry date must fail strict publication preflight.' );
+$perishable_product['_sidrena_expiry_date'] = '2026-10-15';
+sidrena_schema_assert( array() === $validate_product->invoke( $instance, $perishable_product, 'objekt' ), 'Perishable-sale exemption with expiry date must pass strict publication preflight.' );
+
+$validate_service = new ReflectionMethod( 'Sidrena_Pricelist', 'validate_service_row' );
+$validate_service->setAccessible( true );
+$base_service = array(
+	'_sidrena_item_id'               => 2,
+	'_sidrena_sale_reference_status' => 'ready',
+	'_sidrena_sale_reference_source' => 'manual',
+	'naziv_usluge'                   => 'Test usluga',
+	'maloprodajna_cijena'            => '50.00',
+	'sidrena_cijena'                 => '60.00',
+	'posebni_oblik_prodaje'          => 'da',
+	'naziv_posebnog_oblika_prodaje'  => 'Akcija',
+);
+sidrena_schema_assert( array() === $validate_service->invoke( $instance, $base_service, 'objekt' ), 'Physical-location service sale with a 30-day reference must pass strict publication preflight.' );
+
+$distance_service = $base_service;
+$distance_service['_sidrena_sale_reference_status'] = 'exempt';
+$distance_service['_sidrena_sale_reference_source'] = 'distance';
+sidrena_schema_assert( ! empty( $validate_service->invoke( $instance, $distance_service, 'objekt' ) ), 'Distance-contract service exemption must not bypass the 30-day rule for a physical-location price list.' );
+sidrena_schema_assert( array() === $validate_service->invoke( $instance, $distance_service, 'webshop' ), 'Distance-contract service exemption may be recorded for the webshop channel.' );
+
+$standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
+sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_location_availability' ), 'WordPress edition must retain per-location availability data.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'     => ( " . '$has_location_status' . " || 'webshop' === " . '$location_kind' . " ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_sale_reference_exemption' ), 'WordPress edition must support product 30-day reference exemptions.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_expiry_date' ), 'WordPress edition must retain expiry date for perishable/fast-expiry sale exemptions.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "sidrena-expiry" ), 'WordPress public price output must render the saved expiry date for a perishable/fast-expiry sale exemption.' );
+
+$public_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
+sidrena_schema_assert( false !== strpos( $public_source, "najniza_cijena_30_dana" ), 'Public HTML price list must retain the 30-day sale reference from the snapshot.' );
+sidrena_schema_assert( false !== strpos( $public_source, "krajnji_rok_uporabe" ), 'Public HTML price list must retain the expiry date used by perishable/fast-expiry sale exemptions.' );
+sidrena_schema_assert( false !== strpos( $public_source, "vrsta_usluge" ) && false !== strpos( $public_source, "opseg_usluge" ), 'Public service price list must expose service type and scope.' );
+sidrena_schema_assert( false !== strpos( $public_source, "pripadajuci_troskovi" ) && false !== strpos( $public_source, "ugradbena_zamjenska_roba" ), 'Public service price list must expose included costs and integral replacement/install goods details.' );
 
 fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema and automation smoke test passed.\n" );

@@ -288,12 +288,26 @@ final class Sidrena_Public {
 							$unit_price   = 'service' === $type ? '' : ( $row['cijena_za_jedinicu_mjere'] ?? '' );
 							$barcode      = 'service' === $type ? '' : ( $row['barkod'] ?? '' );
 							$availability = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
+							$lowest_30    = $row['najniza_cijena_30_dana'] ?? '';
+							$expiry_date  = Sidrena_Utils::sanitize_date( $row['krajnji_rok_uporabe'] ?? '' );
+							$service_type  = 'service' === $type ? trim( (string) ( $row['vrsta_usluge'] ?? '' ) ) : '';
+							$service_scope = 'service' === $type ? trim( (string) ( $row['opseg_usluge'] ?? '' ) ) : '';
+							$service_costs = 'service' === $type ? trim( (string) ( $row['pripadajuci_troskovi'] ?? '' ) ) : '';
+							$service_goods = 'service' === $type ? trim( (string) ( $row['ugradbena_zamjenska_roba'] ?? '' ) ) : '';
 							?>
 							<tr>
-								<th scope="row" data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>"><strong><?php echo esc_html( $name ); ?></strong><?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?></th>
+								<th scope="row" data-label="<?php esc_attr_e( 'Naziv', 'sidrena' ); ?>">
+									<strong><?php echo esc_html( $name ); ?></strong>
+									<?php if ( ! empty( $row['naziv_posebnog_oblika_prodaje'] ) ) : ?><small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?>
+									<?php if ( $expiry_date ) : ?><small><?php esc_html_e( 'Krajnji rok uporabe', 'sidrena' ); ?>: <?php echo esc_html( Sidrena_Utils::date_display( $expiry_date ) ); ?></small><?php endif; ?>
+									<?php if ( $service_type ) : ?><small><strong><?php esc_html_e( 'Vrsta usluge', 'sidrena' ); ?>:</strong> <?php echo esc_html( $service_type ); ?></small><?php endif; ?>
+									<?php if ( $service_scope ) : ?><small><strong><?php esc_html_e( 'Opseg usluge', 'sidrena' ); ?>:</strong> <?php echo esc_html( $service_scope ); ?></small><?php endif; ?>
+									<?php if ( $service_costs ) : ?><small><strong><?php esc_html_e( 'Pripadajući troškovi / napomena o cijeni', 'sidrena' ); ?>:</strong> <?php echo nl2br( esc_html( $service_costs ) ); ?></small><?php endif; ?>
+									<?php if ( $service_goods ) : ?><small><strong><?php esc_html_e( 'Ugradbena / zamjenska roba i cijena', 'sidrena' ); ?>:</strong> <?php echo nl2br( esc_html( $service_goods ) ); ?></small><?php endif; ?>
+								</th>
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
-								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong></td>
+								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong><?php if ( '' !== (string) $lowest_30 ) : ?><small><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?>: <?php echo esc_html( (string) $lowest_30 . ' ' . $currency ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>"><?php echo '' !== $anchor ? esc_html( (string) $anchor . ' ' . $currency ) : '—'; ?></td>
 								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ?: '—' ); ?><?php if ( '' !== $unit_price ) : ?><small><?php echo esc_html( (string) $unit_price . ' ' . $currency ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Barkod', 'sidrena' ); ?>"><?php echo esc_html( $barcode ?: '—' ); ?></td>

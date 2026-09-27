@@ -21,7 +21,7 @@ Zbog toga oznake u administraciji predstavljaju **tehničku spremnost/pokrivenos
 - **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.**
 - **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.**
 - **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja za dodatnu cijenu i objavu cjenika od 1. listopada.
-- **NN 59/2026, 728** — relevantne izmjene Zakona o zaštiti potrošača, uključujući najnižu cijenu u prethodnih 30 dana kod posebnih oblika prodaje.
+- **NN 59/2026, 728** — izmjene Zakona o zaštiti potrošača: najniža cijena u prethodnih 30 dana kod posebnih oblika prodaje te budući sloj bazne cijene; izmijenjeni članak 7. stavci 1.–9. počinju se primjenjivati **17.11.2026.**.
 - **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026., stupa na snagu **26.09.2026.**
 
 Službeni URL-ovi nalaze se i u Sidrena → Propisi.
@@ -34,6 +34,14 @@ Sidrena razlikuje izvore po ulozi:
 - **Hrvatska obrtnička komora (HOK)** koristi se kao praktično pojašnjenje za obrtnike, ali ne zamjenjuje tekst propisa.
 - **Državni inspektorat** koristi se za opća pravila transparentnosti i predugovorne informacije kod internetske prodaje.
 - Implementacije drugih WordPress plugina i javni cjenici drugih trgovaca koriste se samo kao UX/tehnička inspiracija; njihov format nije pravni standard.
+
+## Tri odvojena cjenovna pojma
+
+Sidrena ih namjerno ne spaja:
+
+1. **Dodatna / sidrena cijena** — sloj iz NN 101/2026 s referentnim datumom 10.09.2026. odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije.
+2. **Najniža cijena u prethodnih 30 dana** — referentna cijena za posebni oblik prodaje prema Zakonu o zaštiti potrošača; vodi se iz povijesti cijena ili provjerene ručne evidencije, uz propisane iznimke.
+3. **Bazna cijena** — zaseban pojam iz izmijenjenog članka 7. Zakona. Relevantni stavci počinju se primjenjivati 17.11.2026., ali konkretan dan u prethodnom razdoblju, proizvodi i način isticanja ovise o provedbenom pravilniku. Dok taj provedbeni sloj nije određen i implementiran, Sidrena ga ne izjednačava sa sidrenom cijenom niti automatski popunjava vrijednost.
 
 ## Dodatna / sidrena cijena
 
@@ -61,7 +69,7 @@ Sidrena zato:
 
 Digitalni cjenik proizvoda podržava naziv, stabilnu šifru, marku, jedinicu mjere i cijenu za jedinicu mjere kada je primjenjivo, maloprodajnu cijenu, podatak o posebnom obliku prodaje i njegov naziv, sidrenu cijenu, barkod i dostupnost po lokaciji.
 
-Sidrena 1.0.10 koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
+Sidrena koristi eksplicitnu oznaku primjenjivosti jedinične cijene. Administrator mora provjeriti je li proizvod obuhvaćen pravilom ili iznimkom; plugin to ne zaključuje automatski iz kategorije proizvoda.
 
 NN 105/2026 navodi skupine robe za koje se ističe cijena za jedinicu mjere i posebne iznimke. Kada administrator označi da je jedinična cijena obvezna, Sidrena upozorava ako nedostaje jedinica ili iznos.
 
@@ -73,7 +81,7 @@ Sidrena **ne klasificira automatski** proizvod u pravnu kategoriju na temelju na
 
 NN 105/2026 čl. 9.–11. zahtijeva lako dostupan cjenik usluga, jasan prikaz cijena te naziv, vrstu i opseg usluge; cijena mora obuhvatiti pripadajuće troškove, a cijena ugradbene ili zamjenske robe mora biti istaknuta kada je roba sastavni dio usluge. Zasebno, NN 101/2026 za strojno čitljivi cjenik usluga propisuje naziv usluge, maloprodajnu cijenu s informacijom o posebnom obliku prodaje i sidrenu cijenu.
 
-Sidrena zato vodi oba sloja podataka: obvezna polja digitalnog NN 101/2026 cjenika te detalje javnog prikaza iz NN 105/2026. U 1.0.10 first-publish finalizacija nove usluge odvija se nakon spremanja meta podataka kako se referentna cijena ne bi računala prije stvarno unesene aktualne cijene.
+Sidrena zato vodi oba sloja podataka: obvezna polja digitalnog NN 101/2026 cjenika te detalje javnog prikaza iz NN 105/2026. First-publish finalizacija nove usluge odvija se nakon spremanja meta podataka kako se referentna cijena ne bi računala prije stvarno unesene aktualne cijene.
 
 ## Dvije različite evidencije “30 dana”
 
@@ -81,6 +89,15 @@ Sidrena zato vodi oba sloja podataka: obvezna polja digitalnog NN 101/2026 cjeni
 2. **Interna povijest cijena** — služi kao tehnička podloga za 30-dnevnu referencu kod sniženja.
 
 To nisu ista evidencija i Sidrena ih ne spaja.
+
+## Posebni oblik prodaje
+
+Strogi publication preflight razlikuje proizvod i uslugu:
+
+- proizvod na posebnoj prodaji mora imati provjerljivu najnižu cijenu u prethodnih 30 dana ili evidentiranu iznimku za lako pokvarljivu robu / robu kojoj brzo istječe rok; kod tih iznimaka Sidrena traži i krajnji rok uporabe
+- usluga na posebnoj prodaji u fizičkoj poslovnici mora imati 30-dnevnu referencu
+- iznimke za oglašavanje, ugovor na daljinu ili ugovor izvan poslovnih prostorija vode se odvojeno i ne koriste se za zaobilaženje reference fizičke poslovnice
+- nepotpuna povijest ne pretvara se automatski u izmišljenu cijenu
 
 ## Povijesne cijene
 
@@ -90,13 +107,15 @@ Plugin ne može pouzdano rekonstruirati vrijeme prije instalacije. Ako nema pozn
 
 Ministarstvo je pojasnilo da se kod više fizičkih lokacija objavljuju zasebne datoteke po lokaciji, a webshop se vodi zasebno. Raspoloživost proizvoda odnosi se na konkretnu lokaciju i mora odgovarati stvarnom stanju.
 
+WooCommerce izdanje zato za fizičku lokaciju traži eksplicitni lokacijski status raspoloživosti umjesto globalnog WooCommerce stock statusa. WordPress izdanje koristi zasebnu mapu dostupnosti po aktivnoj fizičkoj lokaciji; jedna opća vrijednost više se ne smatra dokazom stvarnog stanja svih poslovnica. Webshop može koristiti zadani kataloški status kada zasebni status kanala nije unesen.
+
 ## Automatizacija
 
 Zadano vrijeme Sidrene je 06:30 prema WordPress vremenskoj zoni. WP-Cron ovisi o prometu stranice i ne jamči izvršavanje u točno određenoj minuti. Za poslovno kritične rokove preporučuje se pouzdani server cron koji pokreće WordPress cron ili WP-CLI naredba `wp sidrena generate`.
 
 ## Produkcijski i release guardovi
 
-Sidrena 1.0.10 stabilna release linija koristi zasebne provjere za:
+Aktualna stabilna release linija koristi zasebne provjere za:
 
 - admin asset routing i obveznu prisutnost produkcijskog CSS/JS + logo runtime sloja u instalacijskom ZIP-u
 
@@ -109,7 +128,7 @@ Sidrena 1.0.10 stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.10.zip`, `sidrena-wordpress-1.0.10.zip.sha256`, `sidrena-woocommerce-1.0.10.zip` i `sidrena-woocommerce-1.0.10.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.18.zip`, `sidrena-wordpress-1.0.18.zip.sha256`, `sidrena-woocommerce-1.0.18.zip` i `sidrena-woocommerce-1.0.18.zip.sha256`.
 
 ## Podaci obrta / tvrtke na mrežnoj stranici
 
