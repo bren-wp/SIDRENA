@@ -90,7 +90,9 @@ final class Sidrena_Admin {
 					'emptyLocationAddress'  => __( 'Adresa nije upisana', 'sidrena' ),
 					'locationAdded'         => __( 'Nova lokacija je dodana. Unesite podatke i spremite promjene.', 'sidrena' ),
 					'locationRemoved'       => __( 'Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu.', 'sidrena' ),
-					'removeLocationLabel'   => __( 'Ukloni lokaciju %s', 'sidrena' ),
+					'removeLocationLabel'   =>
+						/* translators: %s: location code or fallback title. */
+						__( 'Ukloni lokaciju %s', 'sidrena' ),
 				)
 			);
 			return;
