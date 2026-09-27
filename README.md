@@ -26,6 +26,43 @@ Support: sidrena@brendigo.com
   <strong>Jedan Sidrena identitet. Dva namjenska plugina. Bez nepotrebnog dupliciranja vašeg postojećeg sadržaja.</strong>
 </p>
 
+## Stvarni SIDRENA vizualni identitet
+
+Svi vizuali ispod učitavaju se **izravno iz produkcijskih asseta ovog repozitorija**. To nisu zamjenske slike ni vanjski stock materijali: README prikazuje stvarne SIDRENA logotipe, ikone, WordPress.org bannere i aktualne renderirane brand vizuale koji se koriste za projekt.
+
+<table>
+<tr>
+<td width="50%" align="center"><img src="assets/images/logo-wordpress.svg" alt="SIDRENA WordPress — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WordPress logo</strong></td>
+<td width="50%" align="center"><img src="assets/images/logo-woocommerce.svg" alt="SIDRENA WooCommerce — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WooCommerce logo</strong></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src="branding/rendered/plugin-cover-wordpress.png" alt="SIDRENA WordPress — aktualni plugin cover" width="100%"><br><strong>WordPress plugin cover</strong></td>
+<td width="50%" align="center"><img src="branding/rendered/plugin-cover-woocommerce.png" alt="SIDRENA WooCommerce — aktualni plugin cover" width="100%"><br><strong>WooCommerce plugin cover</strong></td>
+</tr>
+</table>
+
+### Ikone i brand mark
+
+<table>
+<tr>
+<td align="center"><img src="assets/images/logo-mark.svg" alt="SIDRENA logo mark" width="96"><br><strong>Logo mark</strong></td>
+<td align="center"><img src="assets/images/app-icon.svg" alt="SIDRENA app ikona" width="96"><br><strong>App ikona</strong></td>
+<td align="center"><img src="assets/images/favicon.svg" alt="SIDRENA favicon" width="72"><br><strong>Favicon</strong></td>
+<td align="center"><img src="assets/images/menu-anchor.svg" alt="SIDRENA WordPress admin menu ikona" width="72"><br><strong>Admin menu ikona</strong></td>
+<td align="center"><img src="wporg-assets/sidrena-wordpress/assets/icon-128x128.png" alt="SIDRENA WordPress.org WordPress ikona" width="96"><br><strong>WP.org WordPress</strong></td>
+<td align="center"><img src="wporg-assets/sidrena-woocommerce/assets/icon-128x128.png" alt="SIDRENA WordPress.org WooCommerce ikona" width="96"><br><strong>WP.org WooCommerce</strong></td>
+</tr>
+</table>
+
+### Aktualni WordPress.org banneri
+
+<table>
+<tr>
+<td width="50%" align="center"><img src="wporg-assets/sidrena-wordpress/assets/banner-772x250.png" alt="SIDRENA WordPress — stvarni WordPress.org banner" width="100%"></td>
+<td width="50%" align="center"><img src="wporg-assets/sidrena-woocommerce/assets/banner-772x250.png" alt="SIDRENA WooCommerce — stvarni WordPress.org banner" width="100%"></td>
+</tr>
+</table>
+
 <p align="center">
   <a href="https://brendigo.com/sidrene-cijene/"><strong>Službena stranica</strong></a>
   ·
@@ -110,17 +147,6 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 <tr>
 <td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-5.png" alt="Sidrena WooCommerce — postavke"></td>
 <td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-6.png" alt="Sidrena WooCommerce — pomoć"></td>
-</tr>
-</table>
-
-## Produkcijski identitet i ikone
-
-<table>
-<tr>
-<td align="center"><img src="wporg-assets/sidrena-wordpress/assets/icon-128x128.png" alt="Sidrena WordPress ikona" width="96"><br><strong>WordPress</strong></td>
-<td align="center"><img src="wporg-assets/sidrena-woocommerce/assets/icon-128x128.png" alt="Sidrena WooCommerce ikona" width="96"><br><strong>WooCommerce</strong></td>
-<td align="center"><img src="assets/images/menu-anchor.svg" alt="Sidrena WordPress menu ikona" width="48"><br><strong>WP admin sidro</strong></td>
-<td align="center"><img src="assets/images/app-icon.svg" alt="Sidrena app ikona" width="96"><br><strong>App / WP.org ikona</strong></td>
 </tr>
 </table>
 

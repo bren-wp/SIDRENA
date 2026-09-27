@@ -174,8 +174,13 @@ final class Sidrena_Woo_Import_Export {
 				}
 			}
 		}
-		if ( array_key_exists( 'sidrena_jedinica_pakiranja', $data ) && '' !== trim( (string) $data['sidrena_jedinica_pakiranja'] ) ) {
-			$product->update_meta_data( '_sidrena_quantity_unit', Sidrena_Utils::normalize_unit( $data['sidrena_jedinica_pakiranja'] ) );
+		if ( array_key_exists( 'sidrena_jedinica_pakiranja', $data ) ) {
+			$unit = Sidrena_Utils::normalize_unit( $data['sidrena_jedinica_pakiranja'] );
+			if ( '' === $unit ) {
+				$product->delete_meta_data( '_sidrena_quantity_unit' );
+			} else {
+				$product->update_meta_data( '_sidrena_quantity_unit', $unit );
+			}
 		}
 	}
 

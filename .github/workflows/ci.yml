@@ -84,6 +84,9 @@ jobs:
       - name: WooCommerce edition runtime smoke test
         run: php .github/tests/woocommerce-edition-smoke.php
 
+      - name: WooCommerce import state smoke test
+        run: php .github/tests/woo-import-state-smoke.php
+
       - name: Woo REST flattened pagination smoke test
         run: php .github/tests/rest-woocommerce-pagination-smoke.php
 
@@ -104,6 +107,9 @@ jobs:
 
       - name: Reference admin UI smoke test
         run: php .github/tests/reference-admin-ui-smoke.php
+
+      - name: Main README real-assets smoke test
+        run: php .github/tests/readme-assets-smoke.php
 
       - name: Edition conflict guard smoke tests
         shell: bash

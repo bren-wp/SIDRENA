@@ -1117,14 +1117,19 @@ final class Sidrena_Pricelist {
 		}
 
 		$payload = $json . "\n";
-		$temp    = $paths['manifest'] . '.tmp';
-		$written = file_put_contents( $temp, $payload ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		if ( false === $written || strlen( $payload ) !== $written ) {
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+		$opened  = $this->open_atomic_writer( $paths['manifest'] );
+		if ( is_wp_error( $opened ) ) {
+			return new WP_Error( 'manifest_open', $opened->get_error_message() );
+		}
+		list( $handle, $temp ) = $opened;
+
+		if ( ! $this->write_stream_all( $handle, $payload ) ) {
+			$this->discard_atomic_writer( $handle, $temp );
 			return new WP_Error( 'manifest_write', __( 'Nije moguće zapisati JSON manifest cjenika.', 'sidrena' ) );
 		}
-		if ( ! rename( $temp, $paths['manifest'] ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
-			@unlink( $temp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+
+		$result = $this->commit_atomic_writer( $handle, $temp, $paths['manifest'] );
+		if ( is_wp_error( $result ) ) {
 			return new WP_Error( 'manifest_commit', __( 'Nije moguće atomski objaviti JSON manifest cjenika.', 'sidrena' ) );
 		}
 		return true;

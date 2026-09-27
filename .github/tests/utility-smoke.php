@@ -8,14 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
 
 define( 'ABSPATH', __DIR__ . '/' );
 
@@ -28,8 +20,26 @@ function wp_check_invalid_utf8( $value, $strip = false ) {
 	return (string) $value;
 }
 
+function absint( $value ) {
+	return abs( (int) $value );
+}
+
+function wp_json_encode( $value, $flags = 0 ) {
+	return json_encode( $value, $flags );
+}
+
+function sanitize_key( $value ) {
+	$value = strtolower( (string) $value );
+	return preg_replace( '/[^a-z0-9_\-]/', '', $value );
+}
+
+function sanitize_textarea_field( $value ) {
+	return trim( strip_tags( (string) $value ) );
+}
+
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-audit.php';
 
 function sidrena_assert_same( $expected, $actual, $label ) {
 	if ( $expected !== $actual ) {
@@ -95,5 +105,21 @@ sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculati
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1.234,56' ), 'Croatian thousands/decimal parsing failed.' );
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1,234.56' ), 'International thousands/decimal parsing failed.' );
 sidrena_assert_same( '', Sidrena_Utils::decimal( '1e9999' ), 'Non-finite numeric values must be rejected.' );
+
+$trim_method = new ReflectionMethod( 'Sidrena_Audit', 'trim_bytes' );
+$trim_method->setAccessible( true );
+$trimmed = $trim_method->invoke( null, str_repeat( 'Ž', 30 ), 25 );
+sidrena_assert_same( true, strlen( $trimmed ) <= 25, 'Audit byte trimming exceeded the configured byte budget.' );
+sidrena_assert_same( 1, preg_match( '//u', $trimmed ), 'Audit byte trimming split a UTF-8 character.' );
+
+$context_method = new ReflectionMethod( 'Sidrena_Audit', 'encode_context' );
+$context_method->setAccessible( true );
+$encoded_context = $context_method->invoke( null, array( 'payload' => str_repeat( 'čćžšđ', 5000 ) ) );
+$decoded_context = json_decode( $encoded_context, true );
+sidrena_assert_same( true, is_array( $decoded_context ), 'Truncated audit context must remain valid JSON.' );
+sidrena_assert_same( true, true === ( $decoded_context['truncated'] ?? false ), 'Oversized audit context must expose truncation metadata.' );
+sidrena_assert_same( true, isset( $decoded_context['original_bytes'] ) && $decoded_context['original_bytes'] > strlen( $encoded_context ), 'Audit truncation metadata must retain the original byte size.' );
+sidrena_assert_same( 1, preg_match( '//u', (string) ( $decoded_context['preview'] ?? '' ) ), 'Audit JSON preview must remain valid UTF-8.' );
+sidrena_assert_same( true, strlen( $encoded_context ) <= Sidrena_Audit::MAX_CONTEXT_BYTES, 'Truncated audit context exceeded the configured byte budget.' );
 
 fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );
