@@ -244,6 +244,8 @@ final class Sidrena_Standalone {
 		if ( ! $source_post_id ) {
 			return 0;
 		}
+		// This is a bounded one-row reverse lookup for a unique source/content link.
+		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 		$ids = get_posts(
 			array(
 				'post_type'      => self::POST_TYPE,
@@ -255,6 +257,7 @@ final class Sidrena_Standalone {
 				'no_found_rows'  => true,
 			)
 		);
+		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 		return ! empty( $ids ) ? absint( $ids[0] ) : 0;
 	}
 
