@@ -1532,3 +1532,23 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 		grid-template-columns:1fr;
 	}
 }
+
+
+/* Reference UI finishing invariants. */
+.sidrena-admin-screen .sid-dashboard-metric--purple .sid-dashboard-metric__icon {
+	background:#f1eaff;
+	color:#7c3aed;
+}
+.sidrena-admin-screen .sid-dashboard-metric--purple {
+	border-color:#e5dafb;
+	background:linear-gradient(145deg,#fff,#fbf9ff);
+}
+.sidrena-admin-screen .sid-reference-readiness .sid-health {
+	max-height:255px;
+	overflow:auto;
+	padding-right:3px;
+	scrollbar-gutter:stable;
+}
+.sidrena-admin-screen .sid-reference-readiness .sid-health-row {
+	min-width:0;
+}
