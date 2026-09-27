@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.16
+Stable tag: 1.0.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.16 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.17 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.16.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.17.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,13 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.17 =
+* Hardened stable release-source verification so every release branch must match the current main commit before publication.
+* Preserved valid UTF-8 and JSON structure when local audit messages or context exceed storage limits.
+* Reused the durable atomic writer for the public JSON manifest, including short-write handling and fsync before commit.
+* Added permanent regression coverage for release integrity, audit data integrity, manifest publication, README real assets and Plugin Check workflow resilience.
+* The main README now displays real SIDRENA production logos, icons, WordPress.org banners, brand covers and both runtime screenshot galleries.
 
 = 1.0.16 =
 * Consolidated the production hero and page-head layout into the canonical admin component layer and removed obsolete 1.0.14 override duplication.
