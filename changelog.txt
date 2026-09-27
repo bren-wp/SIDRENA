@@ -6,6 +6,19 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.13 =
+* WordPress i WooCommerce dobili su zasebne dashboard rasporede prema odobrenim SIDRENA referencama, uz isključivo stvarne runtime metrike umjesto demo podataka.
+* WordPress Pregled sada koristi strukturu Brze akcije, Tehnička spremnost, Zdravlje arhive, Lokacije/Poslovnice i Status oznake cijene.
+* WooCommerce Pregled sada koristi strukturu Nedavne promjene cijena, Razumijevanje cijena, Status usklađenosti, Brze radnje, Lokacije i Zadnje objavljeno.
+* Cjenici su preuređeni u Digitalni cjenici prikaz s realnim statusima publikacije, rasporedom, distribucijom/integracijama, javnim previewem i aktualnim datotekama.
+* Stari WooCommerce glavni editor s 13 stupaca zamijenjen je kompaktnom tablicom; napredna SIDRENA polja ostaju dostupna u proširivom detalju svakog stvarnog Woo proizvoda.
+* Novi lokalni reference UI sloj usklađuje navy/cyan WordPress i navy/purple WooCommerce izgled bez vanjskog Tailwind/CDN ovisništva.
+* Dodatno su ispravljeni responsive gridovi, tablice, location forme, akcije i kontrolne širine radi uklanjanja preklapanja na desktop, tablet i mobilnim širinama.
+* CSV/XML upload sada prije slanja u browseru provjerava podržani format i limit od 5 MB, uz zadržanu server-side provjeru.
+* Dodan je reference-admin-ui regression test u glavni CI i admin-polish guard.
+* Stvarni WordPress i WooCommerce wp-admin screenshot pipeline mora ponovno proći JavaScript, overlap, horizontal overflow i form viewport provjere prije objave.
+* Oba plugina podignuta su na 1.0.13.
+
 = 1.0.12 =
 * Javni REST indeks sada iz sourcea vraća kanonski URL https://brendigo.com/sidrene-cijene/ umjesto umirovljene sidrene-cijene.com.hr adrese.
 * Build više ne prepisuje zastarjelu domenu tijekom pakiranja, pa produkcijski source mora biti ispravan prije izrade ZIP-a.
