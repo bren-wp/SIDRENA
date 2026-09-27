@@ -12,6 +12,7 @@ Sidrena changelog
 * WooCommerce Pregled sada koristi strukturu Nedavne promjene cijena, Razumijevanje cijena, Status usklađenosti, Brze radnje, Lokacije i Zadnje objavljeno.
 * Cjenici su preuređeni u Digitalni cjenici prikaz s realnim statusima publikacije, rasporedom, distribucijom/integracijama, javnim previewem i aktualnim datotekama.
 * Stari WooCommerce glavni editor s 13 stupaca zamijenjen je kompaktnom tablicom; napredna SIDRENA polja ostaju dostupna u proširivom detalju svakog stvarnog Woo proizvoda.
+* WordPress katalog koristi isti kompaktni princip: osnovni red s ključnim cijenama i dostupnošću te proširivi detalj za marku, barkod, jedinice, posebnu prodaju i brisanje.
 * Novi lokalni reference UI sloj usklađuje navy/cyan WordPress i navy/purple WooCommerce izgled bez vanjskog Tailwind/CDN ovisništva.
 * Dodatno su ispravljeni responsive gridovi, tablice, location forme, akcije i kontrolne širine radi uklanjanja preklapanja na desktop, tablet i mobilnim širinama.
 * CSV/XML upload sada prije slanja u browseru provjerava podržani format i limit od 5 MB, uz zadržanu server-side provjeru.
