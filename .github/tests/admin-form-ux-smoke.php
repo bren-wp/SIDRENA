@@ -107,4 +107,16 @@ sidrena_form_ux_assert(
 	'Client-side OIB checksum feedback must remain available.'
 );
 
+sidrena_form_ux_assert(
+	false !== strpos( $script, 'function validateFileField(field)' )
+	&& false !== strpos( $script, "message('fileTooLarge'" )
+	&& false !== strpos( $script, "message('invalidFileType'" ),
+	'Client-side upload size/type validation must remain available.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "'fileTooLarge'" )
+	&& false !== strpos( $admin, "'invalidFileType'" ),
+	'Localized upload validation feedback must remain available.'
+);
+
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );
