@@ -52,7 +52,8 @@ foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 
 
 sidrena_support_assert(
 	false !== strpos( $public, '<caption class="sidrena-visually-hidden">' )
-	&& 8 <= substr_count( $public, 'scope="col"' ),
+	&& 8 <= substr_count( $public, 'scope="col"' )
+	&& false !== strpos( $public, '<th scope="row" data-label="' ),
 	'Public price-list table must retain an independent caption and scoped column headers.'
 );
 sidrena_support_assert(
