@@ -43,7 +43,7 @@
 				if (response.ok) {
 					return response.json();
 				}
-				if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+				if ([400, 401, 403, 404, 405, 410, 422, 451].indexOf(response.status) !== -1) {
 					return { html: "" };
 				}
 				return Promise.reject();
