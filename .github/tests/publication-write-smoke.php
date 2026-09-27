@@ -35,10 +35,10 @@ sidrena_publication_write_assert( false === strpos( $method, ".tmp'" ), 'Public 
 sidrena_publication_write_assert( false === strpos( $method, ',"rows":[' ), 'Streaming public snapshot must not build one monolithic JSON rows array.' );
 
 sidrena_publication_write_assert( '' !== $manifest, 'Manifest writer method could not be inspected.' );
-sidrena_publication_write_assert( false !== strpos( $manifest, "open_atomic_writer( $paths['manifest'] )" ), 'Manifest must use the shared unique atomic writer.' );
+sidrena_publication_write_assert( false !== strpos( $manifest, 'open_atomic_writer( $paths[\'manifest\'] )' ), 'Manifest must use the shared unique atomic writer.' );
 sidrena_publication_write_assert( false !== strpos( $manifest, 'write_stream_all( $handle, $payload )' ), 'Manifest must handle short writes through the shared stream helper.' );
-sidrena_publication_write_assert( false !== strpos( $manifest, "commit_atomic_writer( $handle, $temp, $paths['manifest'] )" ), 'Manifest must fsync and atomically commit through the shared writer.' );
+sidrena_publication_write_assert( false !== strpos( $manifest, 'commit_atomic_writer( $handle, $temp, $paths[\'manifest\'] )' ), 'Manifest must fsync and atomically commit through the shared writer.' );
 sidrena_publication_write_assert( false === strpos( $manifest, 'file_put_contents(' ), 'Manifest must not bypass the shared durable atomic writer.' );
-sidrena_publication_write_assert( false === strpos( $manifest, "$paths['manifest'] . '.tmp'" ), 'Manifest must not use a fixed temporary filename.' );
+sidrena_publication_write_assert( false === strpos( $manifest, '$paths[\'manifest\'] . \'.tmp\'' ), 'Manifest must not use a fixed temporary filename.' );
 
 fwrite( STDOUT, "Sidrena atomic publication smoke test passed.\n" );
