@@ -96,6 +96,7 @@ async function assertBrandRuntime(targetPage, route) {
 			logoHeight: logoRect ? logoRect.height : 0,
 			menuWidth: menuRect ? menuRect.width : 0,
 			menuHeight: menuRect ? menuRect.height : 0,
+			visibleSourceLeak: /\/\*\s*translators:|\$anchor_caption|\$published_caption|\bsprintf\s*\(/.test(document.body.innerText || ''),
 		};
 	});
 
@@ -117,6 +118,9 @@ async function assertBrandRuntime(targetPage, route) {
 	if (result.menuWidth > 20.5 || result.menuHeight > 20.5) {
 		throw new Error(`SIDRENA WordPress menu icon is oversized on ${route}: ${JSON.stringify(result)}`);
 	}
+	if (result.visibleSourceLeak) {
+		throw new Error(`SIDRENA PHP/source fragment is visible to administrators on ${route}`);
+	}
 }
 
 async function assertNoKeyOverlaps(targetPage, route) {
@@ -133,7 +137,10 @@ async function assertNoKeyOverlaps(targetPage, route) {
 		const intersects = (a, b) => a && b && Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
 		const pairs = [
 			['.sidrena-brandbar__identity', '.sidrena-brandbar__copy'],
+			['.sidrena-brandbar__logo', '.sidrena-brandbar__copy'],
+			['.sidrena-brandbar__edition', '.sidrena-brandbar__copy'],
 			['.sidrena-brandbar__copy', '.sidrena-brandbar__actions'],
+			['.sidrena-brandbar__edition', '.sidrena-brandbar__actions'],
 		];
 		for (const [aSelector, bSelector] of pairs) {
 			const a = visibleRect(aSelector);
