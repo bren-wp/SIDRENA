@@ -86,6 +86,11 @@ final class Sidrena_Admin {
 					'invalidOib'            => __( 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.', 'sidrena' ),
 					'fileTooLarge'          => __( 'Datoteka je prevelika. Najveća dopuštena veličina je 5 MB.', 'sidrena' ),
 					'invalidFileType'       => __( 'Odaberite podržanu CSV ili XML datoteku.', 'sidrena' ),
+					'newLocation'           => __( 'Nova lokacija', 'sidrena' ),
+					'emptyLocationAddress'  => __( 'Adresa nije upisana', 'sidrena' ),
+					'locationAdded'         => __( 'Nova lokacija je dodana. Unesite podatke i spremite promjene.', 'sidrena' ),
+					'locationRemoved'       => __( 'Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu.', 'sidrena' ),
+					'removeLocationLabel'   => __( 'Ukloni lokaciju %s', 'sidrena' ),
 				)
 			);
 			return;
@@ -1414,8 +1419,17 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-location">
 			<div class="sid-location-head">
-				<div><span class="sid-location-icon dashicons <?php echo 'webshop' === sanitize_key( $kind ) ? 'dashicons-store' : 'dashicons-location'; ?>"></span><strong><?php echo esc_html( $location['code'] ?: __( 'Nova lokacija', 'sidrena' ) ); ?></strong><small><?php echo esc_html( $location['address'] ?: __( 'Adresa nije upisana', 'sidrena' ) ); ?></small></div>
-				<div class="sid-location-actions"><label class="sid-switch"><input class="sid-location-enabled" type="checkbox" name="locations[<?php echo esc_attr( $index ); ?>][enabled]" value="yes" <?php checked( $location['enabled'] ?? '', 'yes' ); ?>><span><?php esc_html_e( 'Aktivna', 'sidrena' ); ?></span></label><button type="button" class="button-link-delete sid-remove-location"><?php esc_html_e( 'Ukloni', 'sidrena' ); ?></button></div>
+				<?php
+				$location_title = $location['code'] ?: __( 'Nova lokacija', 'sidrena' );
+				$location_address = $location['address'] ?: __( 'Adresa nije upisana', 'sidrena' );
+				$remove_label = sprintf(
+					/* translators: %s: location code or fallback title. */
+					__( 'Ukloni lokaciju %s', 'sidrena' ),
+					$location_title
+				);
+				?>
+				<div><span class="sid-location-icon dashicons <?php echo 'webshop' === sanitize_key( $kind ) ? 'dashicons-store' : 'dashicons-location'; ?>"></span><strong class="sid-location-title"><?php echo esc_html( $location_title ); ?></strong><small class="sid-location-address"><?php echo esc_html( $location_address ); ?></small></div>
+				<div class="sid-location-actions"><label class="sid-switch"><input class="sid-location-enabled" type="checkbox" name="locations[<?php echo esc_attr( $index ); ?>][enabled]" value="yes" <?php checked( $location['enabled'] ?? '', 'yes' ); ?>><span><?php esc_html_e( 'Aktivna', 'sidrena' ); ?></span></label><button type="button" class="button-link-delete sid-remove-location" aria-label="<?php echo esc_attr( $remove_label ); ?>"><?php esc_html_e( 'Ukloni', 'sidrena' ); ?></button></div>
 			</div>
 			<div class="sid-fields sid-fields-location">
 				<label><span><?php esc_html_e( 'ID lokacije', 'sidrena' ); ?></span><input type="text" name="locations[<?php echo esc_attr( $index ); ?>][id]" value="<?php echo esc_attr( $location['id'] ?? '' ); ?>" placeholder="zagreb-centar" data-required-when-active <?php echo 'yes' === ( $location['enabled'] ?? '' ) ? 'required aria-required="true"' : 'aria-required="false"'; ?>></label>
