@@ -1584,3 +1584,35 @@ msgstr ""
 msgid "Tehnička spremnost: %d posto"
 msgstr ""
 
+#: includes/class-sidrena-admin.php
+msgid "Sve objavljive stavke imaju aktualnu maloprodajnu cijenu"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Dopunite aktualnu cijenu proizvoda ili usluge prije objave cjenika."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Provjeri javnu dostupnost"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "zadnji pokušaj s upozorenjima"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Nedostaje na jednoj ili više stavki"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Nema nepotpunih aktivnih referenci"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Aktivno sniženje traži provjeru"
+msgstr ""
+
+#: includes/class-sidrena-bulk.php
+msgid "WooCommerce: hidden"
+msgstr ""
+
