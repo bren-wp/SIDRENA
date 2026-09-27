@@ -200,7 +200,7 @@ final class Sidrena_Admin {
 				</div>
 				<div class="sidrena-brandbar__actions">
 					<a href="<?php echo esc_url( $official_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Web stranica', 'sidrena' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><span class="dashicons dashicons-sos"></span><?php esc_html_e( 'Pomoć', 'sidrena' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><span class="dashicons dashicons-editor-help"></span><?php esc_html_e( 'Pomoć', 'sidrena' ); ?></a>
 				</div>
 			</header>
 
@@ -551,11 +551,18 @@ final class Sidrena_Admin {
 	private function wordpress_dashboard( $data ) {
 		$last_ts       = ! empty( $data['last']['generated_at'] ) ? strtotime( (string) $data['last']['generated_at'] ) : 0;
 		$published_pct = $data['total_items'] > 0 ? (int) round( ( $data['anchor_ready'] / $data['total_items'] ) * 100 ) : 0;
+		$anchor_caption = sprintf(
+			/* translators: %d: number of catalog items with an anchor price. */
+			__( '%d sa sidrenom cijenom', 'sidrena' ),
+			$data['anchor_ready']
+		);
+		$published_caption = sprintf(
+			/* translators: 1: number of ready catalog items, 2: total number of catalog items. */
+			__( '%1$d / %2$d stavki', 'sidrena' ),
+			$data['anchor_ready'],
+			$data['total_items']
+		);
 		?>
-		/* translators: %d: number of catalog items with an anchor price. */
-		$anchor_caption = sprintf( __( '%d sa sidrenom cijenom', 'sidrena' ), $data['anchor_ready'] );
-		/* translators: 1: number of ready catalog items, 2: total number of catalog items. */
-		$published_caption = sprintf( __( '%1$d / %2$d stavki', 'sidrena' ), $data['anchor_ready'], $data['total_items'] );
 		<div class="sid-reference-dashboard sid-reference-dashboard--wordpress">
 			<div class="sid-page-head sid-reference-page-head">
 				<div>
@@ -564,7 +571,7 @@ final class Sidrena_Admin {
 					<p><?php esc_html_e( 'Pregled kataloga, objave cjenika, arhive i tehničke spremnosti.', 'sidrena' ); ?></p>
 				</div>
 				<div class="sid-head-inline-actions">
-					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-products"></span><?php esc_html_e( 'Upravljaj katalogom', 'sidrena' ); ?></a>
+					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-list-view"></span><?php esc_html_e( 'Upravljaj katalogom', 'sidrena' ); ?></a>
 					<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><?php esc_html_e( 'Objavi cjenik', 'sidrena' ); ?></a>
 				</div>
 			</div>
