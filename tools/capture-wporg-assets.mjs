@@ -87,7 +87,7 @@ async function assertBrandRuntime(targetPage, route) {
 			styleLoaded: !!styleLink,
 			scriptLoaded: !!adminScript,
 			brandDisplay: brandStyle ? brandStyle.display : '',
-			brandRadius: brandStyle ? parseFloat(brandStyle.borderRadius) || 0 : 0,
+			brandBottomLeftRadius: brandStyle ? parseFloat(brandStyle.borderBottomLeftRadius) || 0 : 0,\n\t\t\tbrandBottomRightRadius: brandStyle ? parseFloat(brandStyle.borderBottomRightRadius) || 0 : 0,
 			brandBackground: brandStyle ? brandStyle.backgroundImage : '',
 			cardRadius: cardStyle ? parseFloat(cardStyle.borderRadius) || 0 : 0,
 			cardBackground: cardStyle ? cardStyle.backgroundColor : '',
@@ -104,7 +104,7 @@ async function assertBrandRuntime(targetPage, route) {
 	if (!result.scriptLoaded) {
 		throw new Error(`SIDRENA admin.js is missing on ${route}`);
 	}
-	if (result.brandDisplay !== 'grid' || result.brandRadius < 10 || !result.brandBackground.includes('brand-hero.svg')) {
+	if (result.brandDisplay !== 'grid' || result.brandBottomLeftRadius < 10 || result.brandBottomRightRadius < 10 || !result.brandBackground.includes('brand-hero.svg')) {
 		throw new Error(`SIDRENA hero styles are not applied on ${route}: ${JSON.stringify(result)}`);
 	}
 	if (result.cardRadius < 8 || result.cardBackground !== 'rgb(255, 255, 255)') {
