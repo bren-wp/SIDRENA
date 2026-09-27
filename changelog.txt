@@ -6,6 +6,18 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.14 =
+* Ispravljen je kritični WordPress dashboard PHP boundary bug zbog kojeg su translators komentari i $anchor_caption/$published_caption izrazi mogli biti vidljivi administratoru kao običan tekst.
+* Hero zaglavlje je stabilizirano za WordPress i WooCommerce izdanje: logo, edition badge, slogan i akcijski gumbi više se ne preklapaju na desktop, tablet i mobilnim širinama.
+* Uklonjeni su zastarjeli 1.0.13 hero overrideovi koji su mogli nadjačati novi production layout; završni responsive sloj sada ima jednu jasnu hijerarhiju.
+* Pomoć i katalog akcije dobile su jasnije Dashicons ikone, a lokacijski gumb Ukloni dobio je sigurnu 38 px hit-area, destruktivni stil i vidljivo focus stanje.
+* WordPress katalog ima usklađeni colspan za kompaktnih šest stupaca, lokalizirane statuse sinkronizacije i ujednačene ikone za sinkronizaciju, uvoz i spremanje.
+* Forme su dodatno ispolirane s ujednačenim visinama inputa, selecta, textarea i akcijskih gumba, jasnim focus/invalid stateovima i boljim responsive rasporedom.
+* Browser QA sada ruši build ako se pojavi vidljivi PHP/source fragment, stvarni hero child overlap, neoznačena forma, premala interaktivna kontrola, horizontalni overflow ili preklapanje ključnih gridova.
+* Source-leak audit kroz production PHP nije pronašao drugi primjer prerano zatvorenog PHP bloka iste vrste.
+* Završni WordPress i WooCommerce wp-admin capture prošao je JavaScript runtime, source-leak, hero/card, overlap, overflow, accessible-label i form-control provjere na 1440, 1180, 782 i 390 px.
+* Oba plugina podignuta su na 1.0.14.
+
 = 1.0.13 =
 * WordPress i WooCommerce dobili su zasebne dashboard rasporede prema odobrenim SIDRENA referencama, uz isključivo stvarne runtime metrike umjesto demo podataka.
 * WordPress Pregled sada koristi strukturu Brze akcije, Tehnička spremnost, Zdravlje arhive, Lokacije/Poslovnice i Status oznake cijene.
