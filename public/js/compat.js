@@ -40,10 +40,13 @@
 			headers: { "Accept": "application/json" }
 		})
 			.then(function (response) {
-				if (!response.ok) {
-					return Promise.reject();
+				if (response.ok) {
+					return response.json();
 				}
-				return response.json();
+				if ([400, 401, 403, 404, 405, 410, 422, 451].indexOf(response.status) !== -1) {
+					return { html: "" };
+				}
+				return Promise.reject();
 			})
 			.then(function (data) {
 				var html = data && typeof data.html === "string" ? data.html : "";
