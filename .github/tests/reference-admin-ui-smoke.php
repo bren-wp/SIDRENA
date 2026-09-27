@@ -128,4 +128,38 @@ sidrena_reference_ui_assert(
 	'Woo public-catalog status must honor native catalog visibility.'
 );
 
+$wordpress_dashboard_start = strpos( $admin, 'private function wordpress_dashboard( $data )' );
+$woocommerce_dashboard_start = strpos( $admin, 'private function woocommerce_dashboard( $data )' );
+sidrena_reference_ui_assert(
+	false !== $wordpress_dashboard_start
+	&& false !== $woocommerce_dashboard_start
+	&& $woocommerce_dashboard_start > $wordpress_dashboard_start,
+	'Unable to isolate the WordPress dashboard renderer.'
+);
+$wordpress_dashboard_source = substr( $admin, $wordpress_dashboard_start, $woocommerce_dashboard_start - $wordpress_dashboard_start );
+$first_php_close = strpos( $wordpress_dashboard_source, '?>' );
+$anchor_assignment = strpos( $wordpress_dashboard_source, '$anchor_caption = sprintf(' );
+$published_assignment = strpos( $wordpress_dashboard_source, '$published_caption = sprintf(' );
+sidrena_reference_ui_assert(
+	false !== $first_php_close
+	&& false !== $anchor_assignment
+	&& false !== $published_assignment
+	&& $anchor_assignment < $first_php_close
+	&& $published_assignment < $first_php_close,
+	'WordPress dashboard captions must be computed inside PHP and must never leak as visible source text.'
+);
+
+sidrena_reference_ui_assert(
+	false === strpos( $style, 'grid-template-columns:minmax(360px,520px) minmax(280px,1fr) auto' )
+	&& false === strpos( $style, 'width:min(430px,100%);' )
+	&& false !== strpos( $style, 'grid-template-columns:minmax(430px,470px) minmax(360px,1fr) max-content' ),
+	'Legacy hero sizing must not override the 1.0.14 production layout.'
+);
+
+sidrena_reference_ui_assert(
+	false !== strpos( $capture, 'visibleSourceLeak' )
+	&& false !== strpos( $capture, "['.sidrena-brandbar__edition', '.sidrena-brandbar__copy']" ),
+	'Real browser capture must detect visible PHP fragments and edition-badge overlap.'
+);
+
 fwrite( STDOUT, "Sidrena reference admin UI smoke test passed.\n" );
