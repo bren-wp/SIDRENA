@@ -192,6 +192,10 @@ jobs:
             node --check "$FILE"
           done < <(find admin public -type f -name '*.js' -print0)
 
+      - name: Woo variation hydration behavior smoke test
+        if: matrix.php == '8.3'
+        run: node .github/tests/woo-compat-hydration-smoke.js
+
       - name: Edition metadata checks
         if: matrix.php == '8.3'
         shell: bash

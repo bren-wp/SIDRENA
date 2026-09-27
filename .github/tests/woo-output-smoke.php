@@ -64,6 +64,9 @@ $product = new WC_Product( 12 );
 $html = Sidrena_Products::instance()->append_reference_prices( '<span class="price">19,99 €</span>', $product );
 $frontend_css = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
+$compat_php = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-compatibility.php' );
+$compat_js  = file_get_contents( dirname( __DIR__, 2 ) . '/public/js/compat.js' );
+
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-reference-prices' ), 'Automatic Woo output must append Sidrena reference wrapper.' );
 sidrena_woo_output_assert( false !== strpos( $html, '29,99 €' ), 'Automatic Woo output must include the entered Sidrena price.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'Cijena na 10.09.2026.' ), 'Default storefront label must identify the Sidrena price and reference date.' );
@@ -72,6 +75,11 @@ sidrena_woo_output_assert( false !== strpos( $html, 'tabindex="0"' ), 'Sidrena t
 sidrena_woo_output_assert( false !== strpos( $html, 'aria-describedby=' ), 'Sidrena tooltip trigger must reference its tooltip with aria-describedby.' );
 sidrena_woo_output_assert( false !== strpos( $frontend_css, '.sidrena-anchor--has-tooltip:focus-visible' ), 'Sidrena tooltip needs a visible keyboard focus state.' );
 sidrena_woo_output_assert( false !== strpos( $frontend_css, 'position: fixed;' ) && false !== strpos( $frontend_css, 'max-width: calc(100vw - 36px);' ), 'Mobile Sidrena tooltip viewport clamp is missing.' );
+
+sidrena_woo_output_assert( false !== strpos( $compat_php, "enable_rest_index" ), 'Woo compatibility hydration must honor the public REST API setting.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'targetsAlreadyHydrated' ), 'Woo compatibility JavaScript must avoid a redundant base-product REST fetch when server-rendered Sidrena markup is already present.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, '!variationMode && targetsAlreadyHydrated' ), 'Variation hydration optimization must only skip redundant base-product requests, not dynamic variation requests.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'hydrate(productId, root, false, true);' ), 'Variation reset must force restoration of the parent product reference markup.' );
 
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );

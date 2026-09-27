@@ -146,6 +146,10 @@ final class Sidrena_Compatibility {
 		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 			return;
 		}
+		$settings = Sidrena_Utils::settings();
+		if ( 'yes' !== ( $settings['enable_rest_index'] ?? 'yes' ) ) {
+			return;
+		}
 		$product_id = get_queried_object_id();
 		if ( ! $product_id ) {
 			return;

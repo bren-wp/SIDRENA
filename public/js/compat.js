@@ -87,6 +87,24 @@
 		existing.outerHTML = html;
 	}
 
+	function targetHasMarkup(target) {
+		if (!target) {
+			return false;
+		}
+		if (target.closest(".sidrena-reference-prices")) {
+			return true;
+		}
+		if (target.querySelector(".sidrena-reference-prices")) {
+			return true;
+		}
+		return !!(target.parentElement && target.parentElement.querySelector(":scope > .sidrena-reference-prices"));
+	}
+
+	function targetsAlreadyHydrated(root, variationMode) {
+		var targets = candidateTargets(root, variationMode);
+		return targets.length > 0 && targets.every(targetHasMarkup);
+	}
+
 	function applyMarkup(html, root, variationMode) {
 		if (!html) {
 			return;
@@ -130,9 +148,12 @@
 		});
 	}
 
-	function hydrate(id, root, variationMode) {
+	function hydrate(id, root, variationMode, force) {
 		id = parseInt(id || 0, 10);
 		if (!id) {
+			return;
+		}
+		if (!force && !variationMode && targetsAlreadyHydrated(root, false)) {
 			return;
 		}
 		fetchMarkup(id).then(function (html) {
@@ -159,7 +180,8 @@
 			$(document).on("reset_data hide_variation", ".variations_form", function (event) {
 				var root = event.currentTarget.closest(".product") || document;
 				activeId = productId;
-				hydrate(productId, root, false);
+				// Reset must restore the parent markup even when variation HTML is still present.
+				hydrate(productId, root, false, true);
 			});
 		}
 

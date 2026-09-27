@@ -1744,3 +1744,11 @@ msgstr ""
 #: includes/class-sidrena-standalone.php
 msgid "marka, barkod, jedinična cijena, posebna prodaja i dostupnost po lokaciji"
 msgstr ""
+
+#: includes/class-sidrena-rest.php
+msgid "Javni REST prikaz cijena je isključen."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Javni indeks i aktualne maloprodajne cijene za automatizirani dohvat u realnom vremenu. Isključivanje također zaustavlja dinamičko WooCommerce builder/variation REST osvježavanje."
+msgstr ""

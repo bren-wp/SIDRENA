@@ -171,6 +171,10 @@ final class Sidrena_REST {
 
 
 	public function display( WP_REST_Request $request ) {
+		if ( ! $this->realtime_enabled() ) {
+			return new WP_Error( 'disabled', __( 'Javni REST prikaz cijena je isključen.', 'sidrena' ), array( 'status' => 404 ) );
+		}
+
 		$raw = strtolower( trim( (string) $request->get_param( 'id' ) ) );
 
 		if ( Sidrena_Utils::is_wordpress_edition() ) {
@@ -240,6 +244,9 @@ final class Sidrena_REST {
 		$total    = 0;
 
 		foreach ( $this->realtime_woocommerce_products() as $product ) {
+			if ( ! $this->has_realtime_location_availability( $product, $location ) ) {
+				continue;
+			}
 			if ( $total >= $offset && count( $items ) < $per_page ) {
 				$items[] = $this->product_item( $product, $location );
 			}
@@ -333,6 +340,15 @@ final class Sidrena_REST {
 			'updated_at'                   => $id ? get_post_modified_time( 'c', true, $id ) : null,
 		);
 	}
+	private function has_realtime_location_availability( $product, $location ) {
+		$kind = sanitize_key( (string) ( $location['kind'] ?? 'objekt' ) );
+		if ( 'webshop' === $kind || empty( $location['id'] ) ) {
+			return true;
+		}
+		$override = Sidrena_Location_Data::get_for_product( $location['id'], $product );
+		return isset( $override['availability'] ) && in_array( $override['availability'], array( 'dostupno', 'nedostupno' ), true );
+	}
+
 	private function product_item( $product, $location ) {
 		$override             = ! empty( $location['id'] ) ? Sidrena_Location_Data::get_for_product( $location['id'], $product ) : array();
 		$has_location_price    = isset( $override['price'] ) && '' !== $override['price'];
@@ -340,6 +356,7 @@ final class Sidrena_REST {
 		$current               = $has_location_price ? Sidrena_Utils::decimal( $override['price'] ) : $product->get_price( 'edit' );
 		$anchor                = $has_location_anchor ? Sidrena_Utils::decimal( $override['anchor_price'] ) : Sidrena_Utils::product_anchor_price( $product->get_id() );
 		$availability          = $override['availability'] ?? '';
+		$location_kind       = sanitize_key( (string) ( $location['kind'] ?? 'objekt' ) );
 
 		// Keep the real-time endpoint aligned with the public CSV/XML cjenik:
 		// WooCommerce base prices follow the shop tax-entry setting, while imported
@@ -350,7 +367,7 @@ final class Sidrena_REST {
 		if ( ! $has_location_anchor && '' !== $anchor && function_exists( 'wc_get_price_including_tax' ) ) {
 			$anchor = wc_get_price_including_tax( $product, array( 'price' => (float) $anchor ) );
 		}
-		if ( ! $availability ) {
+		if ( ! $availability && 'webshop' === $location_kind ) {
 			$availability = $product->is_in_stock() ? 'dostupno' : 'nedostupno';
 		}
 		$sale_name = sanitize_text_field( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' ) );
