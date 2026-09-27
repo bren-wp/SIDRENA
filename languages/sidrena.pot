@@ -1616,3 +1616,35 @@ msgstr ""
 msgid "WooCommerce: hidden"
 msgstr ""
 
+#: includes/class-sidrena-standalone.php
+msgid "Proizvod / usluga"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Status"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Spremno"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "marka, barkod, jedinična cijena i posebna prodaja"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Jedinica pakiranja"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Cijena po jedinici"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Obriši ovaj proizvod"
+msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "Ukloni nespremljeni proizvod"
+msgstr ""
+
