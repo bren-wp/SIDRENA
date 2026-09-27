@@ -248,6 +248,7 @@ final class Sidrena_Products {
 				'options'     => array(
 					'auto'    => __( 'Automatski', 'sidrena' ),
 					'include' => __( 'Uvijek uključi', 'sidrena' ),
+					// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- This is a UI option key, not a query exclusion parameter.
 					'exclude' => __( 'Isključi iz Sidrena cjenika', 'sidrena' ),
 				),
 			)
@@ -436,7 +437,8 @@ final class Sidrena_Products {
 			if ( ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request.
 				continue;
 			}
-			$value = wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request before this hook runs.
+			$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( '' === $value || ( 'exemption' === $type && 'none' === $value ) ) {
 				$product->delete_meta_data( $key );
@@ -468,7 +470,8 @@ final class Sidrena_Products {
 			if ( ! isset( $_POST[ $key ][ $loop ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request.
 				continue;
 			}
-			$value = wp_unslash( $_POST[ $key ][ $loop ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request before this hook runs.
+			$value = sanitize_text_field( wp_unslash( $_POST[ $key ][ $loop ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( '' === $value || ( 'exemption' === $type && 'none' === $value ) ) {
 				delete_post_meta( $variation_id, $key );
