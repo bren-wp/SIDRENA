@@ -27,7 +27,9 @@ function check(condition, message) {
 
 const parentHtml = '<span class="sidrena-reference-prices" data-product="10">parent</span>';
 const variationHtml = '<span class="sidrena-reference-prices" data-product="20">variation</span>';
+const retryVariationHtml = '<span class="sidrena-reference-prices" data-product="30">retry variation</span>';
 let renderedHtml = parentHtml;
+let retryFailedOnce = false;
 const fetches = [];
 const handlers = {};
 
@@ -120,11 +122,22 @@ const sandbox = {
 	fetch(url) {
 		fetches.push(url);
 		const id = Number(String(url).split("/").filter(Boolean).pop());
+		if (30 === id && !retryFailedOnce) {
+			retryFailedOnce = true;
+			return Promise.resolve({
+				ok: false,
+				status: 503,
+				json() {
+					return Promise.resolve({});
+				},
+			});
+		}
 		return Promise.resolve({
 			ok: true,
+			status: 200,
 			json() {
 				return Promise.resolve({
-					html: 20 === id ? variationHtml : parentHtml,
+					html: 20 === id ? variationHtml : (30 === id ? retryVariationHtml : parentHtml),
 				});
 			},
 		});
@@ -176,6 +189,24 @@ async function flushPromises() {
 	await flushPromises();
 
 	check(parentHtml === renderedHtml, "hide_variation must also restore the parent product reference markup.");
+
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 30 }
+	);
+	await flushPromises();
+
+	check(3 === fetches.length && /\/30$/.test(fetches[2]), "First retryable variation request must reach the REST endpoint.");
+	check(parentHtml === renderedHtml, "Transient HTTP failure must leave the previously valid parent markup unchanged.");
+
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 30 }
+	);
+	await flushPromises();
+
+	check(4 === fetches.length && /\/30$/.test(fetches[3]), "Transient HTTP failure must not be cached as a permanent empty result.");
+	check(retryVariationHtml === renderedHtml, "A later successful retry must hydrate the variation markup.");
 
 	process.stdout.write("SIDRENA Woo compatibility hydration behavior smoke test passed.\n");
 })().catch((error) => {
