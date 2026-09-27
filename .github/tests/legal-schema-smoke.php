@@ -202,8 +202,9 @@ sidrena_schema_assert( array() === $validate_service->invoke( $instance, $distan
 
 $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_location_availability' ), 'WordPress edition must retain per-location availability data.' );
-sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'     => ( $has_location_status || 'webshop' === $location_kind ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'     => ( " . '$has_location_status' . " || 'webshop' === " . '$location_kind' . " ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_sale_reference_exemption' ), 'WordPress edition must support product 30-day reference exemptions.' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_expiry_date' ), 'WordPress edition must retain expiry date for perishable/fast-expiry sale exemptions.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "sidrena-expiry" ), 'WordPress public price output must render the saved expiry date for a perishable/fast-expiry sale exemption.' );
 
 fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema and automation smoke test passed.\n" );
