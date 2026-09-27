@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.18
+Stable tag: 1.0.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.18 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.19 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.18.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.19.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,16 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.19 =
+* Separated the current additional/sidrena price, the lowest price in the previous 30 days and the future statutory base-price layer so they are not treated as the same legal concept.
+* Strict publication now blocks incomplete special-sale product/service rows when the 30-day reference is missing; perishable/fast-expiry exemptions require an expiry date and service exceptions remain channel-aware.
+* WooCommerce variations now honor perishable/fast-expiry exemptions inherited from the parent product while physical-location availability remains explicit per location.
+* Public HTML price lists now show available 30-day references, expiry details and service type/scope/cost/replacement-goods information without changing the fixed machine-readable CSV/XML header set.
+* The safe legal profile keeps anchor display, 30-day display and price-history tracking enabled for auditable publication.
+* Added NN 59/2026 future base-price readiness notes for the 17.11.2026 application date without inventing an implementing reference day or product scope that is not yet configured by the implementing rule.
+* Expanded regression coverage for Croatian sale-reference rules, inherited Woo exemptions, stable machine headers and public legal details.
+* The functional code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser capture before this version bump.
 
 = 1.0.18 =
 * Corrected the public WooCommerce text domain to `sidrena-for-woocommerce` across the source entrypoint and production package while retaining the `sidrena-woocommerce` install folder for compatible upgrades.

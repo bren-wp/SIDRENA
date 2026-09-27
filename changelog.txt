@@ -6,6 +6,20 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.19 =
+* Jasno su odvojeni dodatna/sidrena cijena, najniža cijena u prethodnih 30 dana i budući sloj bazne cijene; bazna cijena se ne tretira kao sinonim za sidrenu cijenu.
+* Safe legal profil sada obvezno zadržava prikaz sidrene cijene, prikaz 30-dnevne reference i praćenje povijesti cijena uz postojeći strict publication i failure-notification sloj.
+* Strogi publication preflight blokira proizvod ili uslugu na posebnoj prodaji bez provjerljive 30-dnevne reference; iznimka za lako pokvarljivu robu / robu s kratkim rokom traži i krajnji rok uporabe.
+* Iznimke usluga za oglašavanje, ugovor na daljinu ili izvan poslovnih prostorija ostaju vezane uz webshop/distance kanal i ne zaobilaze 30-dnevnu referencu fizičke poslovnice.
+* WordPress izdanje dobilo je stvarnu dostupnost po aktivnoj fizičkoj lokaciji, evidenciju iznimke i krajnjeg roka uporabe te stroži status “Spremno” usklađen s publication preflightom.
+* WooCommerce varijacije sada pravilno poštuju perishable/fast-expiry iznimku naslijeđenu s parent proizvoda.
+* Javni HTML cjenik sada prikazuje dostupnu 30-dnevnu referencu, krajnji rok uporabe te vrstu, opseg, pripadajuće troškove i ugradbenu/zamjensku robu kod usluga.
+* Strojno čitljivi CSV/XML header skup ostaje stabilan; nova HTML-only pravna pojašnjenja ne predstavljaju se kao dodatni obvezni stupci NN 101/2026.
+* Pravne bilješke i runtime ruleset marker dopunjeni su NN 59/2026 future-state slojem za baznu cijenu s početkom primjene relevantnih stavaka 17.11.2026., bez izmišljanja još neodređenog provedbenog referentnog dana/proizvoda.
+* Dodani su trajni regression testovi za hrvatska pravila posebne prodaje, per-lokacijsku dostupnost, Woo parent iznimke, javne pravne detalje i stabilnost machine-readable sheme.
+* Funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba službena Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture prije verzijskog bumpa.
+* Oba plugina podignuta su na 1.0.19.
+
 = 1.0.18 =
 * Ispravljeni su javni text domaini u oba stvarna produkcijska paketa: WordPress koristi `sidrena`, a WooCommerce `sidrena-for-woocommerce`; instalacijski folderi ostaju `sidrena-wordpress` i `sidrena-woocommerce` radi kompatibilnih nadogradnji.
 * Build sustav više ne pretvara javne text domaine u nazive instalacijskih foldera; WordPress paket zadržava `languages/sidrena.pot`, a WooCommerce generira `languages/sidrena-for-woocommerce.pot` s odgovarajućim X-Domain metapodatkom.
