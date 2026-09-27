@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.19
+Stable tag: 1.0.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.19 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.20 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.19.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.20.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,12 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.20 =
+* The public REST display endpoint now honors the SIDRENA REST toggle instead of remaining available when public REST output is intentionally disabled.
+* Shared REST/public safeguards and regression coverage were tightened before packaging both editions.
+* Production packages and release metadata remain aligned with the verified 1.0.20 source.
+* The functional 1.0.20 code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser QA before this version bump.
 
 = 1.0.19 =
 * Separated the current additional/sidrena price, the lowest price in the previous 30 days and the future statutory base-price layer so they are not treated as the same legal concept.

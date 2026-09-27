@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.19
+Stable tag: 1.0.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.19 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.20 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.19.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.20.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,15 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.20 =
+* Public REST display hydration now honors the SIDRENA REST toggle and does not enqueue the compatibility REST layer when public REST output is disabled.
+* Physical-location REST output no longer falls back to global WooCommerce stock when an explicit per-location availability value is missing; webshop output may still use the global stock fallback.
+* Woo REST pagination totals now count the actual public rows available for the requested channel instead of counting variable parents or unavailable physical-location rows incorrectly.
+* Storefront hydration skips redundant base-product REST requests when server-rendered SIDRENA markup is already present, while selected variations still hydrate dynamically.
+* HTTP 408/409/425/429, 5xx, network and JSON failures remain retryable and keep the last valid markup visible; explicitly permanent client statuses are negative-cached to prevent repeated REST traffic for removed/non-public variations.
+* Browser-like Node regression coverage verifies transient 503 recovery, permanent 404 negative caching and HTTP 408 timeout recovery.
+* The functional 1.0.20 code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser QA before this version bump.
 
 = 1.0.19 =
 * Separated the current additional/sidrena price, the lowest price in the previous 30 days and the future statutory base-price layer so they are not treated as the same legal concept.
