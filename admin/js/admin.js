@@ -206,8 +206,14 @@
 		var removeStandalone = closest(target, '.sidrena-remove-standalone');
 		if (removeStandalone) {
 			event.preventDefault();
-			var standaloneRow = closest(removeStandalone, '.sidrena-standalone-row');
+			var detailsRow = closest(removeStandalone, '.sid-standalone-details-row');
+			var standaloneRow = detailsRow && detailsRow.previousElementSibling && detailsRow.previousElementSibling.matches('.sidrena-standalone-row')
+				? detailsRow.previousElementSibling
+				: closest(removeStandalone, '.sidrena-standalone-row');
 			if (standaloneRow && window.confirm(message('removeUnsavedProduct', 'Ukloniti ovaj nespremljeni proizvod?'))) {
+				if (detailsRow) {
+					detailsRow.remove();
+				}
 				standaloneRow.remove();
 				syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 				var addStandaloneButton = document.getElementById('sidrena-add-standalone');
