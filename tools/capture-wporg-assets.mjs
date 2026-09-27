@@ -144,6 +144,35 @@ async function assertNoKeyOverlaps(targetPage, route) {
 			const b = visibleRect('.sid-location-actions', head);
 			if (intersects(a, b)) overlaps.push(['.sid-location-head identity', '.sid-location-actions']);
 		}
+
+		const gridSelectors = [
+			'.sid-reference-metrics',
+			'.sid-reference-action-grid',
+			'.sid-reference-grid',
+			'.sid-reference-files-grid',
+			'.sid-fields-location',
+			'.sid-row-details__grid',
+		];
+		for (const selector of gridSelectors) {
+			for (const grid of document.querySelectorAll(selector)) {
+				const children = Array.from(grid.children).filter((node) => {
+					const style = window.getComputedStyle(node);
+					const rect = node.getBoundingClientRect();
+					return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 2 && rect.height > 2;
+				});
+				for (let i = 0; i < children.length; i += 1) {
+					const aRect = children[i].getBoundingClientRect();
+					const a = { left: aRect.left, top: aRect.top, right: aRect.right, bottom: aRect.bottom };
+					for (let j = i + 1; j < children.length; j += 1) {
+						const bRect = children[j].getBoundingClientRect();
+						const b = { left: bRect.left, top: bRect.top, right: bRect.right, bottom: bRect.bottom };
+						if (intersects(a, b)) {
+							overlaps.push([selector + ' child ' + i, selector + ' child ' + j]);
+						}
+					}
+				}
+			}
+		}
 		return overlaps;
 	});
 	if (result.length) {
