@@ -108,6 +108,9 @@ jobs:
       - name: Reference admin UI smoke test
         run: php .github/tests/reference-admin-ui-smoke.php
 
+      - name: Main README real-assets smoke test
+        run: php .github/tests/readme-assets-smoke.php
+
       - name: Edition conflict guard smoke tests
         shell: bash
         run: |
