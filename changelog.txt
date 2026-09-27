@@ -6,6 +6,18 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.15 =
+* Admin tablice dobile su skrivene čitljive naslove, scope="col" zaglavlja i jasnu semantiku akcijskog stupca za čitače zaslona.
+* Gumbi Otvori uz generirane datoteke dobili su kontekstualne aria-label oznake s nazivom konkretne datoteke.
+* Kartice Lokacija sada uživo osvježavaju oznaku i adresu tijekom unosa, najavljuju dodavanje/uklanjanje te nakon brisanja vraćaju fokus na najbližu preostalu lokaciju.
+* Gumb Ukloni lokaciju ima kontekstualnu pristupačnu oznaku koja se ažurira zajedno s oznakom lokacije.
+* Javni cjenik koristi scope="col" zaglavlja i scope="row" naziv proizvoda/usluge, uz lokalnu sidrena-visually-hidden klasu neovisnu o aktivnoj WordPress temi.
+* Javni cjenik usluga dobio je vlastiti pristupačni caption uz postojeća row/column zaglavlja.
+* POT katalog dopunjen je svim novim accessibility i dinamičkim lokacijskim stringovima; translators komentar za placeholder provjeren je službenim Plugin Checkom.
+* Dodani su trajni regression guardovi za admin tablice, javne tablice, dinamičke Lokacije, fokus i frontend screen-reader utility.
+* Funkcionalni 1.0.15 kod prije verzijskog bumpa prošao je CI, admin-polish, distribution, legal, oba Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture.
+* Oba plugina podignuta su na 1.0.15.
+
 = 1.0.14 =
 * Ispravljen je kritični WordPress dashboard PHP boundary bug zbog kojeg su translators komentari i $anchor_caption/$published_caption izrazi mogli biti vidljivi administratoru kao običan tekst.
 * Hero zaglavlje je stabilizirano za WordPress i WooCommerce izdanje: logo, edition badge, slogan i akcijski gumbi više se ne preklapaju na desktop, tablet i mobilnim širinama.

@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.14</h1>
+<h1 align="center">SIDRENA 1.0.15</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -124,11 +124,11 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.14 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.15 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.14
+## Zašto SIDRENA 1.0.15
 
-**SIDRENA 1.0.14** prenosi odobreni vizualni smjer iz referentnih SIDRENA prikaza u stvarno WordPress administratorsko sučelje, bez demo podataka i bez paralelnog WooCommerce kataloga.
+**SIDRENA 1.0.15** prenosi odobreni vizualni smjer iz referentnih SIDRENA prikaza u stvarno WordPress administratorsko sučelje, bez demo podataka i bez paralelnog WooCommerce kataloga.
 
 Izdanje 1.0.14 donosi:
 
@@ -202,13 +202,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.14 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.15 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.14.zip`
-- `sidrena-woocommerce-1.0.14.zip`
+- `sidrena-wordpress-1.0.15.zip`
+- `sidrena-woocommerce-1.0.15.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 

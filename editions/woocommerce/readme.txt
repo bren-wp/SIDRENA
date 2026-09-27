@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.14
+Stable tag: 1.0.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.14 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.15 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.14.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.15.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,16 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.15 =
+* Added screen-reader captions and scoped column headers to SIDRENA admin data tables.
+* Generated price-list file actions now expose contextual accessible labels instead of repeating an ambiguous “Open” action.
+* Dynamic location cards update their title and address while editing, announce add/remove changes and restore focus to the nearest remaining location.
+* Public price lists now use scoped column and row headers plus a local theme-independent visually-hidden utility.
+* The public services table now includes its own accessible caption.
+* Added all new accessibility and dynamic-location strings to the shipped translation catalog.
+* Added permanent regression coverage for admin/public table semantics, dynamic location UX and frontend accessibility utilities.
+* Real WordPress and WooCommerce admin captures passed the functional 1.0.15 UI/runtime checks before the version bump.
 
 = 1.0.14 =
 * Rebuilt the WordPress and WooCommerce dashboards as edition-specific SIDRENA interfaces based on the approved visual references, while keeping all metrics tied to real runtime data.
