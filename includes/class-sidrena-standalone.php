@@ -675,7 +675,34 @@ final class Sidrena_Standalone {
 		$location_availability = $meta( '_sidrena_standalone_location_availability' );
 		$location_availability = is_array( $location_availability ) ? $location_availability : array();
 		$locations             = Sidrena_Utils::locations();
-		$row_ready    = $id && '' !== Sidrena_Utils::decimal( $current ) && '' !== Sidrena_Utils::decimal( $anchor );
+		$lowest_30            = Sidrena_Utils::decimal( $meta( '_sidrena_standalone_lowest_30' ) );
+		$sale_name            = trim( (string) $meta( '_sidrena_standalone_sale_name' ) );
+		$physical_locations_ready = true;
+		foreach ( $locations as $location ) {
+			if ( 'yes' !== ( $location['enabled'] ?? '' ) || 'webshop' === sanitize_key( (string) ( $location['kind'] ?? 'objekt' ) ) ) {
+				continue;
+			}
+			$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+			if ( ! $location_id || ! isset( $location_availability[ $location_id ] ) || ! in_array( $location_availability[ $location_id ], array( 'dostupno', 'nedostupno' ), true ) ) {
+				$physical_locations_ready = false;
+				break;
+			}
+		}
+		$sale_reference_ready = true;
+		if ( $sale_name ) {
+			$sale_reference_ready = '' !== $lowest_30;
+			if ( in_array( $reference_exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
+				$sale_reference_ready = (bool) $expiry_date;
+			}
+		}
+		$row_ready = $id
+			&& '' !== Sidrena_Utils::decimal( $current )
+			&& '' !== Sidrena_Utils::decimal( $anchor )
+			&& '' !== trim( (string) $meta( '_sidrena_standalone_code' ) )
+			&& '' !== trim( (string) $meta( '_sidrena_standalone_brand' ) )
+			&& 'review' !== $status
+			&& $physical_locations_ready
+			&& $sale_reference_ready;
 		?>
 		<tr class="sidrena-standalone-row" data-sidrena-row-key="<?php echo esc_attr( $key ); ?>">
 			<td>
@@ -697,7 +724,7 @@ final class Sidrena_Standalone {
 		<tr class="sid-standalone-details-row" data-sidrena-details-for="<?php echo esc_attr( $key ); ?>">
 			<td colspan="6">
 				<details class="sid-row-details">
-					<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'marka, barkod, jedinična cijena i posebna prodaja', 'sidrena' ); ?></span></summary>
+					<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'marka, barkod, jedinična cijena, posebna prodaja i dostupnost po lokaciji', 'sidrena' ); ?></span></summary>
 					<div class="sid-row-details__grid sid-row-details__grid--wordpress">
 						<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][brand]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_brand' ) ); ?>"></label>
 						<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][barcode]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_barcode' ) ); ?>"></label>
