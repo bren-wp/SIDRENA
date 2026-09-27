@@ -30,6 +30,7 @@ const variationHtml = '<span class="sidrena-reference-prices" data-product="20">
 const retryVariationHtml = '<span class="sidrena-reference-prices" data-product="30">retry variation</span>';
 let renderedHtml = parentHtml;
 let retryFailedOnce = false;
+let timeoutFailedOnce = false;
 const fetches = [];
 const handlers = {};
 
@@ -141,12 +142,22 @@ const sandbox = {
 				},
 			});
 		}
+		if (50 === id && !timeoutFailedOnce) {
+			timeoutFailedOnce = true;
+			return Promise.resolve({
+				ok: false,
+				status: 408,
+				json() {
+					return Promise.resolve({});
+				},
+			});
+		}
 		return Promise.resolve({
 			ok: true,
 			status: 200,
 			json() {
 				return Promise.resolve({
-					html: 20 === id ? variationHtml : (30 === id ? retryVariationHtml : parentHtml),
+					html: 20 === id ? variationHtml : (30 === id ? retryVariationHtml : (50 === id ? retryVariationHtml : parentHtml)),
 				});
 			},
 		});
@@ -235,6 +246,23 @@ async function flushPromises() {
 	await flushPromises();
 
 	check(beforePermanentFailure + 1 === fetches.length, "Permanent 4xx REST result must be negative-cached instead of refetched on repeated hydration.");
+
+	const beforeTimeout = fetches.length;
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 50 }
+	);
+	await flushPromises();
+
+	check(beforeTimeout + 1 === fetches.length && /\/50$/.test(fetches[fetches.length - 1]), "HTTP 408 variation request must reach REST.");
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 50 }
+	);
+	await flushPromises();
+
+	check(beforeTimeout + 2 === fetches.length, "HTTP 408 must remain retryable instead of being negative-cached.");
+	check(retryVariationHtml === renderedHtml, "A successful retry after HTTP 408 must restore variation markup.");
 
 	process.stdout.write("SIDRENA Woo compatibility hydration behavior smoke test passed.\n");
 })().catch((error) => {
