@@ -559,6 +559,8 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 }
 .sidrena-admin-screen .sid-page-head {
 	margin:3px 0 15px;
+	align-items:flex-end;
+	gap:22px;
 }
 .sidrena-admin-screen .sid-page-head h2 {
 	font-size:28px;
@@ -655,7 +657,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	grid-template-rows:auto auto;
 	align-items:center;
 	gap:2px 9px;
-	min-height:112px;
+	min-height:104px;
 	padding:12px;
 	border:1px solid #dce8f3;
 	border-radius:10px;
@@ -1340,7 +1342,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	display:flex;
 	align-items:center;
 	gap:7px;
-	min-height:38px;
+	min-height:42px;
 	padding:8px 10px;
 	color:#34516f;
 	font-size:10px;
@@ -1419,9 +1421,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	padding:11px 13px;
 	border-top:1px solid #e3ebf2;
 	background:#f8fbfe;
-}
-.sidrena-admin-screen .sid-standalone-table {
-	min-width:1320px;
 }
 .sidrena-admin-screen .sid-standalone-table td {
 	background:#fff;
@@ -1702,10 +1701,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	padding:8px 14px;
 	white-space:nowrap;
 }
-.sidrena-admin-screen .sid-page-head {
-	align-items:flex-end;
-	gap:22px;
-}
 .sidrena-admin-screen .sid-page-head>div:first-child {
 	min-width:0;
 }
@@ -1744,9 +1739,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 .sidrena-admin-screen .sid-standalone-import {
 	scroll-margin-top:48px;
 }
-.sidrena-admin-screen .sid-reference-action {
-	min-height:104px;
-}
 .sidrena-admin-screen .sid-reference-action strong {
 	line-height:1.25;
 }
@@ -1759,9 +1751,6 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	height:16px;
 	font-size:16px;
 	line-height:16px;
-}
-.sidrena-admin-screen .sid-row-details summary {
-	min-height:42px;
 }
 .sidrena-admin-screen .sid-row-details__grid label>span,
 .sidrena-admin-screen .sid-fields label>span,
