@@ -14,6 +14,8 @@ Sidrena changelog
 * Konsolidirane su canonical vrijednosti quick-action visine, button paddinga, location layouta, form-label line-heighta i standalone form stylinga bez promjene funkcionalnosti.
 * Dodani su regression guardovi za canonical CSS vrijednosti i lifecycle form live-regiona.
 * Funkcionalni WordPress i WooCommerce kod prije verzijskog bumpa prošao je CI, admin-polish, distribution, legal, oba Plugin Check izdanja i stvarni browser capture.
+* P2 review nalaz za live-region timing je zatvoren: prazna status regija više ne koristi display:none, ostaje u accessibility treeju kroz visually-hidden tretman, a browser QA provjerava computed display/visibility prije prve poruke.
+* Završni versioned 1.0.16 WordPress i WooCommerce capture nakon tog popravka prošao je runtime JavaScript, live-region, overlap, overflow i form-control provjere te generirao svježe WordPress.org screenshotove.
 * Oba plugina podignuta su na 1.0.16.
 
 = 1.0.15 =
