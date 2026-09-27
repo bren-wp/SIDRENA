@@ -54,10 +54,11 @@ final class Sidrena_Bulk {
 				'paginate' => true,
 			)
 		);
-		$result = $query->get_products();
-		$items  = is_object( $result ) && isset( $result->products ) ? $result->products : array();
-		$pages  = is_object( $result ) && isset( $result->max_num_pages ) ? max( 1, absint( $result->max_num_pages ) ) : 1;
-		$total  = is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items );
+		$result        = $query->get_products();
+		$items         = is_object( $result ) && isset( $result->products ) ? $result->products : array();
+		$pages         = is_object( $result ) && isset( $result->max_num_pages ) ? max( 1, absint( $result->max_num_pages ) ) : 1;
+		$total         = is_object( $result ) && isset( $result->total ) ? absint( $result->total ) : count( $items );
+		$product_types = function_exists( 'wc_get_product_types' ) ? wc_get_product_types() : array();
 		$product_count_caption = sprintf(
 			/* translators: %d: total number of WooCommerce products. */
 			_n( '%d proizvod', '%d proizvoda', $total, 'sidrena' ),
@@ -76,7 +77,7 @@ final class Sidrena_Bulk {
 				<h2><?php esc_html_e( 'WooCommerce proizvodi', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Sidrena koristi postojeći WooCommerce katalog kao izvor istine. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
 			</div>
-			<div class="sid-head-inline-actions"><span class="sid-status-pill is-ok"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori WooCommerce proizvode', 'sidrena' ); ?></a></div>
+			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori WooCommerce proizvode', 'sidrena' ); ?></a></div>
 		</div>
 
 		<section class="sid-card sid-reference-panel sid-woo-catalog-summary">
@@ -116,17 +117,19 @@ final class Sidrena_Bulk {
 						$visibility         = get_post_meta( $id, '_sidrena_cjenik_visibility', true ) ?: 'auto';
 						$catalog_visibility = is_callable( array( $product, 'get_catalog_visibility' ) ) ? $product->get_catalog_visibility() : 'visible';
 						$public_included    = 'include' === $visibility || ( 'exclude' !== $visibility && 'hidden' !== $catalog_visibility );
-						$sku         = $product->get_sku();
-						$price       = $product->get_price();
+						$sku                = $product->get_sku();
+						$price              = $product->get_price();
+						$product_type        = sanitize_key( $product->get_type() );
+						$product_type_label  = isset( $product_types[ $product_type ] ) ? $product_types[ $product_type ] : $product_type;
 						?>
 						<tr class="sid-woo-product-row">
-							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product->get_type() ); ?></span></td>
+							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product_type_label ); ?></span></td>
 							<td><code><?php echo esc_html( $sku ?: '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
 							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
 							<td><?php if ( 'ready' === ( $reference['status'] ?? '' ) && '' !== ( $reference['price'] ?? '' ) ) : ?><strong><?php echo esc_html( Sidrena_Utils::money( $reference['price'] ) . ' €' ); ?></strong><?php elseif ( 'incomplete' === ( $reference['status'] ?? '' ) ) : ?><span class="sid-status-pill is-warn"><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></span><?php else : ?>—<?php endif; ?></td>
-							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span><?php if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) : ?><small class="sid-cell-sub"><?php esc_html_e( 'WooCommerce: hidden', 'sidrena' ); ?></small><?php endif; ?></td>
+							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span><?php if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) : ?><small class="sid-cell-sub"><?php esc_html_e( 'WooCommerce: skriveno', 'sidrena' ); ?></small><?php endif; ?></td>
 						</tr>
 						<tr class="sid-woo-product-details-row">
 							<td colspan="7">
@@ -141,7 +144,7 @@ final class Sidrena_Bulk {
 										<label><span><?php esc_html_e( 'Količina', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>"></label>
 										<label><span><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][quantity_unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity_unit', true ) ); ?>" placeholder="g / kg / ml / l"></label>
 										<label><span><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit', true ) ); ?>" placeholder="kg / l / m"></label>
-										<label><span><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][unit_price]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit_price', true ) ); ?>" placeholder="<?php esc_attr_e( 'auto', 'sidrena' ); ?>"></label>
+										<label><span><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][unit_price]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit_price', true ) ); ?>" placeholder="<?php esc_attr_e( 'automatski', 'sidrena' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Javni cjenik', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][cjenik_visibility]"><option value="auto" <?php selected( $visibility, 'auto' ); ?>><?php esc_html_e( 'Automatski', 'sidrena' ); ?></option><option value="include" <?php selected( $visibility, 'include' ); ?>><?php esc_html_e( 'Uvijek uključi', 'sidrena' ); ?></option><option value="exclude" <?php selected( $visibility, 'exclude' ); ?>><?php esc_html_e( 'Isključi', 'sidrena' ); ?></option></select></label>
 									</div>
 								</details>
