@@ -41,7 +41,7 @@
 		})
 			.then(function (response) {
 				if (!response.ok) {
-					return "";
+					return Promise.reject();
 				}
 				return response.json();
 			})
