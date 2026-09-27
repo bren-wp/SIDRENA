@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.17
+Stable tag: 1.0.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.17 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.18 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.17.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.18.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -75,8 +75,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Changelog ==
 
+= 1.0.18 =
+* Corrected the public WooCommerce text domain to `sidrena-for-woocommerce` across the source entrypoint and production package while retaining the `sidrena-woocommerce` install folder for compatible upgrades.
+* Updated the package builder so WooCommerce ships `languages/sidrena-for-woocommerce.pot` with matching X-Domain metadata.
+* Strict Plugin Check now validates the WooCommerce package against the public `sidrena-for-woocommerce` slug instead of the install-folder alias.
+* Distribution, package-entrypoint and CI regression guards now fail if the old install-folder alias returns as the public text domain.
+* The corrected production-shaped package passed PHP 7.4/8.3/8.4 CI, distribution guards, strict WooCommerce Plugin Check and real wp-admin browser capture before this release bump.
+
 = 1.0.17 =
-* Aligned the WooCommerce package with the public `sidrena-for-woocommerce` text domain expected by WordPress Plugin Check while keeping the existing install folder for upgrade compatibility.
 * Hardened stable release-source verification so every release branch must match the current main commit before publication.
 * Preserved valid UTF-8 and JSON structure when local audit messages or context exceed storage limits.
 * Reused the durable atomic writer for the public JSON manifest, including short-write handling and fsync before commit.

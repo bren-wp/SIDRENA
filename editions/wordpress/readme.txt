@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.17
+Stable tag: 1.0.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.17 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.18 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.17.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.18.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,8 +74,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 
 == Changelog ==
 
+= 1.0.18 =
+* Corrected the public WordPress text domain to `sidrena` in the source entrypoint and production package while retaining the `sidrena-wordpress` install folder for compatible upgrades.
+* Updated the package builder so the WordPress edition keeps `languages/sidrena.pot` with matching X-Domain metadata.
+* Strict Plugin Check now validates the WordPress package against the public `sidrena` slug instead of the install-folder alias.
+* Distribution, package-entrypoint and CI regression guards now fail if the old install-folder alias returns as the public text domain.
+* The corrected production-shaped package passed PHP 7.4/8.3/8.4 CI, distribution guards, strict WordPress Plugin Check and real wp-admin browser capture before this release bump.
+
 = 1.0.17 =
-* Aligned the WordPress package with the public `sidrena` text domain expected by WordPress Plugin Check while keeping the existing install folder for upgrade compatibility.
 * Hardened stable release-source verification so every release branch must match the current main commit before publication.
 * Preserved valid UTF-8 and JSON structure when local audit messages or context exceed storage limits.
 * Reused the durable atomic writer for the public JSON manifest, including short-write handling and fsync before commit.

@@ -6,8 +6,18 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.18 =
+* Ispravljeni su javni text domaini u oba stvarna produkcijska paketa: WordPress koristi `sidrena`, a WooCommerce `sidrena-for-woocommerce`; instalacijski folderi ostaju `sidrena-wordpress` i `sidrena-woocommerce` radi kompatibilnih nadogradnji.
+* Build sustav više ne pretvara javne text domaine u nazive instalacijskih foldera; WordPress paket zadržava `languages/sidrena.pot`, a WooCommerce generira `languages/sidrena-for-woocommerce.pot` s odgovarajućim X-Domain metapodatkom.
+* Redovni i release Plugin Check workflowi sada koriste javne WordPress slugove `sidrena` i `sidrena-for-woocommerce`, pa interni CI više ne može sakriti TextDomainMismatch problem provjerom pogrešnog sluga.
+* CI, distribution guard i package-entrypoint regression testovi trajno provjeravaju ispravne header domaine i POT datoteke za oba izdanja.
+* Ispravljen je distribution guard koji je nakon promjene domena još očekivao stare install-folder aliase.
+* Ispravljena je privremeno oštećena CI YAML definicija nastala tijekom patchanja; workflow je obnovljen iz zadnje zelene main definicije i ponovno prošao cijelu PHP 7.4/8.3/8.4 matricu.
+* Oba produkcijski oblikovana paketa prošla su strogi službeni Plugin Check s javnim slugovima te stvarni WordPress i WooCommerce browser capture prije verzijskog bumpa.
+* Nakon verzijskog bumpa ponovno su snimljeni i commitani stvarni WordPress i WooCommerce 1.0.18 screenshotovi za glavni README, dokumentaciju i WordPress.org assete.
+* 1.0.18 se objavljuje kao novo izdanje jer je v1.0.17 već bio javno objavljen prije ovog hotfixa; postojeći tag i release nisu prepisivani.
+
 = 1.0.17 =
-* Ispravljeni su javni WordPress text domaini: WordPress izdanje koristi `sidrena`, a WooCommerce izdanje `sidrena-for-woocommerce`; instalacijski folderi ostaju nepromijenjeni radi kompatibilnih nadogradnji.
 * Svi stabilni release/* branchovi sada moraju pokazivati na trenutačni main commit prije objave izdanja.
 * Audit poruke režu se UTF-8 sigurno, a preveliki audit context ostaje valjan JSON s oznakom skraćivanja i izvornom veličinom.
 * JSON manifest javnog cjenika prebačen je na postojeći jedinstveni durable atomic writer sa short-write provjerom i fsync korakom.

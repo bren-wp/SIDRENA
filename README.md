@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.17</h1>
+<h1 align="center">SIDRENA 1.0.18</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,24 +150,22 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.17 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.18 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.17
+## Zašto SIDRENA 1.0.18
 
-**SIDRENA 1.0.17** dodatno učvršćuje integritet objave, lokalnog audita, WooCommerce uvoza i release procesa, uz glavni README koji sada prikazuje stvarne produkcijske vizuale i runtime screenshotove.
+**SIDRENA 1.0.18** je korektivno izdanje za oba plugina koje popravlja WordPress.org i18n identitet bez promjene instalacijskih foldera, podataka ili postojećeg upgrade puta.
 
-Izdanje 1.0.17 donosi:
+Izdanje 1.0.18 donosi:
 
-- WordPress paket koristi javni text domain `sidrena`, a WooCommerce paket `sidrena-for-woocommerce`; Plugin Check i release gateovi sada provjeravaju upravo te javne slugove, dok instalacijski folderi ostaju kompatibilni sa starijim nadogradnjama
-- svaki stabilni `release/*` branch mora pokazivati na trenutačni `main` commit prije objave, čime se sprječava slučajno izdavanje zastarjelog koda
-- audit zapis više ne reže UTF-8 tekst usred znaka, a preveliki audit context ostaje valjan JSON s eksplicitnim podacima o skraćivanju
-- javni JSON manifest koristi isti jedinstveni durable atomic-writer sloj kao CSV/XML i javni snapshot, uključujući short-write provjeru i fsync prije zamjene datoteke
-- WooCommerce CSV uvoz eksplicitno prazne jedinice pakiranja sada uklanja stari meta podatak umjesto ostavljanja zastarjelog stanja
-- glavni README izravno prikazuje stvarne SIDRENA logotipe, ikone, WordPress.org bannere, plugin-cover vizuale i obje runtime screenshot galerije
-- dodan je trajni CI guard koji ruši build ako se stvarni README brand/runtime asseti uklone ili putanje više ne postoje
-- Plugin Check na `polish/*` granama više ne pokreće duplicirani push i pull-request run; build i oba edition checka imaju definirane timeout granice
-- dodani su trajni regression testovi za release-source integritet, audit UTF-8/JSON obradu, atomic manifest, Woo import state, README real-assets pravilo i Plugin Check workflow politiku
-- funkcionalni 1.0.17 kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture prije završnog verzijskog bumpa
+- WordPress paket koristi javni text domain `sidrena`, a WooCommerce paket `sidrena-for-woocommerce`, točno prema javnim WordPress slugovima
+- instalacijski folderi i ZIP nazivi ostaju `sidrena-wordpress` i `sidrena-woocommerce`, pa ručna nadogradnja i postojeće instalacije nastavljaju koristiti iste direktorije
+- build više ne prepisuje javni text domain u install-folder alias; WordPress zadržava `languages/sidrena.pot`, a WooCommerce generira `languages/sidrena-for-woocommerce.pot` s usklađenim X-Domain metapodatkom
+- redovni i release Plugin Check workflowi provjeravaju javne slugove `sidrena` i `sidrena-for-woocommerce`, pa se TextDomainMismatch više ne može sakriti provjerom pogrešnog aliasa
+- CI, distribution guard i package-entrypoint smoke test trajno provjeravaju header domaine, POT nazive i X-Domain vrijednosti za oba produkcijska paketa
+- distribution guard je usklađen s novim domenama bez slabljenja ZIP, sigurnosnih, branding ili size provjera
+- oba produkcijski oblikovana paketa prošla su PHP 7.4/8.3/8.4 CI, distribution/legal/admin guardove, službeni Plugin Check i stvarni WordPress/WooCommerce browser capture na mainu prije 1.0.18 verzijskog bumpa
+- postojeći javni `v1.0.17` tag/release nije prepisan; ispravci se isporučuju kroz novo, slijedno izdanje 1.0.18
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -228,13 +226,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.17 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.18 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.17.zip`
-- `sidrena-woocommerce-1.0.17.zip`
+- `sidrena-wordpress-1.0.18.zip`
+- `sidrena-woocommerce-1.0.18.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
