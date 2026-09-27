@@ -74,7 +74,7 @@ async function assertBrandRuntime(targetPage, route) {
 		);
 		const brandbar = document.querySelector('.sidrena-brandbar');
 		const logo = document.querySelector('.sidrena-brandbar__logo');
-		const card = document.querySelector('.sid-reference-panel, .sid-settings-section.sid-card, .sid-source-sync.sid-card, .sid-bulk-card.sid-card, .sid-standalone-import.sid-card');
+		const card = document.querySelector('.sid-reference-panel, .sid-settings-section.sid-card, .sid-source-sync.sid-card, .sid-bulk-card.sid-card, .sid-standalone-import.sid-card, .sid-tool-card.sid-card, .sid-contact-card.sid-card, .sid-location');
 		const menuIcon = document.querySelector('#adminmenu .toplevel_page_sidrena .wp-menu-image img');
 
 		const read = (node) => node ? window.getComputedStyle(node) : null;
