@@ -207,4 +207,10 @@ sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalon
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_expiry_date' ), 'WordPress edition must retain expiry date for perishable/fast-expiry sale exemptions.' );
 sidrena_schema_assert( false !== strpos( $standalone_source, "sidrena-expiry" ), 'WordPress public price output must render the saved expiry date for a perishable/fast-expiry sale exemption.' );
 
+$public_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
+sidrena_schema_assert( false !== strpos( $public_source, "najniza_cijena_30_dana" ), 'Public HTML price list must retain the 30-day sale reference from the snapshot.' );
+sidrena_schema_assert( false !== strpos( $public_source, "krajnji_rok_uporabe" ), 'Public HTML price list must retain the expiry date used by perishable/fast-expiry sale exemptions.' );
+sidrena_schema_assert( false !== strpos( $public_source, "vrsta_usluge" ) && false !== strpos( $public_source, "opseg_usluge" ), 'Public service price list must expose service type and scope.' );
+sidrena_schema_assert( false !== strpos( $public_source, "pripadajuci_troskovi" ) && false !== strpos( $public_source, "ugradbena_zamjenska_roba" ), 'Public service price list must expose included costs and integral replacement/install goods details.' );
+
 fwrite( STDOUT, "Sidrena NN 101/2026 + NN 105/2026 schema and automation smoke test passed.\n" );
