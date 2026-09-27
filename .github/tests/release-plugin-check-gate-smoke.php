@@ -64,6 +64,23 @@ sidrena_release_gate_assert(
 	'Missing release tags must be deferred until after validation gates.'
 );
 
+
+$main_guard_start = strpos( $release, '- name: Require stable release branch to match main' );
+$main_guard_end   = strpos( $release, '- name: Refresh first public 0.1.0 release when rebuilding from release branch' );
+sidrena_release_gate_assert(
+	false !== $main_guard_start && false !== $main_guard_end && $main_guard_start < $main_guard_end,
+	'Unable to isolate stable release main-source guard.'
+);
+$main_guard_block = substr( $release, $main_guard_start, $main_guard_end - $main_guard_start );
+sidrena_release_gate_assert(
+	false !== strpos( $main_guard_block, "if: startsWith(github.ref, 'refs/heads/release/')" )
+	&& false === strpos( $main_guard_block, "env.VERSION == '1.0.0'" )
+	&& false !== strpos( $main_guard_block, 'git fetch origin main --no-tags' )
+	&& false !== strpos( $main_guard_block, 'MAIN_SHA="$(git rev-parse origin/main)"' )
+	&& false !== strpos( $main_guard_block, 'if [[ "$GITHUB_SHA" != "$MAIN_SHA" ]]' ),
+	'Every stable release branch must be blocked unless it points at the current main commit.'
+);
+
 sidrena_release_gate_assert(
 	false !== strpos( $check, "- 'release/**'" ) && false !== strpos( $check, "- 'v*'" ),
 	'Plugin Check workflow must also observe release branches and version tags.'
