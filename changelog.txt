@@ -18,6 +18,7 @@ Sidrena changelog
 * CSV/XML upload sada prije slanja u browseru provjerava podržani format i limit od 5 MB, uz zadržanu server-side provjeru.
 * Dodan je reference-admin-ui regression test u glavni CI i admin-polish guard.
 * Stvarni WordPress i WooCommerce wp-admin screenshot pipeline mora ponovno proći JavaScript, overlap, horizontal overflow i form viewport provjere prije objave.
+* Završni 1.0.13 WordPress i WooCommerce wp-admin capture uspješno je prošao sve JavaScript runtime, hero/card, grid-overlap, horizontal overflow i form-control viewport provjere na 1440, 1180, 782 i 390 px te je generirao svježe stvarne WordPress.org screenshotove.
 * Oba plugina podignuta su na 1.0.13.
 
 = 1.0.12 =
