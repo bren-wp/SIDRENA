@@ -767,6 +767,14 @@ final class Sidrena_Pricelist {
 		$sale_reference = $product->is_on_sale() && class_exists( 'Sidrena_History' )
 			? Sidrena_History::sale_reference( $product )
 			: array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
+		$reference_exemption = sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_reference_exemption' ) );
+		if ( $product->is_on_sale() && in_array( $reference_exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
+			$sale_reference = array(
+				'status' => 'exempt',
+				'price'  => '',
+				'source' => $reference_exemption,
+			);
+		}
 		$expiry_date = Sidrena_Utils::sanitize_date( Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_expiry_date' ) );
 
 		$name = $product->get_name();
