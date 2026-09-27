@@ -138,7 +138,7 @@ sidrena_form_ux_assert(
 sidrena_form_ux_assert(
 	3 <= substr_count( $admin, '<caption class="screen-reader-text">' )
 	&& 17 <= substr_count( $admin, 'scope="col"' )
-	&& false !== strpos( $admin, "__( 'Radnje', 'sidrena' )" )
+	&& false !== strpos( $admin, "esc_html_e( 'Radnje', 'sidrena' )" )
 	&& false !== strpos( $admin, 'aria-label="<?php echo esc_attr( $open_label ); ?>"' ),
 	'Admin data tables must retain captions, scoped headers and contextual action labels.'
 );
