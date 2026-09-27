@@ -162,4 +162,21 @@ sidrena_reference_ui_assert(
 	'Real browser capture must detect visible PHP fragments and edition-badge overlap.'
 );
 
+sidrena_reference_ui_assert(
+	false === strpos( $style, ".sidrena-admin-screen .sid-standalone-table {\n\tmin-width:1320px;" )
+	&& false !== strpos( $style, ".sidrena-admin-screen .sid-standalone-table {\n\tmin-width:920px;" ),
+	'WordPress catalog must retain one canonical compact table width.'
+);
+sidrena_reference_ui_assert(
+	false === strpos( $style, "min-height:112px;\n\tpadding:12px;" )
+	&& false !== strpos( $style, "min-height:104px;\n\tpadding:12px;" ),
+	'Reference actions must not depend on stale top-level min-height overrides.'
+);
+sidrena_reference_ui_assert(
+	false !== strpos( $script, "status.setAttribute('aria-atomic', 'true')" )
+	&& false !== strpos( $script, 'document.querySelectorAll(managedFormSelector).forEach(ensureFormStatus);' )
+	&& false !== strpos( $capture, "managed form has no preinitialized atomic live region" ),
+	'Managed forms must initialize atomic polite live regions before interaction.'
+);
+
 fwrite( STDOUT, "Sidrena reference admin UI smoke test passed.\n" );
