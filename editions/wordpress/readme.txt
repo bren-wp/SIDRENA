@@ -83,6 +83,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Added NN 59/2026 future base-price readiness notes for the 17.11.2026 application date without inventing an implementing reference day or product scope that is not yet configured by the implementing rule.
 * Expanded regression coverage for Croatian sale-reference rules, per-location availability, inherited Woo exemptions, stable machine headers and public legal details.
 * The functional code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser capture before this version bump.
+* The versioned 1.0.19 WordPress/WooCommerce wp-admin capture was rerun successfully and refreshed the real WordPress.org screenshots.
 
 = 1.0.18 =
 * Corrected the public WordPress text domain to `sidrena` in the source entrypoint and production package while retaining the `sidrena-wordpress` install folder for compatible upgrades.

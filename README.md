@@ -167,6 +167,7 @@ Izdanje 1.0.19 donosi:
 - safe legal profil zadržava uključen prikaz sidrene cijene, 30-dnevne reference i povijesti cijena
 - NN 59/2026 vodi se kao zaseban future-state sloj s datumom početka primjene relevantnih stavaka 17.11.2026., bez pretpostavljanja referentnog dana/proizvoda koje treba odrediti provedbeni pravilnik
 - funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin/legal/distribution guardove, službeni Plugin Check za oba izdanja te stvarni WordPress i WooCommerce browser capture prije verzijskog bumpa
+- nakon verzijskog bumpa stvarni 1.0.19 WordPress i WooCommerce wp-admin capture ponovno je prošao i commitirao svježe WordPress.org screenshotove
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 

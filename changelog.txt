@@ -18,6 +18,7 @@ Sidrena changelog
 * Pravne bilješke i runtime ruleset marker dopunjeni su NN 59/2026 future-state slojem za baznu cijenu s početkom primjene relevantnih stavaka 17.11.2026., bez izmišljanja još neodređenog provedbenog referentnog dana/proizvoda.
 * Dodani su trajni regression testovi za hrvatska pravila posebne prodaje, per-lokacijsku dostupnost, Woo parent iznimke, javne pravne detalje i stabilnost machine-readable sheme.
 * Funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba službena Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture prije verzijskog bumpa.
+* Nakon verzijskog bumpa ponovno su snimljeni i commitani stvarni WordPress i WooCommerce 1.0.19 screenshotovi za README, dokumentaciju i WordPress.org assete.
 * Oba plugina podignuta su na 1.0.19.
 
 = 1.0.18 =
