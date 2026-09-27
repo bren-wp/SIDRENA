@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.19</h1>
+<h1 align="center">SIDRENA 1.0.20</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,24 +150,23 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.19 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.20 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.19
+## Zašto SIDRENA 1.0.20
 
-**SIDRENA 1.0.19** je pravno-tehničko izdanje za oba plugina koje pojačava hrvatska pravila prikaza i objave cijena bez izmišljanja podataka koje plugin ne može provjeriti.
+**SIDRENA 1.0.20** je release usmjeren na REST integritet, WooCommerce performanse i pouzdaniji storefront hydration bez nepotrebnih mrežnih zahtjeva.
 
-Izdanje 1.0.19 donosi:
+Izdanje 1.0.20 donosi:
 
-- jasno odvaja **dodatnu/sidrenu cijenu**, **najnižu cijenu u prethodnih 30 dana** i budući sloj **bazne cijene**; bazna cijena se ne izjednačava sa sidrenom cijenom
-- strogi publication preflight blokira poseban oblik prodaje bez provjerljive 30-dnevne reference, a iznimke za lako pokvarljivu robu / robu s kratkim rokom traže i krajnji rok uporabe
-- WordPress katalog vodi stvarnu dostupnost po fizičkoj lokaciji, umjesto da jednu opću vrijednost smatra stanjem svih poslovnica
-- WooCommerce varijacije pravilno nasljeđuju dopuštenu `perishable` / `fast_expiry` iznimku s parent proizvoda
-- javni HTML cjenik prikazuje dostupnu 30-dnevnu referencu, krajnji rok uporabe te vrstu, opseg, pripadajuće troškove i ugradbenu/zamjensku robu kod usluga
-- službeni CSV/XML header skup ostaje stabilan; HTML-only detalji ne uvode se kao izmišljeni dodatni obvezni stupci NN 101/2026
-- safe legal profil zadržava uključen prikaz sidrene cijene, 30-dnevne reference i povijesti cijena
-- NN 59/2026 vodi se kao zaseban future-state sloj s datumom početka primjene relevantnih stavaka 17.11.2026., bez pretpostavljanja referentnog dana/proizvoda koje treba odrediti provedbeni pravilnik
+- javni REST `display/{id}` poštuje postavku za javni REST i Woo compatibility sloj se ne učitava kada je REST namjerno isključen
+- fizička WooCommerce lokacija više ne koristi globalni stock kao zamjenu kada nedostaje eksplicitna raspoloživost te lokacije; webshop i dalje može koristiti globalni stock fallback
+- Woo REST paginacija broji stvarne javno dostupne stavke i ne broji variable parent kao dodatnu stavku uz varijacije
+- skupi Woo podaci o cijeni, meti i lokaciji učitavaju se samo za stavke tražene stranice
+- storefront preskače redundantni REST fetch osnovnog proizvoda kada je SIDRENA markup već server-renderiran, ali dinamička hidratacija odabrane varijacije ostaje aktivna
+- prolazni HTTP 408/409/425/429, 5xx, mrežni i JSON kvarovi ostaju retryable i ne brišu zadnji valjani prikaz
+- eksplicitno trajni client statusi negativno se cacheiraju kako uklonjena/neobjavljena varijacija ne bi ponovno udarala REST endpoint pri svakoj DOM promjeni
+- izvršni Node regression testovi pokrivaju 503→uspješan retry, trajni 404 negative-cache i 408→uspješan retry
 - funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin/legal/distribution guardove, službeni Plugin Check za oba izdanja te stvarni WordPress i WooCommerce browser capture prije verzijskog bumpa
-- nakon verzijskog bumpa stvarni 1.0.19 WordPress i WooCommerce wp-admin capture ponovno je prošao i commitirao svježe WordPress.org screenshotove
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -228,13 +227,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.19 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.20 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.19.zip`
-- `sidrena-woocommerce-1.0.19.zip`
+- `sidrena-wordpress-1.0.20.zip`
+- `sidrena-woocommerce-1.0.20.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 

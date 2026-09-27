@@ -6,6 +6,18 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.20 =
+* Javni REST display endpoint sada poštuje postavku za javni SIDRENA REST; Woo compatibility REST hydration se ne enqueuea kada je javni REST namjerno isključen.
+* Woo REST za fizičke lokacije više ne pada na globalni WooCommerce stock kada nedostaje eksplicitna dostupnost konkretne lokacije; webshop zadržava globalni fallback.
+* Woo REST paginacija računa stvarne javne stavke za kanal i ne broji variable parent kao dodatnu stavku uz njegove varijacije.
+* Skupi Woo podaci o cijeni, meti i lokacijama učitavaju se samo za proizvode/varijacije tražene stranice.
+* Storefront hydration preskače redundantni base-product REST fetch kada je server-rendered SIDRENA markup već prisutan, dok dinamička varijacija i reset roditeljskog prikaza ostaju aktivni.
+* Prolazni 408/409/425/429, 5xx, network i JSON kvarovi ostaju retryable i ne postaju trajni prazni cache rezultat.
+* Trajni client statusi 400/401/403/404/405/410/422/451 negativno se cacheiraju tijekom page sessiona kako uklonjene/neobjavljene varijacije ne bi generirale ponovljene REST zahtjeve.
+* Dodani su izvršni browser-like Node regression scenariji za 503 retry, 404 negative-cache i 408 timeout recovery.
+* Funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba službena Plugin Check izdanja i stvarni WordPress/WooCommerce browser capture prije verzijskog bumpa.
+* Oba plugina podignuta su na 1.0.20.
+
 = 1.0.19 =
 * Jasno su odvojeni dodatna/sidrena cijena, najniža cijena u prethodnih 30 dana i budući sloj bazne cijene; bazna cijena se ne tretira kao sinonim za sidrenu cijenu.
 * Safe legal profil sada obvezno zadržava prikaz sidrene cijene, prikaz 30-dnevne reference i praćenje povijesti cijena uz postojeći strict publication i failure-notification sloj.
