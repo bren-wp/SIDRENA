@@ -95,4 +95,10 @@ sidrena_reference_ui_assert(
 	'WordPress catalog table must remain part of the reference UI surface.'
 );
 
+sidrena_reference_ui_assert(
+	false === strpos( $admin, 'style="--sid-score:' )
+	&& false !== strpos( $admin, 'sid-reference-ring__value' ),
+	'Compliance progress must not reintroduce inline CSS.'
+);
+
 fwrite( STDOUT, "Sidrena reference admin UI smoke test passed.\n" );
