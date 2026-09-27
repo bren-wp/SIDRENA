@@ -651,7 +651,13 @@ final class Sidrena_Admin {
 
 				<section class="sid-card sid-reference-panel sid-reference-compliance">
 					<div class="sid-section-head"><div><h2><?php esc_html_e( 'Status usklađenosti', 'sidrena' ); ?></h2></div><a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena&sidrena_section=compliance' ) ); ?>"><?php esc_html_e( 'Detalji', 'sidrena' ); ?></a></div>
-					<div class="sid-reference-ring" style="--sid-score:<?php echo esc_attr( $data['health_score'] ); ?>"><div><strong><?php echo esc_html( $data['health_score'] . '%' ); ?></strong><span><?php esc_html_e( 'tehničkih provjera', 'sidrena' ); ?></span></div></div>
+					<div class="sid-reference-ring" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Tehnička spremnost: %d posto', 'sidrena' ), $data['health_score'] ) ); ?>">
+						<svg viewBox="0 0 42 42" aria-hidden="true" focusable="false">
+							<circle class="sid-reference-ring__track" cx="21" cy="21" r="15.9155"></circle>
+							<circle class="sid-reference-ring__value" cx="21" cy="21" r="15.9155" pathLength="100" stroke-dasharray="<?php echo esc_attr( $data['health_score'] . ' 100' ); ?>"></circle>
+						</svg>
+						<div><strong><?php echo esc_html( $data['health_score'] . '%' ); ?></strong><span><?php esc_html_e( 'tehničkih provjera', 'sidrena' ); ?></span></div>
+					</div>
 					<div class="sid-reference-compliance-summary"><span class="is-ok"><?php echo esc_html( (int) ( count( $data['health_checks'] ) - $data['health_issues'] ) ); ?> <?php esc_html_e( 'uredno', 'sidrena' ); ?></span><span class="<?php echo $data['health_issues'] ? 'is-warn' : 'is-ok'; ?>"><?php echo esc_html( $data['health_issues'] ); ?> <?php esc_html_e( 'za provjeru', 'sidrena' ); ?></span></div>
 				</section>
 			</div>
