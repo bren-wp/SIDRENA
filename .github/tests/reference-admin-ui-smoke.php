@@ -179,4 +179,12 @@ sidrena_reference_ui_assert(
 	'Managed forms must initialize atomic polite live regions before interaction.'
 );
 
+sidrena_reference_ui_assert(
+	false === strpos( $style, '.sid-form-status:empty { display:none; }' )
+	&& false !== strpos( $style, '.sid-form-status:empty {' )
+	&& false !== strpos( $style, 'clip:rect(0,0,0,0)!important;' )
+	&& false !== strpos( $capture, 'preinitialized form live region is removed from the accessibility tree' ),
+	'Empty managed-form live regions must stay rendered and visually hidden before their first announcement.'
+);
+
 fwrite( STDOUT, "Sidrena reference admin UI smoke test passed.\n" );
