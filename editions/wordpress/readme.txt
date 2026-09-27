@@ -5,7 +5,7 @@ Tags: cijene, cjenik, csv, xml, trgovina
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, products and services, public CSV/XML price lists, locations and 
 
 == Description ==
 
-SIDRENA 1.0.15 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA 1.0.16 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
@@ -38,7 +38,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.15.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.16.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte Sidrena WordPress.
 3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
 4. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -73,6 +73,14 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.16 =
+* Consolidated the production hero and page-head layout into the canonical admin component layer and removed obsolete 1.0.14 override duplication.
+* Preserved explicit edition-badge icon sizing after CSS consolidation so WordPress and WooCommerce hero identity remains stable.
+* Hardened WooCommerce storefront variation hydration so stale asynchronous responses cannot overwrite the currently selected variation price information.
+* Removed an obsolete release-specific version marker from production admin CSS.
+* Expanded permanent regression coverage for the canonical hero layer, edition-badge icon sizing and stale WooCommerce variation responses.
+* Real WordPress and WooCommerce admin captures passed the functional 1.0.16 runtime checks before the version bump.
 
 = 1.0.15 =
 * Added screen-reader captions and scoped column headers to SIDRENA admin data tables.

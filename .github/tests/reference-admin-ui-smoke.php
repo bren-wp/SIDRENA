@@ -16,6 +16,7 @@ $standalone = file_get_contents( $root . '/includes/class-sidrena-standalone.php
 $script     = file_get_contents( $root . '/admin/js/admin.js' );
 $style      = file_get_contents( $root . '/admin/css/brand.css' );
 $capture    = file_get_contents( $root . '/tools/capture-wporg-assets.mjs' );
+$compat     = file_get_contents( $root . '/public/js/compat.js' );
 
 function sidrena_reference_ui_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -24,7 +25,7 @@ function sidrena_reference_ui_assert( $condition, $message ) {
 	}
 }
 
-foreach ( array( $admin, $bulk, $standalone, $script, $style, $capture ) as $contents ) {
+foreach ( array( $admin, $bulk, $standalone, $script, $style, $capture, $compat ) as $contents ) {
 	sidrena_reference_ui_assert( false !== $contents, 'Unable to read a reference UI source file.' );
 }
 
@@ -152,8 +153,26 @@ sidrena_reference_ui_assert(
 sidrena_reference_ui_assert(
 	false === strpos( $style, 'grid-template-columns:minmax(360px,520px) minmax(280px,1fr) auto' )
 	&& false === strpos( $style, ".sidrena-admin-screen .sidrena-brandbar__logo {\n\twidth:min(430px,100%);" )
-	&& false !== strpos( $style, 'grid-template-columns:minmax(430px,470px) minmax(360px,1fr) max-content' ),
-	'Legacy hero sizing must not override the 1.0.14 production layout.'
+	&& false === strpos( $style, 'SIDRENA 1.0.14 production polish' )
+	&& false !== strpos( $style, ".sidrena-brandbar {\n\tposition:relative;\n\tdisplay:grid;\n\tgrid-template-columns:minmax(430px,470px) minmax(360px,1fr) max-content;" ),
+	'Hero sizing must remain consolidated in the canonical 1.0.16 component layer.'
+);
+
+sidrena_reference_ui_assert(
+	false === strpos( $style, 'Sidrena 1.0.10 brand UI' ),
+	'Production admin CSS must not retain obsolete release-specific branding comments.'
+);
+
+sidrena_reference_ui_assert(
+	false !== strpos( $style, '.sidrena-admin-screen .sidrena-brandbar__edition .dashicons,' ),
+	'Edition badge icon sizing must remain in the canonical production icon group.'
+);
+
+sidrena_reference_ui_assert(
+	false !== strpos( $compat, 'id = parseInt(id || 0, 10);' )
+	&& false !== strpos( $compat, 'if (id !== activeId) {' )
+	&& false !== strpos( $compat, 'applyMarkup(html, root, variationMode);' ),
+	'Woo compatibility hydration must discard stale asynchronous variation responses.'
 );
 
 sidrena_reference_ui_assert(
