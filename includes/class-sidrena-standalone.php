@@ -517,6 +517,11 @@ final class Sidrena_Standalone {
 		$items = is_array( $query->posts ) ? $query->posts : array();
 		$pages = max( 1, absint( $query->max_num_pages ) );
 		$total = absint( $query->found_posts );
+		$product_count_caption = sprintf(
+			/* translators: %d: number of products in the standalone WordPress catalog. */
+			_n( '%d proizvod', '%d proizvoda', $total, 'sidrena' ),
+			$total
+		);
 		?>
 		<div class="sid-page-head">
 			<div>
@@ -524,17 +529,41 @@ final class Sidrena_Standalone {
 				<h2><?php esc_html_e( 'Postojeći proizvodi i WordPress katalog', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Možete voditi proizvode izravno u Sidreni ili povući postojeći WordPress tip sadržaja. Povezanim zapisima Sidrena automatski prikazuje sidrenu cijenu na njihovoj javnoj stranici.', 'sidrena' ); ?></p>
 			</div>
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-			<span class="sid-status-pill"><?php echo esc_html( sprintf( __( '%d proizvoda', 'sidrena' ), $total ) ); ?></span>
+			<span class="sid-status-pill"><?php echo esc_html( $product_count_caption ); ?></span>
 		</div>
 		<?php
 		$source_types = $this->source_post_types();
 		$sync_state   = get_option( 'sidrena_standalone_sync_state', array() );
+		$sync_status  = sanitize_key( (string) ( $sync_state['status'] ?? '' ) );
+		$sync_labels  = array(
+			'queued'   => __( 'Na čekanju', 'sidrena' ),
+			'running'  => __( 'Sinkronizacija u tijeku', 'sidrena' ),
+			'complete' => __( 'Dovršeno', 'sidrena' ),
+			'error'    => __( 'Greška', 'sidrena' ),
+		);
+		$sync_label = $sync_labels[ $sync_status ] ?? '';
+		$sync_class = 'complete' === $sync_status ? 'is-ok' : ( 'error' === $sync_status ? 'is-error' : 'is-warn' );
+		$sync_summary = '';
+		if ( ! empty( $sync_state['created'] ) || ! empty( $sync_state['updated'] ) || ! empty( $sync_state['skipped'] ) ) {
+			$sync_summary = sprintf(
+				/* translators: 1: created products, 2: updated products, 3: skipped products. */
+				__( 'Zadnja sinkronizacija: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ),
+				absint( $sync_state['created'] ?? 0 ),
+				absint( $sync_state['updated'] ?? 0 ),
+				absint( $sync_state['skipped'] ?? 0 )
+			);
+		}
+		$page_caption = sprintf(
+			/* translators: 1: current catalog page, 2: total number of catalog pages. */
+			__( 'Stranica %1$d od %2$d', 'sidrena' ),
+			min( $page, $pages ),
+			$pages
+		);
 		?>
 		<section class="sid-card sid-source-sync">
 			<div class="sid-section-head">
 				<div><span class="sid-kicker"><?php esc_html_e( 'Automatsko povezivanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Povuci postojeće proizvode / sadržaj', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Odaberite postojeći tip sadržaja. Sidrena će povući nazive, povezati zapise i pokušati prepoznati postojeće polje cijene. Nakon toga u pravilu trebate dopuniti samo sidrenu cijenu i ostale obvezne podatke koji nedostaju.', 'sidrena' ); ?></p></div>
-				<?php if ( ! empty( $sync_state['status'] ) ) : ?><span class="sid-status-pill <?php echo 'complete' === $sync_state['status'] ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( ucfirst( (string) $sync_state['status'] ) ); ?></span><?php endif; ?>
+				<?php if ( $sync_label ) : ?><span class="sid-status-pill <?php echo esc_attr( $sync_class ); ?>"><?php echo esc_html( $sync_label ); ?></span><?php endif; ?>
 			</div>
 			<form class="sid-form sid-inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="sidrena_standalone_sync_source">
@@ -543,8 +572,7 @@ final class Sidrena_Standalone {
 				<label><span><?php esc_html_e( 'Meta ključ postojeće cijene', 'sidrena' ); ?></span><input type="text" name="source_price_key" placeholder="_price / price / cijena"><small><?php esc_html_e( 'Ostavite prazno za automatsko prepoznavanje.', 'sidrena' ); ?></small></label>
 				<button type="submit" class="button sid-secondary"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Pokreni sinkronizaciju', 'sidrena' ); ?></button>
 			</form>
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-			<?php if ( ! empty( $sync_state['created'] ) || ! empty( $sync_state['updated'] ) || ! empty( $sync_state['skipped'] ) ) : ?><p class="description"><?php echo esc_html( sprintf( __( 'Zadnja sinkronizacija: %1$d novih, %2$d ažuriranih, %3$d preskočenih.', 'sidrena' ), absint( $sync_state['created'] ?? 0 ), absint( $sync_state['updated'] ?? 0 ), absint( $sync_state['skipped'] ?? 0 ) ) ); ?></p><?php endif; ?>
+			<?php if ( $sync_summary ) : ?><p class="description"><?php echo esc_html( $sync_summary ); ?></p><?php endif; ?>
 		</section>
 		<form class="sid-card sid-form sid-standalone-import" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="sidrena_standalone_import">
@@ -554,7 +582,7 @@ final class Sidrena_Standalone {
 			</div>
 			<div class="sid-form-actions">
 				<label class="sid-file-control"><span><?php esc_html_e( 'CSV ili XML datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="standalone_file" accept=".csv,.xml,text/csv,text/xml,application/xml" aria-describedby="sid-standalone-file-help" required><small id="sid-standalone-file-help"><?php esc_html_e( 'Najviše 5 MB. Podržani su CSV i XML formati bez izvršnog sadržaja.', 'sidrena' ); ?></small></label>
-				<button type="submit" class="button sid-secondary"><?php esc_html_e( 'Uvezi katalog', 'sidrena' ); ?></button>
+				<button type="submit" class="button sid-secondary"><span class="dashicons dashicons-upload"></span><?php esc_html_e( 'Uvezi katalog', 'sidrena' ); ?></button>
 			</div>
 		</form>
 
@@ -582,22 +610,21 @@ final class Sidrena_Standalone {
 						<?php if ( 0 === $total ) : ?>
 							<tr class="sid-catalog-empty-row"><td colspan="6" class="sid-table-empty-cell"><strong><?php esc_html_e( 'Katalog je spreman za prvi stvarni proizvod.', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Povežite postojeći WordPress sadržaj, uvezite CSV/XML ili kliknite “Dodaj proizvod”. Sidrena ne umeće demo ni izmišljene podatke.', 'sidrena' ); ?></span></td></tr>
 						<?php elseif ( empty( $items ) ) : ?>
-							<tr><td colspan="10" class="sid-table-empty-cell"><strong><?php esc_html_e( 'Na ovoj stranici nema proizvoda.', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Vratite se na prethodnu stranicu kataloga ili dodajte novi stvarni proizvod.', 'sidrena' ); ?></span></td></tr>
+							<tr><td colspan="6" class="sid-table-empty-cell"><strong><?php esc_html_e( 'Na ovoj stranici nema proizvoda.', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Vratite se na prethodnu stranicu kataloga ili dodajte novi stvarni proizvod.', 'sidrena' ); ?></span></td></tr>
 						<?php endif; ?>
 					</tbody>
 				</table>
 			</div>
 			<div class="sid-form-actions">
 				<button type="button" class="button sid-secondary" id="sidrena-add-standalone"><span class="dashicons dashicons-plus-alt2"></span><?php esc_html_e( 'Dodaj proizvod', 'sidrena' ); ?></button>
-				<button type="submit" class="button button-primary sid-primary"><?php esc_html_e( 'Spremi ovu stranicu kataloga', 'sidrena' ); ?></button>
+				<button type="submit" class="button button-primary sid-primary"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi ovu stranicu kataloga', 'sidrena' ); ?></button>
 			</div>
 			<template id="sidrena-standalone-template"><?php $this->row( 0, '__KEY__', true ); ?></template>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija WordPress kataloga', 'sidrena' ); ?>">
 			<?php if ( $page > 1 ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page - 1 ) ) ); ?>">← <?php esc_html_e( 'Prethodna', 'sidrena' ); ?></a><?php endif; ?>
-			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-			<span><?php echo esc_html( sprintf( __( 'Stranica %1$d od %2$d', 'sidrena' ), min( $page, $pages ), $pages ) ); ?></span>
+			<span><?php echo esc_html( $page_caption ); ?></span>
 			<?php if ( $page < $pages ) : ?><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog&standalone_page=' . ( $page + 1 ) ) ); ?>"><?php esc_html_e( 'Sljedeća', 'sidrena' ); ?> →</a><?php endif; ?>
 		</nav>
 		<?php endif; ?>
