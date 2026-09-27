@@ -148,12 +148,12 @@
 		});
 	}
 
-	function hydrate(id, root, variationMode) {
+	function hydrate(id, root, variationMode, force) {
 		id = parseInt(id || 0, 10);
 		if (!id) {
 			return;
 		}
-		if (!variationMode && targetsAlreadyHydrated(root, false)) {
+		if (!force && !variationMode && targetsAlreadyHydrated(root, false)) {
 			return;
 		}
 		fetchMarkup(id).then(function (html) {
@@ -180,7 +180,8 @@
 			$(document).on("reset_data hide_variation", ".variations_form", function (event) {
 				var root = event.currentTarget.closest(".product") || document;
 				activeId = productId;
-				hydrate(productId, root, false);
+				// Reset must restore the parent markup even when variation HTML is still present.
+				hydrate(productId, root, false, true);
 			});
 		}
 
