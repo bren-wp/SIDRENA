@@ -737,10 +737,20 @@ final class Sidrena_Standalone {
 
 		$items   = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? wp_unslash( $_POST['items'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$page    = max( 1, isset( $_POST['standalone_page'] ) ? absint( $_POST['standalone_page'] ) : 1 );
-		$saved      = 0;
-		$deleted    = 0;
-		$errors     = 0;
-		$code_index = $this->code_index();
+		$saved           = 0;
+		$deleted         = 0;
+		$errors          = 0;
+		$code_index      = $this->code_index();
+		$valid_locations = array();
+		foreach ( Sidrena_Utils::locations() as $location ) {
+			if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
+				continue;
+			}
+			$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+			if ( $location_id ) {
+				$valid_locations[ $location_id ] = true;
+			}
+		}
 
 		foreach ( $items as $row ) {
 			if ( ! is_array( $row ) ) {
@@ -840,17 +850,7 @@ final class Sidrena_Standalone {
 			$this->set_meta( $saved_id, '_sidrena_standalone_sale_reference_exemption', $reference_exemption );
 			$this->set_meta( $saved_id, '_sidrena_standalone_expiry_date', Sidrena_Utils::sanitize_date( $row['expiry_date'] ?? '' ) );
 
-			$valid_locations       = array();
-			$location_availability = array();
-			foreach ( Sidrena_Utils::locations() as $location ) {
-				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
-					continue;
-				}
-				$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
-				if ( $location_id ) {
-					$valid_locations[ $location_id ] = true;
-				}
-			}
+			$location_availability        = array();
 			$posted_location_availability = isset( $row['location_availability'] ) && is_array( $row['location_availability'] ) ? $row['location_availability'] : array();
 			foreach ( $posted_location_availability as $location_id => $location_status ) {
 				$location_id     = Sidrena_Utils::sanitize_location_id( $location_id );
