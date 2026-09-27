@@ -152,8 +152,9 @@ sidrena_reference_ui_assert(
 sidrena_reference_ui_assert(
 	false === strpos( $style, 'grid-template-columns:minmax(360px,520px) minmax(280px,1fr) auto' )
 	&& false === strpos( $style, ".sidrena-admin-screen .sidrena-brandbar__logo {\n\twidth:min(430px,100%);" )
-	&& false !== strpos( $style, 'grid-template-columns:minmax(430px,470px) minmax(360px,1fr) max-content' ),
-	'Legacy hero sizing must not override the 1.0.14 production layout.'
+	&& false === strpos( $style, 'SIDRENA 1.0.14 production polish' )
+	&& false !== strpos( $style, ".sidrena-brandbar {\n\tposition:relative;\n\tdisplay:grid;\n\tgrid-template-columns:minmax(430px,470px) minmax(360px,1fr) max-content;" ),
+	'Hero sizing must remain consolidated in the canonical 1.0.16 component layer.'
 );
 
 sidrena_reference_ui_assert(
