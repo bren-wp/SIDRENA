@@ -84,6 +84,8 @@ final class Sidrena_Admin {
 					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
 					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
 					'invalidOib'            => __( 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.', 'sidrena' ),
+					'fileTooLarge'          => __( 'Datoteka je prevelika. Najveća dopuštena veličina je 5 MB.', 'sidrena' ),
+					'invalidFileType'       => __( 'Odaberite podržanu CSV ili XML datoteku.', 'sidrena' ),
 				)
 			);
 			return;
