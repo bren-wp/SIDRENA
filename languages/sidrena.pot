@@ -6,7 +6,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.12\n"
+"Project-Id-Version: Sidrena 1.0.13\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -1526,5 +1526,57 @@ msgstr ""
 
 #: includes/class-sidrena-admin.php
 msgid "Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Datoteka je prevelika. Najveća dopuštena veličina je 5 MB."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Odaberite podržanu CSV ili XML datoteku."
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Upravljaj katalogom"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Objavljeno s cijenama"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Zdravlje arhive"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Status oznake cijene"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Razumijevanje cijena u Sidreni"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Digitalni cjenici"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Postavke publikacije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Distribucija i integracije"
+msgstr ""
+
+#: includes/class-sidrena-admin.php
+msgid "Javni prikaz"
+msgstr ""
+
+#: includes/class-sidrena-bulk.php
+msgid "Napredna SIDRENA polja"
+msgstr ""
+
+#: includes/class-sidrena-bulk.php
+msgid "Spremi SIDRENA podatke"
 msgstr ""
 
