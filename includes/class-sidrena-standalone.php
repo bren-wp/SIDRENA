@@ -194,6 +194,8 @@ final class Sidrena_Standalone {
 			'maloprodajna_cijena'       => Sidrena_Utils::money( $current ),
 			'posebni_oblik_prodaje'     => $sale_name ? 'da' : 'ne',
 			'naziv_posebnog_oblika_prodaje' => $sale_name,
+			'najniza_cijena_30_dana'    => $sale_name && 'ready' === $sale_reference_status ? Sidrena_Utils::money( $lowest_30 ) : '',
+			'krajnji_rok_uporabe'       => $sale_name && 'exempt' === $sale_reference_status ? $expiry_date : '',
 			'sidrena_cijena'            => Sidrena_Utils::money( $anchor ),
 			'datum_sidrene_cijene'      => '' === Sidrena_Utils::decimal( $anchor ) ? '' : Sidrena_Utils::date_display( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'] ),
 			'barkod'                    => get_post_meta( $id, '_sidrena_standalone_barcode', true ),
