@@ -38,8 +38,10 @@ sidrena_support_assert( false !== strpos( Sidrena_Utils::donation_url(), 'revolu
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-PODRSKA.pdf' ), 'Support PDF URL mismatch.' );
 sidrena_support_assert( 'Brendigo' === Sidrena_Utils::developer_label(), 'Author label mismatch.' );
 
-$admin  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
-$public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
+$admin    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+$public   = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
+$services = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
+$frontend = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
 foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratno početno postavljanje', 'Dobrovoljna donacija za razvoj', 'logo-horizontal-light.svg', 'sidrena-brandbar__edition', 'admin/css/brand.css' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
@@ -47,6 +49,22 @@ foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'das
 foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 === $group_index' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $public, $needle ), 'Public publication surface missing: ' . $needle );
 }
+
+sidrena_support_assert(
+	false !== strpos( $public, '<caption class="sidrena-visually-hidden">' )
+	&& 8 <= substr_count( $public, 'scope="col"' ),
+	'Public price-list table must retain an independent caption and scoped column headers.'
+);
+sidrena_support_assert(
+	false !== strpos( $services, '<caption class="sidrena-visually-hidden">' )
+	&& false !== strpos( $services, '<th scope="row">' ),
+	'Public services table must retain caption and row/column header semantics.'
+);
+sidrena_support_assert(
+	false !== strpos( $frontend, '.sidrena-visually-hidden' )
+	&& false !== strpos( $frontend, 'clip:rect(0,0,0,0)!important;' ),
+	'Frontend accessibility utility must remain local and theme-independent.'
+);
 
 sidrena_support_assert( false === strpos( $admin, '20 EUR' ), 'Unrequested recurring maintenance offer leaked into admin.' );
 fwrite( STDOUT, "Sidrena support/public surface smoke test passed.\n" );
