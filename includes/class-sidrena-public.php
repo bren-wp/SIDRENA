@@ -262,17 +262,17 @@ final class Sidrena_Public {
 			</p>
 			<div class="sidrena-pricelist__table-wrap">
 				<table class="sidrena-pricelist__table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
+					<caption class="sidrena-visually-hidden"><?php esc_html_e( 'Aktualni Sidrena cjenik', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Marka', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Cijena', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th>
-							<th><?php esc_html_e( 'Dostupnost', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Naziv', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Šifra', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Marka', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Cijena', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Barkod', 'sidrena' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Dostupnost', 'sidrena' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
