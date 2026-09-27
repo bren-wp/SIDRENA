@@ -176,8 +176,24 @@ final class Sidrena_Audit {
 		if ( false === $encoded ) {
 			$encoded = wp_json_encode( array( 'encoding_error' => true ) );
 		}
+		$encoded = (string) $encoded;
 
-		return self::trim_bytes( (string) $encoded, self::MAX_CONTEXT_BYTES );
+		if ( strlen( $encoded ) <= self::MAX_CONTEXT_BYTES ) {
+			return $encoded;
+		}
+
+		$original_bytes = strlen( $encoded );
+		$preview_limit  = min( 8000, max( 256, (int) floor( ( self::MAX_CONTEXT_BYTES - 512 ) / 2 ) ) );
+		$summary        = wp_json_encode(
+			array(
+				'truncated'      => true,
+				'original_bytes' => $original_bytes,
+				'preview'        => self::cut_utf8_bytes( $encoded, $preview_limit ),
+			),
+			JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+		);
+
+		return false === $summary ? '{"truncated":true}' : (string) $summary;
 	}
 
 	private static function trim_bytes( $value, $max_bytes ) {
@@ -188,7 +204,34 @@ final class Sidrena_Audit {
 			return $value;
 		}
 
-		$value = substr( $value, 0, $max_bytes - 14 );
-		return rtrim( $value ) . '… [skraćeno]';
+		$suffix       = '… [skraćeno]';
+		$suffix_bytes = strlen( $suffix );
+		if ( $max_bytes <= $suffix_bytes ) {
+			return self::cut_utf8_bytes( $suffix, $max_bytes );
+		}
+
+		$prefix = self::cut_utf8_bytes( $value, $max_bytes - $suffix_bytes );
+		return rtrim( $prefix ) . $suffix;
+	}
+
+	private static function cut_utf8_bytes( $value, $max_bytes ) {
+		$value     = (string) $value;
+		$max_bytes = max( 0, (int) $max_bytes );
+
+		if ( 0 === $max_bytes || '' === $value ) {
+			return '';
+		}
+		if ( strlen( $value ) <= $max_bytes ) {
+			return $value;
+		}
+		if ( function_exists( 'mb_strcut' ) ) {
+			return mb_strcut( $value, 0, $max_bytes, 'UTF-8' );
+		}
+
+		$cut = substr( $value, 0, $max_bytes );
+		while ( '' !== $cut && 1 !== preg_match( '//u', $cut ) ) {
+			$cut = substr( $cut, 0, -1 );
+		}
+		return $cut;
 	}
 }
