@@ -634,16 +634,19 @@ final class Sidrena_Admin {
 		if ( $data['is_ready'] ) {
 			$health_caption = __( 'sve provjere uredne', 'sidrena' );
 		} else {
-			/* translators: %d: number of technical checks that require attention. */
 			$health_caption = sprintf(
+				/* translators: %d: number of technical checks that require attention. */
 				_n( '%d stavka za provjeru', '%d stavki za provjeru', $data['health_issues'], 'sidrena' ),
 				$data['health_issues']
 			);
 		}
-		/* translators: %d: technical readiness percentage. */
-		$health_aria_label = sprintf( __( 'Tehnička spremnost: %d posto', 'sidrena' ), $data['health_score'] );
-		/* translators: %d: number of currently published public files. */
+		$health_aria_label = sprintf(
+			/* translators: %d: technical readiness percentage. */
+			__( 'Tehnička spremnost: %d posto', 'sidrena' ),
+			$data['health_score']
+		);
 		$published_files_caption = sprintf(
+			/* translators: %d: number of currently published public files. */
 			_n( '%d aktualna datoteka', '%d aktualnih datoteka', absint( $data['integrity']['current_entries'] ), 'sidrena' ),
 			absint( $data['integrity']['current_entries'] )
 		);
@@ -742,8 +745,8 @@ final class Sidrena_Admin {
 	}
 
 	private function dashboard_price_education( $settings ) {
-		/* translators: %s: configured reference date. */
 		$dated_price_caption = sprintf(
+			/* translators: %s: configured reference date. */
 			__( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ),
 			wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) )
 		);
@@ -1130,15 +1133,18 @@ final class Sidrena_Admin {
 		$next_cron        = wp_next_scheduled( 'sidrena_daily_generation' );
 		$rest_enabled     = 'yes' === $settings['enable_rest_index'];
 		$html_enabled     = 'yes' === $settings['enable_public_html'];
-		/* translators: %d: number of currently published public files. */
 		$current_files_caption = sprintf(
+			/* translators: %d: number of currently published public files. */
 			_n( '%d aktualna datoteka', '%d aktualnih datoteka', count( $current ), 'sidrena' ),
 			count( $current )
 		);
 		$next_cron_caption = '';
 		if ( $next_cron ) {
-			/* translators: %s: date and time of the next scheduled WordPress cron run. */
-			$next_cron_caption = sprintf( __( 'Sljedeći WordPress cron događaj: %s.', 'sidrena' ), wp_date( 'd.m.Y. H:i', $next_cron ) );
+			$next_cron_caption = sprintf(
+				/* translators: %s: date and time of the next scheduled WordPress cron run. */
+				__( 'Sljedeći WordPress cron događaj: %s.', 'sidrena' ),
+				wp_date( 'd.m.Y. H:i', $next_cron )
+			);
 		}
 		$formats          = array();
 		if ( 'yes' === $settings['generate_csv'] ) {
@@ -2434,7 +2440,7 @@ final class Sidrena_Admin {
 			return array();
 		}
 		// Every scalar is sanitized here; domain-specific validation follows in the caller.
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- map_deep sanitizes every scalar after wp_unslash().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce is verified by guard_post(); map_deep sanitizes every scalar after wp_unslash().
 		return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
 	}
 
