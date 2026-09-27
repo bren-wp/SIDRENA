@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.18</h1>
+<h1 align="center">SIDRENA 1.0.19</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,22 +150,24 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.18 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.19 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.18
+## Zašto SIDRENA 1.0.19
 
-**SIDRENA 1.0.18** je korektivno izdanje za oba plugina koje popravlja WordPress.org i18n identitet bez promjene instalacijskih foldera, podataka ili postojećeg upgrade puta.
+**SIDRENA 1.0.19** je pravno-tehničko izdanje za oba plugina koje pojačava hrvatska pravila prikaza i objave cijena bez izmišljanja podataka koje plugin ne može provjeriti.
 
-Izdanje 1.0.18 donosi:
+Izdanje 1.0.19 donosi:
 
-- WordPress paket koristi javni text domain `sidrena`, a WooCommerce paket `sidrena-for-woocommerce`, točno prema javnim WordPress slugovima
-- instalacijski folderi i ZIP nazivi ostaju `sidrena-wordpress` i `sidrena-woocommerce`, pa ručna nadogradnja i postojeće instalacije nastavljaju koristiti iste direktorije
-- build više ne prepisuje javni text domain u install-folder alias; WordPress zadržava `languages/sidrena.pot`, a WooCommerce generira `languages/sidrena-for-woocommerce.pot` s usklađenim X-Domain metapodatkom
-- redovni i release Plugin Check workflowi provjeravaju javne slugove `sidrena` i `sidrena-for-woocommerce`, pa se TextDomainMismatch više ne može sakriti provjerom pogrešnog aliasa
-- CI, distribution guard i package-entrypoint smoke test trajno provjeravaju header domaine, POT nazive i X-Domain vrijednosti za oba produkcijska paketa
-- distribution guard je usklađen s novim domenama bez slabljenja ZIP, sigurnosnih, branding ili size provjera
-- oba produkcijski oblikovana paketa prošla su PHP 7.4/8.3/8.4 CI, distribution/legal/admin guardove, službeni Plugin Check i stvarni WordPress/WooCommerce browser capture na mainu prije 1.0.18 verzijskog bumpa
-- postojeći javni `v1.0.17` tag/release nije prepisan; ispravci se isporučuju kroz novo, slijedno izdanje 1.0.18
+- jasno odvaja **dodatnu/sidrenu cijenu**, **najnižu cijenu u prethodnih 30 dana** i budući sloj **bazne cijene**; bazna cijena se ne izjednačava sa sidrenom cijenom
+- strogi publication preflight blokira poseban oblik prodaje bez provjerljive 30-dnevne reference, a iznimke za lako pokvarljivu robu / robu s kratkim rokom traže i krajnji rok uporabe
+- WordPress katalog vodi stvarnu dostupnost po fizičkoj lokaciji, umjesto da jednu opću vrijednost smatra stanjem svih poslovnica
+- WooCommerce varijacije pravilno nasljeđuju dopuštenu `perishable` / `fast_expiry` iznimku s parent proizvoda
+- javni HTML cjenik prikazuje dostupnu 30-dnevnu referencu, krajnji rok uporabe te vrstu, opseg, pripadajuće troškove i ugradbenu/zamjensku robu kod usluga
+- službeni CSV/XML header skup ostaje stabilan; HTML-only detalji ne uvode se kao izmišljeni dodatni obvezni stupci NN 101/2026
+- safe legal profil zadržava uključen prikaz sidrene cijene, 30-dnevne reference i povijesti cijena
+- NN 59/2026 vodi se kao zaseban future-state sloj s datumom početka primjene relevantnih stavaka 17.11.2026., bez pretpostavljanja referentnog dana/proizvoda koje treba odrediti provedbeni pravilnik
+- funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin/legal/distribution guardove, službeni Plugin Check za oba izdanja te stvarni WordPress i WooCommerce browser capture prije verzijskog bumpa
+- nakon verzijskog bumpa stvarni 1.0.19 WordPress i WooCommerce wp-admin capture ponovno je prošao i commitirao svježe WordPress.org screenshotove
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -226,13 +228,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.18 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.19 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.18.zip`
-- `sidrena-woocommerce-1.0.18.zip`
+- `sidrena-wordpress-1.0.19.zip`
+- `sidrena-woocommerce-1.0.19.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
