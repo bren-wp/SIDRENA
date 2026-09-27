@@ -74,7 +74,7 @@ async function assertBrandRuntime(targetPage, route) {
 		);
 		const brandbar = document.querySelector('.sidrena-brandbar');
 		const logo = document.querySelector('.sidrena-brandbar__logo');
-		const card = document.querySelector('.sid-card, .sid-dashboard-metric');
+		const card = document.querySelector('.sid-reference-panel, .sid-settings-section.sid-card, .sid-source-sync.sid-card, .sid-bulk-card.sid-card, .sid-standalone-import.sid-card, .sid-tool-card.sid-card, .sid-contact-card.sid-card, .sid-location');
 		const menuIcon = document.querySelector('#adminmenu .toplevel_page_sidrena .wp-menu-image img');
 
 		const read = (node) => node ? window.getComputedStyle(node) : null;
@@ -87,7 +87,8 @@ async function assertBrandRuntime(targetPage, route) {
 			styleLoaded: !!styleLink,
 			scriptLoaded: !!adminScript,
 			brandDisplay: brandStyle ? brandStyle.display : '',
-			brandRadius: brandStyle ? parseFloat(brandStyle.borderRadius) || 0 : 0,
+			brandBottomLeftRadius: brandStyle ? parseFloat(brandStyle.borderBottomLeftRadius) || 0 : 0,
+			brandBottomRightRadius: brandStyle ? parseFloat(brandStyle.borderBottomRightRadius) || 0 : 0,
 			brandBackground: brandStyle ? brandStyle.backgroundImage : '',
 			cardRadius: cardStyle ? parseFloat(cardStyle.borderRadius) || 0 : 0,
 			cardBackground: cardStyle ? cardStyle.backgroundColor : '',
@@ -104,7 +105,7 @@ async function assertBrandRuntime(targetPage, route) {
 	if (!result.scriptLoaded) {
 		throw new Error(`SIDRENA admin.js is missing on ${route}`);
 	}
-	if (result.brandDisplay !== 'grid' || result.brandRadius < 10 || !result.brandBackground.includes('brand-hero.svg')) {
+	if (result.brandDisplay !== 'grid' || result.brandBottomLeftRadius < 10 || result.brandBottomRightRadius < 10 || !result.brandBackground.includes('brand-hero.svg')) {
 		throw new Error(`SIDRENA hero styles are not applied on ${route}: ${JSON.stringify(result)}`);
 	}
 	if (result.cardRadius < 8 || result.cardBackground !== 'rgb(255, 255, 255)') {
@@ -143,6 +144,35 @@ async function assertNoKeyOverlaps(targetPage, route) {
 			const a = visibleRect(':scope > div:first-child', head);
 			const b = visibleRect('.sid-location-actions', head);
 			if (intersects(a, b)) overlaps.push(['.sid-location-head identity', '.sid-location-actions']);
+		}
+
+		const gridSelectors = [
+			'.sid-reference-metrics',
+			'.sid-reference-action-grid',
+			'.sid-reference-grid',
+			'.sid-reference-files-grid',
+			'.sid-fields-location',
+			'.sid-row-details__grid',
+		];
+		for (const selector of gridSelectors) {
+			for (const grid of document.querySelectorAll(selector)) {
+				const children = Array.from(grid.children).filter((node) => {
+					const style = window.getComputedStyle(node);
+					const rect = node.getBoundingClientRect();
+					return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 2 && rect.height > 2;
+				});
+				for (let i = 0; i < children.length; i += 1) {
+					const aRect = children[i].getBoundingClientRect();
+					const a = { left: aRect.left, top: aRect.top, right: aRect.right, bottom: aRect.bottom };
+					for (let j = i + 1; j < children.length; j += 1) {
+						const bRect = children[j].getBoundingClientRect();
+						const b = { left: bRect.left, top: bRect.top, right: bRect.right, bottom: bRect.bottom };
+						if (intersects(a, b)) {
+							overlaps.push([selector + ' child ' + i, selector + ' child ' + j]);
+						}
+					}
+				}
+			}
 		}
 		return overlaps;
 	});

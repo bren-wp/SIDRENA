@@ -45,6 +45,7 @@ jobs:
           grep -Fq "Sidrena_Admin_UX::SERVICE_MENU_SLUG === \$item[0]" includes/class-sidrena-admin-menu.php
           grep -Fq "dataset.sidrenaSubmitting" admin/js/admin.js
           php .github/tests/admin-form-ux-smoke.php
+          php .github/tests/reference-admin-ui-smoke.php
           grep -Fq "assertFormRuntime" tools/capture-wporg-assets.mjs
           grep -Fq "page.on('pageerror'" tools/capture-wporg-assets.mjs
           grep -Fq "admin_print_styles" includes/class-sidrena-admin.php

@@ -97,6 +97,33 @@
 		field.setCustomValidity(isValidOib(value) ? '' : message('invalidOib', 'Unesite valjani OIB s 11 znamenki i ispravnom kontrolnom znamenkom.'));
 	}
 
+	function validateFileField(field) {
+		if (!field || !field.matches || !field.matches('.sid-file-input')) {
+			return;
+		}
+		field.setCustomValidity('');
+		var file = field.files && field.files.length ? field.files[0] : null;
+		if (!file) {
+			return;
+		}
+		var maxBytes = Number(field.getAttribute('data-max-bytes') || 5242880);
+		if (file.size > maxBytes) {
+			field.setCustomValidity(message('fileTooLarge', 'Datoteka je prevelika. Najveća dopuštena veličina je 5 MB.'));
+			return;
+		}
+		var accept = String(field.getAttribute('accept') || '').toLowerCase();
+		if (accept) {
+			var name = String(file.name || '').toLowerCase();
+			var allowed = accept.split(',').some(function (token) {
+				token = token.trim();
+				return token.charAt(0) === '.' ? name.endsWith(token) : token === String(file.type || '').toLowerCase();
+			});
+			if (!allowed) {
+				field.setCustomValidity(message('invalidFileType', 'Odaberite podržanu CSV ili XML datoteku.'));
+			}
+		}
+	}
+
 	function setLocationState(row) {
 		if (!row) {
 			return;
@@ -179,8 +206,14 @@
 		var removeStandalone = closest(target, '.sidrena-remove-standalone');
 		if (removeStandalone) {
 			event.preventDefault();
-			var standaloneRow = closest(removeStandalone, '.sidrena-standalone-row');
+			var detailsRow = closest(removeStandalone, '.sid-standalone-details-row');
+			var standaloneRow = detailsRow && detailsRow.previousElementSibling && detailsRow.previousElementSibling.matches('.sidrena-standalone-row')
+				? detailsRow.previousElementSibling
+				: closest(removeStandalone, '.sidrena-standalone-row');
 			if (standaloneRow && window.confirm(message('removeUnsavedProduct', 'Ukloniti ovaj nespremljeni proizvod?'))) {
+				if (detailsRow) {
+					detailsRow.remove();
+				}
 				standaloneRow.remove();
 				syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 				var addStandaloneButton = document.getElementById('sidrena-add-standalone');
@@ -217,6 +250,7 @@
 			return;
 		}
 		validateOibField(target);
+		validateFileField(target);
 		clearInvalidState(target);
 		var changedForm = target.form;
 		if (changedForm && changedForm.matches && changedForm.matches(managedFormSelector)) {
@@ -267,6 +301,7 @@
 
 	document.addEventListener('input', function (event) {
 		validateOibField(event.target);
+		validateFileField(event.target);
 		clearInvalidState(event.target);
 		var form = event.target && event.target.form;
 		if (form && form.matches && form.matches(managedFormSelector)) {
@@ -279,6 +314,7 @@
 	});
 
 	document.querySelectorAll('[data-sidrena-oib]').forEach(validateOibField);
+	document.querySelectorAll('.sid-file-input').forEach(validateFileField);
 	initLocations();
 	syncStandaloneEmptyState(document.getElementById('sidrena-standalone-rows'));
 }());
