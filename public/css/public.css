@@ -124,22 +124,31 @@
 	font-weight: 800;
 }
 
-.sidrena-pricelist__table td {
+.sidrena-pricelist__table td,
+.sidrena-pricelist__table tbody th[scope="row"] {
 	color: #28465f;
 	font-size: 13px;
 }
 
-.sidrena-pricelist__table td strong {
+.sidrena-pricelist__table tbody th[scope="row"] {
+	background: transparent;
+	font-weight: 400;
+}
+
+.sidrena-pricelist__table td strong,
+.sidrena-pricelist__table tbody th[scope="row"] strong {
 	color: #082642;
 }
 
-.sidrena-pricelist__table td small {
+.sidrena-pricelist__table td small,
+.sidrena-pricelist__table tbody th[scope="row"] small {
 	display: block;
 	margin-top: 3px;
 	color: #6b8196;
 }
 
-.sidrena-pricelist__table tbody tr:last-child td {
+.sidrena-pricelist__table tbody tr:last-child td,
+.sidrena-pricelist__table tbody tr:last-child th[scope="row"] {
 	border-bottom: 0;
 }
 
