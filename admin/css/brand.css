@@ -1006,6 +1006,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	color:#334e6c;
 	font-size:10px;
 	font-weight:800;
+	line-height:1.35;
 }
 .sidrena-admin-screen input[type="text"],
 .sidrena-admin-screen input[type="email"],
@@ -1736,9 +1737,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	font-size:16px;
 	line-height:16px;
 }
-.sidrena-admin-screen .sid-row-details__grid label>span,
-.sidrena-admin-screen .sid-fields label>span,
-.sidrena-admin-screen .sid-file-control>span {
+.sidrena-admin-screen .sid-row-details__grid label>span {
 	line-height:1.35;
 }
 .sidrena-admin-screen .sid-file-input {
