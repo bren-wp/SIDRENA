@@ -88,6 +88,9 @@ final class Sidrena_Legal_Automation {
 		return array(
 			'strict_publication',
 			'failure_notifications',
+			'display_anchor',
+			'display_lowest_30',
+			'track_price_history',
 		);
 	}
 }
