@@ -57,6 +57,11 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-22',
 				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
 			),
+			'nn_59_2026_base_price_future' => array(
+				'label' => 'NN 59/2026, Zakon o izmjenama i dopunama Zakona o zaštiti potrošača — bazna cijena',
+				'date'  => '2026-06-09',
+				'note'  => 'Izmijenjeni članak 7. stavci 1. do 9. počinju se primjenjivati 17.11.2026.; bazna cijena ostaje odvojena od dodatne/sidrene cijene, a konkretan dan, proizvodi i način isticanja ovise o provedbenom pravilniku.',
+			),
 		);
 	}
 
@@ -72,6 +77,9 @@ final class Sidrena_Compliance {
 			'xml_enabled'            => 'yes' === $settings['generate_xml'],
 			'strict_publication'     => 'yes' === $settings['strict_publication'],
 			'failure_notifications'  => 'yes' === $settings['failure_notifications'],
+			'display_anchor'         => 'yes' === $settings['display_anchor'],
+			'display_lowest_30'      => 'yes' === $settings['display_lowest_30'],
+			'track_price_history'    => 'yes' === $settings['track_price_history'],
 			'publication_watch'      => (bool) wp_next_scheduled( 'sidrena_publication_watch' ),
 			'daily_generation'       => (bool) wp_next_scheduled( 'sidrena_daily_generation' ),
 		);
@@ -92,6 +100,15 @@ final class Sidrena_Compliance {
 		}
 		if ( ! $profile['strict_publication'] ) {
 			$issues[] = 'Strict publication način treba biti uključen kako neuspjeli novi fajl ne bi zamijenio zadnju ispravnu objavu.';
+		}
+		if ( ! $profile['display_anchor'] ) {
+			$issues[] = 'Prikaz dodatne/sidrene cijene treba ostati uključen na javnim prikazima.';
+		}
+		if ( ! $profile['display_lowest_30'] ) {
+			$issues[] = 'Prikaz 30-dnevne referentne cijene treba ostati uključen za posebne oblike prodaje.';
+		}
+		if ( ! $profile['track_price_history'] ) {
+			$issues[] = 'Povijest cijena treba ostati uključena radi provjerljive 30-dnevne reference.';
 		}
 		if ( $profile['archive_retention_days'] < 30 ) {
 			$issues[] = 'Javna arhiva mora imati najmanje 30 dana čuvanja.';
@@ -136,7 +153,7 @@ final class Sidrena_Compliance {
 
 		$before_normalize = $settings;
 		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
-		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'strict_publication', 'failure_notifications' ) as $key ) {
+		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'strict_publication', 'failure_notifications', 'display_anchor', 'display_lowest_30', 'track_price_history' ) as $key ) {
 			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
 				$repairs[] = 'settings:' . $key;
 			}
