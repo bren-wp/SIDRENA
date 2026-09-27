@@ -86,6 +86,9 @@ sidrena_schema_assert( count( $product_headers ) === count( array_unique( $produ
 sidrena_schema_assert( count( $service_headers ) === count( array_unique( $service_headers ) ), 'Duplicate service headers detected.' );
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $product_headers, true ), 'Reference date traceability missing from product output.' );
 sidrena_schema_assert( in_array( 'datum_sidrene_cijene', $service_headers, true ), 'Reference date traceability missing from service output.' );
+sidrena_schema_assert( ! in_array( 'najniza_cijena_30_dana', $product_headers, true ), 'HTML-only 30-day reference must not silently change the NN 101/2026 product CSV/XML header set.' );
+sidrena_schema_assert( ! in_array( 'krajnji_rok_uporabe', $product_headers, true ), 'HTML-only expiry detail must not silently change the NN 101/2026 product CSV/XML header set.' );
+sidrena_schema_assert( ! in_array( 'najniza_cijena_30_dana', $service_headers, true ), 'HTML-only service sale reference must not silently change the machine-readable service header set.' );
 foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi', 'ugradbena_zamjenska_roba' ) as $service_detail ) {
 	sidrena_schema_assert( in_array( $service_detail, $service_headers, true ), 'NN 105/2026 service display field missing: ' . $service_detail );
 }
@@ -113,6 +116,11 @@ $services_source  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usluge' ), 'Service type must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Service scope must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, "'barkod'              => __( 'barkod'" ), 'Barcode must not block publication when it is not applicable.' );
+sidrena_schema_assert(
+	false !== strpos( $pricelist_source, "product_meta_with_parent( \$product, '_sidrena_sale_reference_exemption' )" )
+	&& false !== strpos( $pricelist_source, "array( 'perishable', 'fast_expiry' )" ),
+	'WooCommerce variation rows must honor a perishable/fast-expiry sale-reference exemption inherited from the parent product.'
+);
 sidrena_schema_assert( false === strpos( $services_source, "add_action( 'transition_post_status'" ), 'Service anchor snapshot must not run before service meta is saved.' );
 sidrena_schema_assert( false !== strpos( $services_source, "add_action( 'wp_after_insert_post'" ), 'Service finalization must run after custom meta save hooks.' );
 sidrena_schema_assert( false !== strpos( $services_source, '$this->snapshot_newly_published( $post_id, $post );' ), 'First publication must snapshot the submitted current price after meta save.' );
