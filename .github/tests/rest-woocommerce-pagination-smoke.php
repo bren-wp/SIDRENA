@@ -13,8 +13,11 @@ define( 'ABSPATH', __DIR__ . '/' );
 class WP_REST_Request {}
 class Sidrena_Location_Data {
 	public static function get_for_product( $location_id, $product ) {
-		unset( $location_id, $product );
-		return array();
+		unset( $location_id );
+		$explicit = array( 1, 20, 21, 22 );
+		return in_array( $product->get_id(), $explicit, true )
+			? array( 'availability' => 'dostupno', 'updated_at' => '2026-09-24T10:00:00+00:00' )
+			: array();
 	}
 }
 $GLOBALS['sidrena_anchor_calls'] = 0;
@@ -111,22 +114,33 @@ $method = new ReflectionMethod( 'Sidrena_REST', 'realtime_products' );
 $method->setAccessible( true );
 $rest = Sidrena_REST::instance();
 
-$page1 = $method->invoke( $rest, array( 'id' => 'loc-1', 'code' => 'L1' ), 1, 2 );
-sidrena_rest_page_assert( 5 === $page1['total'], 'Woo REST total must count flattened public items, including variations and excluding hidden/excluded parents.' );
-sidrena_rest_page_assert( 3 === $page1['total_pages'], 'Woo REST total_pages must use flattened item count.' );
+$physical_location = array( 'id' => 'loc-1', 'code' => 'L1', 'kind' => 'objekt' );
+$page1 = $method->invoke( $rest, $physical_location, 1, 2 );
+sidrena_rest_page_assert( 4 === $page1['total'], 'Physical-location REST total must exclude products without explicit per-location availability.' );
+sidrena_rest_page_assert( 2 === $page1['total_pages'], 'Physical-location REST pagination must be based on explicitly available location rows.' );
 sidrena_rest_page_assert( 2 === count( $page1['items'] ), 'Woo REST page must never exceed per_page.' );
 sidrena_rest_page_assert( 1 === $page1['items'][0]['id'], 'Woo REST first item should be the simple product.' );
 sidrena_rest_page_assert( 20 === $page1['items'][1]['id'], 'Woo REST variable parent must expand to its first variation.' );
 
-$page2 = $method->invoke( $rest, array( 'id' => 'loc-1', 'code' => 'L1' ), 2, 2 );
+$page2 = $method->invoke( $rest, $physical_location, 2, 2 );
 sidrena_rest_page_assert( array( 21, 22 ) === array_column( $page2['items'], 'id' ), 'Woo REST second page must continue through flattened variations.' );
 sidrena_rest_page_assert( 2 === count( $page2['items'] ), 'Woo REST second page must respect per_page.' );
 
-$page3 = $method->invoke( $rest, array( 'id' => 'loc-1', 'code' => 'L1' ), 3, 2 );
-sidrena_rest_page_assert( array( 5 ) === array_column( $page3['items'], 'id' ), 'Woo REST final page must contain the remaining public item.' );
+$page3 = $method->invoke( $rest, $physical_location, 3, 2 );
+sidrena_rest_page_assert( array() === array_column( $page3['items'], 'id' ), 'Physical-location REST must not leak a product that lacks explicit location availability.' );
+
+$availability_method = new ReflectionMethod( 'Sidrena_REST', 'has_realtime_location_availability' );
+$availability_method->setAccessible( true );
+sidrena_rest_page_assert( false === $availability_method->invoke( $rest, $GLOBALS['sidrena_wc_products'][5], $physical_location ), 'Physical store must reject global Woo stock as a location-specific availability fact.' );
+sidrena_rest_page_assert( true === $availability_method->invoke( $rest, $GLOBALS['sidrena_wc_products'][5], array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ) ), 'Webshop may use the global Woo stock fallback.' );
+
+$product_method = new ReflectionMethod( 'Sidrena_REST', 'product_item' );
+$product_method->setAccessible( true );
+$webshop_item = $product_method->invoke( $rest, $GLOBALS['sidrena_wc_products'][5], array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ) );
+sidrena_rest_page_assert( 'dostupno' === $webshop_item['dostupnost'], 'Webshop REST item must retain the global Woo stock fallback.' );
 
 sidrena_rest_page_assert( ! isset( $GLOBALS['sidrena_wc_queries'][0]['paginate'] ), 'Woo REST flattened iterator must not use parent-product paginate totals.' );
 sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Woo REST flattened iterator must fetch bounded catalog batches.' );
-sidrena_rest_page_assert( 5 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for items returned on the requested pages.' );
+sidrena_rest_page_assert( 5 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for requested physical pages plus the explicit webshop item test.' );
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );
