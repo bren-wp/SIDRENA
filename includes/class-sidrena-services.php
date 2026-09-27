@@ -360,7 +360,8 @@ final class Sidrena_Services {
 		$out         = '<div class="sidrena-services" role="region" aria-label="' . esc_attr__( 'Cjenik usluga', 'sidrena' ) . '">';
 		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 		$out        .= '<p class="sidrena-services__summary">' . esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d usluga.', 'sidrena' ), $first, $last, $total ) ) . '</p>';
-		$out        .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table"><thead><tr>';
+		$out        .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table">';
+		$out        .= '<caption class="sidrena-visually-hidden">' . esc_html__( 'Aktualni cjenik usluga', 'sidrena' ) . '</caption><thead><tr>';
 		$out        .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
 		$out        .= '<th scope="col">' . esc_html__( 'Aktualna cijena', 'sidrena' ) . '</th>';
 		$show_lowest = 'yes' === Sidrena_Utils::settings()['display_lowest_30'];
