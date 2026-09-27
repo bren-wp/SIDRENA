@@ -1310,3 +1310,165 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 		text-align:left;
 	}
 }
+
+
+/* WooCommerce compact catalog — approved reference hierarchy. */
+.sidrena-admin-screen .sid-woo-catalog-summary {
+	margin:0 0 12px;
+	padding:12px 14px;
+}
+.sidrena-admin-screen .sid-woo-catalog-form {
+	margin:0;
+	padding:0;
+	overflow:hidden;
+}
+.sidrena-admin-screen .sid-woo-table-wrap {
+	border:0;
+	border-radius:0;
+}
+.sidrena-admin-screen .sid-woo-compact-table {
+	min-width:980px;
+}
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(1) { min-width:220px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(2) { min-width:105px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(3) { min-width:105px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(4) { min-width:120px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(5) { min-width:135px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(6) { min-width:115px; }
+.sidrena-admin-screen .sid-woo-compact-table th:nth-child(7) { min-width:100px; }
+.sidrena-admin-screen .sid-woo-compact-table td {
+	background:#fff;
+}
+.sidrena-admin-screen .sid-woo-product-row td {
+	border-bottom:0;
+}
+.sidrena-admin-screen .sid-woo-product-row:hover td {
+	background:#f8fbff;
+}
+.sidrena-admin-screen .sid-woo-current-price .woocommerce-Price-amount {
+	color:var(--sid-ref-text);
+	font-weight:800;
+}
+.sidrena-admin-screen .sid-woo-product-details-row>td {
+	padding:0 9px 8px!important;
+	background:#fff;
+}
+.sidrena-admin-screen .sid-row-details {
+	border:1px solid #e4ebf3;
+	border-radius:8px;
+	background:#f8fbfe;
+}
+.sidrena-admin-screen .sid-row-details summary {
+	display:flex;
+	align-items:center;
+	gap:7px;
+	min-height:38px;
+	padding:8px 10px;
+	color:#34516f;
+	font-size:10px;
+	font-weight:800;
+	cursor:pointer;
+	list-style:none;
+}
+.sidrena-admin-screen .sid-row-details summary::-webkit-details-marker { display:none; }
+.sidrena-admin-screen .sid-row-details summary::after {
+	content:"›";
+	margin-left:auto;
+	color:#68819a;
+	font-size:17px;
+	line-height:1;
+	transform:rotate(90deg);
+	transition:transform .15s ease;
+}
+.sidrena-admin-screen .sid-row-details[open] summary::after {
+	transform:rotate(-90deg);
+}
+.sidrena-admin-screen .sid-row-details__hint {
+	color:#7a8fa4;
+	font-size:9px;
+	font-weight:500;
+}
+.sidrena-admin-screen .sid-row-details__grid {
+	display:grid;
+	grid-template-columns:repeat(5,minmax(140px,1fr));
+	gap:9px;
+	padding:0 10px 10px;
+}
+.sidrena-admin-screen .sid-row-details__grid label {
+	display:grid;
+	align-content:start;
+	gap:4px;
+	min-width:0;
+}
+.sidrena-admin-screen .sid-row-details__grid label>span {
+	color:#506a83;
+	font-size:9px;
+	font-weight:800;
+}
+.sidrena-admin-screen .sid-row-details__grid input,
+.sidrena-admin-screen .sid-row-details__grid select {
+	min-height:38px;
+	font-size:10px;
+}
+.sidrena-admin-screen .sid-woo-catalog-form .sid-bulk-actions {
+	margin:0;
+	padding:11px 13px;
+	border-top:1px solid #e3ebf2;
+	background:#f8fbfe;
+}
+
+/* WordPress catalog alignment with the reference table/editor. */
+.sidrena-admin-screen .sid-source-sync,
+.sidrena-admin-screen .sid-standalone-import,
+.sidrena-admin-screen .sid-standalone-form {
+	border-radius:10px;
+	box-shadow:none;
+}
+.sidrena-admin-screen .sid-source-sync .sid-inline-form {
+	grid-template-columns:minmax(180px,.8fr) minmax(220px,1fr) auto;
+	align-items:end;
+}
+.sidrena-admin-screen .sid-standalone-form {
+	padding:0;
+	overflow:hidden;
+}
+.sidrena-admin-screen .sid-standalone-form .sid-table-wrap {
+	border:0;
+	border-radius:0;
+}
+.sidrena-admin-screen .sid-standalone-form .sid-form-actions {
+	margin:0;
+	padding:11px 13px;
+	border-top:1px solid #e3ebf2;
+	background:#f8fbfe;
+}
+.sidrena-admin-screen .sid-standalone-table {
+	min-width:1320px;
+}
+.sidrena-admin-screen .sid-standalone-table td {
+	background:#fff;
+}
+.sidrena-admin-screen .sid-standalone-table tbody tr:hover td {
+	background:#f8fbff;
+}
+@media (max-width:1300px) {
+	.sidrena-admin-screen .sid-row-details__grid {
+		grid-template-columns:repeat(3,minmax(150px,1fr));
+	}
+}
+@media (max-width:900px) {
+	.sidrena-admin-screen .sid-row-details__grid {
+		grid-template-columns:repeat(2,minmax(145px,1fr));
+	}
+	.sidrena-admin-screen .sid-source-sync .sid-inline-form {
+		grid-template-columns:1fr;
+	}
+}
+@media (max-width:560px) {
+	.sidrena-admin-screen .sid-row-details__grid {
+		grid-template-columns:1fr;
+	}
+	.sidrena-admin-screen .sid-row-details__hint {
+		display:none;
+	}
+}
