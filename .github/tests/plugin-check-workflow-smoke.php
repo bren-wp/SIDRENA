@@ -41,4 +41,15 @@ sidrena_plugin_check_workflow_assert(
 	'Plugin Check build and edition jobs must retain bounded execution time.'
 );
 
+sidrena_plugin_check_workflow_assert(
+	false !== strpos( $check, 'slug: sidrena' )
+	&& false !== strpos( $check, 'slug: sidrena-for-woocommerce' ),
+	'Plugin Check must use the public WordPress and WooCommerce slugs/text domains.'
+);
+sidrena_plugin_check_workflow_assert(
+	false === strpos( $check, 'slug: sidrena-wordpress' )
+	&& false === strpos( $check, 'slug: sidrena-woocommerce' ),
+	'Install-folder names must not be reused as public Plugin Check slugs.'
+);
+
 fwrite( STDOUT, "Sidrena Plugin Check workflow smoke test passed.\n" );
