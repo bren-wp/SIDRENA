@@ -1740,3 +1740,7 @@ msgstr ""
 #: includes/class-sidrena-admin.php
 msgid "Članak 7. stavci 1. do 9. izmijenjenog Zakona počinju se primjenjivati 17.11.2026. i uvode obvezu isticanja bazne cijene te objave važećih cjenika proizvoda na mrežnim stranicama. Bazna cijena nije isto što i dodatna/sidrena cijena iz NN 101/2026. Konkretan referentni dan, proizvodi i način isticanja bazne cijene uređuju se provedbenim pravilnikom, pa Sidrena ne pretpostavlja vrijednosti koje još nisu propisane."
 msgstr ""
+
+#: includes/class-sidrena-standalone.php
+msgid "marka, barkod, jedinična cijena, posebna prodaja i dostupnost po lokaciji"
+msgstr ""
