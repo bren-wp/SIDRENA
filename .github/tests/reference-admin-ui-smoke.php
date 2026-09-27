@@ -101,4 +101,24 @@ sidrena_reference_ui_assert(
 	'Compliance progress must not reintroduce inline CSS.'
 );
 
+sidrena_reference_ui_assert(
+	false !== strpos( $admin, '$last_success' )
+	&& false !== strpos( $admin, "'files'] ?? 0" )
+	&& false !== strpos( $admin, 'sidrena_check_public_access' ),
+	'Publication UI must distinguish successful runs and retain the public-access action.'
+);
+sidrena_reference_ui_assert(
+	false !== strpos( $admin, "'missing_current_total'" )
+	&& false !== strpos( $admin, '$current_price_ok' )
+	&& false !== strpos( $admin, '$lowest_price_ok' )
+	&& false !== strpos( $admin, '$dated_price_ok' ),
+	'Price-label status rows must derive from actual audit data.'
+);
+sidrena_reference_ui_assert(
+	false !== strpos( $bulk, '$catalog_visibility' )
+	&& false !== strpos( $bulk, '$public_included' )
+	&& false !== strpos( $bulk, "'hidden' !==" ),
+	'Woo public-catalog status must honor native catalog visibility.'
+);
+
 fwrite( STDOUT, "Sidrena reference admin UI smoke test passed.\n" );
