@@ -180,6 +180,7 @@ final class Sidrena_Standalone {
 	public static function audit_stats() {
 		$stats = array(
 			'products'           => 0,
+			'missing_current'    => 0,
 			'missing_anchor'     => 0,
 			'missing_brand'      => 0,
 			'missing_barcode'    => 0,
@@ -191,6 +192,9 @@ final class Sidrena_Standalone {
 
 		foreach ( self::iterate_rows() as $row ) {
 			++$stats['products'];
+			if ( '' === Sidrena_Utils::decimal( $row['maloprodajna_cijena'] ?? '' ) ) {
+				++$stats['missing_current'];
+			}
 			if ( '' === trim( (string) $row['sidrena_cijena'] ) ) {
 				++$stats['missing_anchor'];
 			}
