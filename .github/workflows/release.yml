@@ -197,7 +197,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-wordpress
-          slug: brendigo-cjenikomat
+          slug: brendigo-sidrena-digitalni-cjenici
           # Public standalone slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
           wp-version: latest
           ignore-errors: 'false'
@@ -208,7 +208,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-woocommerce
-          slug: brendigo-cjenikomat-trgovine
+          slug: brendigo-sidrena-cjenici
           # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
           wp-version: latest
           ignore-errors: 'false'
