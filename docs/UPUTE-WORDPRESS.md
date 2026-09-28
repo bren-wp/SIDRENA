@@ -43,9 +43,9 @@ Sidrena WordPress namijenjena je WordPress web stranicama koje **ne koriste WooC
 
 ## Instalacija
 
-Instalacijski ZIP 1.0.21 je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
+Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
 
-1. Prenesite `sidrena-wordpress-1.0.21.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite aktualni `sidrena-wordpress-<verzija>.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte **Sidrena WordPress**.
 3. Otvorite **Sidrena** u lijevom admin meniju.
 4. Otvorite **Sidrena > Katalog**.
@@ -243,7 +243,7 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - WhatsApp: **+385 91 901 0092**
 - Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- PDF: `docs/SIDRENA-PODRSKA.pdf`
+- Detaljni PDF priručnik i podrška: `docs/SIDRENA-PODRSKA.pdf`
 - Autor: **Brendigo**
 
 ## Donacija
