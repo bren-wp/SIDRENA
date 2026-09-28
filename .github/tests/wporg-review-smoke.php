@@ -245,6 +245,8 @@ sidrena_wporg_assert(
 	&& false !== strpos( $woo_readme, 'mingo.gov.hr' )
 	&& false !== strpos( $wp_readme, 'dirh.gov.hr' )
 	&& false !== strpos( $woo_readme, 'dirh.gov.hr' )
+	&& false !== strpos( $wp_readme, 'www.hok.hr' )
+	&& false !== strpos( $woo_readme, 'www.hok.hr' )
 	&& false !== strpos( $wp_readme, 'normal connection/request data' )
 	&& false !== strpos( $woo_readme, 'normal connection/request data' )
 	&& false !== strpos( $wp_readme, 'SIDRENA never uses these government/reference sites as an API or automatic data service' )
@@ -253,8 +255,8 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	0 === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source )
-	&& 0 === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source ),
+	0 === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr|(?:www\.)?hok\.hr)/i', $production_source )
+	&& 0 === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr|(?:www\.)?hok\.hr)/i', $production_source ),
 	'Official legal/reference sites must remain user-clicked links and must never become automatic PHP or browser network endpoints.'
 );
 
