@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -503,7 +503,7 @@ final class Sidrena_Pricelist {
 		$meta = array(
 			'schema'       => 2,
 			'format'       => 'jsonl',
-			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
+			'generator'    => 'Cjenikomat ' . SIDRENA_VERSION,
 			'generated_at' => wp_date( DATE_ATOM, $timestamp ),
 			'location'     => array(
 				'id'      => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
@@ -1192,7 +1192,7 @@ final class Sidrena_Pricelist {
 
 		$data = array(
 			'schema'         => 3,
-			'generator'      => 'Sidrena ' . SIDRENA_VERSION,
+			'generator'      => 'Cjenikomat ' . SIDRENA_VERSION,
 			'plugin_url'     => 'https://brendigo.com/sidrene-cijene/',
 			'ruleset'        => SIDRENA_RULESET,
 			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
