@@ -68,10 +68,24 @@ sidrena_release_gate_assert(
 
 sidrena_release_gate_assert(
 	false !== strpos( $release, 'V1023_STALE_TARGET=c7a41fa9cf31e0c0f8fb3c43769b59fd474ab4c0' )
-	&& false !== strpos( $resolve_block, '"$VERSION" == "1.0.23" && "$EXISTING_TAG_TARGET" == "$V1023_STALE_TARGET"' )
-	&& false !== strpos( $release, 'CURRENT_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"' )
-	&& false !== strpos( $release, 'test "$CURRENT_TAG_TARGET" = "$V1023_STALE_TARGET"' ),
-	'1.0.23 release repair must be a one-time controlled refresh tied to the known premature tag target.'
+	&& false !== strpos( $resolve_block, '"$VERSION" == "1.0.23" && "$EXISTING_TAG_TARGET" == "$V1023_STALE_TARGET"' ),
+	'1.0.23 release repair must be enabled only for the known premature tag target.'
+);
+
+$retarget_start = strpos( $release, '- name: Retarget refreshed existing controlled tag' );
+$retarget_end   = strpos( $release, '- name: Verify published GitHub release assets' );
+sidrena_release_gate_assert(
+	false !== $retarget_start && false !== $retarget_end && $retarget_start < $retarget_end,
+	'Unable to isolate controlled existing-release retarget step.'
+);
+$retarget_block = substr( $release, $retarget_start, $retarget_end - $retarget_start );
+sidrena_release_gate_assert(
+	false !== strpos( $retarget_block, "env.RELEASE_EXISTS == 'true'" )
+	&& false !== strpos( $retarget_block, 'if [[ "$VERSION" == "1.0.23" ]]' )
+	&& false !== strpos( $retarget_block, 'CURRENT_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"' )
+	&& false !== strpos( $retarget_block, 'test "$CURRENT_TAG_TARGET" = "$V1023_STALE_TARGET"' )
+	&& false !== strpos( $retarget_block, 'test "$RELEASE_TARGET" = "$GITHUB_SHA"' ),
+	'Existing 1.0.23 release retarget must verify both the known stale tag and the current validated release target.'
 );
 
 
