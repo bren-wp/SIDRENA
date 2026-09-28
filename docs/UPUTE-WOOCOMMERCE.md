@@ -279,7 +279,7 @@ Kod migracije weba zajedno prenesite bazu podataka i cijeli uploads/sidrena sadr
 
 - Sidrena prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.25.zip` i `sidrena-woocommerce-1.0.25.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.26.zip` i `sidrena-woocommerce-1.0.26.zip`.
 
 ## WP-CLI
 
