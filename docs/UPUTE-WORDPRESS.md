@@ -332,11 +332,9 @@ SIDRENA je tehnički alat za vođenje i objavu podataka. Ne daje pravno jamstvo,
 
 ## Podrška
 
-- E-mail: **sidrena@brendigo.com**
-- WhatsApp: **+385 91 901 0092**
-- Plugin možete instalirati i postaviti sami.
-- Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- Detaljni PDF priručnik i podrška: `docs/SIDRENA-UPUTE.pdf`
+- E-mail: **info@brendigo.com**
+- Dokumentacija: `docs/SIDRENA-UPUTE.pdf`
+- Web-stranica projekta: **https://brendigo.com/sidrene-cijene/**
 - Autor: **brendigo**
 
 ## Donacija
