@@ -53,6 +53,7 @@ class Sidrena_Utils {
 	public static function is_wordpress_edition() { return false; }
 	public static function public_index() { return array(); }
 	public static function archive_index() { return array(); }
+	public static function public_file_index( $entries ) { return is_array( $entries ) ? $entries : array(); }
 	public static function upload_paths() { return array( 'manifest_url' => '' ); }
 }
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
