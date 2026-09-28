@@ -26,8 +26,8 @@ SKIP_FILES = {
 }
 TEXT_SUFFIXES = {".php", ".css", ".js", ".yml", ".yaml", ".sh", ".py", ".svg", ".md", ".txt", ".pot"}
 ENTRYPOINTS = {
-    pathlib.Path("editions/wordpress/sidrena-wordpress.php"),
-    pathlib.Path("editions/woocommerce/sidrena-woocommerce.php"),
+    pathlib.Path("editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php"),
+    pathlib.Path("editions/woocommerce/brendigo-sidrene-cijene-cjenici.php"),
 }
 
 PHP_HEADER = """/**
