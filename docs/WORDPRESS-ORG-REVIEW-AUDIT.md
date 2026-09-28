@@ -54,10 +54,9 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** `admin_notices`, global notice hooks, dependency/conflict notices, support/donation/setup surfaces.
 
 **Resolution:**
-- only two dependency/conflict `admin_notices` remain.
-- both are limited to the WordPress Plugins screen.
-- both require the relevant plugin-management capability.
-- both are dismissible.
+- only one custom `admin_notices` hook remains: the SIDRENA edition-conflict notice.
+- it is limited to the WordPress Plugins screen, requires `activate_plugins`, and is dismissible.
+- the WooCommerce dependency uses the core `Requires Plugins: woocommerce` header instead of a custom dashboard notice.
 - no `all_admin_notices` hook exists.
 - donation and optional paid setup are confined to SIDRENA Support/documentation, not global notices or general dashboard marketing.
 
@@ -110,6 +109,7 @@ This file records the repository-side audit performed before the next WordPress.
 - that check is restricted to SIDRENA publication URLs under the current site's own public upload base, validates the URL, uses `wp_safe_remote_get()`, explicitly rejects unsafe URLs, limits redirects/response size and sends no catalogue/customer payload to brendigo.
 - the frontend compatibility fetch is same-origin and targets the local SIDRENA read-only REST endpoint.
 - official legal sources, brendigo, WhatsApp and Revolut are user-initiated links and are documented as such in both readmes.
+- public REST/manifest output does not inject a brendigo credit URL or other automatic public-facing external link.
 - Terms/Privacy destinations for the external support/donation services are documented.
 
 **Proof:** WordPress.org network regression guard and readme External services sections.
@@ -121,7 +121,8 @@ This file records the repository-side audit performed before the next WordPress.
 **Resolution:**
 - sidrena/reference price, lowest price in the previous 30 days and public 30-day archive are separate concepts.
 - the documentation states that machine-readable publication accepts XML **or** CSV; SIDRENA generates both as a technical interoperability choice without claiming both are simultaneously required.
-- the service-price-list timing wording is aligned to NN 101/2026-1213: on each change, no later than 08:00 on the day the service price-list amendment is published; the older “day the change enters into force” paraphrase is prohibited by regression coverage.
+- the service-price-list timing wording is aligned to the published NN 101/2026-1213 text: on each change, no later than 08:00 on the day the service price-list amendment is published.
+- the 22.09.2026 Ministry clarification paraphrases this timing differently; SIDRENA therefore keeps the text of the published Decision as its implementation baseline and does not present itself as a legal arbiter.
 - SIDRENA does not claim 100% legal compliance or guaranteed compliance.
 - future/base-price rules are not silently equated with the current SIDRENA reference-price model.
 - legal sources and effective dates are documented in `docs/legal-and-technical-notes.md`.
