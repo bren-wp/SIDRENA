@@ -1578,7 +1578,7 @@ else :
 			$out .= '<span class="sidrena-expiry"><span class="sidrena-expiry__label">' . esc_html__( 'Krajnji rok uporabe', 'sidrena' ) . ':</span> <span class="sidrena-expiry__value">' . esc_html( Sidrena_Utils::date_display( $expiry_date ) ) . '</span></span>';
 		}
 		if ( '' !== $anchor ) {
-			$date       = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'];
+			$date       = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ? get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) : Sidrena_Utils::settings()['default_ref_date'];
 			$tooltip    = Sidrena_Utils::anchor_tooltip();
 			$tooltip_id = 'sidrena-anchor-tip-s' . absint( $id );
 			$tip_html   = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
