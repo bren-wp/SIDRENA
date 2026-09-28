@@ -130,6 +130,8 @@ Premium atributi uključuju lokaciju, format (csv/xml), katalog (products/servic
 
 Sidrena više ne traži da korisnik ručno uključuje zakonski važan output. Automatski ostaju uključeni:
 
+Propis za strojno obradivi cjenik predviđa XML **ili** CSV format. SIDRENA namjerno generira oba formata radi interoperabilnosti i praktičnijeg automatiziranog dohvaćanja; oba formata su tehnička odluka plugina, a ne tvrdnja da zakon zahtijeva oba istodobno.
+
 - CSV i XML
 - javni HTML cjenik
 - JSON manifest
