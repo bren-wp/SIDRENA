@@ -820,6 +820,46 @@ final class Sidrena_Utils {
 		return trim( (string) get_post_meta( $product->get_id(), '_sidrena_barcode', true ) );
 	}
 
+	public static function is_public_file_available( $entry ) {
+		if ( ! is_array( $entry ) ) {
+			return false;
+		}
+
+		$filename = isset( $entry['filename'] ) ? basename( (string) $entry['filename'] ) : '';
+		if ( '' === $filename ) {
+			return false;
+		}
+
+		$paths = self::upload_paths();
+		$path  = $paths['archive_dir'] . $filename;
+		if ( ! is_file( $path ) || ! is_readable( $path ) ) {
+			return false;
+		}
+
+		$actual_bytes = filesize( $path );
+		if ( false === $actual_bytes || $actual_bytes <= 0 ) {
+			return false;
+		}
+
+		$expected_bytes = absint( $entry['bytes'] ?? 0 );
+		if ( $expected_bytes > 0 && $actual_bytes !== $expected_bytes ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'sidrena_public_file_available', true, $entry, $path );
+	}
+
+	public static function available_public_file_index( $entries ) {
+		$available = array();
+		foreach ( is_array( $entries ) ? $entries : array() as $entry ) {
+			if ( ! self::is_public_file_available( $entry ) ) {
+				continue;
+			}
+			$available[] = $entry;
+		}
+		return self::public_file_index( $available );
+	}
+
 	public static function public_file_index( $entries ) {
 		$public = array();
 		foreach ( is_array( $entries ) ? $entries : array() as $entry ) {
