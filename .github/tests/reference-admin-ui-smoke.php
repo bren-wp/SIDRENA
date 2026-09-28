@@ -46,7 +46,7 @@ foreach (
 	array(
 		'sid-woo-compact-table',
 		'sid-row-details',
-		'Napredna Cjenikomat polja',
+		'Napredna SIDRENA polja',
 		'Sidrena_History::sale_reference( $product )',
 		'private function safe_suggestions( $product )',
 		"apply_filters( 'sidrena_safe_field_suggestions'",
