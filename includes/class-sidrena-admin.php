@@ -2278,7 +2278,7 @@ final class Sidrena_Admin {
 					continue;
 				}
 				++$stats['services'];
-				if ( '' === Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_price', true ) ) ) {
+				if ( '' === Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_current_price', true ) ) ) {
 					++$stats['missing_current'];
 				}
 				if ( '' === get_post_meta( $service_id, '_sidrena_service_anchor_price', true ) ) {
