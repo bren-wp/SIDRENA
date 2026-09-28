@@ -1,6 +1,6 @@
 === brendigo Sidrene cijene i cjenici ===
 Contributors: brendigo
-Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
+Donate link: https://revolut.me/catanyus
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
