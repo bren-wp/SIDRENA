@@ -321,7 +321,6 @@ final class Sidrena_Public {
 										?>
 										<small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?>
 									<?php
-									<?php
 									if ( $service_type ) :
 										?>
 										<small><strong><?php esc_html_e( 'Vrsta usluge', 'sidrena' ); ?>:</strong> <?php echo esc_html( $service_type ); ?></small><?php endif; ?>
