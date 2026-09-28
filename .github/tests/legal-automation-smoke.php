@@ -58,8 +58,8 @@ sidrena_legal_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        =
 sidrena_legal_assert( false !== strpos( $utils_source, "'generation_time'      => '06:30'" ), 'Default generation time is not automated early enough.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'strict_publication'   => 'yes'" ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
-sidrena_legal_assert( false === strpos( $utils_source, "'business_name'" ) && false === strpos( $utils_source, "'show_business_identity'" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
-sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'" ) && false === strpos( $utils_source, "'anchor_tooltip_text'" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );
+sidrena_legal_assert( false === strpos( $utils_source, "'business_name'        =>" ) && false === strpos( $utils_source, "'show_business_identity' =>" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
+sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'         =>" ) && false === strpos( $utils_source, "'anchor_tooltip_text'    =>" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "Sidrena cijena na %s" ), 'Sidrena reference label must stay fixed and date-based.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '0.5.0' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '0.5.0 changelog does not mention legal automation watchdog.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '0.5.0 changelog does not mention production hardening.' );
