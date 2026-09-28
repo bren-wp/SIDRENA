@@ -1,4 +1,4 @@
-=== SIDRENA ===
+=== brendigo SIDRENA Price Publisher ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
 Tags: cijene, cjenik, csv, xml, trgovina
@@ -26,7 +26,7 @@ SIDRENA 1.0.21 is built for WordPress sites that need a structured price catalog
 
 Official website: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
-Author: Brendigo
+Author: brendigo
 
 = Privacy and external links =
 
