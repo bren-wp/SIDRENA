@@ -122,6 +122,12 @@ sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje vrsta usl
 sidrena_schema_assert( false === strpos( $pricelist_source, 'nedostaje opseg usluge' ), 'Service scope must remain optional in strict NN 101/2026 publication preflight.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, "'barkod'              => __( 'barkod'" ), 'Barcode must not block publication when it is not applicable.' );
 sidrena_schema_assert( false === strpos( $pricelist_source, 'sale_reference' ), 'Active price-list generation must not depend on the retired 30-day sale-price reference workflow.' );
+sidrena_schema_assert( false === strpos( file_get_contents( dirname( __DIR__, 2 ) . '/includes/sidrena-bootstrap.php' ), 'class-sidrena-history.php' ), 'Retired product 30-day history runtime must not be loaded.' );
+sidrena_schema_assert( false === strpos( file_get_contents( dirname( __DIR__, 2 ) . '/includes/sidrena-bootstrap.php' ), 'class-sidrena-service-history.php' ), 'Retired service 30-day history runtime must not be loaded.' );
+sidrena_schema_assert( ! file_exists( dirname( __DIR__, 2 ) . '/includes/class-sidrena-history.php' ), 'Retired product sale-reference implementation must not return.' );
+sidrena_schema_assert( ! file_exists( dirname( __DIR__, 2 ) . '/includes/class-sidrena-service-history.php' ), 'Retired service sale-reference implementation must not return.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Sidrena_Utils::custom_reference_date' ), 'Anchor CSV import must validate custom first-listing dates through the SIDRENA ruleset.' );
+sidrena_schema_assert( false !== strpos( $admin_source, "delete_post_meta( $product_id, '_sidrena_anchor_date' )" ), 'Anchor CSV import must remove custom dates for locked legal groups.' );
 sidrena_schema_assert( false !== strpos( $pricelist_source, "'posebni_oblik_prodaje'" ) && false !== strpos( $pricelist_source, "'naziv_posebnog_oblika_prodaje'" ), 'Price-list output must retain special-sale status and name.' );
 sidrena_schema_assert( false === strpos( $services_source, "add_action( 'transition_post_status'" ), 'Service anchor snapshot must not run before service meta is saved.' );
 sidrena_schema_assert( false !== strpos( $services_source, "add_action( 'wp_after_insert_post'" ), 'Service finalization must run after custom meta save hooks.' );
