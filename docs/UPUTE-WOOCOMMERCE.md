@@ -217,11 +217,9 @@ Nakon masovnog uređivanja pregledajte rezultate prije spremanja.
 
 ### Korak 7 — posebni oblici prodaje
 
-Kod sniženja SIDRENA prati dostupnu povijest WooCommerce cijena i iz nje pokušava dobiti 30-dnevnu referencu.
+Ako je aktivan poseban oblik prodaje, evidentirajte njegov status i naziv. Sidrena cijena ostaje zasebna referentna redovna cijena za mjerodavni datum; SIDRENA ne vodi paralelni 30-dnevni sustav snižene cijene.
 
-Ako povijest nije dovoljna, unesite samo provjerenu ručnu vrijednost iz poslovne evidencije ili stvarno primjenjivu iznimku.
-
-Najniža cijena u prethodnih 30 dana nije isto što i 30-dnevna javna arhiva CSV/XML datoteka.
+Javna arhiva CSV/XML cjenika čuva se 30 dana neovisno o tome postoji li poseban oblik prodaje.
 
 ### Korak 8 — jedinična cijena
 
@@ -241,7 +239,7 @@ Kod većeg uvoza napravite backup i prvo testirajte manju datoteku. SIDRENA kori
 
 ### Korak 11 — provjerite SIDRENA > Provjera
 
-Riješite stvarna upozorenja: nedostajuću sidrenu cijenu, marku, barkod, jediničnu cijenu, nepotpunu 30-dnevnu referencu, lokacijsku pokrivenost ili problem objave.
+Riješite stvarna upozorenja: nedostajuću sidrenu cijenu, neispravan pravni datum, marku, barkod, jediničnu cijenu, lokacijsku pokrivenost ili problem objave.
 
 Zeleni tehnički status nije pravno jamstvo; potvrđuje da su ugrađene tehničke provjere zadovoljene.
 
@@ -251,7 +249,7 @@ U **SIDRENA > Cjenici** kliknite **Generiraj cjenik odmah**. Provjerite da su na
 
 ### Korak 13 — otvorite javnu Objavu cjenika
 
-Otvorite stranicu kao običan posjetitelj. Provjerite pretragu, cijene, sidrenu cijenu, 30-dnevnu referencu gdje je primjenjiva, download i arhivu.
+Otvorite stranicu kao običan posjetitelj. Provjerite pretragu, aktualne cijene, sidrenu cijenu, podatak o posebnom obliku prodaje, preuzimanje i arhivu.
 
 ### Korak 14 — provjerite integritet datoteka
 
@@ -295,7 +293,7 @@ WooCommerce izdanje dodatno ima Woo-specifične WP-CLI naredbe kada su registrir
 
 Prije produkcijske objave provjerite najmanje sljedeće:
 
-- dodatna/sidrena cijena uz važeću cijenu kada je obveza primjenjiva
+- sidrena cijena uz važeću cijenu kada je obveza primjenjiva
 - referentni datum 10.09.2026. za novobuhvaćene proizvode/usluge, odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije
 - CSV ili XML javni cjenik
 - zasebnu objavu po lokaciji i webshopu kada je primjenjivo
@@ -307,15 +305,9 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 
 ## SIDRENA cijena
 
-SIDRENA cijena je zasebna referentna vrijednost uz aktualnu WooCommerce cijenu kada je obveza primjenjiva. Ne poistovjećujte je s redovnom WooCommerce cijenom, akcijskom cijenom, najnižom cijenom u prethodnih 30 dana niti s javnom arhivskom datotekom.
+SIDRENA cijena je zasebna referentna vrijednost uz aktualnu WooCommerce cijenu kada je obveza primjenjiva. Ne poistovjećujte je s trenutačnom cijenom posebnog oblika prodaje niti s javnom arhivskom datotekom.
 
 SIDRENA može popuniti podatke iz pouzdanih WooCommerce izvora samo gdje je to tehnički i semantički sigurno. Povijesna referentna vrijednost mora odgovarati stvarnoj poslovnoj evidenciji; plugin ne smije izmišljati ili rekonstruirati nedokazivu cijenu.
-
-## Najniža cijena u prethodnih 30 dana
-
-Kod posebnog oblika prodaje SIDRENA koristi dostupnu povijest cijena kao tehničku podlogu za 30-dnevnu referencu. Ako nema dovoljno pouzdanih zapisa, ostavlja potrebu za provjerenim ručnim podatkom umjesto izmišljanja vrijednosti.
-
-WooCommerce sale price i SIDRENA 30-dnevna referenca nisu isti podatak. Također, 30-dnevna referenca nije isto što i najmanje 30 dana javno dostupne arhive digitalnih cjenika.
 
 ## Jedinična cijena
 
