@@ -54,4 +54,11 @@ sidrena_readme_assets_assert(
 	'Main README must clearly distinguish real runtime screenshots and production brand assets.'
 );
 
+sidrena_readme_assets_assert(
+	false === stripos( $readme, 'usklađene cijene, sigurno poslovanje' )
+	&& false === stripos( $readme, '100% usklađ' )
+	&& false === stripos( $readme, 'jamči usklađenost' ),
+	'Main README must not contain legal-compliance marketing claims.'
+);
+
 fwrite( STDOUT, "Sidrena README real-assets smoke test passed.\n" );
