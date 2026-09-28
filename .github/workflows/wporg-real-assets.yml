@@ -21,6 +21,7 @@ on:
       - 'branding/**'
       - '!branding/rendered/**'
       - 'includes/**'
+      - 'languages/**'
       - 'public/**'
       - 'editions/**'
       - 'tools/capture-wporg-assets.mjs'
