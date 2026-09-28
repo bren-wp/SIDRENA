@@ -25,6 +25,8 @@ mkdir -p "$WORK"
 
 WP_MAIN="$ROOT/editions/wordpress/sidrena-wordpress.php"
 WOO_MAIN="$ROOT/editions/woocommerce/sidrena-woocommerce.php"
+WP_SLUG="brendigo-sidrene-cijene-digitalni-cjenici"
+WOO_SLUG="brendigo-sidrena-cijena"
 WP_README="$ROOT/editions/wordpress/readme.txt"
 WOO_README="$ROOT/editions/woocommerce/readme.txt"
 
@@ -123,7 +125,7 @@ if pot.exists():
 PY
 }
 
-WP_STAGE="$WORK/sidrena-wordpress"
+WP_STAGE="$WORK/$WP_SLUG"
 copy_common "$WP_STAGE"
 cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
@@ -141,7 +143,7 @@ rm -f \
   "$WP_STAGE/includes/class-sidrena-woo-import-export.php" \
   "$WP_STAGE/includes/class-sidrena-compatibility.php"
 
-WOO_STAGE="$WORK/sidrena-woocommerce"
+WOO_STAGE="$WORK/$WOO_SLUG"
 copy_common "$WOO_STAGE"
 cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
@@ -169,8 +171,8 @@ PY
 rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"
 (
   cd "$WORK"
-  LC_ALL=C find sidrena-wordpress -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
-  LC_ALL=C find sidrena-woocommerce -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
+  LC_ALL=C find "$WP_SLUG" -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
+  LC_ALL=C find "$WOO_SLUG" -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
 )
 
 for zip_path in "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"; do
