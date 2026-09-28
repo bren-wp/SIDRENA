@@ -29,8 +29,9 @@ $admin_source = file_get_contents( $root . '/includes/class-sidrena-admin.php' )
 $bootstrap_source = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
 $products_source = file_get_contents( $root . '/includes/class-sidrena-products.php' );
 $rest_source = file_get_contents( $root . '/includes/class-sidrena-rest.php' );
+$public_source = file_get_contents( $root . '/includes/class-sidrena-public.php' );
 
-foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source, $products_source, $rest_source ) as $source ) {
+foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source, $products_source, $rest_source, $public_source ) as $source ) {
 	sidrena_wporg_assert( false !== $source, 'WordPress.org review guard could not read a required source file.' );
 }
 
@@ -172,7 +173,7 @@ sidrena_wporg_assert(
 sidrena_wporg_assert(
 	false === strpos( $rest_source, "add_shortcode( 'sidrena_cjenici'" )
 	&& false === strpos( $rest_source, 'public function shortcode( $atts = array() )' )
-	&& false !== strpos( $root ? file_get_contents( $root . '/includes/class-sidrena-public.php' ) : '', "add_shortcode( 'sidrena_cjenici', array( $this, 'downloads_shortcode' ) );" ),
+	&& false !== strpos( $public_source, "add_shortcode( 'sidrena_cjenici', array( $this, 'downloads_shortcode' ) );" ),
 	'The public price-list download shortcode must be owned only by Sidrena_Public.'
 );
 
