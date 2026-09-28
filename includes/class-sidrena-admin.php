@@ -203,7 +203,7 @@ final class Sidrena_Admin {
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="620" height="120" loading="eager" decoding="async" alt="<?php esc_attr_e( 'CJENIKOMAT — sidrene cijene i digitalni cjenici', 'sidrena' ); ?>">
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="620" height="120" loading="eager" decoding="async" alt="<?php esc_attr_e( 'SIDRENA — sidrene cijene i digitalni cjenici', 'sidrena' ); ?>">
 					<span class="sidrena-brandbar__edition"><span class="dashicons <?php echo $is_woo ? 'dashicons-cart' : 'dashicons-wordpress'; ?>"></span><?php echo esc_html( $edition_name ); ?></span>
 				</div>
 				<div class="sidrena-brandbar__copy">
@@ -220,7 +220,7 @@ final class Sidrena_Admin {
 				<div class="sidrena-contextbar__left">
 					<span class="sid-context-chip"><?php esc_html_e( 'Produkcijsko okruženje', 'sidrena' ); ?></span>
 					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'Cjenikomat · %s', 'sidrena' ), $edition_name ) ); ?></span>
+					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'SIDRENA · %s', 'sidrena' ), $edition_name ) ); ?></span>
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
 				</div>
 				<div class="sidrena-contextbar__right">
@@ -281,7 +281,7 @@ final class Sidrena_Admin {
 			</main>
 
 			<footer class="sidrena-footer">
-				<span><?php echo esc_html( Sidrena_Utils::developer_label() ); ?> · Cjenikomat <?php echo esc_html( SIDRENA_VERSION ); ?></span>
+				<span><?php echo esc_html( Sidrena_Utils::developer_label() ); ?> · SIDRENA <?php echo esc_html( SIDRENA_VERSION ); ?></span>
 				<span><a href="mailto:<?php echo esc_attr( Sidrena_Utils::support_email() ); ?>"><?php echo esc_html( Sidrena_Utils::support_email() ); ?></a> · <a href="<?php echo esc_url( $official_url ); ?>" target="_blank" rel="noopener noreferrer">brendigo.com/sidrene-cijene</a></span>
 			</footer>
 		</div>
@@ -401,7 +401,7 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'O nama', 'sidrena' ); ?></span>
 				<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
-				<p><?php esc_html_e( 'Razvoj, održavanje i podrška za oba Cjenikomat izdanja.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'Razvoj, održavanje i podrška za oba SIDRENA izdanja.', 'sidrena' ); ?></p>
 			</div>
 			<a class="button sid-secondary" href="https://brendigo.com/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span>brendigo.com</a>
 		</div>
@@ -453,7 +453,7 @@ final class Sidrena_Admin {
 			<section class="sid-card">
 				<span class="sid-kicker"><?php esc_html_e( '2. Katalog', 'sidrena' ); ?></span>
 				<h2><?php echo $woo ? esc_html__( 'Katalog web trgovine', 'sidrena' ) : esc_html__( 'Samostalni katalog', 'sidrena' ); ?></h2>
-				<p><?php echo $woo ? esc_html__( 'Cjenikomat koristi postojeće proizvode i varijacije web trgovine kao izvor podataka.', 'sidrena' ) : esc_html__( 'Samostalno Cjenikomat izdanje koristi vlastiti katalog proizvoda koji možete unositi ručno ili uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
+				<p><?php echo $woo ? esc_html__( 'SIDRENA koristi postojeće proizvode i varijacije web trgovine kao izvor podataka.', 'sidrena' ) : esc_html__( 'Samostalno SIDRENA izdanje koristi vlastiti katalog proizvoda koji možete unositi ručno ili uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
 				<p><?php esc_html_e( 'Za jediničnu cijenu prvo označite primjenjivost. Kada je obvezna, količina pakiranja i jedinica mogu poslužiti za automatski izračun ako iznos nije ručno unesen.', 'sidrena' ); ?></p>
 				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><?php esc_html_e( 'Otvori Katalog', 'sidrena' ); ?></a>
 			</section>
@@ -640,7 +640,7 @@ final class Sidrena_Admin {
 			</div>
 
 			<section class="sid-card sid-reference-panel sid-reference-price-explainer">
-				<div class="sid-section-head"><div><h2><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Kako se prikazuju cijene na Vašoj stranici?', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Cjenikomat odvaja trenutnu cijenu, najnižu cijenu u prethodnih 30 dana i referentnu cijenu na datum.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-section-head"><div><h2><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Kako se prikazuju cijene na Vašoj stranici?', 'sidrena' ); ?></h2><p><?php esc_html_e( 'SIDRENA odvaja trenutnu cijenu, najnižu cijenu u prethodnih 30 dana i referentnu cijenu na datum.', 'sidrena' ); ?></p></div></div>
 				<?php $this->dashboard_price_education( $data['settings'] ); ?>
 			</section>
 		</div>
@@ -1543,7 +1543,7 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Sljedivost', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Dnevnik važnih događaja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Generiranje cjenika i administrativne promjene bilježe se u Dnevniku radi provjere rada i lakšeg otklanjanja pogrešaka.', 'sidrena' ); ?></p></div></div>
 		<section class="sid-card">
-			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><caption class="screen-reader-text"><?php esc_html_e( 'Dnevnik važnih Cjenikomat događaja', 'sidrena' ); ?></caption><thead><tr><th scope="col"><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
+			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><caption class="screen-reader-text"><?php esc_html_e( 'Dnevnik važnih SIDRENA događaja', 'sidrena' ); ?></caption><thead><tr><th scope="col"><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
 			<?php if ( empty( $rows ) ) : ?><tr><td colspan="4"><?php esc_html_e( 'Dnevnik je zasad prazan.', 'sidrena' ); ?></td></tr><?php endif; ?>
 			<?php foreach ( $rows as $row ) : ?>
 			<?php $status_labels = array( 'success' => __( 'Uspješno', 'sidrena' ), 'warning' => __( 'Upozorenje', 'sidrena' ), 'error' => __( 'Greška', 'sidrena' ) ); $status = sanitize_key( $row['status'] ?? '' ); ?>
@@ -2507,7 +2507,7 @@ final class Sidrena_Admin {
 					'limit_response_size' => 262144,
 					'headers'     => array(
 						'Accept'     => 'text/csv, application/xml, text/xml, */*;q=0.1',
-						'User-Agent' => 'Cjenikomat-Public-Check/' . SIDRENA_VERSION,
+						'User-Agent' => 'SIDRENA-Public-Check/' . SIDRENA_VERSION,
 					),
 				)
 			);

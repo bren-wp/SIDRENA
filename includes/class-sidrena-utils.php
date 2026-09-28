@@ -652,8 +652,8 @@ final class Sidrena_Utils {
 
 	public static function runtime_mode_label() {
 		return self::is_woocommerce_edition()
-			? __( 'Cjenikomat · web trgovina', 'sidrena' )
-			: __( 'Cjenikomat · samostalni katalog', 'sidrena' );
+			? __( 'SIDRENA · web trgovina', 'sidrena' )
+			: __( 'SIDRENA · samostalni katalog', 'sidrena' );
 	}
 
 	public static function is_public_wc_product( $product ) {
