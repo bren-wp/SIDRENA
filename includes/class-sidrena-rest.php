@@ -130,8 +130,8 @@ final class Sidrena_REST {
 				'generated_at'    => isset( $last['generated_at'] ) ? sanitize_text_field( (string) $last['generated_at'] ) : null,
 				'manifest_url' => 'yes' === $settings['publish_manifest'] ? esc_url_raw( $paths['manifest_url'] ) : null,
 				'realtime_url' => esc_url_raw( rest_url( 'sidrena/v1/cijene' ) ),
-				'current'      => Sidrena_Utils::public_file_index( Sidrena_Utils::public_index() ),
-				'archive'      => Sidrena_Utils::public_file_index( Sidrena_Utils::archive_index() ),
+				'current'      => Sidrena_Utils::available_public_file_index( Sidrena_Utils::public_index() ),
+				'archive'      => Sidrena_Utils::available_public_file_index( Sidrena_Utils::archive_index() ),
 			)
 		);
 	}
