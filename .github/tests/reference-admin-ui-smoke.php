@@ -47,7 +47,9 @@ foreach (
 		'sid-woo-compact-table',
 		'sid-row-details',
 		'Napredna SIDRENA polja',
-		'Sidrena_History::sale_reference( $product )',
+		'Zaključano: 10.09.2026.',
+		'Zaključano FMCG: 02.05.2025.',
+		'Novouvedeni proizvod nakon 10.09.2026.',
 		'private function safe_suggestions( $product )',
 		"apply_filters( 'sidrena_safe_field_suggestions'",
 		'data-sidrena-safe-fill="code"',
@@ -63,6 +65,18 @@ foreach (
 sidrena_reference_ui_assert(
 	false === strpos( $bulk, "<th scope=\"col\"><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></th><th scope=\"col\"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>" ),
 	'The legacy 13-column Woo editor must not return as the main table.'
+);
+
+sidrena_reference_ui_assert(
+	false === strpos( $bulk, 'Najniža 30 dana' )
+	&& false === strpos( $bulk, 'Sidrena_History::sale_reference' ),
+	'Retired 30-day/sale-reference workflow must not return to the Woo bulk catalog.'
+);
+
+sidrena_reference_ui_assert(
+	false !== strpos( $bulk, 'Sidrena_Utils::custom_reference_date' )
+	&& false !== strpos( $bulk, "delete_post_meta( $id, '_sidrena_anchor_date' )" ),
+	'Woo bulk save must ignore/remove custom dates outside the new-item ruleset.'
 );
 
 foreach (
