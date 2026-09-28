@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -36,7 +36,7 @@ sidrena_support_assert( '80 EUR' === Sidrena_Utils::installation_price(), 'Insta
 sidrena_support_assert( false !== strpos( rawurldecode( Sidrena_Utils::installation_service_url() ), '80 EUR' ), 'Installation service URL must mention 80 EUR.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::donation_url(), 'revolut.me/catanyus' ), 'Direct Revolut donation URL missing.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-PODRSKA.pdf' ), 'Support PDF URL mismatch.' );
-sidrena_support_assert( 'Brendigo' === Sidrena_Utils::developer_label(), 'Author label mismatch.' );
+sidrena_support_assert( 'brendigo' === Sidrena_Utils::developer_label(), 'Author label mismatch.' );
 
 sidrena_support_assert(
 	false !== strpos( $builder, '"wordpress" "$WP_STAGE/docs/UPUTE.md"' )
