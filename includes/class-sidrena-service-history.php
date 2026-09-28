@@ -204,8 +204,8 @@ final class Sidrena_Service_History {
 		}
 
 		return array(
-			'ready'         => ! empty( $values ),
-			'price'         => empty( $values ) ? '' : min( $values ),
+			'ready'         => true,
+			'price'         => min( $values ),
 			'coverage_from' => sanitize_text_field( $baseline['recorded_at'] ),
 		);
 	}
