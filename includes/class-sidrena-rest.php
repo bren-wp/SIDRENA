@@ -24,7 +24,6 @@ final class Sidrena_REST {
 
 	public function hooks() {
 		add_action( 'rest_api_init', array( $this, 'routes' ) );
-		add_shortcode( 'sidrena_cjenici', array( $this, 'shortcode' ) );
 	}
 
 	public function routes() {
@@ -520,65 +519,5 @@ final class Sidrena_REST {
 			'total'       => absint( $query->found_posts ),
 			'total_pages' => absint( $query->max_num_pages ),
 		);
-	}
-
-	public function shortcode( $atts = array() ) {
-		$atts = shortcode_atts( array( 'archive' => 'yes' ), $atts, 'sidrena_cjenici' );
-		$current = Sidrena_Utils::public_index();
-		$archive = 'yes' === $atts['archive'] ? Sidrena_Utils::archive_index() : array();
-		if ( empty( $current ) && empty( $archive ) ) {
-			return '<p>' . esc_html__( 'Cjenik još nije generiran.', 'sidrena' ) . '</p>';
-		}
-
-		wp_enqueue_style( 'sidrena-frontend', SIDRENA_URL . 'public/css/frontend.css', array(), SIDRENA_VERSION );
-		$out  = '<div class="sidrena-public-files">';
-		$out .= '<h2>' . esc_html__( 'Aktualni cjenici', 'sidrena' ) . '</h2>';
-		$out .= $this->files_list( $current );
-
-		if ( 'yes' === $atts['archive'] ) {
-			$current_names = array();
-			foreach ( $current as $file ) {
-				if ( ! empty( $file['filename'] ) ) {
-					$current_names[ $file['filename'] ] = true;
-				}
-			}
-			$older = array();
-			foreach ( $archive as $file ) {
-				if ( empty( $file['filename'] ) || isset( $current_names[ $file['filename'] ] ) ) {
-					continue;
-				}
-				$older[] = $file;
-			}
-			if ( ! empty( $older ) ) {
-				$out .= '<details class="sidrena-archive"><summary>' . esc_html__( 'Arhiva prethodnih cjenika', 'sidrena' ) . '</summary>';
-				$out .= $this->files_list( $older );
-				$out .= '</details>';
-			}
-		}
-
-		$out .= '</div>';
-		return $out;
-	}
-
-	private function files_list( $files ) {
-		if ( empty( $files ) ) {
-			return '<p>' . esc_html__( 'Nema dostupnih datoteka.', 'sidrena' ) . '</p>';
-		}
-
-		$out = '<ul class="sidrena-file-list">';
-		foreach ( $files as $file ) {
-			$catalog = 'products' === ( $file['catalog'] ?? '' ) ? __( 'Proizvodi', 'sidrena' ) : __( 'Usluge', 'sidrena' );
-			$label = sprintf(
-				/* translators: 1: location code, 2: catalog type, 3: file format, 4: generation time. */
-				__( '%1$s · %2$s · %3$s · %4$s', 'sidrena' ),
-				isset( $file['location_code'] ) ? $file['location_code'] : '',
-				$catalog,
-				strtoupper( $file['format'] ?? '' ),
-				isset( $file['generated_at'] ) ? $file['generated_at'] : ''
-			);
-			$out .= '<li><a rel="nofollow" href="' . esc_url( $file['url'] ?? '' ) . '">' . esc_html( $label ) . '</a></li>';
-		}
-		$out .= '</ul>';
-		return $out;
 	}
 }
