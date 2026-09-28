@@ -86,7 +86,7 @@ def should_process(path: pathlib.Path) -> bool:
 def has_metadata(text: str) -> bool:
     head = "\n".join(text.splitlines()[:24])
     author_present = re.search(
-        r"(?i)(?<![A-Za-z0-9_-])(?:@author\\s+|author:\\s*)brendigo(?![A-Za-z0-9_-])",
+        r"(?i)(?<![A-Za-z0-9_-])(?:@author\s+|author:\s*)brendigo(?![A-Za-z0-9_-])",
         head,
     )
     return bool(author_present) and PLUGIN_URI in head and AUTHOR_URI in head
