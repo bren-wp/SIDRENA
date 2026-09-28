@@ -69,6 +69,16 @@ if ( function_exists( 'simplexml_load_string' ) ) {
 
 $admin = Sidrena_Admin::instance();
 
+$write_stream_all = new ReflectionMethod( 'Sidrena_Admin', 'write_stream_all' );
+$write_stream_all->setAccessible( true );
+$payload  = str_repeat( 'sidrena-stream-', 131072 );
+$resource = fopen( 'php://temp/maxmemory:1048576', 'w+b' );
+sidrena_import_stream_assert( is_resource( $resource ), 'Woo admin CSV temp stream must be available.' );
+sidrena_import_stream_assert( true === $write_stream_all->invoke( $admin, $resource, $payload ), 'Woo admin CSV helper must report a complete stream write.' );
+rewind( $resource );
+sidrena_import_stream_assert( $payload === stream_get_contents( $resource ), 'Woo admin CSV helper must preserve the complete payload across memory/disk temp buffering.' );
+fclose( $resource );
+
 $validate_price = new ReflectionMethod( 'Sidrena_Admin', 'validated_import_price' );
 $validate_price->setAccessible( true );
 sidrena_import_stream_assert( '1234.56' === $validate_price->invoke( $admin, '1.234,56' ), 'Woo financial CSV validation must preserve a valid Croatian decimal.' );
@@ -105,5 +115,8 @@ sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' 
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );
 sidrena_import_stream_assert( false === strpos( $admin_source, 'if ( $processed > 50000 )' ), 'Woo imports must not partially import then silently stop at the row limit.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, "fopen( 'php://temp/maxmemory:1048576', 'w+b' )" ), 'Woo admin CSV import must cap in-memory temp buffering before spilling to disk.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'if ( ! $this->write_stream_all( $resource, $contents ) )' ), 'Woo admin CSV import must reject incomplete temp-stream writes.' );
+sidrena_import_stream_assert( false === strpos( $admin_source, 'fwrite( $resource, $contents )' ), 'Woo admin CSV import must not rely on one unchecked fwrite call.' );
 
 fwrite( STDOUT, "Sidrena streaming import smoke test passed.\n" );
