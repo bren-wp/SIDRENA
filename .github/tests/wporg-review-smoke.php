@@ -27,8 +27,9 @@ $release = file_get_contents( $root . '/.github/workflows/release.yml' );
 $bulk_source = file_get_contents( $root . '/includes/class-sidrena-bulk.php' );
 $admin_source = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
 $bootstrap_source = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
+$products_source = file_get_contents( $root . '/includes/class-sidrena-products.php' );
 
-foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source ) as $source ) {
+foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source, $products_source ) as $source ) {
 	sidrena_wporg_assert( false !== $source, 'WordPress.org review guard could not read a required source file.' );
 }
 
@@ -36,6 +37,12 @@ sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' )
 	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Sidrene cijene i cjenici' ),
 	'Final Croatian plugin display names changed.'
+);
+
+sidrena_wporg_assert(
+	false === preg_match( '/^\s*\*\s*Plugin Name:.*WooCommerce/im', $woo_main )
+	&& false === stripos( strtok( $woo_readme, "\n" ), 'WooCommerce' ),
+	'WooCommerce trademark must not appear in the public plugin display name or readme title.'
 );
 
 sidrena_wporg_assert(
@@ -63,6 +70,18 @@ sidrena_wporg_assert(
 );
 
 foreach ( array( $wp_readme, $woo_readme ) as $readme ) {
+	$readme_lines = preg_split( '/\R/', $readme );
+	$description_marker = array_search( '== Description ==', $readme_lines, true );
+	$short_description = '';
+	if ( false !== $description_marker ) {
+		for ( $line_index = 10; $line_index < $description_marker; ++$line_index ) {
+			$candidate = trim( (string) $readme_lines[ $line_index ] );
+			if ( '' !== $candidate ) {
+				$short_description = $candidate;
+			}
+		}
+	}
+	sidrena_wporg_assert( '' !== $short_description && strlen( $short_description ) <= 150, 'WordPress.org short description must not exceed 150 characters.' );
 	preg_match( '/^Tags:\s*(.+)$/mi', $readme, $tags_match );
 	$tags = isset( $tags_match[1] ) ? array_filter( array_map( 'trim', explode( ',', $tags_match[1] ) ) ) : array();
 	sidrena_wporg_assert( count( $tags ) > 0 && count( $tags ) <= 5, 'WordPress.org readme must contain at most five focused tags.' );
@@ -79,9 +98,9 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_readme, 'Reference prices, 30-day sale-price references' )
+	false !== strpos( $wp_readme, 'Reference prices, 30-day sale references' )
 	&& false !== strpos( $wp_readme, '== Description ==' )
-	&& false !== strpos( $woo_readme, 'Reference prices, 30-day sale-price references' )
+	&& false !== strpos( $woo_readme, 'Reference prices, 30-day sale references' )
 	&& false !== strpos( $woo_readme, '== Description ==' ),
 	'WordPress.org readme base language must remain standard English.'
 );
@@ -115,6 +134,15 @@ sidrena_wporg_assert(
 	false !== strpos( $bulk_source, "current_user_can( 'edit_post', \$id )" )
 	&& substr_count( $admin_source, "current_user_can( 'edit_post', \$product_id )" ) >= 2,
 	'WooCommerce bulk/import write paths must enforce per-product edit capabilities in addition to action-level permissions.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $products_source, 'private function verified_product_form_data' )
+	&& false !== strpos( $products_source, "wp_verify_nonce( \$nonce, 'woocommerce_save_data' )" )
+	&& false !== strpos( $products_source, '$posted = $this->verified_product_form_data' )
+	&& false === strpos( $products_source, 'can_process_product_form' )
+	&& false === strpos( $products_source, 'isset( $_POST[ $key ] )' ),
+	'Woo product and variation writes must process field data only after Woo nonce and object permission verification.'
 );
 
 sidrena_wporg_assert(
