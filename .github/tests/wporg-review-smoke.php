@@ -36,9 +36,9 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 }
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_main, 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: Brendigo Sidrena Cijena' ),
-	'Final Croatian plugin display names changed.'
+	false !== strpos( $wp_main, 'Plugin Name: SIDRENA' )
+	&& false !== strpos( $woo_main, 'Plugin Name: SIDRENA' ),
+	'Both installed plugin display names must remain SIDRENA.'
 );
 
 sidrena_wporg_assert(
@@ -66,9 +66,9 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_readme, '=== brendigo Sidrene cijene i digitalni cjenici ===' )
-	&& false !== strpos( $woo_readme, '=== Brendigo Sidrena Cijena ===' ),
-	'WordPress.org readme titles must match plugin headers.'
+	false !== strpos( $wp_readme, '=== SIDRENA ===' )
+	&& false !== strpos( $woo_readme, '=== SIDRENA ===' ),
+	'Both WordPress.org readme titles must remain SIDRENA.'
 );
 
 foreach ( array( $wp_readme, $woo_readme ) as $readme ) {
@@ -199,7 +199,7 @@ foreach ( $production_files as $file ) {
 sidrena_wporg_assert(
 	2 === substr_count( $production_source, "'admin_notices'" )
 	&& 0 === substr_count( $production_source, "'all_admin_notices'" )
-	&& false !== strpos( $bootstrap_source, 'Brendigo Sidrena Cijena zahtijeva aktivan WooCommerce.' ),
+	&& false !== strpos( $bootstrap_source, 'SIDRENA zahtijeva aktivan WooCommerce za WooCommerce izdanje.' ),
 	'Only scoped edition-conflict and missing-WooCommerce notices are allowed; global all_admin_notices are forbidden.'
 );
 
