@@ -90,21 +90,23 @@ sidrena_form_ux_assert(
 );
 
 sidrena_form_ux_assert(
-	false !== strpos( $admin, 'data-sidrena-oib' )
-	&& false !== strpos( $admin, 'Sidrena_Utils::is_valid_oib( $business_oib )' )
-	&& false !== strpos( $admin, "settings_invalid_oib" ),
-	'OIB must be validated in the settings form and on the server.'
+	false === strpos( $admin, 'data-sidrena-oib' )
+	&& false === strpos( $admin, 'business_name' )
+	&& false === strpos( $admin, 'show_business_identity' )
+	&& false === strpos( $script, 'function isValidOib(value)' ),
+	'General business-identity fields must stay outside the focused Sidrena settings workflow.'
 );
 sidrena_form_ux_assert(
-	false !== strpos( $admin, 'is_email( $business_email )' )
+	false !== strpos( $admin, 'is_email( $failure_email )' )
 	&& false !== strpos( $admin, "settings_invalid_email" ),
-	'Business email must retain server-side validation.'
+	'Publication alert email must retain server-side validation.'
 );
 sidrena_form_ux_assert(
-	false !== strpos( $script, 'function isValidOib(value)' )
-	&& false !== strpos( $script, 'function validateOibField(field)' )
-	&& false !== strpos( $script, "message('invalidOib'" ),
-	'Client-side OIB checksum feedback must remain available.'
+	false !== strpos( $admin, "CSV + XML uvijek uključeni" )
+	&& false !== strpos( $admin, "Automatizirani dohvat uvijek uključen" )
+	&& false === strpos( $admin, 'name="generate_csv"' )
+	&& false === strpos( $admin, 'name="enable_rest_index"' ),
+	'Legal publication switches must be automatic rather than user-disableable settings.'
 );
 
 sidrena_form_ux_assert(
