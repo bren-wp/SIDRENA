@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -65,7 +65,7 @@ jobs:
           cp -a build/plugin-check/.sidrena-build/sidrena-woocommerce build/plugin-check-packages/
 
       - name: Upload Plugin Check packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sidrena-plugin-check-build
           path: build/plugin-check-packages
@@ -78,7 +78,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Download build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: sidrena-plugin-check-build
           path: build/plugin-check-packages
@@ -100,7 +100,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Download build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: sidrena-plugin-check-build
           path: build/plugin-check-packages
