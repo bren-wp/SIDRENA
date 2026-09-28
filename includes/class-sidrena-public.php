@@ -137,8 +137,14 @@ final class Sidrena_Public {
 			return;
 		}
 
-		$location = isset( $_GET['lokacija'] ) ? Sidrena_Utils::sanitize_location_id( sanitize_text_field( wp_unslash( $_GET['lokacija'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( 'cjenik' === $route ) {
+		$location_raw = isset( $_GET['lokacija'] ) ? trim( sanitize_text_field( wp_unslash( $_GET['lokacija'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$location     = '' === $location_raw ? '' : Sidrena_Utils::sanitize_location_id( $location_raw );
+		$location_id  = $this->optional_location_id( $location );
+		if ( null === $location_id ) {
+			$content = $this->invalid_location_message();
+			status_header( 404 );
+			$title = 'cjenik' === $route ? __( 'Cjenik', 'sidrena' ) : __( 'Arhiva cjenika', 'sidrena' );
+		} elseif ( 'cjenik' === $route ) {
 			$content = $this->pricelist_shortcode( array( 'lokacija' => $location ) );
 			if ( ! $this->last_snapshot_available ) {
 				status_header( 503 );
@@ -345,9 +351,11 @@ final class Sidrena_Public {
 		);
 
 		$requested   = $atts['lokacija'] ? $atts['lokacija'] : $atts['oznaka'];
-		$location    = $requested ? $this->resolve_location( $requested ) : array();
-		$location_id = $location ? Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) : '';
-		$groups      = $this->archive_groups( $location_id, true );
+		$location_id = $this->optional_location_id( $requested );
+		if ( null === $location_id ) {
+			return $this->invalid_location_message();
+		}
+		$groups = $this->archive_groups( $location_id, true );
 		$total       = array_sum( array_map( 'count', $groups ) );
 
 		$this->enqueue_assets();
@@ -434,8 +442,10 @@ final class Sidrena_Public {
 			'sidrena_cjenici'
 		);
 		$requested   = $atts['lokacija'] ? $atts['lokacija'] : $atts['oznaka'];
-		$location    = $requested ? $this->resolve_location( $requested ) : array();
-		$location_id = $location ? Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) : '';
+		$location_id = $this->optional_location_id( $requested );
+		if ( null === $location_id ) {
+			return $this->invalid_location_message();
+		}
 
 		$current = array();
 		foreach ( Sidrena_Utils::public_index() as $entry ) {
@@ -492,8 +502,27 @@ final class Sidrena_Public {
 		return (string) ob_get_clean();
 	}
 
+	private function optional_location_id( $requested ) {
+		$requested = trim( (string) $requested );
+		if ( '' === $requested ) {
+			return '';
+		}
+
+		$location = $this->resolve_location( $requested );
+		if ( ! $location ) {
+			return null;
+		}
+
+		return Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+	}
+
+	private function invalid_location_message() {
+		return '<div class="sidrena-public-message sidrena-public-message--warning">' . esc_html__( 'Tražena Sidrena lokacija nije dostupna.', 'sidrena' ) . '</div>';
+	}
+
 	private function archive_groups( $location_id = '', $exclude_current = true ) {
-		$location_id   = Sidrena_Utils::sanitize_location_id( $location_id );
+		$location_id   = trim( (string) $location_id );
+		$location_id   = '' === $location_id ? '' : Sidrena_Utils::sanitize_location_id( $location_id );
 		$current_names = array();
 		if ( $exclude_current ) {
 			foreach ( Sidrena_Utils::public_index() as $entry ) {
