@@ -46,14 +46,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          set +e
-          "$COMPOSER_HOME/vendor/bin/phpcbf" --standard=phpcs.xml.dist
-          code=$?
-          set -e
-          if [ "$code" -gt 2 ]; then
-            echo "PHPCBF returned unexpected exit code $code" >&2
-            exit "$code"
-          fi
+          for pass in 1 2 3; do
+            set +e
+            "$COMPOSER_HOME/vendor/bin/phpcbf" --standard=phpcs.xml.dist
+            code=$?
+            set -e
+            if [ "$code" -gt 2 ]; then
+              echo "PHPCBF returned unexpected exit code $code on pass $pass" >&2
+              exit "$code"
+            fi
+            if [ "$code" -eq 0 ]; then
+              break
+            fi
+          done
           git diff --check
 
       - name: Commit formatter changes
