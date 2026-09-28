@@ -153,7 +153,6 @@ final class Sidrena_Admin {
 		return trim( $classes . ' sidrena-admin-screen sidrena-edition-body-' . $edition );
 	}
 
-	
 	public function action_links( $links ) {
 		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return $links;
@@ -288,7 +287,6 @@ final class Sidrena_Admin {
 		<?php
 	}
 
-	
 	private function render_notice() {
 		if ( ! isset( $_GET['sid_notice'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
@@ -325,7 +323,6 @@ final class Sidrena_Admin {
 		$text = $messages[ $notice ][1];
 		echo '<div class="notice notice-' . esc_attr( $type ) . ' is-dismissible"><p>' . esc_html( $text ) . '</p></div>';
 	}
-
 
 	private function support_tab() {
 		$pdf_url         = Sidrena_Utils::support_pdf_url();
@@ -378,9 +375,7 @@ final class Sidrena_Admin {
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( $install_url ); ?>"><?php echo esc_html( sprintf( __( 'Zatraži postavljanje - %s', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></a>
 			</section>
 
-
 		</div>
-
 
 		<?php
 	}
@@ -413,7 +408,6 @@ final class Sidrena_Admin {
 		</section>
 		<?php
 	}
-
 
 	private function help_tab() {
 		$woo = Sidrena_Utils::is_woocommerce_edition();
@@ -765,7 +759,6 @@ final class Sidrena_Admin {
 		</div>
 		<?php
 	}
-
 
 	private function dashboard_metric( $label, $value, $icon, $caption, $tone = 'blue' ) {
 		?>
@@ -1264,7 +1257,6 @@ final class Sidrena_Admin {
 		</div>
 		<?php
 	}
-
 
 	private function archive_tab() {
 		$archive   = Sidrena_Utils::archive_index();
@@ -2078,7 +2070,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$product_table,
 					1000,
 					$offset
@@ -2120,7 +2112,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$service_table,
 					1000,
 					$offset
@@ -2160,7 +2152,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$location_table,
 					1000,
 					$offset
@@ -2324,7 +2316,6 @@ final class Sidrena_Admin {
 		return $stats;
 	}
 
-
 	private function audit_stats() {
 		$products        = 0;
 		$missing_current = 0;
@@ -2373,7 +2364,6 @@ final class Sidrena_Admin {
 				}
 			}
 		}
-
 
 		if ( Sidrena_Utils::is_wordpress_edition() ) {
 			$standalone                = Sidrena_Standalone::audit_stats();
@@ -2490,7 +2480,6 @@ final class Sidrena_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce is verified by guard_post(); map_deep sanitizes every scalar after wp_unslash().
 		return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
 	}
-
 
 	public function check_public_access() {
 		$this->guard_post( 'sidrena_check_public_access' );
