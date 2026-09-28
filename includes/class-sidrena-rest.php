@@ -382,8 +382,9 @@ final class Sidrena_REST {
 
 				yield $product;
 			}
+			$product_count = count( $products );
 			++$catalog_page;
-		} while ( 100 === count( $products ) );
+		} while ( 100 === $product_count );
 	}
 
 	private function realtime_standalone_products( $location, $page, $per_page ) {
