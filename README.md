@@ -1,6 +1,6 @@
 <!--
 Sidrena source file.
-Author: Brendigo
+Author: brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
@@ -254,7 +254,7 @@ Sidrena tehnički pomaže voditi, provjeravati i objavljivati podatke o cijenama
 - Službena stranica: **https://brendigo.com/sidrene-cijene/**
 - E-mail: **sidrena@brendigo.com**
 - Telefon / WhatsApp: **+385 91 901 0092**
-- Autor: **Brendigo**
+- Autor: **brendigo**
 
 ## Licenca
 

@@ -3,7 +3,7 @@
  * Shared Sidrena edition-conflict guard.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  */
 
@@ -48,9 +48,16 @@ add_action(
 add_action(
 	'admin_notices',
 	static function () {
-		if ( current_user_can( 'activate_plugins' ) ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Aktivno može biti samo jedno Sidrena izdanje. Drugo ili starije izdanje je blokirano/deaktivirano kako bi se spriječili dvostruki hookovi, klase i objave.', 'sidrena' ) . '</p></div>';
+		if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
+			return;
 		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || 'plugins' !== $screen->id ) {
+			return;
+		}
+
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno SIDRENA izdanje. Konfliktno izdanje je deaktivirano. Na ekranu Dodataka ostavite aktivno samo izdanje koje želite koristiti.', 'sidrena' ) . '</p></div>';
 	}
 );
 

@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -57,7 +57,7 @@ $expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
 
 preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
 $actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
-$expected_domain = 'wordpress' === $edition ? 'sidrena' : 'sidrena-for-woocommerce';
+$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrena-digitalni-cjenici' : 'brendigo-sidrena-cjenici';
 
 require $main;
 

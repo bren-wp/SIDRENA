@@ -148,10 +148,11 @@ sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention mu
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
 	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication safety flag not hardened: ' . $required_flag );
 }
-sidrena_schema_assert( 'yes' === $hardened['generate_csv'], 'At least one machine-readable format must be enabled when both CSV and XML are disabled.' );
-sidrena_schema_assert( 'no' === $hardened['generate_xml'], 'XML must remain a user choice when CSV already satisfies the machine-readable publication requirement.' );
-sidrena_schema_assert( 'no' === $hardened['enable_public_html'], 'Public HTML is optional and must not be forced by legal automation.' );
-sidrena_schema_assert( 'no' === $hardened['publish_manifest'], 'Manifest publication is optional and must not be forced by legal automation.' );
+sidrena_schema_assert( 'yes' === $hardened['generate_csv'], 'Premium automation must keep CSV enabled.' );
+sidrena_schema_assert( 'yes' === $hardened['generate_xml'], 'Premium automation must keep XML enabled alongside CSV for maximum machine-readable interoperability.' );
+sidrena_schema_assert( 'yes' === $hardened['enable_public_html'], 'Premium automation must keep the public price-list surface available.' );
+sidrena_schema_assert( 'yes' === $hardened['enable_rest_index'], 'Premium automation must keep the REST discovery/index surface available.' );
+sidrena_schema_assert( 'yes' === $hardened['publish_manifest'], 'Premium automation must keep the file manifest available for automated discovery.' );
 
 sidrena_schema_assert( 'yes' === $hardened['display_anchor'], 'Public sidrena-price display must remain enabled by the safe legal profile.' );
 sidrena_schema_assert( 'yes' === $hardened['display_lowest_30'], '30-day reference display must remain enabled by the safe legal profile.' );

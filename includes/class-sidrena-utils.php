@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -16,22 +16,8 @@ final class Sidrena_Utils {
 	public static function defaults() {
 		return array(
 			'business_mode'        => 'mixed',
-			'business_name'        => '',
-			'business_address'     => '',
-			'business_oib'         => '',
-			'business_email'       => '',
-			'business_phone'       => '',
-			'business_registry'    => '',
-			'business_registry_number' => '',
-			'business_vat_id'      => '',
-			'business_supervisory_authority' => '',
-			'show_business_identity' => 'yes',
 			'display_anchor'       => 'yes',
 			'display_lowest_30'    => 'yes',
-			'label_mode'           => 'date_only',
-			'label_custom'         => 'Sidrena cijena (%s)',
-			'anchor_tooltip_enabled' => 'yes',
-			'anchor_tooltip_text'    => 'Dodatna (sidrena) cijena je redovna cijena proizvoda ili usluge koja je vrijedila na prikazani referentni datum. Nije isto što i najniža cijena u prethodnih 30 dana.',
 			'default_ref_date'     => '2026-09-10',
 			'fmcg_ref_date'        => '2025-05-02',
 			'generate_csv'         => 'yes',
@@ -56,6 +42,26 @@ final class Sidrena_Utils {
 			$settings['fmcg_ref_date'] = self::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
 		}
 		unset( $settings['fmsid_ref_date'] );
+		foreach (
+			array(
+				'business_name',
+				'business_address',
+				'business_oib',
+				'business_email',
+				'business_phone',
+				'business_registry',
+				'business_registry_number',
+				'business_vat_id',
+				'business_supervisory_authority',
+				'show_business_identity',
+				'label_mode',
+				'label_custom',
+				'anchor_tooltip_enabled',
+				'anchor_tooltip_text',
+			) as $legacy_key
+		) {
+			unset( $settings[ $legacy_key ] );
+		}
 		$settings = wp_parse_args( $settings, self::defaults() );
 		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
 		return $settings;
@@ -127,53 +133,6 @@ final class Sidrena_Utils {
 		return $caps;
 	}
 
-	public static function sanitize_oib( $value ) {
-		$digits = preg_replace( '/\D+/', '', (string) $value );
-		return substr( (string) $digits, 0, 11 );
-	}
-
-	public static function is_valid_oib( $value ) {
-		$oib = self::sanitize_oib( $value );
-		if ( 11 !== strlen( $oib ) ) {
-			return false;
-		}
-		$a = 10;
-		for ( $i = 0; $i < 10; $i++ ) {
-			$a = ( $a + (int) $oib[ $i ] ) % 10;
-			if ( 0 === $a ) {
-				$a = 10;
-			}
-			$a = ( 2 * $a ) % 11;
-		}
-		$control = 11 - $a;
-		if ( 10 === $control ) {
-			$control = 0;
-		}
-		return $control === (int) $oib[10];
-	}
-
-	public static function sanitize_business_phone( $value ) {
-		$value = sanitize_text_field( (string) $value );
-		$value = preg_replace( '/[^0-9+() .\/-]/', '', $value );
-		return substr( trim( (string) $value ), 0, 40 );
-	}
-
-	public static function business_identity() {
-		$settings = self::settings();
-		return array(
-			'name'                  => sanitize_text_field( (string) ( $settings['business_name'] ?? '' ) ),
-			'address'               => sanitize_text_field( (string) ( $settings['business_address'] ?? '' ) ),
-			'oib'                   => self::sanitize_oib( $settings['business_oib'] ?? '' ),
-			'email'                 => sanitize_email( (string) ( $settings['business_email'] ?? '' ) ),
-			'phone'                 => self::sanitize_business_phone( $settings['business_phone'] ?? '' ),
-			'registry'              => sanitize_text_field( (string) ( $settings['business_registry'] ?? '' ) ),
-			'registry_number'       => sanitize_text_field( (string) ( $settings['business_registry_number'] ?? '' ) ),
-			'vat_id'                => sanitize_text_field( (string) ( $settings['business_vat_id'] ?? '' ) ),
-			'supervisory_authority' => sanitize_text_field( (string) ( $settings['business_supervisory_authority'] ?? '' ) ),
-			'show'                  => 'yes' === ( $settings['show_business_identity'] ?? 'yes' ),
-		);
-	}
-
 	public static function donation_url() {
 		$url = apply_filters(
 			'sidrena_donation_url',
@@ -209,11 +168,11 @@ final class Sidrena_Utils {
 
 
 	public static function support_pdf_url() {
-		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
+		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-UPUTE.pdf' : '';
 	}
 
 	public static function developer_label() {
-		return 'Brendigo';
+		return 'brendigo';
 	}
 
 	public static function woocommerce_store_address() {
@@ -369,59 +328,16 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_label( $date ) {
-		$settings = self::settings();
-		$display  = self::date_display( $date );
-
-		if ( 'date_only' === $settings['label_mode'] ) {
-			return sprintf(
-				/* translators: %s is a date. */
-				__( 'Cijena na %s', 'sidrena' ),
-				$display
-			);
-		}
-
-		$template = self::translate_user_string( trim( (string) $settings['label_custom'] ), 'label_custom' );
-		if ( false === strpos( $template, '%s' ) ) {
-			$template .= ' %s';
-		}
-		return sprintf( $template, $display );
+		$display = self::date_display( $date );
+		return sprintf(
+			/* translators: %s is the reference date used for the Sidrena price. */
+			__( 'Sidrena cijena na %s', 'sidrena' ),
+			$display
+		);
 	}
 
 	public static function anchor_tooltip() {
-		$settings = self::settings();
-		if ( 'yes' !== $settings['anchor_tooltip_enabled'] ) {
-			return '';
-		}
-		return self::translate_user_string( trim( (string) $settings['anchor_tooltip_text'] ), 'anchor_tooltip_text' );
-	}
-
-	public static function register_translation_strings() {
-		$settings = self::settings();
-		$strings  = array(
-			'label_custom'        => (string) $settings['label_custom'],
-			'anchor_tooltip_text' => (string) $settings['anchor_tooltip_text'],
-		);
-
-		foreach ( $strings as $name => $value ) {
-			if ( '' === trim( $value ) ) {
-				continue;
-			}
-			if ( function_exists( 'pll_register_string' ) ) {
-				pll_register_string( 'Sidrena ' . $name, $value, 'Sidrena', false );
-			}
-			do_action( 'wpml_register_single_string', 'Sidrena', $name, $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook.
-		}
-	}
-
-	public static function translate_user_string( $value, $name ) {
-		$value = (string) $value;
-		if ( '' === $value ) {
-			return '';
-		}
-		if ( function_exists( 'pll__' ) ) {
-			$value = pll__( $value );
-		}
-		return (string) apply_filters( 'wpml_translate_single_string', $value, 'Sidrena', $name ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External WPML API hook.
+		return __( 'Sidrena cijena je referentna redovna cijena koja je vrijedila na primjenjivi referentni datum. Nije isto što i najniža cijena u prethodnih 30 dana kod posebnog oblika prodaje.', 'sidrena' );
 	}
 
 	public static function upload_paths() {
@@ -736,8 +652,8 @@ final class Sidrena_Utils {
 
 	public static function runtime_mode_label() {
 		return self::is_woocommerce_edition()
-			? __( 'Sidrena WooCommerce', 'sidrena' )
-			: __( 'Sidrena WordPress', 'sidrena' );
+			? __( 'SIDRENA · web trgovina', 'sidrena' )
+			: __( 'SIDRENA · samostalni katalog', 'sidrena' );
 	}
 
 	public static function is_public_wc_product( $product ) {

@@ -548,7 +548,6 @@ final class Sidrena_Public {
 			'sidrena_objava_cjenika'
 		);
 		$this->enqueue_assets();
-		$identity = Sidrena_Utils::business_identity();
 		ob_start();
 		?>
 		<section class="sidrena-publication">
@@ -557,19 +556,6 @@ final class Sidrena_Public {
 				<h2><?php esc_html_e( 'Aktualne cijene i prethodne objave', 'sidrena' ); ?></h2>
 				<p><?php esc_html_e( 'Na jednom mjestu dostupni su aktualni pretraživi cjenik, CSV/XML datoteke za preuzimanje i arhiva prethodnih objava.', 'sidrena' ); ?></p>
 			</header>
-			<?php if ( ! empty( $identity['show'] ) && array_filter( $identity ) ) : ?>
-			<section class="sidrena-business-card" aria-label="<?php esc_attr_e( 'Podaci poslovnog subjekta', 'sidrena' ); ?>">
-				<div><span><?php esc_html_e( 'Poslovni subjekt', 'sidrena' ); ?></span><strong><?php echo esc_html( $identity['name'] ?: get_bloginfo( 'name' ) ); ?></strong><?php if ( $identity['address'] ) : ?><small><?php echo esc_html( $identity['address'] ); ?></small><?php endif; ?></div>
-				<dl>
-					<?php if ( $identity['oib'] ) : ?><div><dt>OIB</dt><dd><?php echo esc_html( $identity['oib'] ); ?></dd></div><?php endif; ?>
-					<?php if ( $identity['email'] ) : ?><div><dt><?php esc_html_e( 'E-mail', 'sidrena' ); ?></dt><dd><a href="mailto:<?php echo esc_attr( $identity['email'] ); ?>"><?php echo esc_html( $identity['email'] ); ?></a></dd></div><?php endif; ?>
-					<?php if ( $identity['phone'] ) : ?><div><dt><?php esc_html_e( 'Telefon', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['phone'] ); ?></dd></div><?php endif; ?>
-					<?php if ( $identity['registry'] || $identity['registry_number'] ) : ?><div><dt><?php esc_html_e( 'Registar', 'sidrena' ); ?></dt><dd><?php echo esc_html( trim( $identity['registry'] . ' ' . $identity['registry_number'] ) ); ?></dd></div><?php endif; ?>
-					<?php if ( $identity['vat_id'] ) : ?><div><dt><?php esc_html_e( 'PDV ID', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['vat_id'] ); ?></dd></div><?php endif; ?>
-					<?php if ( $identity['supervisory_authority'] ) : ?><div><dt><?php esc_html_e( 'Nadležno tijelo', 'sidrena' ); ?></dt><dd><?php echo esc_html( $identity['supervisory_authority'] ); ?></dd></div><?php endif; ?>
-				</dl>
-			</section>
-			<?php endif; ?>
 			<div class="sidrena-publication__section"><?php echo $this->pricelist_shortcode( $atts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes all dynamic values. ?></div>
 			<div class="sidrena-publication__section"><?php echo wp_kses_post( $this->downloads_shortcode( $atts ) ); ?></div>
 		</section>

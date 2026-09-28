@@ -1,19 +1,19 @@
 <?php
 /**
- * Plugin Name: SIDRENA for WooCommerce
+ * Plugin Name: brendigo SIDRENA – sidrene cijene i cjenici za web trgovine
  * Plugin URI: https://brendigo.com/sidrene-cijene/
- * Description: Price history, public CSV/XML price lists, locations and compliance-oriented price data for WooCommerce products and services.
+ * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije i objava cijena za WooCommerce proizvode i usluge.
  * Version: 1.0.21
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * WC requires at least: 8.0
  * WC tested up to: 11.1.2
- * Author: Brendigo
+ * Author: brendigo
  * Author URI: https://brendigo.com/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: sidrena-for-woocommerce
+ * Text Domain: brendigo-sidrena-cjenici
  * Domain Path: /languages
  */
 

@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -70,7 +70,7 @@ $compat_js  = file_get_contents( dirname( __DIR__, 2 ) . '/public/js/compat.js' 
 
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-reference-prices' ), 'Automatic Woo output must append Sidrena reference wrapper.' );
 sidrena_woo_output_assert( false !== strpos( $html, '29,99 €' ), 'Automatic Woo output must include the entered Sidrena price.' );
-sidrena_woo_output_assert( false !== strpos( $html, 'Cijena na 10.09.2026.' ), 'Default storefront label must identify the Sidrena price and reference date.' );
+sidrena_woo_output_assert( false !== strpos( $html, 'Sidrena cijena na 10.09.2026.' ), 'Default storefront label must identify the Sidrena price and reference date.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'sidrena-anchor__info' ), 'Automatic Woo output must include the accessible info indicator.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'tabindex="0"' ), 'Sidrena tooltip trigger must be keyboard focusable.' );
 sidrena_woo_output_assert( false !== strpos( $html, 'aria-describedby=' ), 'Sidrena tooltip trigger must reference its tooltip with aria-describedby.' );

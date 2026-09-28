@@ -1,3 +1,9 @@
+# Sidrena source file.
+# Author: brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
+# Support: sidrena@brendigo.com
+
 name: Sidrena admin polish guard
 
 on:

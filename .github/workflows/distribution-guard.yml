@@ -1,5 +1,5 @@
 # Sidrena source file.
-# Author: Brendigo
+# Author: brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
@@ -94,6 +94,21 @@ jobs:
           test -s branding/website-hero-woocommerce.svg
           test -s docs/media/screenshot-wordpress.png
           test -s docs/media/screenshot-woocommerce.png
+
+          if grep -Ini 'WooCommerce' \
+            assets/images/logo-woocommerce.svg \
+            assets/images/logo-woocommerce-light.svg \
+            branding/app-card-woocommerce.svg \
+            branding/compact-woocommerce.svg \
+            branding/cta-woocommerce.svg \
+            branding/docs-cover-woocommerce.svg \
+            branding/plugin-cover-woocommerce.svg \
+            branding/social-woocommerce.svg \
+            branding/website-hero-woocommerce.svg \
+            branding/wporg-banner-woocommerce.svg; then
+            echo 'Third-party WooCommerce wording must not appear inside SIDRENA graphic assets.' >&2
+            exit 1
+          fi
 
           grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
           grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
@@ -190,8 +205,8 @@ jobs:
           grep -Fxq 'sidrena-woocommerce/sidrena-woocommerce.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -Fxq 'sidrena-wordpress/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -Fxq 'sidrena-woocommerce/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'sidrena-wordpress/docs/SIDRENA-PODRSKA.pdf' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'sidrena-woocommerce/docs/SIDRENA-PODRSKA.pdf' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'sidrena-wordpress/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -Fxq 'sidrena-wordpress/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           grep -Fxq 'sidrena-woocommerce/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           grep -Fxq 'sidrena-wordpress/assets/images/logo-wordpress.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
@@ -237,14 +252,14 @@ jobs:
 
           WP="$OUT/.sidrena-build/sidrena-wordpress"
           WOO="$OUT/.sidrena-build/sidrena-woocommerce"
-          grep -Fq 'Text Domain: sidrena' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: sidrena-for-woocommerce' "$WOO/sidrena-woocommerce.php"
-          test -f "$WP/languages/sidrena.pot"
-          test -f "$WOO/languages/sidrena-for-woocommerce.pot"
+          grep -Fq 'Text Domain: brendigo-sidrena-digitalni-cjenici' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cjenici' "$WOO/sidrena-woocommerce.php"
+          test -f "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          test -f "$WOO/languages/brendigo-sidrena-cjenici.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
           test ! -f "$WOO/languages/sidrena-woocommerce.pot"
-          grep -Fq 'X-Domain: sidrena' "$WP/languages/sidrena.pot"
-          grep -Fq 'X-Domain: sidrena-for-woocommerce' "$WOO/languages/sidrena-for-woocommerce.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-digitalni-cjenici' "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-cjenici' "$WOO/languages/brendigo-sidrena-cjenici.pot"
           grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
           grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
@@ -264,3 +279,15 @@ jobs:
             echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
             exit 1
           fi
+
+      - name: Upload verified review packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-wordpress-org-review
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            ${{ runner.temp }}/sidrena-distribution/sidrena-wordpress-*.zip
+            ${{ runner.temp }}/sidrena-distribution/sidrena-woocommerce-*.zip
+            ${{ runner.temp }}/sidrena-distribution/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf
+            ${{ runner.temp }}/sidrena-distribution/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf

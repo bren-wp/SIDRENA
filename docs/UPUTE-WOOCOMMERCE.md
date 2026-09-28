@@ -1,12 +1,12 @@
 <!--
 Sidrena source file.
-Author: Brendigo
+Author: brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WooCommerce 1.0.21 - Upute za korištenje
+# Sidrena WooCommerce - detaljne upute za korištenje
 
 ![Stvarni Sidrena WooCommerce admin prikaz](media/screenshot-woocommerce.png)
 
@@ -43,10 +43,10 @@ Sidrena WooCommerce namijenjena je WordPress trgovinama s aktivnim WooCommerceom
 
 ## Instalacija
 
-Instalacijski ZIP 1.0.21 je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
+Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.21.zip`.
+2. Prenesite aktualni `sidrena-woocommerce-<verzija>.zip` paket.
 3. Aktivirajte **Sidrena WooCommerce**.
 
 Kod nadogradnje preko starijeg SIDRENA WooCommerce izdanja plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće proizvode, Sidrena meta podatke, lokacije, arhivu i povijest.
@@ -108,31 +108,47 @@ Sidrena usluge rade i u WooCommerce izdanju kao zaseban katalog usluga. Prva obj
 
 U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
 
-Kompletni javni prikaz koristi:
+Kompletni javni prikaz koristi shortcode:
 
-`[sidrena_objava_cjenika]`
+\`[sidrena_objava_cjenika]\`
 
-Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
+Prikaz je namjerno fokusiran na aktualne cijene, datoteke i arhivu. Opći identitet tvrtke/obrta održava se u odgovarajućem dijelu web-stranice ili WooCommerce postavkama, a ne u Sidrena postavkama.
 
-Javni cjenik koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. \`[sidrena_cjenik po_stranici="50"]\`. Podržan raspon je 10–100 stavki po stranici.
 
 Dostupni su i:
 
-`[sidrena_cjenici]` — samo aktualne datoteke i arhiva preuzimanja
+- \`[sidrena_cjenici]\` — aktualne datoteke i arhiva
+- \`[sidrena_cjenik]\` — pretraživi javni cjenik
+- \`[sidrena_arhiva]\` — prethodne objave
+- \`[sidrena_cjenik_url]\` — URL aktualne datoteke
+- \`[sidrena_usluge]\` — javni katalog usluga
 
-`[sidrena_cjenik]`
+Premium atributi uključuju lokaciju, format (csv/xml), katalog (products/services), prikaz, limit, naslove i uključivanje/isključivanje arhive. Prikaz može biti kartice, popis/list ili tablica/table.
 
-`[sidrena_arhiva]`
+## Pojednostavljene postavke
 
-`[sidrena_usluge]`
+Sidrena više ne traži da korisnik ručno uključuje zakonski važan output. Automatski ostaju uključeni:
 
-## Podaci obrta / tvrtke
+- CSV i XML
+- javni HTML cjenik
+- JSON manifest
+- REST indeks
+- strict publication
+- sidrena cijena
+- 30-dnevna referentna evidencija
+- povijest cijena
+- publication watchdog
+- upozorenja o neuspjeloj ili zakašnjeloj objavi
 
-U **Sidrena > Postavke** možete unijeti naziv, sjedište/adresu, OIB, poslovni e-mail, telefon, naziv i broj javnog registra, PDV identifikacijski broj te nadležno/nadzorno tijelo kada je primjenjivo.
+U **Sidrena > Postavke** korisnik podešava samo:
 
-Podaci se mogu prikazati na javnoj stranici **Objava cjenika**; ne dodaju se kao izmišljeni stupci NN 101/2026 CSV/XML datoteke.
+1. objavljuje li proizvode, usluge ili oboje
+2. vrijeme dnevnog generiranja prije 08:00
+3. razdoblje čuvanja arhive, najmanje 30 dana
+4. e-mail za upozorenja
 
-Ako unesete OIB, Sidrena provjerava njegovu kontrolnu znamenku.
+Ako je e-mail prazan, koristi se WordPress administratorska adresa. Referentni datumi imaju sigurne zadane vrijednosti; posebna stvarna situacija pojedinog proizvoda ili varijacije rješava se na toj stavci.
 
 ## Automatska dnevna objava
 
@@ -149,6 +165,113 @@ Za pouzdano izvršavanje prije poslovno kritičnog roka koristite server cron ko
 ## Arhiva
 
 Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. Javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
+
+## Korak-po-korak za korisnika koji prvi put koristi Sidrena WooCommerce
+
+### Korak 1 — provjerite WooCommerce
+
+WooCommerce mora biti instaliran i aktivan prije Sidrena WooCommerce plugina. Sidrena ne izrađuje drugi katalog proizvoda; koristi postojeće WooCommerce proizvode i varijacije.
+
+### Korak 2 — otvorite Sidrena > Postavke
+
+Za tipičan webshop odaberite **Proizvodi / trgovina**. Ako uz proizvode objavljujete i usluge, odaberite **Proizvodi i usluge**.
+
+Ako nemate poseban razlog za promjenu, ostavite generiranje u 06:30 i arhivu na 45 dana.
+
+### Korak 3 — otvorite Sidrena > Lokacije
+
+Za webshop lokaciju Sidrena može predložiti adresu iz WooCommerce postavki trgovine. Gumb **Popuni Woo adresu webshopa** popunjava samo prazno polje i ništa ne sprema bez vaše potvrde.
+
+Za fizičku poslovnicu unesite stvarnu adresu, oznaku i vrstu objekta.
+
+### Korak 4 — otvorite postojeći WooCommerce proizvod
+
+U Sidrena poljima proizvoda provjerite:
+
+- aktualnu WooCommerce cijenu
+- sidrenu cijenu
+- referentnu skupinu ili datum
+- šifru
+- marku
+- barkod
+- jediničnu cijenu ako je primjenjiva
+- podatke o posebnom obliku prodaje ako postoji
+
+Ne unosite izmišljene vrijednosti samo da biste uklonili upozorenje.
+
+### Korak 5 — varijabilni proizvodi
+
+Kod varijabilnog proizvoda provjerite Sidrena podatke po varijaciji.
+
+Na frontendu Sidrena dobiva referentni markup iz WooCommerce variation payloada. U normalnom slučaju promjena varijacije ne radi dodatni REST zahtjev; REST ostaje kompatibilni fallback za teme/builder integracije koje uklone payload.
+
+Ako odabrana varijacija nema referentnu cijenu, Sidrena uklanja stari roditeljski prikaz kako kupac ne bi vidio podatak pogrešne varijacije.
+
+### Korak 6 — koristite bulk editor za veći katalog
+
+Ako imate mnogo proizvoda, koristite Sidrena Woo bulk katalog. Sigurno automatsko popunjavanje radi samo s pouzdanim WooCommerce izvorima i ne prepisuje već unesene vrijednosti.
+
+Nakon masovnog uređivanja pregledajte rezultate prije spremanja.
+
+### Korak 7 — posebni oblici prodaje
+
+Kod sniženja Sidrena prati dostupnu povijest WooCommerce cijena i iz nje pokušava dobiti 30-dnevnu referencu.
+
+Ako povijest nije dovoljna, unesite samo provjerenu ručnu vrijednost iz poslovne evidencije ili stvarno primjenjivu iznimku.
+
+Najniža cijena u prethodnih 30 dana nije isto što i 30-dnevna javna arhiva CSV/XML datoteka.
+
+### Korak 8 — jedinična cijena
+
+Za proizvod označite je li jedinična cijena obvezna, nije primjenjiva ili postoji iznimka. Ako je obvezna, provjerite količinu, jedinicu i izračun.
+
+Sidrena ima standardne konverzije te validirane developer hookove za dodatne jedinice i aliase.
+
+### Korak 9 — lokacijska raspoloživost i cijena
+
+Za fizičke poslovnice globalna WooCommerce zaliha ne mora biti dovoljna. Koristite Sidrena podatke po lokaciji ili CSV predložak lokacija za raspoloživost, lokalnu cijenu i lokalnu sidrenu cijenu.
+
+### Korak 10 — WooCommerce CSV Import/Export
+
+Sidrena polja integrirana su u WooCommerce CSV Import/Export.
+
+Kod većeg uvoza napravite backup i prvo testirajte manju datoteku. Sidrena koristi row-limit preflight i odbija prevelik uvoz prije djelomičnih poslovnih promjena.
+
+### Korak 11 — provjerite Sidrena > Provjera
+
+Riješite stvarna upozorenja: nedostajuću sidrenu cijenu, marku, barkod, jediničnu cijenu, nepotpunu 30-dnevnu referencu, lokacijsku pokrivenost ili problem objave.
+
+Zeleni tehnički status nije pravno jamstvo; potvrđuje da su ugrađene tehničke provjere zadovoljene.
+
+### Korak 12 — generirajte prvi cjenik
+
+U **Sidrena > Cjenici** kliknite **Generiraj cjenik odmah**. Provjerite da su nastale CSV i XML datoteke za odgovarajuću lokaciju i katalog.
+
+### Korak 13 — otvorite javnu Objavu cjenika
+
+Otvorite stranicu kao običan posjetitelj. Provjerite pretragu, cijene, sidrenu cijenu, 30-dnevnu referencu gdje je primjenjiva, download i arhivu.
+
+### Korak 14 — provjerite integritet datoteka
+
+Javni prikaz može koristiti spremljeni broj redaka, veličinu datoteke i SHA-256 checksum bez dodatnog hashiranja pri svakom posjetu.
+
+Ako je datoteka nestala ili je izmijenjena izvan Sidrene, pregledajte Dnevnik i regenerirajte valjanu objavu.
+
+### Korak 15 — cron i upozorenja
+
+WordPress WP-Cron ovisi o prometu. Za pouzdan rok prije 08:00 koristite server cron koji redovito pokreće WordPress cron.
+
+E-mail upozorenje ide na posebno upisanu adresu ili na WordPress administratorski e-mail.
+
+### Korak 16 — nakon ažuriranja WooCommercea, teme ili buildera
+
+Otvorite nekoliko jednostavnih i varijabilnih proizvoda na frontendu, promijenite varijacije i provjerite Sidrena markup. Zatim napravite testno generiranje i provjerite Dnevnik.
+
+## Što ne treba ručno isključivati ili mijenjati
+
+Sidrena automatski drži uključene zakonski važne tehničke izlaze. Nemojte ručno uređivati generirane CSV/XML datoteke, manifest ili arhivske datoteke u uploads/sidrena.
+
+Kod migracije weba zajedno prenesite bazu podataka i cijeli uploads/sidrena sadržaj.
 
 ## Produkcijska provjera
 
@@ -186,8 +309,8 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - WhatsApp: **+385 91 901 0092**
 - Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- PDF: `docs/SIDRENA-PODRSKA.pdf`
-- Autor: **Brendigo**
+- Detaljni PDF priručnik i podrška: `docs/SIDRENA-UPUTE.pdf`
+- Autor: **brendigo**
 
 ## Donacija
 
