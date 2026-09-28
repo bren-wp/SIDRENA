@@ -37,6 +37,14 @@ function sanitize_textarea_field( $value ) {
 	return trim( strip_tags( (string) $value ) );
 }
 
+function sanitize_text_field( $value ) {
+	return trim( strip_tags( (string) $value ) );
+}
+
+function esc_url_raw( $value ) {
+	return filter_var( (string) $value, FILTER_SANITIZE_URL );
+}
+
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-audit.php';
@@ -105,6 +113,35 @@ sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculati
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1.234,56' ), 'Croatian thousands/decimal parsing failed.' );
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1,234.56' ), 'International thousands/decimal parsing failed.' );
 sidrena_assert_same( '', Sidrena_Utils::decimal( '1e9999' ), 'Non-finite numeric values must be rejected.' );
+
+$public_files = Sidrena_Utils::public_file_index(
+	array(
+		array(
+			'location_id' => 'RIJEKA-CENTAR',
+			'location_code' => '<b>RI-C</b>',
+			'kind' => 'OBJEKT',
+			'catalog' => 'PRODUCTS',
+			'format' => 'CSV',
+			'url' => 'https://example.test/uploads/sidrena/arhiva/cjenik.csv',
+			'filename' => '../cjenik.csv',
+			'generated_at' => '2026-09-28T01:00:00+02:00',
+			'generated_ts' => 1790550000,
+			'retain_until' => '2026-11-12T01:00:00+01:00',
+			'retain_until_ts' => 1794438000,
+			'sequence' => 44,
+			'rows' => '25',
+			'bytes' => '2048',
+			'sha256' => str_repeat( 'A', 64 ),
+		),
+	)
+);
+sidrena_assert_same( 1, count( $public_files ), 'Public file projection must retain valid public entries.' );
+sidrena_assert_same( 'cjenik.csv', $public_files[0]['filename'] ?? '', 'Public file projection must strip path components from filenames.' );
+sidrena_assert_same( 'RI-C', $public_files[0]['location_code'] ?? '', 'Public file projection must sanitize display text.' );
+sidrena_assert_same( str_repeat( 'a', 64 ), $public_files[0]['sha256'] ?? '', 'Public file projection must normalize SHA-256 digests.' );
+sidrena_assert_same( false, array_key_exists( 'sequence', $public_files[0] ), 'Internal sequence metadata must not be exposed publicly.' );
+sidrena_assert_same( false, array_key_exists( 'generated_ts', $public_files[0] ), 'Internal generation timestamps must not be exposed publicly.' );
+sidrena_assert_same( false, array_key_exists( 'retain_until_ts', $public_files[0] ), 'Internal retention timestamps must not be exposed publicly.' );
 
 $trim_method = new ReflectionMethod( 'Sidrena_Audit', 'trim_bytes' );
 $trim_method->setAccessible( true );
