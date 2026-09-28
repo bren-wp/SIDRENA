@@ -28,17 +28,15 @@ final class Sidrena_Utils {
 		return array(
 			'business_mode'         => 'mixed',
 			'display_anchor'        => 'yes',
-			'display_lowest_30'     => 'yes',
 			'generate_csv'          => 'yes',
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
 			'generation_time'       => '06:30',
-			'retention_days'        => 45,
+			'retention_days'        => 30,
 			'enable_rest_index'     => 'yes',
 			'publish_manifest'      => 'yes',
 			'enable_public_html'    => 'yes',
 			'strict_publication'    => 'yes',
-			'track_price_history'   => 'yes',
 			'failure_notifications' => 'yes',
 			'failure_email'         => '',
 		);
@@ -47,8 +45,9 @@ final class Sidrena_Utils {
 	public static function settings() {
 		$settings = get_option( 'sidrena_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
-		// Legal reference dates are ruleset values, never administrator settings.
-		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
+		// Legal reference dates and the 30-day public archive are ruleset values,
+		// never administrator-overridable compliance settings.
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 		foreach (
 			array(
 				'business_name',
@@ -70,7 +69,7 @@ final class Sidrena_Utils {
 			unset( $settings[ $legacy_key ] );
 		}
 		$settings                     = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days']   = max( 30, absint( $settings['retention_days'] ) );
+		$settings['retention_days']   = 30;
 		// Backward-compatible read-only aliases for older internal callers.
 		$settings['default_ref_date'] = self::standard_reference_date();
 		$settings['fmcg_ref_date']    = self::fmcg_reference_date();

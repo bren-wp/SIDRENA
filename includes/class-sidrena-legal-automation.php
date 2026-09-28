@@ -44,11 +44,10 @@ final class Sidrena_Legal_Automation {
 			return $settings;
 		}
 
-		$settings['generation_time']  = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
-		$settings['retention_days']   = max( 30, absint( $settings['retention_days'] ?? 45 ) );
-		$settings['default_ref_date'] = '2026-09-10';
-		$settings['fmcg_ref_date']    = '2025-05-02';
-		$settings['csv_delimiter']    = ';';
+		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
+		$settings['retention_days']  = 30;
+		$settings['csv_delimiter']   = ';';
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 
 		foreach ( self::required_publication_flags() as $key ) {
 			$settings[ $key ] = 'yes';
@@ -112,8 +111,6 @@ final class Sidrena_Legal_Automation {
 			'strict_publication',
 			'failure_notifications',
 			'display_anchor',
-			'display_lowest_30',
-			'track_price_history',
 		);
 	}
 }
