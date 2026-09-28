@@ -47,6 +47,13 @@ sidrena_plugin_check_workflow_assert(
 	'Plugin Check must use the public WordPress and WooCommerce slugs/text domains.'
 );
 sidrena_plugin_check_workflow_assert(
+	false === strpos( $check, 'ignore-codes: trademarked_term' )
+	&& false === strpos( $check, 'slug: woo' )
+	&& false === strpos( $check, 'slug: woocommerce' ),
+	'Trademark checks must not be suppressed and public slugs must not be based on third-party project names.'
+);
+
+sidrena_plugin_check_workflow_assert(
 	false === strpos( $check, 'slug: sidrena-wordpress' )
 	&& false === strpos( $check, 'slug: sidrena-woocommerce' ),
 	'Install-folder names must not be reused as public Plugin Check slugs.'
