@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -89,12 +89,12 @@ final class Sidrena_Admin {
 					'emptyLocationAddress'  => __( 'Adresa nije upisana', 'sidrena' ),
 					'locationAdded'         => __( 'Nova lokacija je dodana. Unesite podatke i spremite promjene.', 'sidrena' ),
 					'locationRemoved'       => __( 'Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu.', 'sidrena' ),
-					'wooLocationFilled'     => __( 'WooCommerce adresa trgovine unesena je u praznu webshop lokaciju. Pregledajte podatak i spremite lokacije.', 'sidrena' ),
+					'wooLocationFilled'     => __( 'Adresa web trgovine unesena je u praznu webshop lokaciju. Pregledajte podatak i spremite lokacije.', 'sidrena' ),
 					'wooLocationNoTarget'   => __( 'Nema prazne webshop adrese za popunjavanje. Postojeći podaci nisu promijenjeni.', 'sidrena' ),
 					'safeFillChanged'       =>
 						/* translators: %s: number of empty catalog fields populated from trusted WooCommerce data. */
-						__( 'Popunjeno je %s praznih polja iz pouzdanih WooCommerce izvora. Pregledajte podatke i spremite promjene.', 'sidrena' ),
-					'safeFillEmpty'         => __( 'Nema praznih polja s pouzdanim WooCommerce izvorom. Ostala polja ostaju nepromijenjena.', 'sidrena' ),
+						__( 'Popunjeno je %s praznih polja iz pouzdanih izvora trgovine. Pregledajte podatke i spremite promjene.', 'sidrena' ),
+					'safeFillEmpty'         => __( 'Nema praznih polja s pouzdanim izvorom trgovine. Ostala polja ostaju nepromijenjena.', 'sidrena' ),
 					'removeLocationLabel'   =>
 						/* translators: %s: location code or fallback title. */
 						__( 'Ukloni lokaciju %s', 'sidrena' ),
@@ -196,7 +196,7 @@ final class Sidrena_Admin {
 
 		$is_woo       = Sidrena_Utils::is_woocommerce_edition();
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
-		$edition_name = $is_woo ? __( 'WooCommerce', 'sidrena' ) : __( 'WordPress', 'sidrena' );
+		$edition_name = $is_woo ? __( 'Web trgovina', 'sidrena' ) : __( 'Samostalni katalog', 'sidrena' );
 		$brand_logo   = SIDRENA_URL . 'assets/images/logo-horizontal-light.svg';
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
@@ -220,7 +220,7 @@ final class Sidrena_Admin {
 				<div class="sidrena-contextbar__left">
 					<span class="sid-context-chip"><?php esc_html_e( 'Produkcijsko okruženje', 'sidrena' ); ?></span>
 					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'Sidrena %s', 'sidrena' ), $edition_name ) ); ?></span>
+					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'SIDRENA · %s', 'sidrena' ), $edition_name ) ); ?></span>
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
 				</div>
 				<div class="sidrena-contextbar__right">
@@ -374,7 +374,7 @@ final class Sidrena_Admin {
 				<div class="sid-tool-icon"><span class="dashicons dashicons-admin-tools"></span></div>
 				<h2><?php esc_html_e( 'Jednokratno početno postavljanje', 'sidrena' ); ?></h2>
 				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-				<p><?php echo esc_html( sprintf( __( 'Samo ako želite da Brendigo odradi instalaciju i početno postavljanje: %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Samo ako želite da brendigo odradi instalaciju i početno postavljanje: %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
 				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( $install_url ); ?>"><?php echo esc_html( sprintf( __( 'Zatraži postavljanje - %s', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></a>
 			</section>
@@ -401,7 +401,7 @@ final class Sidrena_Admin {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'O nama', 'sidrena' ); ?></span>
 				<h2><?php echo esc_html( Sidrena_Utils::developer_label() ); ?></h2>
-				<p><?php esc_html_e( 'Razvoj, održavanje i podrška za Sidrena WordPress i Sidrena WooCommerce izdanje.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'Razvoj, održavanje i podrška za oba SIDRENA izdanja.', 'sidrena' ); ?></p>
 			</div>
 			<a class="button sid-secondary" href="https://brendigo.com/" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-external"></span>brendigo.com</a>
 		</div>
@@ -420,7 +420,7 @@ final class Sidrena_Admin {
 		</div>
 		<section class="sid-card sid-note">
 			<div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div>
-			<div><h2><?php esc_html_e( 'Dva odvojena izdanja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena WordPress namijenjena je web stranicama bez WooCommercea, a Sidrena WooCommerce trgovinama koje koriste WooCommerce. Istodobno može biti aktivno samo jedno izdanje.', 'sidrena' ); ?></p></div>
+			<div><h2><?php esc_html_e( 'Dva odvojena izdanja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Samostalno izdanje koristi vlastiti katalog, a izdanje za web trgovinu koristi postojeći katalog trgovine. Istodobno može biti aktivno samo jedno izdanje.', 'sidrena' ); ?></p></div>
 		</section>
 		<?php
 	}
@@ -452,8 +452,8 @@ final class Sidrena_Admin {
 
 			<section class="sid-card">
 				<span class="sid-kicker"><?php esc_html_e( '2. Katalog', 'sidrena' ); ?></span>
-				<h2><?php echo $woo ? esc_html__( 'WooCommerce katalog', 'sidrena' ) : esc_html__( 'WordPress katalog', 'sidrena' ); ?></h2>
-				<p><?php echo $woo ? esc_html__( 'Sidrena WooCommerce koristi WooCommerce proizvode i varijacije kao izvor proizvoda.', 'sidrena' ) : esc_html__( 'Sidrena WordPress koristi vlastiti katalog proizvoda koji možete unositi ručno ili uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
+				<h2><?php echo $woo ? esc_html__( 'Katalog web trgovine', 'sidrena' ) : esc_html__( 'Samostalni katalog', 'sidrena' ); ?></h2>
+				<p><?php echo $woo ? esc_html__( 'SIDRENA koristi postojeće proizvode i varijacije web trgovine kao izvor podataka.', 'sidrena' ) : esc_html__( 'Samostalno SIDRENA izdanje koristi vlastiti katalog proizvoda koji možete unositi ručno ili uvesti CSV/XML datotekom.', 'sidrena' ); ?></p>
 				<p><?php esc_html_e( 'Za jediničnu cijenu prvo označite primjenjivost. Kada je obvezna, količina pakiranja i jedinica mogu poslužiti za automatski izračun ako iznos nije ručno unesen.', 'sidrena' ); ?></p>
 				<a class="sid-inline-link" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><?php esc_html_e( 'Otvori Katalog', 'sidrena' ); ?></a>
 			</section>
@@ -672,9 +672,9 @@ final class Sidrena_Admin {
 		<div class="sid-reference-dashboard sid-reference-dashboard--woocommerce">
 			<div class="sid-page-head sid-reference-page-head">
 				<div>
-					<span class="sid-kicker"><?php esc_html_e( 'WooCommerce', 'sidrena' ); ?></span>
+					<span class="sid-kicker"><?php esc_html_e( 'Web trgovina', 'sidrena' ); ?></span>
 					<h2><?php esc_html_e( 'Nadzorna ploča', 'sidrena' ); ?></h2>
-					<p><?php esc_html_e( 'Pregled postojećih WooCommerce proizvoda, cijena, povijesti i objavljenih cjenika.', 'sidrena' ); ?></p>
+					<p><?php esc_html_e( 'Pregled postojećih proizvoda trgovine, cijena, povijesti i objavljenih cjenika.', 'sidrena' ); ?></p>
 				</div>
 				<div class="sid-head-inline-actions">
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Proizvodi', 'sidrena' ); ?></a>
@@ -683,7 +683,7 @@ final class Sidrena_Admin {
 			</div>
 
 			<div class="sid-reference-metrics">
-				<?php $this->dashboard_metric( __( 'Ukupno proizvoda', 'sidrena' ), absint( $data['stats']['products'] ), 'dashicons-products', __( 'postojeći WooCommerce katalog', 'sidrena' ), 'blue' ); ?>
+				<?php $this->dashboard_metric( __( 'Ukupno proizvoda', 'sidrena' ), absint( $data['stats']['products'] ), 'dashicons-products', __( 'postojeći katalog trgovine', 'sidrena' ), 'blue' ); ?>
 				<?php $this->dashboard_metric( __( 'Zapisa povijesti', 'sidrena' ), $data['history_total'], 'dashicons-chart-line', __( 'promjene cijena i lokacija', 'sidrena' ), 'teal' ); ?>
 				<?php $this->dashboard_metric( __( 'Aktualni cjenici', 'sidrena' ), $data['integrity']['current_entries'], 'dashicons-media-spreadsheet', __( 'javno dostupne datoteke', 'sidrena' ), 'purple' ); ?>
 				<?php $this->dashboard_metric( __( 'Spremnost provjera', 'sidrena' ), $data['health_score'] . '%', 'dashicons-shield-alt', $health_caption, $data['is_ready'] ? 'ok' : 'warn' ); ?>
@@ -873,9 +873,9 @@ final class Sidrena_Admin {
 			<div class="sid-support-card__icon"><span class="dashicons dashicons-editor-help"></span></div>
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Podrška po izboru korisnika', 'sidrena' ); ?></span>
-				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati Brendigo', 'sidrena' ); ?></h2>
+				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati brendigo', 'sidrena' ); ?></h2>
 				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da Brendigo odradi instalaciju i početno postavljanje, cijena je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da brendigo odradi instalaciju i početno postavljanje, cijena je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
 				<div class="sid-head-inline-actions">
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
 					<?php if ( $donation_url ) : ?><a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Dobrovoljna donacija', 'sidrena' ); ?></a><?php endif; ?>
@@ -948,7 +948,7 @@ final class Sidrena_Admin {
 				<h2><?php esc_html_e( 'Povijest se gradi kontinuirano', 'sidrena' ); ?></h2>
 				<p><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Ovo izdanje vodi povijest WooCommerce cijena, cijena usluga i podataka po lokacijama. Javne CSV/XML objave čuvaju se prema postavljenoj politici arhive.', 'sidrena' ) : esc_html__( 'Ovo izdanje koristi vlastiti Sidrena katalog proizvoda i usluga bez WooCommercea. Javne CSV/XML objave čuvaju se prema postavljenoj politici arhive.', 'sidrena' ); ?></p>
 				<div class="sid-history-stack">
-					<div><span class="dashicons dashicons-products"></span><span><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'WooCommerce povijest', 'sidrena' ) : esc_html__( 'WordPress proizvodi', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::is_woocommerce_edition() ? $product_hist : ( class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : 0 ) ); ?></strong></div>
+					<div><span class="dashicons dashicons-products"></span><span><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Povijest cijena trgovine', 'sidrena' ) : esc_html__( 'WordPress proizvodi', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::is_woocommerce_edition() ? $product_hist : ( class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : 0 ) ); ?></strong></div>
 					<div><span class="dashicons dashicons-clipboard"></span><span><?php esc_html_e( 'Povijest usluga', 'sidrena' ); ?></span><strong><?php echo esc_html( $service_hist ); ?></strong></div>
 					<div><span class="dashicons dashicons-location-alt"></span><span><?php esc_html_e( 'Lokacijska povijest', 'sidrena' ); ?></span><strong><?php echo esc_html( $location_hist ); ?></strong></div>
 					<div><span class="dashicons dashicons-backup"></span><span><?php esc_html_e( 'Čuvanje javne arhive', 'sidrena' ); ?></span><strong><?php echo esc_html( max( 30, absint( $settings['retention_days'] ) ) ); ?> d</strong></div>
@@ -1405,7 +1405,7 @@ final class Sidrena_Admin {
 			<div id="sid-locations" class="sid-locations" data-sidrena-woo-address="<?php echo esc_attr( $woo_address ); ?>">
 				<?php foreach ( $locations as $index => $location ) : ?><?php $this->location_card( $index, $location, $stats['products'] ); ?><?php endforeach; ?>
 			</div>
-			<div class="sid-form-actions"><div class="sid-form-actions__group"><button type="button" class="button sid-secondary" id="sid-add-location"><span class="dashicons dashicons-plus-alt2"></span><?php esc_html_e( 'Dodaj lokaciju', 'sidrena' ); ?></button><?php if ( $woo_address ) : ?><button type="button" class="button sid-secondary" id="sid-fill-woo-location"><span class="dashicons dashicons-store"></span><?php esc_html_e( 'Popuni Woo adresu webshopa', 'sidrena' ); ?></button><?php endif; ?></div><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Spremi lokacije', 'sidrena' ); ?></button></div>
+			<div class="sid-form-actions"><div class="sid-form-actions__group"><button type="button" class="button sid-secondary" id="sid-add-location"><span class="dashicons dashicons-plus-alt2"></span><?php esc_html_e( 'Dodaj lokaciju', 'sidrena' ); ?></button><?php if ( $woo_address ) : ?><button type="button" class="button sid-secondary" id="sid-fill-woo-location"><span class="dashicons dashicons-store"></span><?php esc_html_e( 'Popuni adresu web trgovine', 'sidrena' ); ?></button><?php endif; ?></div><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Spremi lokacije', 'sidrena' ); ?></button></div>
 		</form>
 		<template id="sid-location-template"><?php $this->location_card( '__INDEX__', array( 'id' => '', 'enabled' => 'yes', 'kind' => 'prodavaonica', 'address' => '', 'code' => '', 'sequence' => 1 ), $stats['products'], true ); ?></template>
 		<?php
