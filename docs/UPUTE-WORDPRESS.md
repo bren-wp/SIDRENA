@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WordPress 1.0.21 - Upute za korištenje
+# Sidrena WordPress - detaljne upute za korištenje
 
 ![Stvarni Sidrena WordPress admin prikaz](media/screenshot-wordpress.png)
 
@@ -104,31 +104,32 @@ Za svaku aktivnu lokaciju/webshop Sidrena generira zasebnu objavu prema konfigur
 
 U **Sidrena > Cjenici** kliknite **Izradi stranicu Objava cjenika**.
 
-Plugin objavljuje WordPress stranicu sa shortcodeom:
+Plugin objavljuje WordPress stranicu sa shortcodeom [sidrena_objava_cjenika]. Prikaz je namjerno fokusiran na cijene, datoteke i arhivu; opći identitet tvrtke/obrta održava se u odgovarajućem dijelu web-stranice, a ne u Sidrena postavkama.
 
-`[sidrena_objava_cjenika]`
-
-Kompletni shortcode prikazuje podatke obrta/tvrtke (ako su uključeni), aktualni pretraživi cjenik te datoteke za preuzimanje i arhivu.
-
-Javni cjenik koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. `[sidrena_cjenik po_stranici="50"]`. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
+Javni cjenik koristi server-side pretragu kroz cijeli snapshot i paginaciju. Zadano se prikazuje 50 stavki po stranici, a zasebni shortcode može koristiti npr. [sidrena_cjenik po_stranici="50"]. Podržan raspon je 10–100 stavki po stranici. Pretraga i paginacija rade bez JavaScripta.
 
 Dostupni su i zasebni prikazi:
 
-`[sidrena_cjenici]` — samo aktualne datoteke i arhiva preuzimanja
+- [sidrena_cjenici] — aktualne datoteke i arhiva
+- [sidrena_cjenik] — pretraživi javni cjenik
+- [sidrena_arhiva] — prethodne objave
+- [sidrena_cjenik_url] — URL aktualne datoteke
+- [sidrena_usluge] — javni katalog usluga
 
-`[sidrena_cjenik]`
+Premium atributi za datoteke/arhivu uključuju lokacija, format (csv/xml), katalog (products/services), arhiva, limit, prikaz i naslovi. Prikaz može biti kartice, popis/list ili tablica/table.
 
-`[sidrena_arhiva]`
+## Pojednostavljene postavke
 
-`[sidrena_usluge]`
+Sidrena više ne traži da laik odlučuje treba li uključiti zakonski važan output. Automatski su uključeni CSV, XML, javni HTML cjenik, JSON manifest, REST indeks, strict publication, sidrena cijena, 30-dnevna referentna evidencija, povijest cijena i upozorenja.
 
-## Podaci obrta / tvrtke
+U **Sidrena > Postavke** korisnik podešava samo:
 
-U **Sidrena > Postavke** možete unijeti naziv, sjedište/adresu, OIB, poslovni e-mail, telefon, naziv i broj javnog registra, PDV identifikacijski broj te nadležno/nadzorno tijelo kada je primjenjivo.
+1. objavljuje li proizvode, usluge ili oboje
+2. vrijeme dnevnog generiranja prije 08:00
+3. razdoblje čuvanja arhive, najmanje 30 dana
+4. e-mail za upozorenja
 
-Ta se polja mogu prikazati na stranici **Objava cjenika**, ali nisu dodani stupci propisanog CSV/XML cjenika proizvoda/usluga.
-
-Ako unesete OIB, Sidrena provjerava njegovu kontrolnu znamenku.
+Ako je e-mail prazan, koristi se WordPress administratorska adresa. CSV koristi stabilni razdjelnik, a referentni datumi imaju zakonski zadane vrijednosti; posebna stvarna situacija pojedinog proizvoda rješava se na proizvodu.
 
 ## Automatska dnevna objava
 
@@ -145,6 +146,68 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za pouzdano izvršavanje prij
 ## Arhiva
 
 Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. Javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
+
+## Korak-po-korak za korisnika koji prvi put koristi Sidrenu
+
+### Korak 1 — otvorite Postavke
+
+Odaberite način rada. Za običnu trgovinu odaberite **Proizvodi / trgovina**. Ako imate samo usluge odaberite **Usluge**. Ako imate oboje, odaberite **Proizvodi i usluge**.
+
+Ostavite vrijeme 06:30 ako nemate poseban razlog za drugačije vrijeme. Sidrena neće prihvatiti rizično vrijeme 08:00 ili kasnije.
+
+### Korak 2 — uredite Lokacije
+
+Otvorite **Sidrena > Lokacije**. Svaka aktivna lokacija mora imati jasan ID, vrstu objekta, oznaku i stvarnu adresu. Adresa ulazi i u naziv datoteke, zato izbjegavajte privremene ili testne vrijednosti.
+
+### Korak 3 — unesite prvi proizvod
+
+Otvorite **Sidrena > Katalog** i unesite stvarni proizvod. Za početni test preporučuje se jedan proizvod s potpuno popunjenim podacima prije masovnog uvoza.
+
+Provjerite naziv, šifru, marku, barkod, aktualnu cijenu, sidrenu cijenu, dostupnost te jedinicu/jediničnu cijenu ako je primjenjiva.
+
+### Korak 4 — provjerite sidrenu cijenu
+
+Sidrena cijena mora dolaziti iz stvarne evidencije. Ne unosite izmišljenu vrijednost samo da biste uklonili upozorenje.
+
+Za opće novobuhvaćene stavke zadani referentni datum je 10.09.2026., a za ranije obuhvaćene FMCG kategorije 02.05.2025. Posebni slučajevi evidentiraju se na stavci.
+
+### Korak 5 — ako postoji sniženje, provjerite 30-dnevnu referencu
+
+Najniža cijena u prethodnih 30 dana i javna arhiva od 30 dana nisu ista stvar. Sidrena ih vodi odvojeno.
+
+Kod posebnog oblika prodaje provjerite da postoji dokaziva 30-dnevna referenca ili stvarno primjenjiva iznimka.
+
+### Korak 6 — provjerite jediničnu cijenu
+
+Za proizvod označite je li jedinična cijena obvezna, nije primjenjiva ili postoji iznimka. Ako je obvezna, unesite količinu i jedinicu te provjerite izračun.
+
+### Korak 7 — otvorite Provjeru
+
+Otvorite **Sidrena > Provjera** i redom riješite crvena/žuta upozorenja. Zeleni status znači da je tehnička provjera prošla, ne da plugin daje pravno jamstvo.
+
+### Korak 8 — generirajte prvi cjenik
+
+U **Sidrena > Cjenici** kliknite **Generiraj cjenik odmah**. Nakon završetka provjerite da postoje CSV i XML datoteke.
+
+### Korak 9 — otvorite javnu stranicu
+
+Izradite stranicu **Objava cjenika** i otvorite je kao običan posjetitelj. Isprobajte pretragu, paginaciju i preuzimanje.
+
+### Korak 10 — provjerite arhivu i integritet
+
+Nakon više uspješnih objava starije datoteke ulaze u arhivu. Sidrena prikazuje veličinu, broj redaka i SHA-256 podatak koji je spremljen pri generiranju.
+
+### Korak 11 — provjerite e-mail upozorenja i cron
+
+Provjerite da WordPress administratorski e-mail ili posebno upisana adresa može primati poruke. Ako hosting ima slab WP-Cron, postavite server cron.
+
+### Korak 12 — nakon svake veće promjene
+
+Nakon uvoza, promjene lokacija ili velikog uređivanja kataloga otvorite Dnevnik i napravite ručnu probnu generaciju.
+
+## Što ne treba dirati ručno
+
+Nemojte ručno brisati datoteke u uploads/sidrena, mijenjati manifest ili uređivati arhivske CSV/XML datoteke nakon objave. Ako morate migrirati web, prenesite cijeli uploads/sidrena sadržaj i bazu podataka zajedno.
 
 ## Produkcijska provjera
 
