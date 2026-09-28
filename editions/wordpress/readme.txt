@@ -1,4 +1,4 @@
-=== brendigo SIDRENA – digitalni cjenici ===
+=== SIDRENA – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
 Tags: cijene, cjenik, csv, xml, trgovina
@@ -9,11 +9,11 @@ Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Price history, products and services, public CSV/XML price lists, locations and publication archives for standard WordPress sites.
+Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici, lokacije i arhiva objava za WordPress.
 
 == Description ==
 
-SIDRENA 1.0.21 is built for WordPress sites that need a structured price catalogue without using WooCommerce as the product source.
+SIDRENA je namijenjena WordPress stranicama koje trebaju strukturirani katalog cijena bez WooCommercea kao izvora proizvoda.
 
 * manage products and services in a dedicated catalogue or connect existing public WordPress content
 * record current, reference and unit prices when applicable
