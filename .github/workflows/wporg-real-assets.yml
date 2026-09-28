@@ -25,7 +25,10 @@ on:
       - 'editions/**'
       - 'tools/capture-wporg-assets.mjs'
       - 'tools/runtime-rest-qa.mjs'
-      - '.github/workflows/wporg-real-assets.yml'
+      - 'tools/install-wp-env.sh'
+      - 'tools/run-plugin-check.sh'
+      - '.github/tests/**'
+      - '.github/workflows/**'
       - 'README.md'
       - 'docs/**'
 
