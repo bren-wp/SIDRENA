@@ -2051,7 +2051,8 @@ final class Sidrena_Admin {
 			if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
 				continue;
 			}
-			$this->safe_fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', get_post_meta( $item->get_id(), '_sidrena_reference_group', true ) ? get_post_meta( $item->get_id(), '_sidrena_reference_group', true ) : 'standard' ), ';' );
+			$reference_group = get_post_meta( $item->get_id(), '_sidrena_reference_group', true );
+			$this->safe_fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', $reference_group ? $reference_group : 'standard' ), ';' );
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
