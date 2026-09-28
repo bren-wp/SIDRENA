@@ -138,7 +138,7 @@ final class Sidrena_Bulk {
 							<td><code><?php echo esc_html( $sku ? $sku : '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
-							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
+							<td><input aria-label="<?php esc_attr_e( 'Datum prvog uvrštenja novouvedene stavke', 'sidrena' ); ?>" type="date" min="2026-09-11" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( 'custom' === $group ? $anchor_date : '' ); ?>"><small class="sid-cell-sub"><?php esc_html_e( 'Samo za novouvedenu stavku nakon 10.09.2026.', 'sidrena' ); ?></small></td>
 							<td>
 							<?php
 							if ( 'ready' === ( $reference['status'] ?? '' ) && '' !== ( $reference['price'] ?? '' ) ) :
@@ -164,7 +164,7 @@ final class Sidrena_Bulk {
 										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>" data-sidrena-safe-fill="barcode" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['barcode'] ?? '' ); ?>"></label>
-										<label><span><?php esc_html_e( 'Referentna grupa', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( $group, 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></label>
+										<label><span><?php esc_html_e( 'Ruleset sidrene cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( $group, 'standard' ); ?>><?php echo esc_html( sprintf( __( 'Standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::general_reference_date() ) ) ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>><?php echo esc_html( sprintf( __( 'Ranije obuhvaćeni FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::fmcg_reference_date() ) ) ); ?></option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Novouvedena stavka nakon 10.09.2026.', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Količina', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>"></label>
 										<label><span><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][quantity_unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity_unit', true ) ); ?>" placeholder="g / kg / ml / l"></label>
@@ -227,18 +227,18 @@ final class Sidrena_Bulk {
 				update_post_meta( $id, '_sidrena_anchor_price', $anchor );
 			}
 
-			$date = Sidrena_Utils::sanitize_date( isset( $row['date'] ) ? $row['date'] : '' );
-			if ( $date ) {
-				update_post_meta( $id, '_sidrena_anchor_date', $date );
-			} else {
-				delete_post_meta( $id, '_sidrena_anchor_date' );
-			}
-
 			$group = sanitize_key( isset( $row['group'] ) ? $row['group'] : 'standard' );
 			if ( ! in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
 				$group = 'standard';
 			}
 			update_post_meta( $id, '_sidrena_reference_group', $group );
+
+			$date = 'custom' === $group ? Sidrena_Legal_Automation::custom_reference_date( $row['date'] ?? '' ) : '';
+			if ( $date ) {
+				update_post_meta( $id, '_sidrena_anchor_date', $date );
+			} else {
+				delete_post_meta( $id, '_sidrena_anchor_date' );
+			}
 
 			$unit_status = sanitize_key( isset( $row['unit_status'] ) ? $row['unit_status'] : 'review' );
 			if ( ! in_array( $unit_status, array( 'review', 'required', 'not_required', 'exception' ), true ) ) {

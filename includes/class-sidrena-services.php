@@ -98,9 +98,8 @@ final class Sidrena_Services {
 			'service_costs' => get_post_meta( $post->ID, '_sidrena_service_costs', true ),
 			'service_goods' => get_post_meta( $post->ID, '_sidrena_service_goods', true ),
 		);
-		if ( ! $fields['anchor_date'] ) {
-			$fields['anchor_date'] = Sidrena_Utils::settings()['default_ref_date'];
-		}
+		$custom_anchor_date    = Sidrena_Legal_Automation::custom_reference_date( $fields['anchor_date'] );
+		$fields['anchor_date'] = $custom_anchor_date ? $custom_anchor_date : Sidrena_Legal_Automation::general_reference_date();
 		?>
 		<div class="sidrena-service-grid">
 			<p>
@@ -108,22 +107,23 @@ final class Sidrena_Services {
 				<input class="regular-text" type="number" min="0" step="0.01" id="sidrena_service_current_price" name="sidrena_service_current_price" value="<?php echo esc_attr( $fields['current_price'] ); ?>">
 			</p>
 			<p>
-				<label for="sidrena_service_anchor_price"><strong><?php esc_html_e( 'Dodatna / sidrena cijena (€)', 'sidrena' ); ?></strong></label><br>
+				<label for="sidrena_service_anchor_price"><strong><?php esc_html_e( 'Sidrena cijena (€)', 'sidrena' ); ?></strong></label><br>
 				<input class="regular-text" type="number" min="0" step="0.01" id="sidrena_service_anchor_price" name="sidrena_service_anchor_price" value="<?php echo esc_attr( $fields['anchor_price'] ); ?>">
 			</p>
 			<p>
-				<label for="sidrena_service_anchor_date"><strong><?php esc_html_e( 'Referentni datum', 'sidrena' ); ?></strong></label><br>
-				<input type="date" id="sidrena_service_anchor_date" name="sidrena_service_anchor_date" value="<?php echo esc_attr( $fields['anchor_date'] ); ?>">
+				<strong><?php esc_html_e( 'Datum sidrene cijene', 'sidrena' ); ?></strong><br>
+				<code><?php echo esc_html( Sidrena_Utils::date_display( $fields['anchor_date'] ) ); ?></code>
+				<small><?php esc_html_e( 'Datum određuje SIDRENA ruleset. Za novu uslugu prvi put objavljenu nakon 10.09.2026. datum se automatski snima pri prvoj objavi.', 'sidrena' ); ?></small>
 			</p>
 			<p>
-				<label><input type="checkbox" name="sidrena_service_sale" value="yes" <?php checked( $fields['sale'], 'yes' ); ?>> <?php esc_html_e( 'Posebni oblik prodaje / sniženje je aktivno', 'sidrena' ); ?></label>
+				<label><input type="checkbox" name="sidrena_service_sale" value="yes" <?php checked( $fields['sale'], 'yes' ); ?>> <?php esc_html_e( 'Posebni oblik prodaje je aktivan', 'sidrena' ); ?></label>
 			</p>
 			<p>
 				<label for="sidrena_service_sale_name"><strong><?php esc_html_e( 'Naziv posebnog oblika prodaje', 'sidrena' ); ?></strong></label><br>
 				<input class="regular-text" type="text" id="sidrena_service_sale_name" name="sidrena_service_sale_name" value="<?php echo esc_attr( $fields['sale_name'] ); ?>" placeholder="<?php esc_attr_e( 'npr. Akcija', 'sidrena' ); ?>">
 			</p>
 			<p>
-				<label for="sidrena_service_lowest_30_manual"><strong><?php esc_html_e( 'Najniža cijena prije sniženja — ručna vrijednost (€)', 'sidrena' ); ?></strong></label><br>
+				<label for="sidrena_service_lowest_30_manual"><strong><?php esc_html_e( 'Najniža cijena 30 dana prije posebnog oblika prodaje — ručna vrijednost (€)', 'sidrena' ); ?></strong></label><br>
 				<input class="regular-text" type="number" min="0" step="0.01" id="sidrena_service_lowest_30_manual" name="sidrena_service_lowest_30_manual" value="<?php echo esc_attr( $fields['lowest_30'] ); ?>">
 				<small><?php esc_html_e( 'Ostavite prazno za automatski izračun kada postoji potpuna 30-dnevna povijest.', 'sidrena' ); ?></small>
 			</p>
@@ -196,7 +196,6 @@ final class Sidrena_Services {
 		$map = array(
 			'sidrena_service_current_price'    => '_sidrena_service_current_price',
 			'sidrena_service_anchor_price'     => '_sidrena_service_anchor_price',
-			'sidrena_service_anchor_date'      => '_sidrena_service_anchor_date',
 			'sidrena_service_sale_name'        => '_sidrena_service_sale_name',
 			'sidrena_service_lowest_30_manual' => '_sidrena_service_lowest_30_manual',
 			'sidrena_service_type'             => '_sidrena_service_type',
@@ -318,14 +317,13 @@ final class Sidrena_Services {
 			return;
 		}
 
-		$settings  = Sidrena_Utils::settings();
 		$published = get_post_datetime( $post );
 		if ( ! $published ) {
 			return;
 		}
 
 		try {
-			$cutoff = new DateTimeImmutable( $settings['default_ref_date'] . ' 23:59:59', wp_timezone() );
+			$cutoff = new DateTimeImmutable( Sidrena_Legal_Automation::general_reference_date() . ' 23:59:59', wp_timezone() );
 		} catch ( Exception $exception ) {
 			return;
 		}
