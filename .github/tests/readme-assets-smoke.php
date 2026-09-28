@@ -22,8 +22,8 @@ sidrena_readme_assets_assert( false !== $readme, 'Unable to read main README.' )
 
 $required_assets = array(
 	'assets/images/logo-horizontal.svg',
-	'assets/images/logo-wordpress.svg',
-	'assets/images/logo-woocommerce.svg',
+	'assets/images/logo-brendigo-standalone.svg',
+	'assets/images/logo-brendigo-store.svg',
 	'assets/images/logo-mark.svg',
 	'assets/images/app-icon.svg',
 	'assets/images/favicon.svg',
