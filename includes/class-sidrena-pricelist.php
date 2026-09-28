@@ -204,7 +204,7 @@ final class Sidrena_Pricelist {
 				$this->merge_archive_index( $index );
 			}
 			$this->merge_current_index( $index, $expected );
-			$this->cleanup_public_snapshots( $locations );
+			$this->cleanup_public_snapshots( $locations, 'yes' === $settings['enable_public_html'] );
 
 			$this->cleanup_archives();
 			$manifest = $this->write_manifest();
@@ -558,15 +558,17 @@ final class Sidrena_Pricelist {
 		return is_wp_error( $result ) ? $result : $count;
 	}
 
-	private function cleanup_public_snapshots( $locations ) {
+	private function cleanup_public_snapshots( $locations, $public_enabled = true ) {
 		$paths = Sidrena_Utils::upload_paths();
 		if ( ! is_dir( $paths['snapshot_dir'] ) ) {
 			return;
 		}
 		$keep = array();
-		foreach ( $locations as $location ) {
-			if ( 'yes' === ( $location['enabled'] ?? '' ) ) {
-				$keep[ basename( Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' ) ) ] = true;
+		if ( $public_enabled ) {
+			foreach ( $locations as $location ) {
+				if ( 'yes' === ( $location['enabled'] ?? '' ) ) {
+					$keep[ basename( Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' ) ) ] = true;
+				}
 			}
 		}
 		$files = array();
