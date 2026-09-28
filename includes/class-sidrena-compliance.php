@@ -249,7 +249,7 @@ final class Sidrena_Compliance {
 		if ( file_exists( $index ) ) {
 			return false;
 		}
-		file_put_contents( $index, '<!doctype html><meta charset="utf-8"><title>Sidrena</title>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		return true;
+		$written = file_put_contents( $index, '<!doctype html><meta charset="utf-8"><title>Sidrena</title>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		return false !== $written;
 	}
 }
