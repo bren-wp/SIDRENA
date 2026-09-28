@@ -35,6 +35,8 @@ The plugin provides:
 
 Important publication and technical outputs are automated so an end user cannot accidentally disable them. CSV, XML, public HTML, the JSON manifest, REST index, price history, strict publication checks, and publication monitoring remain enabled.
 
+The Croatian machine-readable price-list rule accepts XML or CSV. SIDRENA generates both formats by design for interoperability; this does not state that the rule requires both formats at the same time.
+
 The simplified settings screen only asks the user to choose the business mode, a daily generation time before 08:00, an archive retention period of at least 30 days, and an alert email address.
 
 = Croatian end-user documentation =
