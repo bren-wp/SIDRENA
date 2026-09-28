@@ -350,10 +350,7 @@ final class Sidrena_Services {
 		}
 		if ( 'sidrena_anchor' === $column ) {
 			$price = get_post_meta( $post_id, '_sidrena_service_anchor_price', true );
-			$date  = get_post_meta( $post_id, '_sidrena_service_anchor_date', true );
-			if ( ! $date ) {
-				$date = Sidrena_Utils::settings()['default_ref_date'];
-			}
+			$date  = Sidrena_Utils::service_reference_date( $post_id );
 			echo esc_html( Sidrena_Utils::money( $price ) . ' € · ' . Sidrena_Utils::date_display( $date ) );
 		}
 	}
@@ -421,7 +418,7 @@ final class Sidrena_Services {
 			$current_text = '' === $current ? '—' : Sidrena_Utils::money( $current ) . ' €';
 			$anchor_text  = '' === $anchor ? '—' : Sidrena_Utils::money( $anchor ) . ' €';
 			$out         .= '<td data-label="' . esc_attr__( 'Aktualna cijena', 'sidrena' ) . '">' . esc_html( $current_text ) . '</td>';
-			$out .= '<td data-label="' . esc_attr__( 'Dodatna cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
+			$out .= '<td data-label="' . esc_attr__( 'Sidrena cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
 			if ( '' !== $anchor ) {
 				$out .= '<small>' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . '</small>';
 			}

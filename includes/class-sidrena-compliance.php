@@ -80,8 +80,6 @@ final class Sidrena_Compliance {
 			'strict_publication'     => 'yes' === $settings['strict_publication'],
 			'failure_notifications'  => 'yes' === $settings['failure_notifications'],
 			'display_anchor'         => 'yes' === $settings['display_anchor'],
-			'display_lowest_30'      => 'yes' === $settings['display_lowest_30'],
-			'track_price_history'    => 'yes' === $settings['track_price_history'],
 			'publication_watch'      => (bool) wp_next_scheduled( 'sidrena_publication_watch' ),
 			'daily_generation'       => (bool) wp_next_scheduled( 'sidrena_daily_generation' ),
 		);
@@ -112,14 +110,8 @@ final class Sidrena_Compliance {
 		if ( ! $profile['display_anchor'] ) {
 			$issues[] = 'Prikaz dodatne/sidrene cijene treba ostati uključen na javnim prikazima.';
 		}
-		if ( ! $profile['display_lowest_30'] ) {
-			$issues[] = 'Prikaz 30-dnevne referentne cijene treba ostati uključen za posebne oblike prodaje.';
-		}
-		if ( ! $profile['track_price_history'] ) {
-			$issues[] = 'Povijest cijena treba ostati uključena radi provjerljive 30-dnevne reference.';
-		}
-		if ( $profile['archive_retention_days'] < 30 ) {
-			$issues[] = 'Javna arhiva mora imati najmanje 30 dana čuvanja.';
+		if ( 30 !== $profile['archive_retention_days'] ) {
+			$issues[] = 'Javna arhiva SIDRENA ruleseta mora biti postavljena na 30 dana.';
 		}
 		if ( ! $profile['daily_generation'] ) {
 			$issues[] = 'Automatsko generiranje nije zakazano; provjerite dnevnu objavu proizvoda i regeneriranje cjenika nakon promjena usluga.';
@@ -161,7 +153,7 @@ final class Sidrena_Compliance {
 
 		$before_normalize = $settings;
 		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
-		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor', 'display_lowest_30', 'track_price_history' ) as $key ) {
+		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor' ) as $key ) {
 			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
 				$repairs[] = 'settings:' . $key;
 			}
