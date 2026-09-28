@@ -214,16 +214,16 @@ jobs:
           test "$WP_VERSION" = "$WOO_VERSION"
           test "$WP_VERSION" = "$WP_STABLE"
           test "$WP_VERSION" = "$WOO_STABLE"
-          grep -q '^ \* Plugin Name: SIDRENA$' "$WP_MAIN"
-          grep -q '^ \* Plugin Name: SIDRENA for WooCommerce$' "$WOO_MAIN"
-          grep -q '^ \* Text Domain: sidrena$' "$WP_MAIN"
-          grep -q '^ \* Text Domain: sidrena-for-woocommerce$' "$WOO_MAIN"
+          grep -Fq 'Plugin Name: brendigo SIDRENA – digitalni cjenici' "$WP_MAIN"
+          grep -Fq 'Plugin Name: brendigo SIDRENA – cjenici za WooCommerce' "$WOO_MAIN"
+          grep -q '^ \* Text Domain: brendigo-sidrena-digitalni-cjenici$' "$WP_MAIN"
+          grep -q '^ \* Text Domain: brendigo-sidrena-cjenici$' "$WOO_MAIN"
           ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"
           grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WOO_MAIN"
           grep -q "define( 'SIDRENA_EDITION', 'wordpress' );" "$WP_MAIN"
           grep -q "define( 'SIDRENA_EDITION', 'woocommerce' );" "$WOO_MAIN"
-          grep -q 'Author: Brendigo' "$WP_MAIN"
-          grep -q 'Author: Brendigo' "$WOO_MAIN"
+          grep -q 'Author: brendigo' "$WP_MAIN"
+          grep -q 'Author: brendigo' "$WOO_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WP_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WOO_MAIN"
           grep -Fq 'Plugin URI: https://brendigo.com/sidrene-cijene/' "$WP_MAIN"
@@ -232,7 +232,7 @@ jobs:
           grep -Fq 'License URI: https://www.gnu.org/licenses/gpl-2.0.html' "$WP_MAIN"
           grep -Fq 'License: GPLv2 or later' "$WOO_MAIN"
           grep -Fq 'License URI: https://www.gnu.org/licenses/gpl-2.0.html' "$WOO_MAIN"
-          grep -Fq 'Brendigo' LICENSE
+          grep -Fqi 'brendigo' LICENSE
           grep -Fq 'GNU General Public License v2 or later' LICENSE
           test -s docs/UPUTE-WORDPRESS.md
           test -s docs/UPUTE-WOOCOMMERCE.md
@@ -332,14 +332,14 @@ jobs:
           test -s "$WOO/assets/images/menu-anchor.svg"
           test -s "$WP/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
-          grep -Fq 'Text Domain: sidrena' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: sidrena-for-woocommerce' "$WOO/sidrena-woocommerce.php"
-          test -f "$WP/languages/sidrena.pot"
-          test -f "$WOO/languages/sidrena-for-woocommerce.pot"
+          grep -Fq 'Text Domain: brendigo-sidrena-digitalni-cjenici' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cjenici' "$WOO/sidrena-woocommerce.php"
+          test -f "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          test -f "$WOO/languages/brendigo-sidrena-cjenici.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
           test ! -f "$WOO/languages/sidrena-woocommerce.pot"
-          grep -Fq 'X-Domain: sidrena' "$WP/languages/sidrena.pot"
-          grep -Fq 'X-Domain: sidrena-for-woocommerce' "$WOO/languages/sidrena-for-woocommerce.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-digitalni-cjenici' "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-cjenici' "$WOO/languages/brendigo-sidrena-cjenici.pot"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
           php .github/tests/wordpress-edition-smoke.php "$WP"
@@ -377,7 +377,7 @@ jobs:
           set -euo pipefail
           grep -Fq 'License: GPLv2 or later' editions/wordpress/sidrena-wordpress.php
           grep -Fq 'License: GPLv2 or later' editions/woocommerce/sidrena-woocommerce.php
-          grep -Fq 'Brendigo' README.md
+          grep -Fq 'brendigo' README.md
           grep -Fq 'sidrena@brendigo.com' README.md
           grep -Fq '+385 91 901 0092' README.md
           grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
