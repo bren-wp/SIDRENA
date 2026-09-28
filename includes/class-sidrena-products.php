@@ -34,6 +34,7 @@ final class Sidrena_Products {
 		add_action( 'woocommerce_save_product_variation', array( $this, 'save_variation' ), 10, 2 );
 		add_action( 'woocommerce_new_product_variation', array( $this, 'snapshot_new_variation' ), 20, 1 );
 		add_filter( 'woocommerce_get_price_html', array( $this, 'append_reference_prices' ), 999, 2 );
+		add_filter( 'woocommerce_available_variation', array( $this, 'variation_reference_payload' ), 20, 3 );
 		add_shortcode( 'sidrena_cijena', array( $this, 'shortcode' ) );
 		add_shortcode( 'sidrena-cijena', array( $this, 'shortcode' ) );
 		add_action( 'sidrena_cijena', array( $this, 'action_output' ), 10, 1 );
@@ -585,6 +586,33 @@ final class Sidrena_Products {
 		}
 		$extra .= $this->expiry_html( $product );
 		return $extra ? $html . '<span class="sidrena-reference-prices">' . $extra . '</span>' : $html;
+	}
+
+	public function variation_reference_payload( $data, $product, $variation ) {
+		unset( $product );
+		if ( ! is_array( $data ) || ! $variation instanceof WC_Product ) {
+			return $data;
+		}
+
+		$settings = Sidrena_Utils::settings();
+		$out      = '';
+		if ( 'yes' === $settings['display_anchor'] ) {
+			$out .= $this->anchor_html( $variation );
+		}
+		if ( 'yes' === $settings['display_lowest_30'] ) {
+			$out .= $this->lowest_30_html( $variation );
+		}
+		$out .= $this->expiry_html( $variation );
+
+		$html = $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
+		$data['sidrena_reference_html'] = (string) apply_filters(
+			'sidrena_variation_reference_html',
+			$html,
+			$variation,
+			$data
+		);
+
+		return $data;
 	}
 
 	public function shortcode( $atts ) {
