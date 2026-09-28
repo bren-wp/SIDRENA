@@ -76,6 +76,7 @@ This file records the repository-side audit performed before the next WordPress.
 - service writes use a dedicated nonce plus object-specific `edit_post`.
 - public REST routes are read-only and define explicit `permission_callback` values.
 - no public REST write endpoint is registered.
+- automatic conflicting-edition self-deactivation is also gated by `activate_plugins`; an admin request without plugin-management permission cannot mutate plugin activation state.
 
 **Proof:** CI request/security smoke tests, WordPress.org review regression guard and runtime tests.
 
