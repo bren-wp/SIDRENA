@@ -251,7 +251,7 @@ final class Sidrena_Service_History {
 		return array(
 			'status'        => 'incomplete',
 			'price'         => '',
-			'source'        => $source ?: 'incomplete',
+			'source'        => $source ? $source : 'incomplete',
 			'coverage_from' => sanitize_text_field( (string) get_post_meta( $service_id, '_sidrena_service_sale_reference_coverage_from', true ) ),
 		);
 	}
