@@ -6,7 +6,6 @@
  * Support: sidrena@brendigo.com
  */
 
-
 (function () {
 	"use strict";
 
@@ -18,15 +17,16 @@
 	var pending = {};
 	var observerTimer = 0;
 	var activeId = productId;
+	var parentMarkup = null;
 
-	if (!productId || !endpoint || !selectors.length) {
+	if (!productId || !selectors.length) {
 		return;
 	}
 
 	function fetchMarkup(id) {
 		id = parseInt(id || 0, 10);
-		if (!id) {
-			return Promise.resolve("");
+		if (!id || !endpoint) {
+			return Promise.resolve(null);
 		}
 		if (Object.prototype.hasOwnProperty.call(cache, id)) {
 			return Promise.resolve(cache[id]);
@@ -49,14 +49,16 @@
 				return Promise.reject();
 			})
 			.then(function (data) {
-				var html = data && typeof data.html === "string" ? data.html : "";
-				cache[id] = html;
+				var html = data && typeof data.html === "string" ? data.html : null;
+				if (html !== null) {
+					cache[id] = html;
+				}
 				delete pending[id];
 				return html;
 			})
 			.catch(function () {
 				delete pending[id];
-				return "";
+				return null;
 			});
 
 		return pending[id];
@@ -83,6 +85,14 @@
 		return found;
 	}
 
+	function existingMarkupNodes(root) {
+		root = root || document;
+		if (!root.querySelectorAll) {
+			return [];
+		}
+		return Array.prototype.slice.call(root.querySelectorAll(".sidrena-reference-prices"));
+	}
+
 	function replaceMarkup(existing, html) {
 		if (!existing || existing.outerHTML === html) {
 			return;
@@ -90,44 +100,89 @@
 		existing.outerHTML = html;
 	}
 
-	function targetHasMarkup(target) {
+	function removeMarkup(existing) {
+		if (!existing) {
+			return;
+		}
+		if (typeof existing.remove === "function") {
+			existing.remove();
+			return;
+		}
+		existing.outerHTML = "";
+	}
+
+	function targetMarkup(target) {
 		if (!target) {
-			return false;
+			return null;
 		}
-		if (target.closest(".sidrena-reference-prices")) {
-			return true;
+		if (target.closest) {
+			var closest = target.closest(".sidrena-reference-prices");
+			if (closest) {
+				return closest;
+			}
 		}
-		if (target.querySelector(".sidrena-reference-prices")) {
-			return true;
+		var nested = target.querySelector ? target.querySelector(".sidrena-reference-prices") : null;
+		if (nested) {
+			return nested;
 		}
-		return !!(target.parentElement && target.parentElement.querySelector(":scope > .sidrena-reference-prices"));
+		return target.parentElement && target.parentElement.querySelector
+			? target.parentElement.querySelector(":scope > .sidrena-reference-prices")
+			: null;
+	}
+
+	function readMarkup(root) {
+		var nodes = existingMarkupNodes(root);
+		if (nodes.length && typeof nodes[0].outerHTML === "string") {
+			return nodes[0].outerHTML;
+		}
+
+		var targets = candidateTargets(root, false);
+		for (var i = 0; i < targets.length; i++) {
+			var existing = targetMarkup(targets[i]);
+			if (existing && typeof existing.outerHTML === "string") {
+				return existing.outerHTML;
+			}
+		}
+		return "";
 	}
 
 	function targetsAlreadyHydrated(root, variationMode) {
 		var targets = candidateTargets(root, variationMode);
-		return targets.length > 0 && targets.every(targetHasMarkup);
+		return targets.length > 0 && targets.every(function (target) {
+			return !!targetMarkup(target);
+		});
 	}
 
 	function applyMarkup(html, root, variationMode) {
+		if (typeof html !== "string") {
+			return;
+		}
+
+		root = root || document;
+		var existingNodes = existingMarkupNodes(root);
+		if (existingNodes.length) {
+			existingNodes.forEach(function (existing) {
+				if (html) {
+					replaceMarkup(existing, html);
+				} else {
+					removeMarkup(existing);
+				}
+			});
+			return;
+		}
+
 		if (!html) {
 			return;
 		}
 
 		candidateTargets(root, variationMode).forEach(function (target) {
-			if (target.closest(".sidrena-reference-prices")) {
+			if (target.closest && target.closest(".sidrena-reference-prices")) {
 				return;
 			}
-			var existing = target.querySelector(".sidrena-reference-prices");
+			var existing = targetMarkup(target);
 			if (existing) {
 				replaceMarkup(existing, html);
 				return;
-			}
-			if (target.parentElement) {
-				var sibling = target.parentElement.querySelector(":scope > .sidrena-reference-prices");
-				if (sibling) {
-					replaceMarkup(sibling, html);
-					return;
-				}
 			}
 			target.insertAdjacentHTML("beforeend", html);
 		});
@@ -163,28 +218,57 @@
 			if (id !== activeId) {
 				return;
 			}
+			if (typeof html !== "string") {
+				return;
+			}
 			applyMarkup(html, root, variationMode);
 		});
 	}
 
+	function applyVariationPayload(id, html, root) {
+		activeId = id;
+		cache[id] = html;
+		applyMarkup(html, root, true);
+	}
+
+	function restoreParent(root) {
+		activeId = productId;
+		if (typeof parentMarkup === "string") {
+			cache[productId] = parentMarkup;
+			applyMarkup(parentMarkup, root, false);
+			return;
+		}
+		hydrate(productId, root, false, true);
+	}
+
 	function boot() {
-		hydrate(productId, document, false);
+		parentMarkup = readMarkup(document);
+		if (parentMarkup) {
+			cache[productId] = parentMarkup;
+		} else {
+			hydrate(productId, document, false);
+		}
 
 		if (window.jQuery) {
 			var $ = window.jQuery;
 			$(document).on("found_variation", ".variations_form", function (event, variation) {
 				var id = variation && parseInt(variation.variation_id || 0, 10);
 				var root = event.currentTarget.closest(".product") || document;
-				if (id) {
-					activeId = id;
-					hydrate(id, root, true);
+				if (!id) {
+					return;
 				}
+
+				if (typeof variation.sidrena_reference_html === "string") {
+					applyVariationPayload(id, variation.sidrena_reference_html, root);
+					return;
+				}
+
+				activeId = id;
+				hydrate(id, root, true);
 			});
 			$(document).on("reset_data hide_variation", ".variations_form", function (event) {
 				var root = event.currentTarget.closest(".product") || document;
-				activeId = productId;
-				// Reset must restore the parent markup even when variation HTML is still present.
-				hydrate(productId, root, false, true);
+				restoreParent(root);
 			});
 		}
 
@@ -197,7 +281,11 @@
 					}
 					window.clearTimeout(observerTimer);
 					observerTimer = window.setTimeout(function () {
-						hydrate(activeId, root, activeId !== productId);
+						if (Object.prototype.hasOwnProperty.call(cache, activeId)) {
+							applyMarkup(cache[activeId], root, activeId !== productId);
+						} else {
+							hydrate(activeId, root, activeId !== productId);
+						}
 					}, 120);
 				});
 				observer.observe(root, { childList: true, subtree: true });
