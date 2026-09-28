@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.21</h1>
+<h1 align="center">SIDRENA 1.0.22</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,23 +150,23 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.21 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.22 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.21
+## Zašto SIDRENA 1.0.22
 
-**SIDRENA 1.0.21** je release usmjeren na pouzdaniji javni REST ugovor, bolju skalabilnost fizičkih WooCommerce lokacija i trajni runtime QA oba izdanja.
+**SIDRENA 1.0.22** je release usmjeren na pojednostavljen hrvatski workflow, sigurniju automatizaciju objave, detaljne korisničke upute i WordPress.org usklađivanje oba produkcijska izdanja.
 
-Izdanje 1.0.21 donosi:
+Izdanje 1.0.22 donosi:
 
-- ispravljen REST zahtjev bez eksplicitnog `location` parametra: pravilno se koristi prva omogućena lokacija/kanal umjesto sintetičkog `location_not_found` rezultata
-- javni REST i `manifest.json` koriste kanonski public metadata projection, bez internih `sequence`, `generated_ts`, `retain_until_ts` i sličnih runtime detalja
-- javni tekst, URL-ovi, veličine datoteka i SHA-256 vrijednosti dodatno se normaliziraju prije objave
-- fizička WooCommerce lokacija dohvaća kandidate iz indeksirane SIDRENA lokacijske tablice umjesto prolaska cijelog Woo kataloga
-- REST paginacija fizičkih lokacija čuva stvarni konfigurirani WooCommerce redoslijed varijacija, uključujući ručno presložene varijacije
-- regression testovi eksplicitno provjeravaju paginaciju i ručni variation child-order
-- stvarni Chromium REST QA izvršava se u aktivnom WordPress i WordPress + WooCommerce okruženju
-- CI dodatno blokira debug/generirane sadržajne tragove i rizični `base64_decode` primitive u produkcijskom PHP sloju
-- funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin/legal/distribution guardove, službeni Plugin Check za oba izdanja te stvarni WordPress i WooCommerce browser QA prije verzijskog bumpa
+- automatski uključene publication-critical funkcije bez rizičnih korisničkih prekidača
+- pojednostavljene postavke za krajnjeg korisnika
+- detaljne hrvatske Markdown i PDF upute za oba izdanja
+- WooCommerce store-address onboarding bez prepisivanja postojećih lokacija
+- poboljšan variation reference-price payload bez dodatnog zahtjeva u standardnom toku
+- javne podatke o integritetu datoteka i poboljšanu arhivu/preuzimanja
+- validirane hookove za dodatne jedinice i aliase
+- WordPress.org naming/slug/trademark/admin-notice cleanup prema recenzentskim smjernicama
+- proširene CI, Plugin Check i runtime QA guardove.
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -227,13 +227,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.21 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.22 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.21.zip`
-- `sidrena-woocommerce-1.0.21.zip`
+- `sidrena-wordpress-1.0.22.zip`
+- `sidrena-woocommerce-1.0.22.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
