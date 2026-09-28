@@ -23,6 +23,7 @@ on:
       - 'public/**'
       - 'editions/**'
       - 'tools/capture-wporg-assets.mjs'
+      - 'tools/runtime-rest-qa.mjs'
       - '.github/workflows/wporg-real-assets.yml'
       - 'README.md'
       - 'docs/**'
@@ -99,6 +100,7 @@ jobs:
 
           npx wp-env start
           npx wp-env run cli wp plugin activate sidrena-wordpress
+          SIDRENA_QA_EDITION=wordpress SIDRENA_RUNTIME_URL=http://localhost:8888 node tools/runtime-rest-qa.mjs
 
           rm -rf "$RUNNER_TEMP/sidrena-wordpress-assets"
           mkdir -p "$RUNNER_TEMP/sidrena-wordpress-assets"
@@ -128,6 +130,7 @@ jobs:
           npx wp-env start
           npx wp-env run cli wp plugin install woocommerce --activate
           npx wp-env run cli wp plugin activate sidrena-woocommerce
+          SIDRENA_QA_EDITION=woocommerce SIDRENA_RUNTIME_URL=http://localhost:8888 node tools/runtime-rest-qa.mjs
 
           rm -rf "$RUNNER_TEMP/sidrena-woocommerce-assets"
           mkdir -p "$RUNNER_TEMP/sidrena-woocommerce-assets"
