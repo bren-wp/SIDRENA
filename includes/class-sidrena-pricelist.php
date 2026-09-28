@@ -1105,9 +1105,24 @@ final class Sidrena_Pricelist {
 			}
 
 			if ( $is_expired && ! $is_current ) {
+				$removed = true;
 				if ( is_file( $path ) ) {
-					unlink( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					$removed = unlink( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					if ( ! $removed && ! is_file( $path ) ) {
+						$removed = true;
+					}
 				}
+				if ( $removed ) {
+					continue;
+				}
+
+				$archive[] = $entry;
+				Sidrena_Audit::log(
+					'archive_retention_cleanup',
+					'warning',
+					__( 'Isteklu arhivsku datoteku nije moguće obrisati pa je zadržana u indeksu za sljedeći pokušaj.', 'sidrena' ),
+					array( 'filename' => $filename )
+				);
 				continue;
 			}
 
