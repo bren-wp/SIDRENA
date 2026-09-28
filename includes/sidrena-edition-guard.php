@@ -31,8 +31,8 @@ $sidrena_edition_labels = array(
 
 $sidrena_attempted_label  = isset( $sidrena_edition_labels[ $sidrena_attempted_key ] ) ? $sidrena_edition_labels[ $sidrena_attempted_key ] : 'SIDRENA izdanje';
 $sidrena_active_label     = isset( $sidrena_edition_labels[ $sidrena_active_key ] ) ? $sidrena_edition_labels[ $sidrena_active_key ] : 'drugo SIDRENA izdanje';
-/* translators: 1: currently active SIDRENA edition, 2: SIDRENA edition being activated. */
 $sidrena_conflict_message = sprintf(
+	/* translators: 1: currently active SIDRENA edition, 2: SIDRENA edition being activated. */
 	__( 'Aktivno izdanje: %1$s. Pokušavate aktivirati: %2$s. Deaktivirajte aktivno izdanje prije aktivacije drugoga. Deaktivacija ne briše SIDRENA poslovne podatke.', 'sidrena' ),
 	$sidrena_active_label,
 	$sidrena_attempted_label
