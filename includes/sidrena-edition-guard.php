@@ -33,22 +33,6 @@ register_activation_hook(
 );
 
 add_action(
-	'admin_init',
-	static function () use ( $sidrena_conflicting_file ) {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return;
-		}
-		if ( ! function_exists( 'deactivate_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-		if ( function_exists( 'deactivate_plugins' ) ) {
-			deactivate_plugins( plugin_basename( $sidrena_conflicting_file ), true );
-		}
-	},
-	1
-);
-
-add_action(
 	'admin_notices',
 	static function () {
 		if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
@@ -60,7 +44,7 @@ add_action(
 			return;
 		}
 
-		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno SIDRENA izdanje. Konfliktno izdanje je deaktivirano. Na ekranu Dodataka ostavite aktivno samo izdanje koje želite koristiti.', 'sidrena' ) . '</p></div>';
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno SIDRENA izdanje. Deaktivirajte jedno izdanje na ekranu Dodataka; plugin neće automatski mijenjati stanje drugih dodataka.', 'sidrena' ) . '</p></div>';
 	}
 );
 
