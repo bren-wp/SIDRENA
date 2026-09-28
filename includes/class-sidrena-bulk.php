@@ -182,7 +182,7 @@ final class Sidrena_Bulk {
 
 		foreach ( $items as $id => $row ) {
 			$id = absint( $id );
-			if ( ! $id || ! is_array( $row ) || 'product' !== get_post_type( $id ) ) {
+			if ( ! $id || ! is_array( $row ) || 'product' !== get_post_type( $id ) || ! current_user_can( 'edit_post', $id ) ) {
 				continue;
 			}
 

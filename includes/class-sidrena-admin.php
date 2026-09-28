@@ -1762,7 +1762,7 @@ final class Sidrena_Admin {
 				continue;
 			}
 			$product_id = Sidrena_Utils::find_product_id_by_code( $sku );
-			if ( ! $product_id ) {
+			if ( ! $product_id || ! current_user_can( 'edit_post', $product_id ) ) {
 				++$skipped;
 				continue;
 			}
@@ -1866,7 +1866,7 @@ final class Sidrena_Admin {
 				$product_id = absint( $row[ $map['product_id'] ] ?? 0 );
 			}
 			$product = $product_id ? wc_get_product( $product_id ) : false;
-			if ( ! $product ) {
+			if ( ! $product || ! current_user_can( 'edit_post', $product_id ) ) {
 				++$skipped;
 				continue;
 			}

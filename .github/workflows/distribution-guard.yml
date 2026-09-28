@@ -78,6 +78,10 @@ jobs:
       - name: Verify documentation and local branding assets
         shell: bash
         run: |
+          if grep -RInE 'Cjenikomat|cjenikomat' assets branding wporg-assets editions includes docs tools --exclude='*.png' --exclude='*.jpg' --exclude='*.jpeg' --exclude='*.pdf'; then
+            echo 'Retired Cjenikomat branding detected; SIDRENA must remain the runtime and visual brand.' >&2
+            exit 1
+          fi
           set -euo pipefail
           test -s assets/images/menu-anchor.svg
           test -s assets/images/logo-mark.svg

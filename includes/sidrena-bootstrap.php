@@ -109,7 +109,7 @@ add_action(
 						return;
 					}
 
-					echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Cjenikomat izdanje za web trgovine zahtijeva aktivan WooCommerce dodatak. Aktivirajte WooCommerce ili deaktivirajte ovo Cjenikomat izdanje.', 'sidrena' ) . '</p></div>';
+					echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'SIDRENA izdanje za web trgovine zahtijeva aktivan WooCommerce dodatak. Aktivirajte WooCommerce ili deaktivirajte ovo SIDRENA izdanje.', 'sidrena' ) . '</p></div>';
 				}
 			);
 			return;

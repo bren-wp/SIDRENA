@@ -24,8 +24,11 @@ $woo_readme = file_get_contents( $root . '/editions/woocommerce/readme.txt' );
 $edition_guard = file_get_contents( $root . '/includes/sidrena-edition-guard.php' );
 $plugin_check = file_get_contents( $root . '/.github/workflows/plugin-check.yml' );
 $release = file_get_contents( $root . '/.github/workflows/release.yml' );
+$bulk_source = file_get_contents( $root . '/includes/class-sidrena-bulk.php' );
+$admin_source = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
+$bootstrap_source = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
 
-foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release ) as $source ) {
+foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source ) as $source ) {
 	sidrena_wporg_assert( false !== $source, 'WordPress.org review guard could not read a required source file.' );
 }
 
@@ -106,5 +109,21 @@ foreach ( $visuals as $visual ) {
 	sidrena_wporg_assert( false !== $source, 'Unable to read visual asset: ' . $visual );
 	sidrena_wporg_assert( false === stripos( $source, 'WooCommerce' ), 'Third-party WooCommerce branding returned inside visual asset: ' . $visual );
 }
+
+
+sidrena_wporg_assert(
+	false !== strpos( $bulk_source, "current_user_can( 'edit_post', $id )" )
+	&& substr_count( $admin_source, "current_user_can( 'edit_post', $product_id )" ) >= 2,
+	'WooCommerce bulk/import write paths must enforce per-product edit capabilities in addition to action-level permissions.'
+);
+
+sidrena_wporg_assert(
+	false === stripos( $bootstrap_source, 'Cjenikomat' )
+	&& false === stripos( $wp_main, 'Cjenikomat' )
+	&& false === stripos( $woo_main, 'Cjenikomat' )
+	&& false === stripos( $wp_readme, 'Cjenikomat' )
+	&& false === stripos( $woo_readme, 'Cjenikomat' ),
+	'Retired Cjenikomat branding must not return to production-facing plugin sources.'
+);
 
 fwrite( STDOUT, "SIDRENA WordPress.org review regression guard passed.\n" );
