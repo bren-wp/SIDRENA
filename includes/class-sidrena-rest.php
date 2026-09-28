@@ -251,11 +251,17 @@ final class Sidrena_REST {
 			return array( 'items' => array(), 'total' => 0, 'total_pages' => 0 );
 		}
 
-		$page     = max( 1, absint( $page ) );
-		$per_page = min( 100, max( 1, absint( $per_page ) ) );
-		$offset   = ( $page - 1 ) * $per_page;
-		$items    = array();
-		$total    = 0;
+		$page      = max( 1, absint( $page ) );
+		$per_page  = min( 100, max( 1, absint( $per_page ) ) );
+		$kind      = sanitize_key( (string) ( $location['kind'] ?? 'objekt' ) );
+		$location_id = trim( (string) ( $location['id'] ?? '' ) );
+		if ( 'webshop' !== $kind && '' !== $location_id && is_callable( array( 'Sidrena_Location_Data', 'available_item_ids_for_location' ) ) ) {
+			return $this->realtime_woocommerce_location_products( $location, $page, $per_page );
+		}
+
+		$offset = ( $page - 1 ) * $per_page;
+		$items  = array();
+		$total  = 0;
 
 		foreach ( $this->realtime_woocommerce_products() as $product ) {
 			if ( ! $this->has_realtime_location_availability( $product, $location ) ) {
@@ -274,6 +280,58 @@ final class Sidrena_REST {
 		);
 	}
 
+	private function realtime_woocommerce_location_products( $location, $page, $per_page ) {
+		$location_id = trim( (string) ( $location['id'] ?? '' ) );
+		$candidates  = Sidrena_Location_Data::available_item_ids_for_location( $location_id );
+		$offset      = ( $page - 1 ) * $per_page;
+		$items       = array();
+		$total       = 0;
+
+		foreach ( $candidates as $product_id ) {
+			$product = wc_get_product( absint( $product_id ) );
+			if ( ! $product || ! $product->exists() || $product->is_type( 'variable' ) || ! $this->is_realtime_woocommerce_product_allowed( $product ) ) {
+				continue;
+			}
+
+			if ( $total >= $offset && count( $items ) < $per_page ) {
+				$items[] = $this->product_item( $product, $location );
+			}
+			++$total;
+		}
+
+		return array(
+			'items'       => $items,
+			'total'       => $total,
+			'total_pages' => $total ? (int) ceil( $total / $per_page ) : 0,
+		);
+	}
+
+	private function is_realtime_woocommerce_product_allowed( $product ) {
+		if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
+			return false;
+		}
+
+		$visibility_product = $product;
+		if ( $product->is_type( 'variation' ) ) {
+			$parent_id = absint( $product->get_parent_id() );
+			$parent    = $parent_id ? wc_get_product( $parent_id ) : false;
+			if ( ! $parent || ! $parent->exists() || ! Sidrena_Utils::is_public_wc_product( $parent ) ) {
+				return false;
+			}
+			$visibility_product = $parent;
+		}
+
+		$cjenik_visibility = sanitize_key( (string) get_post_meta( $visibility_product->get_id(), '_sidrena_cjenik_visibility', true ) );
+		if ( 'exclude' === $cjenik_visibility ) {
+			return false;
+		}
+		if ( is_callable( array( $visibility_product, 'get_catalog_visibility' ) ) && 'hidden' === $visibility_product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private function realtime_woocommerce_products() {
 		$catalog_page = 1;
 		do {
@@ -290,15 +348,7 @@ final class Sidrena_REST {
 			$products = is_array( $products ) ? $products : array();
 
 			foreach ( $products as $product ) {
-				if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
-					continue;
-				}
-
-				$cjenik_visibility = sanitize_key( (string) get_post_meta( $product->get_id(), '_sidrena_cjenik_visibility', true ) );
-				if ( 'exclude' === $cjenik_visibility ) {
-					continue;
-				}
-				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
+				if ( ! $this->is_realtime_woocommerce_product_allowed( $product ) ) {
 					continue;
 				}
 
