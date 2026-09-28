@@ -1,4 +1,4 @@
-=== SIDRENA – sidrene cijene i digitalni cjenici ===
+=== brendigo SIDRENA – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
 Tags: cijene, cjenik, csv, xml, trgovina
