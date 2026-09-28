@@ -35,8 +35,13 @@ jobs:
           php-version: '8.3'
           coverage: none
 
-      - name: Install PDF build dependency
-        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+      - name: Install PDF build and render dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --quiet reportlab pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends poppler-utils
 
       - name: Guard source tree edition boundaries
         shell: bash
@@ -284,6 +289,32 @@ jobs:
             exit 1
           fi
 
+      - name: Render and validate detailed PDF manuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/sidrena-distribution"
+          RENDER="$RUNNER_TEMP/sidrena-pdf-visual-qa"
+          rm -rf "$RENDER"
+          mkdir -p "$RENDER"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$OUT/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/wordpress" \
+            --label "SIDRENA WordPress"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$OUT/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/woocommerce" \
+            --label "SIDRENA WooCommerce"
+
+      - name: Upload PDF visual QA renders
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-pdf-visual-qa
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ runner.temp }}/sidrena-pdf-visual-qa/
       - name: Upload verified review packages
         uses: actions/upload-artifact@v7
         with:
