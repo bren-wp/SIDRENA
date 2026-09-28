@@ -292,6 +292,10 @@
 .sidrena-downloads__table tbody th{font-weight:650;overflow-wrap:anywhere;max-width:360px}
 .sidrena-downloads__table tbody tr:last-child th,.sidrena-downloads__table tbody tr:last-child td{border-bottom:0}
 .sidrena-downloads__table a{font-weight:700}
+.sidrena-download-integrity{margin-top:6px;font-size:.74rem;color:#64748b}
+.sidrena-download-integrity>summary{cursor:pointer;width:max-content;max-width:100%;font-weight:700;color:#475569}
+.sidrena-download-integrity>summary:focus-visible{outline:2px solid rgba(22,119,255,.28);outline-offset:2px}
+.sidrena-download-integrity code{display:block;max-width:100%;margin-top:5px;padding:6px 8px;border-radius:7px;background:#f1f5f9;color:#334155;font-size:.72rem;line-height:1.45;overflow-wrap:anywhere;white-space:normal}
 .sidrena-downloads__source{font-size:.8rem;color:#64748b;padding-top:4px}
 @media(max-width:720px){
  .sidrena-downloads__summary,.sidrena-downloads__grid{grid-template-columns:1fr}

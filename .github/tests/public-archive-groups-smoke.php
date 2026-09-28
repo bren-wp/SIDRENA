@@ -34,7 +34,7 @@ class Sidrena_Utils {
 
 	public static function public_index() {
 		return array(
-			array( 'location_id' => 'loc-1', 'location_code' => 'LOC-1', 'filename' => 'current.csv', 'format' => 'csv', 'catalog' => 'products', 'url' => 'https://example.test/current.csv', 'generated_ts' => 1790245000 ),
+			array( 'location_id' => 'loc-1', 'location_code' => 'LOC-1', 'filename' => 'current.csv', 'format' => 'csv', 'catalog' => 'products', 'url' => 'https://example.test/current.csv', 'generated_ts' => 1790245000, 'generated_at' => '2026-09-24T10:00:00+02:00', 'rows' => 42, 'bytes' => 2048, 'sha256' => 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ),
 			array( 'location_id' => 'loc-1', 'location_code' => 'LOC-1', 'filename' => 'current.xml', 'format' => 'xml', 'catalog' => 'products', 'url' => 'https://example.test/current.xml', 'generated_ts' => 1790244900 ),
 			array( 'location_id' => 'loc-1', 'location_code' => 'LOC-1', 'filename' => 'services.csv', 'format' => 'csv', 'catalog' => 'services', 'url' => 'https://example.test/services.csv', 'generated_ts' => 1790244800 ),
 			array( 'location_id' => 'loc-2', 'location_code' => 'LOC-2', 'filename' => 'other-current.csv', 'format' => 'csv', 'catalog' => 'products', 'url' => 'https://example.test/other-current.csv', 'generated_ts' => 1790244700 ),
@@ -65,6 +65,13 @@ function esc_url_raw( $value ) { return (string) $value; }
 function esc_url( $value ) { return (string) $value; }
 function esc_html( $value ) { return htmlspecialchars( (string) $value, ENT_QUOTES, 'UTF-8' ); }
 function esc_html__( $text, $domain = null ) { unset( $domain ); return $text; }
+function esc_html_e( $text, $domain = null ) { echo esc_html__( $text, $domain ); }
+function _n( $single, $plural, $number, $domain = null ) { unset( $domain ); return 1 === (int) $number ? $single : $plural; }
+function size_format( $bytes, $decimals = 0 ) {
+	unset( $decimals );
+	$bytes = (int) $bytes;
+	return $bytes >= 1024 ? rtrim( rtrim( number_format( $bytes / 1024, 2, '.', '' ), '0' ), '.' ) . ' KB' : $bytes . ' B';
+}
 function absint( $value ) { return abs( (int) $value ); }
 function wp_date( $format, $timestamp = null ) { return gmdate( $format, null === $timestamp ? time() : (int) $timestamp ); }
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
@@ -125,6 +132,20 @@ sidrena_archive_assert( 'https://example.test/current.xml' === $url, 'Current fi
 $missing_url = $public->current_file_url_shortcode( array( 'lokacija' => 'missing' ) );
 sidrena_archive_assert( '' === $missing_url, 'Current file URL shortcode must not fall back to all locations for an invalid explicit location.' );
 
+$render_files = new ReflectionMethod( 'Sidrena_Public', 'render_file_entries' );
+$render_files->setAccessible( true );
+$current_entry = Sidrena_Utils::public_index()[0];
+foreach ( array( 'kartice', 'popis', 'tablica' ) as $view ) {
+	$rendered = $render_files->invoke( $public, array( $current_entry ), $view, 'current' );
+	sidrena_archive_assert( false !== strpos( $rendered, '42' ), 'Public ' . $view . ' file view must expose the stored row count.' );
+	sidrena_archive_assert( false !== strpos( $rendered, '2 KB' ), 'Public ' . $view . ' file view must expose the stored file size.' );
+	sidrena_archive_assert( false !== strpos( $rendered, str_repeat( 'a', 64 ) ), 'Public ' . $view . ' file view must expose the stored SHA-256 checksum.' );
+}
+$invalid_checksum = $current_entry;
+$invalid_checksum['sha256'] = '<invalid>';
+$rendered_invalid = $render_files->invoke( $public, array( $invalid_checksum ), 'kartice', 'current' );
+sidrena_archive_assert( false === strpos( $rendered_invalid, '<invalid>' ), 'Invalid checksum metadata must never be rendered publicly.' );
+
 $source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 $css    = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/public.css' );
 sidrena_archive_assert( substr_count( $source, 'archive_groups( $location_id, true,' ) >= 2, 'Archive and downloads shortcodes must share the filtered grouping engine.' );
@@ -144,10 +165,14 @@ sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_file_entries
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_archive_groups'" ), 'Public archive group extension filter is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_files_html'" ), 'Public file HTML extension filter is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_current_file_url'" ), 'Current file URL extension filter is missing.' );
+sidrena_archive_assert( false !== strpos( $source, "public_file_integrity_html" ), 'Public checksum integrity renderer is missing.' );
+sidrena_archive_assert( false !== strpos( $source, "size_format( \$bytes, 2 )" ), 'Public file size must use stored byte metadata.' );
+sidrena_archive_assert( false !== strpos( $source, "preg_match( '/^[a-f0-9]{64}$/'" ), 'Public checksum renderer must validate SHA-256 metadata before output.' );
 sidrena_archive_assert( false === strpos( $source, 'sidrena-public-archive__list' ), 'Legacy flat archive markup must not return.' );
 sidrena_archive_assert( false === strpos( $css, '.sidrena-public-archive__list' ), 'Legacy flat archive CSS must be removed.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__day>summary:focus-visible' ), 'Grouped archive summary needs a visible keyboard focus state.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__list-item' ), 'Premium list layout styles are missing.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__table-wrap' ), 'Premium table layout styles are missing.' );
+sidrena_archive_assert( false !== strpos( $css, '.sidrena-download-integrity>summary:focus-visible' ), 'Public checksum disclosure needs a visible keyboard focus state.' );
 
 fwrite( STDOUT, "Sidrena grouped public archive runtime test passed.\n" );

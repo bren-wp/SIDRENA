@@ -785,6 +785,31 @@ final class Sidrena_Public {
 		return (string) ob_get_clean();
 	}
 
+	private function public_file_meta( $entry ) {
+		$bytes = max( 0, absint( $entry['bytes'] ?? 0 ) );
+		$rows  = max( 0, absint( $entry['rows'] ?? 0 ) );
+		$sha   = strtolower( trim( (string) ( $entry['sha256'] ?? '' ) ) );
+		if ( ! preg_match( '/^[a-f0-9]{64}$/', $sha ) ) {
+			$sha = '';
+		}
+
+		return array(
+			'bytes' => $bytes,
+			'size'  => $bytes > 0 ? size_format( $bytes, 2 ) : '',
+			'rows'  => $rows,
+			'sha256' => $sha,
+		);
+	}
+
+	private function public_file_integrity_html( $entry ) {
+		$meta = $this->public_file_meta( $entry );
+		if ( ! $meta['sha256'] ) {
+			return '';
+		}
+
+		return '<details class="sidrena-download-integrity"><summary>' . esc_html__( 'SHA-256', 'sidrena' ) . '</summary><code>' . esc_html( $meta['sha256'] ) . '</code></details>';
+	}
+
 	private function render_file_entries( $entries, $view = 'kartice', $context = 'current' ) {
 		$view    = $this->normalize_public_view( $view );
 		$entries = array_values( array_filter( (array) $entries, 'is_array' ) );
@@ -804,11 +829,21 @@ final class Sidrena_Public {
 				$filename  = (string) ( $entry['filename'] ?? __( 'Cjenik', 'sidrena' ) );
 				$url       = esc_url( (string) ( $entry['url'] ?? '' ) );
 				$generated = ! empty( $entry['generated_at'] ) ? Sidrena_Utils::format_iso_datetime( (string) $entry['generated_at'] ) : '';
-				$meta      = trim( (string) ( $entry['location_code'] ?? '' ) . ( $generated ? ' · ' . $generated : '' ) );
+				$file_meta = $this->public_file_meta( $entry );
+				$meta      = array_filter(
+					array(
+						trim( (string) ( $entry['location_code'] ?? '' ) ),
+						$generated,
+						/* translators: %d: number of rows in the published price-list file. */
+						$file_meta['rows'] > 0 ? sprintf( _n( '%d redak', '%d redaka', $file_meta['rows'], 'sidrena' ), $file_meta['rows'] ) : '',
+						$file_meta['size'],
+					)
+				);
 				$html     .= '<li class="sidrena-downloads__list-item"><div><strong>' . esc_html( $filename ) . '</strong>';
 				if ( $meta ) {
-					$html .= '<span>' . esc_html( $meta ) . '</span>';
+					$html .= '<span>' . esc_html( implode( ' · ', $meta ) ) . '</span>';
 				}
+				$html .= $this->public_file_integrity_html( $entry );
 				$html .= '</div>';
 				$html .= $url ? '<a href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>' : '<span>' . esc_html__( 'Datoteka nije dostupna', 'sidrena' ) . '</span>';
 				$html .= '</li>';
@@ -820,6 +855,8 @@ final class Sidrena_Public {
 			$html .= '<th scope="col">' . esc_html__( 'Katalog', 'sidrena' ) . '</th>';
 			$html .= '<th scope="col">' . esc_html__( 'Lokacija', 'sidrena' ) . '</th>';
 			$html .= '<th scope="col">' . esc_html__( 'Objavljeno', 'sidrena' ) . '</th>';
+			$html .= '<th scope="col">' . esc_html__( 'Redaka', 'sidrena' ) . '</th>';
+			$html .= '<th scope="col">' . esc_html__( 'Veličina', 'sidrena' ) . '</th>';
 			$html .= '<th scope="col">' . esc_html__( 'Format', 'sidrena' ) . '</th>';
 			$html .= '<th scope="col">' . esc_html__( 'Akcija', 'sidrena' ) . '</th></tr></thead><tbody>';
 			foreach ( $entries as $entry ) {
@@ -829,7 +866,8 @@ final class Sidrena_Public {
 				$location  = trim( (string) ( $entry['location_code'] ?? '' ) );
 				$generated = ! empty( $entry['generated_at'] ) ? Sidrena_Utils::format_iso_datetime( (string) $entry['generated_at'] ) : '';
 				$format    = strtoupper( sanitize_key( (string) ( $entry['format'] ?? pathinfo( $filename, PATHINFO_EXTENSION ) ) ) );
-				$html     .= '<tr><th scope="row">' . esc_html( $filename ) . '</th><td>' . esc_html( $catalog ) . '</td><td>' . esc_html( $location ?: '—' ) . '</td><td>' . esc_html( $generated ?: '—' ) . '</td><td>' . esc_html( $format ?: '—' ) . '</td><td>';
+				$file_meta = $this->public_file_meta( $entry );
+				$html     .= '<tr><th scope="row">' . esc_html( $filename ) . $this->public_file_integrity_html( $entry ) . '</th><td>' . esc_html( $catalog ) . '</td><td>' . esc_html( $location ?: '—' ) . '</td><td>' . esc_html( $generated ?: '—' ) . '</td><td>' . esc_html( $file_meta['rows'] > 0 ? (string) $file_meta['rows'] : '—' ) . '</td><td>' . esc_html( $file_meta['size'] ?: '—' ) . '</td><td>' . esc_html( $format ?: '—' ) . '</td><td>';
 				$html     .= $url ? '<a href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>' : esc_html__( 'Nije dostupno', 'sidrena' );
 				$html     .= '</td></tr>';
 			}
@@ -845,8 +883,9 @@ final class Sidrena_Public {
 		$catalog  = 'services' === sanitize_key( (string) ( $entry['catalog'] ?? '' ) ) ? __( 'Usluge', 'sidrena' ) : __( 'Proizvodi', 'sidrena' );
 		$location = trim( (string) ( $entry['location_code'] ?? '' ) );
 		$kind     = trim( (string) ( $entry['kind'] ?? '' ) );
-		$url      = esc_url( (string) ( $entry['url'] ?? '' ) );
+		$url       = esc_url( (string) ( $entry['url'] ?? '' ) );
 		$generated = ! empty( $entry['generated_at'] ) ? Sidrena_Utils::format_iso_datetime( (string) $entry['generated_at'] ) : '';
+		$file_meta = $this->public_file_meta( $entry );
 
 		ob_start();
 		?>
@@ -859,7 +898,13 @@ final class Sidrena_Public {
 			<div class="sidrena-download-card__meta">
 				<?php if ( $location || $kind ) : ?><span><?php echo esc_html( trim( $kind . ( $kind && $location ? ' · ' : '' ) . $location ) ); ?></span><?php endif; ?>
 				<?php if ( $generated ) : ?><span><?php echo esc_html( $generated ); ?></span><?php endif; ?>
+				<?php if ( $file_meta['rows'] > 0 ) : ?>
+					<?php /* translators: %d: number of rows in the published price-list file. */ ?>
+					<span><?php echo esc_html( sprintf( _n( '%d redak', '%d redaka', $file_meta['rows'], 'sidrena' ), $file_meta['rows'] ) ); ?></span>
+				<?php endif; ?>
+				<?php if ( $file_meta['size'] ) : ?><span><?php echo esc_html( $file_meta['size'] ); ?></span><?php endif; ?>
 			</div>
+			<?php echo $this->public_file_integrity_html( $entry ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal helper escapes all dynamic values. ?>
 			<?php if ( $url ) : ?>
 				<a class="sidrena-download-card__button" href="<?php echo esc_url( $url ); ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
 			<?php else : ?>
