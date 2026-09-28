@@ -331,6 +331,7 @@ final class Sidrena_Pricelist {
 
 		ftruncate( $handle, 0 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_ftruncate
 		rewind( $handle );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- Advisory WP_Filesystem cannot preserve this process-level flock handle; writing lock metadata to the already locked local handle is intentional.
 		fwrite(
 			$handle,
 			wp_json_encode(
@@ -339,7 +340,7 @@ final class Sidrena_Pricelist {
 					'version'    => SIDRENA_VERSION,
 				)
 			) . "\n"
-		); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		);
 		fflush( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fflush
 		return $handle;
 	}
