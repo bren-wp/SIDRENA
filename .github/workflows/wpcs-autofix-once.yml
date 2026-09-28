@@ -12,6 +12,7 @@ on:
       - develop/1.0.25-wporg-deep-audit
     paths:
       - '.github/workflows/wpcs-autofix-once.yml'
+      - 'phpcs.xml.dist'
 
 permissions:
   contents: write
@@ -60,6 +61,9 @@ jobs:
             fi
           done
           git diff --check
+          grep -Fq "if ( 'wordpress' === SIDRENA_EDITION )" includes/sidrena-bootstrap.php
+          grep -Fq "? 'woocommerce' : 'wordpress';" includes/sidrena-edition-guard.php
+          grep -Fq "return 'wordpress' === self::edition();" includes/class-sidrena-utils.php
 
       - name: Regression tests after formatter
         shell: bash
