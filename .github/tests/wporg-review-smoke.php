@@ -17,8 +17,8 @@ function sidrena_wporg_assert( $condition, $message ) {
 	}
 }
 
-$wp_main  = file_get_contents( $root . '/editions/wordpress/sidrena-wordpress.php' );
-$woo_main = file_get_contents( $root . '/editions/woocommerce/sidrena-woocommerce.php' );
+$wp_main  = file_get_contents( $root . '/editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php' );
+$woo_main = file_get_contents( $root . '/editions/woocommerce/brendigo-sidrene-cijene-cjenici.php' );
 $wp_readme = file_get_contents( $root . '/editions/wordpress/readme.txt' );
 $woo_readme = file_get_contents( $root . '/editions/woocommerce/readme.txt' );
 $edition_guard = file_get_contents( $root . '/includes/sidrena-edition-guard.php' );
