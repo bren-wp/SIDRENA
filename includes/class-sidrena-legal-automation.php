@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Sidrena_Legal_Automation {
 	private const SAFE_GENERATION_TIME = '06:30';
-	private const PUBLICATION_DEADLINE  = '08:00';
+	private const PUBLICATION_DEADLINE = '08:00';
 
 	private static $instance;
 
@@ -44,8 +44,8 @@ final class Sidrena_Legal_Automation {
 			return $settings;
 		}
 
-		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
-		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 45 ) );
+		$settings['generation_time']  = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
+		$settings['retention_days']   = max( 30, absint( $settings['retention_days'] ?? 45 ) );
 		$settings['default_ref_date'] = '2026-09-10';
 		$settings['fmcg_ref_date']    = '2025-05-02';
 		$settings['csv_delimiter']    = ';';

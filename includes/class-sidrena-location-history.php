@@ -59,7 +59,7 @@ final class Sidrena_Location_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 		$last = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, anchor_price, availability FROM %i WHERE location_id = %s AND product_id = %d AND variation_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				'SELECT price, anchor_price, availability FROM %i WHERE location_id = %s AND product_id = %d AND variation_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$location_id,
 				$product_id,
@@ -109,11 +109,11 @@ final class Sidrena_Location_History {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT id, location_id, product_id, variation_id, price, anchor_price, availability
+					'SELECT id, location_id, product_id, variation_id, price, anchor_price, availability
 					FROM %i
 					WHERE id > %d
 					ORDER BY id ASC
-					LIMIT %d",
+					LIMIT %d',
 					$current_table,
 					$last_id,
 					$batch_size
@@ -171,7 +171,7 @@ final class Sidrena_Location_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM %i WHERE recorded_at < %s",
+				'DELETE FROM %i WHERE recorded_at < %s',
 				$table,
 				$cutoff
 			)

@@ -29,7 +29,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-pricelist.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-rest.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-public.php';
 
-if ( 'wordpress' === SIDRENA_EDITION ) {
+if ( 'WordPress' === SIDRENA_EDITION ) {
 	require_once SIDRENA_DIR . 'includes/class-sidrena-standalone.php';
 }
 

@@ -20,7 +20,7 @@ if ( ! defined( 'SIDRENA_EDITION' ) && ! class_exists( 'Sidrena_Plugin', false )
 }
 
 $sidrena_conflicting_file = $sidrena_entry_file;
-$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'wordpress';
+$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'WordPress';
 $sidrena_active_key       = defined( 'SIDRENA_EDITION' ) ? (string) SIDRENA_EDITION : 'legacy';
 
 $sidrena_edition_labels = array(
@@ -29,8 +29,8 @@ $sidrena_edition_labels = array(
 	'legacy'      => 'starije SIDRENA izdanje',
 );
 
-$sidrena_attempted_label = isset( $sidrena_edition_labels[ $sidrena_attempted_key ] ) ? $sidrena_edition_labels[ $sidrena_attempted_key ] : 'SIDRENA izdanje';
-$sidrena_active_label    = isset( $sidrena_edition_labels[ $sidrena_active_key ] ) ? $sidrena_edition_labels[ $sidrena_active_key ] : 'drugo SIDRENA izdanje';
+$sidrena_attempted_label  = isset( $sidrena_edition_labels[ $sidrena_attempted_key ] ) ? $sidrena_edition_labels[ $sidrena_attempted_key ] : 'SIDRENA izdanje';
+$sidrena_active_label     = isset( $sidrena_edition_labels[ $sidrena_active_key ] ) ? $sidrena_edition_labels[ $sidrena_active_key ] : 'drugo SIDRENA izdanje';
 $sidrena_conflict_message = sprintf(
 	esc_html__( 'Aktivno izdanje: %1$s. Pokušavate aktivirati: %2$s. Deaktivirajte aktivno izdanje prije aktivacije drugoga. Deaktivacija ne briše SIDRENA poslovne podatke.', 'sidrena' ),
 	$sidrena_active_label,

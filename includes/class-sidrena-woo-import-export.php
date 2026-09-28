@@ -41,17 +41,17 @@ final class Sidrena_Woo_Import_Export {
 
 	private function columns() {
 		return array(
-			'sidrena_cijena'                  => __( 'Sidrena cijena', 'sidrena' ),
-			'sidrena_datum'                   => __( 'Sidrena referentni datum', 'sidrena' ),
-			'sidrena_skupina'                 => __( 'Sidrena referentna skupina', 'sidrena' ),
-			'sidrena_marka'                   => __( 'Sidrena marka', 'sidrena' ),
-			'sidrena_barkod'                  => __( 'Sidrena barkod', 'sidrena' ),
-			'sidrena_jedinicna_status'        => __( 'Sidrena jedinična cijena status', 'sidrena' ),
-			'sidrena_kolicina_pakiranja'       => __( 'Sidrena količina pakiranja', 'sidrena' ),
-			'sidrena_jedinica_pakiranja'       => __( 'Sidrena jedinica pakiranja', 'sidrena' ),
-			'sidrena_jedinica_mjere'          => __( 'Sidrena jedinica mjere', 'sidrena' ),
-			'sidrena_cijena_jedinice_mjere'   => __( 'Sidrena cijena za jedinicu mjere', 'sidrena' ),
-			'sidrena_naziv_posebnog_oblika'   => __( 'Sidrena naziv posebnog oblika prodaje', 'sidrena' ),
+			'sidrena_cijena'                => __( 'Sidrena cijena', 'sidrena' ),
+			'sidrena_datum'                 => __( 'Sidrena referentni datum', 'sidrena' ),
+			'sidrena_skupina'               => __( 'Sidrena referentna skupina', 'sidrena' ),
+			'sidrena_marka'                 => __( 'Sidrena marka', 'sidrena' ),
+			'sidrena_barkod'                => __( 'Sidrena barkod', 'sidrena' ),
+			'sidrena_jedinicna_status'      => __( 'Sidrena jedinična cijena status', 'sidrena' ),
+			'sidrena_kolicina_pakiranja'    => __( 'Sidrena količina pakiranja', 'sidrena' ),
+			'sidrena_jedinica_pakiranja'    => __( 'Sidrena jedinica pakiranja', 'sidrena' ),
+			'sidrena_jedinica_mjere'        => __( 'Sidrena jedinica mjere', 'sidrena' ),
+			'sidrena_cijena_jedinice_mjere' => __( 'Sidrena cijena za jedinicu mjere', 'sidrena' ),
+			'sidrena_naziv_posebnog_oblika' => __( 'Sidrena naziv posebnog oblika prodaje', 'sidrena' ),
 		);
 	}
 
@@ -109,24 +109,24 @@ final class Sidrena_Woo_Import_Export {
 
 	public function import_default_columns( $columns ) {
 		$aliases = array(
-			'Sidrena cijena'                         => 'sidrena_cijena',
-			'Sidrena referentni datum'               => 'sidrena_datum',
-			'Sidrena cijena datum'                   => 'sidrena_datum',
-			'Sidrena referentna skupina'             => 'sidrena_skupina',
-			'Sidrena marka'                          => 'sidrena_marka',
-			'Sidrena barkod'                         => 'sidrena_barkod',
-			'Sidrena jedinična cijena status'        => 'sidrena_jedinicna_status',
-			'Sidrena količina pakiranja'              => 'sidrena_kolicina_pakiranja',
-			'Količina pakiranja'                      => 'sidrena_kolicina_pakiranja',
-			'Neto količina'                           => 'sidrena_kolicina_pakiranja',
-			'Sidrena jedinica pakiranja'              => 'sidrena_jedinica_pakiranja',
-			'Jedinica pakiranja'                      => 'sidrena_jedinica_pakiranja',
-			'Sidrena jedinica mjere'                 => 'sidrena_jedinica_mjere',
-			'Jedinica mjere'                         => 'sidrena_jedinica_mjere',
-			'Sidrena cijena za jedinicu mjere'       => 'sidrena_cijena_jedinice_mjere',
-			'Cijena za jedinicu mjere'               => 'sidrena_cijena_jedinice_mjere',
-			'Sidrena naziv posebnog oblika prodaje'  => 'sidrena_naziv_posebnog_oblika',
-			'Naziv posebnog oblika prodaje'          => 'sidrena_naziv_posebnog_oblika',
+			'Sidrena cijena'                        => 'sidrena_cijena',
+			'Sidrena referentni datum'              => 'sidrena_datum',
+			'Sidrena cijena datum'                  => 'sidrena_datum',
+			'Sidrena referentna skupina'            => 'sidrena_skupina',
+			'Sidrena marka'                         => 'sidrena_marka',
+			'Sidrena barkod'                        => 'sidrena_barkod',
+			'Sidrena jedinična cijena status'       => 'sidrena_jedinicna_status',
+			'Sidrena količina pakiranja'            => 'sidrena_kolicina_pakiranja',
+			'Količina pakiranja'                    => 'sidrena_kolicina_pakiranja',
+			'Neto količina'                         => 'sidrena_kolicina_pakiranja',
+			'Sidrena jedinica pakiranja'            => 'sidrena_jedinica_pakiranja',
+			'Jedinica pakiranja'                    => 'sidrena_jedinica_pakiranja',
+			'Sidrena jedinica mjere'                => 'sidrena_jedinica_mjere',
+			'Jedinica mjere'                        => 'sidrena_jedinica_mjere',
+			'Sidrena cijena za jedinicu mjere'      => 'sidrena_cijena_jedinice_mjere',
+			'Cijena za jedinicu mjere'              => 'sidrena_cijena_jedinice_mjere',
+			'Sidrena naziv posebnog oblika prodaje' => 'sidrena_naziv_posebnog_oblika',
+			'Naziv posebnog oblika prodaje'         => 'sidrena_naziv_posebnog_oblika',
 		);
 		foreach ( $aliases as $label => $key ) {
 			$columns[ $label ] = $key;

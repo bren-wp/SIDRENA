@@ -37,17 +37,17 @@ final class Sidrena_Compliance {
 
 	public static function legal_sources() {
 		return array(
-			'nn_101_2026_anchor_price' => array(
+			'nn_101_2026_anchor_price'        => array(
 				'label' => 'NN 101/2026, Odluka o isticanju dodatne cijene kao mjera izravne kontrole cijena',
 				'date'  => '2026-09-11',
 				'note'  => 'Dodatna odnosno sidrena cijena za proizvode i usluge s referentnim datumom 10.09.2026.; za ranije obuhvaćene FMCG kategorije zadržava se 02.05.2025.',
 			),
-			'nn_101_2026_public_pricelist' => array(
+			'nn_101_2026_public_pricelist'    => array(
 				'label' => 'NN 101/2026, Odluka o objavi cjenika proizvoda i usluga kao mjera izravne kontrole cijena',
 				'date'  => '2026-09-11',
 				'note'  => 'Objava važećih cjenika proizvoda i usluga na mrežnim stranicama trgovca odnosno pružatelja usluge.',
 			),
-			'nn_105_2026_retail_unit_price' => array(
+			'nn_105_2026_retail_unit_price'   => array(
 				'label' => 'NN 105/2026, Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda',
 				'date'  => '2026-09-18',
 				'note'  => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute jasno, vidljivo, čitljivo i lako uočljivo.',
@@ -57,7 +57,7 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-22',
 				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
 			),
-			'nn_59_2026_base_price_future' => array(
+			'nn_59_2026_base_price_future'    => array(
 				'label' => 'NN 59/2026, Zakon o izmjenama i dopunama Zakona o zaštiti potrošača — bazna cijena',
 				'date'  => '2026-06-09',
 				'note'  => 'Izmijenjeni članak 7. stavci 1. do 9. počinju se primjenjivati 17.11.2026.; bazna cijena ostaje odvojena od dodatne/sidrene cijene, a konkretan dan, proizvodi i način isticanja ovise o provedbenom pravilniku.',
@@ -152,7 +152,10 @@ final class Sidrena_Compliance {
 		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$repairs  = array();
 
-		foreach ( array( 'default_ref_date' => '2026-09-10', 'fmcg_ref_date' => '2025-05-02' ) as $key => $value ) {
+		foreach ( array(
+			'default_ref_date' => '2026-09-10',
+			'fmcg_ref_date'    => '2025-05-02',
+		) as $key => $value ) {
 			if ( ! isset( $settings[ $key ] ) || $value !== $settings[ $key ] ) {
 				$settings[ $key ] = $value;
 				$repairs[]        = 'settings:' . $key;

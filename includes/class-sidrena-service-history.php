@@ -59,9 +59,9 @@ final class Sidrena_Service_History {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
-		$last  = $wpdb->get_var(
+		$last = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT price FROM %i WHERE service_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				'SELECT price FROM %i WHERE service_id = %d ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$service_id
 			)
@@ -160,7 +160,7 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM %i WHERE service_id = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				'SELECT price, recorded_at FROM %i WHERE service_id = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$service_id,
 				$window_sql
@@ -171,7 +171,7 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$first = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT MIN(recorded_at) FROM %i WHERE service_id = %d",
+				'SELECT MIN(recorded_at) FROM %i WHERE service_id = %d',
 				$table,
 				$service_id
 			)
@@ -188,7 +188,7 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$rows = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT price FROM %i WHERE service_id = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				'SELECT price FROM %i WHERE service_id = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC',
 				$table,
 				$service_id,
 				$window_sql,
@@ -213,23 +213,39 @@ final class Sidrena_Service_History {
 	public static function sale_reference( $service_id ) {
 		$service_id = absint( $service_id );
 		if ( ! $service_id || 'yes' !== get_post_meta( $service_id, '_sidrena_service_sale', true ) ) {
-			return array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
+			return array(
+				'status' => 'not_applicable',
+				'price'  => '',
+				'source' => '',
+			);
 		}
 
 		$exception = sanitize_key( (string) get_post_meta( $service_id, '_sidrena_service_lowest_30_exception', true ) );
 		if ( in_array( $exception, array( 'advertising', 'distance', 'off_premises' ), true ) ) {
-			return array( 'status' => 'exempt', 'price' => '', 'source' => $exception );
+			return array(
+				'status' => 'exempt',
+				'price'  => '',
+				'source' => $exception,
+			);
 		}
 
 		$manual = Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_lowest_30_manual', true ) );
 		if ( '' !== $manual ) {
-			return array( 'status' => 'ready', 'price' => (float) $manual, 'source' => 'manual' );
+			return array(
+				'status' => 'ready',
+				'price'  => (float) $manual,
+				'source' => 'manual',
+			);
 		}
 
 		$source = sanitize_key( (string) get_post_meta( $service_id, '_sidrena_service_sale_reference_source', true ) );
 		$price  = Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_sale_reference_price', true ) );
 		if ( 'auto' === $source && '' !== $price ) {
-			return array( 'status' => 'ready', 'price' => (float) $price, 'source' => 'auto' );
+			return array(
+				'status' => 'ready',
+				'price'  => (float) $price,
+				'source' => 'auto',
+			);
 		}
 
 		return array(
@@ -250,11 +266,11 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, service_id, price, recorded_at
+				'SELECT id, service_id, price, recorded_at
 				FROM %i
 				WHERE price IS NOT NULL
 				ORDER BY id DESC
-				LIMIT %d",
+				LIMIT %d',
 				$table,
 				$scan
 			),
@@ -280,8 +296,8 @@ final class Sidrena_Service_History {
 				continue;
 			}
 
-			$old = (float) $row['price'];
-			$now = (float) $new['price'];
+			$old       = (float) $row['price'];
+			$now       = (float) $new['price'];
 			$changes[] = array(
 				'item_id'     => $service_id,
 				'name'        => wp_strip_all_tags( get_the_title( $service_id ) ),
@@ -325,9 +341,9 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM %i
+				'SELECT price, recorded_at FROM %i
 				WHERE service_id = %d AND price IS NOT NULL AND recorded_at >= %s
-				ORDER BY recorded_at ASC, id ASC",
+				ORDER BY recorded_at ASC, id ASC',
 				$table,
 				$service_id,
 				$cutoff
@@ -420,7 +436,7 @@ final class Sidrena_Service_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM %i WHERE recorded_at < %s",
+				'DELETE FROM %i WHERE recorded_at < %s',
 				$table,
 				$cutoff
 			)
