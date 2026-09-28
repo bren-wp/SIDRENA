@@ -92,7 +92,7 @@ def has_metadata(text: str) -> bool:
     return bool(author_present) and PLUGIN_URI in head and AUTHOR_URI in head
 
 
-def apply_entrypoint(text: str) -> str:
+def apply_entrypoint(text: str, author: str = AUTHOR) -> str:
     replacements = {
         r"(?m)^ \* Author:.*$": " * Author: brendigo",
         r"(?m)^ \* Author URI:.*$": " * Author URI: https://brendigo.com/",
