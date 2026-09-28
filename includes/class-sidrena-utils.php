@@ -418,7 +418,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_tooltip() {
-		return __( 'Sidrena cijena je referentna redovna cijena za mjerodavni datum. Ako je proizvod ili usluga tada bio na akciji ili drugom posebnom obliku prodaje, sidrena cijena nije snižena cijena nego prethodna redovna cijena prije tog posebnog oblika prodaje. Najniža cijena u prethodnih 30 dana vodi se odvojeno.', 'sidrena' );
+		return __( 'Sidrena cijena je referentna redovna cijena za mjerodavni datum. Ako je proizvod ili usluga tada bio na akciji ili drugom posebnom obliku prodaje, sidrena cijena je prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' );
 	}
 
 	public static function upload_paths() {
