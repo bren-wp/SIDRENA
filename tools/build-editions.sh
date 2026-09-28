@@ -129,7 +129,7 @@ cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WP_STAGE/docs/SIDRENA-PODRSKA.pdf" "wordpress" "$WP_STAGE/docs/UPUTE.md"
-prepare_package "$WP_STAGE" "brendigo-sidrena-catalog"
+prepare_package "$WP_STAGE" "brendigo-sidrena-digitalni-cjenici"
 rm -f \
   "$WP_STAGE/assets/images/logo-woocommerce.svg" \
   "$WP_STAGE/assets/images/logo-woocommerce-light.svg" \
@@ -147,7 +147,7 @@ cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WOO_STAGE/docs/SIDRENA-PODRSKA.pdf" "woocommerce" "$WOO_STAGE/docs/UPUTE.md"
-prepare_package "$WOO_STAGE" "brendigo-sidrena"
+prepare_package "$WOO_STAGE" "brendigo-sidrena-cjenici"
 rm -f \
   "$WOO_STAGE/assets/images/logo-wordpress.svg" \
   "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \
