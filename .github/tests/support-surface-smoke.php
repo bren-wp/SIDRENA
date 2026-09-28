@@ -55,8 +55,8 @@ foreach ( array( 'Detaljne upute za krajnjeg korisnika', '80 EUR jednokratno', '
 	sidrena_support_assert( false !== strpos( $pdf_tool, $needle ), 'Detailed PDF manual generator missing: ' . $needle );
 }
 sidrena_support_assert(
-	false !== strpos( $wp_guide, 'Korak-po-korak za korisnika koji prvi put koristi Sidrenu' )
-	&& false !== strpos( $woo_guide, 'Korak-po-korak za korisnika koji prvi put koristi Sidrena WooCommerce' ),
+	false !== strpos( $wp_guide, 'Korak-po-korak za korisnika koji prvi put koristi SIDRENA — WordPress izdanje' )
+	&& false !== strpos( $woo_guide, 'Korak-po-korak za korisnika koji prvi put koristi SIDRENA — WooCommerce izdanje' ),
 	'Both edition guides must contain layperson step-by-step instructions.'
 );
 sidrena_support_assert(
