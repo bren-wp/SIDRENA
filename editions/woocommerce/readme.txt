@@ -5,7 +5,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.21
+Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,16 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.22 =
+
+* Simplified the Croatian end-user settings screen and locked publication-critical safeguards to automatic safe defaults.
+* Added safe WooCommerce store-address onboarding for empty webshop locations without overwriting saved data.
+* Improved variation reference-price hydration so the standard variation payload works without an additional request, with REST retained only as a compatibility fallback.
+* Added public file integrity metadata, improved archive/download layouts, and edition-specific detailed Croatian PDF instructions.
+* Added validated unit/alias extension hooks while preserving existing built-in conversions.
+* Updated WordPress.org-facing naming, slugs, branding, admin notices, readme copy, and trademark handling based on reviewer feedback.
+* Passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check for both production editions, and real WordPress/WooCommerce browser/runtime QA before the version bump.
 
 = 1.0.21 =
 
