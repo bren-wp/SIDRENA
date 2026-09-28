@@ -23,8 +23,8 @@ MAX_ZIP_BYTES="${SIDRENA_MAX_ZIP_BYTES:-1572864}"
 rm -rf "$WORK"
 mkdir -p "$WORK"
 
-WP_MAIN="$ROOT/editions/wordpress/sidrena-wordpress.php"
-WOO_MAIN="$ROOT/editions/woocommerce/sidrena-woocommerce.php"
+WP_MAIN="$ROOT/editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php"
+WOO_MAIN="$ROOT/editions/woocommerce/brendigo-sidrene-cijene-cjenici.php"
 WP_README="$ROOT/editions/wordpress/readme.txt"
 WOO_README="$ROOT/editions/woocommerce/readme.txt"
 
