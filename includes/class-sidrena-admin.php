@@ -90,7 +90,9 @@ final class Sidrena_Admin {
 					'emptyLocationAddress'  => __( 'Adresa nije upisana', 'sidrena' ),
 					'locationAdded'         => __( 'Nova lokacija je dodana. Unesite podatke i spremite promjene.', 'sidrena' ),
 					'locationRemoved'       => __( 'Lokacija je uklonjena iz obrasca. Spremite promjene za potvrdu.', 'sidrena' ),
-					'safeFillChanged'       => __( 'Popunjeno je %s praznih polja iz pouzdanih WooCommerce izvora. Pregledajte podatke i spremite promjene.', 'sidrena' ),
+					'safeFillChanged'       =>
+						/* translators: %s: number of empty catalog fields populated from trusted WooCommerce data. */
+						__( 'Popunjeno je %s praznih polja iz pouzdanih WooCommerce izvora. Pregledajte podatke i spremite promjene.', 'sidrena' ),
 					'safeFillEmpty'         => __( 'Nema praznih polja s pouzdanim WooCommerce izvorom. Ostala polja ostaju nepromijenjena.', 'sidrena' ),
 					'removeLocationLabel'   =>
 						/* translators: %s: location code or fallback title. */
