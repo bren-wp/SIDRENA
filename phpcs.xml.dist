@@ -18,16 +18,22 @@
 
 	<config name="minimum_wp_version" value="6.6"/>
 
-	<rule ref="WordPress-Core"/>
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.WP.CapitalPDangit"/>
+	</rule>
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="sidrena,brendigo-sidrena-cijena,brendigo-sidrene-cijene-digitalni-cjenici"/>
+			<property name="text_domain" type="array">
+				<element value="sidrena"/>
+				<element value="brendigo-sidrena-cijena"/>
+				<element value="brendigo-sidrene-cijene-digitalni-cjenici"/>
+			</property>
 		</properties>
 	</rule>
 
 	<!-- Internal edition identifiers are machine keys, not human-facing WordPress copy. -->
-	<rule ref="WordPress.WP.CapitalPDangit.Misspelled">
+	<rule ref="WordPress.WP.CapitalPDangit">
 		<exclude-pattern>includes/class-sidrena-utils.php</exclude-pattern>
 		<exclude-pattern>includes/sidrena-bootstrap.php</exclude-pattern>
 		<exclude-pattern>includes/sidrena-edition-guard.php</exclude-pattern>
