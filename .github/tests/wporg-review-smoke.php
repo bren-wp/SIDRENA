@@ -127,7 +127,23 @@ foreach ( $visuals as $visual ) {
 	$source = file_get_contents( $root . '/' . $visual );
 	sidrena_wporg_assert( false !== $source, 'Unable to read visual asset: ' . $visual );
 	sidrena_wporg_assert( false === stripos( $source, 'WooCommerce' ), 'Third-party WooCommerce branding returned inside visual asset: ' . $visual );
+	sidrena_wporg_assert(
+		false === stripos( $source, 'usklađene cijene' )
+		&& false === stripos( $source, 'sigurno poslovanje' )
+		&& false === stripos( $source, '100% uskla' )
+		&& false === stripos( $source, 'jamči usklađenost' )
+		&& false === stripos( $source, 'garantira usklađenost' ),
+		'Visual asset contains a legal-compliance marketing claim: ' . $visual
+	);
 }
+
+$wporg_banner_wp = file_get_contents( $root . '/branding/wporg-banner-wordpress.svg' );
+$wporg_banner_woo = file_get_contents( $root . '/branding/wporg-banner-woocommerce.svg' );
+sidrena_wporg_assert(
+	false !== strpos( $wporg_banner_wp, 'by brendigo' )
+	&& false !== strpos( $wporg_banner_woo, 'by brendigo' ),
+	'WordPress.org banners must visibly distinguish SIDRENA as a brendigo product.'
+);
 
 
 sidrena_wporg_assert(
