@@ -75,7 +75,7 @@ sidrena_reference_ui_assert(
 
 sidrena_reference_ui_assert(
 	false !== strpos( $bulk, 'Sidrena_Utils::custom_reference_date' )
-	&& false !== strpos( $bulk, "delete_post_meta( $id, '_sidrena_anchor_date' )" ),
+	&& false !== strpos( $bulk, "delete_post_meta( \$id, '_sidrena_anchor_date' )" ),
 	'Woo bulk save must ignore/remove custom dates outside the new-item ruleset.'
 );
 
