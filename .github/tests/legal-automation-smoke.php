@@ -42,7 +42,7 @@ sidrena_legal_assert( false !== strpos( $services_source, 'Sidrena_Pricelist::qu
 foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $source_key ), 'Legal source marker missing: ' . $source_key );
 }
-foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'enable_public_html', 'strict_publication', 'publication_watch', 'daily_generation', 'Barem jedan strojno čitljiv format cjenika' ) as $profile_key ) {
+foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'enable_public_html', 'enable_rest_index', 'publish_manifest', 'strict_publication', 'publication_watch', 'daily_generation', 'Sidrena automatizacija treba održavati i CSV i XML izlaz' ) as $profile_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $profile_key ), 'Automation profile marker missing: ' . $profile_key );
 }
 
@@ -58,6 +58,9 @@ sidrena_legal_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        =
 sidrena_legal_assert( false !== strpos( $utils_source, "'generation_time'      => '06:30'" ), 'Default generation time is not automated early enough.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'strict_publication'   => 'yes'" ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
+sidrena_legal_assert( false === strpos( $utils_source, "'business_name'" ) && false === strpos( $utils_source, "'show_business_identity'" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
+sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'" ) && false === strpos( $utils_source, "'anchor_tooltip_text'" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );
+sidrena_legal_assert( false !== strpos( $utils_source, "Sidrena cijena na %s" ), 'Sidrena reference label must stay fixed and date-based.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '0.5.0' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '0.5.0 changelog does not mention legal automation watchdog.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '0.5.0 changelog does not mention production hardening.' );
 
