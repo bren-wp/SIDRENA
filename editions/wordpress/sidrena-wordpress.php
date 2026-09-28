@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: brendigo Sidrene cijene i digitalni cjenici
+ * Plugin Name: Brendigo Sidrene cijene i digitalni cjenici
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije, usluge i katalog za WordPress.
  * Version: 1.0.24
@@ -18,15 +18,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$sidrena_guard_root = dirname( __DIR__, 2 );
-if ( ! is_file( $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) ) {
-	$sidrena_guard_root = __DIR__;
-}
-$sidrena_entry_file = __FILE__;
-if ( require $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) {
+$sidrena_guard_file        = __DIR__ . '/includes/sidrena-edition-guard.php';
+$sidrena_entry_file        = __FILE__;
+$sidrena_requested_edition = 'wordpress';
+if ( ! is_file( $sidrena_guard_file ) ) {
 	return;
 }
-unset( $sidrena_entry_file, $sidrena_guard_root );
+if ( require $sidrena_guard_file ) {
+	return;
+}
+unset( $sidrena_guard_file, $sidrena_entry_file, $sidrena_requested_edition );
 
 define( 'SIDRENA_VERSION', '1.0.24' );
 define( 'SIDRENA_EDITION', 'wordpress' );

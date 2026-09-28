@@ -190,11 +190,13 @@ final class Sidrena_Bulk {
 			$this->set_text_meta( $id, '_sidrena_brand', isset( $row['brand'] ) ? $row['brand'] : '' );
 			$this->set_text_meta( $id, '_sidrena_barcode', isset( $row['barcode'] ) ? $row['barcode'] : '' );
 
-			$anchor = Sidrena_Utils::decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
-			if ( '' === $anchor ) {
-				delete_post_meta( $id, '_sidrena_anchor_price' );
-			} else {
-				update_post_meta( $id, '_sidrena_anchor_price', $anchor );
+			$anchor = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
+			if ( null !== $anchor ) {
+				if ( '' === $anchor ) {
+					delete_post_meta( $id, '_sidrena_anchor_price' );
+				} else {
+					update_post_meta( $id, '_sidrena_anchor_price', $anchor );
+				}
 			}
 
 			$date = Sidrena_Utils::sanitize_date( isset( $row['date'] ) ? $row['date'] : '' );
@@ -215,8 +217,11 @@ final class Sidrena_Bulk {
 				$unit_status = 'review';
 			}
 			update_post_meta( $id, '_sidrena_unit_price_status', $unit_status );
-			$quantity = Sidrena_Utils::decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
-			if ( '' === $quantity ) {
+			$quantity = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
+			$quantity_for_calculation = $quantity;
+			if ( null === $quantity ) {
+				$quantity_for_calculation = Sidrena_Utils::validated_nonnegative_decimal( get_post_meta( $id, '_sidrena_quantity', true ) );
+			} elseif ( '' === $quantity ) {
 				delete_post_meta( $id, '_sidrena_quantity' );
 			} else {
 				update_post_meta( $id, '_sidrena_quantity', $quantity );
@@ -229,14 +234,18 @@ final class Sidrena_Bulk {
 			}
 			$this->set_text_meta( $id, '_sidrena_unit', isset( $row['unit'] ) ? $row['unit'] : '' );
 
-			$unit_price = Sidrena_Utils::decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
-			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
+			$unit_price = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
+			if ( null === $unit_price ) {
+				++$updated;
+				continue;
+			}
+			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity_for_calculation && null !== $quantity_for_calculation && '' !== $quantity_unit ) {
 				$product = wc_get_product( $id );
 				if ( $product ) {
 					$raw_price = $product->get_price( 'edit' );
 					if ( '' !== $raw_price ) {
 						$retail = function_exists( 'wc_get_price_including_tax' ) ? wc_get_price_including_tax( $product, array( 'price' => (float) $raw_price ) ) : (float) $raw_price;
-						$calculated = Sidrena_Utils::calculate_unit_price( $retail, $quantity, $quantity_unit );
+						$calculated = Sidrena_Utils::calculate_unit_price( $retail, $quantity_for_calculation, $quantity_unit );
 						if ( $calculated ) {
 							$this->set_text_meta( $id, '_sidrena_unit', $calculated['unit'] );
 							$unit_price = $calculated['unit_price'];

@@ -283,9 +283,41 @@ final class Sidrena_Utils {
 	}
 
 	public static function validated_nonnegative_decimal( $value ) {
-		$raw = trim( wp_strip_all_tags( (string) $value ) );
+		$raw = trim( str_replace( array( "\xC2\xA0", ' ' ), '', wp_strip_all_tags( (string) $value ) ) );
 		if ( '' === $raw ) {
 			return '';
+		}
+
+		// Admin/import decimal fields intentionally do not accept signs or
+		// scientific notation. Invalid input must never become a destructive
+		// empty value.
+		if ( ! preg_match( '/^\d[\d.,]*$/', $raw ) ) {
+			return null;
+		}
+
+		$comma_count = substr_count( $raw, ',' );
+		$dot_count   = substr_count( $raw, '.' );
+		if ( $comma_count && $dot_count ) {
+			$comma_pos   = strrpos( $raw, ',' );
+			$dot_pos     = strrpos( $raw, '.' );
+			$decimal_sep = $comma_pos > $dot_pos ? ',' : '.';
+			$group_sep   = ',' === $decimal_sep ? '.' : ',';
+			$last_sep    = strrpos( $raw, $decimal_sep );
+			$integer     = substr( $raw, 0, $last_sep );
+			$fraction    = substr( $raw, $last_sep + 1 );
+			$group_regex = '/^\d{1,3}(?:' . preg_quote( $group_sep, '/' ) . '\d{3})+$/';
+			if ( '' === $fraction || false !== strpos( $fraction, $group_sep ) || ( false !== strpos( $integer, $group_sep ) && ! preg_match( $group_regex, $integer ) ) ) {
+				return null;
+			}
+			if ( substr_count( $integer, $decimal_sep ) ) {
+				return null;
+			}
+		} elseif ( $comma_count > 1 || $dot_count > 1 ) {
+			$separator = $comma_count ? ',' : '.';
+			$group_regex = '/^\d{1,3}(?:' . preg_quote( $separator, '/' ) . '\d{3})+$/';
+			if ( ! preg_match( $group_regex, $raw ) ) {
+				return null;
+			}
 		}
 
 		$decimal = self::decimal( $raw );
@@ -309,6 +341,11 @@ final class Sidrena_Utils {
 			return $date;
 		}
 		return $fallback;
+	}
+
+	public static function sanitize_time( $time, $fallback = '' ) {
+		$time = sanitize_text_field( (string) $time );
+		return preg_match( '/^(?:[01]\d|2[0-3]):[0-5]\d$/', $time ) ? $time : $fallback;
 	}
 
 
@@ -654,7 +691,7 @@ final class Sidrena_Utils {
 
 		$timezone = wp_timezone();
 		$now      = new DateTimeImmutable( 'now', $timezone );
-		$next     = $now->setTime( (int) $matches[1], (int) $matches[2], 0 );
+		$next     = $now->setTime( (int) $matches[0], (int) $matches[1], 0 );
 		if ( $next <= $now ) {
 			$next = $next->modify( '+1 day' );
 		}

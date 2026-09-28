@@ -208,10 +208,6 @@ final class Sidrena_Compliance {
 			}
 		}
 
-		if ( class_exists( 'Sidrena_Public' ) ) {
-			Sidrena_Public::ensure_public_page();
-			$repairs[] = 'public_page:ensure';
-		}
 
 		return $repairs;
 	}

@@ -65,30 +65,27 @@ final class Sidrena_Public {
 		return home_url( user_trailingslashit( $route ) );
 	}
 
-	public static function ensure_public_page() {
+	public static function create_public_page() {
 		$settings = Sidrena_Utils::settings();
 		if ( 'yes' !== $settings['enable_public_html'] ) {
-			return 0;
+			return new WP_Error( 'sidrena_public_html_disabled', __( 'Javni HTML prikaz je isključen.', 'sidrena' ) );
 		}
 
 		$existing_id = absint( get_option( 'sidrena_public_page_id', 0 ) );
 		if ( $existing_id ) {
 			$existing = get_post( $existing_id );
 			if ( $existing && 'page' === $existing->post_type && 'trash' !== $existing->post_status ) {
-				$legacy_content = trim( (string) $existing->post_content );
-				if ( in_array( $legacy_content, array( '[sidrena_cjenici]', '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->' ), true ) ) {
-					wp_update_post( array( 'ID' => $existing_id, 'post_content' => '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' ) );
-				}
 				return $existing_id;
+			}
+			if ( $existing && 'trash' === $existing->post_status ) {
+				return new WP_Error( 'sidrena_public_page_trashed', __( 'Prethodno izrađena SIDRENA javna stranica nalazi se u smeću. Vratite je ili je trajno izbrišite prije izrade nove.', 'sidrena' ) );
 			}
 		}
 
-		foreach ( array( 'objava-cjenika', 'cjenici' ) as $path ) {
-			$existing = get_page_by_path( $path, OBJECT, 'page' );
-			if ( $existing instanceof WP_Post && 'trash' !== $existing->post_status ) {
-				update_option( 'sidrena_public_page_id', absint( $existing->ID ), false );
-				return absint( $existing->ID );
-			}
+		$slug = 'objava-cjenika';
+		$existing = get_page_by_path( $slug, OBJECT, 'page' );
+		if ( $existing instanceof WP_Post ) {
+			return new WP_Error( 'sidrena_public_page_slug_exists', __( 'Stranica sa slugom objava-cjenika već postoji i SIDRENA je neće prepisati ili preuzeti.', 'sidrena' ) );
 		}
 
 		$page_id = wp_insert_post(
@@ -96,7 +93,7 @@ final class Sidrena_Public {
 				'post_type'      => 'page',
 				'post_status'    => 'publish',
 				'post_title'     => __( 'Objava cjenika', 'sidrena' ),
-				'post_name'      => 'objava-cjenika',
+				'post_name'      => $slug,
 				'post_content'   => '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->',
 				'comment_status' => 'closed',
 			),
@@ -109,7 +106,7 @@ final class Sidrena_Public {
 
 		update_option( 'sidrena_public_page_id', absint( $page_id ), false );
 		if ( class_exists( 'Sidrena_Audit' ) ) {
-			Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
+			Sidrena_Audit::log( 'public_page_create', 'success', __( 'Administrator je ručno izradio javnu stranicu Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
 		}
 		return absint( $page_id );
 	}

@@ -1619,7 +1619,7 @@ final class Sidrena_Admin {
 		Sidrena_Audit::log(
 			'settings_save',
 			false === $scheduled || is_wp_error( $scheduled ) ? 'warning' : 'success',
-			false === $scheduled || is_wp_error( $scheduled ) ? __( 'Sidrena postavke su spremljene, ali dnevno generiranje nije ponovno zakazano.', 'sidrena' ) : __( 'Sidrena postavke su spremljene i zakonska automatizacija ostaje uključena.', 'sidrena' ),
+			false === $scheduled || is_wp_error( $scheduled ) ? __( 'Sidrena postavke su spremljene, ali dnevno generiranje nije ponovno zakazano.', 'sidrena' ) : __( 'SIDRENA postavke su spremljene i tehnička automatizacija objave ostaje uključena.', 'sidrena' ),
 			array( 'generation_time' => $saved['generation_time'], 'retention_days' => $saved['retention_days'] )
 		);
 		$this->redirect( 'settings', false === $scheduled || is_wp_error( $scheduled ) ? 'settings_saved_cron_warning' : 'saved' );
@@ -1709,7 +1709,7 @@ final class Sidrena_Admin {
 			}
 		}
 
-		$page_id = Sidrena_Public::ensure_public_page();
+		$page_id = Sidrena_Public::create_public_page();
 		if ( is_wp_error( $page_id ) || ! $page_id ) {
 			$this->redirect( 'files', 'public_page_failed' );
 		}
@@ -2278,7 +2278,7 @@ final class Sidrena_Admin {
 					continue;
 				}
 				++$stats['services'];
-				if ( '' === Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_price', true ) ) ) {
+				if ( '' === Sidrena_Utils::decimal( get_post_meta( $service_id, '_sidrena_service_current_price', true ) ) ) {
 					++$stats['missing_current'];
 				}
 				if ( '' === get_post_meta( $service_id, '_sidrena_service_anchor_price', true ) ) {
