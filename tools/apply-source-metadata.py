@@ -14,7 +14,6 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 AUTHOR = "brendigo"
-LEGACY_AUTHOR = "Bren" + "digo"
 AUTHOR_URI = "https://brendigo.com/"
 PLUGIN_URI = "https://brendigo.com/sidrene-cijene/"
 SUPPORT = "sidrena@brendigo.com"
@@ -86,8 +85,11 @@ def should_process(path: pathlib.Path) -> bool:
 
 def has_metadata(text: str) -> bool:
     head = "\n".join(text.splitlines()[:24])
-    author_present = AUTHOR in head or LEGACY_AUTHOR in head
-    return author_present and PLUGIN_URI in head and AUTHOR_URI in head
+    author_present = re.search(
+        r"(?i)(?<![A-Za-z0-9_-])(?:@author\s+|author:\s*)brendigo(?![A-Za-z0-9_-])",
+        head,
+    )
+    return bool(author_present) and PLUGIN_URI in head and AUTHOR_URI in head
 
 
 def apply_entrypoint(text: str) -> str:

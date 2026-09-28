@@ -78,6 +78,15 @@ foreach ( array( 'Sidrena_Products', 'Sidrena_History', 'Sidrena_Woo_Import_Expo
 
 Sidrena_Plugin::instance()->run();
 
+$downloads_shortcode = $GLOBALS['sidrena_shortcodes']['sidrena_cjenici'] ?? null;
+sidrena_woo_assert(
+	is_array( $downloads_shortcode )
+	&& isset( $downloads_shortcode[0], $downloads_shortcode[1] )
+	&& $downloads_shortcode[0] instanceof Sidrena_Public
+	&& 'downloads_shortcode' === $downloads_shortcode[1],
+	'SIDRENA public download shortcode must have exactly one canonical owner.'
+);
+
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_update_product'] ), 'Woo price history hook must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_product_options_pricing'] ), 'Woo product fields must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_bulk_save'] ), 'Woo bulk save must register.' );

@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.22
+Stable tag: 1.0.23
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.23 =
+
+* Removed duplicate legacy registration of the `[sidrena_cjenici]` shortcode from the REST class so the public renderer has a single owner.
+* Added runtime regression coverage that verifies the public download shortcode cannot be silently overwritten by another SIDRENA component.
+* Removed a repository-level compliance marketing claim and tightened release QA wording without changing the technical legal model.
+* Updated PDF visual QA for current Pillow APIs so release validation runs without the deprecated `Image.getdata()` path.
+* Strengthened source metadata detection and cleaned stale test metadata while preserving lowercase `brendigo` in public plugin headers.
 
 = 1.0.22 =
 

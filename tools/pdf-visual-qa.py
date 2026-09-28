@@ -36,15 +36,22 @@ def natural_page_key(path: Path) -> int:
     return int(match.group(1)) if match else 0
 
 
+def flattened_pixels(image: Image.Image):
+    getter = getattr(image, "get_flattened_data", None)
+    if callable(getter):
+        return getter()
+    return image.getdata()
+
+
 def edge_dark_ratio(image: Image.Image) -> float:
     gray = image.convert("L")
     width, height = gray.size
     strip = max(2, min(width, height) // 500)
     pixels = []
-    pixels.extend(gray.crop((0, 0, width, strip)).getdata())
-    pixels.extend(gray.crop((0, height - strip, width, height)).getdata())
-    pixels.extend(gray.crop((0, strip, strip, height - strip)).getdata())
-    pixels.extend(gray.crop((width - strip, strip, width, height - strip)).getdata())
+    pixels.extend(flattened_pixels(gray.crop((0, 0, width, strip))))
+    pixels.extend(flattened_pixels(gray.crop((0, height - strip, width, height))))
+    pixels.extend(flattened_pixels(gray.crop((0, strip, strip, height - strip))))
+    pixels.extend(flattened_pixels(gray.crop((width - strip, strip, width, height - strip))))
     if not pixels:
         return 0.0
     return sum(1 for value in pixels if value < 235) / len(pixels)

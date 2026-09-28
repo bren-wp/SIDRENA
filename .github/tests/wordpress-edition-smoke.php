@@ -80,6 +80,15 @@ sidrena_wp_assert( function_exists( 'sidrena_cijena' ), 'Template helper must ex
 
 Sidrena_Plugin::instance()->run();
 
+$downloads_shortcode = $GLOBALS['sidrena_shortcodes']['sidrena_cjenici'] ?? null;
+sidrena_wp_assert(
+	is_array( $downloads_shortcode )
+	&& isset( $downloads_shortcode[0], $downloads_shortcode[1] )
+	&& $downloads_shortcode[0] instanceof Sidrena_Public
+	&& 'downloads_shortcode' === $downloads_shortcode[1],
+	'SIDRENA public download shortcode must have exactly one canonical owner.'
+);
+
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_menu'] ), 'WordPress edition admin menu must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'WordPress catalog import must register.' );
 sidrena_wp_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_save'] ), 'WordPress catalog save must register.' );

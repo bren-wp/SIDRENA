@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'SIDRENA_VERSION', '0.4.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
