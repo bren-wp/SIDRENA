@@ -240,8 +240,22 @@ sidrena_wporg_assert(
 	&& false !== strpos( $wp_readme, 'does not send telemetry or usage analytics' )
 	&& false !== strpos( $woo_readme, 'does not send telemetry or usage analytics' )
 	&& false !== strpos( $wp_readme, 'same WordPress site' )
-	&& false !== strpos( $woo_readme, 'same WordPress site' ),
-	'External-service disclosure must document the same-site check and absence of telemetry.'
+	&& false !== strpos( $woo_readme, 'same WordPress site' )
+	&& false !== strpos( $wp_readme, 'mingo.gov.hr' )
+	&& false !== strpos( $woo_readme, 'mingo.gov.hr' )
+	&& false !== strpos( $wp_readme, 'dirh.gov.hr' )
+	&& false !== strpos( $woo_readme, 'dirh.gov.hr' )
+	&& false !== strpos( $wp_readme, 'normal connection/request data' )
+	&& false !== strpos( $woo_readme, 'normal connection/request data' )
+	&& false !== strpos( $wp_readme, 'SIDRENA never uses these government/reference sites as an API or automatic data service' )
+	&& false !== strpos( $woo_readme, 'SIDRENA never uses these government/reference sites as an API or automatic data service' ),
+	'External-service disclosure must document same-site checks, user-clicked reference links, transferred browser metadata, and absence of telemetry.'
+);
+
+sidrena_wporg_assert(
+	false === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source )
+	&& false === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source ),
+	'Official legal/reference sites must remain user-clicked links and must never become automatic PHP or browser network endpoints.'
 );
 
 fwrite( STDOUT, "SIDRENA WordPress.org review regression guard passed.\n" );
