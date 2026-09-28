@@ -20,7 +20,7 @@ if ( ! defined( 'SIDRENA_EDITION' ) && ! class_exists( 'Sidrena_Plugin', false )
 }
 
 $sidrena_conflicting_file = $sidrena_entry_file;
-$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'WordPress';
+$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'wordpress';
 $sidrena_active_key       = defined( 'SIDRENA_EDITION' ) ? (string) SIDRENA_EDITION : 'legacy';
 
 $sidrena_edition_labels = array(
@@ -31,8 +31,9 @@ $sidrena_edition_labels = array(
 
 $sidrena_attempted_label  = isset( $sidrena_edition_labels[ $sidrena_attempted_key ] ) ? $sidrena_edition_labels[ $sidrena_attempted_key ] : 'SIDRENA izdanje';
 $sidrena_active_label     = isset( $sidrena_edition_labels[ $sidrena_active_key ] ) ? $sidrena_edition_labels[ $sidrena_active_key ] : 'drugo SIDRENA izdanje';
+/* translators: 1: currently active SIDRENA edition, 2: SIDRENA edition being activated. */
 $sidrena_conflict_message = sprintf(
-	esc_html__( 'Aktivno izdanje: %1$s. Pokušavate aktivirati: %2$s. Deaktivirajte aktivno izdanje prije aktivacije drugoga. Deaktivacija ne briše SIDRENA poslovne podatke.', 'sidrena' ),
+	__( 'Aktivno izdanje: %1$s. Pokušavate aktivirati: %2$s. Deaktivirajte aktivno izdanje prije aktivacije drugoga. Deaktivacija ne briše SIDRENA poslovne podatke.', 'sidrena' ),
 	$sidrena_active_label,
 	$sidrena_attempted_label
 );
@@ -41,7 +42,7 @@ register_activation_hook(
 	$sidrena_conflicting_file,
 	static function () use ( $sidrena_conflict_message ) {
 		wp_die(
-			$sidrena_conflict_message,
+			esc_html( $sidrena_conflict_message ),
 			esc_html__( 'SIDRENA — sukob izdanja', 'sidrena' ),
 			array( 'back_link' => true )
 		);
@@ -76,7 +77,7 @@ add_action(
 			return;
 		}
 
-		echo '<div class="notice notice-error is-dismissible"><p>' . $sidrena_conflict_message . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Message is escaped before registration and labels are fixed plugin-owned strings.
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $sidrena_conflict_message ) . '</p></div>';
 	}
 );
 
