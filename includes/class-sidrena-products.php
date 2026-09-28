@@ -415,21 +415,31 @@ final class Sidrena_Products {
 		);
 	}
 
-	private function can_process_product_form( $product_id ) {
+	private function verified_product_form_data( $product_id ) {
 		$product_id = absint( $product_id );
 		if ( ! $product_id || ! current_user_can( 'edit_post', $product_id ) ) {
-			return false;
+			return null;
 		}
 		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) ) {
-			return false;
+			return null;
 		}
 
 		$nonce = sanitize_text_field( wp_unslash( $_POST['woocommerce_meta_nonce'] ) );
-		return (bool) wp_verify_nonce( $nonce, 'woocommerce_save_data' );
+		if ( ! wp_verify_nonce( $nonce, 'woocommerce_save_data' ) ) {
+			return null;
+		}
+
+		// Nonce and object permission are verified above; individual values are sanitized by type before storage.
+		return wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	}
 
 	public function save_product( $product ) {
-		if ( ! $product instanceof WC_Product || ! $this->can_process_product_form( $product->get_id() ) ) {
+		if ( ! $product instanceof WC_Product ) {
+			return;
+		}
+
+		$posted = $this->verified_product_form_data( $product->get_id() );
+		if ( ! is_array( $posted ) ) {
 			return;
 		}
 
@@ -452,10 +462,10 @@ final class Sidrena_Products {
 			'_sidrena_cjenik_visibility'         => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
-			if ( ! isset( $_POST[ $key ] ) ) {
+			if ( ! isset( $posted[ $key ] ) ) {
 				continue;
 			}
-			$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
+			$value = sanitize_text_field( $posted[ $key ] );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( null === $value ) {
 				continue;
@@ -471,8 +481,14 @@ final class Sidrena_Products {
 	}
 	public function save_variation( $variation_id, $loop ) {
 		$variation_id = absint( $variation_id );
+		$loop         = absint( $loop );
 		$parent_id    = wp_get_post_parent_id( $variation_id );
-		if ( ! $variation_id || ! $parent_id || ! $this->can_process_product_form( $parent_id ) || ! current_user_can( 'edit_post', $variation_id ) ) {
+		if ( ! $variation_id || ! $parent_id || ! current_user_can( 'edit_post', $variation_id ) ) {
+			return;
+		}
+
+		$posted = $this->verified_product_form_data( $parent_id );
+		if ( ! is_array( $posted ) ) {
 			return;
 		}
 
@@ -493,10 +509,10 @@ final class Sidrena_Products {
 			'_sidrena_expiry_date'              => 'date',
 		);
 		foreach ( $fields as $key => $type ) {
-			if ( ! isset( $_POST[ $key ][ $loop ] ) ) {
+			if ( ! isset( $posted[ $key ][ $loop ] ) ) {
 				continue;
 			}
-			$value = sanitize_text_field( wp_unslash( $_POST[ $key ][ $loop ] ) );
+			$value = sanitize_text_field( $posted[ $key ][ $loop ] );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( null === $value ) {
 				continue;

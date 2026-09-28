@@ -23,8 +23,10 @@ function sidrena_release_gate_assert( $condition, $message ) {
 sidrena_release_gate_assert( false !== $release, 'Unable to read release workflow.' );
 sidrena_release_gate_assert( false !== $check, 'Unable to read Plugin Check workflow.' );
 sidrena_release_gate_assert(
-	substr_count( $release, 'uses: WordPress/plugin-check-action@v1' ) === 2,
-	'Release workflow must run Plugin Check for both production editions.'
+	substr_count( $release, 'bash tools/run-plugin-check.sh' ) === 2
+	&& false !== strpos( $release, 'bash tools/install-wp-env.sh' )
+	&& false === strpos( $release, 'WordPress/plugin-check-action@v1' ),
+	'Release workflow must run deterministic real Plugin Check gates for both production editions.'
 );
 sidrena_release_gate_assert(
 	false !== strpos( $release, 'build/release-plugin-check/sidrena-wordpress' )
@@ -87,8 +89,8 @@ sidrena_release_gate_assert(
 );
 
 sidrena_release_gate_assert(
-	false !== strpos( $release, 'slug: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $release, 'slug: brendigo-sidrena-cjenici' ),
+	false !== strpos( $release, 'brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $release, 'brendigo-sidrene-cijene-cjenici' ),
 	'Release Plugin Check gates must validate the public plugin slugs/text domains.'
 );
 sidrena_release_gate_assert(

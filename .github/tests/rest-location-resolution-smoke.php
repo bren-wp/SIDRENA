@@ -125,7 +125,7 @@ $index_response = $rest->index();
 foreach ( array( 'generator', 'ruleset', 'rules_effective', 'catalog_mode', 'woocommerce_active', 'product_count', 'retention_days' ) as $internal_key ) {
 	sidrena_rest_location_assert( ! array_key_exists( $internal_key, $index_response->data ), 'Public index must not expose internal runtime metadata: ' . $internal_key );
 }
-sidrena_rest_location_assert( 'https://brendigo.com/sidrene-cijene/' === ( $index_response->data['plugin_url'] ?? '' ), 'Public index must retain the canonical plugin URL.' );
+sidrena_rest_location_assert( ! array_key_exists( 'plugin_url', $index_response->data ), 'Public REST index must not inject an external plugin credit URL.' );
 
 $known = $method->invoke( $rest, 'RIJEKA-CENTAR' );
 sidrena_rest_location_assert( 'rijeka-centar' === ( $known['id'] ?? '' ), 'Known explicit location must resolve after sanitization.' );

@@ -43,7 +43,6 @@ sidrena_support_assert( '+385 91 901 0092' === Sidrena_Utils::whatsapp_number(),
 sidrena_support_assert( false !== strpos( Sidrena_Utils::whatsapp_url(), 'wa.me/385919010092' ), 'WhatsApp URL mismatch.' );
 sidrena_support_assert( '80 EUR' === Sidrena_Utils::installation_price(), 'Installation price mismatch.' );
 sidrena_support_assert( false !== strpos( rawurldecode( Sidrena_Utils::installation_service_url() ), '80 EUR' ), 'Installation service URL must mention 80 EUR.' );
-sidrena_support_assert( false !== strpos( Sidrena_Utils::donation_url(), 'revolut.me/catanyus' ), 'Direct Revolut donation URL missing.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-UPUTE.pdf' ), 'Support PDF URL mismatch.' );
 sidrena_support_assert( 'brendigo' === Sidrena_Utils::developer_label(), 'Author label mismatch.' );
 
@@ -52,7 +51,7 @@ sidrena_support_assert(
 	&& false !== strpos( $builder, '"woocommerce" "$WOO_STAGE/docs/UPUTE.md"' ),
 	'Each edition must build its own PDF manual from its prepared guide.'
 );
-foreach ( array( 'Detaljne upute za krajnjeg korisnika', '80 EUR jednokratno', 'Revolut donacija', 'guide_path', 'edition_label' ) as $needle ) {
+foreach ( array( 'Detaljne upute za krajnjeg korisnika', '80 EUR jednokratno', 'Donacija nije potrebna', 'guide_path', 'edition_label' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $pdf_tool, $needle ), 'Detailed PDF manual generator missing: ' . $needle );
 }
 sidrena_support_assert(
@@ -65,10 +64,10 @@ sidrena_support_assert(
 	&& false !== strpos( $woo_guide, '80 EUR' )
 	&& false !== strpos( $wp_guide, 'Donacija' )
 	&& false !== strpos( $woo_guide, 'Donacija' ),
-	'Donation and optional paid setup must remain documented in both editions.'
+	'Optional paid setup and the no-gating donation note must remain documented in both editions.'
 );
 
-foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratno početno postavljanje', 'Dobrovoljna donacija za razvoj', 'logo-horizontal-light.svg', 'sidrena-brandbar__edition', 'admin/css/brand.css' ) as $needle ) {
+foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratno početno postavljanje', 'logo-horizontal-light.svg', 'sidrena-brandbar__edition', 'admin/css/brand.css' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
 }
 foreach ( array( 'sidrena_objava_cjenika', 'Objava cjenika', '$group_index', '1 === $group_index' ) as $needle ) {
@@ -92,6 +91,14 @@ sidrena_support_assert(
 	'Frontend accessibility utility must remain local and theme-independent.'
 );
 
+sidrena_support_assert(
+	false === strpos( $admin, 'revolut.me' )
+	&& false === strpos( $admin, 'donation_url' )
+	&& false === strpos( $pdf_tool, 'revolut.me' )
+	&& false === strpos( $wp_guide, 'revolut.me' )
+	&& false === strpos( $woo_guide, 'revolut.me' ),
+	'Donation hyperlinks must not return to admin, manuals or PDF generation.'
+);
 sidrena_support_assert( false === strpos( $admin, '20 EUR' ), 'Unrequested recurring maintenance offer leaked into admin.' );
 sidrena_support_assert(
 	false === strpos( $admin, 'Podaci obrta / tvrtke' )

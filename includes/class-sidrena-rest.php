@@ -126,7 +126,6 @@ final class Sidrena_REST {
 		return $this->no_cache_response(
 			array(
 				'schema'           => 3,
-				'plugin_url'      => 'https://brendigo.com/sidrene-cijene/',
 				'generated_at'    => isset( $last['generated_at'] ) ? sanitize_text_field( (string) $last['generated_at'] ) : null,
 				'manifest_url' => 'yes' === $settings['publish_manifest'] ? esc_url_raw( $paths['manifest_url'] ) : null,
 				'realtime_url' => esc_url_raw( rest_url( 'sidrena/v1/cijene' ) ),

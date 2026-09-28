@@ -1,6 +1,5 @@
-=== brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce ===
+=== brendigo Sidrene cijene i cjenici ===
 Contributors: brendigo
-Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
@@ -9,11 +8,11 @@ Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference prices, 30-day sale-price references, public CSV/XML price lists, locations, and publication archives for Croatian stores using WooCommerce.
+Reference prices, 30-day sale references, CSV/XML price lists, locations and archives for Croatian stores using WooCommerce.
 
 == Description ==
 
-**brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
+**brendigo Sidrene cijene i cjenici** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
 
 WooCommerce remains the canonical product and variation source. SIDRENA does not create a duplicate product catalogue; it adds the price-record and publication tools needed around the existing store catalogue.
 
@@ -56,7 +55,7 @@ The installable package includes detailed Croatian documentation:
 
 The guide covers installation, existing products and variations, bulk editing, locations, reference prices, 30-day sale-price references, unit prices, CSV import/export, generation, public publication, archives, cron, the audit log, and troubleshooting.
 
-= Support, donation, and optional setup =
+= Support and optional setup =
 
 Support email: sidrena@brendigo.com
 
@@ -64,7 +63,7 @@ WhatsApp: +385 91 901 0092
 
 Optional one-time initial setup: **80 EUR**.
 
-Paid setup is not required to use the plugin. A voluntary donation supports continued development and does not unlock features, support rights, or legal certification.
+Paid setup is not required to use the plugin and does not unlock features, support rights, or legal certification.
 
 == External services and user-initiated links ==
 
@@ -76,7 +75,6 @@ The administration and bundled documentation also contain optional, user-initiat
 
 * **brendigo** — plugin website, documentation/support, and optional setup information. Terms: https://brendigo.com/uvjeti-koristenja/ Privacy: https://brendigo.com/politika-privatnosti/
 * **WhatsApp** — optional support link that opens WhatsApp with a pre-filled support message. Terms: https://www.whatsapp.com/legal/terms-of-service?lang=hr Privacy: https://www.whatsapp.com/legal/privacy-policy?lang=hr
-* **Revolut** — optional voluntary donation link. Terms: https://www.revolut.com/hr-HR/legal/terms/ Privacy: https://www.revolut.com/hr-HR/legal/privacy/
 * **Official Croatian legal/information sources** — Narodne novine, Ministry of Economy, and Croatian Chamber of Trades and Crafts links are provided only so an administrator can open the cited source manually. SIDRENA does not fetch those pages in the background.
 
 = Legal note =

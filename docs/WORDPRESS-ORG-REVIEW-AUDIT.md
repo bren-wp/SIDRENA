@@ -19,12 +19,13 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** plugin headers, both readmes, text domains, POT packaging, Plugin Check slugs, release workflow, package build, graphics, screenshot-facing copy and branding sources.
 
 **Resolution:**
-- standalone display name: **brendigo SIDRENA – sidrene cijene i digitalni cjenici**
-- WooCommerce display name: **brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce**
-- standalone public slug/text-domain: `brendigo-sidrena-digitalni-cjenici`
-- WooCommerce requested public slug/text-domain: `brendigo-sidrena-cjenici`
+- standalone display name: **brendigo Sidrene cijene i digitalni cjenici**
+- WooCommerce display name: **brendigo Sidrene cijene i cjenici**
+- standalone public slug/text-domain: `brendigo-sidrene-cijene-digitalni-cjenici`
+- WooCommerce requested public slug/text-domain: `brendigo-sidrene-cijene-cjenici`
 - `brendigo` is the leading distinctive element.
-- WooCommerce is used only as a compatibility/dependency descriptor.
+- The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
+- WooCommerce is not used in the public plugin display name or slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
 
@@ -53,12 +54,11 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** `admin_notices`, global notice hooks, dependency/conflict notices, support/donation/setup surfaces.
 
 **Resolution:**
-- only two dependency/conflict `admin_notices` remain.
-- both are limited to the WordPress Plugins screen.
-- both require the relevant plugin-management capability.
-- both are dismissible.
+- only one custom `admin_notices` hook remains: the SIDRENA edition-conflict notice.
+- it is limited to the WordPress Plugins screen, requires `activate_plugins`, and is dismissible.
+- the WooCommerce dependency uses the core `Requires Plugins: woocommerce` header instead of a custom dashboard notice.
 - no `all_admin_notices` hook exists.
-- donation and optional paid setup are confined to SIDRENA Support/documentation, not global notices or general dashboard marketing.
+- donation hyperlinks/CTAs are removed from the plugin, readmes and generated manuals; optional one-time setup remains confined to SIDRENA Support/documentation and does not unlock features.
 
 **Proof:** WordPress.org regression guard and admin-polish guard.
 
@@ -75,6 +75,7 @@ This file records the repository-side audit performed before the next WordPress.
 - service writes use a dedicated nonce plus object-specific `edit_post`.
 - public REST routes are read-only and define explicit `permission_callback` values.
 - no public REST write endpoint is registered.
+- automatic conflicting-edition self-deactivation is also gated by `activate_plugins`; an admin request without plugin-management permission cannot mutate plugin activation state.
 
 **Proof:** CI request/security smoke tests, WordPress.org review regression guard and runtime tests.
 
@@ -107,8 +108,10 @@ This file records the repository-side audit performed before the next WordPress.
 - the only PHP automatic HTTP request is the administrator-triggered public-access check.
 - that check is restricted to SIDRENA publication URLs under the current site's own public upload base, validates the URL, uses `wp_safe_remote_get()`, explicitly rejects unsafe URLs, limits redirects/response size and sends no catalogue/customer payload to brendigo.
 - the frontend compatibility fetch is same-origin and targets the local SIDRENA read-only REST endpoint.
-- official legal sources, brendigo, WhatsApp and Revolut are user-initiated links and are documented as such in both readmes.
-- Terms/Privacy destinations for the external support/donation services are documented.
+- official legal sources, brendigo and WhatsApp are user-initiated links and are documented as such in both readmes.
+- no Revolut/donation URL is bundled in production or documentation.
+- public REST/manifest output does not inject a brendigo credit URL or other automatic public-facing external link.
+- Terms/Privacy destinations for the remaining external support services are documented.
 
 **Proof:** WordPress.org network regression guard and readme External services sections.
 
@@ -119,6 +122,8 @@ This file records the repository-side audit performed before the next WordPress.
 **Resolution:**
 - sidrena/reference price, lowest price in the previous 30 days and public 30-day archive are separate concepts.
 - the documentation states that machine-readable publication accepts XML **or** CSV; SIDRENA generates both as a technical interoperability choice without claiming both are simultaneously required.
+- the service-price-list timing wording is aligned to the published NN 101/2026-1213 text: on each change, no later than 08:00 on the day the service price-list amendment is published.
+- the 22.09.2026 Ministry clarification paraphrases this timing differently; SIDRENA therefore keeps the text of the published Decision as its implementation baseline and does not present itself as a legal arbiter.
 - SIDRENA does not claim 100% legal compliance or guaranteed compliance.
 - future/base-price rules are not silently equated with the current SIDRENA reference-price model.
 - legal sources and effective dates are documented in `docs/legal-and-technical-notes.md`.
@@ -178,10 +183,17 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Proof:** `.github/workflows/wporg-real-assets.yml` and its workflow result on the final SHA.
 
+## Deterministic Plugin Check runtime
+
+- Plugin Check remains the official WordPress `plugin-check` plugin executed through WP-CLI against the production-shaped package.
+- CI pins `@wordpress/env 11.15.0`, `@wp-playground/cli 3.1.55`, and `@php-wasm/node 3.1.55` because the unpinned upstream action attempted to resolve unpublished `@php-wasm/node 3.1.56` before Plugin Check could start.
+- No Plugin Check code, warning, error, trademark check, or category is suppressed.
+- `tools/run-plugin-check.sh` fails on any reported `ERROR` or `WARNING`; the release workflow uses the same runner as pull-request validation.
+
 ## Final submission rule
 
 The WooCommerce permalink requested in the reply to the existing WordPress.org review email thread is:
 
-`brendigo-sidrena-cjenici`
+`brendigo-sidrene-cijene-cjenici`
 
 No repository document claims approval is guaranteed. The submission target is zero known review blockers, zero relevant Plugin Check errors and green project QA on the same final SHA.

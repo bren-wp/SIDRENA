@@ -133,14 +133,6 @@ final class Sidrena_Utils {
 		return $caps;
 	}
 
-	public static function donation_url() {
-		$url = apply_filters(
-			'sidrena_donation_url',
-			'https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija'
-		);
-		return is_string( $url ) ? esc_url_raw( $url ) : '';
-	}
-
 	public static function support_email() {
 		return 'sidrena@brendigo.com';
 	}

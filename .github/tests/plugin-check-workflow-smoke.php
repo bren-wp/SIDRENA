@@ -42,9 +42,10 @@ sidrena_plugin_check_workflow_assert(
 );
 
 sidrena_plugin_check_workflow_assert(
-	false !== strpos( $check, 'slug: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $check, 'slug: brendigo-sidrena-cjenici' ),
-	'Plugin Check must use the public WordPress and WooCommerce slugs/text domains.'
+	false !== strpos( $check, 'brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $check, 'brendigo-sidrene-cijene-cjenici' )
+	&& 2 === substr_count( $check, 'bash tools/run-plugin-check.sh' ),
+	'Plugin Check must run the real checker for both public WordPress and WooCommerce slugs/text domains.'
 );
 sidrena_plugin_check_workflow_assert(
 	false === strpos( $check, 'ignore-codes: trademarked_term' )
@@ -57,6 +58,27 @@ sidrena_plugin_check_workflow_assert(
 	false === strpos( $check, 'slug: sidrena-wordpress' )
 	&& false === strpos( $check, 'slug: sidrena-woocommerce' ),
 	'Install-folder names must not be reused as public Plugin Check slugs.'
+);
+
+$runtime_installer = file_get_contents( $root . '/tools/install-wp-env.sh' );
+$runner = file_get_contents( $root . '/tools/run-plugin-check.sh' );
+sidrena_plugin_check_workflow_assert( false !== $runtime_installer && false !== $runner, 'Deterministic Plugin Check tooling is missing.' );
+sidrena_plugin_check_workflow_assert(
+	false !== strpos( $runtime_installer, '"@wordpress/env": "11.15.0"' )
+	&& false !== strpos( $runtime_installer, '"@wp-playground/cli": "3.1.55"' )
+	&& false !== strpos( $runtime_installer, '"@php-wasm/node": "3.1.55"' ),
+	'WordPress runtime dependencies must remain pinned to published compatible versions.'
+);
+sidrena_plugin_check_workflow_assert(
+	false !== strpos( $runner, 'wp plugin check' )
+	&& false !== strpos( $runner, '--format=json' )
+	&& false !== strpos( $runner, '--slug="$PUBLIC_SLUG"' )
+	&& false !== strpos( $runner, 'if errors or warnings:' ),
+	'Deterministic runner must execute real Plugin Check and fail on errors or warnings.'
+);
+sidrena_plugin_check_workflow_assert(
+	false === strpos( $check, 'WordPress/plugin-check-action@v1' ),
+	'Plugin Check workflow must not return to the currently non-deterministic unpinned wp-env bootstrap.'
 );
 
 $workflow_sources = '';
