@@ -86,8 +86,8 @@ jobs:
             cp LICENSE uninstall.php ".wp-env-runtime/${edition}/"
           done
 
-          cp editions/wordpress/sidrena-wordpress.php .wp-env-runtime/sidrena-wordpress/
-          cp editions/woocommerce/sidrena-woocommerce.php .wp-env-runtime/sidrena-woocommerce/
+          cp editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php .wp-env-runtime/sidrena-wordpress/
+          cp editions/woocommerce/brendigo-sidrene-cijene-cjenici.php .wp-env-runtime/sidrena-woocommerce/
 
       - name: Capture Sidrena WordPress
         shell: bash
