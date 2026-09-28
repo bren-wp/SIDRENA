@@ -82,6 +82,11 @@ set -e
 
 cat "$RESULTS_FILE"
 
+if [[ "$CHECK_STATUS" -ne 0 ]]; then
+  echo "Plugin Check WP-CLI command exited with status $CHECK_STATUS." >&2
+  exit "$CHECK_STATUS"
+fi
+
 python3 - "$RESULTS_FILE" <<'PY'
 import json
 import pathlib
@@ -90,11 +95,14 @@ import sys
 path = pathlib.Path(sys.argv[1])
 raw = path.read_text(encoding="utf-8", errors="replace").strip()
 if not raw:
-    raise SystemExit("Plugin Check returned no JSON output.")
+    raise SystemExit("Plugin Check returned empty output.")
 
 starts = [pos for pos in (raw.find("{"), raw.find("[")) if pos >= 0]
 if not starts:
-    raise SystemExit("Plugin Check output does not contain JSON.")
+    if "Success: Checks complete. No errors found." in raw:
+        print("Plugin Check summary: 0 errors, 0 warnings.")
+        raise SystemExit(0)
+    raise SystemExit("Plugin Check output contains neither JSON findings nor the clean-success marker.")
 raw = raw[min(starts):]
 
 decoder = json.JSONDecoder()
@@ -136,10 +144,5 @@ if errors or warnings:
         print(f"{item.get('type', 'ISSUE')} {code} line={line} column={column}: {message}", file=sys.stderr)
     raise SystemExit(1)
 PY
-
-if [[ "$CHECK_STATUS" -ne 0 ]]; then
-  echo "Plugin Check WP-CLI command exited with status $CHECK_STATUS." >&2
-  exit "$CHECK_STATUS"
-fi
 
 echo "Plugin Check passed for $PLUGIN_SLUG using public slug $PUBLIC_SLUG."
