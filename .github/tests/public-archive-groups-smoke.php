@@ -95,7 +95,7 @@ sidrena_archive_assert( array( 'old-24.xml', 'other-old.csv' ) === $unfiltered_n
 $source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 $css    = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/public.css' );
 sidrena_archive_assert( substr_count( $source, 'archive_groups( $location_id, true )' ) >= 2, 'Archive and downloads shortcodes must share the grouping engine.' );
-sidrena_archive_assert( false !== strpos( $source, "'' === $location_id ? '' : Sidrena_Utils::sanitize_location_id( $location_id )" ), 'Archive grouping must preserve an intentionally empty all-locations filter.' );
+sidrena_archive_assert( false !== strpos( $source, "'' === \$location_id ? '' : Sidrena_Utils::sanitize_location_id( \$location_id )" ), 'Archive grouping must preserve an intentionally empty all-locations filter.' );
 sidrena_archive_assert( substr_count( $source, '$this->optional_location_id( $requested )' ) >= 2, 'Archive and downloads shortcodes must reject invalid explicit location filters through the shared resolver.' );
 sidrena_archive_assert( false !== strpos( $source, 'if ( null === $location_id ) {' ), 'Public location filter resolution must preserve an explicit invalid state.' );
 sidrena_archive_assert( false !== strpos( $source, 'status_header( 404 );' ), 'Dedicated public routes must return HTTP 404 for an explicit unknown or disabled location.' );
