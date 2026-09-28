@@ -1965,11 +1965,14 @@ final class Sidrena_Admin {
 		if ( '' === $contents ) {
 			return new WP_Error( 'upload_encoding' );
 		}
-		$resource = fopen( 'php://temp', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$resource = fopen( 'php://temp/maxmemory:1048576', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $resource ) {
 			return new WP_Error( 'upload_open' );
 		}
-		fwrite( $resource, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		if ( ! $this->write_stream_all( $resource, $contents ) ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'upload_write' );
+		}
 		rewind( $resource );
 		$first_line = fgets( $resource );
 		if ( false === $first_line ) {
@@ -1996,6 +1999,20 @@ final class Sidrena_Admin {
 			return $row_count;
 		}
 		return array( $resource, $delimiter, array_flip( $head ) );
+	}
+
+	private function write_stream_all( $resource, $contents ) {
+		$contents = (string) $contents;
+		$length   = strlen( $contents );
+		$offset   = 0;
+		while ( $offset < $length ) {
+			$written = fwrite( $resource, substr( $contents, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			if ( false === $written || 0 === $written ) {
+				return false;
+			}
+			$offset += $written;
+		}
+		return true;
 	}
 
 	private function enforce_csv_row_limit( $resource, $delimiter, $row_limit = 50000 ) {
