@@ -73,8 +73,9 @@ sidrena_plugin_check_workflow_assert(
 	false !== strpos( $runner, 'wp plugin check' )
 	&& false !== strpos( $runner, '--format=json' )
 	&& false !== strpos( $runner, '--slug="$PUBLIC_SLUG"' )
+	&& false !== strpos( $runner, 'if [[ "$PLUGIN_SLUG" != "$PUBLIC_SLUG" ]]' )
 	&& false !== strpos( $runner, 'if errors or warnings:' ),
-	'Deterministic runner must execute real Plugin Check and fail on errors or warnings.'
+	'Deterministic runner must require the package-root slug to equal the public slug, execute real Plugin Check, and fail on errors or warnings.'
 );
 sidrena_plugin_check_workflow_assert(
 	false === strpos( $check, 'WordPress/plugin-check-action@v1' ),
