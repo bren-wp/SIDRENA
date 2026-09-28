@@ -1709,7 +1709,7 @@ final class Sidrena_Admin {
 			}
 		}
 
-		$page_id = Sidrena_Public::ensure_public_page();
+		$page_id = Sidrena_Public::ensure_public_page( true );
 		if ( is_wp_error( $page_id ) || ! $page_id ) {
 			$this->redirect( 'files', 'public_page_failed' );
 		}
