@@ -418,7 +418,7 @@ SIDRENA je tehnički alat i nije pravna potvrda poslovanja. Korisnik je odgovora
 
 ## Donacija
 
-Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
+Donacija nije potrebna za korištenje SIDRENA funkcija. Plugin ne sadrži donacijski link niti donacija otključava funkcije, podršku ili pravnu potvrdu.
 
 ## Licenca
 
