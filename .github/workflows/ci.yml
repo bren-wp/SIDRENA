@@ -153,6 +153,9 @@ jobs:
       - name: Plugin Check workflow regression test
         run: php .github/tests/plugin-check-workflow-smoke.php
 
+      - name: WordPress.org review regression guard
+        run: php .github/tests/wporg-review-smoke.php
+
       - name: Grouped public archive runtime test
         run: php .github/tests/public-archive-groups-smoke.php
 
