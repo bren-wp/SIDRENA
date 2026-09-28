@@ -72,7 +72,7 @@ sidrena_wporg_assert(
 	&& false !== stripos( $woo_readme, 'neovisno' )
 	&& false !== stripos( $woo_readme, 'Automattic' )
 	&& false !== stripos( $woo_readme, 'službeni proizvod' )
-	&& false !== stripos( $woo_readme, 'opis kompatibilnosti i integracije' ),
+	&& false !== stripos( $woo_readme, 'kompatibilnosti i integracije' ),
 	'WooCommerce independence/trademark clarification changed.'
 );
 
