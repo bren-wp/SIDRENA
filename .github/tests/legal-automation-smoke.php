@@ -34,8 +34,8 @@ sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Public::ens
 sidrena_legal_assert( false !== strpos( $compliance_source, "array( 'archive_dir', 'snapshot_dir' )" ), 'Archive/snapshot directory self-heal list is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[ $path_key ] );' ), 'Looped directory self-heal is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'legal_automation_watchdog' ), 'Audit log event for legal automation watchdog is missing.' );
-sidrena_legal_assert( false !== strpos( $compliance_source, "$written = file_put_contents( $index" ), 'Compliance directory protection must capture the index write result.' );
-sidrena_legal_assert( false !== strpos( $compliance_source, "return false !== $written;" ), 'Compliance directory protection must not report success after a failed index write.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, '$written = file_put_contents( $index' ), 'Compliance directory protection must capture the index write result.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, 'return false !== $written;' ), 'Compliance directory protection must not report success after a failed index write.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Legal_Automation::normalize_settings' ), 'Compliance repair must reuse centralized legal setting normalization.' );
 sidrena_legal_assert( false !== strpos( $services_source, 'Sidrena_Pricelist::queue_regeneration();' ), 'Service price changes must queue cjenik regeneration.' );
 
