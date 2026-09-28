@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.24
+Stable tag: 1.0.25
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -132,6 +132,15 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.25 =
+
+* Renamed the WooCommerce edition to Brendigo Sidrena Cijena and aligned its public text domain/Plugin Check slug to brendigo-sidrena-cijena.
+* Delayed all WooCommerce-specific runtime includes until WooCommerce is actually available on plugins_loaded.
+* Added a defensive missing-WooCommerce safe state and a scoped Plugins-screen notice without registering WooCommerce hooks or running upgrade/publication scheduling.
+* Improved the two-edition conflict guard so activation errors identify the active and attempted editions and explain the safe switch path without deleting business data.
+* Added regression coverage for a missing/deactivated WooCommerce dependency and refreshed legal/source provenance documentation from official Croatian, WordPress and WooCommerce sources.
+* Removed stale donation documentation; SIDRENA remains fully functional without a license key, trial or paid feature lock.
 
 = 1.0.24 =
 

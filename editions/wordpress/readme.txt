@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.24
+Stable tag: 1.0.25
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.25 =
+
+* Added shared edition-conflict messaging that identifies the active and attempted SIDRENA editions and documents the safe switch path without deleting business data.
+* Refreshed official Croatian legal sources and separated current 1 October 2026 duties from the future 17 November 2026 base-price regime.
+* Added repository source/licensing provenance for official WordPress/WooCommerce documentation and open-source plugins studied only as references.
+* Removed stale donation documentation; SIDRENA remains fully functional without a license key, trial or paid feature lock.
+* Kept the established standalone WordPress identity and WooCommerce-independent runtime boundary.
 
 = 1.0.24 =
 
