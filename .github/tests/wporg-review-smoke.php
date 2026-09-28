@@ -36,8 +36,8 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 }
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_main, 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Sidrene cijene i cjenici' ),
+	false !== strpos( $wp_main, 'Plugin Name: Brendigo Sidrene cijene i digitalni cjenici' )
+	&& false !== strpos( $woo_main, 'Plugin Name: Brendigo Sidrene cijene i cjenici' ),
 	'Final Croatian plugin display names changed.'
 );
 
@@ -109,8 +109,10 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $edition_guard, "'plugins' !== " . '$screen->id' )
-	&& false !== strpos( $edition_guard, 'notice notice-error is-dismissible' ),
-	'Edition conflict notice must remain scoped to Plugins and dismissible.'
+	&& false !== strpos( $edition_guard, 'notice notice-error is-dismissible' )
+	&& false === strpos( $edition_guard, 'deactivate_plugins' )
+	&& false === strpos( $edition_guard, "wp-admin/includes/plugin.php" ),
+	'Edition conflict handling must be scoped, dismissible, and must never deactivate another plugin.'
 );
 
 $visuals = array(
@@ -198,8 +200,9 @@ foreach ( $production_files as $file ) {
 
 sidrena_wporg_assert(
 	1 === substr_count( $production_source, "'admin_notices'" )
-	&& 0 === substr_count( $production_source, "'all_admin_notices'" ),
-	'Only the scoped SIDRENA edition-conflict admin notice is allowed; global all_admin_notices are forbidden.'
+	&& 0 === substr_count( $production_source, "'all_admin_notices'" )
+	&& 0 === substr_count( $production_source, 'deactivate_plugins(' ),
+	'Only the scoped SIDRENA edition-conflict admin notice is allowed and plugin activation state must remain user-controlled.'
 );
 
 sidrena_wporg_assert(
@@ -258,6 +261,22 @@ sidrena_wporg_assert(
 	0 === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr|(?:www\.)?hok\.hr)/i', $production_source )
 	&& 0 === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr|(?:www\.)?hok\.hr)/i', $production_source ),
 	'Official legal/reference sites must remain user-clicked links and must never become automatic PHP or browser network endpoints.'
+);
+
+sidrena_wporg_assert(
+	false === strpos( $wp_main, "dirname( __DIR__, 2 ) . '/includes/sidrena-edition-guard.php'" )
+	&& false === strpos( $woo_main, "dirname( __DIR__, 2 ) . '/includes/sidrena-edition-guard.php'" )
+	&& false !== strpos( $wp_main, "__DIR__ . '/includes/sidrena-edition-guard.php'" )
+	&& false !== strpos( $woo_main, "__DIR__ . '/includes/sidrena-edition-guard.php'" ),
+	'Production entrypoints must load the conflict guard only from the plugin-local directory.'
+);
+
+sidrena_wporg_assert(
+	false === strpos( file_get_contents( $root . '/includes/class-sidrena-activator.php' ), 'Sidrena_Public::ensure_public_page' )
+	&& false === strpos( file_get_contents( $root . '/includes/class-sidrena-compliance.php' ), 'Sidrena_Public::ensure_public_page' )
+	&& false === strpos( file_get_contents( $root . '/includes/class-sidrena-compliance.php' ), 'Sidrena_Public::create_public_page' )
+	&& false !== strpos( $admin_source, 'Sidrena_Public::create_public_page();' ),
+	'Public WordPress page creation must be an explicit administrator action only.'
 );
 
 fwrite( STDOUT, "SIDRENA WordPress.org review regression guard passed.\n" );

@@ -1,17 +1,15 @@
 <?php
 /**
- * Sidrena source file.
+ * Manual public-page creation regression test.
  *
  * @package Sidrena
- * @author Brendigo
- * @link https://brendigo.com/sidrene-cijene/
- * @see https://brendigo.com/
+ * @author brendigo
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_VERSION', '0.4.0' );
+define( 'SIDRENA_VERSION', '1.0.24' );
 define( 'SIDRENA_EDITION', 'wordpress' );
-define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena-wordpress/' );
+define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/brendigo-sidrene-cijene-digitalni-cjenici/' );
 define( 'OBJECT', 'OBJECT' );
 
 class WP_Post {
@@ -23,7 +21,11 @@ class WP_Post {
 	public $post_title = '';
 	public function __construct( $id, $name = '' ) { $this->ID = $id; $this->post_name = $name; }
 }
-class WP_Error {}
+class WP_Error {
+	public $code;
+	public $message;
+	public function __construct( $code = '', $message = '' ) { $this->code = $code; $this->message = $message; }
+}
 
 $GLOBALS['sidrena_options'] = array(
 	'sidrena_settings' => array( 'enable_public_html' => 'yes' ),
@@ -56,12 +58,6 @@ function wp_insert_post( $args, $wp_error = false ) {
 	return $id;
 }
 function is_wp_error( $value ) { return $value instanceof WP_Error; }
-function wp_update_post( $args ) {
-	$id = isset( $args['ID'] ) ? (int) $args['ID'] : 0;
-	if ( ! $id || empty( $GLOBALS['sidrena_pages'][ $id ] ) ) return 0;
-	if ( array_key_exists( 'post_content', $args ) ) $GLOBALS['sidrena_pages'][ $id ]->post_content = (string) $args['post_content'];
-	return $id;
-}
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
 function apply_filters( $tag, $value ) { unset( $tag ); return $value; }
 function esc_url_raw( $url ) { return $url; }
@@ -77,20 +73,25 @@ function sidrena_page_assert( $condition, $message ) {
 	if ( ! $condition ) { fwrite( STDERR, $message . "\n" ); exit( 1 ); }
 }
 
-$id1 = Sidrena_Public::ensure_public_page();
-sidrena_page_assert( 1001 === $id1, 'First ensure must create the public page.' );
+$id1 = Sidrena_Public::create_public_page();
+sidrena_page_assert( 1001 === $id1, 'Explicit admin action must create the public page.' );
 sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Public page must be inserted exactly once.' );
 sidrena_page_assert( 1001 === (int) get_option( 'sidrena_public_page_id' ), 'Created public page ID must be stored.' );
-sidrena_page_assert( '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' === $GLOBALS['sidrena_pages'][1001]->post_content, 'Public page must use the complete publication shortcode.' );
-sidrena_page_assert( 'Objava cjenika' === $GLOBALS['sidrena_pages'][1001]->post_title, 'Public page title must be production-ready.' );
+sidrena_page_assert( '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' === $GLOBALS['sidrena_pages'][1001]->post_content, 'Public page must use the publication shortcode.' );
 
-$id2 = Sidrena_Public::ensure_public_page();
-sidrena_page_assert( $id1 === $id2, 'Second ensure must reuse stored public page.' );
-sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Second ensure must not duplicate the page.' );
+$id2 = Sidrena_Public::create_public_page();
+sidrena_page_assert( $id1 === $id2, 'Repeated explicit action must reuse the tracked page.' );
+sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Repeated explicit action must not duplicate the page.' );
 
 update_option( 'sidrena_public_page_id', 0 );
-$id3 = Sidrena_Public::ensure_public_page();
-sidrena_page_assert( $id1 === $id3, 'Ensure must recover an existing objava-cjenika page by slug.' );
-sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Slug recovery must not insert another page.' );
+$claimed = Sidrena_Public::create_public_page();
+sidrena_page_assert( is_wp_error( $claimed ) && 'sidrena_public_page_slug_exists' === $claimed->code, 'SIDRENA must not claim an unrelated existing slug.' );
+sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Slug collision must not insert another page.' );
 
-fwrite( STDOUT, "Sidrena public page automation smoke test passed.\n" );
+update_option( 'sidrena_public_page_id', 1001 );
+$GLOBALS['sidrena_pages'][1001]->post_status = 'trash';
+$trashed = Sidrena_Public::create_public_page();
+sidrena_page_assert( is_wp_error( $trashed ) && 'sidrena_public_page_trashed' === $trashed->code, 'Tracked trashed page must not be silently recreated.' );
+sidrena_page_assert( 1 === $GLOBALS['sidrena_insert_count'], 'Trashed tracked page must not be recreated automatically.' );
+
+fwrite( STDOUT, "SIDRENA manual public page smoke test passed.\n" );

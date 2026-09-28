@@ -42,7 +42,11 @@ sidrena_upgrade_assert(
 
 $source    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php' );
 $bootstrap = file_get_contents( dirname( __DIR__, 2 ) . '/includes/sidrena-bootstrap.php' );
-sidrena_upgrade_assert( false !== strpos( $source, "self::ensure_storage();" ), 'Upgrade path must repair upload storage.' );
+$guard_pos   = strpos( $source, "if ( ! self::needs_upgrade( \$current_db, \$current_plugin ) )" );
+$return_pos  = false !== $guard_pos ? strpos( $source, 'return;', $guard_pos ) : false;
+$storage_pos = strpos( $source, 'self::ensure_storage();', $return_pos ? $return_pos : 0 );
+sidrena_upgrade_assert( false !== $guard_pos && false !== $return_pos && false !== $storage_pos && $return_pos < $storage_pos, 'maybe_upgrade() must return before migration/filesystem/cron work when versions are current.' );
+sidrena_upgrade_assert( false !== strpos( $source, "self::ensure_storage();" ), 'Upgrade path must repair upload storage only when an upgrade is required.' );
 sidrena_upgrade_assert( false !== strpos( $source, "self::install_schema();" ), 'Upgrade path must repair missing database schema.' );
 sidrena_upgrade_assert( false !== strpos( $source, "update_option( self::PLUGIN_VERSION_OPTION, SIDRENA_VERSION, false );" ), 'Upgrade path must persist the installed Sidrena version.' );
 sidrena_upgrade_assert( false !== strpos( $bootstrap, "'init'," ), 'Upgrade repair must run on init, after WordPress rewrite globals are available.' );

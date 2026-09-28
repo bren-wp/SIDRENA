@@ -11,6 +11,7 @@ on:
     branches:
       - main
       - 'develop/**'
+      - 'release/**'
   pull_request:
     branches:
       - main
@@ -135,8 +136,11 @@ jobs:
           php .github/tests/cli-edition-smoke.php wordpress
           php .github/tests/cli-edition-smoke.php woocommerce
 
-      - name: Public page automation smoke test
+      - name: Manual public page smoke test
         run: php .github/tests/public-page-smoke.php
+
+      - name: WordPress.org blocker regression tests
+        run: php .github/tests/review-regressions-smoke.php
 
       - name: Service scalability smoke test
         run: php .github/tests/service-scalability-smoke.php
@@ -217,8 +221,8 @@ jobs:
           test "$WP_VERSION" = "$WOO_VERSION"
           test "$WP_VERSION" = "$WP_STABLE"
           test "$WP_VERSION" = "$WOO_STABLE"
-          grep -Fq 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' "$WP_MAIN"
-          grep -Fq 'Plugin Name: brendigo Sidrene cijene i cjenici' "$WOO_MAIN"
+          grep -Fq 'Plugin Name: Brendigo Sidrene cijene i digitalni cjenici' "$WP_MAIN"
+          grep -Fq 'Plugin Name: Brendigo Sidrene cijene i cjenici' "$WOO_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-digitalni-cjenici$' "$WP_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-cjenici$' "$WOO_MAIN"
           ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"

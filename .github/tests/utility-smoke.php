@@ -60,6 +60,8 @@ function sanitize_text_field( $value ) {
 	return trim( strip_tags( (string) $value ) );
 }
 
+function wp_timezone() { return new DateTimeZone( 'Europe/Zagreb' ); }
+
 function esc_url_raw( $value ) {
 	return filter_var( (string) $value, FILTER_SANITIZE_URL );
 }
@@ -161,6 +163,33 @@ $GLOBALS['sidrena_test_filters'] = array();
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1.234,56' ), 'Croatian thousands/decimal parsing failed.' );
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1,234.56' ), 'International thousands/decimal parsing failed.' );
 sidrena_assert_same( '', Sidrena_Utils::decimal( '1e9999' ), 'Non-finite numeric values must be rejected.' );
+
+
+$decimal_cases = array(
+	'-100' => null,
+	'-1' => null,
+	'-0.01' => null,
+	'0' => '0',
+	'0.00' => '0',
+	'1' => '1',
+	'1.25' => '1.25',
+	'1,25' => '1.25',
+	'abc' => null,
+	'' => '',
+	'999999999999999999999999999999' => null,
+	'1e3' => null,
+	'1E3' => null,
+);
+foreach ( $decimal_cases as $input => $expected ) {
+	sidrena_assert_same( $expected, Sidrena_Utils::validated_nonnegative_decimal( $input ), 'Nonnegative decimal validation failed for: ' . var_export( $input, true ) );
+}
+
+sidrena_assert_same( '2026-09-28', Sidrena_Utils::sanitize_date( '2026-09-28' ), 'Valid ISO date was rejected.' );
+sidrena_assert_same( '', Sidrena_Utils::sanitize_date( '2026-99-99' ), 'Invalid ISO date must be rejected.' );
+sidrena_assert_same( '06:30', Sidrena_Utils::sanitize_time( '06:30' ), 'Valid HH:MM time was rejected.' );
+sidrena_assert_same( '', Sidrena_Utils::sanitize_time( '99:99' ), 'Invalid time must be rejected.' );
+sidrena_assert_same( '', Sidrena_Utils::sanitize_time( '25:70' ), 'Out-of-range time must be rejected.' );
+sidrena_assert_same( '', Sidrena_Utils::sanitize_time( '6:30' ), 'Time must use strict HH:MM format.' );
 
 $public_files = Sidrena_Utils::public_file_index(
 	array(

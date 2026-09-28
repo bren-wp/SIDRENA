@@ -30,7 +30,7 @@ sidrena_legal_assert( false !== strpos( $bootstrap_source, "includes/class-sidre
 sidrena_legal_assert( false !== strpos( $plugin_source, 'Sidrena_Compliance::instance()->hooks();' ), 'Compliance hooks are not registered.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, "add_action( 'sidrena_publication_watch'" ), 'Publication watchdog integration is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, "add_action( 'sidrena_daily_generation'" ), 'Daily generation watchdog integration is missing.' );
-sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Public::ensure_public_page();' ), 'Automatic public page repair is missing.' );
+sidrena_legal_assert( false === strpos( $compliance_source, 'Sidrena_Public::ensure_public_page();' ) && false === strpos( $compliance_source, 'Sidrena_Public::create_public_page();' ), 'Watchdog must never create or repair a public WordPress page automatically.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, "array( 'archive_dir', 'snapshot_dir' )" ), 'Archive/snapshot directory self-heal list is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'wp_mkdir_p( $paths[ $path_key ] );' ), 'Looped directory self-heal is missing.' );
 sidrena_legal_assert( false !== strpos( $compliance_source, 'legal_automation_watchdog' ), 'Audit log event for legal automation watchdog is missing.' );
