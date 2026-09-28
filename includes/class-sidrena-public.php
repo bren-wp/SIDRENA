@@ -308,8 +308,6 @@ final class Sidrena_Public {
 							$unit_price    = 'service' === $type ? '' : ( $row['cijena_za_jedinicu_mjere'] ?? '' );
 							$barcode       = 'service' === $type ? '' : ( $row['barkod'] ?? '' );
 							$availability  = 'service' === $type ? __( 'Usluga', 'sidrena' ) : ( $row['dostupnost'] ?? '' );
-							$lowest_30     = $row['najniza_cijena_30_dana'] ?? '';
-							$expiry_date   = Sidrena_Utils::sanitize_date( $row['krajnji_rok_uporabe'] ?? '' );
 							$service_type  = 'service' === $type ? trim( (string) ( $row['vrsta_usluge'] ?? '' ) ) : '';
 							$service_scope = 'service' === $type ? trim( (string) ( $row['opseg_usluge'] ?? '' ) ) : '';
 							$service_costs = 'service' === $type ? trim( (string) ( $row['pripadajuci_troskovi'] ?? '' ) ) : '';
@@ -323,9 +321,6 @@ final class Sidrena_Public {
 										?>
 										<small><?php echo esc_html( $row['naziv_posebnog_oblika_prodaje'] ); ?></small><?php endif; ?>
 									<?php
-									if ( $expiry_date ) :
-										?>
-										<small><?php esc_html_e( 'Krajnji rok uporabe', 'sidrena' ); ?>: <?php echo esc_html( Sidrena_Utils::date_display( $expiry_date ) ); ?></small><?php endif; ?>
 									<?php
 									if ( $service_type ) :
 										?>
@@ -346,10 +341,7 @@ final class Sidrena_Public {
 								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ? $code : '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ? $brand : '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong>
-								<?php
-								if ( '' !== (string) $lowest_30 ) :
-									?>
-									<small><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?>: <?php echo esc_html( (string) $lowest_30 . ' ' . $currency ); ?></small><?php endif; ?></td>
+								</td>
 								<td data-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>"><?php echo '' !== $anchor ? esc_html( (string) $anchor . ' ' . $currency ) : '—'; ?></td>
 								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ? $unit : '—' ); ?>
 								<?php
