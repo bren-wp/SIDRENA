@@ -1465,7 +1465,11 @@ final class Sidrena_Admin {
 					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-tag"></span></div><div><strong><?php esc_html_e( 'Sidrena i 30-dnevna cijena', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Sidrena cijena i provjerljiva 30-dnevna referenca za posebne oblike prodaje vode se odvojeno i automatski.', 'sidrena' ); ?></p></div></div>
 					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-lock"></span></div><div><strong><?php esc_html_e( 'Sigurna objava i nadzor', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Strict publication, povijest cijena, watchdog i upozorenja ostaju uključeni kako neispravna nova objava ne bi zamijenila zadnju valjanu.', 'sidrena' ); ?></p></div></div>
 				</div>
-				<p class="description"><?php echo esc_html( sprintf( __( 'Referentni datumi koje Sidrena automatski primjenjuje: opći %1$s, ranije obuhvaćeni FMCG %2$s.', 'sidrena' ), Sidrena_Utils::date_display( '2026-09-10' ), Sidrena_Utils::date_display( '2025-05-02' ) ) ); ?></p>
+				<?php
+				/* translators: %1$s: general reference date; %2$s: reference date for previously covered FMCG categories. */
+				$reference_dates_text = __( 'Referentni datumi koje Sidrena automatski primjenjuje: opći %1$s, ranije obuhvaćeni FMCG %2$s.', 'sidrena' );
+				?>
+				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( '2026-09-10' ), Sidrena_Utils::date_display( '2025-05-02' ) ) ); ?></p>
 			</section>
 
 			<section class="sid-card sid-settings-section">
