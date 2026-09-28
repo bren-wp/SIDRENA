@@ -149,7 +149,7 @@ WordPress WP-Cron ovisi o izvršavanju WordPressa. Za pouzdano izvršavanje prij
 
 Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razdoblju čuvanja, najmanje 30 dana. Javna arhiva grupira datoteke po datumu objave (npr. 24.09.2026.), prikazuje format i naziv datoteke te akciju **Preuzmi**. Aktualne datoteke prikazuju se zasebno i ne dupliciraju se među prethodnim objavama.
 
-## Korak-po-korak za korisnika koji prvi put koristi Sidrenu
+## Korak-po-korak za korisnika koji prvi put koristi SIDRENA — WordPress izdanje
 
 ### Korak 1 — otvorite Postavke
 
