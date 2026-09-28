@@ -255,7 +255,7 @@ jobs:
           set -euo pipefail
           bash tools/run-plugin-check.sh \
             build/release-plugin-check/sidrena-woocommerce \
-            brendigo-sidrene-cijene-cjenici \
+            brendigo-sidrena-cijena \
             "$RUNNER_TEMP/plugin-check-release-woocommerce.json"
 
       - name: Upload release Plugin Check results

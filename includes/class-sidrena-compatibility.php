@@ -38,7 +38,7 @@ final class Sidrena_Compatibility {
 	}
 
 	public function filter_block( $content, $block ) {
-		$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+		$name        = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
 		$block_match = false !== strpos( $name, 'woocommerce/product-price' ) || false !== strpos( $name, 'product-price' ) || false !== strpos( $name, 'wc-product-price' );
 		if ( ! $block_match ) {
 			return $content;
@@ -55,7 +55,7 @@ final class Sidrena_Compatibility {
 		if ( ! is_object( $widget ) || ! is_callable( array( $widget, 'get_name' ) ) ) {
 			return $content;
 		}
-		$name = strtolower( (string) $widget->get_name() );
+		$name    = strtolower( (string) $widget->get_name() );
 		$allowed = array(
 			'woocommerce-product-price',
 			'product-price',
@@ -66,7 +66,7 @@ final class Sidrena_Compatibility {
 			'jet-woo-builder-archive-product-price',
 			'woocommerce-price',
 		);
-		$match = false;
+		$match   = false;
 		foreach ( $allowed as $needle ) {
 			if ( false !== strpos( $name, $needle ) ) {
 				$match = true;

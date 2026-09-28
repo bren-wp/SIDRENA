@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# WordPress.org review audit — SIDRENA 1.0.24
+# WordPress.org review audit — SIDRENA 1.0.25
 
 Review reference: `AUTOPREREVIEW ❗TRM-OWN sidrena-for-woocommerce/brendigo/28Sep26/T1 28Sep26/4.3 (P0TDX377029HGN)`
 
@@ -20,13 +20,13 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Resolution:**
 - standalone display name: **brendigo Sidrene cijene i digitalni cjenici**
-- WooCommerce display name: **brendigo Sidrene cijene i cjenici**
+- WooCommerce display name: **Brendigo Sidrena Cijena**
 - standalone public slug/text-domain: `brendigo-sidrene-cijene-digitalni-cjenici`
-- WooCommerce requested public slug/text-domain: `brendigo-sidrene-cijene-cjenici`
+- WooCommerce 1.0.25 target public slug/text-domain: `brendigo-sidrena-cijena`
 - `brendigo` is the leading distinctive element.
 - The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
 - A fresh 28.09.2026 search confirmed unrelated Croatian products already using `Sidrena`, `Sidrena cijena` and `SidreneCijene` naming. The leading `brendigo` identifier is therefore intentional and the old `sidrena-for-woocommerce` slug is not reused.
-- The requested WooCommerce permalink is `brendigo-sidrene-cijene-cjenici`; `WooCommerce` is not a slug term and is not in the public Plugin Name.
+- The 1.0.25 technical target is `brendigo-sidrena-cijena`; `WooCommerce` is not a slug term and is not in the public Plugin Name. The earlier review thread referenced `brendigo-sidrene-cijene-cjenici`, so reviewer coordination is still required if WordPress.org has already reserved that historical slug.
 - WooCommerce is not used in the public plugin display name or slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
@@ -40,7 +40,8 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** public plugin headers, readmes, plugin URI, author URI and contributor identity.
 
 **Resolution:**
-- Author: `brendigo`
+- standalone Author: `brendigo`
+- WooCommerce Author/Developer: `Brendigo`
 - Contributors: `brendigo`
 - Author URI: `https://brendigo.com/`
 - Plugin URI: `https://brendigo.com/sidrene-cijene/`
@@ -57,9 +58,9 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** `admin_notices`, global notice hooks, dependency/conflict notices, support/donation/setup surfaces.
 
 **Resolution:**
-- only one custom `admin_notices` hook remains: the SIDRENA edition-conflict notice.
-- it is limited to the WordPress Plugins screen, requires `activate_plugins`, and is dismissible.
-- the WooCommerce dependency uses the core `Requires Plugins: woocommerce` header instead of a custom dashboard notice.
+- exactly two scoped `admin_notices` paths are permitted: edition-conflict and missing-WooCommerce dependency.
+- both are limited to the WordPress Plugins screen and require `activate_plugins`; the conflict notice is dismissible.
+- the WooCommerce edition still uses the core `Requires Plugins: woocommerce` header; the custom dependency notice is only a defensive runtime fallback if WooCommerce becomes unavailable.
 - no `all_admin_notices` hook exists.
 - donation hyperlinks/CTAs are removed from the plugin, readmes and generated manuals; optional one-time setup remains confined to SIDRENA Support/documentation and does not unlock features.
 
@@ -152,8 +153,8 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Resolution:**
 - exactly two installable ZIPs are built:
-  - `sidrena-wordpress-1.0.24.zip`
-  - `sidrena-woocommerce-1.0.24.zip`
+  - `sidrena-wordpress-1.0.25.zip`
+  - `sidrena-woocommerce-1.0.25.zip`
 - each ZIP has exactly one edition root.
 - standalone ZIP excludes WooCommerce runtime catalogue/integration classes.
 - WooCommerce ZIP excludes the standalone catalogue runtime.
@@ -196,8 +197,10 @@ This file records the repository-side audit performed before the next WordPress.
 
 ## Final submission rule
 
-The WooCommerce permalink requested in the reply to the existing WordPress.org review email thread is:
+The current 1.0.25 build, text-domain and Plugin Check target are:
 
-`brendigo-sidrene-cijene-cjenici`
+`brendigo-sidrena-cijena`
+
+The historical review thread referenced `brendigo-sidrene-cijene-cjenici`. Repository/web search on 28. 9. 2026. did not show either value as a public WordPress.org plugin page, but that does not prove reservation status. If the Plugin Review Team has already reserved the historical slug, the final public permalink must be coordinated with the reviewer before SVN submission.
 
 No repository document claims approval is guaranteed. The submission target is zero known review blockers, zero relevant Plugin Check errors and green project QA on the same final SHA.

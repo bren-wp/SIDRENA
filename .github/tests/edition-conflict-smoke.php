@@ -42,9 +42,16 @@ function current_user_can( $capability ) {
 	}
 	return true;
 }
+function __( $text, $domain = null ) {
+	unset( $domain );
+	return $text;
+}
 function esc_html__( $text, $domain = null ) {
 	unset( $domain );
 	return $text;
+}
+function esc_html( $text ) {
+	return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
 }
 function plugin_basename( $file ) {
 	return basename( $file );
@@ -85,12 +92,19 @@ foreach ( $GLOBALS['sidrena_actions']['admin_init'] as $callback ) {
 $expected = 'sidrena-' . $target . '.php';
 sidrena_conflict_assert( in_array( $expected, $GLOBALS['sidrena_deactivated'], true ), 'Conflicting edition did not deactivate itself for an authorized plugin manager.' );
 
+$expected_active = 'legacy' === $mode
+	? 'starije SIDRENA izdanje'
+	: ( 'wordpress' === $target ? 'Brendigo Sidrena Cijena' : 'SIDRENA WordPress' );
+$expected_attempted = 'wordpress' === $target ? 'SIDRENA WordPress' : 'Brendigo Sidrena Cijena';
+
 $blocked = false;
 try {
 	call_user_func( $GLOBALS['sidrena_activation_callback'] );
 } catch ( RuntimeException $e ) {
-	$blocked = false !== strpos( $e->getMessage(), 'Sidrena izdanje' ) && false !== strpos( $e->getMessage(), 'aktivno' );
+	$blocked = false !== strpos( $e->getMessage(), $expected_active )
+		&& false !== strpos( $e->getMessage(), $expected_attempted )
+		&& false !== strpos( $e->getMessage(), 'Deaktivacija ne briše SIDRENA poslovne podatke' );
 }
-sidrena_conflict_assert( $blocked, 'Activation blocker did not stop the conflicting edition.' );
+sidrena_conflict_assert( $blocked, 'Activation blocker did not identify both editions and the safe-switch behavior.' );
 
 fwrite( STDOUT, "Sidrena {$target} {$mode} conflict guard smoke test passed.\n" );

@@ -45,20 +45,20 @@ final class Sidrena_Products {
 
 	public function register_meta() {
 		$keys = array(
-			'_sidrena_anchor_price'                  => 'number',
-			'_sidrena_anchor_date'                   => 'string',
-			'_sidrena_reference_group'               => 'string',
-			'_sidrena_brand'                         => 'string',
-			'_sidrena_code'                          => 'string',
-			'_sidrena_barcode'                       => 'string',
-			'_sidrena_unit'                          => 'string',
-			'_sidrena_unit_price'                    => 'number',
-			'_sidrena_unit_price_status'             => 'string',
-			'_sidrena_sale_name'                     => 'string',
-			'_sidrena_lowest_30_manual'              => 'number',
-			'_sidrena_sale_reference_exemption'      => 'string',
-			'_sidrena_expiry_date'                    => 'string',
-			'_sidrena_cjenik_visibility'              => 'string',
+			'_sidrena_anchor_price'             => 'number',
+			'_sidrena_anchor_date'              => 'string',
+			'_sidrena_reference_group'          => 'string',
+			'_sidrena_brand'                    => 'string',
+			'_sidrena_code'                     => 'string',
+			'_sidrena_barcode'                  => 'string',
+			'_sidrena_unit'                     => 'string',
+			'_sidrena_unit_price'               => 'number',
+			'_sidrena_unit_price_status'        => 'string',
+			'_sidrena_sale_name'                => 'string',
+			'_sidrena_lowest_30_manual'         => 'number',
+			'_sidrena_sale_reference_exemption' => 'string',
+			'_sidrena_expiry_date'              => 'string',
+			'_sidrena_cjenik_visibility'        => 'string',
 		);
 		foreach ( array( 'product', 'product_variation' ) as $post_type ) {
 			foreach ( $keys as $key => $type ) {
@@ -93,7 +93,10 @@ final class Sidrena_Products {
 				'desc_tip'          => true,
 				'description'       => __( 'Cijena na mjerodavni referentni datum, bez posebnog oblika prodaje. Za postojeći artikl provjerite vlastitu evidenciju.', 'sidrena' ),
 				'type'              => 'number',
-				'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_select(
@@ -130,7 +133,10 @@ final class Sidrena_Products {
 				'desc_tip'          => true,
 				'description'       => __( 'Neobavezno. Koristite ako automatska 30-dnevna povijest nije potpuna ili ste vrijednost provjerili iz druge vjerodostojne evidencije. Tijekom aktivne akcije ručni unos ima prednost.', 'sidrena' ),
 				'type'              => 'number',
-				'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_select(
@@ -203,7 +209,10 @@ final class Sidrena_Products {
 				'id'                => '_sidrena_quantity',
 				'label'             => __( 'Količina pakiranja', 'sidrena' ),
 				'type'              => 'number',
-				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.0001',
+					'min'  => '0',
+				),
 				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
 				'desc_tip'          => true,
 			)
@@ -230,7 +239,10 @@ final class Sidrena_Products {
 				'id'                => '_sidrena_unit_price',
 				'label'             => __( 'Cijena za jedinicu mjere', 'sidrena' ),
 				'type'              => 'number',
-				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.0001',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -285,7 +297,10 @@ final class Sidrena_Products {
 				'label'             => __( 'Sidrena cijena', 'sidrena' ),
 				'type'              => 'number',
 				'wrapper_class'     => 'form-row form-row-first',
-				'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -336,7 +351,10 @@ final class Sidrena_Products {
 				'label'             => __( 'Količina pakiranja', 'sidrena' ),
 				'type'              => 'number',
 				'wrapper_class'     => 'form-row form-row-first',
-				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.0001',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -366,7 +384,10 @@ final class Sidrena_Products {
 				'label'             => __( 'Cijena za jedinicu mjere', 'sidrena' ),
 				'type'              => 'number',
 				'wrapper_class'     => 'form-row form-row-wide',
-				'custom_attributes' => array( 'step' => '0.0001', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.0001',
+					'min'  => '0',
+				),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -386,14 +407,18 @@ final class Sidrena_Products {
 				'label'             => __( 'Najniža cijena 30 dana — ručno', 'sidrena' ),
 				'type'              => 'number',
 				'wrapper_class'     => 'form-row form-row-first',
-				'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
+				),
 			)
 		);
+		$sale_reference_exemption = get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true );
 		woocommerce_wp_select(
 			array(
 				'id'            => "_sidrena_sale_reference_exemption_{$loop}",
 				'name'          => "_sidrena_sale_reference_exemption[{$loop}]",
-				'value'         => get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) ?: 'none',
+				'value'         => $sale_reference_exemption ? $sale_reference_exemption : 'none',
 				'label'         => __( 'Izuzeće 30 dana', 'sidrena' ),
 				'wrapper_class' => 'form-row form-row-last',
 				'options'       => array(
@@ -459,7 +484,7 @@ final class Sidrena_Products {
 			'_sidrena_lowest_30_manual'         => 'decimal',
 			'_sidrena_sale_reference_exemption' => 'exemption',
 			'_sidrena_expiry_date'              => 'date',
-			'_sidrena_cjenik_visibility'         => 'cjenik_visibility',
+			'_sidrena_cjenik_visibility'        => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
 			if ( ! isset( $posted[ $key ] ) ) {
@@ -641,7 +666,7 @@ final class Sidrena_Products {
 		}
 		$out .= $this->expiry_html( $variation );
 
-		$html = $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
+		$html                           = $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 		$data['sidrena_reference_html'] = (string) apply_filters(
 			'sidrena_variation_reference_html',
 			$html,
@@ -708,7 +733,7 @@ final class Sidrena_Products {
 		$display = function_exists( 'wc_get_price_to_display' )
 			? wc_get_price_to_display( $product, array( 'price' => (float) $reference['price'] ) )
 			: (float) $reference['price'];
-		$line = sprintf(
+		$line    = sprintf(
 			'<span class="sidrena-lowest"><span class="sidrena-lowest__label">%1$s:</span> <span class="sidrena-lowest__value">%2$s</span></span>',
 			esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
 			wp_kses_post( wc_price( $display ) )
@@ -732,7 +757,7 @@ final class Sidrena_Products {
 			if ( 'ready' !== $reference['status'] || '' === $reference['price'] ) {
 				return '';
 			}
-			$display = function_exists( 'wc_get_price_to_display' )
+			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $reference['price'] ) )
 				: (float) $reference['price'];
 			$values[] = (float) $display;
@@ -856,11 +881,11 @@ final class Sidrena_Products {
 			if ( '' === $anchor ) {
 				continue;
 			}
-			$display = function_exists( 'wc_get_price_to_display' )
+			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
-			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
 			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}
@@ -869,11 +894,11 @@ final class Sidrena_Products {
 			return '';
 		}
 
-		$min     = min( $values );
-		$max     = max( $values );
-		$date    = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::settings()['default_ref_date'];
-		$label   = Sidrena_Utils::anchor_label( $date );
-		$amount  = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+		$min          = min( $values );
+		$max          = max( $values );
+		$date         = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::settings()['default_ref_date'];
+		$label        = Sidrena_Utils::anchor_label( $date );
+		$amount       = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
 		$tooltip      = Sidrena_Utils::anchor_tooltip();
 		$tooltip_id   = 'sidrena-anchor-tip-' . absint( $product->get_id() );
 		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
@@ -937,7 +962,7 @@ final class Sidrena_Products {
 		}
 		$parent_id = wp_get_post_parent_id( $variation_id );
 		$group     = $parent_id ? get_post_meta( $parent_id, '_sidrena_reference_group', true ) : '';
-		return $group ?: 'standard';
+		return $group ? $group : 'standard';
 	}
 
 	public function snapshot_new_variation( $variation_id ) {

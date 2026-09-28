@@ -30,7 +30,7 @@ if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 }
 foreach ( array_unique( $sidrena_active_plugins ) as $sidrena_active_plugin ) {
 	$sidrena_active_plugin = (string) $sidrena_active_plugin;
-	if ( $sidrena_active_plugin === (string) WP_UNINSTALL_PLUGIN ) {
+	if ( (string) WP_UNINSTALL_PLUGIN === $sidrena_active_plugin ) {
 		continue;
 	}
 	if ( preg_match( '#(^|/)(sidrena-wordpress|sidrena-woocommerce)\.php$#', $sidrena_active_plugin ) ) {
@@ -48,9 +48,9 @@ wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
 
 $sidrena_roles = function_exists( 'wp_roles' ) ? wp_roles() : null;
 if ( $sidrena_roles && ! empty( $sidrena_roles->role_objects ) && is_array( $sidrena_roles->role_objects ) ) {
-	foreach ( $sidrena_roles->role_objects as $role ) {
-		if ( is_object( $role ) && is_callable( array( $role, 'remove_cap' ) ) ) {
-			$role->remove_cap( 'manage_sidrena' );
+	foreach ( $sidrena_roles->role_objects as $sidrena_role ) {
+		if ( is_object( $sidrena_role ) && is_callable( array( $sidrena_role, 'remove_cap' ) ) ) {
+			$sidrena_role->remove_cap( 'manage_sidrena' );
 		}
 	}
 }

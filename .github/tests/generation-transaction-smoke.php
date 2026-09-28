@@ -29,7 +29,14 @@ sidrena_generation_transaction_assert( false !== strpos( $generate, '$location_e
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$location_files    = array();' ), 'Generation must track newly written files for rollback.' );
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$location_failed   = false;' ), 'Generation must track transactional location failure.' );
 sidrena_generation_transaction_assert( false !== strpos( $generate, '$this->discard_generated_files( $location_files );' ), 'Failed location generation must remove newly written files.' );
-sidrena_generation_transaction_assert( false !== strpos( $generate, '$index     = array_merge( $index, $location_entries );' ), 'Current index entries must be committed only after location success.' );
+$rollback_pos = strpos( $generate, '$this->discard_generated_files( $location_files );' );
+$continue_pos = false !== $rollback_pos ? strpos( $generate, 'continue;', $rollback_pos ) : false;
+$commit_pos   = strpos( $generate, 'array_merge( $index, $location_entries )' );
+sidrena_generation_transaction_assert(
+	false !== $rollback_pos && false !== $continue_pos && false !== $commit_pos
+	&& $rollback_pos < $continue_pos && $continue_pos < $commit_pos,
+	'Current index entries must be committed only after location success.'
+);
 $expected_pos = strpos( $generate, '$expected[ $this->index_key( $location, $catalog_type, $format ) ] = true;' );
 $address_pos  = strpos( $generate, "if ( '' === \$address )" );
 sidrena_generation_transaction_assert( false !== $expected_pos && false !== $address_pos && $expected_pos < $address_pos, 'Expected current-index keys must be marked before location validation can fail.' );

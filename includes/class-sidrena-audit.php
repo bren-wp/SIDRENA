@@ -93,7 +93,7 @@ final class Sidrena_Audit {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, event_type, status, message, context, user_id, created_at FROM %i ORDER BY id DESC LIMIT %d",
+				'SELECT id, event_type, status, message, context, user_id, created_at FROM %i ORDER BY id DESC LIMIT %d',
 				$table,
 				$limit
 			),
@@ -124,7 +124,7 @@ final class Sidrena_Audit {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM %i WHERE created_at < %s",
+				'DELETE FROM %i WHERE created_at < %s',
 				$table,
 				$cutoff
 			)
@@ -140,7 +140,7 @@ final class Sidrena_Audit {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT id FROM %i ORDER BY id DESC LIMIT 1 OFFSET %d",
+					'SELECT id FROM %i ORDER BY id DESC LIMIT 1 OFFSET %d',
 					$table,
 					$offset
 				)
@@ -151,7 +151,7 @@ final class Sidrena_Audit {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM %i WHERE id < %d",
+					'DELETE FROM %i WHERE id < %d',
 					$table,
 					$keep_id
 				)

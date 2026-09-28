@@ -15,21 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Sidrena_Utils {
 	public static function defaults() {
 		return array(
-			'business_mode'        => 'mixed',
-			'display_anchor'       => 'yes',
-			'display_lowest_30'    => 'yes',
-			'default_ref_date'     => '2026-09-10',
-			'fmcg_ref_date'        => '2025-05-02',
-			'generate_csv'         => 'yes',
-			'generate_xml'         => 'yes',
-			'csv_delimiter'        => ';',
-			'generation_time'      => '06:30',
-			'retention_days'       => 45,
-			'enable_rest_index'    => 'yes',
-			'publish_manifest'     => 'yes',
-			'enable_public_html'   => 'yes',
-			'strict_publication'   => 'yes',
-			'track_price_history'  => 'yes',
+			'business_mode'         => 'mixed',
+			'display_anchor'        => 'yes',
+			'display_lowest_30'     => 'yes',
+			'default_ref_date'      => '2026-09-10',
+			'fmcg_ref_date'         => '2025-05-02',
+			'generate_csv'          => 'yes',
+			'generate_xml'          => 'yes',
+			'csv_delimiter'         => ';',
+			'generation_time'       => '06:30',
+			'retention_days'        => 45,
+			'enable_rest_index'     => 'yes',
+			'publish_manifest'      => 'yes',
+			'enable_public_html'    => 'yes',
+			'strict_publication'    => 'yes',
+			'track_price_history'   => 'yes',
 			'failure_notifications' => 'yes',
 			'failure_email'         => '',
 		);
@@ -62,7 +62,7 @@ final class Sidrena_Utils {
 		) {
 			unset( $settings[ $legacy_key ] );
 		}
-		$settings = wp_parse_args( $settings, self::defaults() );
+		$settings                   = wp_parse_args( $settings, self::defaults() );
 		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
 		return $settings;
 	}
@@ -178,7 +178,7 @@ final class Sidrena_Utils {
 		$city      = trim( sanitize_text_field( (string) get_option( 'woocommerce_store_city', '' ) ) );
 		$locality  = trim( $postcode . ( $postcode && $city ? ' ' : '' ) . $city );
 
-		$parts = array_values( array_filter( array( $address_1, $address_2, $locality ) ) );
+		$parts   = array_values( array_filter( array( $address_1, $address_2, $locality ) ) );
 		$address = implode( ', ', $parts );
 		return trim( (string) apply_filters( 'sidrena_woocommerce_store_address_suggestion', $address, $parts ) );
 	}
@@ -385,10 +385,10 @@ final class Sidrena_Utils {
 			'archive_dir'  => $base . 'arhiva/',
 			'base_url'     => $url,
 			'archive_url'  => $url . 'arhiva/',
-			'manifest'      => $base . 'manifest.json',
-			'manifest_url'  => $url . 'manifest.json',
-			'snapshot_dir'  => $base . 'public/',
-			'snapshot_url'  => $url . 'public/',
+			'manifest'     => $base . 'manifest.json',
+			'manifest_url' => $url . 'manifest.json',
+			'snapshot_dir' => $base . 'public/',
+			'snapshot_url' => $url . 'public/',
 		);
 	}
 
@@ -441,8 +441,16 @@ final class Sidrena_Utils {
 			$header = strtr(
 				$header,
 				array(
-					'č' => 'c', 'ć' => 'c', 'đ' => 'd', 'š' => 's', 'ž' => 'z',
-					'Č' => 'C', 'Ć' => 'C', 'Đ' => 'D', 'Š' => 'S', 'Ž' => 'Z',
+					'č' => 'c',
+					'ć' => 'c',
+					'đ' => 'd',
+					'š' => 's',
+					'ž' => 'z',
+					'Č' => 'C',
+					'Ć' => 'C',
+					'Đ' => 'D',
+					'Š' => 'S',
+					'Ž' => 'Z',
 				)
 			);
 		}
@@ -452,17 +460,35 @@ final class Sidrena_Utils {
 	}
 
 	public static function unit_aliases() {
-		$aliases = array(
-			'miligram' => 'mg', 'miligrami' => 'mg',
-			'gram' => 'g', 'grama' => 'g', 'grami' => 'g',
-			'dekagram' => 'dag', 'dekagrama' => 'dag',
-			'kilogram' => 'kg', 'kilograma' => 'kg',
-			'mililitar' => 'ml', 'mililitara' => 'ml',
-			'centilitar' => 'cl', 'centilitara' => 'cl',
-			'decilitar' => 'dl', 'decilitara' => 'dl',
-			'lit' => 'l', 'litra' => 'l', 'litre' => 'l', 'litara' => 'l', 'liter' => 'l',
-			'metar' => 'm', 'metra' => 'm', 'metara' => 'm',
-			'komad' => 'kom', 'komada' => 'kom', 'ko' => 'kom', 'pcs' => 'kom', 'pc' => 'kom',
+		$aliases  = array(
+			'miligram'    => 'mg',
+			'miligrami'   => 'mg',
+			'gram'        => 'g',
+			'grama'       => 'g',
+			'grami'       => 'g',
+			'dekagram'    => 'dag',
+			'dekagrama'   => 'dag',
+			'kilogram'    => 'kg',
+			'kilograma'   => 'kg',
+			'mililitar'   => 'ml',
+			'mililitara'  => 'ml',
+			'centilitar'  => 'cl',
+			'centilitara' => 'cl',
+			'decilitar'   => 'dl',
+			'decilitara'  => 'dl',
+			'lit'         => 'l',
+			'litra'       => 'l',
+			'litre'       => 'l',
+			'litara'      => 'l',
+			'liter'       => 'l',
+			'metar'       => 'm',
+			'metra'       => 'm',
+			'metara'      => 'm',
+			'komad'       => 'kom',
+			'komada'      => 'kom',
+			'ko'          => 'kom',
+			'pcs'         => 'kom',
+			'pc'          => 'kom',
 		);
 		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_aliases', $aliases ) : $aliases;
 		if ( ! is_array( $filtered ) ) {
@@ -471,8 +497,8 @@ final class Sidrena_Utils {
 
 		$out = array();
 		foreach ( $filtered as $alias => $canonical ) {
-			$alias = trim( strtolower( (string) $alias ) );
-			$alias = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $alias );
+			$alias     = trim( strtolower( (string) $alias ) );
+			$alias     = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $alias );
 			$canonical = trim( strtolower( (string) $canonical ) );
 			$canonical = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $canonical );
 			if ( '' === $alias || '' === $canonical || ! preg_match( '/^[a-z0-9_-]{1,32}$/', $alias ) || ! preg_match( '/^[a-z0-9_-]{1,32}$/', $canonical ) ) {
@@ -484,35 +510,95 @@ final class Sidrena_Utils {
 	}
 
 	public static function normalize_unit( $unit ) {
-		$unit = trim( (string) $unit );
-		$unit = function_exists( 'mb_strtolower' ) ? mb_strtolower( $unit, 'UTF-8' ) : strtolower( $unit );
-		$unit = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $unit );
+		$unit    = trim( (string) $unit );
+		$unit    = function_exists( 'mb_strtolower' ) ? mb_strtolower( $unit, 'UTF-8' ) : strtolower( $unit );
+		$unit    = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $unit );
 		$aliases = self::unit_aliases();
 		return isset( $aliases[ $unit ] ) ? $aliases[ $unit ] : $unit;
 	}
 
 	public static function unit_definitions() {
 		$defaults = array(
-			'mg'  => array( 'base' => 'kg', 'multiplier' => 0.000001 ),
-			'g'   => array( 'base' => 'kg', 'multiplier' => 0.001 ),
-			'dag' => array( 'base' => 'kg', 'multiplier' => 0.01 ),
-			'kg'  => array( 'base' => 'kg', 'multiplier' => 1.0 ),
-			'ml'  => array( 'base' => 'l', 'multiplier' => 0.001 ),
-			'cl'  => array( 'base' => 'l', 'multiplier' => 0.01 ),
-			'dl'  => array( 'base' => 'l', 'multiplier' => 0.1 ),
-			'l'   => array( 'base' => 'l', 'multiplier' => 1.0 ),
-			'mm'  => array( 'base' => 'm', 'multiplier' => 0.001 ),
-			'cm'  => array( 'base' => 'm', 'multiplier' => 0.01 ),
-			'dm'  => array( 'base' => 'm', 'multiplier' => 0.1 ),
-			'm'   => array( 'base' => 'm', 'multiplier' => 1.0 ),
-			'mm2' => array( 'base' => 'm²', 'multiplier' => 0.000001 ),
-			'cm2' => array( 'base' => 'm²', 'multiplier' => 0.0001 ),
-			'dm2' => array( 'base' => 'm²', 'multiplier' => 0.01 ),
-			'm2'  => array( 'base' => 'm²', 'multiplier' => 1.0 ),
-			'cm3' => array( 'base' => 'm³', 'multiplier' => 0.000001 ),
-			'dm3' => array( 'base' => 'm³', 'multiplier' => 0.001 ),
-			'm3'  => array( 'base' => 'm³', 'multiplier' => 1.0 ),
-			'kom' => array( 'base' => 'kom', 'multiplier' => 1.0 ),
+			'mg'  => array(
+				'base'       => 'kg',
+				'multiplier' => 0.000001,
+			),
+			'g'   => array(
+				'base'       => 'kg',
+				'multiplier' => 0.001,
+			),
+			'dag' => array(
+				'base'       => 'kg',
+				'multiplier' => 0.01,
+			),
+			'kg'  => array(
+				'base'       => 'kg',
+				'multiplier' => 1.0,
+			),
+			'ml'  => array(
+				'base'       => 'l',
+				'multiplier' => 0.001,
+			),
+			'cl'  => array(
+				'base'       => 'l',
+				'multiplier' => 0.01,
+			),
+			'dl'  => array(
+				'base'       => 'l',
+				'multiplier' => 0.1,
+			),
+			'l'   => array(
+				'base'       => 'l',
+				'multiplier' => 1.0,
+			),
+			'mm'  => array(
+				'base'       => 'm',
+				'multiplier' => 0.001,
+			),
+			'cm'  => array(
+				'base'       => 'm',
+				'multiplier' => 0.01,
+			),
+			'dm'  => array(
+				'base'       => 'm',
+				'multiplier' => 0.1,
+			),
+			'm'   => array(
+				'base'       => 'm',
+				'multiplier' => 1.0,
+			),
+			'mm2' => array(
+				'base'       => 'm²',
+				'multiplier' => 0.000001,
+			),
+			'cm2' => array(
+				'base'       => 'm²',
+				'multiplier' => 0.0001,
+			),
+			'dm2' => array(
+				'base'       => 'm²',
+				'multiplier' => 0.01,
+			),
+			'm2'  => array(
+				'base'       => 'm²',
+				'multiplier' => 1.0,
+			),
+			'cm3' => array(
+				'base'       => 'm³',
+				'multiplier' => 0.000001,
+			),
+			'dm3' => array(
+				'base'       => 'm³',
+				'multiplier' => 0.001,
+			),
+			'm3'  => array(
+				'base'       => 'm³',
+				'multiplier' => 1.0,
+			),
+			'kom' => array(
+				'base'       => 'kom',
+				'multiplier' => 1.0,
+			),
 		);
 		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_definitions', $defaults ) : $defaults;
 		if ( ! is_array( $filtered ) ) {
@@ -725,9 +811,9 @@ final class Sidrena_Utils {
 		return '' === $value ? '' : (float) $value;
 	}
 
-	public static function product_meta_with_parent( $product, $key, $default = '' ) {
+	public static function product_meta_with_parent( $product, $key, $fallback = '' ) {
 		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
-			return $default;
+			return $fallback;
 		}
 
 		$value = get_post_meta( $product->get_id(), $key, true );
@@ -744,7 +830,7 @@ final class Sidrena_Utils {
 				}
 			}
 		}
-		return $default;
+		return $fallback;
 	}
 
 	public static function get_product_code( $product ) {
@@ -893,8 +979,8 @@ final class Sidrena_Utils {
 				continue;
 			}
 			$days[ wp_date( 'Y-m-d', $ts ) ] = true;
-			$oldest = ! $oldest || $ts < $oldest ? $ts : $oldest;
-			$newest = $ts > $newest ? $ts : $newest;
+			$oldest                          = ! $oldest || $ts < $oldest ? $ts : $oldest;
+			$newest                          = $ts > $newest ? $ts : $newest;
 		}
 		return array(
 			'files'         => count( $archive ),

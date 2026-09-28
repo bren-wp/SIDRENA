@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_Activator {
-	const DB_VERSION = '0.1.0';
+	const DB_VERSION            = '0.1.0';
 	const PLUGIN_VERSION_OPTION = 'sidrena_plugin_version';
 
 	public static function activate() {
@@ -282,7 +282,7 @@ final class Sidrena_Activator {
 		}
 		unset( $settings['fmsid_ref_date'] );
 
-		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
+		$settings                   = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
 		update_option( 'sidrena_settings', $settings, false );
 	}

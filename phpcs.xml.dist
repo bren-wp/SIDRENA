@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<ruleset name="SIDRENA WordPress Coding Standards">
+	<description>WordPress Coding Standards gate for SIDRENA production PHP.</description>
+
+	<arg name="basepath" value="."/>
+	<arg name="extensions" value="php"/>
+	<arg value="ps"/>
+	<arg name="colors"/>
+
+	<file>includes</file>
+	<file>admin</file>
+	<file>public</file>
+	<file>editions</file>
+	<file>uninstall.php</file>
+
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<config name="minimum_wp_version" value="6.6"/>
+
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.WP.CapitalPDangit"/>
+	</rule>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+				<element value="edit_products"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="sidrena"/>
+				<element value="brendigo-sidrena-cijena"/>
+				<element value="brendigo-sidrene-cijene-digitalni-cjenici"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- The admin renderer intentionally interleaves WordPress PHP control flow with semantic HTML. WPCS 3.4.1 fixers for these style-only sniffs oscillate on this file; security, escaping, SQL, nonce, capability and validation sniffs remain enabled. -->
+	<rule ref="Generic.Formatting.MultipleStatementAlignment">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Arrays.ArrayDeclarationSpacing">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.ControlStructures.ControlSignature">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.PHP.EmbeddedPhp">
+		<exclude-pattern>includes/class-sidrena-admin.php</exclude-pattern>
+	</rule>
+
+	<!-- Internal edition identifiers are machine keys, not human-facing WordPress copy. -->
+	<rule ref="WordPress.WP.CapitalPDangit">
+		<exclude-pattern>includes/class-sidrena-utils.php</exclude-pattern>
+		<exclude-pattern>includes/sidrena-bootstrap.php</exclude-pattern>
+		<exclude-pattern>includes/sidrena-edition-guard.php</exclude-pattern>
+	</rule>
+</ruleset>

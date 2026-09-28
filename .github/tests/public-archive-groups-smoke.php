@@ -9,6 +9,8 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena/' );
+define( 'SIDRENA_VERSION', '1.0.25' );
 
 class Sidrena_Utils {
 	public static function sanitize_location_id( $value ) {
@@ -74,6 +76,8 @@ function size_format( $bytes, $decimals = 0 ) {
 }
 function absint( $value ) { return abs( (int) $value ); }
 function wp_date( $format, $timestamp = null ) { return gmdate( $format, null === $timestamp ? time() : (int) $timestamp ); }
+function wp_enqueue_style( $handle, $src = '', $deps = array(), $version = false ) { unset( $handle, $src, $deps, $version ); }
+function get_bloginfo( $show = '' ) { unset( $show ); return 'SIDRENA Test'; }
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php';
@@ -159,7 +163,16 @@ sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidr
 sidrena_archive_assert( false !== strpos( $source, "add_shortcode( 'sidrena_cjenik_url'" ), 'Premium current-file URL shortcode is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'prikaz'   => 'kartice'" ), 'Premium public file layout attribute is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'arhiva'   => 'da'" ), 'Premium archive visibility attribute is missing.' );
-sidrena_archive_assert( false !== strpos( $source, "if ( \$show_archive ) : ?><div><span><?php esc_html_e( 'Arhiva', 'sidrena' )" ), 'Archive summary metric must be hidden when archive output is disabled.' );
+$without_archive = $public->downloads_shortcode(
+	array(
+		'lokacija' => 'loc-1',
+		'arhiva'   => 'ne',
+		'naslovi'  => 'ne',
+	)
+);
+sidrena_archive_assert( false !== strpos( $without_archive, 'sidrena-downloads__summary--compact' ), 'Downloads summary must switch to compact layout when archive output is disabled.' );
+sidrena_archive_assert( false === strpos( $without_archive, '<span>Arhiva</span>' ), 'Archive summary metric must be hidden when archive output is disabled.' );
+sidrena_archive_assert( false === strpos( $without_archive, 'Prethodne objave' ), 'Archive section must be hidden when archive output is disabled.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__summary--compact' ), 'Compact two-column summary styles are missing when archive output is disabled.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_file_entries'" ), 'Public file entry extension filter is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_archive_groups'" ), 'Public archive group extension filter is missing.' );

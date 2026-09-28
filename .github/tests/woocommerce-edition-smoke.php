@@ -73,10 +73,17 @@ sidrena_woo_assert( Sidrena_Utils::is_woocommerce_active(), 'WooCommerce edition
 sidrena_woo_assert( ! class_exists( 'Sidrena_Standalone' ), 'Standalone catalog must not load in WooCommerce edition.' );
 
 foreach ( array( 'Sidrena_Products', 'Sidrena_History', 'Sidrena_Woo_Import_Export', 'Sidrena_Compatibility', 'Sidrena_Bulk', 'Sidrena_Location_Data', 'Sidrena_Location_History' ) as $class ) {
-	sidrena_woo_assert( class_exists( $class ), $class . ' must load in WooCommerce edition.' );
+	sidrena_woo_assert( ! class_exists( $class ), $class . ' loaded before the WooCommerce dependency check completed.' );
 }
 
-Sidrena_Plugin::instance()->run();
+sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['plugins_loaded'] ), 'WooCommerce dependency-safe bootstrap hook must register.' );
+foreach ( $GLOBALS['sidrena_actions']['plugins_loaded'] as $callback ) {
+	call_user_func( $callback );
+}
+
+foreach ( array( 'Sidrena_Products', 'Sidrena_History', 'Sidrena_Woo_Import_Export', 'Sidrena_Compatibility', 'Sidrena_Bulk', 'Sidrena_Location_Data', 'Sidrena_Location_History' ) as $class ) {
+	sidrena_woo_assert( class_exists( $class ), $class . ' must load after the WooCommerce dependency check succeeds.' );
+}
 
 $downloads_shortcode = $GLOBALS['sidrena_shortcodes']['sidrena_cjenici'] ?? null;
 sidrena_woo_assert(

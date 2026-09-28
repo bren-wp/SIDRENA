@@ -128,7 +128,7 @@ Aktualna stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.22.zip`, `sidrena-wordpress-1.0.22.zip.sha256`, `sidrena-woocommerce-1.0.22.zip` i `sidrena-woocommerce-1.0.22.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.25.zip`, `sidrena-wordpress-1.0.25.zip.sha256`, `sidrena-woocommerce-1.0.25.zip` i `sidrena-woocommerce-1.0.25.zip.sha256`.
 
 ## Opseg Sidrene
 
@@ -136,13 +136,16 @@ Sidrena je namjerno ograničena na sidrene cijene, 30-dnevnu referencu kod poseb
 
 Opći podaci poslovnog subjekta koji proizlaze iz drugih propisa (npr. identitet trgovca, registracijski podaci ili opći kontakt podaci web-trgovine) više se ne vode kroz Sidrena postavke. Takve podatke treba održavati u odgovarajućem dijelu mrežne stranice ili drugom za to namijenjenom sustavu.
 
-## Podrška, distribucija i donacija
+## Podrška i distribucija
 
 Podrška je dostupna na sidrena@brendigo.com i putem WhatsApp broja +385 91 901 0092.
 
 Plugin korisnik može instalirati, postaviti i održavati sam. Brendigo usluge naručuju se samo po želji korisnika:
 - jednokratna instalacija i početno postavljanje: **80 EUR**
 
-Dobrovoljna donacija za razvoj otvara se izravno preko Revolut gumba u Sidrena administraciji. Donacija nije naknada za instalaciju ili održavanje i ne predstavlja narudžbu usluge.
-
 Sidrena se distribuira pod licencom GPLv2 ili novijom. Kod, dokumentacija i originalni projektni asseti uključeni u WordPress.org distribuciju moraju ostati GPL-kompatibilni.
+
+
+## Provjerljivi izvori
+
+Primarni pravni izvori i razdvajanje zakonske obveze, tehničke preporuke i SIDRENA implementacijske odluke vode se u `docs/LEGAL-SOURCES.md`. Svi materijalno korišteni vanjski izvori, uključujući WordPress/WooCommerce dokumentaciju i open-source projekte proučene bez kopiranja koda, evidentirani su u `docs/SOURCES.md`.

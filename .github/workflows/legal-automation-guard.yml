@@ -54,9 +54,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq "'default_ref_date'     => '2026-09-10'" includes/class-sidrena-utils.php
-          grep -Fq "'fmcg_ref_date'        => '2025-05-02'" includes/class-sidrena-utils.php
-          grep -Fq "'generation_time'      => '06:30'" includes/class-sidrena-utils.php
-          grep -Fq "'strict_publication'   => 'yes'" includes/class-sidrena-utils.php
-          grep -Fq "'failure_notifications' => 'yes'" includes/class-sidrena-utils.php
+          grep -Eq "'default_ref_date'[[:space:]]*=>[[:space:]]*'2026-09-10'" includes/class-sidrena-utils.php
+          grep -Eq "'fmcg_ref_date'[[:space:]]*=>[[:space:]]*'2025-05-02'" includes/class-sidrena-utils.php
+          grep -Eq "'generation_time'[[:space:]]*=>[[:space:]]*'06:30'" includes/class-sidrena-utils.php
+          grep -Eq "'strict_publication'[[:space:]]*=>[[:space:]]*'yes'" includes/class-sidrena-utils.php
+          grep -Eq "'failure_notifications'[[:space:]]*=>[[:space:]]*'yes'" includes/class-sidrena-utils.php
           grep -Fq "wp_schedule_event( self::publication_watch_timestamp(), 'hourly', 'sidrena_publication_watch' );" includes/class-sidrena-activator.php

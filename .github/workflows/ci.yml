@@ -84,6 +84,9 @@ jobs:
       - name: WooCommerce edition runtime smoke test
         run: php .github/tests/woocommerce-edition-smoke.php
 
+      - name: WooCommerce missing-dependency smoke test
+        run: php .github/tests/woocommerce-dependency-smoke.php
+
       - name: WooCommerce import state smoke test
         run: php .github/tests/woo-import-state-smoke.php
 
@@ -218,15 +221,17 @@ jobs:
           test "$WP_VERSION" = "$WP_STABLE"
           test "$WP_VERSION" = "$WOO_STABLE"
           grep -Fq 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' "$WP_MAIN"
-          grep -Fq 'Plugin Name: brendigo Sidrene cijene i cjenici' "$WOO_MAIN"
+          grep -Fq 'Plugin Name: Brendigo Sidrena Cijena' "$WOO_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-digitalni-cjenici$' "$WP_MAIN"
-          grep -q '^ \* Text Domain: brendigo-sidrene-cijene-cjenici$' "$WOO_MAIN"
+          grep -q '^ \* Text Domain: brendigo-sidrena-cijena$' "$WOO_MAIN"
           ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"
           grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WOO_MAIN"
           grep -q "define( 'SIDRENA_EDITION', 'wordpress' );" "$WP_MAIN"
           grep -q "define( 'SIDRENA_EDITION', 'woocommerce' );" "$WOO_MAIN"
           grep -q 'Author: brendigo' "$WP_MAIN"
-          grep -q 'Author: brendigo' "$WOO_MAIN"
+          grep -q 'Author: Brendigo' "$WOO_MAIN"
+          grep -q 'Developer: Brendigo' "$WOO_MAIN"
+          grep -Fq 'Developer URI: https://brendigo.com/' "$WOO_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WP_MAIN"
           grep -Fq 'Author URI: https://brendigo.com/' "$WOO_MAIN"
           grep -Fq 'Plugin URI: https://brendigo.com/sidrene-cijene/' "$WP_MAIN"
@@ -336,13 +341,13 @@ jobs:
           test -s "$WP/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: brendigo-sidrene-cijene-cjenici' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/sidrena-woocommerce.php"
           test -f "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
-          test -f "$WOO/languages/brendigo-sidrene-cijene-cjenici.pot"
+          test -f "$WOO/languages/brendigo-sidrena-cijena.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
           test ! -f "$WOO/languages/sidrena-woocommerce.pot"
           grep -Fq 'X-Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
-          grep -Fq 'X-Domain: brendigo-sidrene-cijene-cjenici' "$WOO/languages/brendigo-sidrene-cijene-cjenici.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-cijena' "$WOO/languages/brendigo-sidrena-cijena.pot"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
           php .github/tests/wordpress-edition-smoke.php "$WP"
@@ -487,3 +492,46 @@ jobs:
             echo 'Potential secret material detected in production files.' >&2
             exit 1
           fi
+
+
+  quality:
+    name: WPCS and PHPStan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install pinned quality tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          export COMPOSER_HOME="$RUNNER_TEMP/sidrena-quality-composer"
+          echo "COMPOSER_HOME=$COMPOSER_HOME" >> "$GITHUB_ENV"
+          composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require --no-interaction --no-progress \
+            dealerdirect/phpcodesniffer-composer-installer:1.2.1 \
+            wp-coding-standards/wpcs:3.4.1 \
+            phpstan/phpstan:2.2.13 \
+            php-stubs/woocommerce-stubs:11.1.2
+
+      - name: WordPress Coding Standards
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$COMPOSER_HOME/vendor/bin/phpcs" -i
+          "$COMPOSER_HOME/vendor/bin/phpcs" --standard=phpcs.xml.dist
+
+      - name: PHPStan static analysis
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$COMPOSER_HOME/vendor/bin/phpstan" analyse --configuration=phpstan.neon.dist --no-progress --error-format=table

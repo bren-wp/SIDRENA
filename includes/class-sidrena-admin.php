@@ -153,7 +153,6 @@ final class Sidrena_Admin {
 		return trim( $classes . ' sidrena-admin-screen sidrena-edition-body-' . $edition );
 	}
 
-	
 	public function action_links( $links ) {
 		if ( ! Sidrena_Utils::current_user_can_manage() ) {
 			return $links;
@@ -288,7 +287,6 @@ final class Sidrena_Admin {
 		<?php
 	}
 
-	
 	private function render_notice() {
 		if ( ! isset( $_GET['sid_notice'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
@@ -325,7 +323,6 @@ final class Sidrena_Admin {
 		$text = $messages[ $notice ][1];
 		echo '<div class="notice notice-' . esc_attr( $type ) . ' is-dismissible"><p>' . esc_html( $text ) . '</p></div>';
 	}
-
 
 	private function support_tab() {
 		$pdf_url         = Sidrena_Utils::support_pdf_url();
@@ -378,9 +375,7 @@ final class Sidrena_Admin {
 				<a class="button button-primary sid-primary" href="<?php echo esc_url( $install_url ); ?>"><?php echo esc_html( sprintf( __( 'Zatraži postavljanje - %s', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></a>
 			</section>
 
-
 		</div>
-
 
 		<?php
 	}
@@ -413,7 +408,6 @@ final class Sidrena_Admin {
 		</section>
 		<?php
 	}
-
 
 	private function help_tab() {
 		$woo = Sidrena_Utils::is_woocommerce_edition();
@@ -506,7 +500,14 @@ final class Sidrena_Admin {
 		$total_items      = max( 0, absint( $stats['products'] ) + absint( $stats['services'] ) );
 		$anchor_ready     = max( 0, $total_items - absint( $stats['missing_total'] ) );
 		$health_checks    = $this->health_checks( $stats, $last, $settings );
-		$health_issues    = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
+		$health_issues    = count(
+			array_filter(
+				$health_checks,
+				static function ( $check ) {
+				return empty( $check[0] );
+				}
+			)
+		);
 		$health_total     = max( 1, count( $health_checks ) );
 		$health_score     = max( 0, min( 100, (int) round( ( ( $health_total - $health_issues ) / $health_total ) * 100 ) ) );
 		$is_ready         = 0 === $health_issues;
@@ -766,7 +767,6 @@ final class Sidrena_Admin {
 		<?php
 	}
 
-
 	private function dashboard_metric( $label, $value, $icon, $caption, $tone = 'blue' ) {
 		?>
 		<section class="sid-dashboard-metric sid-dashboard-metric--<?php echo esc_attr( $tone ); ?>">
@@ -793,7 +793,7 @@ final class Sidrena_Admin {
 		$min    = (float) min( $prices );
 		$max    = (float) max( $prices );
 		if ( abs( $max - $min ) < 0.000001 ) {
-			$max += 1;
+			++$max;
 			$min = max( 0, $min - 1 );
 		}
 		$count  = count( $points );
@@ -898,7 +898,14 @@ final class Sidrena_Admin {
 		$sales_pending  = $stats['sale_incomplete'] + $stats['service_sale_incomplete'];
 		$sales_ready    = max( 0, $sales_total - $sales_pending );
 		$health_checks  = $this->health_checks( $stats, $last, $settings );
-		$health_issues  = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
+		$health_issues  = count(
+			array_filter(
+				$health_checks,
+				static function ( $check ) {
+				return empty( $check[0] );
+				}
+			)
+		);
 		?>
 		<div class="sid-page-head">
 			<div>
@@ -1265,7 +1272,6 @@ final class Sidrena_Admin {
 		<?php
 	}
 
-
 	private function archive_tab() {
 		$archive   = Sidrena_Utils::archive_index();
 		$stats     = Sidrena_Utils::archive_stats();
@@ -1331,7 +1337,11 @@ final class Sidrena_Admin {
 			</div>
 			<div class="sid-day-strip" role="list" aria-label="<?php esc_attr_e( 'Kalendar arhive', 'sidrena' ); ?>">
 				<?php for ( $offset = 34; $offset >= 0; --$offset ) : ?>
-					<?php $date = $today->modify( '-' . $offset . ' days' ); $key = $date->format( 'Y-m-d' ); $count = $days[ $key ] ?? 0; ?>
+					<?php
+					$date  = $today->modify( '-' . $offset . ' days' );
+					$key   = $date->format( 'Y-m-d' );
+					$count = $days[ $key ] ?? 0;
+					?>
 					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 					<div class="sid-day <?php echo $count ? 'has-files' : ''; ?>" role="listitem" title="<?php echo esc_attr( $date->format( 'd.m.Y.' ) . ' · ' . sprintf( _n( '%d datoteka', '%d datoteka', $count, 'sidrena' ), $count ) ); ?>">
 						<span><?php echo esc_html( $date->format( 'd' ) ); ?></span>
@@ -1406,8 +1416,8 @@ final class Sidrena_Admin {
 		<div class="sid-location">
 			<div class="sid-location-head">
 				<?php
-				$location_title = $location['code'] ?: __( 'Nova lokacija', 'sidrena' );
-				$location_address = $location['address'] ?: __( 'Adresa nije upisana', 'sidrena' );
+				$location_title   = $location['code'] ? $location['code'] : __( 'Nova lokacija', 'sidrena' );
+				$location_address = $location['address'] ? $location['address'] : __( 'Adresa nije upisana', 'sidrena' );
 				$remove_label = sprintf(
 					/* translators: %s: location code or fallback title. */
 					__( 'Ukloni lokaciju %s', 'sidrena' ),
@@ -1533,7 +1543,14 @@ final class Sidrena_Admin {
 			<div class="sid-table-wrap"><table class="widefat striped sid-log-table"><caption class="screen-reader-text"><?php esc_html_e( 'Dnevnik važnih SIDRENA događaja', 'sidrena' ); ?></caption><thead><tr><th scope="col"><?php esc_html_e( 'Vrijeme', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Događaj', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Status', 'sidrena' ); ?></th><th scope="col"><?php esc_html_e( 'Opis', 'sidrena' ); ?></th></tr></thead><tbody>
 			<?php if ( empty( $rows ) ) : ?><tr><td colspan="4"><?php esc_html_e( 'Dnevnik je zasad prazan.', 'sidrena' ); ?></td></tr><?php endif; ?>
 			<?php foreach ( $rows as $row ) : ?>
-			<?php $status_labels = array( 'success' => __( 'Uspješno', 'sidrena' ), 'warning' => __( 'Upozorenje', 'sidrena' ), 'error' => __( 'Greška', 'sidrena' ) ); $status = sanitize_key( $row['status'] ?? '' ); ?>
+			<?php
+			$status_labels = array(
+				'success' => __( 'Uspješno', 'sidrena' ),
+				'warning' => __( 'Upozorenje', 'sidrena' ),
+				'error'   => __( 'Greška', 'sidrena' ),
+			);
+			$status = sanitize_key( $row['status'] ?? '' );
+			?>
 			<tr><td><?php echo esc_html( Sidrena_Utils::format_mysql_datetime( $row['created_at'] ) ); ?></td><td><code><?php echo esc_html( $row['event_type'] ); ?></code></td><td><span class="sid-status sid-status-<?php echo esc_attr( $status ); ?>"><?php echo esc_html( $status_labels[ $status ] ?? ucfirst( $status ) ); ?></span></td><td><?php echo esc_html( $row['message'] ); ?></td></tr>
 			<?php endforeach; ?>
 			</tbody></table></div>
@@ -1665,9 +1682,9 @@ final class Sidrena_Admin {
 			$out[] = array(
 				'id'       => $id,
 				'enabled'  => $enabled,
-				'kind'     => $kind ?: 'objekt',
+				'kind'     => $kind ? $kind : 'objekt',
 				'address'  => $address,
-				'code'     => $code ?: '01',
+				'code'     => $code ? $code : '01',
 				'sequence' => max( 1, absint( $location['sequence'] ?? 1 ) ),
 			);
 		}
@@ -1741,7 +1758,11 @@ final class Sidrena_Admin {
 		$processed = 0;
 		$updated   = 0;
 		$skipped   = 0;
-		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+		while ( true ) {
+			$row = fgetcsv( $resource, 0, $delimiter );
+			if ( false === $row ) {
+				break;
+			}
 			++$processed;
 			$sku = isset( $row[ $map['sku'] ] ) ? sanitize_text_field( $row[ $map['sku'] ] ) : '';
 			if ( ! $sku ) {
@@ -1835,7 +1856,11 @@ final class Sidrena_Admin {
 		$processed = 0;
 		$updated   = 0;
 		$skipped   = 0;
-		while ( ( $row = fgetcsv( $resource, 0, $delimiter ) ) !== false ) {
+		while ( true ) {
+			$row = fgetcsv( $resource, 0, $delimiter );
+			if ( false === $row ) {
+				break;
+			}
 			++$processed;
 			$location_id = Sidrena_Utils::sanitize_location_id( $row[ $map['location_id'] ] ?? '' );
 			if ( ! isset( $valid_locations[ $location_id ] ) ) {
@@ -1949,12 +1974,12 @@ final class Sidrena_Admin {
 		return array( $resource, $delimiter, array_flip( $head ) );
 	}
 
-	private function write_stream_all( $resource, $contents ) {
+	private function write_stream_all( $stream, $contents ) {
 		$contents = (string) $contents;
 		$length   = strlen( $contents );
 		$offset   = 0;
 		while ( $offset < $length ) {
-			$written = fwrite( $resource, substr( $contents, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			$written = fwrite( $stream, substr( $contents, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 			if ( false === $written || 0 === $written ) {
 				return false;
 			}
@@ -1963,10 +1988,14 @@ final class Sidrena_Admin {
 		return true;
 	}
 
-	private function enforce_csv_row_limit( $resource, $delimiter, $row_limit = 50000 ) {
+	private function enforce_csv_row_limit( $stream, $delimiter, $row_limit = 50000 ) {
 		$row_limit = min( 50000, max( 1, absint( $row_limit ) ) );
 		$count     = 0;
-		while ( is_resource( $resource ) && false !== ( $row = fgetcsv( $resource, 0, $delimiter ) ) ) {
+		while ( is_resource( $stream ) ) {
+			$row = fgetcsv( $stream, 0, $delimiter );
+			if ( false === $row ) {
+				break;
+			}
 			unset( $row );
 			++$count;
 			if ( $count > $row_limit ) {
@@ -1974,16 +2003,15 @@ final class Sidrena_Admin {
 			}
 		}
 
-		if ( ! is_resource( $resource ) ) {
+		if ( ! is_resource( $stream ) ) {
 			return new WP_Error( 'upload_open' );
 		}
-		rewind( $resource );
-		if ( false === fgetcsv( $resource, 0, $delimiter ) ) {
+		rewind( $stream );
+		if ( false === fgetcsv( $stream, 0, $delimiter ) ) {
 			return new WP_Error( 'upload_header' );
 		}
 		return $count;
 	}
-
 
 	private function resolve_aliases( $map, $aliases ) {
 		foreach ( $aliases as $canonical => $names ) {
@@ -2023,7 +2051,8 @@ final class Sidrena_Admin {
 			if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
 				continue;
 			}
-			$this->safe_fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', get_post_meta( $item->get_id(), '_sidrena_reference_group', true ) ?: 'standard' ), ';' );
+			$reference_group = get_post_meta( $item->get_id(), '_sidrena_reference_group', true );
+			$this->safe_fputcsv( $out, array( Sidrena_Utils::get_product_code( $item ), $item->get_name(), '', '', $reference_group ? $reference_group : 'standard' ), ';' );
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
@@ -2056,7 +2085,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$product_table,
 					1000,
 					$offset
@@ -2064,7 +2093,7 @@ final class Sidrena_Admin {
 				ARRAY_A
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
+				$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
 				$this->safe_fputcsv(
 					$out,
@@ -2098,7 +2127,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$service_table,
 					1000,
 					$offset
@@ -2138,7 +2167,7 @@ final class Sidrena_Admin {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d",
+					'SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$location_table,
 					1000,
 					$offset
@@ -2146,7 +2175,7 @@ final class Sidrena_Admin {
 				ARRAY_A
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
+				$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
 				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
 				$this->safe_fputcsv(
 					$out,
@@ -2302,7 +2331,6 @@ final class Sidrena_Admin {
 		return $stats;
 	}
 
-
 	private function audit_stats() {
 		$products        = 0;
 		$missing_current = 0;
@@ -2351,7 +2379,6 @@ final class Sidrena_Admin {
 				}
 			}
 		}
-
 
 		if ( Sidrena_Utils::is_wordpress_edition() ) {
 			$standalone                = Sidrena_Standalone::audit_stats();
@@ -2423,8 +2450,9 @@ final class Sidrena_Admin {
 				}
 				yield $product;
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( count( $products ) === 100 );
+		} while ( 100 === $product_count );
 	}
 
 	private function validated_import_price( $value ) {
@@ -2445,10 +2473,10 @@ final class Sidrena_Admin {
 		return $best;
 	}
 
-	private function post_value( $key, $default = '' ) {
+	private function post_value( $key, $fallback = '' ) {
 		// Callers invoke guard_post() before reading mutable form data and apply field-specific sanitization after retrieval.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce is verified by the action-specific guard before this helper is called.
-		$value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
+		$value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $fallback;
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		return $value;
 	}
@@ -2467,7 +2495,6 @@ final class Sidrena_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce is verified by guard_post(); map_deep sanitizes every scalar after wp_unslash().
 		return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
 	}
-
 
 	public function check_public_access() {
 		$this->guard_post( 'sidrena_check_public_access' );

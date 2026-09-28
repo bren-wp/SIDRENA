@@ -84,7 +84,7 @@ final class Sidrena_CLI {
 		$date    = wp_date( 'Y-m-d' );
 
 		do {
-			$query = new WC_Product_Query(
+			$query    = new WC_Product_Query(
 				array(
 					'limit'   => 100,
 					'page'    => $page,
@@ -130,8 +130,9 @@ final class Sidrena_CLI {
 					}
 				}
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( 100 === count( $products ) );
+		} while ( 100 === $product_count );
 
 		if ( ! $dry_run && $filled ) {
 			Sidrena_Pricelist::queue_regeneration();
@@ -139,7 +140,11 @@ final class Sidrena_CLI {
 				'cli_fill',
 				'success',
 				sprintf( 'WP-CLI popunio je %d praznih Sidrena cijena.', $filled ),
-				array( 'today' => $today ? 'yes' : 'no', 'seen' => $seen, 'skipped' => $skipped )
+				array(
+					'today'   => $today ? 'yes' : 'no',
+					'seen'    => $seen,
+					'skipped' => $skipped,
+				)
 			);
 		}
 
@@ -160,23 +165,53 @@ final class Sidrena_CLI {
 		$settings = Sidrena_Utils::settings();
 		$last     = get_option( 'sidrena_last_run', array() );
 		$next     = wp_next_scheduled( 'sidrena_daily_generation' );
-		$rows = array(
-			array( 'key' => 'version', 'value' => SIDRENA_VERSION ),
-			array( 'key' => 'generation_time', 'value' => $settings['generation_time'] ),
-			array( 'key' => 'retention_days', 'value' => max( 30, absint( $settings['retention_days'] ) ) ),
-			array( 'key' => 'next_run', 'value' => $next ? wp_date( DATE_ATOM, $next ) : 'not-scheduled' ),
-			array( 'key' => 'last_run', 'value' => ! empty( $last['generated_at'] ) ? $last['generated_at'] : 'never' ),
-			array( 'key' => 'edition', 'value' => Sidrena_Utils::edition() ),
-			array( 'key' => 'audit_rows', 'value' => Sidrena_Audit::count_rows() ),
+		$rows     = array(
+			array(
+				'key'   => 'version',
+				'value' => SIDRENA_VERSION,
+			),
+			array(
+				'key'   => 'generation_time',
+				'value' => $settings['generation_time'],
+			),
+			array(
+				'key'   => 'retention_days',
+				'value' => max( 30, absint( $settings['retention_days'] ) ),
+			),
+			array(
+				'key'   => 'next_run',
+				'value' => $next ? wp_date( DATE_ATOM, $next ) : 'not-scheduled',
+			),
+			array(
+				'key'   => 'last_run',
+				'value' => ! empty( $last['generated_at'] ) ? $last['generated_at'] : 'never',
+			),
+			array(
+				'key'   => 'edition',
+				'value' => Sidrena_Utils::edition(),
+			),
+			array(
+				'key'   => 'audit_rows',
+				'value' => Sidrena_Audit::count_rows(),
+			),
 			array(
 				'key'   => 'history_rows',
 				'value' => ( class_exists( 'Sidrena_History' ) ? Sidrena_History::count_rows() : 0 )
 					+ Sidrena_Service_History::count_rows()
 					+ ( class_exists( 'Sidrena_Location_History' ) ? Sidrena_Location_History::count_rows() : 0 ),
 			),
-			array( 'key' => 'public_files', 'value' => count( Sidrena_Utils::public_index() ) ),
-			array( 'key' => 'archive_files', 'value' => count( Sidrena_Utils::archive_index() ) ),
-			array( 'key' => 'strict_publication', 'value' => $settings['strict_publication'] ),
+			array(
+				'key'   => 'public_files',
+				'value' => count( Sidrena_Utils::public_index() ),
+			),
+			array(
+				'key'   => 'archive_files',
+				'value' => count( Sidrena_Utils::archive_index() ),
+			),
+			array(
+				'key'   => 'strict_publication',
+				'value' => $settings['strict_publication'],
+			),
 		);
 		WP_CLI\Utils\format_items( 'table', $rows, array( 'key', 'value' ) );
 	}

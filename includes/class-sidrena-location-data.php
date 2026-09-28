@@ -34,9 +34,9 @@ final class Sidrena_Location_Data {
 		global $wpdb;
 		$table = self::table_name();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location price/availability table requires direct bounded CRUD.
-		$rows  = $wpdb->get_results(
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT product_id, variation_id, price, anchor_price, availability, updated_at FROM %i WHERE location_id = %s",
+				'SELECT product_id, variation_id, price, anchor_price, availability, updated_at FROM %i WHERE location_id = %s',
 				$table,
 				$location_id
 			),

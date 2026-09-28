@@ -66,7 +66,7 @@ final class Sidrena_History {
 			return;
 		}
 
-		$ids = array_keys( self::$pending_meta_products );
+		$ids                         = array_keys( self::$pending_meta_products );
 		self::$pending_meta_products = array();
 		foreach ( $ids as $product_id ) {
 			$this->capture_product( absint( $product_id ), 'price-meta-change' );
@@ -116,9 +116,9 @@ final class Sidrena_History {
 		$key   = $variation_id ? 'variation_id' : 'product_id';
 		$id    = $variation_id ? $variation_id : $product_id;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-		$last  = $wpdb->get_row(
+		$last = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, regular_price, sale_price FROM %i WHERE %i = %d ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				'SELECT price, regular_price, sale_price FROM %i WHERE %i = %d ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$key,
 				$id
@@ -231,6 +231,7 @@ final class Sidrena_History {
 			try {
 				return new DateTimeImmutable( $from->date( 'Y-m-d H:i:s' ), wp_timezone() );
 			} catch ( Exception $e ) {
+				unset( $e );
 				// Fall through to the current WordPress time.
 			}
 		}
@@ -245,9 +246,9 @@ final class Sidrena_History {
 	 */
 	private function calculate_lowest_before( $product, DateTimeImmutable $start ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'sidrena_price_history';
-		$id    = $product->get_id();
-		$key   = $product->is_type( 'variation' ) ? 'variation_id' : 'product_id';
+		$table        = $wpdb->prefix . 'sidrena_price_history';
+		$id           = $product->get_id();
+		$key          = $product->is_type( 'variation' ) ? 'variation_id' : 'product_id';
 		$window_start = $start->modify( '-30 days' );
 		$start_sql    = $start->format( 'Y-m-d H:i:s' );
 		$window_sql   = $window_start->format( 'Y-m-d H:i:s' );
@@ -255,7 +256,7 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1",
+				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$key,
 				$id,
@@ -267,7 +268,7 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$first = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT MIN(recorded_at) FROM %i WHERE %i = %d",
+				'SELECT MIN(recorded_at) FROM %i WHERE %i = %d',
 				$table,
 				$key,
 				$id
@@ -285,7 +286,7 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$rows = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT price FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC",
+				'SELECT price FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC',
 				$table,
 				$key,
 				$id,
@@ -302,8 +303,8 @@ final class Sidrena_History {
 		}
 
 		return array(
-			'ready'         => ! empty( $values ),
-			'price'         => empty( $values ) ? '' : min( $values ),
+			'ready'         => true,
+			'price'         => min( $values ),
 			'coverage_from' => sanitize_text_field( $baseline['recorded_at'] ),
 		);
 	}
@@ -313,33 +314,53 @@ final class Sidrena_History {
 	 */
 	public static function sale_reference( $product ) {
 		if ( ! $product instanceof WC_Product ) {
-			return array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
+			return array(
+				'status' => 'not_applicable',
+				'price'  => '',
+				'source' => '',
+			);
 		}
 
 		$id        = $product->get_id();
 		$exemption = sanitize_key( (string) get_post_meta( $id, '_sidrena_sale_reference_exemption', true ) );
 		if ( in_array( $exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
-			return array( 'status' => 'exempt', 'price' => '', 'source' => $exemption );
+			return array(
+				'status' => 'exempt',
+				'price'  => '',
+				'source' => $exemption,
+			);
 		}
 		if ( ! $product->is_on_sale() ) {
-			return array( 'status' => 'not_applicable', 'price' => '', 'source' => '' );
+			return array(
+				'status' => 'not_applicable',
+				'price'  => '',
+				'source' => '',
+			);
 		}
 
 		$manual = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_lowest_30_manual', true ) );
 		if ( '' !== $manual ) {
-			return array( 'status' => 'ready', 'price' => (float) $manual, 'source' => 'manual' );
+			return array(
+				'status' => 'ready',
+				'price'  => (float) $manual,
+				'source' => 'manual',
+			);
 		}
 
 		$source = sanitize_key( (string) get_post_meta( $id, '_sidrena_sale_reference_source', true ) );
 		$price  = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_sale_reference_price', true ) );
 		if ( 'auto' === $source && '' !== $price ) {
-			return array( 'status' => 'ready', 'price' => (float) $price, 'source' => 'auto' );
+			return array(
+				'status' => 'ready',
+				'price'  => (float) $price,
+				'source' => 'auto',
+			);
 		}
 
 		return array(
 			'status'        => 'incomplete',
 			'price'         => '',
-			'source'        => $source ?: 'incomplete',
+			'source'        => $source ? $source : 'incomplete',
 			'coverage_from' => sanitize_text_field( (string) get_post_meta( $id, '_sidrena_sale_reference_coverage_from', true ) ),
 		);
 	}
@@ -354,11 +375,11 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, product_id, variation_id, price, recorded_at
+				'SELECT id, product_id, variation_id, price, recorded_at
 				FROM %i
 				WHERE price IS NOT NULL
 				ORDER BY id DESC
-				LIMIT %d",
+				LIMIT %d',
 				$table,
 				$scan
 			),
@@ -368,7 +389,7 @@ final class Sidrena_History {
 		$newest  = array();
 		$changes = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
+			$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
 			if ( ! $item_id ) {
 				continue;
 			}
@@ -385,8 +406,8 @@ final class Sidrena_History {
 				continue;
 			}
 
-			$product = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
-			$name    = $product ? $product->get_name() : get_the_title( $item_id );
+			$product   = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
+			$name      = $product ? $product->get_name() : get_the_title( $item_id );
 			$changes[] = array(
 				'item_id'     => $item_id,
 				/* translators: %d: WooCommerce product or variation ID. */
@@ -415,10 +436,10 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$latest = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT product_id, variation_id, price, recorded_at
+				'SELECT product_id, variation_id, price, recorded_at
 				FROM %i
 				WHERE price IS NOT NULL
-				ORDER BY id DESC LIMIT 1",
+				ORDER BY id DESC LIMIT 1',
 				$table
 			),
 			ARRAY_A
@@ -428,7 +449,7 @@ final class Sidrena_History {
 			return array();
 		}
 
-		$item_id   = absint( $latest['variation_id'] ) ?: absint( $latest['product_id'] );
+		$item_id   = absint( $latest['variation_id'] ) ? absint( $latest['variation_id'] ) : absint( $latest['product_id'] );
 		$cutoff_dt = new DateTimeImmutable( '-' . $days . ' days', wp_timezone() );
 		$cutoff    = $cutoff_dt->format( 'Y-m-d H:i:s' );
 
@@ -436,9 +457,9 @@ final class Sidrena_History {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT price, recorded_at FROM %i
+					'SELECT price, recorded_at FROM %i
 					WHERE variation_id = %d AND price IS NOT NULL AND recorded_at >= %s
-					ORDER BY recorded_at ASC, id ASC",
+					ORDER BY recorded_at ASC, id ASC',
 					$table,
 					absint( $latest['variation_id'] ),
 					$cutoff
@@ -449,9 +470,9 @@ final class Sidrena_History {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT price, recorded_at FROM %i
+					'SELECT price, recorded_at FROM %i
 					WHERE product_id = %d AND variation_id = 0 AND price IS NOT NULL AND recorded_at >= %s
-					ORDER BY recorded_at ASC, id ASC",
+					ORDER BY recorded_at ASC, id ASC',
 					$table,
 					absint( $latest['product_id'] ),
 					$cutoff
@@ -524,7 +545,7 @@ final class Sidrena_History {
 	private function catalog_item_ids() {
 		$page = 1;
 		do {
-			$query = new WC_Product_Query(
+			$query    = new WC_Product_Query(
 				array(
 					'limit'   => 100,
 					'page'    => $page,
@@ -544,8 +565,9 @@ final class Sidrena_History {
 					yield absint( $product->get_id() );
 				}
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( count( $products ) === 100 );
+		} while ( 100 === $product_count );
 	}
 
 	private function prune_history() {
@@ -555,7 +577,7 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM %i WHERE recorded_at < %s",
+				'DELETE FROM %i WHERE recorded_at < %s',
 				$table,
 				$cutoff
 			)

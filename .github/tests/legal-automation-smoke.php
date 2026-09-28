@@ -53,10 +53,10 @@ foreach ( array( 'MAX_MESSAGE_BYTES', 'MAX_CONTEXT_BYTES', 'MAX_ROWS', 'table_ex
 	sidrena_legal_assert( false !== strpos( $audit_source, $marker ), 'Audit hardening marker missing: ' . $marker );
 }
 
-sidrena_legal_assert( false !== strpos( $utils_source, "'default_ref_date'     => '2026-09-10'" ), 'Default reference date is not aligned with NN 101/2026.' );
-sidrena_legal_assert( false !== strpos( $utils_source, "'fmcg_ref_date'        => '2025-05-02'" ), 'FMCG reference date is not preserved.' );
-sidrena_legal_assert( false !== strpos( $utils_source, "'generation_time'      => '06:30'" ), 'Default generation time is not automated early enough.' );
-sidrena_legal_assert( false !== strpos( $utils_source, "'strict_publication'   => 'yes'" ), 'Strict publication is not enabled by default.' );
+sidrena_legal_assert( 1 === preg_match( "/'default_ref_date'\\s*=>\\s*'2026-09-10'/", $utils_source ), 'Default reference date is not aligned with NN 101/2026.' );
+sidrena_legal_assert( 1 === preg_match( "/'fmcg_ref_date'\\s*=>\\s*'2025-05-02'/", $utils_source ), 'FMCG reference date is not preserved.' );
+sidrena_legal_assert( 1 === preg_match( "/'generation_time'\\s*=>\\s*'06:30'/", $utils_source ), 'Default generation time is not automated early enough.' );
+sidrena_legal_assert( 1 === preg_match( "/'strict_publication'\\s*=>\\s*'yes'/", $utils_source ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
 sidrena_legal_assert( false === strpos( $utils_source, "'business_name'        =>" ) && false === strpos( $utils_source, "'show_business_identity' =>" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
 sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'         =>" ) && false === strpos( $utils_source, "'anchor_tooltip_text'    =>" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );

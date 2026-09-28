@@ -57,7 +57,7 @@ $expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
 
 preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
 $actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
-$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrene-cijene-cjenici';
+$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrena-cijena';
 
 require $main;
 
@@ -81,8 +81,10 @@ if ( 'wordpress' === $edition ) {
 	sidrena_entry_assert( ! class_exists( 'Sidrena_Products' ), 'Woo product class leaked into WordPress package.' );
 	sidrena_entry_assert( ! class_exists( 'Sidrena_Bulk' ), 'Woo bulk class leaked into WordPress package.' );
 } else {
-	sidrena_entry_assert( class_exists( 'Sidrena_Products' ), 'WooCommerce package did not load product integration.' );
-	sidrena_entry_assert( class_exists( 'Sidrena_Bulk' ), 'WooCommerce package did not load bulk integration.' );
+	sidrena_entry_assert( ! class_exists( 'Sidrena_Products' ), 'WooCommerce product runtime must remain deferred until the dependency-safe plugins_loaded bootstrap.' );
+	sidrena_entry_assert( ! class_exists( 'Sidrena_Bulk' ), 'WooCommerce bulk runtime must remain deferred until the dependency-safe plugins_loaded bootstrap.' );
+	sidrena_entry_assert( is_file( $root . '/includes/class-sidrena-products.php' ), 'WooCommerce package is missing product integration source.' );
+	sidrena_entry_assert( is_file( $root . '/includes/class-sidrena-bulk.php' ), 'WooCommerce package is missing bulk integration source.' );
 	sidrena_entry_assert( ! class_exists( 'Sidrena_Standalone' ), 'Standalone catalog leaked into WooCommerce package.' );
 }
 

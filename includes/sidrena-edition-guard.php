@@ -20,13 +20,30 @@ if ( ! defined( 'SIDRENA_EDITION' ) && ! class_exists( 'Sidrena_Plugin', false )
 }
 
 $sidrena_conflicting_file = $sidrena_entry_file;
+$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'wordpress';
+$sidrena_active_key       = defined( 'SIDRENA_EDITION' ) ? (string) SIDRENA_EDITION : 'legacy';
+
+$sidrena_edition_labels = array(
+	'wordpress'   => 'SIDRENA WordPress',
+	'woocommerce' => 'Brendigo Sidrena Cijena',
+	'legacy'      => 'starije SIDRENA izdanje',
+);
+
+$sidrena_attempted_label  = isset( $sidrena_edition_labels[ $sidrena_attempted_key ] ) ? $sidrena_edition_labels[ $sidrena_attempted_key ] : 'SIDRENA izdanje';
+$sidrena_active_label     = isset( $sidrena_edition_labels[ $sidrena_active_key ] ) ? $sidrena_edition_labels[ $sidrena_active_key ] : 'drugo SIDRENA izdanje';
+$sidrena_conflict_message = sprintf(
+	/* translators: 1: currently active SIDRENA edition, 2: SIDRENA edition being activated. */
+	__( 'Aktivno izdanje: %1$s. Pokušavate aktivirati: %2$s. Deaktivirajte aktivno izdanje prije aktivacije drugoga. Deaktivacija ne briše SIDRENA poslovne podatke.', 'sidrena' ),
+	$sidrena_active_label,
+	$sidrena_attempted_label
+);
 
 register_activation_hook(
 	$sidrena_conflicting_file,
-	static function () {
+	static function () use ( $sidrena_conflict_message ) {
 		wp_die(
-			esc_html__( 'Drugo ili starije Sidrena izdanje je već aktivno. Deaktivirajte ga prije aktivacije ovog plugina.', 'sidrena' ),
-			esc_html__( 'Sidrena — sukob izdanja', 'sidrena' ),
+			esc_html( $sidrena_conflict_message ),
+			esc_html__( 'SIDRENA — sukob izdanja', 'sidrena' ),
 			array( 'back_link' => true )
 		);
 	}
@@ -50,7 +67,7 @@ add_action(
 
 add_action(
 	'admin_notices',
-	static function () {
+	static function () use ( $sidrena_conflict_message ) {
 		if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
 			return;
 		}
@@ -60,7 +77,7 @@ add_action(
 			return;
 		}
 
-		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno SIDRENA izdanje. Konfliktno izdanje je deaktivirano. Na ekranu Dodataka ostavite aktivno samo izdanje koje želite koristiti.', 'sidrena' ) . '</p></div>';
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $sidrena_conflict_message ) . '</p></div>';
 	}
 );
 

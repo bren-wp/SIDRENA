@@ -38,7 +38,7 @@ final class Sidrena_Services {
 		register_post_type(
 			'sidrena_service',
 			array(
-				'labels' => array(
+				'labels'              => array(
 					'name'          => __( 'Usluge', 'sidrena' ),
 					'singular_name' => __( 'Usluga', 'sidrena' ),
 					'add_new_item'  => __( 'Dodaj uslugu', 'sidrena' ),
@@ -153,14 +153,18 @@ final class Sidrena_Services {
 		$location_anchor_prices = get_post_meta( $post->ID, '_sidrena_service_location_anchor_prices', true );
 		$location_prices        = is_array( $location_prices ) ? $location_prices : array();
 		$location_anchor_prices = is_array( $location_anchor_prices ) ? $location_anchor_prices : array();
-		$locations       = Sidrena_Utils::locations();
+		$locations              = Sidrena_Utils::locations();
 		?>
 		<div class="sid-service-locations">
 			<h3><?php esc_html_e( 'Cijena po lokaciji', 'sidrena' ); ?></h3>
 			<p class="description"><?php esc_html_e( 'Ako ova usluga ima različitu cijenu po poslovnici ili webshopu, ovdje unesite lokalnu maloprodajnu cijenu. Prazno polje koristi osnovnu cijenu usluge.', 'sidrena' ); ?></p>
 			<div class="sidrena-service-grid">
 			<?php foreach ( $locations as $location ) : ?>
-				<?php if ( 'yes' !== ( $location['enabled'] ?? '' ) ) { continue; } $location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ); ?>
+				<?php
+				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
+					continue;
+				} $location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+				?>
 				<p class="sid-service-location-card">
 					<strong class="sid-service-location-title"><?php echo esc_html( ( $location['code'] ?? $location_id ) . ' · ' . ( $location['address'] ?? '' ) ); ?></strong>
 					<span class="sid-service-location-fields">
@@ -178,6 +182,7 @@ final class Sidrena_Services {
 	}
 
 	public function save( $post_id, $post ) {
+		unset( $post );
 		if ( ! isset( $_POST['sidrena_service_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['sidrena_service_nonce'] ) ), 'sidrena_service_save' ) ) {
 			return;
 		}
@@ -189,12 +194,12 @@ final class Sidrena_Services {
 		}
 
 		$map = array(
-			'sidrena_service_current_price' => '_sidrena_service_current_price',
-			'sidrena_service_anchor_price'  => '_sidrena_service_anchor_price',
-			'sidrena_service_anchor_date'   => '_sidrena_service_anchor_date',
-			'sidrena_service_sale_name'     => '_sidrena_service_sale_name',
+			'sidrena_service_current_price'    => '_sidrena_service_current_price',
+			'sidrena_service_anchor_price'     => '_sidrena_service_anchor_price',
+			'sidrena_service_anchor_date'      => '_sidrena_service_anchor_date',
+			'sidrena_service_sale_name'        => '_sidrena_service_sale_name',
 			'sidrena_service_lowest_30_manual' => '_sidrena_service_lowest_30_manual',
-			'sidrena_service_type'         => '_sidrena_service_type',
+			'sidrena_service_type'             => '_sidrena_service_type',
 		);
 
 		foreach ( $map as $field => $meta ) {
@@ -217,7 +222,11 @@ final class Sidrena_Services {
 			}
 		}
 
-		foreach ( array( 'sidrena_service_scope' => '_sidrena_service_scope', 'sidrena_service_costs' => '_sidrena_service_costs', 'sidrena_service_goods' => '_sidrena_service_goods' ) as $field => $meta ) {
+		foreach ( array(
+			'sidrena_service_scope' => '_sidrena_service_scope',
+			'sidrena_service_costs' => '_sidrena_service_costs',
+			'sidrena_service_goods' => '_sidrena_service_goods',
+		) as $field => $meta ) {
 			$value = isset( $_POST[ $field ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ) : '';
 			if ( '' === $value ) {
 				delete_post_meta( $post_id, $meta );
@@ -240,8 +249,8 @@ final class Sidrena_Services {
 
 		$existing_location_prices = get_post_meta( $post_id, '_sidrena_service_location_prices', true );
 		$existing_location_prices = is_array( $existing_location_prices ) ? $existing_location_prices : array();
-		$location_prices = array();
-		$posted_prices   = isset( $_POST['sidrena_service_location_price'] ) && is_array( $_POST['sidrena_service_location_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_price'] ), 'sanitize_text_field' ) : array();
+		$location_prices          = array();
+		$posted_prices            = isset( $_POST['sidrena_service_location_price'] ) && is_array( $_POST['sidrena_service_location_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_price'] ), 'sanitize_text_field' ) : array();
 		foreach ( $posted_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
 			$location_price = Sidrena_Utils::validated_nonnegative_decimal( $location_price );
@@ -263,8 +272,8 @@ final class Sidrena_Services {
 
 		$existing_location_anchor_prices = get_post_meta( $post_id, '_sidrena_service_location_anchor_prices', true );
 		$existing_location_anchor_prices = is_array( $existing_location_anchor_prices ) ? $existing_location_anchor_prices : array();
-		$location_anchor_prices = array();
-		$posted_anchor_prices   = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_anchor_price'] ), 'sanitize_text_field' ) : array();
+		$location_anchor_prices          = array();
+		$posted_anchor_prices            = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_anchor_price'] ), 'sanitize_text_field' ) : array();
 		foreach ( $posted_anchor_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
 			$location_price = Sidrena_Utils::validated_nonnegative_decimal( $location_price );
@@ -283,7 +292,6 @@ final class Sidrena_Services {
 		} else {
 			delete_post_meta( $post_id, '_sidrena_service_location_anchor_prices' );
 		}
-
 	}
 
 	public function after_insert_post( $post_id, $post, $update, $post_before ) {
@@ -350,7 +358,7 @@ final class Sidrena_Services {
 	}
 
 	public function shortcode( $atts = array() ) {
-		$atts = shortcode_atts(
+		$atts     = shortcode_atts(
 			array(
 				'po_stranici' => 50,
 			),
@@ -397,12 +405,12 @@ final class Sidrena_Services {
 			if ( ! $date ) {
 				$date = Sidrena_Utils::settings()['default_ref_date'];
 			}
-			$out .= '<tr>';
+			$out  .= '<tr>';
 			$type  = trim( (string) get_post_meta( $service->ID, '_sidrena_service_type', true ) );
 			$scope = trim( (string) get_post_meta( $service->ID, '_sidrena_service_scope', true ) );
 			$costs = trim( (string) get_post_meta( $service->ID, '_sidrena_service_costs', true ) );
 			$goods = trim( (string) get_post_meta( $service->ID, '_sidrena_service_goods', true ) );
-			$out .= '<th scope="row"><span class="sidrena-service-name">' . esc_html( get_the_title( $service ) ) . '</span>';
+			$out  .= '<th scope="row"><span class="sidrena-service-name">' . esc_html( get_the_title( $service ) ) . '</span>';
 			if ( $type ) {
 				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Vrsta:', 'sidrena' ) . '</strong> ' . esc_html( $type ) . '</small>';
 			}
@@ -415,14 +423,14 @@ final class Sidrena_Services {
 			if ( $goods ) {
 				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Ugradbena/zamjenska roba:', 'sidrena' ) . '</strong> ' . nl2br( esc_html( $goods ) ) . '</small>';
 			}
-			$out .= '</th>';
+			$out         .= '</th>';
 			$current_text = '' === $current ? '—' : Sidrena_Utils::money( $current ) . ' €';
 			$anchor_text  = '' === $anchor ? '—' : Sidrena_Utils::money( $anchor ) . ' €';
-			$out .= '<td data-label="' . esc_attr__( 'Aktualna cijena', 'sidrena' ) . '">' . esc_html( $current_text ) . '</td>';
+			$out         .= '<td data-label="' . esc_attr__( 'Aktualna cijena', 'sidrena' ) . '">' . esc_html( $current_text ) . '</td>';
 			if ( $show_lowest ) {
 				$reference      = Sidrena_Service_History::sale_reference( $service->ID );
 				$reference_text = 'ready' === $reference['status'] ? Sidrena_Utils::money( $reference['price'] ) . ' €' : '—';
-				$out .= '<td data-label="' . esc_attr__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . '">' . esc_html( $reference_text ) . '</td>';
+				$out           .= '<td data-label="' . esc_attr__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ) . '">' . esc_html( $reference_text ) . '</td>';
 			}
 			$out .= '<td data-label="' . esc_attr__( 'Dodatna cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
 			if ( '' !== $anchor ) {
@@ -435,7 +443,7 @@ final class Sidrena_Services {
 
 		if ( $total_pages > 1 ) {
 			$base_url = remove_query_arg( 'sidrena_usluge_stranica' );
-			$out .= '<nav class="sidrena-services__pagination" aria-label="' . esc_attr__( 'Stranice cjenika usluga', 'sidrena' ) . '">';
+			$out     .= '<nav class="sidrena-services__pagination" aria-label="' . esc_attr__( 'Stranice cjenika usluga', 'sidrena' ) . '">';
 			if ( $page > 1 ) {
 				$out .= '<a rel="prev" href="' . esc_url( add_query_arg( 'sidrena_usluge_stranica', $page - 1, $base_url ) ) . '">' . esc_html__( 'Prethodna stranica', 'sidrena' ) . '</a>';
 			}
@@ -465,5 +473,4 @@ final class Sidrena_Services {
 			)
 		);
 	}
-
 }

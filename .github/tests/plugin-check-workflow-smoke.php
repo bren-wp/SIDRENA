@@ -43,7 +43,7 @@ sidrena_plugin_check_workflow_assert(
 
 sidrena_plugin_check_workflow_assert(
 	false !== strpos( $check, 'brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $check, 'brendigo-sidrene-cijene-cjenici' )
+	&& false !== strpos( $check, 'brendigo-sidrena-cijena' )
 	&& 2 === substr_count( $check, 'bash tools/run-plugin-check.sh' ),
 	'Plugin Check must run the real checker for both public WordPress and WooCommerce slugs/text domains.'
 );

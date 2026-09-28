@@ -1,10 +1,10 @@
-=== brendigo Sidrene cijene i cjenici ===
+=== Brendigo Sidrena Cijena ===
 Contributors: brendigo
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.24
+Stable tag: 1.0.25
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Reference prices, 30-day sale references, CSV/XML price lists, locations and arc
 
 == Description ==
 
-**brendigo Sidrene cijene i cjenici** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
+**Brendigo Sidrena Cijena** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
 
 WooCommerce remains the canonical product and variation source. SIDRENA does not create a duplicate product catalogue; it adds the price-record and publication tools needed around the existing store catalogue.
 
@@ -102,6 +102,10 @@ Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA
 
 No. Existing WooCommerce products and variations remain the source of truth.
 
+= What happens if WooCommerce is deactivated? =
+
+The WooCommerce-specific SIDRENA runtime stays inactive and shows a scoped notice on the Plugins screen. It does not register WooCommerce hooks or publish WooCommerce price lists until WooCommerce is active again.
+
 = Does variation switching require an additional REST request? =
 
 The standard variation payload contains SIDRENA reference-price markup without an additional request. REST remains a compatibility fallback for themes or builders that remove the standard payload.
@@ -128,6 +132,15 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.25 =
+
+* Renamed the WooCommerce edition to Brendigo Sidrena Cijena and aligned its public text domain/Plugin Check slug to brendigo-sidrena-cijena.
+* Delayed all WooCommerce-specific runtime includes until WooCommerce is actually available on plugins_loaded.
+* Added a defensive missing-WooCommerce safe state and a scoped Plugins-screen notice without registering WooCommerce hooks or running upgrade/publication scheduling.
+* Improved the two-edition conflict guard so activation errors identify the active and attempted editions and explain the safe switch path without deleting business data.
+* Added regression coverage for a missing/deactivated WooCommerce dependency and refreshed legal/source provenance documentation from official Croatian, WordPress and WooCommerce sources.
+* Removed obsolete funding-related documentation; SIDRENA remains fully functional without paid activation or feature locks.
 
 = 1.0.24 =
 
