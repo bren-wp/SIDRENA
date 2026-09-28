@@ -86,7 +86,8 @@ def should_process(path: pathlib.Path) -> bool:
 
 def has_metadata(text: str) -> bool:
     head = "\n".join(text.splitlines()[:24])
-    return AUTHOR in head and PLUGIN_URI in head and AUTHOR_URI in head
+    author_present = AUTHOR in head or LEGACY_AUTHOR in head
+    return author_present and PLUGIN_URI in head and AUTHOR_URI in head
 
 
 def apply_entrypoint(text: str) -> str:
@@ -116,7 +117,6 @@ def add_after_shebang(text: str, header: str) -> str:
 
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
-    text = text.replace(LEGACY_AUTHOR, AUTHOR)
     if rel in ENTRYPOINTS:
         return apply_entrypoint(text)
     if has_metadata(text):
