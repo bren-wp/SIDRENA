@@ -32,8 +32,8 @@ Svi vizuali ispod učitavaju se **izravno iz produkcijskih asseta ovog repozitor
 
 <table>
 <tr>
-<td width="50%" align="center"><img src="assets/images/logo-wordpress.svg" alt="SIDRENA WordPress — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WordPress logo</strong></td>
-<td width="50%" align="center"><img src="assets/images/logo-woocommerce.svg" alt="SIDRENA WooCommerce — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WooCommerce logo</strong></td>
+<td width="50%" align="center"><img src="assets/images/logo-brendigo-standalone.svg" alt="Brendigo Sidrene cijene i digitalni cjenici — produkcijski logo" width="420"><br><strong>Brendigo standalone edition logo</strong></td>
+<td width="50%" align="center"><img src="assets/images/logo-brendigo-store.svg" alt="Brendigo Sidrene cijene i cjenici — produkcijski logo" width="420"><br><strong>Brendigo web-store edition logo</strong></td>
 </tr>
 <tr>
 <td width="50%" align="center"><img src="branding/rendered/plugin-cover-wordpress.png" alt="SIDRENA WordPress — aktualni plugin cover" width="100%"><br><strong>WordPress plugin cover</strong></td>
@@ -84,7 +84,7 @@ SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji že
 <table>
 <tr>
 <td width="50%" valign="top">
-<p align="center"><img src="assets/images/logo-wordpress.svg" alt="Sidrena WordPress" width="390"></p>
+<p align="center"><img src="assets/images/logo-brendigo-standalone.svg" alt="Sidrena WordPress" width="390"></p>
 <p><strong>Sidrena WordPress</strong> namijenjena je web stranicama koje žele upravljati cijenama kroz vlastiti katalog ili postojeći javni WordPress sadržaj.</p>
 <ul>
 <li>proizvodi i usluge</li>
@@ -96,7 +96,7 @@ SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji že
 </ul>
 </td>
 <td width="50%" valign="top">
-<p align="center"><img src="assets/images/logo-woocommerce.svg" alt="Sidrena WooCommerce" width="390"></p>
+<p align="center"><img src="assets/images/logo-brendigo-store.svg" alt="Sidrena WooCommerce" width="390"></p>
 <p><strong>Sidrena WooCommerce</strong> radi izravno s postojećim WooCommerce proizvodima i varijacijama.</p>
 <ul>
 <li>bez zasebnog duplog kataloga</li>
