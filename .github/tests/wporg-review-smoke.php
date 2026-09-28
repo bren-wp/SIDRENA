@@ -126,4 +126,64 @@ sidrena_wporg_assert(
 	'Retired Cjenikomat branding must not return to production-facing plugin sources.'
 );
 
+
+$production_files = array();
+foreach ( array( 'includes', 'admin', 'public', 'editions' ) as $directory ) {
+	$iterator = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $root . '/' . $directory, FilesystemIterator::SKIP_DOTS )
+	);
+	foreach ( $iterator as $file ) {
+		if ( ! $file->isFile() || ! in_array( strtolower( $file->getExtension() ), array( 'php', 'js' ), true ) ) {
+			continue;
+		}
+		$production_files[] = $file->getPathname();
+	}
+}
+
+$production_source = '';
+foreach ( $production_files as $file ) {
+	$production_source .= "\n" . file_get_contents( $file );
+}
+
+sidrena_wporg_assert(
+	2 === substr_count( $production_source, "'admin_notices'" )
+	&& 0 === substr_count( $production_source, "'all_admin_notices'" ),
+	'Only the two scoped dependency/conflict admin notices are allowed; global all_admin_notices are forbidden.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $bootstrap_source, "'plugins' !== " . '$screen->id' )
+	&& false !== strpos( $bootstrap_source, 'notice notice-error is-dismissible' )
+	&& false === stripos( $bootstrap_source, 'donation' )
+	&& false === stripos( $bootstrap_source, 'revolut' )
+	&& false === stripos( $bootstrap_source, '80 EUR' ),
+	'WooCommerce dependency notice must stay Plugins-screen-only, dismissible, and free of donation/setup marketing.'
+);
+
+sidrena_wporg_assert(
+	1 === substr_count( $production_source, 'wp_safe_remote_get(' )
+	&& 0 === substr_count( $production_source, 'wp_remote_get(' )
+	&& 0 === substr_count( $production_source, 'wp_remote_post(' )
+	&& 0 === substr_count( $production_source, 'wp_safe_remote_post(' )
+	&& 0 === substr_count( $production_source, 'curl_init(' ),
+	'Unexpected automatic network request primitive detected in production source.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $admin_source, "0 !== strpos( \$url, \$base )" )
+	&& false !== strpos( $admin_source, 'wp_http_validate_url( $url )' )
+	&& false !== strpos( $admin_source, "'reject_unsafe_urls' => true" ),
+	'The sole HTTP public-access check must remain constrained to validated same-site SIDRENA publication URLs.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $wp_readme, '== External services and user-initiated links ==' )
+	&& false !== strpos( $woo_readme, '== External services and user-initiated links ==' )
+	&& false !== strpos( $wp_readme, 'does not send telemetry or usage analytics' )
+	&& false !== strpos( $woo_readme, 'does not send telemetry or usage analytics' )
+	&& false !== strpos( $wp_readme, 'same WordPress site' )
+	&& false !== strpos( $woo_readme, 'same WordPress site' ),
+	'External-service disclosure must document the same-site check and absence of telemetry.'
+);
+
 fwrite( STDOUT, "SIDRENA WordPress.org review regression guard passed.\n" );
