@@ -1808,27 +1808,44 @@ final class Sidrena_Admin {
 				++$skipped;
 				continue;
 			}
+			$price_raw = isset( $row[ $map['anchor_price'] ] ) ? sanitize_text_field( (string) $row[ $map['anchor_price'] ] ) : '';
+			$price     = $this->validated_import_price( $price_raw );
+			if ( null === $price ) {
+				++$skipped;
+				continue;
+			}
+
+			$has_anchor_date = isset( $map['anchor_date'] ) && array_key_exists( $map['anchor_date'], $row );
+			$date_raw        = $has_anchor_date ? sanitize_text_field( (string) $row[ $map['anchor_date'] ] ) : '';
+			$valid_date      = '' !== trim( $date_raw ) ? Sidrena_Utils::sanitize_date( $date_raw ) : '';
+			if ( $has_anchor_date && '' !== trim( $date_raw ) && '' === $valid_date ) {
+				++$skipped;
+				continue;
+			}
+
+			$has_group = isset( $map['reference_group'] ) && array_key_exists( $map['reference_group'], $row );
+			$group_raw = $has_group ? sanitize_text_field( (string) $row[ $map['reference_group'] ] ) : '';
+			$group     = '' !== trim( $group_raw ) ? sanitize_key( $group_raw ) : '';
+			if ( $has_group && '' !== trim( $group_raw ) && ! in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
+				++$skipped;
+				continue;
+			}
+
 			++$updated;
-			$price = isset( $row[ $map['anchor_price'] ] ) ? Sidrena_Utils::decimal( $row[ $map['anchor_price'] ] ) : '';
 			if ( '' === $price ) {
 				delete_post_meta( $product_id, '_sidrena_anchor_price' );
 			} else {
 				update_post_meta( $product_id, '_sidrena_anchor_price', $price );
 			}
-			if ( isset( $map['anchor_date'], $row[ $map['anchor_date'] ] ) ) {
-				$date       = sanitize_text_field( $row[ $map['anchor_date'] ] );
-				$valid_date = Sidrena_Utils::sanitize_date( $date );
-				if ( $valid_date ) {
-					update_post_meta( $product_id, '_sidrena_anchor_date', $valid_date );
-				} elseif ( '' === $date ) {
+			if ( $has_anchor_date ) {
+				if ( '' === $valid_date ) {
 					delete_post_meta( $product_id, '_sidrena_anchor_date' );
+				} else {
+					update_post_meta( $product_id, '_sidrena_anchor_date', $valid_date );
 				}
 			}
-			if ( isset( $map['reference_group'], $row[ $map['reference_group'] ] ) ) {
-				$group = sanitize_key( $row[ $map['reference_group'] ] );
-				if ( in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
-					update_post_meta( $product_id, '_sidrena_reference_group', $group );
-				}
+			if ( $has_group && '' !== $group ) {
+				update_post_meta( $product_id, '_sidrena_reference_group', $group );
 			}
 		}
 		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -1901,8 +1918,12 @@ final class Sidrena_Admin {
 				++$skipped;
 				continue;
 			}
-			$price        = isset( $map['price'] ) ? Sidrena_Utils::decimal( $row[ $map['price'] ] ?? '' ) : '';
-			$anchor_price = isset( $map['anchor_price'] ) ? Sidrena_Utils::decimal( $row[ $map['anchor_price'] ] ?? '' ) : '';
+			$price        = isset( $map['price'] ) ? $this->validated_import_price( $row[ $map['price'] ] ?? '' ) : '';
+			$anchor_price = isset( $map['anchor_price'] ) ? $this->validated_import_price( $row[ $map['anchor_price'] ] ?? '' ) : '';
+			if ( null === $price || null === $anchor_price ) {
+				++$skipped;
+				continue;
+			}
 			$parent_id    = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
 			$variation_id = $product->is_type( 'variation' ) ? $product->get_id() : 0;
 			Sidrena_Location_Data::upsert( $location_id, $parent_id, $variation_id, $price, $availability, $anchor_price );
@@ -2439,6 +2460,19 @@ final class Sidrena_Admin {
 			}
 			++$page;
 		} while ( count( $products ) === 100 );
+	}
+
+	private function validated_import_price( $value ) {
+		$raw = trim( sanitize_text_field( (string) $value ) );
+		if ( '' === $raw ) {
+			return '';
+		}
+
+		$price = Sidrena_Utils::decimal( $raw );
+		if ( '' === $price || (float) $price < 0 ) {
+			return null;
+		}
+		return $price;
 	}
 
 	private function detect_delimiter( $line ) {
