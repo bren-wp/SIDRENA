@@ -101,7 +101,7 @@ final class Sidrena_Products {
 				'id'                => '_sidrena_anchor_price',
 				'label'             => __( 'Sidrena cijena', 'sidrena' ),
 				'desc_tip'          => true,
-				'description'       => __( 'Referentna redovna cijena. Ako je artikl na mjerodavni datum bio na akciji ili drugom posebnom obliku prodaje, ovdje se upisuje prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' ),
+				'description'       => __( 'Referentna redovna cijena za mjerodavni datum. Ako je artikl tada bio u posebnom obliku prodaje, upisuje se prethodna redovna cijena prije tog oblika prodaje, a ne privremeno primijenjena posebna cijena.', 'sidrena' ),
 				'type'              => 'number',
 				'custom_attributes' => array(
 					'step' => '0.01',
@@ -222,7 +222,7 @@ final class Sidrena_Products {
 			array(
 				'id'          => '_sidrena_sale_name',
 				'label'       => __( 'Naziv posebnog oblika prodaje', 'sidrena' ),
-				'placeholder' => __( 'npr. Akcija', 'sidrena' ),
+				'placeholder' => __( 'npr. naziv posebnog oblika prodaje', 'sidrena' ),
 			)
 		);
 		woocommerce_wp_select(
