@@ -26,6 +26,7 @@ if ( 'legacy' === $mode ) {
 $GLOBALS['sidrena_activation_callback'] = null;
 $GLOBALS['sidrena_actions'] = array();
 $GLOBALS['sidrena_deactivated'] = array();
+$GLOBALS['sidrena_can_activate_plugins'] = true;
 
 function register_activation_hook( $file, $callback ) {
 	unset( $file );
@@ -36,7 +37,9 @@ function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 	$GLOBALS['sidrena_actions'][ $hook ][] = $callback;
 }
 function current_user_can( $capability ) {
-	unset( $capability );
+	if ( 'activate_plugins' === $capability ) {
+		return ! empty( $GLOBALS['sidrena_can_activate_plugins'] );
+	}
 	return true;
 }
 function esc_html__( $text, $domain = null ) {
@@ -69,11 +72,18 @@ sidrena_conflict_assert( is_callable( $GLOBALS['sidrena_activation_callback'] ),
 sidrena_conflict_assert( ! empty( $GLOBALS['sidrena_actions']['admin_init'] ), 'Conflicting edition did not schedule self-deactivation.' );
 sidrena_conflict_assert( ! empty( $GLOBALS['sidrena_actions']['admin_notices'] ), 'Conflicting edition did not register an admin notice.' );
 
+$GLOBALS['sidrena_can_activate_plugins'] = false;
+foreach ( $GLOBALS['sidrena_actions']['admin_init'] as $callback ) {
+	call_user_func( $callback );
+}
+sidrena_conflict_assert( empty( $GLOBALS['sidrena_deactivated'] ), 'Conflict guard changed plugin state without activate_plugins permission.' );
+
+$GLOBALS['sidrena_can_activate_plugins'] = true;
 foreach ( $GLOBALS['sidrena_actions']['admin_init'] as $callback ) {
 	call_user_func( $callback );
 }
 $expected = 'sidrena-' . $target . '.php';
-sidrena_conflict_assert( in_array( $expected, $GLOBALS['sidrena_deactivated'], true ), 'Conflicting edition did not deactivate itself.' );
+sidrena_conflict_assert( in_array( $expected, $GLOBALS['sidrena_deactivated'], true ), 'Conflicting edition did not deactivate itself for an authorized plugin manager.' );
 
 $blocked = false;
 try {
