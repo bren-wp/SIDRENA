@@ -148,7 +148,7 @@ jobs:
 
           Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
 
-          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
@@ -345,7 +345,7 @@ jobs:
           test ! -e "$WP/assets/images/logo-woocommerce.svg"
           test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
           test -s "$WP/docs/UPUTE.md"
-          test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WP/docs/SIDRENA-UPUTE.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
           test ! -d "$WP/branding"
@@ -359,7 +359,7 @@ jobs:
           test ! -e "$WOO/assets/images/logo-wordpress.svg"
           test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/docs/UPUTE.md"
-          test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
           test ! -d "$WOO/branding"
@@ -396,7 +396,7 @@ jobs:
 
           Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
 
-          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
