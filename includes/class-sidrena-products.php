@@ -186,8 +186,8 @@ final class Sidrena_Products {
 					'step' => '0.0001',
 					'min'  => '0',
 				),
-				'description' => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
-				'desc_tip'    => true,
+				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
+				'desc_tip'          => true,
 			)
 		);
 		woocommerce_wp_text_input(
@@ -713,8 +713,8 @@ final class Sidrena_Products {
 			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
-			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
 			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}

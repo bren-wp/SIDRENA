@@ -72,11 +72,11 @@ final class Sidrena_Standalone {
 		do {
 			$query = new WP_Query(
 				array(
-					'post_type'      => self::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => $batch_size,
-					'paged'          => $page,
-					'orderby'        => array(
+					'post_type'              => self::POST_TYPE,
+					'post_status'            => 'publish',
+					'posts_per_page'         => $batch_size,
+					'paged'                  => $page,
+					'orderby'                => array(
 						'menu_order' => 'ASC',
 						'ID'         => 'ASC',
 					),
@@ -547,9 +547,9 @@ final class Sidrena_Standalone {
 			return;
 		}
 
-		$page     = max( 1, isset( $_GET['standalone_page'] ) ? absint( $_GET['standalone_page'] ) : 1 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$per_page = 60;
-		$query    = new WP_Query(
+		$page                  = max( 1, isset( $_GET['standalone_page'] ) ? absint( $_GET['standalone_page'] ) : 1 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$per_page              = 60;
+		$query                 = new WP_Query(
 			array(
 				'post_type'      => self::POST_TYPE,
 				'post_status'    => array( 'publish', 'draft' ),
@@ -693,9 +693,9 @@ final class Sidrena_Standalone {
 	}
 	private function row( $id = 0, $key = '', $template = false ) {
 		unset( $template );
-		$id   = absint( $id );
-		$key  = $id ? (string) $id : ( $key ? $key : uniqid( 'new-', false ) );
-		$meta = static function ( $name ) use ( $id ) {
+		$id                       = absint( $id );
+		$key                      = $id ? (string) $id : ( $key ? $key : uniqid( 'new-', false ) );
+		$meta                     = static function ( $name ) use ( $id ) {
 			return $id ? get_post_meta( $id, $name, true ) : '';
 		};
 		$status_raw               = $meta( '_sidrena_standalone_unit_status' );
@@ -1505,8 +1505,8 @@ else :
 			$atts,
 			'sidrena_cijena'
 		);
-		$raw = (string) $atts['id'];
-		$id  = absint( preg_replace( '/\D+/', '', $raw ) );
+		$raw  = (string) $atts['id'];
+		$id   = absint( preg_replace( '/\D+/', '', $raw ) );
 		if ( ! $id || self::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
 			return '';
 		}

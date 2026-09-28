@@ -54,8 +54,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Eq "'default_ref_date'[[:space:]]*=>[[:space:]]*'2026-09-10'" includes/class-sidrena-utils.php
-          grep -Eq "'fmcg_ref_date'[[:space:]]*=>[[:space:]]*'2025-05-02'" includes/class-sidrena-utils.php
+          grep -Fq "const STANDARD_REFERENCE_DATE = '2026-09-10';" includes/class-sidrena-utils.php
+          grep -Fq "const FMCG_REFERENCE_DATE     = '2025-05-02';" includes/class-sidrena-utils.php
+          ! sed -n '/public static function defaults()/,/^\t}/p' includes/class-sidrena-utils.php | grep -Eq "'(default_ref_date|fmcg_ref_date|fmsid_ref_date)'[[:space:]]*=>"
           grep -Eq "'generation_time'[[:space:]]*=>[[:space:]]*'06:30'" includes/class-sidrena-utils.php
           grep -Eq "'strict_publication'[[:space:]]*=>[[:space:]]*'yes'" includes/class-sidrena-utils.php
           grep -Eq "'failure_notifications'[[:space:]]*=>[[:space:]]*'yes'" includes/class-sidrena-utils.php

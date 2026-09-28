@@ -1,8 +1,15 @@
 <?php
 /**
- * Immutable SIDRENA reference-date ruleset regression test.
+ * Sidrena source file.
  *
  * @package Sidrena
+ * @author brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
+ */
+
+/**
+ * Immutable SIDRENA reference-date ruleset regression test.
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
