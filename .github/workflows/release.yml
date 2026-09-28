@@ -197,8 +197,8 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-wordpress
-          slug: sidrena
-          # Public WordPress slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
+          slug: brendigo-sidrena-catalog
+          # Public standalone slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
           ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
@@ -209,7 +209,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-woocommerce
-          slug: sidrena-for-woocommerce
+          slug: brendigo-sidrena
           # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
           ignore-codes: trademarked_term
           wp-version: latest
