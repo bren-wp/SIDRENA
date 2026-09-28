@@ -173,7 +173,7 @@ sidrena_wporg_assert(
 sidrena_wporg_assert(
 	false === strpos( $rest_source, "add_shortcode( 'sidrena_cjenici'" )
 	&& false === strpos( $rest_source, 'public function shortcode( $atts = array() )' )
-	&& false !== strpos( $public_source, "add_shortcode( 'sidrena_cjenici', array( $this, 'downloads_shortcode' ) );" ),
+	&& false !== strpos( $public_source, "add_shortcode( 'sidrena_cjenici', array( \$this, 'downloads_shortcode' ) );" ),
 	'The public price-list download shortcode must be owned only by Sidrena_Public.'
 );
 
