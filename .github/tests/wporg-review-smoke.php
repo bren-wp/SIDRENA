@@ -49,10 +49,10 @@ sidrena_wporg_assert(
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' )
 	&& false !== strpos( $woo_main, 'Text Domain: brendigo-sidrene-cijene-cjenici' )
-	&& false !== strpos( $plugin_check, 'slug: brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $plugin_check, 'slug: brendigo-sidrene-cijene-cjenici' )
-	&& false !== strpos( $release, 'slug: brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $release, 'slug: brendigo-sidrene-cijene-cjenici' ),
+	&& false !== strpos( $plugin_check, 'brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $plugin_check, 'brendigo-sidrene-cijene-cjenici' )
+	&& false !== strpos( $release, 'brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $release, 'brendigo-sidrene-cijene-cjenici' ),
 	'Public text domains and Plugin Check/release slugs must stay synchronized.'
 );
 
