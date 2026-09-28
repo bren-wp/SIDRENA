@@ -493,7 +493,8 @@ final class Sidrena_Public {
 	}
 
 	private function archive_groups( $location_id = '', $exclude_current = true ) {
-		$location_id   = Sidrena_Utils::sanitize_location_id( $location_id );
+		$location_id   = trim( (string) $location_id );
+		$location_id   = '' === $location_id ? '' : Sidrena_Utils::sanitize_location_id( $location_id );
 		$current_names = array();
 		if ( $exclude_current ) {
 			foreach ( Sidrena_Utils::public_index() as $entry ) {
