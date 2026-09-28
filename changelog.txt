@@ -14,7 +14,7 @@ Sidrena changelog
 * Dodan je regression smoke test za nedostajući/deaktivirani WooCommerce i pooštrene su WP.org identity/dependency provjere.
 * Dodani su `docs/SOURCES.md` i `docs/LEGAL-SOURCES.md` s provjerenim primarnim izvorima, licencama istraženih open-source projekata i jasnim razdvajanjem pravne obveze, tehničke preporuke i SIDRENA odluke.
 * Dokumentacija je usklađena s NN 101/2026, NN 105/2026, NN 59/2026 i pojašnjenjem Ministarstva gospodarstva od 22. 9. 2026.; režim od 1. 10. 2026. ne miješa se s budućom baznom cijenom od 17. 11. 2026.
-* Uklonjena je zastarjela dokumentacija o donaciji; plugin nema telemetry, trial, license-key ni plaćeno otključavanje funkcija.
+* Uklonjena je zastarjela dokumentacija o financiranju; plugin nema plaćeno otključavanje uključenih funkcija ni automatsko slanje podataka o korištenju.
 
 = 1.0.24 =
 * Završene su sve dodatne korekcije iz WordPress.org review maila nakon što je 1.0.23 već bio javno objavljen.

@@ -121,7 +121,7 @@ No. It is a completely optional service. The plugin can be installed and configu
 * Added shared edition-conflict messaging that identifies the active and attempted SIDRENA editions and documents the safe switch path without deleting business data.
 * Refreshed official Croatian legal sources and separated current 1 October 2026 duties from the future 17 November 2026 base-price regime.
 * Added repository source/licensing provenance for official WordPress/WooCommerce documentation and open-source plugins studied only as references.
-* Removed stale donation documentation; SIDRENA remains fully functional without a license key, trial or paid feature lock.
+* Removed obsolete funding-related documentation; SIDRENA remains fully functional without paid activation or feature locks.
 * Kept the established standalone WordPress identity and WooCommerce-independent runtime boundary.
 
 = 1.0.24 =

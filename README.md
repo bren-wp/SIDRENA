@@ -165,7 +165,7 @@ Izdanje 1.0.25 donosi:
 - nove regresijske provjere za missing/deactivated dependency scenarij
 - `docs/SOURCES.md` i `docs/LEGAL-SOURCES.md` s primarnim pravnim, WordPress, WooCommerce i open-source referencama
 - odvojeno dokumentirane obveze od 1. 10. 2026. i budući režim bazne cijene od 17. 11. 2026.
-- uklonjenu zastarjelu dokumentaciju o donacijama; nema licence keya, triala, telemetrije ni plaćenog otključavanja funkcija.
+- uklonjenu zastarjelu dokumentaciju o financiranju; nema plaćenog otključavanja uključenih funkcija ni automatskog slanja podataka o korištenju.
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 

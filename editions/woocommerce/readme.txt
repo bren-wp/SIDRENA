@@ -140,7 +140,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Added a defensive missing-WooCommerce safe state and a scoped Plugins-screen notice without registering WooCommerce hooks or running upgrade/publication scheduling.
 * Improved the two-edition conflict guard so activation errors identify the active and attempted editions and explain the safe switch path without deleting business data.
 * Added regression coverage for a missing/deactivated WooCommerce dependency and refreshed legal/source provenance documentation from official Croatian, WordPress and WooCommerce sources.
-* Removed stale donation documentation; SIDRENA remains fully functional without a license key, trial or paid feature lock.
+* Removed obsolete funding-related documentation; SIDRENA remains fully functional without paid activation or feature locks.
 
 = 1.0.24 =
 
