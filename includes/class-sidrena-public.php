@@ -343,21 +343,21 @@ final class Sidrena_Public {
 										?>
 										<small><strong><?php esc_html_e( 'Ugradbena / zamjenska roba i cijena', 'sidrena' ); ?>:</strong> <?php echo nl2br( esc_html( $service_goods ) ); ?></small><?php endif; ?>
 								</th>
-								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ?: '—' ); ?></td>
-								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ?: '—' ); ?></td>
+								<td data-label="<?php esc_attr_e( 'Šifra', 'sidrena' ); ?>"><?php echo esc_html( $code ? $code : '—' ); ?></td>
+								<td data-label="<?php esc_attr_e( 'Marka', 'sidrena' ); ?>"><?php echo esc_html( $brand ? $brand : '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Cijena', 'sidrena' ); ?>"><strong><?php echo '' !== $current ? esc_html( (string) $current . ' ' . $currency ) : '—'; ?></strong>
 								<?php
 								if ( '' !== (string) $lowest_30 ) :
 									?>
 									<small><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?>: <?php echo esc_html( (string) $lowest_30 . ' ' . $currency ); ?></small><?php endif; ?></td>
 								<td data-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>"><?php echo '' !== $anchor ? esc_html( (string) $anchor . ' ' . $currency ) : '—'; ?></td>
-								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ?: '—' ); ?>
+								<td data-label="<?php esc_attr_e( 'Jedinica', 'sidrena' ); ?>"><?php echo esc_html( $unit ? $unit : '—' ); ?>
 								<?php
 								if ( '' !== $unit_price ) :
 									?>
 									<small><?php echo esc_html( (string) $unit_price . ' ' . $currency ); ?></small><?php endif; ?></td>
-								<td data-label="<?php esc_attr_e( 'Barkod', 'sidrena' ); ?>"><?php echo esc_html( $barcode ?: '—' ); ?></td>
-								<td data-label="<?php esc_attr_e( 'Dostupnost', 'sidrena' ); ?>"><span class="sidrena-availability sidrena-availability--<?php echo esc_attr( sanitize_html_class( remove_accents( strtolower( (string) $availability ) ) ) ); ?>"><?php echo esc_html( $availability ?: '—' ); ?></span></td>
+								<td data-label="<?php esc_attr_e( 'Barkod', 'sidrena' ); ?>"><?php echo esc_html( $barcode ? $barcode : '—' ); ?></td>
+								<td data-label="<?php esc_attr_e( 'Dostupnost', 'sidrena' ); ?>"><span class="sidrena-availability sidrena-availability--<?php echo esc_attr( sanitize_html_class( remove_accents( strtolower( (string) $availability ) ) ) ); ?>"><?php echo esc_html( $availability ? $availability : '—' ); ?></span></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -415,10 +415,10 @@ final class Sidrena_Public {
 		return esc_url( (string) $url );
 	}
 
-	private function shortcode_yes( $value, $default = true ) {
+	private function shortcode_yes( $value, $fallback = true ) {
 		$value = strtolower( trim( (string) $value ) );
 		if ( '' === $value ) {
-			return (bool) $default;
+			return (bool) $fallback;
 		}
 		return ! in_array( $value, array( '0', 'false', 'ne', 'no', 'off' ), true );
 	}
@@ -900,7 +900,7 @@ final class Sidrena_Public {
 				$generated = ! empty( $entry['generated_at'] ) ? Sidrena_Utils::format_iso_datetime( (string) $entry['generated_at'] ) : '';
 				$format    = strtoupper( sanitize_key( (string) ( $entry['format'] ?? pathinfo( $filename, PATHINFO_EXTENSION ) ) ) );
 				$file_meta = $this->public_file_meta( $entry );
-				$html     .= '<tr><th scope="row">' . esc_html( $filename ) . $this->public_file_integrity_html( $entry ) . '</th><td>' . esc_html( $catalog ) . '</td><td>' . esc_html( $location ?: '—' ) . '</td><td>' . esc_html( $generated ?: '—' ) . '</td><td>' . esc_html( $file_meta['rows'] > 0 ? (string) $file_meta['rows'] : '—' ) . '</td><td>' . esc_html( $file_meta['size'] ?: '—' ) . '</td><td>' . esc_html( $format ?: '—' ) . '</td><td>';
+				$html     .= '<tr><th scope="row">' . esc_html( $filename ) . $this->public_file_integrity_html( $entry ) . '</th><td>' . esc_html( $catalog ) . '</td><td>' . esc_html( $location ? $location : '—' ) . '</td><td>' . esc_html( $generated ? $generated : '—' ) . '</td><td>' . esc_html( $file_meta['rows'] > 0 ? (string) $file_meta['rows'] : '—' ) . '</td><td>' . esc_html( $file_meta['size'] ? $file_meta['size'] : '—' ) . '</td><td>' . esc_html( $format ? $format : '—' ) . '</td><td>';
 				$html     .= $url ? '<a href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>' : esc_html__( 'Nije dostupno', 'sidrena' );
 				$html     .= '</td></tr>';
 			}
@@ -924,7 +924,7 @@ final class Sidrena_Public {
 		?>
 		<article class="sidrena-download-card">
 			<div class="sidrena-download-card__top">
-				<span class="sidrena-download-card__format"><?php echo esc_html( $format ?: 'FILE' ); ?></span>
+				<span class="sidrena-download-card__format"><?php echo esc_html( $format ? $format : 'FILE' ); ?></span>
 				<span><?php echo esc_html( $catalog ); ?></span>
 			</div>
 			<h4><?php echo esc_html( $filename ); ?></h4>
