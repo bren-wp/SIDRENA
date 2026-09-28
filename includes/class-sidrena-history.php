@@ -231,6 +231,7 @@ final class Sidrena_History {
 			try {
 				return new DateTimeImmutable( $from->date( 'Y-m-d H:i:s' ), wp_timezone() );
 			} catch ( Exception $e ) {
+				unset( $e );
 				// Fall through to the current WordPress time.
 			}
 		}
@@ -359,7 +360,7 @@ final class Sidrena_History {
 		return array(
 			'status'        => 'incomplete',
 			'price'         => '',
-			'source'        => $source ?: 'incomplete',
+			'source'        => $source ? $source : 'incomplete',
 			'coverage_from' => sanitize_text_field( (string) get_post_meta( $id, '_sidrena_sale_reference_coverage_from', true ) ),
 		);
 	}
@@ -388,7 +389,7 @@ final class Sidrena_History {
 		$newest  = array();
 		$changes = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$item_id = absint( $row['variation_id'] ) ?: absint( $row['product_id'] );
+			$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
 			if ( ! $item_id ) {
 				continue;
 			}
@@ -448,7 +449,7 @@ final class Sidrena_History {
 			return array();
 		}
 
-		$item_id   = absint( $latest['variation_id'] ) ?: absint( $latest['product_id'] );
+		$item_id   = absint( $latest['variation_id'] ) ? absint( $latest['variation_id'] ) : absint( $latest['product_id'] );
 		$cutoff_dt = new DateTimeImmutable( '-' . $days . ' days', wp_timezone() );
 		$cutoff    = $cutoff_dt->format( 'Y-m-d H:i:s' );
 
@@ -564,8 +565,9 @@ final class Sidrena_History {
 					yield absint( $product->get_id() );
 				}
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( count( $products ) === 100 );
+		} while ( 100 === $product_count );
 	}
 
 	private function prune_history() {
