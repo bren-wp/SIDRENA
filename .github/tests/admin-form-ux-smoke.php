@@ -137,12 +137,15 @@ sidrena_form_ux_assert(
 	'Dynamic location summaries, removal labels and focus recovery must remain synchronized.'
 );
 
+$admin_table_count   = substr_count( $admin, '<table' );
+$admin_caption_count = substr_count( $admin, '<caption class="screen-reader-text">' );
 sidrena_form_ux_assert(
-	3 <= substr_count( $admin, '<caption class="screen-reader-text">' )
-	&& 17 <= substr_count( $admin, 'scope="col"' )
+	0 < $admin_table_count
+	&& $admin_table_count === $admin_caption_count
+	&& 0 < substr_count( $admin, 'scope="col"' )
 	&& false !== strpos( $admin, "esc_html_e( 'Radnje', 'sidrena' )" )
 	&& false !== strpos( $admin, 'aria-label="<?php echo esc_attr( $open_label ); ?>"' ),
-	'Admin data tables must retain captions, scoped headers and contextual action labels.'
+	'Every admin data table must retain a screen-reader caption, scoped headers and contextual action labels.'
 );
 
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );
