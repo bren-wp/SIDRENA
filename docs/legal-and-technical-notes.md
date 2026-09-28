@@ -128,7 +128,7 @@ Aktualna stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.21.zip`, `sidrena-wordpress-1.0.21.zip.sha256`, `sidrena-woocommerce-1.0.21.zip` i `sidrena-woocommerce-1.0.21.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.22.zip`, `sidrena-wordpress-1.0.22.zip.sha256`, `sidrena-woocommerce-1.0.22.zip` i `sidrena-woocommerce-1.0.22.zip.sha256`.
 
 ## Opseg Sidrene
 
