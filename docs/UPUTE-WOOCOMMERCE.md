@@ -217,7 +217,7 @@ Nakon masovnog uređivanja pregledajte rezultate prije spremanja.
 
 ### Korak 7 — posebni oblici prodaje
 
-Ako je aktivan poseban oblik prodaje, evidentirajte njegov status i naziv. Sidrena cijena ostaje zasebna referentna redovna cijena za mjerodavni datum; SIDRENA ne vodi paralelni 30-dnevni sustav snižene cijene.
+Ako je aktivan poseban oblik prodaje, evidentirajte njegov status i naziv. Sidrena cijena ostaje zasebna referentna redovna cijena za mjerodavni datum; poseban oblik prodaje ne stvara drugi SIDRENA referentni cjenovni sustav.
 
 Javna arhiva CSV/XML cjenika čuva se 30 dana neovisno o tome postoji li poseban oblik prodaje.
 
