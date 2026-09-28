@@ -25,6 +25,8 @@ This file records the repository-side audit performed before the next WordPress.
 - WooCommerce requested public slug/text-domain: `brendigo-sidrene-cijene-cjenici`
 - `brendigo` is the leading distinctive element.
 - The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
+- A fresh 28.09.2026 search confirmed unrelated Croatian products already using `Sidrena`, `Sidrena cijena` and `SidreneCijene` naming. The leading `brendigo` identifier is therefore intentional and the old `sidrena-for-woocommerce` slug is not reused.
+- The requested WooCommerce permalink is `brendigo-sidrene-cijene-cjenici`; `WooCommerce` is not a slug term and is not in the public Plugin Name.
 - WooCommerce is not used in the public plugin display name or slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
@@ -42,7 +44,8 @@ This file records the repository-side audit performed before the next WordPress.
 - Contributors: `brendigo`
 - Author URI: `https://brendigo.com/`
 - Plugin URI: `https://brendigo.com/sidrene-cijene/`
-- submission remains associated with the brendigo WordPress.org identity and `info@brendigo.com` domain email.
+- the review email itself identifies the submitting WordPress.org username as `brendigo` and the account email as `info@brendigo.com`, matching the `brendigo.com` Author URI domain.
+- submission remains associated with that same `brendigo` WordPress.org identity; no transfer or secondary account is used.
 - no DNS verification record is claimed by the plugin or repository.
 
 **Proof:** metadata checks, source-metadata check and WordPress.org regression guard.
@@ -108,7 +111,8 @@ This file records the repository-side audit performed before the next WordPress.
 - the only PHP automatic HTTP request is the administrator-triggered public-access check.
 - that check is restricted to SIDRENA publication URLs under the current site's own public upload base, validates the URL, uses `wp_safe_remote_get()`, explicitly rejects unsafe URLs, limits redirects/response size and sends no catalogue/customer payload to brendigo.
 - the frontend compatibility fetch is same-origin and targets the local SIDRENA read-only REST endpoint.
-- official legal sources, brendigo and WhatsApp are user-initiated links and are documented as such in both readmes.
+- official legal sources, brendigo and WhatsApp are user-initiated links and are documented as such in both readmes, including when the browser makes the request and what normal browser metadata may be sent.
+- the exact external-link concern from the review email was re-audited: current runtime keeps MINGO, Narodne novine and HOK only as click-through reference links; the older DIRH runtime link is gone; none of these hosts is contacted by PHP HTTP functions or browser `fetch()`.
 - no Revolut/donation URL is bundled in production or documentation.
 - public REST/manifest output does not inject a brendigo credit URL or other automatic public-facing external link.
 - Terms/Privacy destinations for the remaining external support services are documented.
