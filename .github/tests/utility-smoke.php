@@ -22,11 +22,6 @@ function get_option( $key, $default = false ) {
 	return array_key_exists( $key, $values ) ? $values[ $key ] : $default;
 }
 
-function apply_filters( $tag, $value ) {
-	unset( $tag );
-	return $value;
-}
-
 $GLOBALS['sidrena_test_filters'] = array();
 function apply_filters( $tag, $value ) {
 	if ( isset( $GLOBALS['sidrena_test_filters'][ $tag ] ) && is_callable( $GLOBALS['sidrena_test_filters'][ $tag ] ) ) {
