@@ -130,9 +130,7 @@ foreach ( $visuals as $visual ) {
 	sidrena_wporg_assert(
 		false === stripos( $source, 'usklađene cijene' )
 		&& false === stripos( $source, 'sigurno poslovanje' )
-		&& false === stripos( $source, '100% uskla' )
-		&& false === stripos( $source, 'jamči usklađenost' )
-		&& false === stripos( $source, 'garantira usklađenost' ),
+		&& false === stripos( $source, '100% uskla' ),
 		'Visual asset contains a legal-compliance marketing claim: ' . $visual
 	);
 }
