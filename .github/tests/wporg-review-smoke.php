@@ -77,7 +77,7 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $edition_guard, "'plugins' !== $screen->id" )
+	false !== strpos( $edition_guard, "'plugins' !== " . '$screen->id' )
 	&& false !== strpos( $edition_guard, 'notice notice-error is-dismissible' ),
 	'Edition conflict notice must remain scoped to Plugins and dismissible.'
 );
