@@ -136,7 +136,7 @@ final class Sidrena_Utils {
 	public static function donation_url() {
 		$url = apply_filters(
 			'sidrena_donation_url',
-			'https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija'
+			'https://revolut.me/catanyus'
 		);
 		return is_string( $url ) ? esc_url_raw( $url ) : '';
 	}
