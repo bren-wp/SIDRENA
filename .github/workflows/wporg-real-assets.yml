@@ -68,26 +68,40 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
           sudo apt-get update -qq
-          sudo apt-get install -y -qq librsvg2-bin imagemagick
+          python3 -m pip install --disable-pip-version-check --quiet reportlab pillow
+          sudo apt-get install -y -qq librsvg2-bin imagemagick poppler-utils
 
-      - name: Prepare runtime plugin copies
+      - name: Build exact RC ZIPs and prepare runtime copies
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf .wp-env-runtime
-          mkdir -p .wp-env-runtime/sidrena-wordpress .wp-env-runtime/sidrena-woocommerce
 
-          for edition in sidrena-wordpress sidrena-woocommerce; do
-            rsync -a admin/ ".wp-env-runtime/${edition}/admin/"
-            rsync -a assets/ ".wp-env-runtime/${edition}/assets/"
-            rsync -a includes/ ".wp-env-runtime/${edition}/includes/"
-            rsync -a languages/ ".wp-env-runtime/${edition}/languages/"
-            rsync -a public/ ".wp-env-runtime/${edition}/public/"
-            cp LICENSE uninstall.php ".wp-env-runtime/${edition}/"
-          done
+          VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1 | tr -d '\r')"
+          test -n "$VERSION"
+          grep -Fq " * Version: $VERSION" editions/woocommerce/sidrena-woocommerce.php
 
-          cp editions/wordpress/sidrena-wordpress.php .wp-env-runtime/sidrena-wordpress/
-          cp editions/woocommerce/sidrena-woocommerce.php .wp-env-runtime/sidrena-woocommerce/
+          BUILD_DIR="$RUNNER_TEMP/sidrena-wporg-rc"
+          rm -rf "$BUILD_DIR" .wp-env-runtime
+          mkdir -p "$BUILD_DIR" .wp-env-runtime
+
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)" ./tools/build-editions.sh "$VERSION" "$BUILD_DIR"
+
+          (
+            cd "$BUILD_DIR"
+            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
+            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+          )
+          unzip -t "$BUILD_DIR/sidrena-wordpress-$VERSION.zip" >/dev/null
+          unzip -t "$BUILD_DIR/sidrena-woocommerce-$VERSION.zip" >/dev/null
+
+          unzip -q "$BUILD_DIR/sidrena-wordpress-$VERSION.zip" -d .wp-env-runtime
+          unzip -q "$BUILD_DIR/sidrena-woocommerce-$VERSION.zip" -d .wp-env-runtime
+
+          test -f .wp-env-runtime/sidrena-wordpress/sidrena-wordpress.php
+          test -f .wp-env-runtime/sidrena-woocommerce/sidrena-woocommerce.php
+
+          echo "SIDRENA_RC_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "SIDRENA_RC_BUILD_DIR=$BUILD_DIR" >> "$GITHUB_ENV"
 
       - name: Capture Sidrena WordPress
         shell: bash
