@@ -264,10 +264,7 @@ def support_buttons():
                 button_link("Otvori WhatsApp", "https://wa.me/385919010092"),
             ],
             [
-                button_link(
-                    "Revolut donacija",
-                    "https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija",
-                ),
+                Paragraph("<b>Donacija nije potrebna</b>", button),
                 button_link("Sidrena web", "https://brendigo.com/sidrene-cijene/"),
             ],
         ],
@@ -474,7 +471,7 @@ story.extend(
             "Plaćeno postavljanje je dobrovoljna usluga brendigo podrške i nije uvjet za rad plugina, pristup funkcijama ili tehničku usklađenost."
         ),
         paragraph(
-            "Revolut donacija je dobrovoljna podrška razvoju. Donacija nije naknada za instalaciju, podršku ili pravno jamstvo."
+            "Donacija nije potrebna za korištenje plugina i ne otključava funkcije, podršku niti pravnu potvrdu."
         ),
         paragraph("Pravna napomena", h3),
         paragraph(
