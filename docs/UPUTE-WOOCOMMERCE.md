@@ -257,7 +257,7 @@ Otvorite stranicu kao običan posjetitelj. Provjerite pretragu, cijene, sidrenu 
 
 Javni prikaz može koristiti spremljeni broj redaka, veličinu datoteke i SHA-256 checksum bez dodatnog hashiranja pri svakom posjetu.
 
-Ako je datoteka nestala ili je izmijenjena izvan Sidrene, pregledajte Dnevnik i regenerirajte valjanu objavu.
+Ako je datoteka nestala ili je izmijenjena izvan SIDRENA plugina, pregledajte Dnevnik i regenerirajte valjanu objavu.
 
 ### Korak 15 — cron i upozorenja
 
