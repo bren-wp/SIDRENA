@@ -5,7 +5,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.21
+Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,15 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.22 =
+
+* Simplified the Croatian end-user settings screen and locked publication-critical safeguards to automatic safe defaults.
+* Focused the plugin on reference prices, 30-day sale-price references, digital price lists, locations, unit prices, archives, automated retrieval, and publication audit data.
+* Added public file integrity metadata, improved archive/download layouts, and an edition-specific detailed Croatian PDF manual for non-technical users.
+* Added validated unit/alias extension hooks while preserving existing built-in conversions.
+* Updated WordPress.org-facing naming, slugs, branding, admin notices, and readme copy based on reviewer feedback.
+* Passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check for both production editions, and real WordPress browser/runtime QA before the version bump.
 
 = 1.0.21 =
 
