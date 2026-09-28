@@ -20,12 +20,12 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Resolution:**
 - standalone display name: **brendigo Sidrene cijene i digitalni cjenici**
-- WooCommerce display name: **brendigo Sidrene cijene i cjenici za WooCommerce**
+- WooCommerce display name: **brendigo Sidrene cijene i cjenici**
 - standalone public slug/text-domain: `brendigo-sidrene-cijene-digitalni-cjenici`
 - WooCommerce requested public slug/text-domain: `brendigo-sidrene-cijene-cjenici`
 - `brendigo` is the leading distinctive element.
 - The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
-- WooCommerce is used only as a trailing compatibility/dependency descriptor.
+- WooCommerce is not used in the public plugin display name or slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
 
