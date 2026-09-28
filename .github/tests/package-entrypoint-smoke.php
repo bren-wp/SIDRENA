@@ -57,7 +57,7 @@ $expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
 
 preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
 $actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
-$expected_domain = 'wordpress' === $edition ? 'brendigo-cjenikomat' : 'brendigo-cjenikomat-trgovine';
+$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrena-digitalni-cjenici' : 'brendigo-sidrena-cjenici';
 
 require $main;
 

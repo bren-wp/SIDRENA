@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: brendigo Cjenikomat – sidrene cijene za web trgovine
+ * Plugin Name: brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije i objava cijena za WooCommerce proizvode i usluge.
  * Version: 1.0.22
@@ -13,7 +13,7 @@
  * Author URI: https://brendigo.com/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: brendigo-cjenikomat-trgovine
+ * Text Domain: brendigo-sidrena-cjenici
  * Domain Path: /languages
  */
 

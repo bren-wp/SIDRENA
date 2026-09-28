@@ -35,8 +35,13 @@ jobs:
           php-version: '8.3'
           coverage: none
 
-      - name: Install PDF build dependency
-        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+      - name: Install PDF build and render dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --quiet reportlab pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends poppler-utils
 
       - name: Guard source tree edition boundaries
         shell: bash
@@ -78,6 +83,10 @@ jobs:
       - name: Verify documentation and local branding assets
         shell: bash
         run: |
+          if grep -RInE 'Cjenikomat|cjenikomat' assets branding wporg-assets editions includes docs tools --exclude='*.png' --exclude='*.jpg' --exclude='*.jpeg' --exclude='*.pdf'; then
+            echo 'Retired Cjenikomat branding detected; SIDRENA must remain the runtime and visual brand.' >&2
+            exit 1
+          fi
           set -euo pipefail
           test -s assets/images/menu-anchor.svg
           test -s assets/images/logo-mark.svg
@@ -252,14 +261,14 @@ jobs:
 
           WP="$OUT/.sidrena-build/sidrena-wordpress"
           WOO="$OUT/.sidrena-build/sidrena-woocommerce"
-          grep -Fq 'Text Domain: brendigo-cjenikomat' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: brendigo-cjenikomat-trgovine' "$WOO/sidrena-woocommerce.php"
-          test -f "$WP/languages/brendigo-cjenikomat.pot"
-          test -f "$WOO/languages/brendigo-cjenikomat-trgovine.pot"
+          grep -Fq 'Text Domain: brendigo-sidrena-digitalni-cjenici' "$WP/sidrena-wordpress.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cjenici' "$WOO/sidrena-woocommerce.php"
+          test -f "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          test -f "$WOO/languages/brendigo-sidrena-cjenici.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
           test ! -f "$WOO/languages/sidrena-woocommerce.pot"
-          grep -Fq 'X-Domain: brendigo-cjenikomat' "$WP/languages/brendigo-cjenikomat.pot"
-          grep -Fq 'X-Domain: brendigo-cjenikomat-trgovine' "$WOO/languages/brendigo-cjenikomat-trgovine.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-digitalni-cjenici' "$WP/languages/brendigo-sidrena-digitalni-cjenici.pot"
+          grep -Fq 'X-Domain: brendigo-sidrena-cjenici' "$WOO/languages/brendigo-sidrena-cjenici.pot"
           grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
           grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
@@ -280,6 +289,32 @@ jobs:
             exit 1
           fi
 
+      - name: Render and validate detailed PDF manuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/sidrena-distribution"
+          RENDER="$RUNNER_TEMP/sidrena-pdf-visual-qa"
+          rm -rf "$RENDER"
+          mkdir -p "$RENDER"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$OUT/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/wordpress" \
+            --label "SIDRENA WordPress"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$OUT/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/woocommerce" \
+            --label "SIDRENA WooCommerce"
+
+      - name: Upload PDF visual QA renders
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-pdf-visual-qa
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ runner.temp }}/sidrena-pdf-visual-qa/
       - name: Upload verified review packages
         uses: actions/upload-artifact@v7
         with:

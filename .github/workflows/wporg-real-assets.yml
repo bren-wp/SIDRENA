@@ -29,7 +29,7 @@ on:
       - 'docs/**'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: sidrena-wporg-assets-${{ github.ref }}
@@ -46,9 +46,9 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Normalize project metadata
+      - name: Verify project metadata without mutating the review branch
         shell: bash
-        run: python3 tools/apply-source-metadata.py
+        run: python3 tools/apply-source-metadata.py --check
 
       - name: Set up Node
         uses: actions/setup-node@v7

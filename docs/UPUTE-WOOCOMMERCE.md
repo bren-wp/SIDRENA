@@ -130,6 +130,8 @@ Premium atributi uključuju lokaciju, format (csv/xml), katalog (products/servic
 
 Sidrena više ne traži da korisnik ručno uključuje zakonski važan output. Automatski ostaju uključeni:
 
+Propis za strojno obradivi cjenik predviđa XML **ili** CSV format. SIDRENA namjerno generira oba formata radi interoperabilnosti i praktičnijeg automatiziranog dohvaćanja; oba formata su tehnička odluka plugina, a ne tvrdnja da zakon zahtijeva oba istodobno.
+
 - CSV i XML
 - javni HTML cjenik
 - JSON manifest
@@ -302,6 +304,108 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - automatizirani dohvat aktualnih maloprodajnih cijena
 - obvezna polja proizvoda: naziv, šifra, marka, primjenjiva jedinica i jedinična cijena, maloprodajna cijena, podatak o posebnom obliku prodaje, sidrena cijena, barkod i dostupnost
 - za usluge: naziv, maloprodajna cijena, podatak o posebnom obliku prodaje i sidrena cijena, uz podatke o vrsti/opsegu i pripadajućim troškovima gdje ih traži primjenjivi propis
+
+## Sidrena cijena
+
+Sidrena cijena je zasebna referentna vrijednost uz aktualnu WooCommerce cijenu kada je obveza primjenjiva. Ne poistovjećujte je s redovnom WooCommerce cijenom, akcijskom cijenom, najnižom cijenom u prethodnih 30 dana niti s javnom arhivskom datotekom.
+
+SIDRENA može popuniti podatke iz pouzdanih WooCommerce izvora samo gdje je to tehnički i semantički sigurno. Povijesna referentna vrijednost mora odgovarati stvarnoj poslovnoj evidenciji; plugin ne smije izmišljati ili rekonstruirati nedokazivu cijenu.
+
+## Najniža cijena u prethodnih 30 dana
+
+Kod posebnog oblika prodaje SIDRENA koristi dostupnu povijest cijena kao tehničku podlogu za 30-dnevnu referencu. Ako nema dovoljno pouzdanih zapisa, ostavlja potrebu za provjerenim ručnim podatkom umjesto izmišljanja vrijednosti.
+
+WooCommerce sale price i SIDRENA 30-dnevna referenca nisu isti podatak. Također, 30-dnevna referenca nije isto što i najmanje 30 dana javno dostupne arhive digitalnih cjenika.
+
+## Jedinična cijena
+
+Jedinična cijena vodi se po proizvodu ili varijaciji kada je primjenjiva. Kod varijabilnog proizvoda provjerite nasljeđivanje i specifične vrijednosti svake varijacije.
+
+Registry jedinica podržava standardne konverzije i developer hookove `sidrena_unit_definitions` i `sidrena_unit_aliases`. Custom definicije prolaze validaciju canonical keya, baze i multiplikatora. SIDRENA ne određuje pravnu kategoriju samo na temelju WooCommerce kategorije, naziva proizvoda ili taga.
+
+## CSV i XML digitalni cjenici
+
+Službena odluka za strojno obradivi cjenik predviđa XML **ili** CSV format. SIDRENA proizvodi oba formata radi interoperabilnosti, automatizacije i lakše integracije; oba formata nisu predstavljena kao istodobni zakonski minimum.
+
+Za svaki katalog i lokaciju provjerite datum, format, URL, broj redaka, veličinu i SHA-256. Aktualni cjenik i arhiva moraju biti javno dostupni. **Otvori** treba otvoriti javni URL, a **Preuzmi** treba spremiti datoteku.
+
+## Shortcodeovi
+
+Dostupni su `[sidrena_objava_cjenika]`, `[sidrena_cjenik]`, `[sidrena_cjenici]`, `[sidrena_arhiva]`, `[sidrena_cjenik_url]` i `[sidrena_usluge]`.
+
+Atributi poput lokacije, formata, kataloga, arhive, limita, prikaza i naslova validiraju se prije upotrebe. Za frontend birajte kartice, popis ili tablicu, ali ne duplicirajte istu objavu na više mjesta bez potrebe.
+
+## REST, manifest i discovery
+
+SIDRENA REST javni endpointi su read-only i služe javnom dohvaćanju cijena, cjenika i discovery podataka. Administrativni write workflow ne oslanja se na javni REST.
+
+JSON manifest pruža stabilan strojno čitljiv indeks objavljenih datoteka. WooCommerce frontend kompatibilnost može dohvatiti lokalni SIDRENA REST prikaz za odabranu varijaciju; zahtjev ostaje na istoj WordPress stranici i nije telemetrija niti vanjski servis.
+
+## Automatizacija, watchdog i cron
+
+Dnevno generiranje, strict publication, arhiva, povijest, integritet i watchdog trebaju ostati automatski. Korisniku se ne daje jednostavan prekidač kojim može slučajno ugasiti osnovni publication workflow.
+
+WP-Cron ovisi o posjetama stranici. Na produkcijskom webshopu preporučuje se server cron koji redovito pokreće WordPress cron. Nakon promjene server crona napravite testno generiranje i provjerite Dnevnik.
+
+## E-mail upozorenja
+
+Neuspjela objava šalje upozorenje na posebno postavljenu adresu ili WordPress administratorski e-mail. Poruka služi samo operativnom upozorenju; nema marketinšku ili tracking svrhu.
+
+Ako poruke ne stižu, zasebno testirajte WordPress mail/SMTP. Uspješan mail transport ne potvrđuje uspješnu objavu — provjerite i javnu datoteku, manifest i audit rezultat.
+
+## Audit i dnevnik
+
+Audit bilježi ključne radnje i rezultate: generiranje, import, promjene lokacija, integritet, watchdog i greške objave. Kod većeg incidenta izvezite tehničku evidenciju prije čišćenja ili migracije.
+
+Audit nije računovodstveni sustav i ne dokazuje sam po sebi stvarnost povijesne cijene. Služi kao tehnički zapis ponašanja plugina.
+
+## Import i export
+
+WooCommerce izdanje koristi postojeći WooCommerce CSV Import/Export za podržana SIDRENA polja te zasebne SIDRENA alate gdje su potrebni lokacijski ili referentni podaci. Prije importa napravite backup i testirajte uzorak.
+
+Upload prolazi provjeru veličine, ekstenzije i MIME tipa. CSV ima ograničenje redaka i zaštitu od neispravnog/nesigurnog unosa. Podaci se sanitiziraju prije spremanja, a svaka write putanja zahtijeva odgovarajuće ovlasti.
+
+## Varijacije
+
+Varijacije imaju vlastite SIDRENA podatke gdje je to potrebno. Pri spremanju varijacije plugin provjerava WooCommerce nonce, dopuštenje nad nadređenim proizvodom i dopuštenje uređivanja konkretne varijacije.
+
+Frontend hydration koristi odabranu varijaciju, a REST fallback ograničen je na javni read-only prikaz. Nakon promjene strukture varijacija obavezno testirajte barem jedan jednostavni i jedan varijabilni proizvod.
+
+## Bulk editor
+
+Bulk editor je namijenjen sigurnom masovnom uređivanju postojećih WooCommerce proizvoda. Spremanje zahtijeva SIDRENA capability, nonce i `edit_post` dopuštenje za svaki pojedini proizvod; redovi za koje korisnik nema ovlast preskaču se.
+
+Kod velikog kataloga radite u manjim serijama i nakon spremanja otvorite **Provjera**. Bulk editor ne smije zaobići WooCommerce katalog niti stvarati paralelne kopije proizvoda.
+
+## Lokacijske cijene i raspoloživost
+
+Fizička lokacija ima vlastitu cijenu, sidrenu cijenu i raspoloživost samo kada postoje stvarni lokacijski podaci. Globalni WooCommerce stock ne koristi se kao lažna lokalna raspoloživost.
+
+WooCommerce adresa trgovine može se ponuditi kao početni prijedlog lokacije, ali se ne sprema automatski bez korisnikove radnje. Kod više poslovnica provjerite svaku lokaciju odvojeno.
+
+## Troubleshooting
+
+Ako SIDRENA polja nisu vidljiva na proizvodu, provjerite je li aktivno WooCommerce izdanje i je li WooCommerce aktivan. Ako spremanje ne uspije, provjerite korisničke ovlasti i eventualni security/cache plugin koji blokira admin request.
+
+Ako frontend ne osvježava podatak kod promjene varijacije, ispraznite cache/minification sloj i provjerite lokalni REST endpoint. Ako cjenik ne nastane, otvorite **Provjera** i **Dnevnik**, zatim ručno pokrenite generiranje.
+
+Kod lokacijskih podataka provjerite ID lokacije, pripadni proizvod/varijaciju i raspoloživost. Nemojte popunjavati fizičku lokaciju globalnim stockom samo da uklonite upozorenje.
+
+## Update postupak
+
+Prije nadogradnje napravite backup baze i `uploads/sidrena`. Nakon nadogradnje provjerite WooCommerce status, otvorite nekoliko proizvoda i varijacija, zatim napravite ručnu objavu i frontend test.
+
+Nakon veće WooCommerce nadogradnje provjerite HPOS/kompatibilnost, CSV import/export i variation hydration. Ne aktivirajte samostalno WordPress izdanje paralelno s WooCommerce izdanjem.
+
+## Sigurnost
+
+Administrativne write akcije koriste nonce i capability provjere. Spremanje proizvoda i varijacija dodatno poštuje WooCommerce nonce i `edit_post` prava nad konkretnim objektom. Importi imaju ograničenja veličine/redaka, MIME provjeru i sanitizaciju.
+
+Nema telemetrije, skrivenog trackinga ni vanjskog update servisa. Lokalni frontend zahtjevi idu na vlastiti WordPress REST endpoint. Vanjske poveznice za dokumentaciju/podršku otvaraju se tek kada ih korisnik klikne.
+
+## Pravna napomena
+
+SIDRENA je tehnički alat i nije pravna potvrda poslovanja. Korisnik je odgovoran za stvarne WooCommerce cijene, povijesne podatke, primjenjivost propisa, posebne iznimke, lokacijsku stvarnost i pravodobnu objavu. Zeleni tehnički status znači da su ugrađene provjere prošle, a ne da WordPress.org ili brendigo jamče pravnu usklađenost.
 
 ## Podrška
 

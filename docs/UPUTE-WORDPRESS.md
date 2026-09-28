@@ -122,6 +122,8 @@ Premium atributi za datoteke/arhivu uključuju lokacija, format (csv/xml), katal
 
 Sidrena više ne traži da laik odlučuje treba li uključiti zakonski važan output. Automatski su uključeni CSV, XML, javni HTML cjenik, JSON manifest, REST indeks, strict publication, sidrena cijena, 30-dnevna referentna evidencija, povijest cijena i upozorenja.
 
+Propis za strojno obradivi cjenik predviđa XML **ili** CSV format. SIDRENA namjerno generira oba formata radi interoperabilnosti i praktičnijeg automatiziranog dohvaćanja; oba formata su tehnička odluka plugina, a ne tvrdnja da zakon zahtijeva oba istodobno.
+
 U **Sidrena > Postavke** korisnik podešava samo:
 
 1. objavljuje li proizvode, usluge ili oboje
@@ -236,6 +238,97 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - automatizirani dohvat aktualnih maloprodajnih cijena
 - obvezna polja proizvoda: naziv, šifra, marka, primjenjiva jedinica i jedinična cijena, maloprodajna cijena, podatak o posebnom obliku prodaje, sidrena cijena, barkod i dostupnost
 - za usluge: naziv, maloprodajna cijena, podatak o posebnom obliku prodaje i sidrena cijena, uz podatke o vrsti/opsegu i pripadajućim troškovima gdje ih traži primjenjivi propis
+
+## Sidrena cijena
+
+Sidrena cijena je zasebna referentna vrijednost koja se prikazuje uz aktualnu maloprodajnu cijenu kada je obveza primjenjiva. Nemojte je poistovjećivati s najnižom cijenom u prethodnih 30 dana niti s arhivskom cijenom iz javnog cjenika.
+
+Vrijednost i datum moraju odgovarati stvarnoj poslovnoj evidenciji. SIDRENA može tehnički spremiti, prikazati i provjeriti vrijednost, ali ne može sama utvrditi je li uneseni povijesni podatak činjenično točan. Ako proizvod ili usluga imaju poseban status, prije objave provjerite primjenjivi službeni izvor ili stručnu pravnu procjenu.
+
+## Najniža cijena u prethodnih 30 dana
+
+Najniža cijena u prethodnih 30 dana koristi se kod posebnih oblika prodaje kada je primjenjiva. To je poseban podatkovni sloj i ne zamjenjuje sidrenu cijenu.
+
+SIDRENA vodi povijest cijena odvojeno od javne arhive datoteka. Ručni unos 30-dnevne vrijednosti koristite samo kada imate provjerenu evidenciju koju plugin ne može rekonstruirati iz dostupne povijesti. Iznimke se ne smiju uključivati samo radi uklanjanja upozorenja.
+
+## Jedinična cijena
+
+Jedinična cijena računa se samo kada je za stavku označeno da je potrebna i kada postoje valjana količina i jedinica. Registry jedinica podržava standardne konverzije, a developer hookovi `sidrena_unit_definitions` i `sidrena_unit_aliases` omogućuju proširenje bez izmjene jezgre plugina.
+
+Custom jedinica mora imati siguran canonical key, valjanu baznu jedinicu i pozitivan konačan multiplikator unutar razumnog raspona. Neispravne, negativne, beskonačne ili nesigurno imenovane definicije odbacuju se. SIDRENA ne zaključuje pravnu kategoriju proizvoda samo iz naziva, kategorije ili opisa.
+
+## CSV i XML digitalni cjenici
+
+Službena odluka za strojno obradivi cjenik predviđa XML **ili** CSV format. SIDRENA namjerno generira oba formata radi interoperabilnosti, automatizacije i lakšeg dohvaćanja od strane različitih sustava; to je tehnička odluka plugina i nije tvrdnja da su oba formata istodobno zakonski obvezna.
+
+Za svaku uspješnu objavu provjerite naziv datoteke, lokaciju, katalog, format, datum generiranja, broj redaka, veličinu i SHA-256 vrijednost. Aktualne datoteke i arhivske datoteke moraju imati javni URL koji se može otvoriti. Akcija **Otvori** treba otvoriti javni resurs, dok je **Preuzmi** namijenjen spremanju datoteke.
+
+## Shortcodeovi
+
+SIDRENA podržava ove javne shortcodeove:
+
+- `[sidrena_objava_cjenika]` za puni javni prikaz
+- `[sidrena_cjenik]` za ciljani prikaz aktualnog cjenika
+- `[sidrena_cjenici]` za popis ili grupu cjenika
+- `[sidrena_arhiva]` za arhivu objava
+- `[sidrena_cjenik_url]` kada trebate samo URL odgovarajuće datoteke
+- `[sidrena_usluge]` za javni prikaz usluga
+
+Atributi se koriste samo gdje imaju smisla i prolaze validaciju. Podržani obrasci uključuju lokaciju, format, katalog, arhivu, limit, prikaz i prilagođeni naslov. Za prikaz koristite kartice, popis ili tablicu prema prostoru stranice.
+
+## REST, manifest i discovery
+
+Javni REST sloj služi za dohvat javno objavljenih podataka i discovery metapodataka. Write REST endpointi nisu potrebni za ovaj workflow. JSON manifest povezuje aktualne datoteke, njihove URL-ove i integritetne metapodatke.
+
+Ako REST ili manifest vratite kroz cache/CDN, provjerite da se nakon nove objave ne poslužuje zastarjela verzija dulje nego što je prihvatljivo za vaš produkcijski workflow. SIDRENA javne realtime odgovore označava tako da ih klijent ne bi trebao dugotrajno spremati.
+
+## Automatizacija, watchdog i cron
+
+Dnevno generiranje je osnovni automatski workflow. Vrijeme postavite dovoljno rano da objava završi prije relevantnog roka; nesigurne vrijednosti plugin normalizira na sigurnu vrijednost.
+
+Publication watchdog provjerava je li očekivana objava stvarno nastala. Ako WordPress WP-Cron na hostingu nije pouzdan, konfigurirajte server cron koji redovito poziva WordPress cron. Nakon promjene cron konfiguracije napravite ručno generiranje i provjerite Dnevnik.
+
+## E-mail upozorenja
+
+E-mail za upozorenja koristi adresu iz SIDRENA postavki, a ako je prazna koristi WordPress administratorsku adresu. Upozorenje je namijenjeno stvarnom neuspjehu objave ili drugom stanju koje zahtijeva pažnju, ne marketingu.
+
+Provjerite da hosting može slati WordPress e-mail. Ako koristite SMTP plugin, testirajte isporuku i provjerite spam mapu. Ne pretpostavljajte da je posao dovršen samo zato što je cron pokrenut; provjerite i objavljenu datoteku.
+
+## Audit i dnevnik
+
+Dnevnik bilježi važne administrativne i publikacijske događaje. Koristite ga pri rješavanju neuspjelog importa, ručnog generiranja, lokacijske promjene, greške integriteta ili watchdog upozorenja.
+
+Audit zapis nije zamjena za računovodstvenu ili poslovnu evidenciju. Njegova je svrha tehnički trag rada plugina: što je SIDRENA pokušala napraviti, kada i s kojim rezultatom.
+
+## Import i export
+
+CSV i XML import služe za kontrolirani unos većih količina podataka. Datoteke imaju ograničenje veličine i broja redaka, provjeru ekstenzije i MIME tipa, normalizaciju tekstualnog kodiranja i sigurnosne provjere prije poslovnih promjena.
+
+CSV vrijednosti tretiraju se kao podaci i izlaz se štiti od formula injection obrazaca. XML ne dopušta DOCTYPE/ENTITY deklaracije i koristi mrežno izolirani parser. Prije velikog importa napravite backup i testirajte manji uzorak.
+
+## Troubleshooting
+
+Ako se cjenik ne generira, prvo otvorite **Sidrena > Provjera** i **Dnevnik**. Provjerite postoje li aktivne lokacije, valjani proizvodi/usluge i dozvola za zapisivanje u WordPress uploads direktorij.
+
+Ako javni URL vraća 404, regenerirajte objavu i provjerite permalink/cache pravila. Ako se prikazuje stara datoteka, ispraznite relevantni page/cache/CDN sloj. Ako e-mail upozorenja ne stižu, testirajte WordPress mail odvojeno od SIDRENA workflowa.
+
+Kod problema nakon nadogradnje nemojte ručno uređivati bazu. Napravite backup, provjerite Dnevnik, ponovno pokrenite generiranje i tek zatim razmatrajte rollback na prethodnu provjerenu verziju.
+
+## Update postupak
+
+Prije nadogradnje napravite backup baze podataka i `uploads/sidrena` direktorija. Nakon nadogradnje otvorite SIDRENA administraciju kako bi se izvršile potrebne upgrade provjere, zatim pokrenite ručno generiranje i pregledajte javnu objavu.
+
+Ne instalirajte WordPress i WooCommerce izdanje istodobno. Ako mijenjate izdanje, prvo deaktivirajte postojeće izdanje, napravite backup i tek zatim aktivirajte drugo izdanje prema dokumentiranom migracijskom postupku.
+
+## Sigurnost
+
+Administrativne write akcije zahtijevaju odgovarajuću korisničku capability provjeru i nonce zaštitu. Importi dodatno provjeravaju veličinu, tip datoteke, broj redaka i sadržaj prije obrade. Javni REST endpointi su read-only i ne služe za administrativne izmjene.
+
+Nemojte davati administratorski pristup korisnicima kojima nije potreban. Držite WordPress, PHP i SIDRENA verzije ažurnima te koristite HTTPS. Nikada ne šaljite backup baze, privatne korisničke podatke ili administratorske pristupne podatke kroz javni support kanal.
+
+## Pravna napomena
+
+SIDRENA je tehnički alat za vođenje i objavu podataka. Ne daje pravno jamstvo, ne potvrđuje da je svaki uneseni podatak činjenično točan i ne može procijeniti sve posebne okolnosti konkretnog trgovca ili pružatelja usluge. Korisnik ostaje odgovoran za stvarne cijene, povijesne podatke, primjenjivost propisa i pravodobnu objavu.
 
 ## Podrška
 

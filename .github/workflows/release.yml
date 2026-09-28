@@ -148,7 +148,7 @@ jobs:
 
           Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
 
-          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
@@ -156,9 +156,14 @@ jobs:
           Službena stranica: https://brendigo.com/sidrene-cijene/
           EOF
 
-      - name: Install PDF build dependency
+      - name: Install PDF build and render dependencies
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
-        run: python3 -m pip install --disable-pip-version-check --quiet reportlab
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check --quiet reportlab pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends poppler-utils
 
       - name: Build WordPress and WooCommerce ZIPs
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -180,6 +185,33 @@ jobs:
           unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
           unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
 
+      - name: Render and validate release PDF manuals
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          RENDER="$RUNNER_TEMP/sidrena-release-pdf-visual-qa"
+          rm -rf "$RENDER"
+          mkdir -p "$RENDER"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$RUNNER_TEMP/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/wordpress" \
+            --label "SIDRENA WordPress release"
+
+          python3 tools/pdf-visual-qa.py \
+            --pdf "$RUNNER_TEMP/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf" \
+            --output-dir "$RENDER/woocommerce" \
+            --label "SIDRENA WooCommerce release"
+
+      - name: Upload release PDF visual QA renders
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-release-pdf-visual-qa-${{ env.VERSION }}
+          if-no-files-found: error
+          retention-days: 14
+          path: ${{ runner.temp }}/sidrena-release-pdf-visual-qa/
       - name: Stage exact release builds for Plugin Check
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
@@ -197,7 +229,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-wordpress
-          slug: brendigo-cjenikomat
+          slug: brendigo-sidrena-digitalni-cjenici
           # Public standalone slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
           wp-version: latest
           ignore-errors: 'false'
@@ -208,7 +240,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/release-plugin-check/sidrena-woocommerce
-          slug: brendigo-cjenikomat-trgovine
+          slug: brendigo-sidrena-cjenici
           # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
           wp-version: latest
           ignore-errors: 'false'
@@ -345,7 +377,7 @@ jobs:
           test ! -e "$WP/assets/images/logo-woocommerce.svg"
           test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
           test -s "$WP/docs/UPUTE.md"
-          test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WP/docs/SIDRENA-UPUTE.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
           test ! -d "$WP/branding"
@@ -359,7 +391,7 @@ jobs:
           test ! -e "$WOO/assets/images/logo-wordpress.svg"
           test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/docs/UPUTE.md"
-          test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
           test ! -d "$WOO/branding"
@@ -396,7 +428,7 @@ jobs:
 
           Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
 
-          Jednokratna instalacija i početno postavljanje od strane Brendiga: 80 EUR.
+          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com

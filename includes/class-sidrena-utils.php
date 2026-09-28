@@ -208,6 +208,50 @@ final class Sidrena_Utils {
 		return $locations;
 	}
 
+
+	public static function uploaded_text_type_allowed( $tmp_name, $filename, $allowed_extensions ) {
+		$tmp_name           = (string) $tmp_name;
+		$filename           = (string) $filename;
+		$allowed_extensions = array_values( array_unique( array_map( 'strtolower', (array) $allowed_extensions ) ) );
+		$extension          = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+
+		if ( ! $tmp_name || ! is_file( $tmp_name ) || ! in_array( $extension, $allowed_extensions, true ) ) {
+			return false;
+		}
+
+		$allowed_mimes = array(
+			'csv' => array(
+				'text/csv',
+				'text/plain',
+				'application/csv',
+				'application/vnd.ms-excel',
+			),
+			'xml' => array(
+				'application/xml',
+				'text/xml',
+				'text/plain',
+			),
+		);
+
+		if ( ! isset( $allowed_mimes[ $extension ] ) ) {
+			return false;
+		}
+
+		if ( function_exists( 'finfo_open' ) && defined( 'FILEINFO_MIME_TYPE' ) ) {
+			$finfo = finfo_open( FILEINFO_MIME_TYPE );
+			if ( $finfo ) {
+				$detected = finfo_file( $finfo, $tmp_name );
+				finfo_close( $finfo );
+				$detected = is_string( $detected ) ? strtolower( trim( $detected ) ) : '';
+				if ( $detected && ! in_array( $detected, $allowed_mimes[ $extension ], true ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	public static function decimal( $value ) {
 		if ( '' === $value || null === $value ) {
 			return '';
@@ -652,8 +696,8 @@ final class Sidrena_Utils {
 
 	public static function runtime_mode_label() {
 		return self::is_woocommerce_edition()
-			? __( 'Cjenikomat · web trgovina', 'sidrena' )
-			: __( 'Cjenikomat · samostalni katalog', 'sidrena' );
+			? __( 'SIDRENA · web trgovina', 'sidrena' )
+			: __( 'SIDRENA · samostalni katalog', 'sidrena' );
 	}
 
 	public static function is_public_wc_product( $product ) {

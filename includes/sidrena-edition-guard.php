@@ -57,7 +57,7 @@ add_action(
 			return;
 		}
 
-		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno Cjenikomat izdanje. Konfliktno izdanje je deaktivirano. Na ekranu Dodataka ostavite aktivno samo izdanje koje želite koristiti.', 'sidrena' ) . '</p></div>';
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Aktivno može biti samo jedno SIDRENA izdanje. Konfliktno izdanje je deaktivirano. Na ekranu Dodataka ostavite aktivno samo izdanje koje želite koristiti.', 'sidrena' ) . '</p></div>';
 	}
 );
 

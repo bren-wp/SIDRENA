@@ -1,6 +1,6 @@
-=== brendigo Cjenikomat – sidrene cijene i digitalni cjenici ===
+=== brendigo SIDRENA – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
-Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Cjenikomat%20plugin%20-%20donacija
+Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
@@ -13,7 +13,7 @@ Reference prices, 30-day sale-price references, products and services, public CS
 
 == Description ==
 
-**brendigo Cjenikomat – sidrene cijene i digitalni cjenici** is the standalone Cjenikomat edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
+**brendigo SIDRENA – sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
 
 The plugin provides:
 
@@ -35,6 +35,8 @@ The plugin provides:
 
 Important publication and technical outputs are automated so an end user cannot accidentally disable them. CSV, XML, public HTML, the JSON manifest, REST index, price history, strict publication checks, and publication monitoring remain enabled.
 
+The Croatian machine-readable price-list rule accepts XML or CSV. SIDRENA generates both formats by design for interoperability; this does not state that the rule requires both formats at the same time.
+
 The simplified settings screen only asks the user to choose the business mode, a daily generation time before 08:00, an archive retention period of at least 30 days, and an alert email address.
 
 = Croatian end-user documentation =
@@ -42,7 +44,7 @@ The simplified settings screen only asks the user to choose the business mode, a
 The installable package includes detailed Croatian documentation:
 
 * `docs/UPUTE.md` — detailed step-by-step text guide
-* `docs/Cjenikomat-UPUTE.pdf` — detailed PDF manual for non-technical end users
+* `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
 The guide covers installation, first-time setup, locations, products and services, reference prices, 30-day sale-price references, unit prices, price-list generation, public publication, archives, the audit log, cron, alerts, and troubleshooting.
 
@@ -58,48 +60,48 @@ Paid setup is not required to use the plugin. A voluntary donation supports cont
 
 == External services and user-initiated links ==
 
-Cjenikomat does not require a remote API or SaaS account for its core price-list functions, and it does not send telemetry or usage analytics.
+SIDRENA does not require a remote API or SaaS account for its core price-list functions, and it does not send telemetry or usage analytics.
 
-When an administrator explicitly runs the public-access check, the plugin uses the WordPress HTTP API only to request public Cjenikomat price-list URLs generated on the same WordPress site. No product/customer personal data is sent to brendigo or to a third-party API by that check; the request contains only normal HTTP request metadata and a Cjenikomat user-agent string.
+When an administrator explicitly runs the public-access check, the plugin uses the WordPress HTTP API only to request public SIDRENA price-list URLs generated on the same WordPress site. No product/customer personal data is sent to brendigo or to a third-party API by that check; the request contains only normal HTTP request metadata and a SIDRENA user-agent string.
 
 The administration and bundled documentation also contain optional, user-initiated external links. The plugin does not contact these sites until the administrator clicks the corresponding link:
 
 * **brendigo** — plugin website, documentation/support, and optional setup information. Terms: https://brendigo.com/uvjeti-koristenja/ Privacy: https://brendigo.com/politika-privatnosti/
 * **WhatsApp** — optional support link that opens WhatsApp with a pre-filled support message. Terms: https://www.whatsapp.com/legal/terms-of-service?lang=hr Privacy: https://www.whatsapp.com/legal/privacy-policy?lang=hr
 * **Revolut** — optional voluntary donation link. Terms: https://www.revolut.com/hr-HR/legal/terms/ Privacy: https://www.revolut.com/hr-HR/legal/privacy/
-* **Official Croatian legal/information sources** — Narodne novine, Ministry of Economy, and Croatian Chamber of Trades and Crafts links are provided only so an administrator can open the cited source manually. Cjenikomat does not fetch those pages in the background.
+* **Official Croatian legal/information sources** — Narodne novine, Ministry of Economy, and Croatian Chamber of Trades and Crafts links are provided only so an administrator can open the cited source manually. SIDRENA does not fetch those pages in the background.
 
 = Legal note =
 
-Cjenikomat provides technical tools for recording, checking, automating, and publishing price data. It does not provide legal certification or replace the merchant's source records or professional legal advice.
+SIDRENA provides technical tools for recording, checking, automating, and publishing price data. It does not provide legal certification or replace the merchant's source records or professional legal advice.
 
 == Installation ==
 
 1. In WordPress, open **Plugins > Add New Plugin > Upload Plugin**.
-2. Upload the current standalone Cjenikomat ZIP package.
+2. Upload the current standalone SIDRENA ZIP package.
 3. Activate the plugin.
-4. Open **Cjenikomat > Settings** and choose the operating mode.
+4. Open **SIDRENA > Settings** and choose the operating mode.
 5. Configure **Locations**.
 6. Add the first product or service.
 7. Open **Check** and resolve genuine data warnings.
 8. Generate the first publication under **Price Lists**.
 9. Verify the public CSV/XML files, archive, and audit log.
 
-Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/Cjenikomat-UPUTE.pdf`.
+Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
 = Does this edition require WooCommerce? =
 
-No. This edition uses its own Cjenikomat product and service catalogue.
+No. This edition uses its own SIDRENA product and service catalogue.
 
 = Can I disable CSV/XML output or publication monitoring? =
 
 Not from the simplified end-user settings screen. Those technical outputs and safeguards stay enabled to prevent accidental misconfiguration.
 
-= Is a Cjenikomat reference price the same as the lowest price in the previous 30 days? =
+= Is a SIDRENA reference price the same as the lowest price in the previous 30 days? =
 
-No. Cjenikomat stores them as separate concepts and displays them only when the relevant rule is applicable.
+No. SIDRENA stores them as separate concepts and displays them only when the relevant rule is applicable.
 
 = Is the 80 EUR initial setup required? =
 
@@ -107,7 +109,7 @@ No. It is a completely optional service. The plugin can be installed and configu
 
 == Screenshots ==
 
-1. Cjenikomat dashboard and publication status.
+1. SIDRENA dashboard and publication status.
 2. Standalone product catalogue.
 3. Digital price lists and publication archive.
 4. Locations and sales channels.
@@ -123,7 +125,7 @@ No. It is a completely optional service. The plugin can be installed and configu
 * Added public file integrity metadata, improved archive/download layouts, and an edition-specific detailed Croatian PDF manual for non-technical users.
 * Added validated unit/alias extension hooks while preserving existing built-in conversions.
 * Updated WordPress.org-facing naming, slugs, branding, admin notices, and readme copy based on reviewer feedback.
-* Passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check for both production editions, and real WordPress browser/runtime QA before the version bump.
+* Expanded PHP 7.4/8.3/8.4 CI, distribution/admin/legal, Plugin Check, and real WordPress runtime regression coverage for the 1.0.22 release.
 
 = 1.0.21 =
 

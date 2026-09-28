@@ -207,4 +207,28 @@ sidrena_assert_same( true, isset( $decoded_context['original_bytes'] ) && $decod
 sidrena_assert_same( 1, preg_match( '//u', (string) ( $decoded_context['preview'] ?? '' ) ), 'Audit JSON preview must remain valid UTF-8.' );
 sidrena_assert_same( true, strlen( $encoded_context ) <= Sidrena_Audit::MAX_CONTEXT_BYTES, 'Truncated audit context exceeded the configured byte budget.' );
 
+
+$csv_upload = tempnam( sys_get_temp_dir(), 'sidrena-csv-' );
+file_put_contents( $csv_upload, "sku;price\nTEST-1;9,99\n" );
+sidrena_assert_same(
+	true,
+	Sidrena_Utils::uploaded_text_type_allowed( $csv_upload, 'catalog.csv', array( 'csv' ) ),
+	'Valid text CSV upload must pass MIME/type validation.'
+);
+sidrena_assert_same(
+	false,
+	Sidrena_Utils::uploaded_text_type_allowed( $csv_upload, 'catalog.exe', array( 'csv' ) ),
+	'Disallowed upload extension must be rejected.'
+);
+@unlink( $csv_upload );
+
+$binary_upload = tempnam( sys_get_temp_dir(), 'sidrena-bin-' );
+file_put_contents( $binary_upload, "\x89PNG\r\n\x1a\n" . str_repeat( "\0", 128 ) );
+sidrena_assert_same(
+	false,
+	Sidrena_Utils::uploaded_text_type_allowed( $binary_upload, 'fake.csv', array( 'csv' ) ),
+	'Binary content disguised with a CSV extension must be rejected.'
+);
+@unlink( $binary_upload );
+
 fwrite( STDOUT, "Sidrena utility smoke tests passed.\n" );

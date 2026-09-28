@@ -940,6 +940,10 @@ final class Sidrena_Standalone {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
 
+		if ( ! Sidrena_Utils::uploaded_text_type_allowed( $file['tmp_name'], $filename, array( 'csv', 'xml' ) ) ) {
+			$this->redirect_import( 'standalone_import_failed' );
+		}
+
 		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $contents || '' === $contents || false !== strpos( $contents, "\0" ) ) {
 			$this->redirect_import( 'standalone_import_failed' );

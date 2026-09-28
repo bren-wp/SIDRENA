@@ -51,7 +51,7 @@ Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put 
 
 ## Digitalni cjenici
 
-Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javne strojno obradive CSV/XML cjenike. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu.
+Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javni strojno obradivi cjenik u XML ili CSV formatu. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu. SIDRENA tehnički generira oba formata radi interoperabilnosti i jednostavnije razmjene podataka; time se ne tvrdi da propis zahtijeva istodobnu objavu oba formata.
 
 Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti automatizirano prikupljanje podataka o aktualnim maloprodajnim cijenama.
 
@@ -128,7 +128,7 @@ Aktualna stabilna release linija koristi zasebne provjere za:
 - kratak WordPress admin menu s lokalnom sidro ikonicom i bez dupliciranih tehničkih stavki,
 - zabranu privremenih workflowova u release grani.
 
-Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.21.zip`, `sidrena-wordpress-1.0.21.zip.sha256`, `sidrena-woocommerce-1.0.21.zip` i `sidrena-woocommerce-1.0.21.zip.sha256`.
+Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.22.zip`, `sidrena-wordpress-1.0.22.zip.sha256`, `sidrena-woocommerce-1.0.22.zip` i `sidrena-woocommerce-1.0.22.zip.sha256`.
 
 ## Opseg Sidrene
 
