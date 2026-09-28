@@ -79,8 +79,8 @@ final class Sidrena_Legal_Automation {
 	}
 
 	public static function normalize_generation_time( $time ) {
-		$time = Sidrena_Utils::sanitize_time( $time, '' );
-		if ( '' === $time ) {
+		$time = is_scalar( $time ) ? sanitize_text_field( (string) $time ) : '';
+		if ( 1 !== preg_match( '/^(?:[01]\d|2[0-3]):[0-5]\d$/', $time ) ) {
 			return self::SAFE_GENERATION_TIME;
 		}
 
