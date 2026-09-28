@@ -224,28 +224,46 @@ jobs:
           test -f build/release-plugin-check/sidrena-wordpress/sidrena-wordpress.php
           test -f build/release-plugin-check/sidrena-woocommerce/sidrena-woocommerce.php
 
+      - name: Set up Node for release Plugin Check
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Install deterministic WordPress runtime tooling
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        shell: bash
+        run: bash tools/install-wp-env.sh "$RUNNER_TEMP/sidrena-wp-env"
+
       - name: Plugin Check release gate — WordPress edition
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
-        uses: WordPress/plugin-check-action@v1
-        with:
-          build-dir: build/release-plugin-check/sidrena-wordpress
-          slug: brendigo-sidrene-cijene-digitalni-cjenici
-          # Public standalone slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
-          wp-version: latest
-          ignore-errors: 'false'
-          ignore-warnings: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash tools/run-plugin-check.sh \
+            build/release-plugin-check/sidrena-wordpress \
+            brendigo-sidrene-cijene-digitalni-cjenici \
+            "$RUNNER_TEMP/plugin-check-release-wordpress.json"
 
       - name: Plugin Check release gate — WooCommerce edition
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
-        uses: WordPress/plugin-check-action@v1
-        with:
-          build-dir: build/release-plugin-check/sidrena-woocommerce
-          slug: brendigo-sidrene-cijene-cjenici
-          # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
-          wp-version: latest
-          ignore-errors: 'false'
-          ignore-warnings: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash tools/run-plugin-check.sh \
+            build/release-plugin-check/sidrena-woocommerce \
+            brendigo-sidrene-cijene-cjenici \
+            "$RUNNER_TEMP/plugin-check-release-woocommerce.json"
 
+      - name: Upload release Plugin Check results
+        if: always() && (env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true')
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-release-plugin-check-${{ env.VERSION }}
+          path: |
+            ${{ runner.temp }}/plugin-check-release-wordpress.json
+            ${{ runner.temp }}/plugin-check-release-woocommerce.json
+          if-no-files-found: warn
       - name: Create verified release tag
         if: startsWith(github.ref, 'refs/heads/release/') && env.CREATE_RELEASE_TAG == 'true'
         shell: bash
