@@ -229,7 +229,12 @@ final class Sidrena_REST {
 		$locations = Sidrena_Utils::locations();
 		if ( $requested ) {
 			foreach ( $locations as $location ) {
-				if ( 'yes' === ( $location['enabled'] ?? '' ) && Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ) === $requested ) {
+				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
+					continue;
+				}
+				$id   = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+				$code = Sidrena_Utils::sanitize_location_id( $location['code'] ?? '' );
+				if ( $requested === $id || $requested === $code ) {
 					return $location;
 				}
 			}

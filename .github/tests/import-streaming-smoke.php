@@ -9,6 +9,7 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'MB_IN_BYTES', 1048576 );
 
 class WP_Error {
 	public $code;
@@ -23,6 +24,7 @@ function remove_accents( $value ) {
 function wp_check_invalid_utf8( $value, $strip = false ) { unset( $strip ); return (string) $value; }
 function wp_strip_all_tags( $value ) { return strip_tags( (string) $value ); }
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
+function wp_filesize( $path ) { return filesize( $path ); }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php';
@@ -68,6 +70,22 @@ if ( function_exists( 'simplexml_load_string' ) ) {
 }
 
 $admin = Sidrena_Admin::instance();
+
+$validate_upload_size = new ReflectionMethod( 'Sidrena_Admin', 'validate_uploaded_csv_size' );
+$validate_upload_size->setAccessible( true );
+$upload_fixture = tempnam( sys_get_temp_dir(), 'sidrena-upload-' );
+file_put_contents( $upload_fixture, "sku;price\nA;1\n" );
+$upload_size = $validate_upload_size->invoke( $admin, $upload_fixture, 1 );
+sidrena_import_stream_assert( is_int( $upload_size ) && $upload_size === filesize( $upload_fixture ), 'Woo CSV upload size validation must use the server-side temp file size.' );
+$reported_too_large = $validate_upload_size->invoke( $admin, $upload_fixture, ( 5 * MB_IN_BYTES ) + 1 );
+sidrena_import_stream_assert( is_wp_error( $reported_too_large ) && 'upload_too_large' === $reported_too_large->code, 'Woo CSV upload must reject oversized reported upload metadata.' );
+file_put_contents( $upload_fixture, str_repeat( 'x', ( 5 * MB_IN_BYTES ) + 1 ) );
+$actual_too_large = $validate_upload_size->invoke( $admin, $upload_fixture, 1 );
+sidrena_import_stream_assert( is_wp_error( $actual_too_large ) && 'upload_too_large' === $actual_too_large->code, 'Woo CSV upload must reject an oversized server-side temp file even when reported metadata is smaller.' );
+file_put_contents( $upload_fixture, '' );
+$empty_upload = $validate_upload_size->invoke( $admin, $upload_fixture, 0 );
+sidrena_import_stream_assert( is_wp_error( $empty_upload ) && 'upload_empty' === $empty_upload->code, 'Woo CSV upload must reject an empty server-side temp file before reading it into memory.' );
+unlink( $upload_fixture );
 
 $write_stream_all = new ReflectionMethod( 'Sidrena_Admin', 'write_stream_all' );
 $write_stream_all->setAccessible( true );
