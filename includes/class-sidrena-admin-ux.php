@@ -90,6 +90,7 @@ final class Sidrena_Admin_UX {
 		}
 
 		if ( $ordered ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- WordPress exposes the wp-admin submenu registry through this core global; this method intentionally reorders only SIDRENA's own entries.
 			$submenu['sidrena'] = $ordered;
 		}
 	}
