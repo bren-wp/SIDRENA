@@ -72,20 +72,32 @@ sidrena_release_gate_assert(
 	'1.0.23 release repair must be enabled only for the known premature tag target.'
 );
 
-$retarget_start = strpos( $release, '- name: Retarget refreshed existing controlled tag' );
-$retarget_end   = strpos( $release, '- name: Verify published GitHub release assets' );
+$retarget_start = strpos( $release, '- name: Retarget controlled existing release tag before asset mutation' );
+$refresh_start  = strpos( $release, '- name: Refresh existing release metadata and controlled assets when required' );
+$verify_start   = strpos( $release, '- name: Verify published GitHub release assets' );
 sidrena_release_gate_assert(
-	false !== $retarget_start && false !== $retarget_end && $retarget_start < $retarget_end,
-	'Unable to isolate controlled existing-release retarget step.'
+	false !== $retarget_start && false !== $refresh_start && false !== $verify_start
+	&& $retarget_start < $refresh_start && $refresh_start < $verify_start,
+	'Controlled tag retarget must happen before mutating existing release assets and before final release verification.'
 );
-$retarget_block = substr( $release, $retarget_start, $retarget_end - $retarget_start );
+$retarget_block = substr( $release, $retarget_start, $refresh_start - $retarget_start );
 sidrena_release_gate_assert(
 	false !== strpos( $retarget_block, "env.RELEASE_EXISTS == 'true'" )
-	&& false !== strpos( $retarget_block, 'if [[ "$VERSION" == "1.0.23" ]]' )
-	&& false !== strpos( $retarget_block, 'CURRENT_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"' )
-	&& false !== strpos( $retarget_block, 'test "$CURRENT_TAG_TARGET" = "$V1023_STALE_TARGET"' )
-	&& false !== strpos( $retarget_block, 'test "$RELEASE_TARGET" = "$GITHUB_SHA"' ),
-	'Existing 1.0.23 release retarget must verify both the known stale tag and the current validated release target.'
+	&& false !== strpos( $retarget_block, 'REMOTE_TAG_REF="$(git ls-remote origin "refs/tags/$TAG_NAME" | awk')
+	&& false !== strpos( $retarget_block, 'REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk')
+	&& false !== strpos( $retarget_block, 'test "$REMOTE_TAG_TARGET" = "$V1023_STALE_TARGET"' )
+	&& false !== strpos( $retarget_block, 'test "$RELEASE_TARGET" = "$GITHUB_SHA"' )
+	&& false !== strpos( $retarget_block, '--force-with-lease="refs/tags/$TAG_NAME:$REMOTE_TAG_REF"' )
+	&& false === strpos( $retarget_block, 'git push --force origin "refs/tags/$TAG_NAME"' ),
+	'Existing 1.0.23 release retarget must verify the remote stale target and use a remote-ref force-with-lease before asset mutation.'
+);
+
+$refresh_block = substr( $release, $refresh_start, $verify_start - $refresh_start );
+sidrena_release_gate_assert(
+	false !== strpos( $refresh_block, 'REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk')
+	&& false !== strpos( $refresh_block, 'test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"' )
+	&& false !== strpos( $refresh_block, 'gh release upload "$TAG_NAME"' ),
+	'Existing 1.0.23 assets may be replaced only after the remote tag points at the validated release target.'
 );
 
 
