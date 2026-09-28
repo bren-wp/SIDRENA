@@ -3,9 +3,9 @@
  *
  * SIDRENA Woo compatibility hydration behavior regression.
  *
- * Executes the production compatibility script in a minimal browser-like VM
- * and verifies that server-rendered parent markup avoids an initial REST call,
- * a selected variation hydrates dynamically, and reset restores the parent.
+ * Verifies that embedded Woo variation payloads update reference markup without
+ * REST, known-empty payloads clear stale markup, reset restores the server
+ * parent markup locally, and REST remains a retryable compatibility fallback.
  *
  * @author Brendigo
  * @link https://brendigo.com/sidrene-cijene/
@@ -34,7 +34,18 @@ let timeoutFailedOnce = false;
 const fetches = [];
 const handlers = {};
 
-const markupNode = {};
+const markupNode = {
+	nodeType: 1,
+	matches(selector) {
+		return ".sidrena-reference-prices" === selector;
+	},
+	closest(selector) {
+		return ".sidrena-reference-prices" === selector ? this : null;
+	},
+	remove() {
+		renderedHtml = "";
+	},
+};
 Object.defineProperty(markupNode, "outerHTML", {
 	get() {
 		return renderedHtml;
@@ -67,9 +78,15 @@ const root = {
 		if (".woocommerce-variation-price .price" === selector) {
 			return null;
 		}
+		if (".sidrena-reference-prices" === selector) {
+			return renderedHtml ? markupNode : null;
+		}
 		return null;
 	},
 	querySelectorAll(selector) {
+		if (".sidrena-reference-prices" === selector) {
+			return renderedHtml ? [markupNode] : [];
+		}
 		return ".price" === selector ? [target] : [];
 	},
 };
@@ -157,7 +174,7 @@ const sandbox = {
 			status: 200,
 			json() {
 				return Promise.resolve({
-					html: 20 === id ? variationHtml : (30 === id ? retryVariationHtml : (50 === id ? retryVariationHtml : parentHtml)),
+					html: 30 === id || 50 === id ? retryVariationHtml : parentHtml,
 				});
 			},
 		});
@@ -173,6 +190,8 @@ const sandbox = {
 };
 
 const source = fs.readFileSync(path.join(__dirname, "../../public/js/compat.js"), "utf8");
+check(source.includes("if (!productId || !selectors.length)"), "Variation synchronization must boot even when REST fallback endpoint is empty.");
+check(!source.includes("!productId || !endpoint || !selectors.length"), "REST availability must not gate embedded Woo variation payload synchronization.");
 vm.runInNewContext(source, sandbox, { filename: "public/js/compat.js" });
 
 async function flushPromises() {
@@ -184,68 +203,75 @@ async function flushPromises() {
 (async () => {
 	await flushPromises();
 
-	check(0 === fetches.length, "Server-rendered parent SIDRENA markup must avoid the redundant initial REST request.");
+	check(0 === fetches.length, "Server-rendered parent SIDRENA markup must avoid an initial REST request.");
 	check("function" === typeof handlers.found_variation, "found_variation handler must be registered.");
 	check("function" === typeof handlers.reset_data, "reset_data handler must be registered.");
 	check("function" === typeof handlers.hide_variation, "hide_variation handler must be registered.");
 
 	handlers.found_variation(
 		{ currentTarget: form },
-		{ variation_id: 20 }
+		{ variation_id: 20, sidrena_reference_html: variationHtml }
 	);
 	await flushPromises();
 
-	check(1 === fetches.length && /\/20$/.test(fetches[0]), "Selected variation must fetch its own SIDRENA markup.");
-	check(variationHtml === renderedHtml, "Selected variation must replace the parent reference markup.");
+	check(0 === fetches.length, "Embedded variation markup must not make a REST request.");
+	check(variationHtml === renderedHtml, "Embedded variation markup must replace the parent reference markup.");
+
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 21, sidrena_reference_html: "" }
+	);
+	await flushPromises();
+
+	check(0 === fetches.length, "Known-empty variation payload must not make a REST request.");
+	check("" === renderedHtml, "Known-empty variation payload must clear stale parent reference markup.");
 
 	handlers.reset_data({ currentTarget: form });
 	await flushPromises();
 
-	check(2 === fetches.length && /\/10$/.test(fetches[1]), "Variation reset must force a parent-product REST refresh.");
-	check(parentHtml === renderedHtml, "Variation reset must restore the parent product reference markup.");
+	check(0 === fetches.length, "Variation reset must restore the server parent markup without REST.");
+	check(parentHtml === renderedHtml, "Variation reset must restore the original parent reference markup.");
 
-	renderedHtml = variationHtml;
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 30 }
+	);
+	await flushPromises();
+
+	check(1 === fetches.length && /\/30$/.test(fetches[0]), "Missing embedded payload must fall back to the variation REST endpoint.");
+	check(parentHtml === renderedHtml, "Transient REST failure must leave the last valid parent markup unchanged.");
+
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 30 }
+	);
+	await flushPromises();
+
+	check(2 === fetches.length && /\/30$/.test(fetches[1]), "Transient REST failure must remain retryable.");
+	check(retryVariationHtml === renderedHtml, "Successful fallback retry must hydrate the variation markup.");
+
+	const beforePermanentFailure = fetches.length;
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 40 }
+	);
+	await flushPromises();
+
+	check(beforePermanentFailure + 1 === fetches.length && /\/40$/.test(fetches[fetches.length - 1]), "Permanent 404 variation request must reach REST once.");
+	check("" === renderedHtml, "Permanent known-empty REST result must clear stale variation markup.");
+
+	handlers.found_variation(
+		{ currentTarget: form },
+		{ variation_id: 40 }
+	);
+	await flushPromises();
+
+	check(beforePermanentFailure + 1 === fetches.length, "Permanent 4xx REST result must be negative-cached.");
+
 	handlers.hide_variation({ currentTarget: form });
 	await flushPromises();
 
-	check(parentHtml === renderedHtml, "hide_variation must also restore the parent product reference markup.");
-
-	handlers.found_variation(
-		{ currentTarget: form },
-		{ variation_id: 30 }
-	);
-	await flushPromises();
-
-	check(3 === fetches.length && /\/30$/.test(fetches[2]), "First retryable variation request must reach the REST endpoint.");
-	check(parentHtml === renderedHtml, "Transient HTTP failure must leave the previously valid parent markup unchanged.");
-
-	handlers.found_variation(
-		{ currentTarget: form },
-		{ variation_id: 30 }
-	);
-	await flushPromises();
-
-	check(4 === fetches.length && /\/30$/.test(fetches[3]), "Transient HTTP failure must not be cached as a permanent empty result.");
-	check(retryVariationHtml === renderedHtml, "A later successful retry must hydrate the variation markup.");
-
-	const beforePermanentFailure = fetches.length;
-	const markupBeforePermanentFailure = renderedHtml;
-	handlers.found_variation(
-		{ currentTarget: form },
-		{ variation_id: 40 }
-	);
-	await flushPromises();
-
-	check(beforePermanentFailure + 1 === fetches.length && /\/40$/.test(fetches[fetches.length - 1]), "Permanent 404 variation request must reach the REST endpoint once.");
-	check(markupBeforePermanentFailure === renderedHtml, "Permanent 404 must leave the previously valid markup unchanged.");
-
-	handlers.found_variation(
-		{ currentTarget: form },
-		{ variation_id: 40 }
-	);
-	await flushPromises();
-
-	check(beforePermanentFailure + 1 === fetches.length, "Permanent 4xx REST result must be negative-cached instead of refetched on repeated hydration.");
+	check(parentHtml === renderedHtml, "hide_variation must restore the parent markup without REST.");
 
 	const beforeTimeout = fetches.length;
 	handlers.found_variation(
@@ -255,6 +281,8 @@ async function flushPromises() {
 	await flushPromises();
 
 	check(beforeTimeout + 1 === fetches.length && /\/50$/.test(fetches[fetches.length - 1]), "HTTP 408 variation request must reach REST.");
+	check(parentHtml === renderedHtml, "HTTP 408 must preserve the last valid parent markup.");
+
 	handlers.found_variation(
 		{ currentTarget: form },
 		{ variation_id: 50 }
@@ -262,9 +290,9 @@ async function flushPromises() {
 	await flushPromises();
 
 	check(beforeTimeout + 2 === fetches.length, "HTTP 408 must remain retryable instead of being negative-cached.");
-	check(retryVariationHtml === renderedHtml, "A successful retry after HTTP 408 must restore variation markup.");
+	check(retryVariationHtml === renderedHtml, "Successful retry after HTTP 408 must hydrate the variation markup.");
 
-	process.stdout.write("SIDRENA Woo compatibility hydration behavior smoke test passed.\n");
+	process.stdout.write("SIDRENA Woo embedded variation hydration smoke test passed.\n");
 })().catch((error) => {
 	process.stderr.write((error && error.stack ? error.stack : String(error)) + "\n");
 	process.exit(1);
