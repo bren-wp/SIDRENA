@@ -847,9 +847,11 @@ else :
 			$code_key   = $this->code_key( $code );
 			$current    = Sidrena_Utils::validated_nonnegative_decimal( $row['current'] ?? '' );
 			$anchor     = Sidrena_Utils::validated_nonnegative_decimal( $row['anchor'] ?? '' );
-			$quantity   = Sidrena_Utils::validated_nonnegative_decimal( $row['quantity'] ?? '' );
-			$unit_price = Sidrena_Utils::validated_nonnegative_decimal( $row['unit_price'] ?? '' );
-			if ( null === $current || null === $anchor || null === $quantity || null === $unit_price ) {
+			$quantity        = Sidrena_Utils::validated_nonnegative_decimal( $row['quantity'] ?? '' );
+			$unit_price      = Sidrena_Utils::validated_nonnegative_decimal( $row['unit_price'] ?? '' );
+			$reference_group = Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ?? 'standard' );
+			$custom_date     = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ?? '' ) : '';
+			if ( null === $current || null === $anchor || null === $quantity || null === $unit_price || ( 'custom' === $reference_group && ! $custom_date ) ) {
 				++$errors;
 				continue;
 			}
@@ -886,9 +888,7 @@ else :
 			$this->set_meta( $saved_id, '_sidrena_standalone_brand', sanitize_text_field( $row['brand'] ?? '' ) );
 			$this->set_meta( $saved_id, '_sidrena_standalone_current_price', $current );
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_price', $anchor );
-			$reference_group = Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ?? 'standard' );
 			$this->set_meta( $saved_id, '_sidrena_standalone_reference_group', $reference_group );
-			$custom_date = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ?? '' ) : '';
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_date', $custom_date );
 			$this->set_meta( $saved_id, '_sidrena_standalone_barcode', sanitize_text_field( $row['barcode'] ?? '' ) );
 
@@ -1014,10 +1014,16 @@ else :
 		$skipped    = 0;
 		$code_index = $this->code_index();
 		foreach ( $rows as $raw ) {
-			$row      = $this->canonical_import_row( $raw );
-			$code     = sanitize_text_field( $row['code'] ?? '' );
-			$code_key = $this->code_key( $code );
-			$id       = $code_key && isset( $code_index[ $code_key ] ) ? absint( $code_index[ $code_key ] ) : 0;
+			$row             = $this->canonical_import_row( $raw );
+			$code            = sanitize_text_field( $row['code'] ?? '' );
+			$code_key        = $this->code_key( $code );
+			$id              = $code_key && isset( $code_index[ $code_key ] ) ? absint( $code_index[ $code_key ] ) : 0;
+			$reference_group = array_key_exists( 'reference_group', $row ) ? Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ) : 'standard';
+			$custom_date     = 'custom' === $reference_group && array_key_exists( 'anchor_date', $row ) ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ) : '';
+			if ( 'custom' === $reference_group && ! $custom_date ) {
+				++$skipped;
+				continue;
+			}
 
 			if ( ! $id ) {
 				$name    = sanitize_text_field( $row['name'] ?? '' );
@@ -1059,9 +1065,7 @@ else :
 			$this->import_field( $id, '_sidrena_standalone_brand', $row, 'brand', 'text' );
 			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
 			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
-			$reference_group = array_key_exists( 'reference_group', $row ) ? Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ) : 'standard';
 			update_post_meta( $id, '_sidrena_standalone_reference_group', $reference_group );
-			$custom_date = 'custom' === $reference_group && array_key_exists( 'anchor_date', $row ) ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ) : '';
 			if ( $custom_date ) {
 				update_post_meta( $id, '_sidrena_standalone_anchor_date', $custom_date );
 			} else {
