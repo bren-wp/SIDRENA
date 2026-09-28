@@ -134,30 +134,12 @@ final class Sidrena_Utils {
 	}
 
 	public static function support_email() {
-		return 'sidrena@brendigo.com';
+		return 'info@brendigo.com';
 	}
 
 	public static function support_email_url() {
 		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena podrška' );
 	}
-
-	public static function whatsapp_number() {
-		return '+385 91 901 0092';
-	}
-
-	public static function whatsapp_url() {
-		return 'https://wa.me/385919010092?text=' . rawurlencode( 'Pozdrav, trebam podršku za Sidrena plugin.' );
-	}
-
-	public static function installation_price() {
-		return '80 EUR';
-	}
-
-
-	public static function installation_service_url() {
-		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno jednokratno postavljanje 80 EUR' );
-	}
-
 
 	public static function support_pdf_url() {
 		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-UPUTE.pdf' : '';
