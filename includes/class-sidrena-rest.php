@@ -55,14 +55,20 @@ final class Sidrena_REST {
 					),
 					'location' => array(
 						'default'           => '',
-						'sanitize_callback' => array( 'Sidrena_Utils', 'sanitize_location_id' ),
+						'type'              => 'string',
+						'sanitize_callback' => array( $this, 'sanitize_location_arg' ),
 					),
 					'page' => array(
 						'default'           => 1,
+						'type'              => 'integer',
+						'minimum'           => 1,
 						'sanitize_callback' => 'absint',
 					),
 					'per_page' => array(
 						'default'           => 100,
+						'type'              => 'integer',
+						'minimum'           => 1,
+						'maximum'           => 100,
 						'sanitize_callback' => 'absint',
 					),
 				),
@@ -91,6 +97,11 @@ final class Sidrena_REST {
 		);
 	}
 
+	public function sanitize_location_arg( $value ) {
+		$value = trim( (string) $value );
+		return '' === $value ? '' : Sidrena_Utils::sanitize_location_id( $value );
+	}
+
 	private function realtime_enabled() {
 		$settings = Sidrena_Utils::settings();
 		return 'yes' === $settings['enable_rest_index'];
@@ -114,20 +125,12 @@ final class Sidrena_REST {
 
 		return $this->no_cache_response(
 			array(
-				'schema'          => 3,
-				'generator'       => 'Sidrena ' . SIDRENA_VERSION,
-				'plugin_url'      => 'https://brendigo.com/sidrene-cijene/',
-				'ruleset'         => SIDRENA_RULESET,
-				'rules_effective' => SIDRENA_RULES_EFFECTIVE,
-				'catalog_mode'    => Sidrena_Utils::runtime_mode(),
-				'woocommerce_active' => Sidrena_Utils::is_woocommerce_active(),
-				'product_count'   => Sidrena_Utils::is_wordpress_edition() && class_exists( 'Sidrena_Standalone' ) ? Sidrena_Standalone::count() : null,
-				'generated_at'    => isset( $last['generated_at'] ) ? $last['generated_at'] : null,
-				'retention_days'  => max( 30, absint( $settings['retention_days'] ) ),
-				'manifest_url'    => 'yes' === $settings['publish_manifest'] ? $paths['manifest_url'] : null,
-				'realtime_url'    => rest_url( 'sidrena/v1/cijene' ),
-				'current'         => Sidrena_Utils::public_index(),
-				'archive'         => Sidrena_Utils::archive_index(),
+				'schema'       => 3,
+				'generated_at' => isset( $last['generated_at'] ) ? sanitize_text_field( (string) $last['generated_at'] ) : null,
+				'manifest_url' => 'yes' === $settings['publish_manifest'] ? esc_url_raw( $paths['manifest_url'] ) : null,
+				'realtime_url' => esc_url_raw( rest_url( 'sidrena/v1/cijene' ) ),
+				'current'      => Sidrena_Utils::public_index(),
+				'archive'      => Sidrena_Utils::archive_index(),
 			)
 		);
 	}
@@ -140,23 +143,20 @@ final class Sidrena_REST {
 		$type               = sanitize_key( (string) $request->get_param( 'type' ) );
 		$page               = max( 1, absint( $request->get_param( 'page' ) ) );
 		$per_page           = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
-		$requested_location = Sidrena_Utils::sanitize_location_id( (string) $request->get_param( 'location' ) );
+		$requested_location = $this->sanitize_location_arg( $request->get_param( 'location' ) );
 		$location           = $this->resolve_location( $requested_location );
 		if ( $requested_location && null === $location ) {
 			return new WP_Error( 'location_not_found', __( 'Tražena lokacija nije pronađena ili nije uključena.', 'sidrena' ), array( 'status' => 404 ) );
 		}
 
 		$data = array(
-			'schema'       => 1,
-			'generator'    => 'Sidrena ' . SIDRENA_VERSION,
-			'as_of'        => current_time( DATE_ATOM ),
-			'location'            => $location,
-			'page'                => $page,
-			'per_page'            => $per_page,
-			'catalog_mode'        => Sidrena_Utils::runtime_mode(),
-			'woocommerce_active'  => Sidrena_Utils::is_woocommerce_active(),
-			'products'            => array(),
-			'services'            => array(),
+			'schema'    => 1,
+			'as_of'     => current_time( DATE_ATOM ),
+			'location'  => $this->public_location( $location ),
+			'page'      => $page,
+			'per_page'  => $per_page,
+			'products'  => array(),
+			'services'  => array(),
 		);
 
 		if ( in_array( $type, array( 'all', 'products' ), true ) ) {
@@ -211,7 +211,7 @@ final class Sidrena_REST {
 		);
 	}
 	private function resolve_location( $requested ) {
-		$requested = Sidrena_Utils::sanitize_location_id( $requested );
+		$requested = $this->sanitize_location_arg( $requested );
 		$locations = Sidrena_Utils::locations();
 		if ( $requested ) {
 			foreach ( $locations as $location ) {
@@ -227,6 +227,20 @@ final class Sidrena_REST {
 			}
 		}
 		return array();
+	}
+
+	private function public_location( $location ) {
+		if ( ! is_array( $location ) || empty( $location ) ) {
+			return array();
+		}
+
+		$raw_id = trim( (string) ( $location['id'] ?? '' ) );
+		return array(
+			'id'      => '' === $raw_id ? '' : Sidrena_Utils::sanitize_location_id( $raw_id ),
+			'code'    => sanitize_text_field( (string) ( $location['code'] ?? '' ) ),
+			'kind'    => sanitize_key( (string) ( $location['kind'] ?? '' ) ),
+			'address' => sanitize_text_field( (string) ( $location['address'] ?? '' ) ),
+		);
 	}
 
 	private function realtime_products( $location, $page, $per_page ) {
