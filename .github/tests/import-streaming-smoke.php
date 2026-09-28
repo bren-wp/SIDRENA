@@ -21,6 +21,7 @@ function remove_accents( $value ) {
 	return strtr( (string) $value, array( 'Č'=>'C','Ć'=>'C','Š'=>'S','Ž'=>'Z','Đ'=>'D','č'=>'c','ć'=>'c','š'=>'s','ž'=>'z','đ'=>'d' ) );
 }
 function wp_check_invalid_utf8( $value, $strip = false ) { unset( $strip ); return (string) $value; }
+function wp_strip_all_tags( $value ) { return strip_tags( (string) $value ); }
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
