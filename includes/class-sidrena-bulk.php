@@ -120,7 +120,8 @@ final class Sidrena_Bulk {
 							'status' => 'not_applicable',
 							'price'  => '',
 						);
-						$visibility         = get_post_meta( $id, '_sidrena_cjenik_visibility', true ) ?: 'auto';
+						$visibility_raw     = get_post_meta( $id, '_sidrena_cjenik_visibility', true );
+						$visibility         = $visibility_raw ? $visibility_raw : 'auto';
 						$catalog_visibility = is_callable( array( $product, 'get_catalog_visibility' ) ) ? $product->get_catalog_visibility() : 'visible';
 						$public_included    = 'include' === $visibility || ( 'exclude' !== $visibility && 'hidden' !== $catalog_visibility );
 						$sku                = $product->get_sku();
@@ -131,7 +132,7 @@ final class Sidrena_Bulk {
 						?>
 						<tr class="sid-woo-product-row">
 							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product_type_label ); ?></span></td>
-							<td><code><?php echo esc_html( $sku ?: '—' ); ?></code></td>
+							<td><code><?php echo esc_html( $sku ? $sku : '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
 							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
@@ -163,7 +164,7 @@ else :
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>" data-sidrena-safe-fill="barcode" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['barcode'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Referentna grupa', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><?php $group = get_post_meta( $id, '_sidrena_reference_group', true ); ?><option value="standard" <?php selected( $group, 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></label>
-										<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><?php $unit_status = get_post_meta( $id, '_sidrena_unit_price_status', true ) ?: 'review'; ?><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
+										<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><?php $unit_status_raw = get_post_meta( $id, '_sidrena_unit_price_status', true ); $unit_status = $unit_status_raw ? $unit_status_raw : 'review'; ?><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Količina', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>"></label>
 										<label><span><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][quantity_unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity_unit', true ) ); ?>" placeholder="g / kg / ml / l"></label>
 										<label><span><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit', true ) ); ?>" placeholder="kg / l / m"></label>
