@@ -57,7 +57,8 @@ Za obveznike s uspostavljenom mrežnom stranicom Odluka propisuje javnu objavu v
 
 - datoteka je u **CSV ili XML** formatu pogodnom za automatsku obradu;
 - trgovac cjenik proizvoda ažurira radnim danom najkasnije do **08:00**;
-- pružatelj usluga ažurira cjenik kod promjene cijene, najkasnije do **08:00 na dan stupanja promjene na snagu**;
+- Odluka, točka II., za pružatelja usluge propisuje ažuriranje uslijed svake promjene, najkasnije do **08:00 sati ujutro dana kada objavljuje izmjenu cjenika usluga**;
+- Ministarstvo gospodarstva u službenom pojašnjenju od 22. 9. 2026. tu operativnu obvezu opisuje kao ažuriranje prilikom promjene cijena, najkasnije do **08:00 na dan stupanja promjene na snagu**; ta se formulacija evidentira kao službeno pojašnjenje, a ne kao doslovni tekst Odluke;
 - prethodno objavljeni cjenici ostaju javno dostupni najmanje **30 dana**;
 - naziv datoteke uključuje podatke o objektu, oznaci/broju pohrane te vremensku oznaku;
 - struktura datoteke mora biti dosljedna;
