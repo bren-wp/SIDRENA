@@ -112,7 +112,7 @@ This file records the repository-side audit performed before the next WordPress.
 - that check is restricted to SIDRENA publication URLs under the current site's own public upload base, validates the URL, uses `wp_safe_remote_get()`, explicitly rejects unsafe URLs, limits redirects/response size and sends no catalogue/customer payload to brendigo.
 - the frontend compatibility fetch is same-origin and targets the local SIDRENA read-only REST endpoint.
 - official legal sources, brendigo and WhatsApp are user-initiated links and are documented as such in both readmes, including when the browser makes the request and what normal browser metadata may be sent.
-- the exact MINGO/DIRH concern from the review email was re-audited: current runtime keeps MINGO/Narodne novine only as click-through reference links; the older DIRH runtime link is gone; none of these hosts is contacted by PHP HTTP functions or browser `fetch()`.
+- the exact external-link concern from the review email was re-audited: current runtime keeps MINGO, Narodne novine and HOK only as click-through reference links; the older DIRH runtime link is gone; none of these hosts is contacted by PHP HTTP functions or browser `fetch()`.
 - no Revolut/donation URL is bundled in production or documentation.
 - public REST/manifest output does not inject a brendigo credit URL or other automatic public-facing external link.
 - Terms/Privacy destinations for the remaining external support services are documented.
