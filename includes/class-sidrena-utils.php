@@ -216,6 +216,22 @@ final class Sidrena_Utils {
 		return 'Brendigo';
 	}
 
+	public static function woocommerce_store_address() {
+		if ( ! self::is_woocommerce_edition() ) {
+			return '';
+		}
+
+		$address_1 = trim( sanitize_text_field( (string) get_option( 'woocommerce_store_address', '' ) ) );
+		$address_2 = trim( sanitize_text_field( (string) get_option( 'woocommerce_store_address_2', '' ) ) );
+		$postcode  = trim( sanitize_text_field( (string) get_option( 'woocommerce_store_postcode', '' ) ) );
+		$city      = trim( sanitize_text_field( (string) get_option( 'woocommerce_store_city', '' ) ) );
+		$locality  = trim( $postcode . ( $postcode && $city ? ' ' : '' ) . $city );
+
+		$parts = array_values( array_filter( array( $address_1, $address_2, $locality ) ) );
+		$address = implode( ', ', $parts );
+		return trim( (string) apply_filters( 'sidrena_woocommerce_store_address_suggestion', $address, $parts ) );
+	}
+
 	public static function locations() {
 		$locations = get_option( 'sidrena_locations', array() );
 		if ( ! is_array( $locations ) || empty( $locations ) ) {
@@ -224,7 +240,7 @@ final class Sidrena_Utils {
 					'id'       => 'webshop',
 					'enabled'  => 'yes',
 					'kind'     => 'webshop',
-					'address'  => '',
+					'address'  => self::woocommerce_store_address(),
 					'code'     => 'WEB-01',
 					'sequence' => 1,
 				),

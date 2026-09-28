@@ -249,6 +249,40 @@
 			return;
 		}
 
+		var fillWooLocation = closest(target, '#sid-fill-woo-location');
+		if (fillWooLocation) {
+			event.preventDefault();
+			var wooWrap = document.getElementById('sid-locations');
+			var wooAddress = wooWrap ? String(wooWrap.getAttribute('data-sidrena-woo-address') || '').trim() : '';
+			var wooTarget = null;
+			if (wooWrap && wooAddress) {
+				Array.prototype.some.call(wooWrap.querySelectorAll('.sid-location'), function (locationRow) {
+					var kindField = locationRow.querySelector('.sid-location-kind');
+					var addressField = locationRow.querySelector('.sid-location-address-input');
+					var kind = kindField ? String(kindField.value || '').trim().toLowerCase() : '';
+					var currentAddress = addressField ? String(addressField.value || '').trim() : '';
+					if ('webshop' === kind && addressField && !currentAddress) {
+						wooTarget = locationRow;
+						addressField.value = wooAddress;
+						addressField.classList.add('is-suggested');
+						addressField.dispatchEvent(new Event('input', { bubbles: true }));
+						updateLocationSummary(locationRow);
+						addressField.focus();
+						return true;
+					}
+					return false;
+				});
+			}
+			var wooForm = fillWooLocation.form || closest(fillWooLocation, 'form');
+			setFormStatus(
+				wooForm,
+				wooTarget
+					? message('wooLocationFilled', 'WooCommerce adresa trgovine unesena je u praznu webshop lokaciju. Pregledajte podatak i spremite lokacije.')
+					: message('wooLocationNoTarget', 'Nema prazne webshop adrese za popunjavanje. Postojeći podaci nisu promijenjeni.')
+			);
+			return;
+		}
+
 		var addButton = closest(target, '#sid-add-location');
 		if (addButton) {
 			event.preventDefault();
