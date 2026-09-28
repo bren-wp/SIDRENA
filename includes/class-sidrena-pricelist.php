@@ -869,7 +869,7 @@ final class Sidrena_Pricelist {
 				array(
 					'post_type'      => 'sidrena_service',
 					'post_status'    => 'publish',
-					'posts_per_page' => 250,
+					'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded service-export batch; pagination prevents full-catalog loading.
 					'paged'          => $page,
 					'orderby'        => 'ID',
 					'order'          => 'ASC',
