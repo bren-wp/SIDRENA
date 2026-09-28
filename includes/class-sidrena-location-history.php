@@ -142,7 +142,8 @@ final class Sidrena_Location_History {
 				);
 				$last_id = $row_id;
 			}
-		} while ( count( $rows ) === $batch_size );
+			$row_count = count( $rows );
+		} while ( $row_count === $batch_size );
 
 		$this->prune_history();
 	}
