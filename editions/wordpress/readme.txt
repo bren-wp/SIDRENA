@@ -47,7 +47,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 7. U Sidrena > Cjenici generirajte prvu objavu i provjerite javni prikaz.
 8. Na Sidrena > Pregled provjerite tehničku spremnost i raspored.
 
-Detaljne upute nalaze se u `docs/UPUTE.md`, a izdanje-specifični detaljni PDF priručnik i podrška u `docs/SIDRENA-PODRSKA.pdf`.
+Detaljne upute nalaze se u `docs/UPUTE.md`, a izdanje-specifični detaljni PDF priručnik i podrška u `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
@@ -142,7 +142,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Real wp-admin screenshots must be regenerated and pass JavaScript, overlap, overflow and form-viewport checks before release.
 
 = 1.0.12 =
-* Corrected the public REST index plugin URL so source and packaged runtime both expose the canonical Brendigo SIDRENA page.
+* Corrected the public REST index plugin URL so source and packaged runtime both expose the canonical brendigo SIDRENA page.
 * Removed the build-time legacy-domain rewrite that could hide stale production source during packaging.
 * Added source-integrity regression coverage for retired SIDRENA domain variants across runtime code, documentation and every input copied into release packages.
 * Strengthened CI so retired production URLs fail before packaging instead of being silently normalized.
@@ -213,7 +213,7 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 * Ispravljeni su CI guardovi nakon legitimnog refaktora admin body klase i površine podrške.
 * Mobilni CSS breakpointi premješteni su iza produkcijskih komponenti kako kasnija desktop pravila više ne bi poništavala 782/390 px raspored.
 * WordPress katalog na uskim ekranima koristi lokalno skrolanje tablice bez horizontalnog overflowa cijele wp-admin stranice.
-* Uklonjen je preostali zastarjeli URL iz javnog manifesta i dokumentacija je usklađena sa službenim Brendigo SIDRENA URL-om.
+* Uklonjen je preostali zastarjeli URL iz javnog manifesta i dokumentacija je usklađena sa službenim brendigo SIDRENA URL-om.
 * Pravna formulacija dodatno je pooštrena: tehničke provjere ne zamjenjuju individualnu pravnu procjenu.
 
 = 1.0.2 =
