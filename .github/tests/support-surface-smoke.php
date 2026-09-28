@@ -28,6 +28,15 @@ function sidrena_support_assert( $condition, $message ) {
 	}
 }
 
+$admin    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+$public   = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
+$services = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
+$frontend = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
+$builder  = file_get_contents( dirname( __DIR__, 2 ) . '/tools/build-editions.sh' );
+$pdf_tool = file_get_contents( dirname( __DIR__, 2 ) . '/tools/build-support-pdf.py' );
+$wp_guide = file_get_contents( dirname( __DIR__, 2 ) . '/docs/UPUTE-WORDPRESS.md' );
+$woo_guide = file_get_contents( dirname( __DIR__, 2 ) . '/docs/UPUTE-WOOCOMMERCE.md' );
+
 sidrena_support_assert( 'sidrena@brendigo.com' === Sidrena_Utils::support_email(), 'Support email mismatch.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::support_email_url(), 'mailto:sidrena@brendigo.com' ), 'Support mailto URL missing.' );
 sidrena_support_assert( '+385 91 901 0092' === Sidrena_Utils::whatsapp_number(), 'WhatsApp number mismatch.' );
@@ -35,7 +44,7 @@ sidrena_support_assert( false !== strpos( Sidrena_Utils::whatsapp_url(), 'wa.me/
 sidrena_support_assert( '80 EUR' === Sidrena_Utils::installation_price(), 'Installation price mismatch.' );
 sidrena_support_assert( false !== strpos( rawurldecode( Sidrena_Utils::installation_service_url() ), '80 EUR' ), 'Installation service URL must mention 80 EUR.' );
 sidrena_support_assert( false !== strpos( Sidrena_Utils::donation_url(), 'revolut.me/catanyus' ), 'Direct Revolut donation URL missing.' );
-sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-PODRSKA.pdf' ), 'Support PDF URL mismatch.' );
+sidrena_support_assert( false !== strpos( Sidrena_Utils::support_pdf_url(), 'docs/SIDRENA-UPUTE.pdf' ), 'Support PDF URL mismatch.' );
 sidrena_support_assert( 'brendigo' === Sidrena_Utils::developer_label(), 'Author label mismatch.' );
 
 sidrena_support_assert(
@@ -58,15 +67,6 @@ sidrena_support_assert(
 	&& false !== strpos( $woo_guide, 'Donacija' ),
 	'Donation and optional paid setup must remain documented in both editions.'
 );
-
-$admin    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
-$public   = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
-$services = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
-$frontend = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
-$builder  = file_get_contents( dirname( __DIR__, 2 ) . '/tools/build-editions.sh' );
-$pdf_tool = file_get_contents( dirname( __DIR__, 2 ) . '/tools/build-support-pdf.py' );
-$wp_guide = file_get_contents( dirname( __DIR__, 2 ) . '/docs/UPUTE-WORDPRESS.md' );
-$woo_guide = file_get_contents( dirname( __DIR__, 2 ) . '/docs/UPUTE-WOOCOMMERCE.md' );
 
 foreach ( array( 'sidrena-support', 'support_tab', 'about_tab', 'help_tab', 'dashicons-pdf', 'Zatraži postavljanje - %s', 'Jednokratno početno postavljanje', 'Dobrovoljna donacija za razvoj', 'logo-horizontal-light.svg', 'sidrena-brandbar__edition', 'admin/css/brand.css' ) as $needle ) {
 	sidrena_support_assert( false !== strpos( $admin, $needle ), 'Admin support surface missing: ' . $needle );
