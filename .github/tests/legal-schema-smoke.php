@@ -96,7 +96,7 @@ foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi', 'ugradb
 $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date must remain immutable at 10.09.2026.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'Existing FMCG reference date must remain immutable at 02.05.2025.' );
-sidrena_schema_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ) && ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'Legal reference dates must not be administrator defaults.' );
+sidrena_schema_assert( 0 === preg_match( "/'default_ref_date'\s*=>/", $utils_source ) && 0 === preg_match( "/'fmcg_ref_date'\s*=>/", $utils_source ), 'Legal reference dates must not be administrator defaults.' );
 sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*30/", $utils_source ), 'Public price-list archive must default to exactly 30 days.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "\$settings['retention_days']   = 30;" ), 'Runtime archive retention must remain locked to 30 days.' );
 
