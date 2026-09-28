@@ -6,6 +6,17 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.21 =
+* Ispravljen je javni REST kada parametar location nije zadan: prazna vrijednost više se ne pretvara u sintetičku lokaciju nego se pravilno koristi prva omogućena javna lokacija/kanal.
+* REST i javni manifest sada koriste kanonski public metadata projection; interni sequence, generated_ts, retain_until_ts i drugi nepotrebni runtime detalji više se ne izlažu javnom JSON ugovoru.
+* Javni tekstualni podaci, URL-ovi, veličine datoteka i SHA-256 vrijednosti dodatno se normaliziraju prije REST/manifest odgovora.
+* WooCommerce REST za fizičke lokacije koristi indeksirani skup kandidata iz vlastite lokacijske tablice umjesto prolaska cijelog Woo kataloga.
+* Ručno konfigurirani WooCommerce redoslijed varijacija očuvan je i u fizičko-lokacijskoj REST paginaciji; dodan je trajni regression test za poredak 22 → 20 → 21.
+* Dodan je stvarni Chromium REST runtime QA za aktivno WordPress i WooCommerce okruženje, uz postojeće browser/screenshot provjere.
+* CI trajno blokira debug/generirani sadržaj i rizični base64_decode primitive u produkcijskom PHP sloju.
+* Funkcionalni kod prošao je PHP 7.4/8.3/8.4 CI, admin-polish, distribution, legal, oba službena Plugin Check izdanja te stvarni WordPress/WooCommerce browser QA prije verzijskog bumpa.
+* Oba plugina podignuta su na 1.0.21.
+
 = 1.0.20 =
 * Javni REST display endpoint sada poštuje postavku za javni SIDRENA REST; Woo compatibility REST hydration se ne enqueuea kada je javni REST namjerno isključen.
 * Woo REST za fizičke lokacije više ne pada na globalni WooCommerce stock kada nedostaje eksplicitna dostupnost konkretne lokacije; webshop zadržava globalni fallback.

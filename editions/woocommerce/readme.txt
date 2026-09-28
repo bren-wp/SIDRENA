@@ -5,7 +5,7 @@ Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.20
+Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.20 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+SIDRENA for WooCommerce 1.0.21 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -40,7 +40,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 == Installation ==
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite `sidrena-woocommerce-1.0.20.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
+2. Prenesite `sidrena-woocommerce-1.0.21.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
 3. Aktivirajte Sidrena WooCommerce.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
@@ -74,6 +74,15 @@ Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
 6. Stvarni prikaz Pomoći i podrške.
 
 == Changelog ==
+
+= 1.0.21 =
+* Fixed the optional REST location flow so an omitted location resolves to the first enabled public channel instead of becoming a synthetic location-not-found value.
+* Physical-location REST requests now use the indexed SIDRENA location table as the candidate set instead of scanning the complete WooCommerce catalogue.
+* Physical-location pagination preserves the configured WooCommerce variation child order, including manually reordered variations.
+* Public REST and manifest output now use a canonical public metadata projection and no longer expose internal ordering/runtime timestamp fields.
+* Real Chromium REST runtime QA now runs against the active WordPress and WooCommerce environments, while regression tests cover location-candidate pagination and configured variation order.
+* CI now permanently guards against generated/debug content markers and encoded PHP execution primitives in production source.
+* Both production packages passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check and real WordPress/WooCommerce browser QA before the 1.0.21 release bump.
 
 = 1.0.20 =
 * Public REST display hydration now honors the SIDRENA REST toggle and does not enqueue the compatibility REST layer when public REST output is disabled.
