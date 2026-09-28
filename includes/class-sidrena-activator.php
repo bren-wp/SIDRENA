@@ -33,7 +33,6 @@ final class Sidrena_Activator {
 		self::ensure_schedules();
 		if ( class_exists( 'Sidrena_Public' ) ) {
 			Sidrena_Public::instance()->register_rewrites();
-			Sidrena_Public::ensure_public_page();
 			flush_rewrite_rules( false );
 		}
 
@@ -45,21 +44,20 @@ final class Sidrena_Activator {
 		$current_db     = (string) get_option( 'sidrena_db_version', '' );
 		$current_plugin = (string) get_option( self::PLUGIN_VERSION_OPTION, '' );
 
+		if ( ! self::needs_upgrade( $current_db, $current_plugin ) ) {
+			return;
+		}
+
+		// Expensive and state-changing repairs only run for a real version/schema
+		// transition. Normal front-end requests return above without DB, FS or cron writes.
 		self::ensure_capabilities();
 		self::migrate_options();
 		self::ensure_storage();
 		self::ensure_schedules();
 
-		if ( ! self::needs_upgrade( $current_db, $current_plugin ) ) {
-			return;
-		}
-
 		// dbDelta is idempotent and repairs missing tables/indexes from any older
 		// Sidrena release without deleting existing business records.
 		self::install_schema();
-		if ( class_exists( 'Sidrena_Public' ) ) {
-			Sidrena_Public::ensure_public_page();
-		}
 
 		update_option( 'sidrena_db_version', self::DB_VERSION, false );
 		update_option( self::PLUGIN_VERSION_OPTION, SIDRENA_VERSION, false );
