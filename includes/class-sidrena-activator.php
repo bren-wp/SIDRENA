@@ -161,45 +161,6 @@ final class Sidrena_Activator {
 		}
 	}
 
-	private static function create_history_table() {
-		global $wpdb;
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		$table   = $wpdb->prefix . 'sidrena_price_history';
-		$charset = $wpdb->get_charset_collate();
-		$sql     = "CREATE TABLE {$table} (
-			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			product_id bigint(20) unsigned NOT NULL,
-			variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
-			price decimal(20,6) NULL,
-			regular_price decimal(20,6) NULL,
-			sale_price decimal(20,6) NULL,
-			recorded_at datetime NOT NULL,
-			source varchar(32) NOT NULL DEFAULT 'save',
-			PRIMARY KEY (id),
-			KEY product_date (product_id, recorded_at),
-			KEY variation_date (variation_id, recorded_at)
-		) {$charset};";
-		dbDelta( $sql );
-	}
-
-
-	private static function create_service_history_table() {
-		global $wpdb;
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		$table   = $wpdb->prefix . 'sidrena_service_price_history';
-		$charset = $wpdb->get_charset_collate();
-		$sql     = "CREATE TABLE {$table} (
-			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			service_id bigint(20) unsigned NOT NULL,
-			price decimal(20,6) NULL,
-			recorded_at datetime NOT NULL,
-			source varchar(32) NOT NULL DEFAULT 'save',
-			PRIMARY KEY (id),
-			KEY service_date (service_id, recorded_at)
-		) {$charset};";
-		dbDelta( $sql );
-	}
-
 	private static function create_location_table() {
 		global $wpdb;
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
