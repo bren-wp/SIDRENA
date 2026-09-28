@@ -807,6 +807,42 @@ final class Sidrena_Utils {
 		return trim( (string) get_post_meta( $product->get_id(), '_sidrena_barcode', true ) );
 	}
 
+	public static function public_file_index( $entries ) {
+		$public = array();
+		foreach ( is_array( $entries ) ? $entries : array() as $entry ) {
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+
+			$filename = isset( $entry['filename'] ) ? basename( (string) $entry['filename'] ) : '';
+			$url      = isset( $entry['url'] ) ? esc_url_raw( (string) $entry['url'] ) : '';
+			if ( '' === $filename || '' === $url ) {
+				continue;
+			}
+
+			$sha256 = strtolower( trim( (string) ( $entry['sha256'] ?? '' ) ) );
+			if ( '' !== $sha256 && 1 !== preg_match( '/^[a-f0-9]{64}$/', $sha256 ) ) {
+				$sha256 = '';
+			}
+
+			$public[] = array(
+				'location_id'   => sanitize_key( (string) ( $entry['location_id'] ?? '' ) ),
+				'location_code' => sanitize_text_field( (string) ( $entry['location_code'] ?? '' ) ),
+				'kind'          => sanitize_key( (string) ( $entry['kind'] ?? '' ) ),
+				'catalog'       => sanitize_key( (string) ( $entry['catalog'] ?? '' ) ),
+				'format'        => sanitize_key( (string) ( $entry['format'] ?? '' ) ),
+				'url'           => $url,
+				'filename'      => $filename,
+				'generated_at'  => sanitize_text_field( (string) ( $entry['generated_at'] ?? '' ) ),
+				'retain_until'  => sanitize_text_field( (string) ( $entry['retain_until'] ?? '' ) ),
+				'rows'          => absint( $entry['rows'] ?? 0 ),
+				'bytes'         => absint( $entry['bytes'] ?? 0 ),
+				'sha256'        => $sha256,
+			);
+		}
+		return $public;
+	}
+
 	public static function public_index() {
 		$index = get_option( 'sidrena_public_index', array() );
 		return is_array( $index ) ? $index : array();
