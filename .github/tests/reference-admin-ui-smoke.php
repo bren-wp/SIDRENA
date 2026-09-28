@@ -152,9 +152,9 @@ sidrena_reference_ui_assert(
 sidrena_reference_ui_assert(
 	false !== strpos( $admin, "'missing_current_total'" )
 	&& false !== strpos( $admin, '$current_price_ok' )
-	&& false !== strpos( $admin, '$lowest_price_ok' )
-	&& false !== strpos( $admin, '$dated_price_ok' ),
-	'Price-label status rows must derive from actual audit data.'
+	&& false !== strpos( $admin, '$dated_price_ok' )
+	&& false === strpos( $admin, '$lowest_price_ok' ),
+	'Price-label status rows must derive from current-price and Sidrena-price audit data only.'
 );
 sidrena_reference_ui_assert(
 	false !== strpos( $bulk, '$catalog_visibility' )

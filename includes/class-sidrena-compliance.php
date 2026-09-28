@@ -68,8 +68,8 @@ final class Sidrena_Compliance {
 	public static function automation_profile() {
 		$settings = Sidrena_Utils::settings();
 		return array(
-			'default_reference_date' => $settings['default_ref_date'],
-			'fmcg_reference_date'    => $settings['fmcg_ref_date'],
+			'default_reference_date' => Sidrena_Utils::standard_reference_date(),
+			'fmcg_reference_date'    => Sidrena_Utils::fmcg_reference_date(),
 			'generation_time'        => $settings['generation_time'],
 			'archive_retention_days' => max( 30, absint( $settings['retention_days'] ) ),
 			'public_html_enabled'    => 'yes' === $settings['enable_public_html'],
@@ -80,8 +80,6 @@ final class Sidrena_Compliance {
 			'strict_publication'     => 'yes' === $settings['strict_publication'],
 			'failure_notifications'  => 'yes' === $settings['failure_notifications'],
 			'display_anchor'         => 'yes' === $settings['display_anchor'],
-			'display_lowest_30'      => 'yes' === $settings['display_lowest_30'],
-			'track_price_history'    => 'yes' === $settings['track_price_history'],
 			'publication_watch'      => (bool) wp_next_scheduled( 'sidrena_publication_watch' ),
 			'daily_generation'       => (bool) wp_next_scheduled( 'sidrena_daily_generation' ),
 		);
@@ -112,14 +110,8 @@ final class Sidrena_Compliance {
 		if ( ! $profile['display_anchor'] ) {
 			$issues[] = 'Prikaz dodatne/sidrene cijene treba ostati uključen na javnim prikazima.';
 		}
-		if ( ! $profile['display_lowest_30'] ) {
-			$issues[] = 'Prikaz 30-dnevne referentne cijene treba ostati uključen za posebne oblike prodaje.';
-		}
-		if ( ! $profile['track_price_history'] ) {
-			$issues[] = 'Povijest cijena treba ostati uključena radi provjerljive 30-dnevne reference.';
-		}
-		if ( $profile['archive_retention_days'] < 30 ) {
-			$issues[] = 'Javna arhiva mora imati najmanje 30 dana čuvanja.';
+		if ( 30 !== $profile['archive_retention_days'] ) {
+			$issues[] = 'Javna arhiva SIDRENA ruleseta mora biti postavljena na 30 dana.';
 		}
 		if ( ! $profile['daily_generation'] ) {
 			$issues[] = 'Automatsko generiranje nije zakazano; provjerite dnevnu objavu proizvoda i regeneriranje cjenika nakon promjena usluga.';
@@ -152,19 +144,16 @@ final class Sidrena_Compliance {
 		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$repairs  = array();
 
-		foreach ( array(
-			'default_ref_date' => '2026-09-10',
-			'fmcg_ref_date'    => '2025-05-02',
-		) as $key => $value ) {
-			if ( ! isset( $settings[ $key ] ) || $value !== $settings[ $key ] ) {
-				$settings[ $key ] = $value;
-				$repairs[]        = 'settings:' . $key;
+		foreach ( array( 'default_ref_date', 'fmcg_ref_date', 'fmsid_ref_date' ) as $legacy_date_key ) {
+			if ( array_key_exists( $legacy_date_key, $settings ) ) {
+				unset( $settings[ $legacy_date_key ] );
+				$repairs[] = 'settings:removed_' . $legacy_date_key;
 			}
 		}
 
 		$before_normalize = $settings;
 		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
-		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor', 'display_lowest_30', 'track_price_history' ) as $key ) {
+		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor' ) as $key ) {
 			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
 				$repairs[] = 'settings:' . $key;
 			}

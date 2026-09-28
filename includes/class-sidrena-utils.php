@@ -13,23 +13,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_Utils {
+	const STANDARD_REFERENCE_DATE = '2026-09-10';
+	const FMCG_REFERENCE_DATE     = '2025-05-02';
+
+	public static function standard_reference_date() {
+		return self::STANDARD_REFERENCE_DATE;
+	}
+
+	public static function fmcg_reference_date() {
+		return self::FMCG_REFERENCE_DATE;
+	}
+
 	public static function defaults() {
 		return array(
 			'business_mode'         => 'mixed',
 			'display_anchor'        => 'yes',
-			'display_lowest_30'     => 'yes',
-			'default_ref_date'      => '2026-09-10',
-			'fmcg_ref_date'         => '2025-05-02',
 			'generate_csv'          => 'yes',
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
 			'generation_time'       => '06:30',
-			'retention_days'        => 45,
+			'retention_days'        => 30,
 			'enable_rest_index'     => 'yes',
 			'publish_manifest'      => 'yes',
 			'enable_public_html'    => 'yes',
 			'strict_publication'    => 'yes',
-			'track_price_history'   => 'yes',
 			'failure_notifications' => 'yes',
 			'failure_email'         => '',
 		);
@@ -38,10 +45,9 @@ final class Sidrena_Utils {
 	public static function settings() {
 		$settings = get_option( 'sidrena_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
-		if ( empty( $settings['fmcg_ref_date'] ) && ! empty( $settings['fmsid_ref_date'] ) ) {
-			$settings['fmcg_ref_date'] = self::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
-		}
-		unset( $settings['fmsid_ref_date'] );
+		// Legal reference dates and the 30-day public archive are ruleset values,
+		// never administrator-overridable compliance settings.
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 		foreach (
 			array(
 				'business_name',
@@ -63,10 +69,12 @@ final class Sidrena_Utils {
 			unset( $settings[ $legacy_key ] );
 		}
 		$settings                   = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
+		$settings['retention_days'] = 30;
+		// Backward-compatible read-only aliases for older internal callers.
+		$settings['default_ref_date'] = self::standard_reference_date();
+		$settings['fmcg_ref_date']    = self::fmcg_reference_date();
 		return $settings;
 	}
-
 
 	public static function admin_capability() {
 		$capability = apply_filters( 'sidrena_admin_capability', 'manage_sidrena' );
@@ -153,11 +161,9 @@ final class Sidrena_Utils {
 		return '80 EUR';
 	}
 
-
 	public static function installation_service_url() {
 		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno jednokratno postavljanje 80 EUR' );
 	}
-
 
 	public static function support_pdf_url() {
 		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-UPUTE.pdf' : '';
@@ -199,7 +205,6 @@ final class Sidrena_Utils {
 		}
 		return $locations;
 	}
-
 
 	public static function uploaded_text_type_allowed( $tmp_name, $filename, $allowed_extensions ) {
 		$tmp_name           = (string) $tmp_name;
@@ -311,7 +316,6 @@ final class Sidrena_Utils {
 		return $fallback;
 	}
 
-
 	public static function format_mysql_datetime( $value ) {
 		$value = sanitize_text_field( (string) $value );
 		if ( ! $value ) {
@@ -334,33 +338,69 @@ final class Sidrena_Utils {
 		return $dt ? $dt->format( 'd.m.Y.' ) : '';
 	}
 
+	public static function sanitize_reference_group( $group, $allow_fmcg = true ) {
+		$group   = sanitize_key( (string) $group );
+		$allowed = $allow_fmcg ? array( 'standard', 'fmcg', 'custom' ) : array( 'standard', 'custom' );
+		return in_array( $group, $allowed, true ) ? $group : 'standard';
+	}
+
+	public static function custom_reference_date( $date ) {
+		$date = self::sanitize_date( $date );
+		if ( ! $date || $date <= self::STANDARD_REFERENCE_DATE ) {
+			return '';
+		}
+		return $date;
+	}
+
+	public static function resolved_reference_date( $group = 'standard', $custom_date = '' ) {
+		$group = self::sanitize_reference_group( $group );
+		if ( 'fmcg' === $group ) {
+			return self::FMCG_REFERENCE_DATE;
+		}
+		if ( 'custom' === $group ) {
+			return self::custom_reference_date( $custom_date );
+		}
+		return self::STANDARD_REFERENCE_DATE;
+	}
+
 	public static function current_reference_date( $product_id = 0 ) {
-		$settings = self::settings();
+		$group      = 'standard';
+		$custom     = '';
+		$lookup_ids = array();
+
 		if ( $product_id ) {
-			$lookup_ids = array( (int) $product_id );
-			$parent_id  = wp_get_post_parent_id( $product_id );
+			$lookup_ids[] = (int) $product_id;
+			$parent_id    = wp_get_post_parent_id( $product_id );
 			if ( $parent_id ) {
 				$lookup_ids[] = (int) $parent_id;
 			}
 
 			foreach ( $lookup_ids as $lookup_id ) {
-				$custom = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );
-				if ( $custom ) {
-					return sanitize_text_field( $custom );
+				$stored_group = sanitize_key( (string) get_post_meta( $lookup_id, '_sidrena_reference_group', true ) );
+				if ( in_array( $stored_group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
+					$group = $stored_group;
+					break;
 				}
 			}
 
-			foreach ( $lookup_ids as $lookup_id ) {
-				$group = get_post_meta( $lookup_id, '_sidrena_reference_group', true );
-				if ( 'fmcg' === $group ) {
-					return $settings['fmcg_ref_date'];
-				}
-				if ( 'standard' === $group ) {
-					return $settings['default_ref_date'];
+			if ( 'custom' === $group ) {
+				foreach ( $lookup_ids as $lookup_id ) {
+					$custom = self::custom_reference_date( get_post_meta( $lookup_id, '_sidrena_anchor_date', true ) );
+					if ( $custom ) {
+						break;
+					}
 				}
 			}
 		}
-		return $settings['default_ref_date'];
+
+		return self::resolved_reference_date( $group, $custom );
+	}
+
+	public static function service_reference_date( $service_id = 0 ) {
+		$group  = $service_id ? sanitize_key( (string) get_post_meta( $service_id, '_sidrena_service_reference_group', true ) ) : 'standard';
+		$group  = self::sanitize_reference_group( $group, false );
+		$custom = 'custom' === $group && $service_id ? get_post_meta( $service_id, '_sidrena_service_anchor_date', true ) : '';
+		return self::resolved_reference_date( $group, $custom );
 	}
 
 	public static function anchor_label( $date ) {
@@ -373,7 +413,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_tooltip() {
-		return __( 'Sidrena cijena je referentna redovna cijena koja je vrijedila na primjenjivi referentni datum. Nije isto što i najniža cijena u prethodnih 30 dana kod posebnog oblika prodaje.', 'sidrena' );
+		return __( 'Sidrena cijena je referentna redovna cijena za mjerodavni datum. Ako je proizvod ili usluga tada bio na akciji ili drugom posebnom obliku prodaje, sidrena cijena je prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' );
 	}
 
 	public static function upload_paths() {
@@ -670,7 +710,6 @@ final class Sidrena_Utils {
 		);
 	}
 
-
 	public static function normalize_text_encoding( $contents ) {
 		$contents = (string) $contents;
 		if ( '' === $contents ) {
@@ -716,7 +755,6 @@ final class Sidrena_Utils {
 		}
 		return wp_check_invalid_utf8( $contents, true );
 	}
-
 
 	public static function format_iso_datetime( $value ) {
 		$value = trim( (string) $value );

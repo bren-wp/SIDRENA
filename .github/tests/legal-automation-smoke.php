@@ -53,14 +53,20 @@ foreach ( array( 'MAX_MESSAGE_BYTES', 'MAX_CONTEXT_BYTES', 'MAX_ROWS', 'table_ex
 	sidrena_legal_assert( false !== strpos( $audit_source, $marker ), 'Audit hardening marker missing: ' . $marker );
 }
 
-sidrena_legal_assert( 1 === preg_match( "/'default_ref_date'\\s*=>\\s*'2026-09-10'/", $utils_source ), 'Default reference date is not aligned with NN 101/2026.' );
-sidrena_legal_assert( 1 === preg_match( "/'fmcg_ref_date'\\s*=>\\s*'2025-05-02'/", $utils_source ), 'FMCG reference date is not preserved.' );
+sidrena_legal_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date is not locked in the legal ruleset.' );
+sidrena_legal_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'FMCG reference date is not locked in the legal ruleset.' );
+sidrena_legal_assert(
+	false !== strpos( $utils_source, "unset( \$settings['default_ref_date'], \$settings['fmcg_ref_date'], \$settings['fmsid_ref_date'], \$settings['display_lowest_30'], \$settings['track_price_history'] );" ),
+	'Legacy administrator date and retired 30-day sale-reference overrides are not stripped from settings.'
+);
 sidrena_legal_assert( 1 === preg_match( "/'generation_time'\\s*=>\\s*'06:30'/", $utils_source ), 'Default generation time is not automated early enough.' );
 sidrena_legal_assert( 1 === preg_match( "/'strict_publication'\\s*=>\\s*'yes'/", $utils_source ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
 sidrena_legal_assert( false === strpos( $utils_source, "'business_name'        =>" ) && false === strpos( $utils_source, "'show_business_identity' =>" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
 sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'         =>" ) && false === strpos( $utils_source, "'anchor_tooltip_text'    =>" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "Sidrena cijena na %s" ), 'Sidrena reference label must stay fixed and date-based.' );
+sidrena_legal_assert( false !== strpos( $utils_source, "'retention_days'        => 30" ), 'Public price-list archive must default to exactly 30 days.' );
+sidrena_legal_assert( false === strpos( $plugin_source, 'Sidrena_History::instance()->hooks();' ) && false === strpos( $plugin_source, 'Sidrena_Service_History::instance()->hooks();' ), 'Retired 30-day sale-price history hooks must not be active.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '0.5.0' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '0.5.0 changelog does not mention legal automation watchdog.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '0.5.0 changelog does not mention production hardening.' );
 
