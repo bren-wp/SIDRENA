@@ -3,17 +3,8 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
- * @see https://brendigo.com/
- */
-
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
  * @see https://brendigo.com/
  */
 
@@ -26,7 +17,6 @@ $GLOBALS['sidrena_options'] = array(
 	'sidrena_settings' => array(
 		'failure_notifications' => 'yes',
 		'failure_email'         => 'alerts@example.test',
-		'business_email'        => 'business@example.test',
 	),
 	'admin_email' => 'admin@example.test',
 );
@@ -89,7 +79,7 @@ $GLOBALS['sidrena_options']['sidrena_settings']['failure_email'] = 'invalid';
 $GLOBALS['sidrena_transients'] = array();
 $late = $method->invoke( $instance, 'late', 'Današnja objava kasni.', array() );
 sidrena_alert_assert( true === $late, 'Fallback alert was not sent.' );
-sidrena_alert_assert( 'business@example.test' === $GLOBALS['sidrena_mails'][1]['to'], 'Business email fallback was not used.' );
+sidrena_alert_assert( 'admin@example.test' === $GLOBALS['sidrena_mails'][1]['to'], 'WordPress administrator email fallback was not used.' );
 
 $GLOBALS['sidrena_options']['sidrena_settings']['failure_notifications'] = 'no';
 $GLOBALS['sidrena_transients'] = array();
