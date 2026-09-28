@@ -180,9 +180,10 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	1 === substr_count( $admin_source, 'Sidrena_Utils::donation_url()' )
+	0 === substr_count( $admin_source, 'donation_url' )
+	&& 0 === substr_count( $production_source, 'revolut.me' )
 	&& 2 === substr_count( $admin_source, 'Sidrena_Utils::installation_price()' ),
-	'Donation and optional paid setup must remain confined to the SIDRENA Support screen.'
+	'Donation links must remain absent while optional paid setup stays confined to SIDRENA Support.'
 );
 
 sidrena_wporg_assert(
