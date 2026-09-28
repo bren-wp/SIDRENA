@@ -48,6 +48,13 @@ foreach (
 		'sid-row-details',
 		'Napredna SIDRENA polja',
 		'Sidrena_History::sale_reference( $product )',
+		'private function safe_suggestions( $product )',
+		"apply_filters( 'sidrena_safe_field_suggestions'",
+		'data-sidrena-safe-fill="code"',
+		'data-sidrena-safe-fill="brand"',
+		'data-sidrena-safe-fill="barcode"',
+		'id="sid-safe-fill-page"',
+		'sid-safe-fill-row',
 	) as $needle
 ) {
 	sidrena_reference_ui_assert( false !== strpos( $bulk, $needle ), 'Woo compact catalog regression: ' . $needle );
@@ -64,6 +71,11 @@ foreach (
 		"message('fileTooLarge'",
 		"message('invalidFileType'",
 		"document.querySelectorAll('.sid-file-input').forEach(validateFileField)",
+		'function safeFillScope(scope)',
+		"closest(target, '.sid-safe-fill-row')",
+		"closest(target, '#sid-safe-fill-page')",
+		"message('safeFillChanged'",
+		"message('safeFillEmpty'",
 	) as $needle
 ) {
 	sidrena_reference_ui_assert( false !== strpos( $script, $needle ), 'Upload validation regression: ' . $needle );
@@ -76,6 +88,9 @@ foreach (
 		'.sid-reference-files-grid',
 		'.sid-woo-compact-table',
 		'.sid-row-details__grid',
+		'.sid-safe-fill',
+		'.sid-bulk-actions__primary',
+		'input.is-suggested',
 		'.sid-fields-location',
 		'@media (max-width:782px)',
 		'@media (max-width:560px)',

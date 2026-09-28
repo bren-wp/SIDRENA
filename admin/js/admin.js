@@ -128,6 +128,25 @@
 		return String(template || '').replace('%s', value);
 	}
 
+	function safeFillScope(scope) {
+		if (!scope || !scope.querySelectorAll) {
+			return 0;
+		}
+		var changed = 0;
+		scope.querySelectorAll('[data-sidrena-safe-fill]').forEach(function (field) {
+			var current = String(field.value || '').trim();
+			var suggestion = String(field.getAttribute('data-sidrena-suggest') || '').trim();
+			if (current || !suggestion) {
+				return;
+			}
+			field.value = suggestion;
+			field.classList.add('is-suggested');
+			field.dispatchEvent(new Event('input', { bubbles: true }));
+			changed += 1;
+		});
+		return changed;
+	}
+
 	function updateLocationSummary(row) {
 		if (!row) {
 			return;
@@ -198,6 +217,35 @@
 	document.addEventListener('click', function (event) {
 		var target = event.target;
 		if (!target) {
+			return;
+		}
+
+		var fillRowButton = closest(target, '.sid-safe-fill-row');
+		if (fillRowButton) {
+			event.preventDefault();
+			var details = closest(fillRowButton, '.sid-row-details');
+			var rowForm = fillRowButton.form || closest(fillRowButton, 'form');
+			var rowChanged = safeFillScope(details || rowForm);
+			setFormStatus(
+				rowForm,
+				rowChanged
+					? formatMessage(message('safeFillChanged', 'Popunjeno je %s praznih polja iz pouzdanih WooCommerce izvora. Pregledajte podatke i spremite promjene.'), rowChanged)
+					: message('safeFillEmpty', 'Nema praznih polja s pouzdanim WooCommerce izvorom. Ostala polja ostaju nepromijenjena.')
+			);
+			return;
+		}
+
+		var fillPageButton = closest(target, '#sid-safe-fill-page');
+		if (fillPageButton) {
+			event.preventDefault();
+			var pageForm = fillPageButton.form || closest(fillPageButton, 'form');
+			var pageChanged = safeFillScope(pageForm);
+			setFormStatus(
+				pageForm,
+				pageChanged
+					? formatMessage(message('safeFillChanged', 'Popunjeno je %s praznih polja iz pouzdanih WooCommerce izvora. Pregledajte podatke i spremite promjene.'), pageChanged)
+					: message('safeFillEmpty', 'Nema praznih polja s pouzdanim WooCommerce izvorom. Ostala polja ostaju nepromijenjena.')
+			);
 			return;
 		}
 
@@ -345,6 +393,9 @@
 	}, true);
 
 	document.addEventListener('input', function (event) {
+		if (event.target && event.target.classList && event.isTrusted) {
+			event.target.classList.remove('is-suggested');
+		}
 		validateOibField(event.target);
 		validateFileField(event.target);
 		clearInvalidState(event.target);

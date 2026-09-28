@@ -121,6 +121,7 @@ final class Sidrena_Bulk {
 						$price              = $product->get_price();
 						$product_type        = sanitize_key( $product->get_type() );
 						$product_type_label  = isset( $product_types[ $product_type ] ) ? $product_types[ $product_type ] : $product_type;
+						$safe_suggestions    = $this->safe_suggestions( $product );
 						?>
 						<tr class="sid-woo-product-row">
 							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product_type_label ); ?></span></td>
@@ -136,9 +137,9 @@ final class Sidrena_Bulk {
 								<details class="sid-row-details">
 									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'šifra, marka, barkod, jedinice i pravilo javnog cjenika', 'sidrena' ); ?></span></summary>
 									<div class="sid-row-details__grid">
-										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>"></label>
-										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>"></label>
-										<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>"></label>
+										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
+										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
+										<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>" data-sidrena-safe-fill="barcode" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['barcode'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Referentna grupa', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><?php $group = get_post_meta( $id, '_sidrena_reference_group', true ); ?><option value="standard" <?php selected( $group, 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><?php $unit_status = get_post_meta( $id, '_sidrena_unit_price_status', true ) ?: 'review'; ?><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Količina', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>"></label>
@@ -147,6 +148,10 @@ final class Sidrena_Bulk {
 										<label><span><?php esc_html_e( 'Iznos / jedinica', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][unit_price]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_unit_price', true ) ); ?>" placeholder="<?php esc_attr_e( 'automatski', 'sidrena' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Javni cjenik', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][cjenik_visibility]"><option value="auto" <?php selected( $visibility, 'auto' ); ?>><?php esc_html_e( 'Automatski', 'sidrena' ); ?></option><option value="include" <?php selected( $visibility, 'include' ); ?>><?php esc_html_e( 'Uvijek uključi', 'sidrena' ); ?></option><option value="exclude" <?php selected( $visibility, 'exclude' ); ?>><?php esc_html_e( 'Isključi', 'sidrena' ); ?></option></select></label>
 									</div>
+									<div class="sid-safe-fill">
+										<button type="button" class="button sid-secondary sid-safe-fill-row"><span class="dashicons dashicons-database-import"></span><?php esc_html_e( 'Popuni dostupna prazna polja', 'sidrena' ); ?></button>
+										<span><?php esc_html_e( 'Popunjava samo praznu šifru, marku i barkod kada postoje pouzdani WooCommerce izvori. Povijesne cijene, pravna izuzeća i druga polja bez sigurnog izvora ostaju nepromijenjena.', 'sidrena' ); ?></span>
+									</div>
 								</details>
 							</td>
 						</tr>
@@ -154,7 +159,7 @@ final class Sidrena_Bulk {
 					</tbody>
 				</table>
 			</div>
-			<div class="sid-bulk-actions"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi SIDRENA podatke', 'sidrena' ); ?></button><span><?php echo esc_html( $page_caption ); ?></span></div>
+			<div class="sid-bulk-actions"><div class="sid-bulk-actions__primary"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi SIDRENA podatke', 'sidrena' ); ?></button><button class="button sid-secondary" type="button" id="sid-safe-fill-page"><span class="dashicons dashicons-database-import"></span><?php esc_html_e( 'Popuni prazna polja na stranici', 'sidrena' ); ?></button></div><span><?php echo esc_html( $page_caption ); ?></span></div>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija kataloga', 'sidrena' ); ?>">
@@ -262,6 +267,27 @@ final class Sidrena_Bulk {
 		$page = max( 1, isset( $_POST['catalog_page'] ) ? absint( $_POST['catalog_page'] ) : 1 );
 		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&catalog_page=' . $page . '&sid_notice=bulk_saved' ) );
 		exit;
+	}
+
+	private function safe_suggestions( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return array();
+		}
+
+		$suggestions = array(
+			'code'    => trim( (string) $product->get_sku() ),
+			'brand'   => trim( (string) Sidrena_Utils::get_brand( $product ) ),
+			'barcode' => trim( (string) Sidrena_Utils::get_barcode( $product ) ),
+		);
+		$suggestions = apply_filters( 'sidrena_safe_field_suggestions', $suggestions, $product );
+		$clean       = array();
+		foreach ( array( 'code', 'brand', 'barcode' ) as $key ) {
+			$value = is_array( $suggestions ) && isset( $suggestions[ $key ] ) ? sanitize_text_field( (string) $suggestions[ $key ] ) : '';
+			if ( '' !== $value ) {
+				$clean[ $key ] = $value;
+			}
+		}
+		return $clean;
 	}
 
 	private function set_text_meta( $id, $key, $value ) {
