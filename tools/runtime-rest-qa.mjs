@@ -45,7 +45,7 @@ try {
 
 	const index = await readJson(page, "/wp-json/sidrena/v1/cjenici");
 	assert(index && index.schema === 3, "Public cjenik index schema changed unexpectedly.");
-	assert(index.plugin_url === "https://brendigo.com/sidrene-cijene/", "Public cjenik index lost the canonical plugin URL.");
+	assert(!Object.prototype.hasOwnProperty.call(index, "plugin_url"), "Public cjenik index must not expose an external plugin credit URL.");
 	for (const key of ["generator", "ruleset", "rules_effective", "catalog_mode", "woocommerce_active", "product_count", "retention_days"]) {
 		assert(!Object.prototype.hasOwnProperty.call(index, key), `Public cjenik index leaked internal field: ${key}`);
 	}
