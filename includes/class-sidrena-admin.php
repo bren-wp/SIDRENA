@@ -2463,16 +2463,7 @@ final class Sidrena_Admin {
 	}
 
 	private function validated_import_price( $value ) {
-		$raw = trim( sanitize_text_field( (string) $value ) );
-		if ( '' === $raw ) {
-			return '';
-		}
-
-		$price = Sidrena_Utils::decimal( $raw );
-		if ( '' === $price || (float) $price < 0 ) {
-			return null;
-		}
-		return $price;
+		return Sidrena_Utils::validated_nonnegative_decimal( $value );
 	}
 
 	private function detect_delimiter( $line ) {
