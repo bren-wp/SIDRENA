@@ -76,8 +76,6 @@ def should_process(path: pathlib.Path) -> bool:
     rel = relative(path)
     if any(part in SKIP_DIRS for part in rel.parts):
         return False
-    if len(rel.parts) >= 3 and rel.parts[0] == ".github" and rel.parts[1] == "workflows":
-        return False
     if rel in SKIP_FILES:
         return False
     if path.suffix.lower() in TEXT_SUFFIXES:
@@ -117,6 +115,7 @@ def add_after_shebang(text: str, header: str) -> str:
 
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
+    text = text.replace("Brendigo", "brendigo")
     if rel in ENTRYPOINTS:
         return apply_entrypoint(text)
     if has_metadata(text):
