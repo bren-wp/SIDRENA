@@ -63,7 +63,7 @@ jobs:
           test ! -f .github/workflows/windows-release-assets.yml
           test ! -f .github/workflows/windows-app-guard.yml
 
-          find editions -maxdepth 2 -type f -name 'sidrena-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
+          find editions -maxdepth 2 -type f -name 'brendigo-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
           cat > "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" <<'EOF'
           editions/woocommerce/brendigo-sidrene-cijene-cjenici.php
           editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php
