@@ -1,7 +1,7 @@
 === brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
-Tags: woocommerce, prices, price-list, csv, xml
+Tags: woocommerce, cijene, cjenik, hrvatska, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -9,113 +9,122 @@ Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference-price records, price history, public CSV/XML price lists, locations and publication archives for Croatian stores using WooCommerce.
+Sidrene cijene, 30-dnevna referenca, javni CSV/XML cjenici, lokacije i arhiva objava za hrvatske trgovine koje koriste WooCommerce.
 
 == Description ==
 
-**brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce** is an independently developed plugin for Croatian merchants that use WooCommerce products and variations.
+**brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce** je neovisno razvijeno izdanje za hrvatske trgovce koji već koriste WooCommerce proizvode i varijacije.
 
-The plugin keeps WooCommerce as the canonical product source and adds tools for:
+WooCommerce ostaje izvor proizvoda i varijacija. SIDRENA ne stvara drugi paralelni katalog, nego postojećim proizvodima dodaje podatke i alate potrebne za evidenciju i objavu cijena.
 
-* recording current and reference-price data
-* maintaining price history used for 30-day sale-price references when applicable
-* handling product data by physical location or webshop channel
-* calculating and publishing unit-price data when applicable
-* generating public CSV and XML price lists
-* publishing a searchable HTML price-list page
-* keeping previous successful publications available in an archive
-* exposing a public JSON manifest and REST index for automated retrieval
-* validating publication data before replacing the last successful public files
-* monitoring daily publication and sending failure or delay notifications
-* displaying stored file size, row count and SHA-256 integrity metadata
-* editing SIDRENA fields in bulk without creating a duplicate product catalogue
-* integrating SIDRENA fields with WooCommerce CSV import/export
+Dodatak omogućuje:
 
-The legal-publication profile is intentionally automated. CSV, XML, public HTML, manifest, REST index, price history, strict publication checks and publication monitoring cannot be accidentally disabled from the simplified settings screen.
+* evidenciju aktualnih i sidrenih cijena uz postojeće proizvode i varijacije
+* odvojenu 30-dnevnu referencu kod posebnih oblika prodaje kada je primjenjiva
+* podatke o raspoloživosti i cijeni po fizičkoj lokaciji
+* izračun i objavu cijene za jedinicu mjere kada je primjenjiva
+* javne CSV i XML cjenike
+* javnu pretraživu HTML stranicu cjenika
+* arhivu prethodnih uspješnih objava
+* JSON manifest i REST indeks za automatizirani dohvat
+* strogu provjeru prije zamjene zadnje valjane objave
+* dnevno generiranje, nadzor objave i e-mail upozorenja
+* bulk uređivanje SIDRENA podataka bez dupliciranja proizvoda
+* integraciju SIDRENA polja s WooCommerce CSV uvozom i izvozom
+* prikaz veličine datoteke, broja redaka i SHA-256 podatka o integritetu
 
-Detailed end-user documentation in Croatian is included in:
+= Automatizirani profil objave =
 
-* `docs/UPUTE.md`
-* `docs/SIDRENA-UPUTE.pdf`
+CSV, XML, javni HTML cjenik, manifest, REST indeks, povijest cijena, stroga provjera objave i nadzor objave ostaju automatski uključeni kako ih krajnji korisnik ne bi slučajno onemogućio.
 
-Optional paid initial setup and voluntary donations are clearly separated from plugin functionality. Paying for setup or donating is not required to use any feature.
+Korisnik podešava samo način rada, vrijeme dnevnog generiranja prije 08:00, arhivu od najmanje 30 dana i e-mail za upozorenja.
 
-SIDRENA provides technical tools for recording, checking and publishing price data. It is not legal certification and does not replace the merchant's source records or professional legal advice.
+= Neovisnost i zaštitni znakovi =
 
-= Independence and trademarks =
+Ovaj dodatak razvija **brendigo** neovisno. Nije povezan s tvrtkom Automattic niti predstavlja službeni proizvod ili službeno izdanje WooCommercea.
 
-This plugin is developed independently by **brendigo**. It is not affiliated with, endorsed by, sponsored by, or an official product of WooCommerce or Automattic.
+Naziv WooCommerce koristi se samo radi točnog opisa kompatibilnosti i integracije.
 
-WooCommerce is mentioned only to identify compatibility and the product-data source used by this edition.
+= Upute za krajnjeg korisnika =
 
-= Privacy =
+U instalacijskom ZIP-u nalaze se:
 
-SIDRENA does not include telemetry or usage tracking.
+* `docs/UPUTE.md` — detaljne tekstualne upute
+* `docs/SIDRENA-UPUTE.pdf` — detaljni PDF priručnik za krajnjeg korisnika
 
-Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same WordPress site. The plugin does not require an external account or license server.
+Upute obuhvaćaju instalaciju, postojeće proizvode i varijacije, bulk uređivanje, lokacije, sidrenu cijenu, 30-dnevnu referencu, jediničnu cijenu, CSV uvoz/izvoz, generiranje, javnu objavu, arhivu, cron, Dnevnik i rješavanje najčešćih problema.
+
+= Podrška, donacija i opcionalno postavljanje =
+
+Podrška: sidrena@brendigo.com
+
+WhatsApp: +385 91 901 0092
+
+Opcionalno jednokratno početno postavljanje: **80 EUR**.
+
+Plaćeno postavljanje nije uvjet za korištenje dodatka. Dobrovoljna donacija podržava razvoj i nije naknada za funkcije, podršku ili pravno jamstvo.
+
+= Pravna napomena =
+
+SIDRENA tehnički pomaže pri unosu, provjeri, evidenciji, automatizaciji i objavi podataka. Ne predstavlja pravno jamstvo, pravnu certifikaciju niti zamjenu za stvarnu poslovnu evidenciju i stručni pravni savjet.
 
 == Installation ==
 
-1. Install and activate WooCommerce.
-2. Upload the SIDRENA ZIP through **Plugins > Add New Plugin > Upload Plugin**.
-3. Activate **brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce**.
-4. Open **SIDRENA > Settings** and choose the operating mode, daily generation time, archive retention and notification email.
-5. Open **SIDRENA > Locations** and review the webshop or physical-store locations.
-6. Review SIDRENA fields on existing products and variations or use the SIDRENA bulk editor.
-7. Open **SIDRENA > Check** and resolve any real data warnings.
-8. Open **SIDRENA > Price Lists** and generate the first public price list.
-9. Open the public price-list page and verify CSV/XML downloads and archive links.
-10. Review **SIDRENA > Log** after the first production generation.
+1. Instalirajte i aktivirajte WooCommerce.
+2. U WordPressu otvorite **Dodaci > Dodaj novi dodatak > Prenesi dodatak**.
+3. Prenesite aktualni ZIP paket SIDRENA izdanja za WooCommerce.
+4. Aktivirajte dodatak.
+5. Otvorite **SIDRENA > Postavke**.
+6. Uredite **Lokacije** i po potrebi popunite prijedlog adrese web trgovine.
+7. Otvorite postojeći proizvod ili SIDRENA bulk katalog i dopunite stvarne podatke.
+8. Otvorite **Provjera** i riješite stvarna upozorenja.
+9. U **Cjenici** generirajte prvu objavu.
+10. Provjerite javne CSV/XML datoteke, arhivu i Dnevnik.
 
-The detailed Croatian manual included in the plugin package explains every step for non-technical users.
+Detaljni postupak nalazi se u `docs/UPUTE.md` i `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
-= Does SIDRENA duplicate WooCommerce products? =
+= Duplira li SIDRENA proizvode? =
 
-No. WooCommerce remains the canonical source for products and variations.
+Ne. Postojeći WooCommerce proizvodi i varijacije ostaju izvor podataka.
 
-= Does the plugin automatically display reference-price information? =
+= Mora li REST biti uključen da bi promjena varijacije prikazala ispravnu referentnu cijenu? =
 
-When the relevant SIDRENA data exists, the plugin can render the configured reference-price information next to the existing product price. Variation-specific data is updated from the standard variation payload, with a compatibility fallback for integrations that remove it.
+Standardni variation payload sadrži SIDRENA podatke bez dodatnog zahtjeva. REST ostaje kompatibilni fallback za teme i buildere koji uklone standardni payload.
 
-= Does SIDRENA guarantee legal compliance? =
+= Mogu li isključiti CSV/XML ili nadzor objave? =
 
-No. SIDRENA automates technical recording, validation and publication workflows. The merchant remains responsible for accurate source data and for determining which legal rules apply to each product, service, sale, location and business model.
+Ne kroz pojednostavljeni korisnički ekran. Ti izlazi i sigurnosni mehanizmi ostaju uključeni radi stabilne objave i interoperabilnosti.
 
-= Does the plugin track visitors or administrators? =
+= Je li sidrena cijena isto što i najniža cijena u prethodnih 30 dana? =
 
-No. There is no telemetry or usage tracking.
+Ne. To su odvojeni podaci.
 
-= Is paid setup required? =
+= Moram li platiti početno postavljanje? =
 
-No. All plugin functionality is available without paid setup. The optional one-time setup service is separate from the plugin.
-
-= Where are the Croatian instructions? =
-
-The install package contains `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
+Ne. Početno postavljanje od 80 EUR je potpuno opcionalno. Dodatak se može samostalno instalirati i koristiti prema priloženim uputama.
 
 == Screenshots ==
 
-1. SIDRENA overview with publication status and operational checks.
-2. Product catalogue and SIDRENA bulk data editor.
-3. Current public price-list files and archive controls.
-4. Location management for webshop and physical stores.
-5. Simplified automated-publication settings.
-6. Help, documentation, support and optional setup information.
+1. SIDRENA pregled i status objave.
+2. Katalog web trgovine i SIDRENA podaci.
+3. Digitalni cjenici i arhiva.
+4. Lokacije i prodajni objekti.
+5. Pojednostavljene automatizirane postavke.
+6. Podrška, dokumentacija i opcionalne usluge.
 
 == Changelog ==
 
 = 1.0.21 =
 
-* Stable production release before the current 1.0.22 development cycle.
-* Uses WooCommerce products and variations without a duplicate catalogue.
-* Includes public CSV/XML generation, searchable HTML output, publication archives, locations, price history and unit-price support.
-* Includes strict publication validation, public file integrity metadata, REST/manifest discovery and publication monitoring.
-* Includes real WordPress/WooCommerce runtime QA and Plugin Check gates in the development workflow.
+* Stabilizirano izdanje za postojeće proizvode i varijacije trgovine.
+* Poboljšani prikaz varijacija bez dodatnog zahtjeva u standardnom WooCommerce toku.
+* Poboljšani digitalni cjenici, arhiva, lokacije i provjera integriteta.
+* Dodana detaljna dokumentacija za krajnjeg korisnika.
+* Pojačani CI, Plugin Check i produkcijski regression guardovi.
 
-== Upgrade Notice ==
+= 1.0.20 =
 
-= 1.0.21 =
-
-Stable production release. Back up the site before upgrading and verify the first public generation after installation.
+* Poboljšana povijest cijena, 30-dnevna referenca i cijena za jedinicu mjere.
+* Poboljšani CSV uvoz/izvoz, lokacijski podaci i javna objava.
