@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: SIDRENA – sidrene cijene i digitalni cjenici
+ * Plugin Name: brendigo SIDRENA – sidrene cijene i digitalni cjenici
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije, usluge i katalog za WordPress.
  * Version: 1.0.21
