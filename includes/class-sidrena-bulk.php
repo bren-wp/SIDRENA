@@ -190,18 +190,21 @@ final class Sidrena_Bulk {
 			$this->set_text_meta( $id, '_sidrena_brand', isset( $row['brand'] ) ? $row['brand'] : '' );
 			$this->set_text_meta( $id, '_sidrena_barcode', isset( $row['barcode'] ) ? $row['barcode'] : '' );
 
-			$anchor = Sidrena_Utils::decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
-			if ( '' === $anchor ) {
-				delete_post_meta( $id, '_sidrena_anchor_price' );
-			} else {
-				update_post_meta( $id, '_sidrena_anchor_price', $anchor );
+			$anchor = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
+			if ( null !== $anchor ) {
+				if ( '' === $anchor ) {
+					delete_post_meta( $id, '_sidrena_anchor_price' );
+				} else {
+					update_post_meta( $id, '_sidrena_anchor_price', $anchor );
+				}
 			}
 
-			$date = Sidrena_Utils::sanitize_date( isset( $row['date'] ) ? $row['date'] : '' );
-			if ( $date ) {
-				update_post_meta( $id, '_sidrena_anchor_date', $date );
-			} else {
+			$date_raw = trim( (string) ( isset( $row['date'] ) ? $row['date'] : '' ) );
+			$date     = Sidrena_Utils::sanitize_date( $date_raw );
+			if ( '' === $date_raw ) {
 				delete_post_meta( $id, '_sidrena_anchor_date' );
+			} elseif ( '' !== $date ) {
+				update_post_meta( $id, '_sidrena_anchor_date', $date );
 			}
 
 			$group = sanitize_key( isset( $row['group'] ) ? $row['group'] : 'standard' );
@@ -215,11 +218,13 @@ final class Sidrena_Bulk {
 				$unit_status = 'review';
 			}
 			update_post_meta( $id, '_sidrena_unit_price_status', $unit_status );
-			$quantity = Sidrena_Utils::decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
-			if ( '' === $quantity ) {
-				delete_post_meta( $id, '_sidrena_quantity' );
-			} else {
-				update_post_meta( $id, '_sidrena_quantity', $quantity );
+			$quantity = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
+			if ( null !== $quantity ) {
+				if ( '' === $quantity ) {
+					delete_post_meta( $id, '_sidrena_quantity' );
+				} else {
+					update_post_meta( $id, '_sidrena_quantity', $quantity );
+				}
 			}
 			$quantity_unit = Sidrena_Utils::normalize_unit( isset( $row['quantity_unit'] ) ? $row['quantity_unit'] : '' );
 			if ( '' === $quantity_unit ) {
@@ -229,8 +234,8 @@ final class Sidrena_Bulk {
 			}
 			$this->set_text_meta( $id, '_sidrena_unit', isset( $row['unit'] ) ? $row['unit'] : '' );
 
-			$unit_price = Sidrena_Utils::decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
-			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
+			$unit_price = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
+			if ( 'required' === $unit_status && '' === $unit_price && null !== $quantity && '' !== $quantity && '' !== $quantity_unit ) {
 				$product = wc_get_product( $id );
 				if ( $product ) {
 					$raw_price = $product->get_price( 'edit' );
@@ -244,10 +249,12 @@ final class Sidrena_Bulk {
 					}
 				}
 			}
-			if ( '' === $unit_price ) {
-				delete_post_meta( $id, '_sidrena_unit_price' );
-			} else {
-				update_post_meta( $id, '_sidrena_unit_price', $unit_price );
+			if ( null !== $unit_price ) {
+				if ( '' === $unit_price ) {
+					delete_post_meta( $id, '_sidrena_unit_price' );
+				} else {
+					update_post_meta( $id, '_sidrena_unit_price', $unit_price );
+				}
 			}
 			$cjenik_visibility = sanitize_key( isset( $row['cjenik_visibility'] ) ? $row['cjenik_visibility'] : 'auto' );
 			if ( ! in_array( $cjenik_visibility, array( 'auto', 'include', 'exclude' ), true ) ) {
