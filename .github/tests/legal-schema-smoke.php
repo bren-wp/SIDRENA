@@ -110,6 +110,10 @@ sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_22_c
 sidrena_schema_assert( false !== strpos( $compliance_source, 'nn_59_2026_base_price_future' ), 'Future bazna-cijena source must remain separate from the NN 101/2026 sidrena-price layer.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, '17.11.2026' ), 'Bazna-price readiness must retain the statutory 17.11.2026 application marker.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'https://mingo.gov.hr/print.aspx?id=10440&url=print' ), 'Official MINGO clarification URL must remain linked from the rules screen.' );
+$legal_notes = file_get_contents( dirname( __DIR__, 2 ) . '/docs/legal-and-technical-notes.md' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'najkasnije do 08:00 dana kada objavljuju izmjenu cjenika usluga' ), 'Admin legal copy must match NN 101/2026 service publication timing.' );
+sidrena_schema_assert( false !== strpos( $legal_notes, 'najkasnije do 08:00 dana kada objavljuje izmjenu cjenika usluga' ), 'Legal notes must match NN 101/2026 service publication timing.' );
+sidrena_schema_assert( false === strpos( $admin_source, 'na dan stupanja promjene na snagu' ) && false === strpos( $legal_notes, 'na dan stupanja promjene na snagu' ), 'Retired service-deadline wording must not return.' );
 
 $pricelist_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
 $services_source  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
