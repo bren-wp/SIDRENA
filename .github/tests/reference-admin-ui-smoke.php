@@ -76,6 +76,10 @@ foreach (
 		"closest(target, '#sid-safe-fill-page')",
 		"message('safeFillChanged'",
 		"message('safeFillEmpty'",
+		"closest(target, '#sid-fill-woo-location')",
+		"data-sidrena-woo-address",
+		"message('wooLocationFilled'",
+		"message('wooLocationNoTarget'",
 	) as $needle
 ) {
 	sidrena_reference_ui_assert( false !== strpos( $script, $needle ), 'Upload validation regression: ' . $needle );
@@ -122,6 +126,13 @@ sidrena_reference_ui_assert(
 	false === strpos( $admin, 'style="--sid-score:' )
 	&& false !== strpos( $admin, 'sid-reference-ring__value' ),
 	'Compliance progress must not reintroduce inline CSS.'
+);
+
+sidrena_reference_ui_assert(
+	false !== strpos( $admin, 'id="sid-fill-woo-location"' )
+	&& false !== strpos( $admin, 'Sidrena_Utils::woocommerce_store_address()' )
+	&& false !== strpos( $admin, 'sid-location-address-input' ),
+	'Woo location onboarding must remain an explicit empty-field suggestion and never an automatic overwrite.'
 );
 
 sidrena_reference_ui_assert(

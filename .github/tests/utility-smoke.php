@@ -10,6 +10,22 @@
 
 
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'SIDRENA_EDITION', 'woocommerce' );
+
+function get_option( $key, $default = false ) {
+	$values = array(
+		'woocommerce_store_address' => 'Korzo 1',
+		'woocommerce_store_address_2' => '2. kat',
+		'woocommerce_store_postcode' => '51000',
+		'woocommerce_store_city' => 'Rijeka',
+	);
+	return array_key_exists( $key, $values ) ? $values[ $key ] : $default;
+}
+
+function apply_filters( $tag, $value ) {
+	unset( $tag );
+	return $value;
+}
 
 function wp_strip_all_tags( $value ) {
 	return strip_tags( (string) $value );
@@ -61,6 +77,15 @@ sidrena_assert_same(
 	Sidrena_Utils::filename_part( 'Ulica Ivana Meštrovića 12, Čakovec' ),
 	'Croatian filename characters must be preserved.'
 );
+
+sidrena_assert_same(
+	'Korzo 1, 2. kat, 51000 Rijeka',
+	Sidrena_Utils::woocommerce_store_address(),
+	'WooCommerce store address suggestion must combine only trusted configured address fields.'
+);
+
+$default_locations = Sidrena_Utils::locations();
+sidrena_assert_same( 'Korzo 1, 2. kat, 51000 Rijeka', $default_locations[0]['address'] ?? '', 'Fresh WooCommerce location fallback must use the configured store address suggestion.' );
 
 sidrena_assert_same( "'=HYPERLINK(\"https://example.test\")", Sidrena_Utils::csv_safe_cell( '=HYPERLINK("https://example.test")' ), 'Formula prefix must be neutralized.' );
 sidrena_assert_same( "' \t=1+1", Sidrena_Utils::csv_safe_cell( " \t=1+1" ), 'Whitespace-prefixed formula must be neutralized.' );
