@@ -1,6 +1,6 @@
-=== SIDRENA for WooCommerce ===
+=== brendigo SIDRENA Price Publisher for WooCommerce ===
 Contributors: brendigo
-Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WooCommerce%20plugin%20-%20donacija
+Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: woocommerce, cijene, cjenik, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
@@ -13,7 +13,7 @@ Price history, public CSV/XML price lists, locations and publication archives fo
 
 == Description ==
 
-SIDRENA for WooCommerce 1.0.21 uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
+brendigo SIDRENA Price Publisher for WooCommerce uses existing WooCommerce products and variations as the product source instead of creating a duplicate catalogue.
 
 * keep WooCommerce as the canonical product and variation source
 * display reference-price information alongside existing WooCommerce prices when configured
@@ -27,11 +27,13 @@ SIDRENA for WooCommerce 1.0.21 uses existing WooCommerce products and variations
 
 Official website: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
-Author: Brendigo
+Author: brendigo
 
 = Privacy and external links =
 
 SIDRENA does not include telemetry or usage tracking. Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same site.
+
+This plugin is developed independently by brendigo. It is not affiliated with, endorsed by, or an official product of WooCommerce or Automattic.
 
 = Important note =
 
@@ -41,7 +43,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 
 1. Instalirajte i aktivirajte WooCommerce.
 2. Prenesite `sidrena-woocommerce-1.0.21.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
-3. Aktivirajte Sidrena WooCommerce.
+3. Aktivirajte brendigo SIDRENA Price Publisher.
 4. Otvorite Sidrena > Proizvodi ili postojeći WooCommerce proizvod/varijaciju i unesite Sidrena podatke.
 5. Provjerite Sidrena > Usluge ako ih objavljujete.
 6. Unesite Sidrena > Lokacije.
