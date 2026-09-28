@@ -124,7 +124,7 @@ sidrena_release_gate_assert(
 
 sidrena_release_gate_assert(
 	false !== strpos( $release, 'brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $release, 'brendigo-sidrene-cijene-cjenici' ),
+	&& false !== strpos( $release, 'brendigo-sidrena-cijena' ),
 	'Release Plugin Check gates must validate the public plugin slugs/text domains.'
 );
 sidrena_release_gate_assert(
