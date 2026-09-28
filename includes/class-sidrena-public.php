@@ -245,11 +245,11 @@ final class Sidrena_Public {
 			<div class="sidrena-pricelist__toolbar">
 				<div>
 					<h2><?php echo esc_html( ! empty( $location['code'] ) ? $location['code'] : __( 'Cjenik', 'sidrena' ) ); ?></h2>
-					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 					<p><?php echo esc_html( $location['address'] ); ?>
 					<?php
 					if ( $generated ) :
 						?>
+						<?php /* translators: %s: formatted date and time when the public price list was generated. */ ?>
 						· <?php echo esc_html( sprintf( __( 'Ažurirano: %s', 'sidrena' ), Sidrena_Utils::format_iso_datetime( $generated ) ) ); ?><?php endif; ?></p>
 				</div>
 				<form class="sidrena-pricelist__search" role="search" method="get">
