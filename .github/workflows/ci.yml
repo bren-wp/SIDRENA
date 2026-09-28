@@ -492,3 +492,46 @@ jobs:
             echo 'Potential secret material detected in production files.' >&2
             exit 1
           fi
+
+
+  quality:
+    name: WPCS and PHPStan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install pinned quality tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          export COMPOSER_HOME="$RUNNER_TEMP/sidrena-quality-composer"
+          echo "COMPOSER_HOME=$COMPOSER_HOME" >> "$GITHUB_ENV"
+          composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require --no-interaction --no-progress \
+            dealerdirect/phpcodesniffer-composer-installer:1.2.1 \
+            wp-coding-standards/wpcs:3.4.1 \
+            phpstan/phpstan:2.2.13 \
+            php-stubs/woocommerce-stubs:11.1.2
+
+      - name: WordPress Coding Standards
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$COMPOSER_HOME/vendor/bin/phpcs" -i
+          "$COMPOSER_HOME/vendor/bin/phpcs" --standard=phpcs.xml.dist
+
+      - name: PHPStan static analysis
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$COMPOSER_HOME/vendor/bin/phpstan" analyse --configuration=phpstan.neon.dist --no-progress --error-format=table
