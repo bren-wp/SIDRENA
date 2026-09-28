@@ -1157,8 +1157,8 @@ final class Sidrena_Pricelist {
 			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
 			'generated_at'   => current_time( DATE_ATOM ),
 			'retention_days' => max( 30, absint( $settings['retention_days'] ) ),
-			'current'        => Sidrena_Utils::public_file_index( Sidrena_Utils::public_index() ),
-			'archive'        => Sidrena_Utils::public_file_index( Sidrena_Utils::archive_index() ),
+			'current'        => Sidrena_Utils::available_public_file_index( Sidrena_Utils::public_index() ),
+			'archive'        => Sidrena_Utils::available_public_file_index( Sidrena_Utils::archive_index() ),
 		);
 		$json = wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		if ( false === $json ) {
