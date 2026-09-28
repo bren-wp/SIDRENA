@@ -24,7 +24,6 @@ final class Sidrena_Plugin {
 
 	public function run() {
 		add_filter( 'map_meta_cap', array( 'Sidrena_Utils', 'map_admin_capability' ), 10, 4 );
-		add_action( 'init', array( 'Sidrena_Utils', 'register_translation_strings' ), 20 );
 
 		Sidrena_Legal_Automation::instance()->hooks();
 		Sidrena_Audit::instance()->hooks();
