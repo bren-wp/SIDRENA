@@ -44,12 +44,12 @@ final class Sidrena_Services {
 					'add_new_item'  => __( 'Dodaj uslugu', 'sidrena' ),
 					'edit_item'     => __( 'Uredi uslugu', 'sidrena' ),
 				),
-				'public'              => false,
-				'show_ui'             => true,
-				'show_in_menu'        => 'sidrena',
-				'supports'            => array( 'title' ),
-				'capability_type'     => 'post',
-				'capabilities'        => array(
+				'public'          => false,
+				'show_ui'         => true,
+				'show_in_menu'    => 'sidrena',
+				'supports'        => array( 'title' ),
+				'capability_type' => 'post',
+				'capabilities'    => array(
 					'edit_post'              => $capability,
 					'read_post'              => $capability,
 					'delete_post'            => $capability,
@@ -186,10 +186,10 @@ final class Sidrena_Services {
 		}
 
 		$map = array(
-			'sidrena_service_current_price'    => '_sidrena_service_current_price',
-			'sidrena_service_anchor_price'     => '_sidrena_service_anchor_price',
-			'sidrena_service_sale_name'        => '_sidrena_service_sale_name',
-			'sidrena_service_type'             => '_sidrena_service_type',
+			'sidrena_service_current_price' => '_sidrena_service_current_price',
+			'sidrena_service_anchor_price'  => '_sidrena_service_anchor_price',
+			'sidrena_service_sale_name'     => '_sidrena_service_sale_name',
+			'sidrena_service_type'          => '_sidrena_service_type',
 		);
 
 		foreach ( $map as $field => $meta ) {
@@ -246,7 +246,6 @@ final class Sidrena_Services {
 		// Legacy 30-day sale-reference metadata is intentionally not part of the active SIDRENA workflow.
 		delete_post_meta( $post_id, '_sidrena_service_lowest_30_manual' );
 		delete_post_meta( $post_id, '_sidrena_service_lowest_30_exception' );
-
 
 		$existing_location_prices = get_post_meta( $post_id, '_sidrena_service_location_prices', true );
 		$existing_location_prices = is_array( $existing_location_prices ) ? $existing_location_prices : array();
