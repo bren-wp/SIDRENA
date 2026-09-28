@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.25</h1>
+<h1 align="center">SIDRENA 1.0.26</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,15 +150,15 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.25 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.26 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.25
+## Zašto SIDRENA 1.0.26
 
-**SIDRENA 1.0.25** je release usmjeren na sigurnije odvajanje dvaju izdanja, stroži WooCommerce dependency lifecycle, provjerljive pravne izvore i konzistentan WordPress.org identitet.
+**SIDRENA 1.0.26** nastavlja sigurnosni i produkcijski hardening uz potpuno jedinstven `SIDRENA` brand za oba izdanja, stabilne javne slugove i dodatne REST/import zaštite.
 
-Izdanje 1.0.25 donosi:
+Izdanje 1.0.26 donosi:
 
-- WooCommerce izdanje **Brendigo Sidrena Cijena** s text-domainom i javnim target slugom `brendigo-sidrena-cijena`
+- oba instalirana izdanja koriste isti javni i administratorski naziv **SIDRENA**, dok postojeći text-domaini i javni slugovi ostaju nepromijenjeni
 - `Requires Plugins: woocommerce` uz defensive runtime guard; Woo-specific klase više se ne učitavaju prije potvrđene dostupnosti WooCommercea
 - sigurno stanje bez WooCommercea: bez Woo hookova, upgrade/publication schedulinga i generiranja Woo cjenika
 - jasniji edition-conflict guard koji imenom navodi aktivno i pokušano izdanje i objašnjava siguran prijelaz bez brisanja poslovnih podataka
@@ -226,13 +226,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.25 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.26 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.25.zip`
-- `sidrena-woocommerce-1.0.25.zip`
+- `sidrena-wordpress-1.0.26.zip`
+- `sidrena-woocommerce-1.0.26.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
