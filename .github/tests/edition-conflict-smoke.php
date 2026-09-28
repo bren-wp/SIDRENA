@@ -94,8 +94,8 @@ sidrena_conflict_assert( in_array( $expected, $GLOBALS['sidrena_deactivated'], t
 
 $expected_active = 'legacy' === $mode
 	? 'starije SIDRENA izdanje'
-	: ( 'wordpress' === $target ? 'Brendigo Sidrena Cijena' : 'SIDRENA WordPress' );
-$expected_attempted = 'wordpress' === $target ? 'SIDRENA WordPress' : 'Brendigo Sidrena Cijena';
+	: ( 'wordpress' === $target ? 'SIDRENA (WooCommerce izdanje)' : 'SIDRENA (WordPress izdanje)' );
+$expected_attempted = 'wordpress' === $target ? 'SIDRENA (WordPress izdanje)' : 'SIDRENA (WooCommerce izdanje)';
 
 $blocked = false;
 try {
