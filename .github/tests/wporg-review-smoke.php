@@ -31,7 +31,7 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Plugin Name: brendigo SIDRENA – sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce' ),
+	&& false !== strpos( $woo_main, 'Plugin Name: brendigo SIDRENA – sidrene cijene i cjenici za web trgovine' ),
 	'Final Croatian plugin display names changed.'
 );
 
@@ -55,7 +55,7 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_readme, '=== brendigo SIDRENA – sidrene cijene i digitalni cjenici ===' )
-	&& false !== strpos( $woo_readme, '=== brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce ===' ),
+	&& false !== strpos( $woo_readme, '=== brendigo SIDRENA – sidrene cijene i cjenici za web trgovine ===' ),
 	'WordPress.org readme titles must match plugin headers.'
 );
 
@@ -68,12 +68,19 @@ foreach ( array( $wp_readme, $woo_readme ) as $readme ) {
 }
 
 sidrena_wporg_assert(
-	false !== stripos( $woo_readme, 'brendigo' )
-	&& false !== stripos( $woo_readme, 'neovisno' )
+	false !== stripos( $woo_readme, 'independently developed' )
 	&& false !== stripos( $woo_readme, 'Automattic' )
-	&& false !== stripos( $woo_readme, 'službeni proizvod' )
-	&& false !== stripos( $woo_readme, 'kompatibilnosti i integracije' ),
+	&& false !== stripos( $woo_readme, 'not an official WooCommerce product' )
+	&& false !== stripos( $woo_readme, 'describe compatibility' ),
 	'WooCommerce independence/trademark clarification changed.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $wp_readme, 'Reference prices, 30-day sale-price references' )
+	&& false !== strpos( $wp_readme, '== Description ==' )
+	&& false !== strpos( $woo_readme, 'Reference prices, 30-day sale-price references' )
+	&& false !== strpos( $woo_readme, '== Description ==' ),
+	'WordPress.org readme base language must remain standard English.'
 );
 
 sidrena_wporg_assert(
