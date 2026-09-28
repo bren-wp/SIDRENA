@@ -38,8 +38,8 @@ jobs:
           else
             VERSION="${GITHUB_REF_NAME#release/}"
           fi
-          WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
-          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
+          WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php | head -n1)"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/brendigo-sidrene-cijene-cjenici.php | head -n1)"
           WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1)"
           WOO_STABLE="$(sed -n 's/^Stable tag: //p' editions/woocommerce/readme.txt | head -n1)"
           test "$VERSION" = "$WP_VERSION"
@@ -182,11 +182,11 @@ jobs:
           set -euo pipefail
           (
             cd "$RUNNER_TEMP"
-            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrene-cijene-cjenici-$VERSION.zip.sha256"
           )
-          unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
-          unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
+          unzip -t "$RUNNER_TEMP/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" >/dev/null
+          unzip -t "$RUNNER_TEMP/brendigo-sidrene-cijene-cjenici-$VERSION.zip" >/dev/null
 
       - name: Render and validate release PDF manuals
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -198,12 +198,12 @@ jobs:
           mkdir -p "$RENDER"
 
           python3 tools/pdf-visual-qa.py \
-            --pdf "$RUNNER_TEMP/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf" \
+            --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/wordpress" \
             --label "SIDRENA WordPress release"
 
           python3 tools/pdf-visual-qa.py \
-            --pdf "$RUNNER_TEMP/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf" \
+            --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-cjenici/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/woocommerce" \
             --label "SIDRENA WooCommerce release"
 
@@ -222,10 +222,10 @@ jobs:
           set -euo pipefail
           rm -rf build/release-plugin-check
           mkdir -p build/release-plugin-check
-          cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-wordpress" build/release-plugin-check/
-          cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-woocommerce" build/release-plugin-check/
-          test -f build/release-plugin-check/sidrena-wordpress/sidrena-wordpress.php
-          test -f build/release-plugin-check/sidrena-woocommerce/sidrena-woocommerce.php
+          cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici" build/release-plugin-check/
+          cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-cjenici" build/release-plugin-check/
+          test -f build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php
+          test -f build/release-plugin-check/brendigo-sidrene-cijene-cjenici/brendigo-sidrene-cijene-cjenici.php
 
       - name: Set up Node for release Plugin Check
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -244,7 +244,7 @@ jobs:
         run: |
           set -euo pipefail
           bash tools/run-plugin-check.sh \
-            build/release-plugin-check/sidrena-wordpress \
+            build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici \
             brendigo-sidrene-cijene-digitalni-cjenici \
             "$RUNNER_TEMP/plugin-check-release-wordpress.json"
 
@@ -254,7 +254,7 @@ jobs:
         run: |
           set -euo pipefail
           bash tools/run-plugin-check.sh \
-            build/release-plugin-check/sidrena-woocommerce \
+            build/release-plugin-check/brendigo-sidrene-cijene-cjenici \
             brendigo-sidrene-cijene-cjenici \
             "$RUNNER_TEMP/plugin-check-release-woocommerce.json"
 
@@ -345,10 +345,10 @@ jobs:
               test "$VERSION" = "0.9.0"
             fi
             gh release upload "$TAG_NAME" \
-              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" \
-              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" \
+              "$RUNNER_TEMP/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" \
+              "$RUNNER_TEMP/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip.sha256" \
+              "$RUNNER_TEMP/brendigo-sidrene-cijene-cjenici-$VERSION.zip" \
+              "$RUNNER_TEMP/brendigo-sidrene-cijene-cjenici-$VERSION.zip.sha256" \
               --clobber --repo "$GITHUB_REPOSITORY"
           fi
 
@@ -375,12 +375,12 @@ jobs:
 
           gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --dir "$VERIFY_DIR"
 
-          WP_ZIP="$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
-          WOO_ZIP="$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          WP_ZIP="$VERIFY_DIR/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip"
+          WOO_ZIP="$VERIFY_DIR/brendigo-sidrene-cijene-cjenici-$VERSION.zip"
           test -f "$WP_ZIP"
-          test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip.sha256"
+          test -f "$VERIFY_DIR/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip.sha256"
           test -f "$WOO_ZIP"
-          test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip.sha256"
+          test -f "$VERIFY_DIR/brendigo-sidrene-cijene-cjenici-$VERSION.zip.sha256"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.zip' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.sha256' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "4"
@@ -393,8 +393,8 @@ jobs:
 
           (
             cd "$VERIFY_DIR"
-            sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrene-cijene-cjenici-$VERSION.zip.sha256"
           )
 
           unzip -t "$WP_ZIP" >/dev/null
@@ -404,14 +404,14 @@ jobs:
           unzip -q "$WP_ZIP" -d "$VERIFY_DIR/wp"
           unzip -q "$WOO_ZIP" -d "$VERIFY_DIR/woo"
 
-          WP="$VERIFY_DIR/wp/sidrena-wordpress"
-          WOO="$VERIFY_DIR/woo/sidrena-woocommerce"
+          WP="$VERIFY_DIR/wp/brendigo-sidrene-cijene-digitalni-cjenici"
+          WOO="$VERIFY_DIR/woo/brendigo-sidrene-cijene-cjenici"
 
-          test -f "$WP/sidrena-wordpress.php"
-          test -s "$WP/assets/images/logo-wordpress.svg"
-          test -s "$WP/assets/images/logo-wordpress-light.svg"
-          test ! -e "$WP/assets/images/logo-woocommerce.svg"
-          test ! -e "$WP/assets/images/logo-woocommerce-light.svg"
+          test -f "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          test -s "$WP/assets/images/logo-brendigo-standalone.svg"
+          test -s "$WP/assets/images/logo-brendigo-standalone-light.svg"
+          test ! -e "$WP/assets/images/logo-brendigo-store.svg"
+          test ! -e "$WP/assets/images/logo-brendigo-store-light.svg"
           test -s "$WP/docs/UPUTE.md"
           test -s "$WP/docs/SIDRENA-UPUTE.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
@@ -421,11 +421,11 @@ jobs:
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/static-php"
 
-          test -f "$WOO/sidrena-woocommerce.php"
-          test -s "$WOO/assets/images/logo-woocommerce.svg"
-          test -s "$WOO/assets/images/logo-woocommerce-light.svg"
-          test ! -e "$WOO/assets/images/logo-wordpress.svg"
-          test ! -e "$WOO/assets/images/logo-wordpress-light.svg"
+          test -f "$WOO/brendigo-sidrene-cijene-cjenici.php"
+          test -s "$WOO/assets/images/logo-brendigo-store.svg"
+          test -s "$WOO/assets/images/logo-brendigo-store-light.svg"
+          test ! -e "$WOO/assets/images/logo-brendigo-standalone.svg"
+          test ! -e "$WOO/assets/images/logo-brendigo-standalone-light.svg"
           test -s "$WOO/docs/UPUTE.md"
           test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
