@@ -1915,6 +1915,9 @@ final class Sidrena_Admin {
 		if ( 'csv' !== strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {
 			return new WP_Error( 'upload_extension' );
 		}
+		if ( ! Sidrena_Utils::uploaded_text_type_allowed( $file['tmp_name'], $filename, array( 'csv' ) ) ) {
+			return new WP_Error( 'upload_mime' );
+		}
 		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $contents || '' === $contents || false !== strpos( $contents, "\0" ) ) {
 			return new WP_Error( 'upload_empty' );
