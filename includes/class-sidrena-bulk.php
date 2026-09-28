@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -37,7 +37,7 @@ final class Sidrena_Bulk {
 		}
 
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'WooCommerce nije dostupan. Sidrena WooCommerce katalog nije moguće otvoriti.', 'sidrena' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Katalog web trgovine nije dostupan. Provjerite je li potrebna integracija aktivna.', 'sidrena' ) . '</p></div>';
 			return;
 		}
 
@@ -73,16 +73,16 @@ final class Sidrena_Bulk {
 		?>
 		<div class="sid-page-head sid-reference-page-head">
 			<div>
-				<span class="sid-kicker"><?php esc_html_e( 'WooCommerce proizvodi', 'sidrena' ); ?></span>
-				<h2><?php esc_html_e( 'WooCommerce proizvodi', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Sidrena koristi postojeći WooCommerce katalog kao izvor istine. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
+				<span class="sid-kicker"><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'SIDRENA koristi postojeći katalog web trgovine kao izvor podataka. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
 			</div>
-			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori WooCommerce proizvode', 'sidrena' ); ?></a></div>
+			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori proizvode trgovine', 'sidrena' ); ?></a></div>
 		</div>
 
 		<section class="sid-card sid-reference-panel sid-woo-catalog-summary">
 			<div class="sid-reference-mini-metrics">
-				<div><strong><?php echo esc_html( number_format_i18n( $total ) ); ?></strong><span><?php esc_html_e( 'WooCommerce proizvoda', 'sidrena' ); ?></span></div>
+				<div><strong><?php echo esc_html( number_format_i18n( $total ) ); ?></strong><span><?php esc_html_e( 'proizvoda trgovine', 'sidrena' ); ?></span></div>
 				<div><strong><?php echo esc_html( number_format_i18n( count( $items ) ) ); ?></strong><span><?php esc_html_e( 'na ovoj stranici', 'sidrena' ); ?></span></div>
 				<div><strong><?php echo esc_html( $page . '/' . $pages ); ?></strong><span><?php esc_html_e( 'stranica kataloga', 'sidrena' ); ?></span></div>
 			</div>
@@ -94,7 +94,7 @@ final class Sidrena_Bulk {
 			<?php wp_nonce_field( 'sidrena_bulk_save' ); ?>
 			<div class="sid-table-wrap sid-woo-table-wrap">
 				<table class="widefat sid-bulk-table sid-woo-compact-table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'WooCommerce Sidrena katalog', 'sidrena' ); ?></caption>
+					<caption class="screen-reader-text"><?php esc_html_e( 'SIDRENA katalog web trgovine', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
 							<th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th>
@@ -107,7 +107,7 @@ final class Sidrena_Bulk {
 						</tr>
 					</thead>
 					<tbody>
-					<?php if ( empty( $items ) ) : ?><tr><td class="sid-table-empty-cell" colspan="7"><strong><?php esc_html_e( 'WooCommerce katalog je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u WooCommerceu; Sidrena će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
+					<?php if ( empty( $items ) ) : ?><tr><td class="sid-table-empty-cell" colspan="7"><strong><?php esc_html_e( 'Katalog web trgovine je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u web trgovinu; SIDRENA će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
 					<?php foreach ( $items as $product ) : ?>
 						<?php
 						$id          = $product->get_id();
@@ -130,7 +130,7 @@ final class Sidrena_Bulk {
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
 							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
 							<td><?php if ( 'ready' === ( $reference['status'] ?? '' ) && '' !== ( $reference['price'] ?? '' ) ) : ?><strong><?php echo esc_html( Sidrena_Utils::money( $reference['price'] ) . ' €' ); ?></strong><?php elseif ( 'incomplete' === ( $reference['status'] ?? '' ) ) : ?><span class="sid-status-pill is-warn"><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></span><?php else : ?>—<?php endif; ?></td>
-							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span><?php if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) : ?><small class="sid-cell-sub"><?php esc_html_e( 'WooCommerce: skriveno', 'sidrena' ); ?></small><?php endif; ?></td>
+							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span><?php if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) : ?><small class="sid-cell-sub"><?php esc_html_e( 'Trgovina: skriveno', 'sidrena' ); ?></small><?php endif; ?></td>
 						</tr>
 						<tr class="sid-woo-product-details-row">
 							<td colspan="7">
@@ -150,7 +150,7 @@ final class Sidrena_Bulk {
 									</div>
 									<div class="sid-safe-fill">
 										<button type="button" class="button sid-secondary sid-safe-fill-row"><span class="dashicons dashicons-database-import"></span><?php esc_html_e( 'Popuni dostupna prazna polja', 'sidrena' ); ?></button>
-										<span><?php esc_html_e( 'Popunjava samo praznu šifru, marku i barkod kada postoje pouzdani WooCommerce izvori. Povijesne cijene, pravna izuzeća i druga polja bez sigurnog izvora ostaju nepromijenjena.', 'sidrena' ); ?></span>
+										<span><?php esc_html_e( 'Popunjava samo praznu šifru, marku i barkod kada postoje pouzdani izvori trgovine. Povijesne cijene, pravna izuzeća i druga polja bez sigurnog izvora ostaju nepromijenjena.', 'sidrena' ); ?></span>
 									</div>
 								</details>
 							</td>
