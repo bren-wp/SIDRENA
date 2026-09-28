@@ -68,8 +68,11 @@ foreach ( array( $wp_readme, $woo_readme ) as $readme ) {
 }
 
 sidrena_wporg_assert(
-	false !== strpos( $woo_readme, 'nije povezan s tvrtkom Automattic' )
-	&& false !== strpos( $woo_readme, 'Naziv WooCommerce koristi se samo radi točnog opisa kompatibilnosti i integracije.' ),
+	false !== stripos( $woo_readme, 'brendigo' )
+	&& false !== stripos( $woo_readme, 'neovisno' )
+	&& false !== stripos( $woo_readme, 'Automattic' )
+	&& false !== stripos( $woo_readme, 'službeni proizvod' )
+	&& false !== stripos( $woo_readme, 'opis kompatibilnosti i integracije' ),
 	'WooCommerce independence/trademark clarification changed.'
 );
 
