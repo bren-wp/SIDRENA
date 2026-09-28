@@ -387,7 +387,10 @@ jobs:
           grep -Fq 'brendigo' README.md
           grep -Fq 'sidrena@brendigo.com' README.md
           grep -Fq '+385 91 901 0092' README.md
-          grep -Fq 'revolut.me/catanyus' includes/class-sidrena-utils.php
+          if grep -RInF 'revolut.me' includes admin public editions docs tools --exclude='*.pdf'; then
+            echo 'Donation hyperlink detected; production and bundled documentation must remain free of donation URLs.' >&2
+            exit 1
+          fi
           grep -Fq "return '80 EUR';" includes/class-sidrena-utils.php
           grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
           grep -Fq '[sidrena_objava_cjenika]' README.md
