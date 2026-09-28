@@ -73,6 +73,8 @@ final class Sidrena_Compliance {
 			'generation_time'        => $settings['generation_time'],
 			'archive_retention_days' => max( 30, absint( $settings['retention_days'] ) ),
 			'public_html_enabled'    => 'yes' === $settings['enable_public_html'],
+			'rest_index_enabled'     => 'yes' === $settings['enable_rest_index'],
+			'manifest_enabled'       => 'yes' === $settings['publish_manifest'],
 			'csv_enabled'            => 'yes' === $settings['generate_csv'],
 			'xml_enabled'            => 'yes' === $settings['generate_xml'],
 			'strict_publication'     => 'yes' === $settings['strict_publication'],
@@ -95,8 +97,14 @@ final class Sidrena_Compliance {
 		if ( '2025-05-02' !== $profile['fmcg_reference_date'] ) {
 			$issues[] = 'FMCG referentni datum nije 02.05.2025.';
 		}
-		if ( ! $profile['csv_enabled'] && ! $profile['xml_enabled'] ) {
-			$issues[] = 'Barem jedan strojno čitljiv format cjenika (CSV ili XML) mora biti uključen.';
+		if ( ! $profile['csv_enabled'] || ! $profile['xml_enabled'] ) {
+			$issues[] = 'Sidrena automatizacija treba održavati i CSV i XML izlaz kako bi korisnik imao oba podržana strojno čitljiva formata.';
+		}
+		if ( ! $profile['public_html_enabled'] ) {
+			$issues[] = 'Javna stranica cjenika mora ostati uključena kako bi objavljene datoteke i arhiva bile lako dostupne s mrežne stranice.';
+		}
+		if ( ! $profile['rest_index_enabled'] || ! $profile['manifest_enabled'] ) {
+			$issues[] = 'REST indeks i JSON manifest trebaju ostati uključeni za automatizirani dohvat i otkrivanje aktualnih datoteka.';
 		}
 		if ( ! $profile['strict_publication'] ) {
 			$issues[] = 'Strict publication način treba biti uključen kako neuspjeli novi fajl ne bi zamijenio zadnju ispravnu objavu.';
@@ -153,7 +161,7 @@ final class Sidrena_Compliance {
 
 		$before_normalize = $settings;
 		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
-		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'strict_publication', 'failure_notifications', 'display_anchor', 'display_lowest_30', 'track_price_history' ) as $key ) {
+		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor', 'display_lowest_30', 'track_price_history' ) as $key ) {
 			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
 				$repairs[] = 'settings:' . $key;
 			}
