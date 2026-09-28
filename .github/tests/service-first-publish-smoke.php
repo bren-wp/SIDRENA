@@ -53,8 +53,8 @@ function wp_timezone() {
 }
 
 final class Sidrena_Utils {
-	public static function settings() {
-		return array( 'default_ref_date' => '2026-09-10' );
+	public static function standard_reference_date() {
+		return '2026-09-10';
 	}
 
 	public static function decimal( $value ) {
@@ -87,6 +87,7 @@ $services->after_insert_post( 101, $new_post, true, $draft_before );
 
 sidrena_service_anchor_assert( '49.90' === get_post_meta( 101, '_sidrena_service_anchor_price', true ), 'Direct first publish did not snapshot the submitted current service price.' );
 sidrena_service_anchor_assert( '2026-09-20' === get_post_meta( 101, '_sidrena_service_anchor_date', true ), 'Direct first publish did not preserve the first publication date.' );
+sidrena_service_anchor_assert( 'custom' === get_post_meta( 101, '_sidrena_service_reference_group', true ), 'New service must be marked as a custom first-listing Sidrena reference.' );
 sidrena_service_anchor_assert( 1 === $GLOBALS['sidrena_queue_count'], 'First publish must queue exactly one cjenik regeneration.' );
 
 // Later edits must not replace the original anchor.
