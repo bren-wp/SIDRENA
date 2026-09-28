@@ -867,18 +867,16 @@ final class Sidrena_Admin {
 	}
 
 	private function support_card() {
-		$donation_url = Sidrena_Utils::donation_url();
 		?>
 		<section class="sid-card sid-support-card">
 			<div class="sid-support-card__icon"><span class="dashicons dashicons-editor-help"></span></div>
 			<div>
-				<span class="sid-kicker"><?php esc_html_e( 'Podrška po izboru korisnika', 'sidrena' ); ?></span>
-				<h2><?php esc_html_e( 'Plugin možete postaviti sami ili angažirati brendigo', 'sidrena' ); ?></h2>
-				<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-				<p><?php echo esc_html( sprintf( __( 'Korištenje plugina nije uvjetovano kupnjom usluge. Ako želite da brendigo odradi instalaciju i početno postavljanje, cijena je %s jednokratno.', 'sidrena' ), Sidrena_Utils::installation_price() ) ); ?></p>
-				<div class="sid-head-inline-actions">
+				<span class="sid-kicker"><?php esc_html_e( 'Pomoć i dokumentacija', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Trebate pomoć oko objave ili arhive?', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Otvorite SIDRENA Podršku za upute, dijagnostiku, kontakt i opcionalne usluge. Ovaj ekran ostaje fokusiran na arhivu i tehničku spremnost.', 'sidrena' ); ?></p>
+				<div class="sid-card-actions">
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
-					<?php if ( $donation_url ) : ?><a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Dobrovoljna donacija', 'sidrena' ); ?></a><?php endif; ?>
+					<a class="button sid-secondary" href="<?php echo esc_url( Sidrena_Utils::support_pdf_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'PDF upute', 'sidrena' ); ?></a>
 				</div>
 			</div>
 		</section>
