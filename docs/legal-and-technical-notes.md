@@ -130,11 +130,11 @@ Aktualna stabilna release linija koristi zasebne provjere za:
 
 Službeni release smije nastati samo kroz GitHub release workflow i objavljuje dva instalacijska ZIP-a te njihove `.sha256` provjere: `sidrena-wordpress-1.0.21.zip`, `sidrena-wordpress-1.0.21.zip.sha256`, `sidrena-woocommerce-1.0.21.zip` i `sidrena-woocommerce-1.0.21.zip.sha256`.
 
-## Podaci obrta / tvrtke na mrežnoj stranici
+## Opseg Sidrene
 
-Podaci kao što su naziv i sjedište, kontaktni e-mail i telefon, podaci javnog registra, PDV identifikacija kada je primjenjiva te nadležno tijelo proizlaze iz širih pravila elektroničke trgovine i zaštite potrošača. To **nisu dodatni obvezni stupci NN 101/2026 CSV/XML cjenika**.
+Sidrena je namjerno ograničena na sidrene cijene, 30-dnevnu referencu kod posebnih oblika prodaje, digitalne cjenike proizvoda/usluga, javnu arhivu, jedinične cijene gdje su primjenjive, lokacije, automatizirani dohvat i tehničku evidenciju objave.
 
-Sidrena ih zato vodi zasebno u Postavkama i, po izboru administratora, prikazuje iznad javne stranice **Objava cjenika**. OIB se tehnički provjerava kontrolnom znamenkom, ali administrator i dalje odgovara za točnost poslovnih podataka.
+Opći podaci poslovnog subjekta koji proizlaze iz drugih propisa (npr. identitet trgovca, registracijski podaci ili opći kontakt podaci web-trgovine) više se ne vode kroz Sidrena postavke. Takve podatke treba održavati u odgovarajućem dijelu mrežne stranice ili drugom za to namijenjenom sustavu.
 
 ## Podrška, distribucija i donacija
 
