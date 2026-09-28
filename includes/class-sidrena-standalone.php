@@ -144,6 +144,7 @@ final class Sidrena_Standalone {
 		$id                  = $post->ID;
 		$current             = get_post_meta( $id, '_sidrena_standalone_current_price', true );
 		$anchor              = get_post_meta( $id, '_sidrena_standalone_anchor_price', true );
+		$anchor_date         = get_post_meta( $id, '_sidrena_standalone_anchor_date', true );
 		$unit_status         = sanitize_key( (string) get_post_meta( $id, '_sidrena_standalone_unit_status', true ) );
 		$sale_name           = trim( (string) get_post_meta( $id, '_sidrena_standalone_sale_name', true ) );
 		$lowest_30           = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_lowest_30', true ) );
@@ -203,7 +204,7 @@ final class Sidrena_Standalone {
 			'najniza_cijena_30_dana'         => $sale_name && 'ready' === $sale_reference_status ? Sidrena_Utils::money( $lowest_30 ) : '',
 			'krajnji_rok_uporabe'            => $sale_name && 'exempt' === $sale_reference_status ? $expiry_date : '',
 			'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
-			'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : Sidrena_Utils::date_display( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ? get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) : Sidrena_Utils::settings()['default_ref_date'] ),
+			'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : Sidrena_Utils::date_display( $anchor_date ? $anchor_date : Sidrena_Utils::settings()['default_ref_date'] ),
 			'barkod'                         => get_post_meta( $id, '_sidrena_standalone_barcode', true ),
 			'dostupnost'                     => $availability,
 		);
@@ -1579,7 +1580,8 @@ else :
 			$out .= '<span class="sidrena-expiry"><span class="sidrena-expiry__label">' . esc_html__( 'Krajnji rok uporabe', 'sidrena' ) . ':</span> <span class="sidrena-expiry__value">' . esc_html( Sidrena_Utils::date_display( $expiry_date ) ) . '</span></span>';
 		}
 		if ( '' !== $anchor ) {
-			$date       = get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ? get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) : Sidrena_Utils::settings()['default_ref_date'];
+			$saved_anchor_date = get_post_meta( $id, '_sidrena_standalone_anchor_date', true );
+			$date              = $saved_anchor_date ? $saved_anchor_date : Sidrena_Utils::settings()['default_ref_date'];
 			$tooltip    = Sidrena_Utils::anchor_tooltip();
 			$tooltip_id = 'sidrena-anchor-tip-s' . absint( $id );
 			$tip_html   = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
