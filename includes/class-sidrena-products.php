@@ -413,11 +413,12 @@ final class Sidrena_Products {
 				),
 			)
 		);
+		$sale_reference_exemption = get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true );
 		woocommerce_wp_select(
 			array(
 				'id'            => "_sidrena_sale_reference_exemption_{$loop}",
 				'name'          => "_sidrena_sale_reference_exemption[{$loop}]",
-				'value'         => get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) ? get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) : 'none',
+				'value'         => $sale_reference_exemption ? $sale_reference_exemption : 'none',
 				'label'         => __( 'Izuzeće 30 dana', 'sidrena' ),
 				'wrapper_class' => 'form-row form-row-last',
 				'options'       => array(
