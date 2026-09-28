@@ -1,4 +1,4 @@
-=== brendigo SIDRENA – sidrene cijene i digitalni cjenici ===
+=== brendigo Cjenikomat – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: prices, price-list, croatia, csv, xml
@@ -13,7 +13,7 @@ Reference prices, 30-day sale-price references, products and services, public CS
 
 == Description ==
 
-**brendigo SIDRENA – sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
+**brendigo Cjenikomat – sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
 
 The plugin provides:
 
