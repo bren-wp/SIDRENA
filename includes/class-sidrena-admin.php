@@ -487,7 +487,7 @@ final class Sidrena_Admin {
 		?>
 		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Službeni izvori', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Pravila koja Sidrena tehnički podržava', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sažetak je informativan. Za konačnu primjenu uvijek provjerite službeni tekst propisa i pojašnjenja nadležnih tijela.', 'sidrena' ); ?></p></div></div>
 		<div class="sid-grid sid-grid-2">
-			<?php $this->rule_card( '01', __( 'Dodatna / sidrena cijena', 'sidrena' ), __( 'Za novobuhvaćene proizvode i usluge referentna je redovna cijena na 10.09.2026.; ranije obuhvaćeni FMCG zadržava 02.05.2025. Ako je stavka na referentni dan bila na akciji, uzima se prethodna redovna cijena. Novouvedena stavka nakon referentnog dana koristi cijenu prvog uvrštenja i taj datum.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html', 'NN 101/2026, 1212' ); ?>
+			<?php $this->rule_card( '01', __( 'Sidrena cijena', 'sidrena' ), __( 'Za novobuhvaćene proizvode i usluge referentna je redovna cijena na 10.09.2026.; ranije obuhvaćeni FMCG zadržava 02.05.2025. Ako je stavka na referentni dan bila u posebnom obliku prodaje, sidrena cijena je prethodna redovna cijena prije tog oblika prodaje. Novouvedena stavka nakon referentnog dana koristi cijenu prvog uvrštenja i taj datum.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html', 'NN 101/2026, 1212' ); ?>
 			<?php $this->rule_card( '02', __( 'XML ili CSV cjenik i 30-dnevna arhiva', 'sidrena' ), __( 'Trgovci koji imaju mrežnu stranicu ažuriraju cjenik proizvoda jednom dnevno, najkasnije do 08:00 za tekući radni dan; pružatelji usluga ažuriraju cjenik usluga uslijed svake promjene, najkasnije do 08:00 dana kada objavljuju izmjenu cjenika usluga. Odluka dopušta XML ili CSV, a SIDRENA radi interoperabilnosti generira oba formata. Prethodne objave moraju ostati javno dostupne najmanje 30 dana, a tehničko rješenje mora omogućiti automatizirani dohvat aktualnih cijena u realnom vremenu.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html', 'NN 101/2026, 1213' ); ?>
 			<?php $this->rule_card( '03', __( 'Detaljna pojašnjenja Ministarstva', 'sidrena' ), __( 'Pojašnjenja pokrivaju webshopove i informativne web-stranice, zasebne podatke po poslovnici, stvarnu raspoloživost po lokaciji, novouvedene proizvode i usluge, promjene šifre/naziva, akcije, usluge bez unaprijed fiksne cijene te strukturu digitalnih cjenika. Profil na društvenoj mreži sam po sebi ne smatra se mrežnom stranicom.', 'sidrena' ), 'https://mingo.gov.hr/print.aspx?id=10440&url=print', __( 'Ministarstvo gospodarstva · 22.09.2026.', 'sidrena' ) ); ?>
 			<?php $this->rule_card( '05', __( 'Maloprodajna, jedinična i cijena usluge', 'sidrena' ), __( 'NN 105/2026 objavljen je 18.09.2026. i stupa na snagu osmoga dana od objave. Uređuje jasan prikaz maloprodajne i jedinične cijene te iznimke. Za usluge traži lako dostupan cjenik, naziv, vrstu i opseg usluge te uključivanje pripadajućih troškova u cijenu; cijena ugradbene ili zamjenske robe prikazuje se uz pripadajuću uslugu.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html', 'NN 105/2026, 1270' ); ?>
@@ -701,20 +701,26 @@ final class Sidrena_Admin {
 				continue;
 			}
 
-			$has_anchor_date = isset( $map['anchor_date'] ) && array_key_exists( $map['anchor_date'], $row );
-			$date_raw        = $has_anchor_date ? sanitize_text_field( (string) $row[ $map['anchor_date'] ] ) : '';
-			$valid_date      = '' !== trim( $date_raw ) ? Sidrena_Utils::sanitize_date( $date_raw ) : '';
-			if ( $has_anchor_date && '' !== trim( $date_raw ) && '' === $valid_date ) {
+			$has_group      = isset( $map['reference_group'] ) && array_key_exists( $map['reference_group'], $row );
+			$group_raw      = $has_group ? sanitize_text_field( (string) $row[ $map['reference_group'] ] ) : '';
+			$existing_group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) );
+			$group          = '' !== trim( $group_raw ) ? sanitize_key( $group_raw ) : $existing_group;
+			if ( $has_group && '' !== trim( $group_raw ) && ! in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
 				++$skipped;
 				continue;
 			}
 
-			$has_group = isset( $map['reference_group'] ) && array_key_exists( $map['reference_group'], $row );
-			$group_raw = $has_group ? sanitize_text_field( (string) $row[ $map['reference_group'] ] ) : '';
-			$group     = '' !== trim( $group_raw ) ? sanitize_key( $group_raw ) : '';
-			if ( $has_group && '' !== trim( $group_raw ) && ! in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
-				++$skipped;
-				continue;
+			$has_anchor_date = isset( $map['anchor_date'] ) && array_key_exists( $map['anchor_date'], $row );
+			$date_raw        = $has_anchor_date ? sanitize_text_field( (string) $row[ $map['anchor_date'] ] ) : '';
+			$custom_date     = '';
+			if ( 'custom' === $group ) {
+				$custom_date = $has_anchor_date
+					? Sidrena_Utils::custom_reference_date( $date_raw )
+					: Sidrena_Utils::custom_reference_date( get_post_meta( $product_id, '_sidrena_anchor_date', true ) );
+				if ( ! $custom_date ) {
+					++$skipped;
+					continue;
+				}
 			}
 
 			++$updated;
@@ -723,15 +729,11 @@ final class Sidrena_Admin {
 			} else {
 				update_post_meta( $product_id, '_sidrena_anchor_price', $price );
 			}
-			if ( $has_anchor_date ) {
-				if ( '' === $valid_date ) {
-					delete_post_meta( $product_id, '_sidrena_anchor_date' );
-				} else {
-					update_post_meta( $product_id, '_sidrena_anchor_date', $valid_date );
-				}
-			}
-			if ( $has_group && '' !== $group ) {
-				update_post_meta( $product_id, '_sidrena_reference_group', $group );
+			update_post_meta( $product_id, '_sidrena_reference_group', $group );
+			if ( 'custom' === $group ) {
+				update_post_meta( $product_id, '_sidrena_anchor_date', $custom_date );
+			} else {
+				delete_post_meta( $product_id, '_sidrena_anchor_date' );
 			}
 		}
 		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
