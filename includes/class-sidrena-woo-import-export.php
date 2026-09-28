@@ -166,7 +166,10 @@ final class Sidrena_Woo_Import_Export {
 					$product->update_meta_data( '_sidrena_quantity_unit', $parsed['unit'] );
 				}
 			} else {
-				$quantity = Sidrena_Utils::decimal( $raw );
+				$quantity = Sidrena_Utils::validated_nonnegative_decimal( $raw );
+				if ( null === $quantity || ( '' !== $quantity && (float) $quantity <= 0 ) ) {
+					return;
+				}
 				if ( '' === $quantity ) {
 					$product->delete_meta_data( '_sidrena_quantity' );
 				} else {
@@ -222,7 +225,10 @@ final class Sidrena_Woo_Import_Export {
 		if ( ! array_key_exists( $column, $data ) ) {
 			return;
 		}
-		$value = Sidrena_Utils::decimal( $data[ $column ] );
+		$value = Sidrena_Utils::validated_nonnegative_decimal( $data[ $column ] );
+		if ( null === $value ) {
+			return;
+		}
 		if ( '' === $value ) {
 			$product->delete_meta_data( $meta_key );
 		} else {

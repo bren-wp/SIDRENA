@@ -808,8 +808,15 @@ final class Sidrena_Standalone {
 			$name     = sanitize_text_field( $row['name'] ?? '' );
 			$code     = sanitize_text_field( $row['code'] ?? '' );
 			$code_key = $this->code_key( $code );
-			$current  = Sidrena_Utils::decimal( $row['current'] ?? '' );
-			$anchor   = Sidrena_Utils::decimal( $row['anchor'] ?? '' );
+			$current  = Sidrena_Utils::validated_nonnegative_decimal( $row['current'] ?? '' );
+			$anchor   = Sidrena_Utils::validated_nonnegative_decimal( $row['anchor'] ?? '' );
+			$quantity = Sidrena_Utils::validated_nonnegative_decimal( $row['quantity'] ?? '' );
+			$unit_price = Sidrena_Utils::validated_nonnegative_decimal( $row['unit_price'] ?? '' );
+			$lowest_30  = Sidrena_Utils::validated_nonnegative_decimal( $row['lowest_30'] ?? '' );
+			if ( null === $current || null === $anchor || null === $quantity || null === $unit_price || null === $lowest_30 ) {
+				++$errors;
+				continue;
+			}
 			if ( ! $id && '' === $name && '' === $current && '' === $anchor && '' === $code ) {
 				continue;
 			}
@@ -851,10 +858,8 @@ final class Sidrena_Standalone {
 				$status = 'review';
 			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_unit_status', $status );
-			$quantity      = Sidrena_Utils::decimal( $row['quantity'] ?? '' );
 			$quantity_unit = Sidrena_Utils::normalize_unit( $row['quantity_unit'] ?? '' );
 			$unit          = sanitize_text_field( $row['unit'] ?? '' );
-			$unit_price    = Sidrena_Utils::decimal( $row['unit_price'] ?? '' );
 			if ( 'required' === $status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
 				$calculated = Sidrena_Utils::calculate_unit_price( $current, $quantity, $quantity_unit );
 				if ( $calculated ) {
@@ -873,7 +878,7 @@ final class Sidrena_Standalone {
 			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_availability', $availability );
 			$this->set_meta( $saved_id, '_sidrena_standalone_sale_name', sanitize_text_field( $row['sale_name'] ?? '' ) );
-			$this->set_meta( $saved_id, '_sidrena_standalone_lowest_30', Sidrena_Utils::decimal( $row['lowest_30'] ?? '' ) );
+			$this->set_meta( $saved_id, '_sidrena_standalone_lowest_30', $lowest_30 );
 			$reference_exemption = sanitize_key( (string) ( $row['sale_reference_exemption'] ?? '' ) );
 			if ( ! in_array( $reference_exemption, array( '', 'perishable', 'fast_expiry' ), true ) ) {
 				$reference_exemption = '';
@@ -976,9 +981,9 @@ final class Sidrena_Standalone {
 
 			if ( ! $id ) {
 				$name    = sanitize_text_field( $row['name'] ?? '' );
-				$current = Sidrena_Utils::decimal( $row['current'] ?? '' );
-				$anchor  = Sidrena_Utils::decimal( $row['anchor'] ?? '' );
-				if ( '' === $name || '' === $current || '' === $anchor ) {
+				$current = Sidrena_Utils::validated_nonnegative_decimal( $row['current'] ?? '' );
+				$anchor  = Sidrena_Utils::validated_nonnegative_decimal( $row['anchor'] ?? '' );
+				if ( null === $current || null === $anchor || '' === $name || '' === $current || '' === $anchor ) {
 					++$skipped;
 					continue;
 				}
@@ -1386,7 +1391,10 @@ final class Sidrena_Standalone {
 		}
 		$value = $row[ $column ];
 		if ( 'decimal' === $type ) {
-			$value = Sidrena_Utils::decimal( $value );
+			$value = Sidrena_Utils::validated_nonnegative_decimal( $value );
+			if ( null === $value ) {
+				return;
+			}
 		} elseif ( 'date' === $type ) {
 			$value = Sidrena_Utils::sanitize_date( $value );
 		} elseif ( 'unit' === $type ) {

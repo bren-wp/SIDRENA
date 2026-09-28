@@ -200,7 +200,10 @@ final class Sidrena_Services {
 		foreach ( $map as $field => $meta ) {
 			$value = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
 			if ( false !== strpos( $field, 'price' ) ) {
-				$value = Sidrena_Utils::decimal( $value );
+				$value = Sidrena_Utils::validated_nonnegative_decimal( $value );
+				if ( null === $value ) {
+					continue;
+				}
 			} elseif ( false !== strpos( $field, 'date' ) ) {
 				$value = Sidrena_Utils::sanitize_date( $value );
 			} else {
@@ -235,11 +238,19 @@ final class Sidrena_Services {
 			delete_post_meta( $post_id, '_sidrena_service_lowest_30_exception' );
 		}
 
+		$existing_location_prices = get_post_meta( $post_id, '_sidrena_service_location_prices', true );
+		$existing_location_prices = is_array( $existing_location_prices ) ? $existing_location_prices : array();
 		$location_prices = array();
 		$posted_prices   = isset( $_POST['sidrena_service_location_price'] ) && is_array( $_POST['sidrena_service_location_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_price'] ), 'sanitize_text_field' ) : array();
 		foreach ( $posted_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
-			$location_price = Sidrena_Utils::decimal( $location_price );
+			$location_price = Sidrena_Utils::validated_nonnegative_decimal( $location_price );
+			if ( null === $location_price ) {
+				if ( isset( $existing_location_prices[ $location_id ] ) ) {
+					$location_prices[ $location_id ] = $existing_location_prices[ $location_id ];
+				}
+				continue;
+			}
 			if ( '' !== $location_price ) {
 				$location_prices[ $location_id ] = $location_price;
 			}
@@ -250,11 +261,19 @@ final class Sidrena_Services {
 			delete_post_meta( $post_id, '_sidrena_service_location_prices' );
 		}
 
+		$existing_location_anchor_prices = get_post_meta( $post_id, '_sidrena_service_location_anchor_prices', true );
+		$existing_location_anchor_prices = is_array( $existing_location_anchor_prices ) ? $existing_location_anchor_prices : array();
 		$location_anchor_prices = array();
 		$posted_anchor_prices   = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_anchor_price'] ), 'sanitize_text_field' ) : array();
 		foreach ( $posted_anchor_prices as $location_id => $location_price ) {
 			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
-			$location_price = Sidrena_Utils::decimal( $location_price );
+			$location_price = Sidrena_Utils::validated_nonnegative_decimal( $location_price );
+			if ( null === $location_price ) {
+				if ( isset( $existing_location_anchor_prices[ $location_id ] ) ) {
+					$location_anchor_prices[ $location_id ] = $existing_location_anchor_prices[ $location_id ];
+				}
+				continue;
+			}
 			if ( '' !== $location_price ) {
 				$location_anchor_prices[ $location_id ] = $location_price;
 			}

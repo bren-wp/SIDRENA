@@ -47,6 +47,7 @@ function __( $text, $domain = null ) { unset( $domain ); return $text; }
 function wp_parse_args( $args, $defaults = array() ) { return array_merge( $defaults, is_array( $args ) ? $args : array() ); }
 function absint( $value ) { return abs( (int) $value ); }
 function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $value ) ); }
+function wp_strip_all_tags( $value ) { return strip_tags( (string) $value ); }
 function wp_timezone() { return new DateTimeZone( 'Europe/Zagreb' ); }
 function get_option( $key, $default = false ) {
 	if ( 'sidrena_history_seeded_at' === $key ) return false;
@@ -83,6 +84,13 @@ sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_bul
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_publication_watch'] ), 'Publication watchdog must register.' );
 sidrena_woo_assert( empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_standalone_import'] ), 'Standalone import must not register in Woo edition.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_filters']['woocommerce_product_export_column_names'] ), 'Woo CSV export filters must register.' );
+
+$sanitize = new ReflectionMethod( 'Sidrena_Products', 'sanitize_by_type' );
+$sanitize->setAccessible( true );
+$products = Sidrena_Products::instance();
+sidrena_woo_assert( '12.5' === $sanitize->invoke( $products, '12,50', 'decimal' ), 'Woo decimal metadata sanitizer must preserve valid nonnegative values.' );
+sidrena_woo_assert( null === $sanitize->invoke( $products, '-1', 'decimal' ), 'Woo decimal metadata sanitizer must reject negative values without converting them to an empty value.' );
+sidrena_woo_assert( null === $sanitize->invoke( $products, 'abc', 'decimal' ), 'Woo decimal metadata sanitizer must reject malformed values without converting them to an empty value.' );
 
 $method = new ReflectionMethod( 'Sidrena_Activator', 'ensure_schedules' );
 $method->setAccessible( true );

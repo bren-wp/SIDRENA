@@ -19,6 +19,10 @@ class Sidrena_Location_Data {
 			? array( 'availability' => 'dostupno', 'updated_at' => '2026-09-24T10:00:00+00:00' )
 			: array();
 	}
+	public static function available_item_ids_for_location( $location_id ) {
+		unset( $location_id );
+		return array( 1, 20, 21, 22 );
+	}
 }
 $GLOBALS['sidrena_anchor_calls'] = 0;
 
@@ -139,8 +143,13 @@ $product_method->setAccessible( true );
 $webshop_item = $product_method->invoke( $rest, $GLOBALS['sidrena_wc_products'][5], array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ) );
 sidrena_rest_page_assert( 'dostupno' === $webshop_item['dostupnost'], 'Webshop REST item must retain the global Woo stock fallback.' );
 
+sidrena_rest_page_assert( array() === $GLOBALS['sidrena_wc_queries'], 'Physical-location REST must use explicit location candidates instead of scanning the complete Woo catalog.' );
+
+$webshop_page = $method->invoke( $rest, array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ), 1, 2 );
+sidrena_rest_page_assert( 5 === $webshop_page['total'], 'Webshop REST must retain the complete public Woo catalog total.' );
+sidrena_rest_page_assert( array( 1, 20 ) === array_column( $webshop_page['items'], 'id' ), 'Webshop REST pagination must retain flattened variable-product ordering.' );
 sidrena_rest_page_assert( ! isset( $GLOBALS['sidrena_wc_queries'][0]['paginate'] ), 'Woo REST flattened iterator must not use parent-product paginate totals.' );
-sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Woo REST flattened iterator must fetch bounded catalog batches.' );
-sidrena_rest_page_assert( 5 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for requested physical pages plus the explicit webshop item test.' );
+sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Webshop Woo REST iterator must fetch bounded catalog batches.' );
+sidrena_rest_page_assert( 7 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for requested physical pages, the explicit webshop item, and the requested webshop page.' );
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );
