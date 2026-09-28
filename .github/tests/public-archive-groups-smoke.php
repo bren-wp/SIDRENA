@@ -8,20 +8,12 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 
 class Sidrena_Utils {
 	public static function sanitize_location_id( $value ) {
-		return strtolower( preg_replace( '/[^a-z0-9_-]/i', '', (string) $value ) );
+		$value = strtolower( preg_replace( '/[^a-z0-9_-]/i', '', (string) $value ) );
+		return $value ? $value : 'lokacija';
 	}
 
 	public static function public_index() {
@@ -78,9 +70,17 @@ sidrena_archive_assert( 'undated.csv' === $groups['undated'][0]['filename'], 'Un
 $all = $method->invoke( $public, 'loc-1', false );
 sidrena_archive_assert( 2 === count( $all['2026-09-24'] ), 'Archive grouping must optionally include the current file.' );
 
+$unfiltered = $method->invoke( $public, '', true );
+sidrena_archive_assert( isset( $unfiltered['2026-09-24'] ), 'Empty archive location filter must retain archive groups instead of becoming a synthetic location filter.' );
+sidrena_archive_assert( 2 === count( $unfiltered['2026-09-24'] ), 'Unfiltered archive must include previous files from all public locations while excluding both current files.' );
+$unfiltered_names = array_column( $unfiltered['2026-09-24'], 'filename' );
+sort( $unfiltered_names );
+sidrena_archive_assert( array( 'old-24.xml', 'other-old.csv' ) === $unfiltered_names, 'Unfiltered archive must include previous files from each location.' );
+
 $source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 $css    = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/public.css' );
 sidrena_archive_assert( substr_count( $source, 'archive_groups( $location_id, true )' ) >= 2, 'Archive and downloads shortcodes must share the grouping engine.' );
+sidrena_archive_assert( false !== strpos( $source, "'' === $location_id ? '' : Sidrena_Utils::sanitize_location_id( $location_id )" ), 'Archive grouping must preserve an intentionally empty all-locations filter.' );
 sidrena_archive_assert( false !== strpos( $source, 'render_archive_groups( $groups )' ), 'Grouped archive renderer is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidrena' )" ), 'Archive download action is missing.' );
 sidrena_archive_assert( false === strpos( $source, 'sidrena-public-archive__list' ), 'Legacy flat archive markup must not return.' );
