@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: brendigo Sidrene cijene i cjenici za WooCommerce
+ * Plugin Name: brendigo Sidrene cijene i cjenici
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije i objava cijena za WooCommerce proizvode i usluge.
  * Version: 1.0.22
