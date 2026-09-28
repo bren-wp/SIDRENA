@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Sidrena source file.
-# Author: Brendigo
+# Author: brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
@@ -73,11 +73,15 @@ DARK = colors.HexColor("#384552")
 WOO = colors.HexColor("#7F54B3")
 ACCENT = WOO if edition == "woocommerce" else colors.HexColor("#1677FF")
 
-edition_label = "Sidrena WooCommerce" if edition == "woocommerce" else "Sidrena WordPress"
-edition_description = (
-    "Izdanje za WordPress trgovine s aktivnim WooCommerce katalogom proizvoda i varijacija."
+edition_label = (
+    "brendigo SIDRENA - sidrene cijene i cjenici za WooCommerce"
     if edition == "woocommerce"
-    else "Izdanje za WordPress stranice koje koriste vlastiti Sidrena katalog proizvoda i usluga bez WooCommerce kataloga."
+    else "brendigo SIDRENA - sidrene cijene i digitalni cjenici"
+)
+edition_description = (
+    "Izdanje za hrvatske web trgovine koje koristi postojeće proizvode i varijacije iz WooCommerce kataloga."
+    if edition == "woocommerce"
+    else "Samostalno izdanje za hrvatske WordPress stranice s vlastitim SIDRENA katalogom proizvoda i usluga."
 )
 
 base = ParagraphStyle(
@@ -240,7 +244,7 @@ def footer(canvas, doc):
     canvas.line(18 * mm, 13.5 * mm, 192 * mm, 13.5 * mm)
     canvas.setFont("SidrenaSans", 7.2)
     canvas.setFillColor(MUTED)
-    canvas.drawString(18 * mm, 8 * mm, f"{edition_label} {version} - Brendigo")
+    canvas.drawString(18 * mm, 8 * mm, f"{edition_label} {version} - brendigo")
     canvas.drawRightString(192 * mm, 8 * mm, f"Stranica {doc.page}")
     canvas.restoreState()
 
@@ -262,7 +266,7 @@ def support_buttons():
             [
                 button_link(
                     "Revolut donacija",
-                    "https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija",
+                    "https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija",
                 ),
                 button_link("Sidrena web", "https://brendigo.com/sidrene-cijene/"),
             ],
@@ -293,6 +297,7 @@ def clean_markdown(text):
     text = re.sub(r"<table>.*?</table>", "", text, flags=re.DOTALL | re.IGNORECASE)
     text = re.sub(r"^!\[[^\n]*\]\([^\n]*\)\s*$", "", text, flags=re.MULTILINE)
     text = re.sub(r"<[^>]+>", "", text)
+    text = text.replace("\u2013", "-").replace("\u2014", "-").replace("\u2212", "-")
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
@@ -401,9 +406,9 @@ doc = SimpleDocTemplate(
     topMargin=18 * mm,
     bottomMargin=20 * mm,
     title=f"{edition_label} - detaljne upute i podrška",
-    author="Brendigo",
+    author="brendigo",
     subject=f"Detaljne upute za krajnjeg korisnika - {edition_label}",
-    creator="Brendigo",
+    creator="brendigo",
 )
 
 story = [
@@ -466,7 +471,7 @@ story.extend(
         Spacer(1, 3 * mm),
         paragraph("Opcionalno jednokratno početno postavljanje: 80 EUR.", value_style),
         paragraph(
-            "Plaćeno postavljanje je dobrovoljna usluga Brendiga i nije uvjet za rad plugina, pristup funkcijama ili tehničku usklađenost."
+            "Plaćeno postavljanje je dobrovoljna usluga brendigo podrške i nije uvjet za rad plugina, pristup funkcijama ili tehničku usklađenost."
         ),
         paragraph(
             "Revolut donacija je dobrovoljna podrška razvoju. Donacija nije naknada za instalaciju, podršku ili pravno jamstvo."
