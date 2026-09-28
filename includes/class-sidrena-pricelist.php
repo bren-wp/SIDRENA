@@ -204,7 +204,10 @@ final class Sidrena_Pricelist {
 				$this->merge_archive_index( $index );
 			}
 			$this->merge_current_index( $index, $expected );
-			$this->cleanup_public_snapshots( $locations, 'yes' === $settings['enable_public_html'] );
+			$snapshot_cleanup = $this->cleanup_public_snapshots( $locations, 'yes' === $settings['enable_public_html'] );
+			if ( is_wp_error( $snapshot_cleanup ) ) {
+				$errors[] = $snapshot_cleanup->get_error_message();
+			}
 
 			$this->cleanup_archives();
 			$manifest = $this->write_manifest();
@@ -561,9 +564,10 @@ final class Sidrena_Pricelist {
 	private function cleanup_public_snapshots( $locations, $public_enabled = true ) {
 		$paths = Sidrena_Utils::upload_paths();
 		if ( ! is_dir( $paths['snapshot_dir'] ) ) {
-			return;
+			return true;
 		}
-		$keep = array();
+		$keep   = array();
+		$failed = array();
 		if ( $public_enabled ) {
 			foreach ( $locations as $location ) {
 				if ( 'yes' === ( $location['enabled'] ?? '' ) ) {
@@ -579,10 +583,33 @@ final class Sidrena_Pricelist {
 			}
 		}
 		foreach ( array_unique( $files ) as $file ) {
-			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
-				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			if ( isset( $keep[ basename( $file ) ] ) || ! is_file( $file ) ) {
+				continue;
+			}
+			$removed = unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			if ( ! $removed && is_file( $file ) ) {
+				$failed[] = basename( $file );
 			}
 		}
+
+		if ( empty( $failed ) ) {
+			return true;
+		}
+
+		Sidrena_Audit::log(
+			'public_snapshot_cleanup',
+			'warning',
+			__( 'Jednu ili više zastarjelih javnih snapshot datoteka nije moguće ukloniti.', 'sidrena' ),
+			array( 'files' => array_values( $failed ) )
+		);
+		return new WP_Error(
+			'public_snapshot_cleanup',
+			sprintf(
+				/* translators: %d: number of public snapshot files that could not be removed. */
+				_n( 'Nije moguće ukloniti %d zastarjelu javnu snapshot datoteku.', 'Nije moguće ukloniti %d zastarjelih javnih snapshot datoteka.', count( $failed ), 'sidrena' ),
+				count( $failed )
+			)
+		);
 	}
 
 	private function formats( $settings ) {
@@ -1105,9 +1132,24 @@ final class Sidrena_Pricelist {
 			}
 
 			if ( $is_expired && ! $is_current ) {
+				$removed = true;
 				if ( is_file( $path ) ) {
-					unlink( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					$removed = unlink( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					if ( ! $removed && ! is_file( $path ) ) {
+						$removed = true;
+					}
 				}
+				if ( $removed ) {
+					continue;
+				}
+
+				$archive[] = $entry;
+				Sidrena_Audit::log(
+					'archive_retention_cleanup',
+					'warning',
+					__( 'Isteklu arhivsku datoteku nije moguće obrisati pa je zadržana u indeksu za sljedeći pokušaj.', 'sidrena' ),
+					array( 'filename' => $filename )
+				);
 				continue;
 			}
 

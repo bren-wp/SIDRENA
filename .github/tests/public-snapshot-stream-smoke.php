@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 $public = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php' );
 $utils  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
 $pricelist = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
@@ -42,7 +33,10 @@ sidrena_stream_assert( false !== strpos( $public, "name=\"sidrena_q\"" ), 'Publi
 sidrena_stream_assert( false !== strpos( $public, "name=\"sidrena_stranica\"" ) || false !== strpos( $public, "'sidrena_stranica'" ), 'Public pricelist pagination parameter is missing.' );
 sidrena_stream_assert( false === strpos( $public, "wp_enqueue_script( 'sidrena-public'" ), 'Public pricelist must not require JavaScript for search or pagination.' );
 sidrena_stream_assert( false !== strpos( $pricelist, "array( 'jsonl', 'json' )" ), 'Snapshot cleanup must remove legacy JSON after a successful JSONL regeneration.' );
-sidrena_stream_assert( false !== strpos( $pricelist, "\$this->cleanup_public_snapshots( \$locations, 'yes' === \$settings['enable_public_html'] );" ), 'Snapshot cleanup must receive the public HTML enabled state.' );
+sidrena_stream_assert( false !== strpos( $pricelist, "\$snapshot_cleanup = \$this->cleanup_public_snapshots( \$locations, 'yes' === \$settings['enable_public_html'] );" ), 'Snapshot cleanup must receive the public HTML enabled state and return a verifiable result.' );
 sidrena_stream_assert( false !== strpos( $pricelist, 'if ( $public_enabled ) {' ), 'Snapshot cleanup must only preserve enabled-location snapshots while public HTML is enabled.' );
+sidrena_stream_assert( false !== strpos( $pricelist, 'if ( is_wp_error( $snapshot_cleanup ) ) {' ), 'Snapshot cleanup failures must be surfaced into the generation warning flow.' );
+sidrena_stream_assert( false !== strpos( $pricelist, '$removed = unlink( $file )' ), 'Snapshot cleanup must verify physical file deletion.' );
+sidrena_stream_assert( false !== strpos( $pricelist, "'public_snapshot_cleanup'" ), 'Snapshot cleanup failures must be audit logged.' );
 
 fwrite( STDOUT, "Sidrena streaming public snapshot smoke test passed.\n" );
