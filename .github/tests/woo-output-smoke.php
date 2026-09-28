@@ -62,6 +62,7 @@ function sidrena_woo_output_assert( $condition, $message ) {
 
 $product = new WC_Product( 12 );
 $html = Sidrena_Products::instance()->append_reference_prices( '<span class="price">19,99 €</span>', $product );
+$variation_data = Sidrena_Products::instance()->variation_reference_payload( array( 'variation_id' => 12 ), null, $product );
 $frontend_css = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
 $compat_php = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-compatibility.php' );
@@ -76,10 +77,15 @@ sidrena_woo_output_assert( false !== strpos( $html, 'aria-describedby=' ), 'Sidr
 sidrena_woo_output_assert( false !== strpos( $frontend_css, '.sidrena-anchor--has-tooltip:focus-visible' ), 'Sidrena tooltip needs a visible keyboard focus state.' );
 sidrena_woo_output_assert( false !== strpos( $frontend_css, 'position: fixed;' ) && false !== strpos( $frontend_css, 'max-width: calc(100vw - 36px);' ), 'Mobile Sidrena tooltip viewport clamp is missing.' );
 
-sidrena_woo_output_assert( false !== strpos( $compat_php, "enable_rest_index" ), 'Woo compatibility hydration must honor the public REST API setting.' );
-sidrena_woo_output_assert( false !== strpos( $compat_js, 'targetsAlreadyHydrated' ), 'Woo compatibility JavaScript must avoid a redundant base-product REST fetch when server-rendered Sidrena markup is already present.' );
-sidrena_woo_output_assert( false !== strpos( $compat_js, '!variationMode && targetsAlreadyHydrated' ), 'Variation hydration optimization must only skip redundant base-product requests, not dynamic variation requests.' );
-sidrena_woo_output_assert( false !== strpos( $compat_js, 'hydrate(productId, root, false, true);' ), 'Variation reset must force restoration of the parent product reference markup.' );
+sidrena_woo_output_assert( isset( $variation_data['sidrena_reference_html'] ), 'Woo variation payload must expose Sidrena reference markup.' );
+sidrena_woo_output_assert( false !== strpos( $variation_data['sidrena_reference_html'], '29,99 €' ), 'Woo variation payload must contain the variation Sidrena price.' );
+sidrena_woo_output_assert( false !== strpos( $compat_php, "'endpoint'  => 'yes' === ( \$settings['enable_rest_index'] ?? 'yes' )" ), 'Woo compatibility script must keep REST as an optional fallback endpoint.' );
+sidrena_woo_output_assert( false === strpos( $compat_php, "if ( 'yes' !== ( \$settings['enable_rest_index'] ?? 'yes' ) )" ), 'Woo variation synchronization must not be disabled when public REST is disabled.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'variation.sidrena_reference_html' ), 'Woo compatibility JavaScript must prefer embedded variation reference markup.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'applyVariationPayload' ), 'Woo compatibility JavaScript must apply embedded variation payloads without REST.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'parentMarkup = readMarkup(document);' ), 'Woo variation reset must retain server-rendered parent markup locally.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'typeof html !== "string"' ), 'Woo compatibility hydration must distinguish transient fallback failures from known empty markup.' );
+sidrena_woo_output_assert( false !== strpos( $compat_js, 'removeMarkup(existing)' ), 'Known empty variation markup must remove stale parent reference output.' );
 
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );
