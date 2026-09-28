@@ -21,7 +21,7 @@ class Sidrena_Location_Data {
 	}
 	public static function available_item_ids_for_location( $location_id ) {
 		unset( $location_id );
-		return array( 1, 20, 21, 22 );
+		return array( 1, 22, 20, 21 );
 	}
 }
 $GLOBALS['sidrena_anchor_calls'] = 0;
@@ -70,7 +70,7 @@ class Mock_Sidrena_Product {
 
 $GLOBALS['sidrena_wc_products'] = array(
 	1  => new Mock_Sidrena_Product( 1 ),
-	2  => new Mock_Sidrena_Product( 2, 'variable', array( 20, 21, 22 ) ),
+	2  => new Mock_Sidrena_Product( 2, 'variable', array( 22, 20, 21 ) ),
 	3  => new Mock_Sidrena_Product( 3, 'simple', array(), 0, 'hidden' ),
 	4  => new Mock_Sidrena_Product( 4 ),
 	5  => new Mock_Sidrena_Product( 5 ),
@@ -124,10 +124,10 @@ sidrena_rest_page_assert( 4 === $page1['total'], 'Physical-location REST total m
 sidrena_rest_page_assert( 2 === $page1['total_pages'], 'Physical-location REST pagination must be based on explicitly available location rows.' );
 sidrena_rest_page_assert( 2 === count( $page1['items'] ), 'Woo REST page must never exceed per_page.' );
 sidrena_rest_page_assert( 1 === $page1['items'][0]['id'], 'Woo REST first item should be the simple product.' );
-sidrena_rest_page_assert( 20 === $page1['items'][1]['id'], 'Woo REST variable parent must expand to its first variation.' );
+sidrena_rest_page_assert( 22 === $page1['items'][1]['id'], 'Woo REST variable parent must expand using its configured first variation.' );
 
 $page2 = $method->invoke( $rest, $physical_location, 2, 2 );
-sidrena_rest_page_assert( array( 21, 22 ) === array_column( $page2['items'], 'id' ), 'Woo REST second page must continue through flattened variations.' );
+sidrena_rest_page_assert( array( 20, 21 ) === array_column( $page2['items'], 'id' ), 'Woo REST second page must continue through the configured flattened variation order.' );
 sidrena_rest_page_assert( 2 === count( $page2['items'] ), 'Woo REST second page must respect per_page.' );
 
 $page3 = $method->invoke( $rest, $physical_location, 3, 2 );
@@ -147,7 +147,7 @@ sidrena_rest_page_assert( array() === $GLOBALS['sidrena_wc_queries'], 'Physical-
 
 $webshop_page = $method->invoke( $rest, array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ), 1, 2 );
 sidrena_rest_page_assert( 5 === $webshop_page['total'], 'Webshop REST must retain the complete public Woo catalog total.' );
-sidrena_rest_page_assert( array( 1, 20 ) === array_column( $webshop_page['items'], 'id' ), 'Webshop REST pagination must retain flattened variable-product ordering.' );
+sidrena_rest_page_assert( array( 1, 22 ) === array_column( $webshop_page['items'], 'id' ), 'Webshop REST pagination must retain configured flattened variable-product ordering.' );
 sidrena_rest_page_assert( ! isset( $GLOBALS['sidrena_wc_queries'][0]['paginate'] ), 'Woo REST flattened iterator must not use parent-product paginate totals.' );
 sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Webshop Woo REST iterator must fetch bounded catalog batches.' );
 sidrena_rest_page_assert( 7 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for requested physical pages, the explicit webshop item, and the requested webshop page.' );
