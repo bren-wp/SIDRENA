@@ -94,7 +94,7 @@ def has_metadata(text: str) -> bool:
 
 def apply_entrypoint(text: str, author: str = AUTHOR) -> str:
     replacements = {
-        r"(?m)^ \* Author:.*$": " * Author: brendigo",
+        r"(?m)^ \\* Author:.*$": f" * Author: {author}",
         r"(?m)^ \* Author URI:.*$": " * Author URI: https://brendigo.com/",
         r"(?m)^ \* Plugin URI:.*$": " * Plugin URI: https://brendigo.com/sidrene-cijene/",
     }
