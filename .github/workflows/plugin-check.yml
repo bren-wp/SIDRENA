@@ -86,7 +86,7 @@ jobs:
         uses: WordPress/plugin-check-action@v1
         with:
           build-dir: build/plugin-check-packages/sidrena-wordpress
-          slug: brendigo-sidrena-catalog
+          slug: brendigo-sidrena-cjenici-digitalni-cjenici
           # Plugin Check must use the public standalone slug/text domain; the install folder remains sidrena-wordpress for upgrade compatibility.
           ignore-codes: trademarked_term
           wp-version: latest
