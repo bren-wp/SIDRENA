@@ -42,8 +42,8 @@ sidrena_plugin_check_workflow_assert(
 );
 
 sidrena_plugin_check_workflow_assert(
-	false !== strpos( $check, 'slug: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $check, 'slug: brendigo-sidrena-cjenici' ),
+	false !== strpos( $check, 'slug: brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $check, 'slug: brendigo-sidrene-cijene-cjenici' ),
 	'Plugin Check must use the public WordPress and WooCommerce slugs/text domains.'
 );
 sidrena_plugin_check_workflow_assert(
