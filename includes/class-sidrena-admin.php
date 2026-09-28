@@ -1946,7 +1946,7 @@ final class Sidrena_Admin {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'upload_write' );
 		}
-		rewind( $stream );
+		rewind( $resource );
 		$first_line = fgets( $resource );
 		if ( false === $first_line ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
