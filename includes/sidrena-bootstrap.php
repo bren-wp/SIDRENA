@@ -31,14 +31,6 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-public.php';
 
 if ( 'wordpress' === SIDRENA_EDITION ) {
 	require_once SIDRENA_DIR . 'includes/class-sidrena-standalone.php';
-} elseif ( 'woocommerce' === SIDRENA_EDITION ) {
-	require_once SIDRENA_DIR . 'includes/class-sidrena-bulk.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-location-data.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-location-history.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-woo-import-export.php';
-	require_once SIDRENA_DIR . 'includes/class-sidrena-compatibility.php';
 }
 
 require_once SIDRENA_DIR . 'includes/class-sidrena-admin.php';
@@ -96,21 +88,37 @@ if ( Sidrena_Utils::is_woocommerce_edition() ) {
 add_action(
 	'plugins_loaded',
 	static function () {
-		if ( Sidrena_Utils::is_woocommerce_edition() && ! Sidrena_Utils::woocommerce_runtime_available() ) {
-			// WordPress 6.6+ enforces the declared Requires Plugins dependency.
-			// Keep this runtime guard only as a defensive no-op if WooCommerce is unavailable unexpectedly.
-			return;
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			if ( ! Sidrena_Utils::woocommerce_runtime_available() ) {
+				add_action(
+					'admin_notices',
+					static function () {
+						if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
+							return;
+						}
+
+						$screen = get_current_screen();
+						if ( ! $screen || 'plugins' !== $screen->id ) {
+							return;
+						}
+
+						echo '<div class="notice notice-error"><p>' . esc_html__( 'Brendigo Sidrena Cijena zahtijeva aktivan WooCommerce. Aktivirajte WooCommerce kako bi se SIDRENA WooCommerce izdanje sigurno pokrenulo.', 'sidrena' ) . '</p></div>';
+					}
+				);
+				return;
+			}
+
+			require_once SIDRENA_DIR . 'includes/class-sidrena-bulk.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-location-data.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-location-history.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-woo-import-export.php';
+			require_once SIDRENA_DIR . 'includes/class-sidrena-compatibility.php';
 		}
 
 		Sidrena_Plugin::instance()->run();
+		add_action( 'init', array( 'Sidrena_Activator', 'maybe_upgrade' ), 1 );
 	},
 	20
-);
-
-add_action(
-	'init',
-	static function () {
-		Sidrena_Activator::maybe_upgrade();
-	},
-	1
 );

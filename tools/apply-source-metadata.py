@@ -101,7 +101,7 @@ def apply_entrypoint(text: str) -> str:
     for pattern, value in replacements.items():
         text = re.sub(pattern, value, text, count=1)
 
-    if " * Author: brendigo" not in text:
+    if f" * Author: {author}" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Author field.")
     if " * Author URI: https://brendigo.com/" not in text:
         raise RuntimeError("Plugin entrypoint is missing its Author URI field.")
@@ -120,7 +120,8 @@ def add_after_shebang(text: str, header: str) -> str:
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
     if rel in ENTRYPOINTS:
-        return apply_entrypoint(text)
+        entrypoint_author = "Brendigo" if rel == pathlib.Path("editions/woocommerce/sidrena-woocommerce.php") else AUTHOR
+        return apply_entrypoint(text, entrypoint_author)
     if has_metadata(text):
         return text
 

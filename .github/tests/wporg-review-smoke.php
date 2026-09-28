@@ -37,7 +37,7 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Sidrene cijene i cjenici' ),
+	&& false !== strpos( $woo_main, 'Plugin Name: Brendigo Sidrena Cijena' ),
 	'Final Croatian plugin display names changed.'
 );
 
@@ -49,25 +49,25 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Author: brendigo' )
-	&& false !== strpos( $woo_main, 'Author: brendigo' )
-	&& false === strpos( $wp_main, 'Author: Brendigo' )
-	&& false === strpos( $woo_main, 'Author: Brendigo' ),
-	'WordPress.org author casing must remain lowercase brendigo.'
+	&& false !== strpos( $woo_main, 'Author: Brendigo' )
+	&& false !== strpos( $woo_main, 'Developer: Brendigo' )
+	&& false !== strpos( $woo_main, 'Developer URI: https://brendigo.com/' ),
+	'Edition ownership/developer metadata is inconsistent.'
 );
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $woo_main, 'Text Domain: brendigo-sidrene-cijene-cjenici' )
+	&& false !== strpos( $woo_main, 'Text Domain: brendigo-sidrena-cijena' )
 	&& false !== strpos( $plugin_check, 'brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $plugin_check, 'brendigo-sidrene-cijene-cjenici' )
+	&& false !== strpos( $plugin_check, 'brendigo-sidrena-cijena' )
 	&& false !== strpos( $release, 'brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $release, 'brendigo-sidrene-cijene-cjenici' ),
+	&& false !== strpos( $release, 'brendigo-sidrena-cijena' ),
 	'Public text domains and Plugin Check/release slugs must stay synchronized.'
 );
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_readme, '=== brendigo Sidrene cijene i digitalni cjenici ===' )
-	&& false !== strpos( $woo_readme, '=== brendigo Sidrene cijene i cjenici ===' ),
+	&& false !== strpos( $woo_readme, '=== Brendigo Sidrena Cijena ===' ),
 	'WordPress.org readme titles must match plugin headers.'
 );
 
@@ -197,9 +197,10 @@ foreach ( $production_files as $file ) {
 }
 
 sidrena_wporg_assert(
-	1 === substr_count( $production_source, "'admin_notices'" )
-	&& 0 === substr_count( $production_source, "'all_admin_notices'" ),
-	'Only the scoped SIDRENA edition-conflict admin notice is allowed; global all_admin_notices are forbidden.'
+	2 === substr_count( $production_source, "'admin_notices'" )
+	&& 0 === substr_count( $production_source, "'all_admin_notices'" )
+	&& false !== strpos( $bootstrap_source, 'Brendigo Sidrena Cijena zahtijeva aktivan WooCommerce.' ),
+	'Only scoped edition-conflict and missing-WooCommerce notices are allowed; global all_admin_notices are forbidden.'
 );
 
 sidrena_wporg_assert(
@@ -211,7 +212,8 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $woo_main, 'Requires Plugins: woocommerce' )
-	&& false === strpos( $bootstrap_source, "'admin_notices'" )
+	&& false !== strpos( $bootstrap_source, "'admin_notices'" )
+	&& false !== strpos( $bootstrap_source, 'woocommerce_runtime_available()' )
 	&& false === stripos( $bootstrap_source, 'donation' )
 	&& false === stripos( $bootstrap_source, 'revolut' )
 	&& false === stripos( $bootstrap_source, '80 EUR' ),

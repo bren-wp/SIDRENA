@@ -147,7 +147,7 @@ cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WOO_STAGE/docs/SIDRENA-UPUTE.pdf" "woocommerce" "$WOO_STAGE/docs/UPUTE.md"
-prepare_package "$WOO_STAGE" "brendigo-sidrene-cijene-cjenici"
+prepare_package "$WOO_STAGE" "brendigo-sidrena-cijena"
 rm -f \
   "$WOO_STAGE/assets/images/logo-wordpress.svg" \
   "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \

@@ -1,4 +1,4 @@
-=== brendigo Sidrene cijene i cjenici ===
+=== Brendigo Sidrena Cijena ===
 Contributors: brendigo
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
@@ -12,7 +12,7 @@ Reference prices, 30-day sale references, CSV/XML price lists, locations and arc
 
 == Description ==
 
-**brendigo Sidrene cijene i cjenici** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
+**Brendigo Sidrena Cijena** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
 
 WooCommerce remains the canonical product and variation source. SIDRENA does not create a duplicate product catalogue; it adds the price-record and publication tools needed around the existing store catalogue.
 
@@ -101,6 +101,10 @@ Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA
 = Does SIDRENA duplicate WooCommerce products? =
 
 No. Existing WooCommerce products and variations remain the source of truth.
+
+= What happens if WooCommerce is deactivated? =
+
+The WooCommerce-specific SIDRENA runtime stays inactive and shows a scoped notice on the Plugins screen. It does not register WooCommerce hooks or publish WooCommerce price lists until WooCommerce is active again.
 
 = Does variation switching require an additional REST request? =
 

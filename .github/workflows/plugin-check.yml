@@ -143,13 +143,13 @@ jobs:
           set -euo pipefail
           bash tools/run-plugin-check.sh \
             build/plugin-check-packages/sidrena-woocommerce \
-            brendigo-sidrene-cijene-cjenici \
+            brendigo-sidrena-cijena \
             "$RUNNER_TEMP/plugin-check-woocommerce.json"
 
       - name: Upload Plugin Check result
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: plugin-check-results-brendigo-sidrene-cijene-cjenici
+          name: plugin-check-results-brendigo-sidrena-cijena
           path: ${{ runner.temp }}/plugin-check-woocommerce.json
           if-no-files-found: warn
