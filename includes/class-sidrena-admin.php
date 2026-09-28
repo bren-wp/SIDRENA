@@ -1918,7 +1918,9 @@ final class Sidrena_Admin {
 			return new WP_Error( 'upload_too_large' );
 		}
 
-		$actual_size = wp_filesize( (string) $tmp_name );
+		$tmp_name = (string) $tmp_name;
+		clearstatcache( true, $tmp_name );
+		$actual_size = wp_filesize( $tmp_name );
 		if ( false === $actual_size || $actual_size <= 0 ) {
 			return new WP_Error( 'upload_empty' );
 		}
