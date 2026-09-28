@@ -279,3 +279,15 @@ jobs:
             echo 'WooCommerce ZIP contains files outside sidrena-woocommerce root.' >&2
             exit 1
           fi
+
+      - name: Upload verified review packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: sidrena-wordpress-org-review
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            ${{ runner.temp }}/sidrena-distribution/sidrena-wordpress-*.zip
+            ${{ runner.temp }}/sidrena-distribution/sidrena-woocommerce-*.zip
+            ${{ runner.temp }}/sidrena-distribution/.sidrena-build/sidrena-wordpress/docs/SIDRENA-UPUTE.pdf
+            ${{ runner.temp }}/sidrena-distribution/.sidrena-build/sidrena-woocommerce/docs/SIDRENA-UPUTE.pdf
