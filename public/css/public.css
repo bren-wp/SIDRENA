@@ -275,12 +275,29 @@
 .sidrena-downloads__day>summary::-webkit-details-marker{display:none}
 .sidrena-downloads__day>summary:focus-visible{outline:3px solid rgba(22,119,255,.28);outline-offset:-3px}
 .sidrena-downloads__day[open]>summary{border-bottom:1px solid #e2e8f0}
-.sidrena-downloads__day>.sidrena-downloads__grid{padding:14px}
+.sidrena-downloads__day-content{padding:14px}
+.sidrena-downloads__list{list-style:none;margin:0;padding:0;border:1px solid #e2e8f0;border-radius:14px;background:#fff;overflow:hidden}
+.sidrena-downloads__list-item{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 16px;border-bottom:1px solid #e2e8f0}
+.sidrena-downloads__list-item:last-child{border-bottom:0}
+.sidrena-downloads__list-item>div{min-width:0;display:grid;gap:4px}
+.sidrena-downloads__list-item strong{font-size:.9rem;line-height:1.4;overflow-wrap:anywhere}
+.sidrena-downloads__list-item span{font-size:.78rem;color:#64748b}
+.sidrena-downloads__list-item>a{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:7px 12px;border-radius:9px;background:#1d4ed8;color:#fff!important;text-decoration:none!important;font-weight:700;font-size:.82rem}
+.sidrena-downloads__list-item>a:hover,.sidrena-downloads__list-item>a:focus{background:#1e40af}
+.sidrena-downloads__table-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:14px;background:#fff}
+.sidrena-downloads__table{width:100%;border-collapse:collapse;min-width:720px}
+.sidrena-downloads__table th,.sidrena-downloads__table td{padding:11px 13px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top;font-size:.82rem}
+.sidrena-downloads__table thead th{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc}
+.sidrena-downloads__table tbody th{font-weight:650;overflow-wrap:anywhere;max-width:360px}
+.sidrena-downloads__table tbody tr:last-child th,.sidrena-downloads__table tbody tr:last-child td{border-bottom:0}
+.sidrena-downloads__table a{font-weight:700}
 .sidrena-downloads__source{font-size:.8rem;color:#64748b;padding-top:4px}
 @media(max-width:720px){
  .sidrena-downloads__summary,.sidrena-downloads__grid{grid-template-columns:1fr}
  .sidrena-downloads__section-head{align-items:flex-start;flex-direction:column;gap:4px}
  .sidrena-download-card__button{width:100%;box-sizing:border-box}
+ .sidrena-downloads__list-item{align-items:flex-start;flex-direction:column}
+ .sidrena-downloads__list-item>a{width:100%;box-sizing:border-box}
 }
 
 /* Public business identity + composite publication */
