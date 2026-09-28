@@ -203,7 +203,7 @@ final class Sidrena_Standalone {
 			'najniza_cijena_30_dana'         => $sale_name && 'ready' === $sale_reference_status ? Sidrena_Utils::money( $lowest_30 ) : '',
 			'krajnji_rok_uporabe'            => $sale_name && 'exempt' === $sale_reference_status ? $expiry_date : '',
 			'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
-			'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : Sidrena_Utils::date_display( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ?: Sidrena_Utils::settings()['default_ref_date'] ),
+			'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : Sidrena_Utils::date_display( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ? get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) : Sidrena_Utils::settings()['default_ref_date'] ),
 			'barkod'                         => get_post_meta( $id, '_sidrena_standalone_barcode', true ),
 			'dostupnost'                     => $availability,
 		);
@@ -402,7 +402,7 @@ final class Sidrena_Standalone {
 			$item_id    = $this->linked_item_id( $source_id );
 			$title      = sanitize_text_field( get_the_title( $source_id ) );
 			$stored_key = $item_id ? sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) ) : '';
-			$lookup_key = $price_key ?: $stored_key;
+			$lookup_key = $price_key ? $price_key : $stored_key;
 			$price      = $this->source_price( $source_id, $lookup_key );
 			$current    = $item_id ? Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) ) : '';
 			if ( '' !== $price['price'] ) {
@@ -416,7 +416,7 @@ final class Sidrena_Standalone {
 				$result = wp_update_post(
 					array(
 						'ID'          => $item_id,
-						'post_title'  => $title ?: __( 'Proizvod bez naziva', 'sidrena' ),
+						'post_title'  => $title ? $title : __( 'Proizvod bez naziva', 'sidrena' ),
 						'post_status' => $post_status,
 					),
 					true
@@ -431,7 +431,7 @@ final class Sidrena_Standalone {
 					array(
 						'post_type'   => self::POST_TYPE,
 						'post_status' => $post_status,
-						'post_title'  => $title ?: __( 'Proizvod bez naziva', 'sidrena' ),
+						'post_title'  => $title ? $title : __( 'Proizvod bez naziva', 'sidrena' ),
 					),
 					true
 				);
@@ -510,7 +510,7 @@ final class Sidrena_Standalone {
 		$changed   = false;
 		$old       = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
 		if ( '' !== $price['price'] ) {
-			if ( $old !== $price['price'] ) {
+			if ( $price['price'] !== $old ) {
 				update_post_meta( $item_id, '_sidrena_standalone_current_price', $price['price'] );
 				$changed = true;
 			}
@@ -519,7 +519,7 @@ final class Sidrena_Standalone {
 			$changed = true;
 		}
 		$title = sanitize_text_field( get_the_title( $post_id ) );
-		if ( $title && $title !== get_the_title( $item_id ) ) {
+		if ( $title && get_the_title( $item_id ) !== $title ) {
 			wp_update_post(
 				array(
 					'ID'         => $item_id,
@@ -530,7 +530,7 @@ final class Sidrena_Standalone {
 		}
 		$current = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
 		$desired = 'publish' === $post->post_status && '' !== $current ? 'publish' : 'draft';
-		if ( $desired !== get_post_status( $item_id ) ) {
+		if ( get_post_status( $item_id ) !== $desired ) {
 			wp_update_post(
 				array(
 					'ID'          => $item_id,
@@ -719,13 +719,16 @@ final class Sidrena_Standalone {
 		<?php
 	}
 	private function row( $id = 0, $key = '', $template = false ) {
+		unset( $template );
 		$id                       = absint( $id );
 		$key                      = $id ? (string) $id : ( $key ? $key : uniqid( 'new-', false ) );
 		$meta                     = static function ( $name ) use ( $id ) {
 			return $id ? get_post_meta( $id, $name, true ) : '';
 		};
-		$status                   = $meta( '_sidrena_standalone_unit_status' ) ?: 'review';
-		$availability             = $meta( '_sidrena_standalone_availability' ) ?: 'dostupno';
+		$status_raw               = $meta( '_sidrena_standalone_unit_status' );
+		$status                   = $status_raw ? $status_raw : 'review';
+		$availability_raw         = $meta( '_sidrena_standalone_availability' );
+		$availability             = $availability_raw ? $availability_raw : 'dostupno';
 		$current                  = $meta( '_sidrena_standalone_current_price' );
 		$anchor                   = $meta( '_sidrena_standalone_anchor_price' );
 		$anchor_date              = $meta( '_sidrena_standalone_anchor_date' );
@@ -1120,7 +1123,8 @@ else :
 					update_post_meta( $id, '_sidrena_standalone_unit_status', $status );
 				}
 			}
-			$unit_status   = sanitize_key( get_post_meta( $id, '_sidrena_standalone_unit_status', true ) ?: 'review' );
+			$unit_status_raw = get_post_meta( $id, '_sidrena_standalone_unit_status', true );
+			$unit_status     = sanitize_key( $unit_status_raw ? $unit_status_raw : 'review' );
 			$unit_price    = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_unit_price', true ) );
 			$quantity      = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_quantity', true ) );
 			$quantity_unit = Sidrena_Utils::normalize_unit( get_post_meta( $id, '_sidrena_standalone_quantity_unit', true ) );
@@ -1218,7 +1222,11 @@ else :
 		}
 
 		$count = 0;
-		while ( false !== ( $values = fgetcsv( $resource, 0, $delimiter ) ) ) {
+		while ( true ) {
+			$values = fgetcsv( $resource, 0, $delimiter );
+			if ( false === $values ) {
+				break;
+			}
 			unset( $values );
 			++$count;
 			if ( $count > $row_limit ) {
@@ -1232,8 +1240,12 @@ else :
 		return array( $resource, $delimiter, $head, $count );
 	}
 
-	private function iterate_csv_import_rows( $resource, $delimiter, $head ) {
-		while ( is_resource( $resource ) && false !== ( $values = fgetcsv( $resource, 0, $delimiter ) ) ) {
+	private function iterate_csv_import_rows( $stream, $delimiter, $head ) {
+		while ( is_resource( $stream ) ) {
+			$values = fgetcsv( $stream, 0, $delimiter );
+			if ( false === $values ) {
+				break;
+			}
 			$row = array();
 			foreach ( $head as $index => $key ) {
 				if ( '' !== $key ) {
@@ -1273,6 +1285,8 @@ else :
 			$root_depth = null;
 			$count      = 0;
 			while ( $reader->read() ) {
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- nodeType is a native XMLReader property.
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- nodeType is a native XMLReader property.
 				if ( XMLReader::ELEMENT !== $reader->nodeType ) {
 					continue;
 				}
@@ -1280,6 +1294,7 @@ else :
 					$root_depth = $reader->depth;
 					continue;
 				}
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- isEmptyElement is a native XMLReader property.
 				if ( $reader->depth === $root_depth + 1 && ! $reader->isEmptyElement ) {
 					++$count;
 					if ( $count > $row_limit ) {
@@ -1333,6 +1348,7 @@ else :
 					$root_depth = $reader->depth;
 					continue;
 				}
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- isEmptyElement is a native XMLReader property.
 				if ( $reader->depth !== $root_depth + 1 || $reader->isEmptyElement ) {
 					continue;
 				}
