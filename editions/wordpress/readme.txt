@@ -42,7 +42,7 @@ The simplified settings screen only asks the user to choose the business mode, a
 The installable package includes detailed Croatian documentation:
 
 * `docs/UPUTE.md` — detailed step-by-step text guide
-* `docs/Cjenikomat-UPUTE.pdf` — detailed PDF manual for non-technical end users
+* `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
 The guide covers installation, first-time setup, locations, products and services, reference prices, 30-day sale-price references, unit prices, price-list generation, public publication, archives, the audit log, cron, alerts, and troubleshooting.
 
@@ -85,7 +85,7 @@ Cjenikomat provides technical tools for recording, checking, automating, and pub
 8. Generate the first publication under **Price Lists**.
 9. Verify the public CSV/XML files, archive, and audit log.
 
-Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/Cjenikomat-UPUTE.pdf`.
+Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
@@ -123,7 +123,7 @@ No. It is a completely optional service. The plugin can be installed and configu
 * Added public file integrity metadata, improved archive/download layouts, and an edition-specific detailed Croatian PDF manual for non-technical users.
 * Added validated unit/alias extension hooks while preserving existing built-in conversions.
 * Updated WordPress.org-facing naming, slugs, branding, admin notices, and readme copy based on reviewer feedback.
-* Passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check for both production editions, and real WordPress browser/runtime QA before the version bump.
+* Expanded PHP 7.4/8.3/8.4 CI, distribution/admin/legal, Plugin Check, and real WordPress runtime regression coverage for the 1.0.22 release.
 
 = 1.0.21 =
 
