@@ -1,7 +1,7 @@
 <?php
 /**
  * Sidrena source file.
- * Author: Brendigo
+ * Author: brendigo
  * Author URI: https://brendigo.com/
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Support: sidrena@brendigo.com
@@ -87,8 +87,8 @@ sidrena_release_gate_assert(
 );
 
 sidrena_release_gate_assert(
-	false !== strpos( $release, 'slug: sidrena' )
-	&& false !== strpos( $release, 'slug: sidrena-for-woocommerce' ),
+	false !== strpos( $release, 'slug: brendigo-sidrena-digitalni-cjenici' )
+	&& false !== strpos( $release, 'slug: brendigo-sidrena-cjenici' ),
 	'Release Plugin Check gates must validate the public plugin slugs/text domains.'
 );
 sidrena_release_gate_assert(
