@@ -496,7 +496,7 @@ final class Sidrena_Utils {
 			'metar' => 'm', 'metra' => 'm', 'metara' => 'm',
 			'komad' => 'kom', 'komada' => 'kom', 'ko' => 'kom', 'pcs' => 'kom', 'pc' => 'kom',
 		);
-		$filtered = apply_filters( 'sidrena_unit_aliases', $aliases );
+		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_aliases', $aliases ) : $aliases;
 		if ( ! is_array( $filtered ) ) {
 			return $aliases;
 		}
@@ -546,7 +546,7 @@ final class Sidrena_Utils {
 			'm3'  => array( 'base' => 'm³', 'multiplier' => 1.0 ),
 			'kom' => array( 'base' => 'kom', 'multiplier' => 1.0 ),
 		);
-		$filtered = apply_filters( 'sidrena_unit_definitions', $defaults );
+		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_definitions', $defaults ) : $defaults;
 		if ( ! is_array( $filtered ) ) {
 			return $defaults;
 		}
