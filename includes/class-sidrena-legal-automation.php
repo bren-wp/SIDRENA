@@ -79,13 +79,12 @@ final class Sidrena_Legal_Automation {
 	}
 
 	public static function normalize_generation_time( $time ) {
-		$time = is_scalar( $time ) ? sanitize_text_field( (string) $time ) : '';
-		if ( ! preg_match( '/^([01]?\d|2[0-3]):([0-5]\d)$/', $time, $match ) ) {
+		$time = Sidrena_Utils::sanitize_time( $time, '' );
+		if ( '' === $time ) {
 			return self::SAFE_GENERATION_TIME;
 		}
 
-		$hour    = (int) $match[1];
-		$minute  = (int) $match[2];
+		list( $hour, $minute ) = array_map( 'intval', explode( ':', $time, 2 ) );
 		$current = ( $hour * 60 ) + $minute;
 		if ( $current >= self::publication_deadline_minutes() ) {
 			return self::SAFE_GENERATION_TIME;
