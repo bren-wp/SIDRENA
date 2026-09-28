@@ -51,8 +51,8 @@ final class Sidrena_Admin_Menu {
 		$capability = Sidrena_Utils::admin_menu_capability();
 
 		add_menu_page(
-			'Sidrena',
-			'Sidrena',
+			'SIDRENA',
+			'SIDRENA',
 			$capability,
 			'sidrena',
 			array( Sidrena_Admin::instance(), 'page' ),
