@@ -1,7 +1,7 @@
 === brendigo SIDRENA – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
-Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=Sidrena%20WordPress%20plugin%20-%20donacija
-Tags: cijene, cjenik, csv, xml, trgovina
+Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
+Tags: prices, price-list, csv, xml, catalog
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -9,266 +9,103 @@ Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sidrene cijene, proizvodi i usluge, javni CSV/XML cjenici, lokacije i arhiva objava za WordPress.
+Reference-price records, products and services, public CSV/XML price lists, locations and publication archives for Croatian WordPress sites.
 
 == Description ==
 
-SIDRENA je namijenjena WordPress stranicama koje trebaju strukturirani katalog cijena bez WooCommercea kao izvora proizvoda.
+**brendigo SIDRENA – sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a structured product/service price catalogue without using an ecommerce catalogue as the source.
 
-* manage products and services in a dedicated catalogue or connect existing public WordPress content
-* record current, reference and unit prices when applicable
-* generate public CSV/XML price lists and searchable HTML output
-* keep at least 30 days of public publication archives
-* maintain separate physical locations and webshop channels
-* run scheduled daily generation, with 06:30 as the default time
-* keep a bounded local audit log without telemetry
-* use a compact, responsive WordPress admin interface with the SIDRENA visual system
+The plugin provides tools for:
 
-Official website: https://brendigo.com/sidrene-cijene/
-Support: sidrena@brendigo.com
-Author: brendigo
+* managing a dedicated product and service catalogue
+* recording current and reference-price data
+* maintaining price history used for 30-day sale-price references when applicable
+* handling multiple physical locations and webshop channels
+* calculating and publishing unit-price data when applicable
+* importing and exporting catalogue data through CSV/XML workflows
+* generating public CSV and XML price lists
+* publishing a searchable HTML price-list page
+* keeping previous successful publications available in an archive
+* exposing a public JSON manifest and REST index for automated retrieval
+* validating publication data before replacing the last successful public files
+* monitoring daily publication and sending failure or delay notifications
+* displaying stored file size, row count and SHA-256 integrity metadata
 
-= Privacy and external links =
+The legal-publication profile is intentionally automated. CSV, XML, public HTML, manifest, REST index, price history, strict publication checks and publication monitoring cannot be accidentally disabled from the simplified settings screen.
 
-SIDRENA does not include telemetry or usage tracking. Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same site.
+Detailed end-user documentation in Croatian is included in:
 
-= Important note =
+* `docs/UPUTE.md`
+* `docs/SIDRENA-UPUTE.pdf`
 
-SIDRENA provides technical tools for recording, checking and publishing price data. It is not an automatic legal certification of a specific business.
+Optional paid initial setup and voluntary donations are clearly separated from plugin functionality. Paying for setup or donating is not required to use any feature.
+
+SIDRENA provides technical tools for recording, checking and publishing price data. It is not legal certification and does not replace the merchant's source records or professional legal advice.
+
+= Privacy =
+
+SIDRENA does not include telemetry or usage tracking.
+
+Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same WordPress site. The plugin does not require an external account or license server.
 
 == Installation ==
 
-1. Prenesite `sidrena-wordpress-1.0.21.zip` kroz Dodaci > Dodaj novi > Prenesi dodatak.
-2. Aktivirajte Sidrena WordPress.
-3. Otvorite Sidrena > Katalog i povežite postojeći sadržaj ili unesite/uvezite katalog.
-4. Provjerite Sidrena > Usluge ako ih objavljujete.
-5. Unesite Sidrena > Lokacije.
-6. Provjerite Sidrena > Postavke.
-7. U Sidrena > Cjenici generirajte prvu objavu i provjerite javni prikaz.
-8. Na Sidrena > Pregled provjerite tehničku spremnost i raspored.
+1. Upload the SIDRENA ZIP through **Plugins > Add New Plugin > Upload Plugin**.
+2. Activate **brendigo SIDRENA – sidrene cijene i digitalni cjenici**.
+3. Open **SIDRENA > Settings** and choose the operating mode, daily generation time, archive retention and notification email.
+4. Open **SIDRENA > Locations** and create the real business locations that should publish price-list files.
+5. Open **SIDRENA > Catalog** and add the first product, or import a prepared catalogue.
+6. Open **SIDRENA > Services** if services are part of the published catalogue.
+7. Open **SIDRENA > Check** and resolve any real data warnings.
+8. Open **SIDRENA > Price Lists** and generate the first public price list.
+9. Open the public price-list page and verify CSV/XML downloads and archive links.
+10. Review **SIDRENA > Log** after the first production generation.
 
-Detaljne upute nalaze se u `docs/UPUTE.md`, a izdanje-specifični detaljni PDF priručnik i podrška u `docs/SIDRENA-UPUTE.pdf`.
+The detailed Croatian manual included in the plugin package explains every step for non-technical users.
 
 == Frequently Asked Questions ==
 
-= Moram li ručno dodavati shortcode uz svaki povezani proizvod? =
-Ne. Kada je postojeći WordPress sadržaj povezan sa Sidrena katalogom, plugin može automatski prikazati sidrenu cijenu na povezanoj javnoj stranici.
+= Does this edition require WooCommerce? =
 
-= Objavljuje li cjenik automatski? =
-Da. WordPress raspored generira cjenik u konfigurirano vrijeme, zadano 06:30. Za poslovno kritičan termin preporučuje se server cron.
+No. This is the standalone edition and uses its own SIDRENA product/service catalogue.
 
-= Prati li Sidrena korisnike ili šalje telemetriju? =
-Ne. Plugin nema ugrađenu analitiku ni telemetriju.
+= Does SIDRENA guarantee legal compliance? =
 
-= Koja je licenca? =
-Sidrena je GPLv2 ili novija, u skladu sa zahtjevima WordPress.org direktorija.
+No. SIDRENA automates technical recording, validation and publication workflows. The merchant remains responsible for accurate source data and for determining which legal rules apply to each product, service, sale, location and business model.
+
+= Does the plugin track visitors or administrators? =
+
+No. There is no telemetry or usage tracking.
+
+= Is paid setup required? =
+
+No. All plugin functionality is available without paid setup. The optional one-time setup service is separate from the plugin.
+
+= Where are the Croatian instructions? =
+
+The install package contains `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
 
 == Screenshots ==
 
-1. Stvarni Sidrena WordPress ekran Pregled snimljen iz aktivnog wp-admin sučelja.
-2. Stvarni prikaz Kataloga u Sidrena WordPress izdanju.
-3. Stvarni prikaz Cjenika i javnih datoteka.
-4. Stvarni prikaz Lokacija.
-5. Stvarni prikaz Postavki i tehničke konfiguracije.
-6. Stvarni prikaz Pomoći i podrške.
+1. SIDRENA overview with publication status and operational checks.
+2. Standalone product catalogue.
+3. Current public price-list files and archive controls.
+4. Location management.
+5. Simplified automated-publication settings.
+6. Help, documentation, support and optional setup information.
 
 == Changelog ==
 
 = 1.0.21 =
-* Fixed the optional REST location flow so an omitted location resolves to the first enabled public channel instead of becoming a synthetic location-not-found value.
-* Public REST and manifest output now use a canonical public metadata projection and no longer expose internal ordering/runtime timestamp fields.
-* Public text, URL, file-size and SHA-256 metadata is normalized before it is returned through the public JSON surfaces.
-* Real Chromium REST runtime QA now runs against the active WordPress and WooCommerce environments in addition to the existing admin screenshot/browser checks.
-* CI now permanently guards against generated/debug content markers and encoded PHP execution primitives in production source.
-* Both production packages passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check and real WordPress/WooCommerce browser QA before the 1.0.21 release bump.
 
-= 1.0.20 =
-* The public REST display endpoint now honors the SIDRENA REST toggle instead of remaining available when public REST output is intentionally disabled.
-* Shared REST/public safeguards and regression coverage were tightened before packaging both editions.
-* Production packages and release metadata remain aligned with the verified 1.0.20 source.
-* The functional 1.0.20 code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser QA before this version bump.
+* Stable production release before the current 1.0.22 development cycle.
+* Includes standalone products and services, public CSV/XML generation, searchable HTML output, publication archives and locations.
+* Includes price history, unit-price support, strict publication validation and public file integrity metadata.
+* Includes REST/manifest discovery, publication monitoring and automated legal-publication defaults.
+* Includes real WordPress runtime QA and Plugin Check gates in the development workflow.
 
-= 1.0.19 =
-* Separated the current additional/sidrena price, the lowest price in the previous 30 days and the future statutory base-price layer so they are not treated as the same legal concept.
-* Strict publication now blocks incomplete special-sale product/service rows when the 30-day reference is missing; perishable/fast-expiry product exemptions also require an expiry date.
-* WordPress catalogue availability is now explicit per physical location instead of reusing one global status for every store; the safe profile also keeps anchor display, 30-day display and price-history tracking enabled.
-* Public HTML price lists now show available 30-day references, expiry details and service type/scope/cost/replacement-goods information without changing the fixed machine-readable CSV/XML header set.
-* WooCommerce variations now honor perishable/fast-expiry exemptions inherited from their parent product.
-* Added NN 59/2026 future base-price readiness notes for the 17.11.2026 application date without inventing an implementing reference day or product scope that is not yet configured by the implementing rule.
-* Expanded regression coverage for Croatian sale-reference rules, per-location availability, inherited Woo exemptions, stable machine headers and public legal details.
-* The functional code passed PHP 7.4/8.3/8.4 CI, admin/legal/distribution guards, strict Plugin Check for both editions and real WordPress/WooCommerce browser capture before this version bump.
-* The versioned 1.0.19 WordPress/WooCommerce wp-admin capture was rerun successfully and refreshed the real WordPress.org screenshots.
+== Upgrade Notice ==
 
-= 1.0.18 =
-* Corrected the public WordPress text domain to `sidrena` in the source entrypoint and production package while retaining the `sidrena-wordpress` install folder for compatible upgrades.
-* Updated the package builder so the WordPress edition keeps `languages/sidrena.pot` with matching X-Domain metadata.
-* Strict Plugin Check now validates the WordPress package against the public `sidrena` slug instead of the install-folder alias.
-* Distribution, package-entrypoint and CI regression guards now fail if the old install-folder alias returns as the public text domain.
-* The corrected production-shaped package passed PHP 7.4/8.3/8.4 CI, distribution guards, strict WordPress Plugin Check and real wp-admin browser capture before this release bump.
+= 1.0.21 =
 
-= 1.0.17 =
-* Hardened stable release-source verification so every release branch must match the current main commit before publication.
-* Preserved valid UTF-8 and JSON structure when local audit messages or context exceed storage limits.
-* Reused the durable atomic writer for the public JSON manifest, including short-write handling and fsync before commit.
-* Added permanent regression coverage for release integrity, audit data integrity, manifest publication, README real assets and Plugin Check workflow resilience.
-* The main README now displays real SIDRENA production logos, icons, WordPress.org banners, brand covers and both runtime screenshot galleries.
-
-= 1.0.16 =
-* Consolidated the production hero and page-head layout into the canonical admin component layer and removed obsolete 1.0.14 override duplication.
-* Preserved explicit edition-badge icon sizing after CSS consolidation so WordPress and WooCommerce hero identity remains stable.
-* Hardened WooCommerce storefront variation hydration so stale asynchronous responses cannot overwrite the currently selected variation price information.
-* Removed an obsolete release-specific version marker from production admin CSS.
-* Expanded permanent regression coverage for the canonical hero layer, edition-badge icon sizing and stale WooCommerce variation responses.
-* Real WordPress and WooCommerce admin captures passed the functional 1.0.16 runtime checks before the version bump.
-
-= 1.0.15 =
-* Added screen-reader captions and scoped column headers to SIDRENA admin data tables.
-* Generated price-list file actions now expose contextual accessible labels instead of repeating an ambiguous “Open” action.
-* Dynamic location cards update their title and address while editing, announce add/remove changes and restore focus to the nearest remaining location.
-* Public price lists now use scoped column and row headers plus a local theme-independent visually-hidden utility.
-* The public services table now includes its own accessible caption.
-* Added all new accessibility and dynamic-location strings to the shipped translation catalog.
-* Added permanent regression coverage for admin/public table semantics, dynamic location UX and frontend accessibility utilities.
-* Real WordPress and WooCommerce admin captures passed the functional 1.0.15 UI/runtime checks before the version bump.
-
-= 1.0.14 =
-* Rebuilt the WordPress and WooCommerce dashboards as edition-specific SIDRENA interfaces based on the approved visual references, while keeping all metrics tied to real runtime data.
-* Rebuilt the Digitalni cjenici screen with publication metrics, distribution/integration summary, real public-output preview, archive access and responsive card hierarchy.
-* Replaced the WooCommerce 13-column primary editor with a compact product table and expandable advanced SIDRENA fields, without duplicating WooCommerce products or dropping any saved metadata.
-* Added a local reference UI design layer for the navy/cyan WordPress and navy/purple WooCommerce editions; no external CSS or Tailwind CDN is required.
-* Tightened responsive behavior for dashboards, tables, location forms, upload controls and action groups across desktop, tablet and mobile widths.
-* Added client-side 5 MB/type validation for CSV/XML uploads while retaining existing server-side checks.
-* Added permanent reference-admin-UI regression coverage to the main CI and admin-polish guard.
-* Real wp-admin screenshots must be regenerated and pass JavaScript, overlap, overflow and form-viewport checks before release.
-
-= 1.0.12 =
-* Corrected the public REST index plugin URL so source and packaged runtime both expose the canonical brendigo SIDRENA page.
-* Removed the build-time legacy-domain rewrite that could hide stale production source during packaging.
-* Added source-integrity regression coverage for retired SIDRENA domain variants across runtime code, documentation and every input copied into release packages.
-* Strengthened CI so retired production URLs fail before packaging instead of being silently normalized.
-* Explicitly unknown or disabled REST location IDs now return a 404 error instead of silently falling back to another active location.
-* Unified import and sync forms under the same double-submit protection, browser-back recovery and accessible form status lifecycle.
-* Added visible invalid/focus states, keyboard focus for custom toggles and labelled CSV/XML upload controls with file-size guidance.
-* Added permanent admin-form UX regression coverage to the main CI and dedicated admin-polish guard.
-* Service per-location current/reference price inputs now have explicit labels and a responsive editor layout.
-* Business identity settings now validate Croatian OIB checksums client-side and server-side, and reject invalid business e-mail values with clear feedback.
-
-= 1.0.11 =
-* Release publication now runs strict official Plugin Check against both production-shaped packages before publishing.
-* New version tags are created only after package integrity verification and both release Plugin Check gates succeed.
-* Added a permanent regression test that protects the release ordering from build through Plugin Check, tag creation and publication.
-* Prepared remaining service-history and standalone table identifiers with WordPress %i placeholders instead of SQL string interpolation.
-* Removed obsolete PreparedSQL.InterpolatedNotPrepared suppression comments from already-prepared custom-table queries.
-* Added regression coverage for service-history and standalone SQL identifier handling.
-
-= 1.0.10 =
-* Fixed Plugin Check findings for translator comments, output escaping, request sanitisation and custom-table SQL identifiers.
-* Removed the discouraged manual translation loader and documented intentional external WPML hooks.
-* Refined the SIDRENA logo geometry, admin hero, menu icon, spacing, cards, tables and edition badges to follow the supplied brand references more closely.
-* WordPress.org description copy is now in standard English while the Croatian runtime interface remains unchanged.
-* README and WordPress.org runtime screenshots are regenerated from the real 1.0.10 plugin UI.
-* Fixed the early upgrade/bootstrap order that could trigger a WP-CLI fatal before rewrite globals were ready.
-* Official WordPress Plugin Check passes against the production-shaped 1.0.10 package.
-
-= 1.0.9 =
-* Ispravljeno je učitavanje kompletnog SIDRENA admin CSS/JS sloja i kada drugi plugin ili admin router promijeni WordPress hook suffix; dodan je sigurni admin_print_styles fallback bez inline CSS-a.
-* Runtime asset URL-ovi koriste plugins_url() vezan uz stvarnu SIDRENA ulaznu datoteku, a filemtime cache-busting sprječava prikaz zastarjelog CSS-a nakon nadogradnje.
-* Potpuno je obnovljen SIDRENA logo sustav: glavni znak, WordPress/WooCommerce lockupi, svijetle varijante, app ikona i posebna mala admin-menu ikona.
-* Admin hero, kartice, metrike, razmaci i responzivne dimenzije dodatno su usklađeni s referentnim SIDRENA prikazima.
-* CI i distribution guard sada izričito provjeravaju da instalacijski ZIP sadrži brand.css, admin.js i edition-specific runtime logotipe.
-* Dodan je izvršni admin asset-routing regresijski test.
-
-= 1.0.8 =
-* Instalacijski ZIP je radikalno smanjen uklanjanjem WordPress.org screenshotova i marketinških PNG/SVG asseta koji nisu potrebni za runtime.
-* Build i release guard odbijaju instalacijski ZIP veći od 1,5 MiB, čime se izbjegava čest shared-hosting upload_max_filesize problem od 2 MiB.
-* Dodan je cross-version upgrade marker i idempotentni repair put koji omogućuje 1.0.8 nadogradnju preko bilo kojeg ranijeg SIDRENA izdanja iste edicije bez brisanja poslovnih podataka.
-* Upgrade automatski obnavlja shemu, postavke, direktorije za objavu, rasporede i javnu stranicu kada nedostaju.
-* Uklonjeni su preostali duplicirani/stari source headeri iz runtime testova.
-
-= 1.0.7 =
-* Ispravljena je prva objava nove usluge: sidrena vrijednost finalizira se nakon spremanja stvarno unesene aktualne cijene.
-* Uklonjena je dvostruka registracija stavke Usluge u WordPress admin meniju.
-* Admin obrasci sprječavaju slučajni dvostruki submit i imaju jasniji keyboard focus / busy state.
-* Pojačani su regresijski testovi za servisni lifecycle, strukturu cjenika i admin navigaciju.
-
-= 1.0.6 =
-* Službeni datum MINGO pojašnjenja usklađen je s datumom objave 22.09.2026.
-* Uklonjena je duplicirana normalizacija pravno relevantnih postavki iz compliance watchdog sloja.
-* Dodatno su ispolirani SIDRENA brand header, responzivni prikaz i zaštite od overflowa.
-
-= 1.0.5 =
-* Ispravljena je službena oznaka MINGO pojašnjenja na dokument objavljen 22.09.2026. i usklađen je ruleset prikaz.
-* Uklonjeni su preostali duplicirani source headeri i zastarjeli URL-ovi iz produkcijskog PHP/CSS koda.
-* Dodatno je poliran Sidrena brand sustav prema službenim vizualnim referencama, uz zadržavanje stvarnih runtime podataka.
-* WordPress i WooCommerce izdanje ostaju strogo odvojeni, bez telemetrije i bez paralelnog kataloga u WooCommerce izdanju.
-
-= 1.0.4 =
-* WordPress katalog dobio je jasno produkcijsko prazno stanje bez lažnog ili nedovršenog retka proizvoda.
-* Admin JavaScript sinkronizira prazno stanje pri dodavanju i uklanjanju prvog nespremljenog proizvoda.
-* Propisi sada sadrže praktičan NN 105/2026 vodič za kategorije jedinične cijene i propisane iznimke, bez automatskog pravnog klasificiranja proizvoda.
-* Vizual svjetionika u brand headeru bolje je kadriran prema službenim SIDRENA referencama.
-* Legal smoke test čuva datum primjene 26.09.2026., vodič kategorija/iznimaka i pravilo ljudske provjere primjenjivosti.
-
-= 1.0.3 =
-* Ispravljeni su CI guardovi nakon legitimnog refaktora admin body klase i površine podrške.
-* Mobilni CSS breakpointi premješteni su iza produkcijskih komponenti kako kasnija desktop pravila više ne bi poništavala 782/390 px raspored.
-* WordPress katalog na uskim ekranima koristi lokalno skrolanje tablice bez horizontalnog overflowa cijele wp-admin stranice.
-* Uklonjen je preostali zastarjeli URL iz javnog manifesta i dokumentacija je usklađena sa službenim brendigo SIDRENA URL-om.
-* Pravna formulacija dodatno je pooštrena: tehničke provjere ne zamjenjuju individualnu pravnu procjenu.
-
-= 1.0.2 =
-* Uklonjen legacy/mrtvi administratorski CSS koji se više ne koristi na glavnim Sidrena ekranima.
-* Smanjeno je dupliciranje PHP navigacije i edition-conflict zaštite.
-* Optimiziran je WooCommerce kompatibilni frontend DOM/AJAX sloj kako bi izbjegao redundantne zahtjeve i vlastite mutation cikluse.
-* WordPress i WooCommerce zadržavaju jasno odvojene edition akcente uz zajednički SIDRENA brand sustav.
-* Produkcijske pravne provjere ostaju tehničke provjere podataka, objave, arhive i raspoloživosti te ne zamjenjuju individualnu pravnu procjenu.
-
-= 1.0.1 =
-* Usklađena je tehnička provjera s NN 101/2026 i službenim MINGO pojašnjenjima: dovoljan je CSV ili XML, dok javni HTML i manifest ostaju opcionalni.
-* Barkod proizvoda više ne blokira objavu kada nije primjenjiv, a dodatni opisni podaci usluge ostaju korisni ali nisu obvezni za strogi cjenik.
-* Zadana oznaka dodatne cijene prikazuje se kao "Cijena na datum", uz zadržavanje podrške za prilagođeni naziv.
-* Očišćeni su duplicirani source headeri, zastarjeli URL-ovi i razvojni version komentari u produkcijskom CSS/JS kodu.
-* Zadržane su zaštite za referentne datume 10.09.2026. i 02.05.2025., arhivu najmanje 30 dana i generiranje prije 08:00.
-
-= 1.0.0 =
-* Stabilno 1.0 izdanje objedinjuje završeni Sidrena produkcijski UI/UX, stvarne runtime screenshotove i kompletan branding paket.
-* Dashboard tehnička spremnost sada koristi isti stvarni checklist kao detaljna kontrola, bez kontradiktornih statusa.
-* Dodatno su ispolirani responzivni obrasci, file inputi, prazna stanja, sticky akcije i prikaz kataloga.
-* Runtime i distribucijski paketi strogo odvajaju WordPress i WooCommerce edition-specific logotipe i marketinške assete.
-* Release ZIP-ovi provjeravaju SHA-256, integritet arhive, stvarne screenshotove i sadržaj paketa prije objave.
-* Uninstall zaštite i smoke testovi usklađeni su sa sigurnim čišćenjem runtime rasporeda i očuvanjem zajedničkih poslovnih podataka.
-* Stvarni wp-admin capture prolazi desktop, tablet i mobilne provjere bez ključnih preklapanja i horizontalnog overflowa.
-
-= 0.9.0 =
-* Potpuno novo Sidrena administracijsko sučelje izrađeno od nule prema službenom pomorskom brand sustavu.
-* Novi tamno-plavi brand header sa svjetionikom, responzivne statusne kartice, tablice, obrasci i jasne akcije.
-* WordPress izdanje koristi plavi edition akcent, lokalne logotipe i novu Sidrena app ikonu.
-* WordPress admin meni koristi kompaktno lokalno sidro bez vanjskih asseta.
-* WordPress.org banneri generiraju se iz službenog Sidrena brandinga, a screenshotovi iz stvarnog aktivnog wp-admin sučelja.
-* Dodan je kompletan brand vodič i produkcijski branding paket koji ulazi i u instalacijski ZIP.
-* Dokumentacija u ZIP-u sadrži šest stvarnih runtime screenshotova novog 0.9.0 sučelja.
-* Službena stranica: https://brendigo.com/sidrene-cijene/.
-
-= 0.8.1 =
-* Dodana lokalna sidro ikonica u WordPress bočni meni.
-* Uklonjen mrtvi legacy admin menu i popravljeni linkovi prema sekundarnim prikazima.
-* Admin zaglavlje pojednostavljeno je na mali Sidrena logo i jasan edition badge.
-* Službeni Plugin URI promijenjen je na https://brendigo.com/sidrene-cijene/.
-* Dokumentacija, WP.org readme i stvarni runtime screenshotovi usklađeni su s trenutačnim sučeljem.
-* Licenca je usklađena na GPLv2 ili noviju za WordPress.org distribuciju.
-* WP.org tagovi ograničeni su na pet i uklonjen je GitHub Update URI iz plugin headera.
-
-= 0.8.0 =
-* Izdvojena su dva službena plugin paketa: WordPress i WooCommerce.
-* Ojačane su provjere izdanja, sigurnosti i stabilnosti.
-
-= 0.7.0 =
-* Distribucija je zadržana isključivo kroz dva WordPress plugin ZIP paketa.
-* Dokumentacija i release pravila usklađeni su s plugin-only isporukom.
-
-= 0.6.0 =
-* Dodani su distribution, legal automation i produkcijski guardovi.
-* Poboljšani su streaming uvoz, arhiva i ograničavanje audit zapisa.
-
-= 0.1.0 =
-* Prvo javno izdanje.
+Stable production release. Back up the site before upgrading and verify the first public generation after installation.
