@@ -765,8 +765,9 @@ final class Sidrena_Pricelist {
 				}
 				yield $this->product_row( $product, $location );
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( count( $products ) === 100 );
+		} while ( 100 === $product_count );
 	}
 
 	private function product_row( $product, $location ) {
