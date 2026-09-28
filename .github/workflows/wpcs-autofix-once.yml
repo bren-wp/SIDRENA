@@ -61,6 +61,19 @@ jobs:
           done
           git diff --check
 
+      - name: Regression tests after formatter
+        shell: bash
+        run: |
+          set -euo pipefail
+          php .github/tests/legal-automation-smoke.php
+          php .github/tests/legal-schema-smoke.php
+          php .github/tests/wordpress-edition-smoke.php
+          php .github/tests/woocommerce-edition-smoke.php
+          php .github/tests/edition-conflict-smoke.php wordpress edition
+          php .github/tests/edition-conflict-smoke.php woocommerce edition
+          php .github/tests/edition-conflict-smoke.php wordpress legacy
+          php .github/tests/edition-conflict-smoke.php woocommerce legacy
+
       - name: Commit formatter changes
         shell: bash
         run: |
