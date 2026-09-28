@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: brendigo SIDRENA – sidrene cijene i digitalni cjenici
+ * Plugin Name: brendigo Cjenikomat – sidrene cijene i digitalni cjenici
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Sidrene cijene, povijest cijena, javni CSV/XML cjenici, lokacije, usluge i katalog za WordPress.
  * Version: 1.0.22
@@ -10,7 +10,7 @@
  * Author URI: https://brendigo.com/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: brendigo-sidrena-digitalni-cjenici
+ * Text Domain: brendigo-cjenikomat
  * Domain Path: /languages
  */
 
