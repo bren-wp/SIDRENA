@@ -97,21 +97,8 @@ add_action(
 	'plugins_loaded',
 	static function () {
 		if ( Sidrena_Utils::is_woocommerce_edition() && ! Sidrena_Utils::woocommerce_runtime_available() ) {
-			add_action(
-				'admin_notices',
-				static function () {
-					if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
-						return;
-					}
-
-					$screen = get_current_screen();
-					if ( ! $screen || 'plugins' !== $screen->id ) {
-						return;
-					}
-
-					echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'SIDRENA izdanje za web trgovine zahtijeva aktivan WooCommerce dodatak. Aktivirajte WooCommerce ili deaktivirajte ovo SIDRENA izdanje.', 'sidrena' ) . '</p></div>';
-				}
-			);
+			// WordPress 6.6+ enforces the declared Requires Plugins dependency.
+			// Keep this runtime guard only as a defensive no-op if WooCommerce is unavailable unexpectedly.
 			return;
 		}
 
