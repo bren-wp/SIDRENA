@@ -40,7 +40,7 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false === preg_match( '/^\s*\*\s*Plugin Name:.*WooCommerce/im', $woo_main )
+	0 === preg_match( '/^\s*\*\s*Plugin Name:.*WooCommerce/im', $woo_main )
 	&& false === stripos( strtok( $woo_readme, "\n" ), 'WooCommerce' ),
 	'WooCommerce trademark must not appear in the public plugin display name or readme title.'
 );
