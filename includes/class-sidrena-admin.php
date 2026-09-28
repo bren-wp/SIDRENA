@@ -2507,6 +2507,7 @@ final class Sidrena_Admin {
 				array(
 					'timeout'             => 10,
 					'redirection'         => 3,
+					'reject_unsafe_urls'  => true,
 					'limit_response_size' => 262144,
 					'headers'     => array(
 						'Accept'     => 'text/csv, application/xml, text/xml, */*;q=0.1',
