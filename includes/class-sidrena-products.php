@@ -440,6 +440,9 @@ final class Sidrena_Products {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request before this hook runs.
 			$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
+			if ( null === $value ) {
+				continue;
+			}
 			if ( '' === $value || ( 'exemption' === $type && 'none' === $value ) ) {
 				$product->delete_meta_data( $key );
 			} else {
@@ -473,6 +476,9 @@ final class Sidrena_Products {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request before this hook runs.
 			$value = sanitize_text_field( wp_unslash( $_POST[ $key ][ $loop ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
+			if ( null === $value ) {
+				continue;
+			}
 			if ( '' === $value || ( 'exemption' === $type && 'none' === $value ) ) {
 				delete_post_meta( $variation_id, $key );
 			} else {
@@ -533,7 +539,7 @@ final class Sidrena_Products {
 	private function sanitize_by_type( $value, $type ) {
 		switch ( $type ) {
 			case 'decimal':
-				return Sidrena_Utils::decimal( $value );
+				return Sidrena_Utils::validated_nonnegative_decimal( $value );
 			case 'date':
 				return Sidrena_Utils::sanitize_date( $value );
 			case 'key':
