@@ -92,6 +92,13 @@ sidrena_release_gate_assert(
 	'Release Plugin Check gates must validate the public plugin slugs/text domains.'
 );
 sidrena_release_gate_assert(
+	false === strpos( $release, 'ignore-codes: trademarked_term' )
+	&& false === strpos( $release, 'slug: woo' )
+	&& false === strpos( $release, 'slug: woocommerce' ),
+	'Trademark checks must not be suppressed and public slugs must not be based on third-party project names.'
+);
+
+sidrena_release_gate_assert(
 	false === strpos( $release, 'slug: sidrena-wordpress' )
 	&& false === strpos( $release, 'slug: sidrena-woocommerce' ),
 	'Release Plugin Check must not validate against install-folder aliases.'
