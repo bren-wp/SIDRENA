@@ -123,16 +123,16 @@ if pot.exists():
 PY
 }
 
-WP_STAGE="$WORK/sidrena-wordpress"
+WP_STAGE="$WORK/brendigo-sidrene-cijene-digitalni-cjenici"
 copy_common "$WP_STAGE"
-cp "$WP_MAIN" "$WP_STAGE/sidrena-wordpress.php"
+cp "$WP_MAIN" "$WP_STAGE/brendigo-sidrene-cijene-digitalni-cjenici.php"
 cp "$WP_README" "$WP_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WORDPRESS.md" "$WP_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WP_STAGE/docs/SIDRENA-UPUTE.pdf" "wordpress" "$WP_STAGE/docs/UPUTE.md"
 prepare_package "$WP_STAGE" "brendigo-sidrene-cijene-digitalni-cjenici"
 rm -f \
-  "$WP_STAGE/assets/images/logo-woocommerce.svg" \
-  "$WP_STAGE/assets/images/logo-woocommerce-light.svg" \
+  "$WP_STAGE/assets/images/logo-brendigo-store.svg" \
+  "$WP_STAGE/assets/images/logo-brendigo-store-light.svg" \
   "$WP_STAGE/includes/class-sidrena-bulk.php" \
   "$WP_STAGE/includes/class-sidrena-history.php" \
   "$WP_STAGE/includes/class-sidrena-location-data.php" \
@@ -141,16 +141,16 @@ rm -f \
   "$WP_STAGE/includes/class-sidrena-woo-import-export.php" \
   "$WP_STAGE/includes/class-sidrena-compatibility.php"
 
-WOO_STAGE="$WORK/sidrena-woocommerce"
+WOO_STAGE="$WORK/brendigo-sidrene-cijene-cjenici"
 copy_common "$WOO_STAGE"
-cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
+cp "$WOO_MAIN" "$WOO_STAGE/brendigo-sidrene-cijene-cjenici.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WOO_STAGE/docs/SIDRENA-UPUTE.pdf" "woocommerce" "$WOO_STAGE/docs/UPUTE.md"
 prepare_package "$WOO_STAGE" "brendigo-sidrene-cijene-cjenici"
 rm -f \
-  "$WOO_STAGE/assets/images/logo-wordpress.svg" \
-  "$WOO_STAGE/assets/images/logo-wordpress-light.svg" \
+  "$WOO_STAGE/assets/images/logo-brendigo-standalone.svg" \
+  "$WOO_STAGE/assets/images/logo-brendigo-standalone-light.svg" \
   "$WOO_STAGE/includes/class-sidrena-standalone.php"
 
 python3 - "$NORMALIZED_EPOCH" "$WP_STAGE" "$WOO_STAGE" <<'PY'
@@ -166,14 +166,14 @@ for root in sys.argv[2:]:
         os.utime(current, (epoch, epoch), follow_symlinks=False)
 PY
 
-rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"
+rm -f "$OUTDIR/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" "$OUTDIR/brendigo-sidrene-cijene-cjenici-$VERSION.zip"
 (
   cd "$WORK"
-  LC_ALL=C find sidrena-wordpress -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
-  LC_ALL=C find sidrena-woocommerce -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
+  LC_ALL=C find brendigo-sidrene-cijene-digitalni-cjenici -print | LC_ALL=C sort | zip -X -q "$OUTDIR/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" -@
+  LC_ALL=C find brendigo-sidrene-cijene-cjenici -print | LC_ALL=C sort | zip -X -q "$OUTDIR/brendigo-sidrene-cijene-cjenici-$VERSION.zip" -@
 )
 
-for zip_path in "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"; do
+for zip_path in "$OUTDIR/brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" "$OUTDIR/brendigo-sidrene-cijene-cjenici-$VERSION.zip"; do
   zip_size="$(stat -c%s "$zip_path")"
   echo "$(basename "$zip_path"): $zip_size bytes"
   if (( zip_size > MAX_ZIP_BYTES )); then
@@ -184,8 +184,8 @@ done
 
 (
   cd "$OUTDIR"
-  sha256sum "sidrena-wordpress-$VERSION.zip" > "sidrena-wordpress-$VERSION.zip.sha256"
-  sha256sum "sidrena-woocommerce-$VERSION.zip" > "sidrena-woocommerce-$VERSION.zip.sha256"
+  sha256sum "brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip" > "brendigo-sidrene-cijene-digitalni-cjenici-$VERSION.zip.sha256"
+  sha256sum "brendigo-sidrene-cijene-cjenici-$VERSION.zip" > "brendigo-sidrene-cijene-cjenici-$VERSION.zip.sha256"
 )
 
 echo "$WP_STAGE"
