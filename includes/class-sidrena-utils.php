@@ -748,12 +748,12 @@ final class Sidrena_Utils {
 	}
 
 	public static function edition() {
-		$edition = defined( 'SIDRENA_EDITION' ) ? sanitize_key( (string) SIDRENA_EDITION ) : 'WordPress';
-		return in_array( $edition, array( 'wordpress', 'woocommerce' ), true ) ? $edition : 'WordPress';
+		$edition = defined( 'SIDRENA_EDITION' ) ? sanitize_key( (string) SIDRENA_EDITION ) : 'wordpress';
+		return in_array( $edition, array( 'wordpress', 'woocommerce' ), true ) ? $edition : 'wordpress';
 	}
 
 	public static function is_wordpress_edition() {
-		return 'WordPress' === self::edition();
+		return 'wordpress' === self::edition();
 	}
 
 	public static function is_woocommerce_edition() {
