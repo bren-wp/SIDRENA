@@ -1125,9 +1125,9 @@ else :
 			}
 			$unit_status_raw = get_post_meta( $id, '_sidrena_standalone_unit_status', true );
 			$unit_status     = sanitize_key( $unit_status_raw ? $unit_status_raw : 'review' );
-			$unit_price    = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_unit_price', true ) );
-			$quantity      = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_quantity', true ) );
-			$quantity_unit = Sidrena_Utils::normalize_unit( get_post_meta( $id, '_sidrena_standalone_quantity_unit', true ) );
+			$unit_price      = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_unit_price', true ) );
+			$quantity        = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_quantity', true ) );
+			$quantity_unit   = Sidrena_Utils::normalize_unit( get_post_meta( $id, '_sidrena_standalone_quantity_unit', true ) );
 			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
 				$calculated = Sidrena_Utils::calculate_unit_price( get_post_meta( $id, '_sidrena_standalone_current_price', true ), $quantity, $quantity_unit );
 				if ( $calculated ) {
@@ -1341,6 +1341,7 @@ else :
 			}
 			$root_depth = null;
 			while ( $reader->read() ) {
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- nodeType is a native XMLReader property.
 				if ( XMLReader::ELEMENT !== $reader->nodeType ) {
 					continue;
 				}
