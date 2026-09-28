@@ -271,6 +271,19 @@ final class Sidrena_Utils {
 		return rtrim( rtrim( number_format( $number, 6, '.', '' ), '0' ), '.' );
 	}
 
+	public static function validated_nonnegative_decimal( $value ) {
+		$raw = trim( wp_strip_all_tags( (string) $value ) );
+		if ( '' === $raw ) {
+			return '';
+		}
+
+		$decimal = self::decimal( $raw );
+		if ( '' === $decimal || (float) $decimal < 0 ) {
+			return null;
+		}
+		return $decimal;
+	}
+
 	public static function money( $value, $decimals = 2 ) {
 		if ( '' === $value || null === $value ) {
 			return '';
