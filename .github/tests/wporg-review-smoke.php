@@ -253,8 +253,8 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source )
-	&& false === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source ),
+	0 === preg_match( '/wp_(?:safe_)?remote_(?:get|post)\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source )
+	&& 0 === preg_match( '/fetch\s*\(\s*[\'\"]https?:\/\/(?:mingo\.gov\.hr|dirh\.gov\.hr|narodne-novine\.nn\.hr|www\.nn\.hr)/i', $production_source ),
 	'Official legal/reference sites must remain user-clicked links and must never become automatic PHP or browser network endpoints.'
 );
 
