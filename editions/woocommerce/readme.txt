@@ -50,7 +50,7 @@ The WooCommerce name is used only to accurately describe compatibility, the requ
 The installable package includes detailed Croatian documentation:
 
 * `docs/UPUTE.md` — detailed step-by-step text guide
-* `docs/Cjenikomat-UPUTE.pdf` — detailed PDF manual for non-technical end users
+* `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
 The guide covers installation, existing products and variations, bulk editing, locations, reference prices, 30-day sale-price references, unit prices, CSV import/export, generation, public publication, archives, cron, the audit log, and troubleshooting.
 
@@ -94,7 +94,7 @@ Cjenikomat provides technical tools for recording, checking, automating, and pub
 9. Generate the first publication under **Price Lists**.
 10. Verify the public CSV/XML files, archive, and audit log.
 
-Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/Cjenikomat-UPUTE.pdf`.
+Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
@@ -137,7 +137,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Added public file integrity metadata, improved archive/download layouts, and edition-specific detailed Croatian PDF instructions.
 * Added validated unit/alias extension hooks while preserving existing built-in conversions.
 * Updated WordPress.org-facing naming, slugs, branding, admin notices, readme copy, and trademark handling based on reviewer feedback.
-* Passed PHP 7.4/8.3/8.4 CI, distribution/admin/legal guards, strict Plugin Check for both production editions, and real WordPress/WooCommerce browser/runtime QA before the version bump.
+* Expanded PHP 7.4/8.3/8.4 CI, distribution/admin/legal, Plugin Check, and real WordPress/WooCommerce runtime regression coverage for the 1.0.22 release.
 
 = 1.0.21 =
 
