@@ -10,7 +10,7 @@
 
 
 $root = isset( $argv[1] ) && is_dir( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : dirname( __DIR__, 2 );
-$main = is_file( $root . '/sidrena-wordpress.php' ) ? $root . '/sidrena-wordpress.php' : $root . '/editions/wordpress/sidrena-wordpress.php';
+$main = is_file( $root . '/brendigo-sidrene-cijene-digitalni-cjenici.php' ) ? $root . '/brendigo-sidrene-cijene-digitalni-cjenici.php' : $root . '/editions/wordpress/brendigo-sidrene-cijene-digitalni-cjenici.php';
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
