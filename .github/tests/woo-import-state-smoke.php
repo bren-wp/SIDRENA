@@ -10,6 +10,10 @@
 
 define( 'ABSPATH', __DIR__ . '/' );
 
+function wp_strip_all_tags( $value ) {
+	return strip_tags( (string) $value );
+}
+
 class WC_Product {
 	private $meta = array();
 
@@ -82,5 +86,24 @@ $method->invoke(
 	)
 );
 sidrena_woo_import_state_assert( 'ml' === $product->get_meta( '_sidrena_quantity_unit' ), 'Explicit package unit import must normalize and replace stale unit metadata.' );
+
+$decimal_method = new ReflectionMethod( 'Sidrena_Woo_Import_Export', 'set_decimal' );
+$decimal_method->setAccessible( true );
+
+$product = new WC_Product( array( '_sidrena_anchor_price' => '19.99' ) );
+$decimal_method->invoke( $importer, $product, '_sidrena_anchor_price', array( 'sidrena_cijena' => 'abc' ), 'sidrena_cijena' );
+sidrena_woo_import_state_assert( '19.99' === $product->get_meta( '_sidrena_anchor_price' ), 'Malformed Woo CSV price must preserve existing metadata.' );
+$decimal_method->invoke( $importer, $product, '_sidrena_anchor_price', array( 'sidrena_cijena' => '-1' ), 'sidrena_cijena' );
+sidrena_woo_import_state_assert( '19.99' === $product->get_meta( '_sidrena_anchor_price' ), 'Negative Woo CSV price must preserve existing metadata.' );
+$decimal_method->invoke( $importer, $product, '_sidrena_anchor_price', array( 'sidrena_cijena' => '' ), 'sidrena_cijena' );
+sidrena_woo_import_state_assert( '' === $product->get_meta( '_sidrena_anchor_price' ), 'Explicitly blank Woo CSV price must still clear stale metadata.' );
+
+$product = new WC_Product( array( '_sidrena_quantity' => '500' ) );
+$method->invoke( $importer, $product, array( 'sidrena_kolicina_pakiranja' => 'abc' ) );
+sidrena_woo_import_state_assert( '500' === $product->get_meta( '_sidrena_quantity' ), 'Malformed Woo CSV package quantity must preserve existing metadata.' );
+$method->invoke( $importer, $product, array( 'sidrena_kolicina_pakiranja' => '-2' ) );
+sidrena_woo_import_state_assert( '500' === $product->get_meta( '_sidrena_quantity' ), 'Negative Woo CSV package quantity must preserve existing metadata.' );
+$method->invoke( $importer, $product, array( 'sidrena_kolicina_pakiranja' => '0' ) );
+sidrena_woo_import_state_assert( '500' === $product->get_meta( '_sidrena_quantity' ), 'Zero Woo CSV package quantity must preserve existing metadata.' );
 
 fwrite( STDOUT, "Sidrena Woo import state smoke test passed.\n" );
