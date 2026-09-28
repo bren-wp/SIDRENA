@@ -621,9 +621,9 @@ final class Sidrena_Public {
 			</header>
 			<?php endif; ?>
 
-			<div class="sidrena-downloads__summary">
+			<div class="sidrena-downloads__summary<?php echo $show_archive ? '' : ' sidrena-downloads__summary--compact'; ?>">
 				<div><span><?php esc_html_e( 'Aktualno', 'sidrena' ); ?></span><strong><?php echo esc_html( count( $current ) ); ?></strong></div>
-				<div><span><?php esc_html_e( 'Arhiva', 'sidrena' ); ?></span><strong><?php echo esc_html( array_sum( array_map( 'count', $groups ) ) ); ?></strong></div>
+				<?php if ( $show_archive ) : ?><div><span><?php esc_html_e( 'Arhiva', 'sidrena' ); ?></span><strong><?php echo esc_html( array_sum( array_map( 'count', $groups ) ) ); ?></strong></div><?php endif; ?>
 				<div><span><?php esc_html_e( 'Izvor podataka', 'sidrena' ); ?></span><strong><?php echo esc_html( get_bloginfo( 'name' ) ); ?></strong></div>
 			</div>
 
