@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.23
+Stable tag: 1.0.24
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.24 =
+
+* Finalized the WordPress.org review-mail follow-up after the 1.0.23 release had already been published.
+* Expanded external-link disclosure for brendigo, WhatsApp, Narodne novine, the Ministry of Economy, HOK, and the historical DIRH review reference.
+* Added regression coverage preventing official Croatian legal/reference hosts from becoming automatic PHP HTTP or browser fetch endpoints.
+* Preserved the distinctive public name/slug, lowercase brendigo ownership metadata, nonce/capability protections, scoped admin notices, and zero-telemetry model.
+* Includes the 1.0.23 code-audit fixes for canonical shortcode ownership, neutral legal marketing copy, stricter source metadata checks, and PDF QA compatibility.
 
 = 1.0.23 =
 
