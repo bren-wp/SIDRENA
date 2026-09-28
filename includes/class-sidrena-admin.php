@@ -393,7 +393,7 @@ final class Sidrena_Admin {
 				/* translators: %1$s: general reference date; %2$s: reference date for previously covered FMCG categories. */
 				$reference_dates_text = __( 'Referentni datumi koje Sidrena automatski primjenjuje: opći %1$s, ranije obuhvaćeni FMCG %2$s.', 'sidrena' );
 				?>
-				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( '2026-09-10' ), Sidrena_Utils::date_display( '2025-05-02' ) ) ); ?></p>
+				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ) ); ?></p>
 			</section>
 
 			<section class="sid-card sid-settings-section">
@@ -425,7 +425,7 @@ final class Sidrena_Admin {
 			<div class="sid-grid sid-grid-2">
 				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_anchor"><?php wp_nonce_field( 'sidrena_import_anchor' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, anchor_date, reference_group. Prihvaća ; , ili TAB.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, reference_group i opcionalni anchor_date. Datum se prihvaća samo za reference_group=custom, odnosno stvarno novouvedenu stavku nakon 10.09.2026.; za standard i FMCG koristi se zaključani ruleset datum.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
 				</form>
 				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_location_data"><?php wp_nonce_field( 'sidrena_import_location_data' ); ?>
