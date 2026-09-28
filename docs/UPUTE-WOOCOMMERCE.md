@@ -309,7 +309,7 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - WhatsApp: **+385 91 901 0092**
 - Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- PDF: `docs/SIDRENA-PODRSKA.pdf`
+- Detaljni PDF priručnik i podrška: `docs/SIDRENA-PODRSKA.pdf`
 - Autor: **Brendigo**
 
 ## Donacija
