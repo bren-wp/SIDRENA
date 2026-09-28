@@ -130,6 +130,21 @@ sidrena_rest_location_assert( ! array_key_exists( 'plugin_url', $index_response-
 $known = $method->invoke( $rest, 'RIJEKA-CENTAR' );
 sidrena_rest_location_assert( 'rijeka-centar' === ( $known['id'] ?? '' ), 'Known explicit location must resolve after sanitization.' );
 
+$known_code = $method->invoke( $rest, 'RI-C' );
+sidrena_rest_location_assert( 'rijeka-centar' === ( $known_code['id'] ?? '' ), 'Public location code must resolve to the enabled canonical location.' );
+
+$code_request = new WP_REST_Request(
+	array(
+		'type' => 'products',
+		'page' => 1,
+		'per_page' => 20,
+		'location' => 'RI-C',
+	)
+);
+$code_response = $rest->prices( $code_request );
+sidrena_rest_location_assert( ! ( $code_response instanceof WP_Error ), 'Public location code must be accepted by the prices endpoint.' );
+sidrena_rest_location_assert( 'rijeka-centar' === ( $code_response->data['location']['id'] ?? '' ), 'REST location-code filter must resolve to the canonical location ID.' );
+
 $disabled = $method->invoke( $rest, 'rijeka-zapad' );
 sidrena_rest_location_assert( null === $disabled, 'Disabled explicit location must not silently fall back to another location.' );
 

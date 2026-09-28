@@ -58,7 +58,7 @@ Dodatno su pregledane aktualne WordPress.org kategorije `lowest-price`, `price-h
 
 ## Biblioteke i distribuirani third-party materijal
 
-Audit izvornog stabla za 1.0.25 nije identificirao vendoriziranu third-party PHP/JS/CSS biblioteku koja se distribuira kao dio SIDRENA runtime ZIP-a. Runtime se oslanja na WordPress/WooCommerce API-je instalacije korisnika i na vlastite lokalne SIDRENA assete.
+Audit izvornog stabla za 1.0.26 nije identificirao vendoriziranu third-party PHP/JS/CSS biblioteku koja se distribuira kao dio SIDRENA runtime ZIP-a. Runtime se oslanja na WordPress/WooCommerce API-je instalacije korisnika i na vlastite lokalne SIDRENA assete.
 
 Zbog toga `THIRD-PARTY-NOTICES.md` nije dodan samo reda radi. Ako se u budućnosti uključi third-party kod ili asset, taj se dokument mora izraditi prije releasea i navesti autor, upstream, verziju/commit, licencu, copyright, lokalne datoteke i modifikacije.
 

@@ -56,8 +56,10 @@ function get_post_type( $post_id ) {
 	return 123 === (int) $post_id ? 'sidrena_service' : 'post';
 }
 function add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url = '', $position = null ) {
-	unset( $page_title, $menu_title, $callback, $position );
+	unset( $callback, $position );
 	$GLOBALS['sidrena_test_menu']['top'] = array(
+		'page_title' => $page_title,
+		'menu_title' => $menu_title,
 		'capability' => $capability,
 		'slug'       => $menu_slug,
 		'icon'       => $icon_url,
@@ -113,7 +115,9 @@ sidrena_menu_assert( array( 'exist' ) === $mapped, 'manage_sidrena must map for 
 Sidrena_Admin_Menu::instance()->register_menu();
 
 sidrena_menu_assert( isset( $GLOBALS['sidrena_test_menu']['top'] ), 'Sidrena top-level menu was not registered.' );
-sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'Sidrena top-level menu slug is incorrect.' );
+sidrena_menu_assert( 'SIDRENA' === $GLOBALS['sidrena_test_menu']['top']['page_title'], 'SIDRENA top-level page title changed.' );
+sidrena_menu_assert( 'SIDRENA' === $GLOBALS['sidrena_test_menu']['top']['menu_title'], 'SIDRENA top-level menu label changed.' );
+sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'SIDRENA top-level menu slug is incorrect.' );
 sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['capability'], 'Sidrena menu must use administrator fallback capability when needed.' );
 sidrena_menu_assert( SIDRENA_URL . 'assets/images/menu-anchor.svg' === $GLOBALS['sidrena_test_menu']['top']['icon'], 'Sidrena top-level menu must use the local anchor icon.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );

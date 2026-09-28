@@ -102,7 +102,7 @@ add_action(
 							return;
 						}
 
-						echo '<div class="notice notice-error"><p>' . esc_html__( 'Brendigo Sidrena Cijena zahtijeva aktivan WooCommerce. Aktivirajte WooCommerce kako bi se SIDRENA WooCommerce izdanje sigurno pokrenulo.', 'sidrena' ) . '</p></div>';
+						echo '<div class="notice notice-error"><p>' . esc_html__( 'SIDRENA zahtijeva aktivan WooCommerce za WooCommerce izdanje. Aktivirajte WooCommerce kako bi se ovo SIDRENA izdanje sigurno pokrenulo.', 'sidrena' ) . '</p></div>';
 					}
 				);
 				return;

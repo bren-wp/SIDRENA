@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# WordPress.org review audit — SIDRENA 1.0.25
+# WordPress.org review audit — SIDRENA 1.0.26
 
 Review reference: `AUTOPREREVIEW ❗TRM-OWN sidrena-for-woocommerce/brendigo/28Sep26/T1 28Sep26/4.3 (P0TDX377029HGN)`
 
@@ -19,15 +19,15 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** plugin headers, both readmes, text domains, POT packaging, Plugin Check slugs, release workflow, package build, graphics, screenshot-facing copy and branding sources.
 
 **Resolution:**
-- standalone display name: **brendigo Sidrene cijene i digitalni cjenici**
-- WooCommerce display name: **Brendigo Sidrena Cijena**
-- standalone public slug/text-domain: `brendigo-sidrene-cijene-digitalni-cjenici`
-- WooCommerce 1.0.25 target public slug/text-domain: `brendigo-sidrena-cijena`
-- `brendigo` is the leading distinctive element.
-- The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
-- A fresh 28.09.2026 search confirmed unrelated Croatian products already using `Sidrena`, `Sidrena cijena` and `SidreneCijene` naming. The leading `brendigo` identifier is therefore intentional and the old `sidrena-for-woocommerce` slug is not reused.
-- The 1.0.25 technical target is `brendigo-sidrena-cijena`; `WooCommerce` is not a slug term and is not in the public Plugin Name. The earlier review thread referenced `brendigo-sidrene-cijene-cjenici`, so reviewer coordination is still required if WordPress.org has already reserved that historical slug.
-- WooCommerce is not used in the public plugin display name or slug; it remains only in dependency metadata and descriptive compatibility text.
+- standalone display name: **SIDRENA**
+- WooCommerce display name: **SIDRENA**
+- standalone public slug/text-domain remains: `brendigo-sidrene-cijene-digitalni-cjenici`
+- WooCommerce public slug/text-domain remains: `brendigo-sidrena-cijena`
+- the installed plugin list, WordPress.org readme titles and SIDRENA admin menu use one consistent public brand: **SIDRENA**.
+- edition identity is communicated descriptively as WordPress or WooCommerce edition in descriptions, dependency messaging and conflict handling; it is not encoded as a second product brand.
+- existing public slugs are intentionally preserved for update compatibility, review continuity and stable package targeting.
+- the old `sidrena-for-woocommerce` slug is not reused.
+- `WooCommerce` is not part of the Plugin Name or public slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
 
@@ -153,8 +153,8 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Resolution:**
 - exactly two installable ZIPs are built:
-  - `sidrena-wordpress-1.0.25.zip`
-  - `sidrena-woocommerce-1.0.25.zip`
+  - `sidrena-wordpress-1.0.26.zip`
+  - `sidrena-woocommerce-1.0.26.zip`
 - each ZIP has exactly one edition root.
 - standalone ZIP excludes WooCommerce runtime catalogue/integration classes.
 - WooCommerce ZIP excludes the standalone catalogue runtime.
@@ -197,9 +197,10 @@ This file records the repository-side audit performed before the next WordPress.
 
 ## Final submission rule
 
-The current 1.0.25 build, text-domain and Plugin Check target are:
+The current 1.0.26 public text-domain / Plugin Check targets remain:
 
-`brendigo-sidrena-cijena`
+- standalone: `brendigo-sidrene-cijene-digitalni-cjenici`
+- WooCommerce: `brendigo-sidrena-cijena`
 
 The historical review thread referenced `brendigo-sidrene-cijene-cjenici`. Repository/web search on 28. 9. 2026. did not show either value as a public WordPress.org plugin page, but that does not prove reservation status. If the Plugin Review Team has already reserved the historical slug, the final public permalink must be coordinated with the reviewer before SVN submission.
 

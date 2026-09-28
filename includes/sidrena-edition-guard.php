@@ -24,8 +24,8 @@ $sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_fi
 $sidrena_active_key       = defined( 'SIDRENA_EDITION' ) ? (string) SIDRENA_EDITION : 'legacy';
 
 $sidrena_edition_labels = array(
-	'wordpress'   => 'SIDRENA WordPress',
-	'woocommerce' => 'Brendigo Sidrena Cijena',
+	'wordpress'   => 'SIDRENA (WordPress izdanje)',
+	'woocommerce' => 'SIDRENA (WooCommerce izdanje)',
 	'legacy'      => 'starije SIDRENA izdanje',
 );
 

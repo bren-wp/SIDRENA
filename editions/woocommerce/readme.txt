@@ -1,10 +1,10 @@
-=== Brendigo Sidrena Cijena ===
+=== SIDRENA ===
 Contributors: brendigo
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.25
+Stable tag: 1.0.26
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Reference prices, 30-day sale references, CSV/XML price lists, locations and arc
 
 == Description ==
 
-**Brendigo Sidrena Cijena** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
+**SIDRENA** is the WooCommerce edition for Croatian merchants who already use WooCommerce products and variations.
 
 WooCommerce remains the canonical product and variation source. SIDRENA does not create a duplicate product catalogue; it adds the price-record and publication tools needed around the existing store catalogue.
 
@@ -133,9 +133,16 @@ No. It is completely optional. The plugin can be installed and configured indepe
 
 == Changelog ==
 
+= 1.0.26 =
+
+* Unified the installed plugin name and WordPress.org readme brand to SIDRENA while keeping the established public slug/text domain unchanged.
+* Added REST location-code resolution so the public location code returned by SIDRENA can also be used as a REST filter.
+* Hardened CSV imports by validating the actual server-side temporary file size before reading content into memory.
+* Added regression coverage for REST location-code filters and server-side upload-size enforcement across supported PHP versions.
+
 = 1.0.25 =
 
-* Renamed the WooCommerce edition to Brendigo Sidrena Cijena and aligned its public text domain/Plugin Check slug to brendigo-sidrena-cijena.
+* Aligned the WooCommerce edition public text domain and Plugin Check slug to brendigo-sidrena-cijena.
 * Delayed all WooCommerce-specific runtime includes until WooCommerce is actually available on plugins_loaded.
 * Added a defensive missing-WooCommerce safe state and a scoped Plugins-screen notice without registering WooCommerce hooks or running upgrade/publication scheduling.
 * Improved the two-edition conflict guard so activation errors identify the active and attempted editions and explain the safe switch path without deleting business data.

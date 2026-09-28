@@ -6,8 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.26 =
+* Oba instalirana izdanja sada koriste jedinstven naziv i brand "SIDRENA" u plugin headeru, WordPress.org readme naslovu, admin meniju i runtime porukama; postojeći javni slugovi i text-domaini ostaju nepromijenjeni.
+* REST dohvat cijena sada prihvaća i javni kod lokacije koji SIDRENA vraća u location payloadu, uz mapiranje na kanonski interni ID.
+* Woo CSV import dodatno provjerava stvarnu veličinu server-side privremene upload datoteke prije čitanja sadržaja u memoriju.
+* Upload-size zaštita osvježava filesystem stat podatke prije provjere, tako da zastarjeli PHP stat cache ne može dati pogrešnu veličinu.
+* Dodani su regression testovi za location-code REST filter i server-side upload-size enforcement na svim podržanim PHP granama.
+
 = 1.0.25 =
-* WooCommerce izdanje preimenovano je u "Brendigo Sidrena Cijena" uz text-domain i Plugin Check target `brendigo-sidrena-cijena`; zadržan je obvezni `Requires Plugins: woocommerce`.
+* WooCommerce izdanje uskladilo je text-domain i Plugin Check target `brendigo-sidrena-cijena`; zadržan je obvezni `Requires Plugins: woocommerce`.
 * WooCommerce-specific klase sada se učitavaju tek nakon `plugins_loaded` provjere stvarne dostupnosti WooCommerce runtimea.
 * Bez WooCommercea se ne pokreću SIDRENA Woo hookovi, upgrade/publication scheduling ni generiranje Woo cjenika; na Plugins ekranu prikazuje se ograničena dependency poruka.
 * Edition-conflict guard sada jasno navodi aktivno i pokušano izdanje te siguran prijelaz bez brisanja poslovnih podataka.

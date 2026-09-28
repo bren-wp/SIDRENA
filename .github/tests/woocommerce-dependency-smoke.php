@@ -62,7 +62,7 @@ foreach ( $GLOBALS['sidrena_actions']['admin_notices'] as $callback ) {
 $notice = ob_get_clean();
 
 sidrena_dependency_assert(
-	false !== strpos( $notice, 'Brendigo Sidrena Cijena zahtijeva aktivan WooCommerce.' ),
+	false !== strpos( $notice, 'SIDRENA zahtijeva aktivan WooCommerce za WooCommerce izdanje.' ),
 	'Dependency notice does not clearly explain that WooCommerce is required.'
 );
 

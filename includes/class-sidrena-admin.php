@@ -1911,6 +1911,25 @@ final class Sidrena_Admin {
 		$this->redirect( 'tools', 'location_imported' );
 	}
 
+	private function validate_uploaded_csv_size( $tmp_name, $reported_size ) {
+		$max_size      = 5 * MB_IN_BYTES;
+		$reported_size = max( 0, (int) $reported_size );
+		if ( $reported_size > $max_size ) {
+			return new WP_Error( 'upload_too_large' );
+		}
+
+		$tmp_name = (string) $tmp_name;
+		clearstatcache( true, $tmp_name );
+		$actual_size = wp_filesize( $tmp_name );
+		if ( false === $actual_size || $actual_size <= 0 ) {
+			return new WP_Error( 'upload_empty' );
+		}
+		if ( $actual_size > $max_size ) {
+			return new WP_Error( 'upload_too_large' );
+		}
+		return (int) $actual_size;
+	}
+
 	private function open_uploaded_csv( $field ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Every caller verifies its action nonce before entering this upload helper.
 		if ( empty( $_FILES[ $field ] ) || ! is_array( $_FILES[ $field ] ) ) {
@@ -1920,8 +1939,9 @@ final class Sidrena_Admin {
 		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			return new WP_Error( 'upload_error' );
 		}
-		if ( (int) ( $file['size'] ?? 0 ) > 5 * MB_IN_BYTES ) {
-			return new WP_Error( 'upload_too_large' );
+		$size_check = $this->validate_uploaded_csv_size( $file['tmp_name'], $file['size'] ?? 0 );
+		if ( is_wp_error( $size_check ) ) {
+			return $size_check;
 		}
 		$filename = sanitize_file_name( wp_unslash( $file['name'] ?? '' ) );
 		if ( 'csv' !== strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {

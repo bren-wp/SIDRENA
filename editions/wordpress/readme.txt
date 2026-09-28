@@ -1,10 +1,10 @@
-=== brendigo Sidrene cijene i digitalni cjenici ===
+=== SIDRENA ===
 Contributors: brendigo
 Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.25
+Stable tag: 1.0.26
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Reference prices, 30-day sale references, products, services, CSV/XML price list
 
 == Description ==
 
-**brendigo Sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
+**SIDRENA** is the standalone WordPress edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
 
 The plugin provides:
 
@@ -115,6 +115,13 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.26 =
+
+* Unified the installed plugin name and WordPress.org readme brand to SIDRENA while keeping the established public slug/text domain unchanged.
+* Added REST location-code resolution so the public location code returned by SIDRENA can also be used as a REST filter.
+* Hardened Woo CSV uploads by validating the actual server-side temporary file size before reading content into memory.
+* Added regression coverage for REST location-code filters and server-side upload-size enforcement across supported PHP versions.
 
 = 1.0.25 =
 
