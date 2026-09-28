@@ -1,4 +1,4 @@
-=== brendigo Sidrene cijene i cjenici ===
+=== Brendigo Sidrene cijene i cjenici ===
 Contributors: brendigo
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
@@ -55,17 +55,15 @@ The installable package includes detailed Croatian documentation:
 
 The guide covers installation, existing products and variations, bulk editing, locations, reference prices, 30-day sale-price references, unit prices, CSV import/export, generation, public publication, archives, cron, the audit log, and troubleshooting.
 
-= Support and optional setup =
+= Support =
 
-Support email: sidrena@brendigo.com
+Support email: info@brendigo.com
 
-WhatsApp: +385 91 901 0092
+Project website: https://brendigo.com/sidrene-cijene/
 
-Optional one-time initial setup: **80 EUR**.
+Support and documentation links are user-initiated and do not unlock or gate plugin features.
 
-Paid setup is not required to use the plugin and does not unlock features, support rights, or legal certification.
-
-== External services and user-initiated links ==
+== External services ==
 
 SIDRENA does not require a remote API or SaaS account for its core price-list functions, and it does not send telemetry or usage analytics.
 
@@ -73,8 +71,7 @@ When an administrator explicitly runs the public-access check, the plugin uses t
 
 The administration and bundled documentation also contain optional, user-initiated external links. SIDRENA does not fetch these destinations in the background. When an administrator clicks one of these links, their browser or mail application opens the destination directly. The destination may then receive normal connection/request data such as the visitor IP address, browser user-agent, referrer information allowed by the browser, and any cookies already associated with that destination. SIDRENA does not append catalogue, product, customer, order, or price-list data to those links.
 
-* **brendigo** — plugin website, documentation/support, and optional setup information. Terms: https://brendigo.com/uvjeti-koristenja/ Privacy: https://brendigo.com/politika-privatnosti/
-* **WhatsApp** — optional support link to `wa.me` with only the static pre-filled text "Pozdrav, trebam podršku za Sidrena plugin." The administrator decides whether to continue/send in WhatsApp. Terms: https://www.whatsapp.com/legal/terms-of-service?lang=hr Privacy: https://www.whatsapp.com/legal/privacy-policy?lang=hr
+* **brendigo** — project website and support/documentation information. Terms: https://brendigo.com/uvjeti-koristenja/ Privacy: https://brendigo.com/politika-privatnosti/
 * **Official Croatian legal/information references** — links to Narodne novine (`narodne-novine.nn.hr`), the Ministry of Economy (`mingo.gov.hr`), and the Croatian Chamber of Trades and Crafts / HOK (`www.hok.hr`) are ordinary reference links opened only after an administrator clicks them. Older review builds also contained a Državni inspektorat (`dirh.gov.hr`) reference link; the current production runtime no longer contains that DIRH link. SIDRENA never uses these government/reference sites as an API or automatic data service. Narodne novine Terms: https://www.nn.hr/hr/o-nama/opci-uvjeti-koristenja/ Privacy: https://www.nn.hr/hr/o-nama/zastita-privatnosti/ Government portal Terms/Privacy information: https://gov.hr/hr/uvjeti-koristenja-i-politika-privatnosti/1808 HOK Privacy: https://www.hok.hr/o-hok-u/zastita-osobnih-podataka
 
 = Legal note =
@@ -114,9 +111,6 @@ Not from the simplified end-user settings screen. These technical outputs and sa
 
 No. They are stored and handled as separate concepts.
 
-= Is the 80 EUR initial setup required? =
-
-No. It is completely optional. The plugin can be installed and configured independently using the included Croatian documentation.
 
 == Screenshots ==
 
@@ -125,14 +119,14 @@ No. It is completely optional. The plugin can be installed and configured indepe
 3. Digital price lists and publication archive.
 4. Locations and sales channels.
 5. Simplified automated settings.
-6. Support, documentation, and optional services.
+6. Support, documentation, and technical information.
 
 == Changelog ==
 
 = 1.0.24 =
 
 * Finalized the WordPress.org review-mail follow-up after the 1.0.23 release had already been published.
-* Expanded external-link disclosure for brendigo, WhatsApp, Narodne novine, the Ministry of Economy, HOK, and the historical DIRH review reference.
+* Expanded external-link disclosure for brendigo, Narodne novine, the Ministry of Economy, HOK, and the historical DIRH review reference.
 * Added regression coverage preventing official Croatian legal/reference hosts from becoming automatic PHP HTTP or browser fetch endpoints.
 * Preserved the distinctive public name/slug, WooCommerce dependency header, lowercase brendigo ownership metadata, nonce/capability protections, scoped admin notices, and zero-telemetry model.
 * Includes the 1.0.23 code-audit fixes for canonical shortcode ownership, neutral legal marketing copy, stricter source metadata checks, and PDF QA compatibility.
