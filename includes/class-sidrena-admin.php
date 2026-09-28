@@ -755,14 +755,14 @@ final class Sidrena_Admin {
 	private function dashboard_price_education( $settings ) {
 		$dated_price_caption = sprintf(
 			/* translators: %s: configured reference date. */
-			__( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ),
-			wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) )
+			__( 'Sidrena cijena uz zakonski zaključan datum %s.', 'sidrena' ),
+			Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() )
 		);
 		?>
 		<div class="sid-price-guide sid-price-guide--reference">
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-cart"></span><h3><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja se trenutno prikazuje kupcu i koristi za prodaju.', 'sidrena' ); ?></p></div>
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-clock"></span><h3><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Najniža provjerljiva cijena u prethodnom razdoblju kada je primjenjivo.', 'sidrena' ); ?></p></div>
-			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></h3><p><?php echo esc_html( $dated_price_caption ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></h3><p><?php echo esc_html( $dated_price_caption ); ?></p></div>
 		</div>
 		<?php
 	}
@@ -1607,8 +1607,6 @@ final class Sidrena_Admin {
 			'business_mode'         => $business_mode,
 			'display_anchor'        => 'yes',
 			'display_lowest_30'     => 'yes',
-			'default_ref_date'      => '2026-09-10',
-			'fmcg_ref_date'         => '2025-05-02',
 			'generate_csv'          => 'yes',
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',

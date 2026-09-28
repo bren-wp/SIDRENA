@@ -94,8 +94,9 @@ foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi', 'ugradb
 }
 
 $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
-sidrena_schema_assert( 1 === preg_match( "/'default_ref_date'\\s*=>\\s*'2026-09-10'/", $utils_source ), 'Default reference date must remain 10.09.2026.' );
-sidrena_schema_assert( 1 === preg_match( "/'fmcg_ref_date'\\s*=>\\s*'2025-05-02'/", $utils_source ), 'Existing FMCG reference date must remain 02.05.2025.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date must remain immutable at 10.09.2026.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'Existing FMCG reference date must remain immutable at 02.05.2025.' );
+sidrena_schema_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ) && ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'Legal reference dates must not be administrator defaults.' );
 sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*45/", $utils_source ), 'Default archive retention should preserve an operational margin above 30 days.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
