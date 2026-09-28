@@ -16,6 +16,14 @@ class Sidrena_Utils {
 		return $value ? $value : 'lokacija';
 	}
 
+	public static function locations() {
+		return array(
+			array( 'id' => 'loc-1', 'code' => 'LOC-1', 'enabled' => 'yes' ),
+			array( 'id' => 'loc-2', 'code' => 'LOC-2', 'enabled' => 'yes' ),
+			array( 'id' => 'loc-off', 'code' => 'LOC-OFF', 'enabled' => 'no' ),
+		);
+	}
+
 	public static function public_index() {
 		return array(
 			array( 'location_id' => 'loc-1', 'filename' => 'current.csv' ),
@@ -56,6 +64,13 @@ $method = new ReflectionMethod( 'Sidrena_Public', 'archive_groups' );
 $method->setAccessible( true );
 $public = Sidrena_Public::instance();
 
+$location_filter = new ReflectionMethod( 'Sidrena_Public', 'optional_location_id' );
+$location_filter->setAccessible( true );
+sidrena_archive_assert( '' === $location_filter->invoke( $public, '' ), 'Empty optional location filter must remain empty and mean all locations.' );
+sidrena_archive_assert( 'loc-1' === $location_filter->invoke( $public, 'LOC-1' ), 'Enabled location code must resolve to its canonical location ID.' );
+sidrena_archive_assert( null === $location_filter->invoke( $public, 'loc-off' ), 'Disabled location must be rejected by optional public filters.' );
+sidrena_archive_assert( null === $location_filter->invoke( $public, 'missing' ), 'Unknown location must be rejected by optional public filters.' );
+
 $groups = $method->invoke( $public, 'loc-1', true );
 $keys   = array_keys( $groups );
 
@@ -81,6 +96,10 @@ $source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pu
 $css    = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/public.css' );
 sidrena_archive_assert( substr_count( $source, 'archive_groups( $location_id, true )' ) >= 2, 'Archive and downloads shortcodes must share the grouping engine.' );
 sidrena_archive_assert( false !== strpos( $source, "'' === $location_id ? '' : Sidrena_Utils::sanitize_location_id( $location_id )" ), 'Archive grouping must preserve an intentionally empty all-locations filter.' );
+sidrena_archive_assert( substr_count( $source, '$this->optional_location_id( $requested )' ) >= 2, 'Archive and downloads shortcodes must reject invalid explicit location filters through the shared resolver.' );
+sidrena_archive_assert( false !== strpos( $source, 'if ( null === $location_id ) {' ), 'Public location filter resolution must preserve an explicit invalid state.' );
+sidrena_archive_assert( false !== strpos( $source, 'status_header( 404 );' ), 'Dedicated public routes must return HTTP 404 for an explicit unknown or disabled location.' );
+sidrena_archive_assert( false !== strpos( $source, "'' === $location_raw ? '' : Sidrena_Utils::sanitize_location_id( $location_raw )" ), 'An explicitly empty location query parameter must remain empty instead of becoming the sanitizer fallback ID.' );
 sidrena_archive_assert( false !== strpos( $source, 'render_archive_groups( $groups )' ), 'Grouped archive renderer is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidrena' )" ), 'Archive download action is missing.' );
 sidrena_archive_assert( false === strpos( $source, 'sidrena-public-archive__list' ), 'Legacy flat archive markup must not return.' );
