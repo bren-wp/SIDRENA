@@ -28,7 +28,14 @@ class WP_Error {
 class WP_REST_Server {
 	const READABLE = 'GET';
 }
-$GLOBALS['sidrena_rest_enabled'] = 'yes';
+$GLOBALS['sidrena_rest_enabled']       = 'yes';
+$GLOBALS['sidrena_woocommerce_active'] = false;
+$GLOBALS['sidrena_woo_catalog_calls']  = 0;
+$GLOBALS['sidrena_service_queries']    = 0;
+$GLOBALS['sidrena_locations']          = array(
+	array( 'id' => 'rijeka-centar', 'code' => 'RI-C', 'kind' => 'objekt', 'address' => 'Korzo 1', 'enabled' => 'yes', 'sequence' => 7 ),
+	array( 'id' => 'rijeka-zapad', 'code' => 'RI-Z', 'kind' => 'objekt', 'address' => 'Zapad 2', 'enabled' => 'no', 'sequence' => 8 ),
+);
 
 class Sidrena_Utils {
 	public static function settings() {
@@ -39,17 +46,14 @@ class Sidrena_Utils {
 		);
 	}
 	public static function locations() {
-		return array(
-			array( 'id' => 'rijeka-centar', 'code' => 'RI-C', 'kind' => 'objekt', 'address' => 'Korzo 1', 'enabled' => 'yes', 'sequence' => 7 ),
-			array( 'id' => 'rijeka-zapad', 'code' => 'RI-Z', 'kind' => 'objekt', 'address' => 'Zapad 2', 'enabled' => 'no', 'sequence' => 8 ),
-		);
+		return $GLOBALS['sidrena_locations'];
 	}
 	public static function sanitize_location_id( $value ) {
 		$value = strtolower( preg_replace( '/[^a-z0-9_-]/i', '', (string) $value ) );
 		return $value ? $value : 'lokacija';
 	}
 	public static function runtime_mode() { return 'woocommerce'; }
-	public static function is_woocommerce_active() { return false; }
+	public static function is_woocommerce_active() { return (bool) $GLOBALS['sidrena_woocommerce_active']; }
 	public static function is_wordpress_edition() { return false; }
 	public static function public_index() { return array(); }
 	public static function archive_index() { return array(); }
@@ -72,6 +76,20 @@ function rest_ensure_response( $data ) {
 function rest_url( $path ) { return 'https://example.test/wp-json/' . ltrim( $path, '/' ); }
 function esc_url_raw( $url ) { return (string) $url; }
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
+function wc_get_products( $args = array() ) {
+	unset( $args );
+	++$GLOBALS['sidrena_woo_catalog_calls'];
+	return array();
+}
+class WP_Query {
+	public $posts = array();
+	public $found_posts = 0;
+	public $max_num_pages = 0;
+	public function __construct( $args = array() ) {
+		unset( $args );
+		++$GLOBALS['sidrena_service_queries'];
+	}
+}
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-rest.php';
 
@@ -130,6 +148,24 @@ $response = $rest->prices( $request );
 sidrena_rest_location_assert( $response instanceof WP_Error, 'Unknown explicit location must return WP_Error.' );
 sidrena_rest_location_assert( 'location_not_found' === $response->code, 'Unknown explicit location must return location_not_found.' );
 sidrena_rest_location_assert( 404 === ( $response->data['status'] ?? 0 ), 'Unknown explicit location must return HTTP 404.' );
+
+$GLOBALS['sidrena_locations'] = array();
+$GLOBALS['sidrena_woocommerce_active'] = true;
+$no_location_response = $rest->prices(
+	new WP_REST_Request(
+		array(
+			'type' => 'all',
+			'page' => 1,
+			'per_page' => 20,
+		)
+	)
+);
+sidrena_rest_location_assert( ! ( $no_location_response instanceof WP_Error ), 'Omitted location with no enabled locations must return a safe empty response.' );
+sidrena_rest_location_assert( array() === ( $no_location_response->data['location'] ?? null ), 'No enabled location must keep the public location payload empty.' );
+sidrena_rest_location_assert( array( 'items' => array(), 'total' => 0, 'total_pages' => 0 ) === ( $no_location_response->data['products'] ?? null ), 'No enabled location must expose an empty product collection.' );
+sidrena_rest_location_assert( array( 'items' => array(), 'total' => 0, 'total_pages' => 0 ) === ( $no_location_response->data['services'] ?? null ), 'No enabled location must expose an empty service collection.' );
+sidrena_rest_location_assert( 0 === $GLOBALS['sidrena_woo_catalog_calls'], 'No enabled location must not fall back to scanning the global WooCommerce catalog.' );
+sidrena_rest_location_assert( 0 === $GLOBALS['sidrena_service_queries'], 'No enabled location must not query public services with a synthetic location.' );
 
 $GLOBALS['sidrena_rest_enabled'] = 'no';
 $display_response = $rest->display( new WP_REST_Request( array( 'id' => '1' ) ) );

@@ -160,6 +160,21 @@ final class Sidrena_REST {
 			'services'  => array(),
 		);
 
+		if ( empty( $location ) ) {
+			$empty = array(
+				'items'       => array(),
+				'total'       => 0,
+				'total_pages' => 0,
+			);
+			if ( in_array( $type, array( 'all', 'products' ), true ) ) {
+				$data['products'] = $empty;
+			}
+			if ( in_array( $type, array( 'all', 'services' ), true ) ) {
+				$data['services'] = $empty;
+			}
+			return $this->no_cache_response( $data );
+		}
+
 		if ( in_array( $type, array( 'all', 'products' ), true ) ) {
 			$data['products'] = $this->realtime_products( $location, $page, $per_page );
 		}
