@@ -35,6 +35,9 @@ register_activation_hook(
 add_action(
 	'admin_init',
 	static function () use ( $sidrena_conflicting_file ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
 		if ( ! function_exists( 'deactivate_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
