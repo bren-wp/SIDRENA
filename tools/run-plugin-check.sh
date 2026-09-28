@@ -16,6 +16,10 @@ PLUGIN_DIR="$(realpath "$1")"
 PUBLIC_SLUG="$2"
 RESULTS_FILE="$3"
 PLUGIN_SLUG="$(basename "$PLUGIN_DIR")"
+if [[ "$PLUGIN_SLUG" != "$PUBLIC_SLUG" ]]; then
+  echo "Plugin package root slug '$PLUGIN_SLUG' does not match public slug '$PUBLIC_SLUG'." >&2
+  exit 1
+fi
 WORK_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/sidrena-plugin-check.XXXXXX")"
 RESULTS_FILE="$(realpath -m "$RESULTS_FILE")"
 
