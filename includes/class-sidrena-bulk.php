@@ -75,7 +75,7 @@ final class Sidrena_Bulk {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'SIDRENA koristi postojeći katalog web trgovine kao izvor podataka. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'Cjenikomat koristi postojeći katalog web trgovine kao izvor podataka. Nema dupliciranja proizvoda; ovdje uređujete samo Cjenikomat podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
 			</div>
 			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori proizvode trgovine', 'sidrena' ); ?></a></div>
 		</div>
@@ -94,7 +94,7 @@ final class Sidrena_Bulk {
 			<?php wp_nonce_field( 'sidrena_bulk_save' ); ?>
 			<div class="sid-table-wrap sid-woo-table-wrap">
 				<table class="widefat sid-bulk-table sid-woo-compact-table">
-					<caption class="screen-reader-text"><?php esc_html_e( 'SIDRENA katalog web trgovine', 'sidrena' ); ?></caption>
+					<caption class="screen-reader-text"><?php esc_html_e( 'Cjenikomat katalog web trgovine', 'sidrena' ); ?></caption>
 					<thead>
 						<tr>
 							<th scope="col"><?php esc_html_e( 'Proizvod', 'sidrena' ); ?></th>
@@ -107,7 +107,7 @@ final class Sidrena_Bulk {
 						</tr>
 					</thead>
 					<tbody>
-					<?php if ( empty( $items ) ) : ?><tr><td class="sid-table-empty-cell" colspan="7"><strong><?php esc_html_e( 'Katalog web trgovine je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u web trgovinu; SIDRENA će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
+					<?php if ( empty( $items ) ) : ?><tr><td class="sid-table-empty-cell" colspan="7"><strong><?php esc_html_e( 'Katalog web trgovine je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u web trgovinu; Cjenikomat će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
 					<?php foreach ( $items as $product ) : ?>
 						<?php
 						$id          = $product->get_id();
@@ -135,7 +135,7 @@ final class Sidrena_Bulk {
 						<tr class="sid-woo-product-details-row">
 							<td colspan="7">
 								<details class="sid-row-details">
-									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'šifra, marka, barkod, jedinice i pravilo javnog cjenika', 'sidrena' ); ?></span></summary>
+									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna Cjenikomat polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'šifra, marka, barkod, jedinice i pravilo javnog cjenika', 'sidrena' ); ?></span></summary>
 									<div class="sid-row-details__grid">
 										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
@@ -159,7 +159,7 @@ final class Sidrena_Bulk {
 					</tbody>
 				</table>
 			</div>
-			<div class="sid-bulk-actions"><div class="sid-bulk-actions__primary"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi SIDRENA podatke', 'sidrena' ); ?></button><button class="button sid-secondary" type="button" id="sid-safe-fill-page"><span class="dashicons dashicons-database-import"></span><?php esc_html_e( 'Popuni prazna polja na stranici', 'sidrena' ); ?></button></div><span><?php echo esc_html( $page_caption ); ?></span></div>
+			<div class="sid-bulk-actions"><div class="sid-bulk-actions__primary"><button class="button button-primary sid-primary" type="submit"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Spremi Cjenikomat podatke', 'sidrena' ); ?></button><button class="button sid-secondary" type="button" id="sid-safe-fill-page"><span class="dashicons dashicons-database-import"></span><?php esc_html_e( 'Popuni prazna polja na stranici', 'sidrena' ); ?></button></div><span><?php echo esc_html( $page_caption ); ?></span></div>
 		</form>
 		<?php if ( $pages > 1 ) : ?>
 		<nav class="sid-pagination" aria-label="<?php esc_attr_e( 'Navigacija kataloga', 'sidrena' ); ?>">
