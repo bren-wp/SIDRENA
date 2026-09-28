@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: SIDRENA
+ * Plugin Name: brendigo SIDRENA Price Publisher
  * Plugin URI: https://brendigo.com/sidrene-cijene/
  * Description: Price history, public CSV/XML price lists, locations, services and catalogue management for standard WordPress sites.
  * Version: 1.0.21
  * Requires at least: 6.6
  * Requires PHP: 7.4
- * Author: Brendigo
+ * Author: brendigo
  * Author URI: https://brendigo.com/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: sidrena
+ * Text Domain: brendigo-sidrena-catalog
  * Domain Path: /languages
  */
 
