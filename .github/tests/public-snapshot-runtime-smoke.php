@@ -8,15 +8,6 @@
  * @see https://brendigo.com/
  */
 
-/**
- * Sidrena source file.
- *
- * @package Sidrena
- * @author Brendigo
- * @link https://sidrene-cijene.com.hr/
- * @see https://brendigo.com/
- */
-
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'SIDRENA_VERSION', '0.4.0' );
 define( 'SIDRENA_EDITION', 'wordpress' );
@@ -46,6 +37,7 @@ function absint( $value ) { return abs( (int) $value ); }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-public.php';
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 
 function sidrena_stream_runtime_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -109,7 +101,28 @@ $clamped = $method->invoke( $public, 'lokacija-1', '', 999, 50 );
 sidrena_stream_runtime_assert( 3 === $clamped['page'], 'Out-of-range public page must clamp to the final page.' );
 sidrena_stream_runtime_assert( 20 === count( $clamped['rows'] ), 'Clamped final page must contain the remaining rows.' );
 
-unlink( $path );
+$other_path = Sidrena_Utils::public_snapshot_path( 'lokacija-2' );
+file_put_contents( $other_path, "{}\n" );
+$legacy_path = dirname( $path ) . '/cjenik-legacy.json';
+file_put_contents( $legacy_path, '{}');
+
+$cleanup = new ReflectionMethod( 'Sidrena_Pricelist', 'cleanup_public_snapshots' );
+$cleanup->setAccessible( true );
+$pricelist = Sidrena_Pricelist::instance();
+$locations = array(
+	array( 'id' => 'lokacija-1', 'enabled' => 'yes' ),
+	array( 'id' => 'lokacija-2', 'enabled' => 'no' ),
+);
+$cleanup->invoke( $pricelist, $locations, true );
+sidrena_stream_runtime_assert( is_file( $path ), 'Enabled public location snapshot must remain while public HTML is enabled.' );
+sidrena_stream_runtime_assert( ! is_file( $other_path ), 'Disabled location snapshot must be removed.' );
+sidrena_stream_runtime_assert( ! is_file( $legacy_path ), 'Legacy public snapshot without an enabled location must be removed.' );
+
+file_put_contents( $legacy_path, '{}' );
+$cleanup->invoke( $pricelist, $locations, false );
+sidrena_stream_runtime_assert( ! is_file( $path ), 'Disabling public HTML must remove the remaining JSONL snapshot.' );
+sidrena_stream_runtime_assert( ! is_file( $legacy_path ), 'Disabling public HTML must also remove legacy JSON snapshots.' );
+
 rmdir( dirname( $path ) );
 rmdir( dirname( dirname( $path ) ) );
 rmdir( $base );
