@@ -149,7 +149,6 @@ jobs:
           Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
 
           Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
-          Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
           Autor: brendigo
@@ -447,7 +446,6 @@ jobs:
           Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
 
           Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
-          Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
           Autor: brendigo
