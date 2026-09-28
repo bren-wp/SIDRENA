@@ -21,6 +21,7 @@ function remove_accents( $value ) {
 	return strtr( (string) $value, array( 'Č'=>'C','Ć'=>'C','Š'=>'S','Ž'=>'Z','Đ'=>'D','č'=>'c','ć'=>'c','š'=>'s','ž'=>'z','đ'=>'d' ) );
 }
 function wp_check_invalid_utf8( $value, $strip = false ) { unset( $strip ); return (string) $value; }
+function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php';
@@ -66,6 +67,14 @@ if ( function_exists( 'simplexml_load_string' ) ) {
 }
 
 $admin = Sidrena_Admin::instance();
+
+$validate_price = new ReflectionMethod( 'Sidrena_Admin', 'validated_import_price' );
+$validate_price->setAccessible( true );
+sidrena_import_stream_assert( '1234.56' === $validate_price->invoke( $admin, '1.234,56' ), 'Woo financial CSV validation must preserve a valid Croatian decimal.' );
+sidrena_import_stream_assert( '' === $validate_price->invoke( $admin, '' ), 'Woo financial CSV validation must preserve an intentionally blank value.' );
+sidrena_import_stream_assert( null === $validate_price->invoke( $admin, 'abc' ), 'Woo financial CSV validation must reject malformed numeric text instead of treating it as an empty value.' );
+sidrena_import_stream_assert( null === $validate_price->invoke( $admin, '-1,00' ), 'Woo financial CSV validation must reject negative retail/reference prices.' );
+
 $limit = new ReflectionMethod( 'Sidrena_Admin', 'enforce_csv_row_limit' );
 $limit->setAccessible( true );
 
