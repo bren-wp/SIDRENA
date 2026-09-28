@@ -500,7 +500,14 @@ final class Sidrena_Admin {
 		$total_items      = max( 0, absint( $stats['products'] ) + absint( $stats['services'] ) );
 		$anchor_ready     = max( 0, $total_items - absint( $stats['missing_total'] ) );
 		$health_checks    = $this->health_checks( $stats, $last, $settings );
-		$health_issues    = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
+		$health_issues    = count(
+			array_filter(
+				$health_checks,
+				static function ( $check ) {
+				return empty( $check[0] );
+				}
+			)
+		);
 		$health_total     = max( 1, count( $health_checks ) );
 		$health_score     = max( 0, min( 100, (int) round( ( ( $health_total - $health_issues ) / $health_total ) * 100 ) ) );
 		$is_ready         = 0 === $health_issues;
@@ -891,7 +898,14 @@ final class Sidrena_Admin {
 		$sales_pending  = $stats['sale_incomplete'] + $stats['service_sale_incomplete'];
 		$sales_ready    = max( 0, $sales_total - $sales_pending );
 		$health_checks  = $this->health_checks( $stats, $last, $settings );
-		$health_issues  = count( array_filter( $health_checks, static function ( $check ) { return empty( $check[0] ); } ) );
+		$health_issues  = count(
+			array_filter(
+				$health_checks,
+				static function ( $check ) {
+				return empty( $check[0] );
+				}
+			)
+		);
 		?>
 		<div class="sid-page-head">
 			<div>
