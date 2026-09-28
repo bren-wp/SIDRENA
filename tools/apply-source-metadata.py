@@ -14,6 +14,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 AUTHOR = "brendigo"
+LEGACY_AUTHOR = "Bren" + "digo"
 AUTHOR_URI = "https://brendigo.com/"
 PLUGIN_URI = "https://brendigo.com/sidrene-cijene/"
 SUPPORT = "sidrena@brendigo.com"
@@ -115,7 +116,7 @@ def add_after_shebang(text: str, header: str) -> str:
 
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
-    text = text.replace("Brendigo", "brendigo")
+    text = text.replace(LEGACY_AUTHOR, AUTHOR)
     if rel in ENTRYPOINTS:
         return apply_entrypoint(text)
     if has_metadata(text):
