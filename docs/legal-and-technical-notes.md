@@ -51,7 +51,7 @@ Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put 
 
 ## Digitalni cjenici
 
-Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javne strojno obradive CSV/XML cjenike. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu.
+Za obveznike s mrežnom stranicom NN 101/2026, 1213 propisuje javni strojno obradivi cjenik u XML ili CSV formatu. Trgovac ažurira cjenik proizvoda radnim danom najkasnije do 08:00, a pružatelj usluge kod promjene cijene najkasnije do 08:00 na dan stupanja promjene na snagu. SIDRENA tehnički generira oba formata radi interoperabilnosti i jednostavnije razmjene podataka; time se ne tvrdi da propis zahtijeva istodobnu objavu oba formata.
 
 Prethodne objave moraju ostati javno dostupne najmanje 30 dana. Tehničko rješenje mora omogućiti automatizirano prikupljanje podataka o aktualnim maloprodajnim cijenama.
 
