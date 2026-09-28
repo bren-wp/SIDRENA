@@ -104,9 +104,10 @@ sidrena_rest_location_assert( ! isset( $default_response->data['location']['sequ
 sidrena_rest_location_assert( array( 'id', 'code', 'kind', 'address' ) === array_keys( $default_response->data['location'] ), 'Public REST location payload must use the canonical public field set.' );
 
 $index_response = $rest->index();
-foreach ( array( 'generator', 'plugin_url', 'ruleset', 'rules_effective', 'catalog_mode', 'woocommerce_active', 'product_count', 'retention_days' ) as $internal_key ) {
+foreach ( array( 'generator', 'ruleset', 'rules_effective', 'catalog_mode', 'woocommerce_active', 'product_count', 'retention_days' ) as $internal_key ) {
 	sidrena_rest_location_assert( ! array_key_exists( $internal_key, $index_response->data ), 'Public index must not expose internal runtime metadata: ' . $internal_key );
 }
+sidrena_rest_location_assert( 'https://brendigo.com/sidrene-cijene/' === ( $index_response->data['plugin_url'] ?? '' ), 'Public index must retain the canonical plugin URL.' );
 
 $known = $method->invoke( $rest, 'RIJEKA-CENTAR' );
 sidrena_rest_location_assert( 'rijeka-centar' === ( $known['id'] ?? '' ), 'Known explicit location must resolve after sanitization.' );
