@@ -173,11 +173,9 @@ SIDRENA cijena mora dolaziti iz stvarne evidencije. Ne unosite izmišljenu vrije
 
 Za opće novobuhvaćene stavke zadani referentni datum je 10.09.2026., a za ranije obuhvaćene FMCG kategorije 02.05.2025. Posebni slučajevi evidentiraju se na stavci.
 
-### Korak 5 — ako postoji sniženje, provjerite 30-dnevnu referencu
+### Korak 5 — ako postoji poseban oblik prodaje
 
-Najniža cijena u prethodnih 30 dana i javna arhiva od 30 dana nisu ista stvar. SIDRENA ih vodi odvojeno.
-
-Kod posebnog oblika prodaje provjerite da postoji dokaziva 30-dnevna referenca ili stvarno primjenjiva iznimka.
+Evidentirajte da je poseban oblik prodaje aktivan i navedite njegov naziv. SIDRENA pritom i dalje koristi sidrenu cijenu određenu za mjerodavni datum; ne uvodi zasebnu 30-dnevnu referentnu cijenu.
 
 ### Korak 6 — provjerite jediničnu cijenu
 
@@ -229,7 +227,7 @@ Nemojte ručno brisati datoteke u uploads/sidrena, mijenjati manifest ili uređi
 
 Prije produkcijske objave provjerite najmanje sljedeće:
 
-- dodatna/sidrena cijena uz važeću cijenu kada je obveza primjenjiva
+- sidrena cijena uz važeću cijenu kada je obveza primjenjiva
 - referentni datum 10.09.2026. za novobuhvaćene proizvode/usluge, odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije
 - CSV ili XML javni cjenik
 - zasebnu objavu po lokaciji i webshopu kada je primjenjivo
@@ -241,15 +239,9 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 
 ## SIDRENA cijena
 
-SIDRENA cijena je zasebna referentna vrijednost koja se prikazuje uz aktualnu maloprodajnu cijenu kada je obveza primjenjiva. Nemojte je poistovjećivati s najnižom cijenom u prethodnih 30 dana niti s arhivskom cijenom iz javnog cjenika.
+SIDRENA cijena je zasebna referentna vrijednost koja se prikazuje uz aktualnu maloprodajnu cijenu kada je obveza primjenjiva. Poseban oblik prodaje vodi se samo kroz status i naziv oblika; 30-dnevno razdoblje u SIDRENA-i odnosi se na javnu arhivu objavljenih cjenika, ne na izračun sidrene cijene.
 
 Vrijednost i datum moraju odgovarati stvarnoj poslovnoj evidenciji. SIDRENA može tehnički spremiti, prikazati i provjeriti vrijednost, ali ne može sama utvrditi je li uneseni povijesni podatak činjenično točan. Ako proizvod ili usluga imaju poseban status, prije objave provjerite primjenjivi službeni izvor ili stručnu pravnu procjenu.
-
-## Najniža cijena u prethodnih 30 dana
-
-Najniža cijena u prethodnih 30 dana koristi se kod posebnih oblika prodaje kada je primjenjiva. To je poseban podatkovni sloj i ne zamjenjuje sidrenu cijenu.
-
-SIDRENA vodi povijest cijena odvojeno od javne arhive datoteka. Ručni unos 30-dnevne vrijednosti koristite samo kada imate provjerenu evidenciju koju plugin ne može rekonstruirati iz dostupne povijesti. Iznimke se ne smiju uključivati samo radi uklanjanja upozorenja.
 
 ## Jedinična cijena
 
