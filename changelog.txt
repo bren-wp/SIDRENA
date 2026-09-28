@@ -6,6 +6,13 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.24 =
+* Završene su sve dodatne korekcije iz WordPress.org review maila nakon što je 1.0.23 već bio javno objavljen.
+* External-service disclosure sada eksplicitno pokriva brendigo, WhatsApp, Narodne novine, Ministarstvo gospodarstva, HOK i povijesni DIRH primjer iz reviewa.
+* Dodan je regression guard koji sprječava da službeni pravni/informacijski hostovi postanu automatski PHP HTTP ili browser fetch endpointi.
+* Zadržani su finalni sigurni javni nazivi i slugovi, brendigo ownership metadata, nonce/capability zaštite, ograničeni admin noticeovi i model bez telemetrije.
+* 1.0.24 uključuje i sve code-audit popravke iz 1.0.23 bez retroaktivnog mijenjanja već objavljenog releasea.
+
 = 1.0.23 =
 * Uklonjena je duplicirana registracija shortcoda [sidrena_cjenici] iz REST klase; javni renderer sada ima jednog vlasnika i više se ne može tiho pregaziti redoslijedom hookova.
 * Dodani su regresijski testovi koji u oba izdanja provjeravaju vlasništvo nad javnim shortcodeom.
