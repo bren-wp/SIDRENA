@@ -29,6 +29,7 @@ function register_deactivation_hook( $file, $callback ) { unset( $file, $callbac
 function current_user_can( $capability ) { return 'activate_plugins' === $capability; }
 function get_current_screen() { return (object) array( 'id' => 'plugins' ); }
 function esc_html__( $text, $domain = null ) { unset( $domain ); return $text; }
+function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_\\-]/i', '', (string) $value ) ); }
 
 require $root . '/includes/sidrena-bootstrap.php';
 
