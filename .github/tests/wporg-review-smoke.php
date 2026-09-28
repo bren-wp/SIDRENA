@@ -174,9 +174,9 @@ foreach ( $production_files as $file ) {
 }
 
 sidrena_wporg_assert(
-	2 === substr_count( $production_source, "'admin_notices'" )
+	1 === substr_count( $production_source, "'admin_notices'" )
 	&& 0 === substr_count( $production_source, "'all_admin_notices'" ),
-	'Only the two scoped dependency/conflict admin notices are allowed; global all_admin_notices are forbidden.'
+	'Only the scoped SIDRENA edition-conflict admin notice is allowed; global all_admin_notices are forbidden.'
 );
 
 sidrena_wporg_assert(
@@ -186,12 +186,12 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $bootstrap_source, "'plugins' !== " . '$screen->id' )
-	&& false !== strpos( $bootstrap_source, 'notice notice-error is-dismissible' )
+	false !== strpos( $woo_main, 'Requires Plugins: woocommerce' )
+	&& false === strpos( $bootstrap_source, "'admin_notices'" )
 	&& false === stripos( $bootstrap_source, 'donation' )
 	&& false === stripos( $bootstrap_source, 'revolut' )
 	&& false === stripos( $bootstrap_source, '80 EUR' ),
-	'WooCommerce dependency notice must stay Plugins-screen-only, dismissible, and free of donation/setup marketing.'
+	'WooCommerce dependency handling must rely on the core Requires Plugins header without a custom dashboard notice.'
 );
 
 sidrena_wporg_assert(
