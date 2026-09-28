@@ -133,7 +133,7 @@ sidrena_archive_assert( substr_count( $source, '$this->optional_location_id( $re
 sidrena_archive_assert( false !== strpos( $source, 'if ( null === $location_id ) {' ), 'Public location filter resolution must preserve an explicit invalid state.' );
 sidrena_archive_assert( false !== strpos( $source, 'status_header( 404 );' ), 'Dedicated public routes must return HTTP 404 for an explicit unknown or disabled location.' );
 sidrena_archive_assert( false !== strpos( $source, "'' === \$location_raw ? '' : Sidrena_Utils::sanitize_location_id( \$location_raw )" ), 'An explicitly empty location query parameter must remain empty instead of becoming the sanitizer fallback ID.' );
-sidrena_archive_assert( false !== strpos( $source, 'render_archive_groups( $groups )' ), 'Grouped archive renderer is missing.' );
+sidrena_archive_assert( false !== strpos( $source, 'render_archive_groups( $groups, $view )' ), 'View-aware grouped archive renderer is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidrena' )" ), 'Archive download action is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "add_shortcode( 'sidrena_cjenik_url'" ), 'Premium current-file URL shortcode is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'prikaz'   => 'kartice'" ), 'Premium public file layout attribute is missing.' );
