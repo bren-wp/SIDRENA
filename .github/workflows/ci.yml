@@ -218,7 +218,7 @@ jobs:
           test "$WP_VERSION" = "$WP_STABLE"
           test "$WP_VERSION" = "$WOO_STABLE"
           grep -Fq 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' "$WP_MAIN"
-          grep -Fq 'Plugin Name: brendigo Sidrene cijene i cjenici za WooCommerce' "$WOO_MAIN"
+          grep -Fq 'Plugin Name: brendigo Sidrene cijene i cjenici' "$WOO_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-digitalni-cjenici$' "$WP_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-cjenici$' "$WOO_MAIN"
           ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"
