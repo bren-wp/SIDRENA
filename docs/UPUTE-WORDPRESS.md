@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# Sidrena WordPress 1.0.10 - Upute za korištenje
+# Sidrena WordPress 1.0.21 - Upute za korištenje
 
 ![Stvarni Sidrena WordPress admin prikaz](media/screenshot-wordpress.png)
 
@@ -43,14 +43,14 @@ Sidrena WordPress namijenjena je WordPress web stranicama koje **ne koriste WooC
 
 ## Instalacija
 
-Instalacijski ZIP 1.0.10 je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
+Instalacijski ZIP 1.0.21 je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
 
-1. Prenesite `sidrena-wordpress-1.0.10.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
+1. Prenesite `sidrena-wordpress-1.0.21.zip` u WordPress > Dodaci > Dodaj novi > Prenesi dodatak.
 2. Aktivirajte **Sidrena WordPress**.
 3. Otvorite **Sidrena** u lijevom admin meniju.
 4. Otvorite **Sidrena > Katalog**.
 
-Kod nadogradnje preko starije SIDRENA WordPress verzije 1.0.10 automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
+Kod nadogradnje preko starijeg SIDRENA WordPress izdanja plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
 
 ## Najbrži način za postojeću web stranicu
 
@@ -150,7 +150,7 @@ Prethodne uspješne CSV/XML objave ostaju javno dostupne prema postavljenom razd
 
 - Sidrena prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.10.zip` i `sidrena-woocommerce-1.0.10.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.21.zip` i `sidrena-woocommerce-1.0.21.zip`.
 
 ## WP-CLI
 
