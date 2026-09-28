@@ -58,7 +58,7 @@ This file records the repository-side audit performed before the next WordPress.
 - it is limited to the WordPress Plugins screen, requires `activate_plugins`, and is dismissible.
 - the WooCommerce dependency uses the core `Requires Plugins: woocommerce` header instead of a custom dashboard notice.
 - no `all_admin_notices` hook exists.
-- donation and optional paid setup are confined to SIDRENA Support/documentation, not global notices or general dashboard marketing.
+- donation hyperlinks/CTAs are removed from the plugin, readmes and generated manuals; optional one-time setup remains confined to SIDRENA Support/documentation and does not unlock features.
 
 **Proof:** WordPress.org regression guard and admin-polish guard.
 
@@ -108,9 +108,10 @@ This file records the repository-side audit performed before the next WordPress.
 - the only PHP automatic HTTP request is the administrator-triggered public-access check.
 - that check is restricted to SIDRENA publication URLs under the current site's own public upload base, validates the URL, uses `wp_safe_remote_get()`, explicitly rejects unsafe URLs, limits redirects/response size and sends no catalogue/customer payload to brendigo.
 - the frontend compatibility fetch is same-origin and targets the local SIDRENA read-only REST endpoint.
-- official legal sources, brendigo, WhatsApp and Revolut are user-initiated links and are documented as such in both readmes.
+- official legal sources, brendigo and WhatsApp are user-initiated links and are documented as such in both readmes.
+- no Revolut/donation URL is bundled in production or documentation.
 - public REST/manifest output does not inject a brendigo credit URL or other automatic public-facing external link.
-- Terms/Privacy destinations for the external support/donation services are documented.
+- Terms/Privacy destinations for the remaining external support services are documented.
 
 **Proof:** WordPress.org network regression guard and readme External services sections.
 
