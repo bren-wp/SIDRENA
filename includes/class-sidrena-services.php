@@ -181,7 +181,7 @@ final class Sidrena_Services {
 		<?php
 	}
 
- 	public function save( $post_id, $post ) {
+	public function save( $post_id, $post ) {
 		unset( $post );
 		if ( ! isset( $_POST['sidrena_service_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['sidrena_service_nonce'] ) ), 'sidrena_service_save' ) ) {
 			return;
