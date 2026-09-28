@@ -811,9 +811,9 @@ final class Sidrena_Utils {
 		return '' === $value ? '' : (float) $value;
 	}
 
-	public static function product_meta_with_parent( $product, $key, $default = '' ) {
+	public static function product_meta_with_parent( $product, $key, $fallback = '' ) {
 		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
-			return $default;
+			return $fallback;
 		}
 
 		$value = get_post_meta( $product->get_id(), $key, true );
@@ -830,7 +830,7 @@ final class Sidrena_Utils {
 				}
 			}
 		}
-		return $default;
+		return $fallback;
 	}
 
 	public static function get_product_code( $product ) {
