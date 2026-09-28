@@ -168,7 +168,7 @@ final class Sidrena_Utils {
 
 
 	public static function support_pdf_url() {
-		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-PODRSKA.pdf' : '';
+		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-UPUTE.pdf' : '';
 	}
 
 	public static function developer_label() {
