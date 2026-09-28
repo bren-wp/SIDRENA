@@ -2000,13 +2000,12 @@ final class Sidrena_Admin {
 		if ( ! is_resource( $stream ) ) {
 			return new WP_Error( 'upload_open' );
 		}
-		rewind( $resource );
-		if ( false === fgetcsv( $resource, 0, $delimiter ) ) {
+		rewind( $stream );
+		if ( false === fgetcsv( $stream, 0, $delimiter ) ) {
 			return new WP_Error( 'upload_header' );
 		}
 		return $count;
 	}
-
 
 	private function resolve_aliases( $map, $aliases ) {
 		foreach ( $aliases as $canonical => $names ) {
