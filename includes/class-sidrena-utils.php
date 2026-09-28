@@ -499,10 +499,7 @@ final class Sidrena_Utils {
 		return trim( (string) $header, '_' );
 	}
 
-	public static function normalize_unit( $unit ) {
-		$unit = trim( (string) $unit );
-		$unit = function_exists( 'mb_strtolower' ) ? mb_strtolower( $unit, 'UTF-8' ) : strtolower( $unit );
-		$unit = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $unit );
+	public static function unit_aliases() {
 		$aliases = array(
 			'miligram' => 'mg', 'miligrami' => 'mg',
 			'gram' => 'g', 'grama' => 'g', 'grami' => 'g',
@@ -515,7 +512,79 @@ final class Sidrena_Utils {
 			'metar' => 'm', 'metra' => 'm', 'metara' => 'm',
 			'komad' => 'kom', 'komada' => 'kom', 'ko' => 'kom', 'pcs' => 'kom', 'pc' => 'kom',
 		);
+		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_aliases', $aliases ) : $aliases;
+		if ( ! is_array( $filtered ) ) {
+			return $aliases;
+		}
+
+		$out = array();
+		foreach ( $filtered as $alias => $canonical ) {
+			$alias = trim( strtolower( (string) $alias ) );
+			$alias = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $alias );
+			$canonical = trim( strtolower( (string) $canonical ) );
+			$canonical = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $canonical );
+			if ( '' === $alias || '' === $canonical || ! preg_match( '/^[a-z0-9_-]{1,32}$/', $alias ) || ! preg_match( '/^[a-z0-9_-]{1,32}$/', $canonical ) ) {
+				continue;
+			}
+			$out[ $alias ] = $canonical;
+		}
+		return $out;
+	}
+
+	public static function normalize_unit( $unit ) {
+		$unit = trim( (string) $unit );
+		$unit = function_exists( 'mb_strtolower' ) ? mb_strtolower( $unit, 'UTF-8' ) : strtolower( $unit );
+		$unit = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $unit );
+		$aliases = self::unit_aliases();
 		return isset( $aliases[ $unit ] ) ? $aliases[ $unit ] : $unit;
+	}
+
+	public static function unit_definitions() {
+		$defaults = array(
+			'mg'  => array( 'base' => 'kg', 'multiplier' => 0.000001 ),
+			'g'   => array( 'base' => 'kg', 'multiplier' => 0.001 ),
+			'dag' => array( 'base' => 'kg', 'multiplier' => 0.01 ),
+			'kg'  => array( 'base' => 'kg', 'multiplier' => 1.0 ),
+			'ml'  => array( 'base' => 'l', 'multiplier' => 0.001 ),
+			'cl'  => array( 'base' => 'l', 'multiplier' => 0.01 ),
+			'dl'  => array( 'base' => 'l', 'multiplier' => 0.1 ),
+			'l'   => array( 'base' => 'l', 'multiplier' => 1.0 ),
+			'mm'  => array( 'base' => 'm', 'multiplier' => 0.001 ),
+			'cm'  => array( 'base' => 'm', 'multiplier' => 0.01 ),
+			'dm'  => array( 'base' => 'm', 'multiplier' => 0.1 ),
+			'm'   => array( 'base' => 'm', 'multiplier' => 1.0 ),
+			'mm2' => array( 'base' => 'm²', 'multiplier' => 0.000001 ),
+			'cm2' => array( 'base' => 'm²', 'multiplier' => 0.0001 ),
+			'dm2' => array( 'base' => 'm²', 'multiplier' => 0.01 ),
+			'm2'  => array( 'base' => 'm²', 'multiplier' => 1.0 ),
+			'cm3' => array( 'base' => 'm³', 'multiplier' => 0.000001 ),
+			'dm3' => array( 'base' => 'm³', 'multiplier' => 0.001 ),
+			'm3'  => array( 'base' => 'm³', 'multiplier' => 1.0 ),
+			'kom' => array( 'base' => 'kom', 'multiplier' => 1.0 ),
+		);
+		$filtered = function_exists( 'apply_filters' ) ? apply_filters( 'sidrena_unit_definitions', $defaults ) : $defaults;
+		if ( ! is_array( $filtered ) ) {
+			return $defaults;
+		}
+
+		$out = array();
+		foreach ( $filtered as $key => $definition ) {
+			$key = trim( strtolower( (string) $key ) );
+			$key = str_replace( array( ' ', '.', '²', '^2', '³', '^3' ), array( '', '', '2', '2', '3', '3' ), $key );
+			if ( ! preg_match( '/^[a-z0-9_-]{1,32}$/', $key ) || ! is_array( $definition ) ) {
+				continue;
+			}
+			$base       = isset( $definition['base'] ) ? sanitize_text_field( (string) $definition['base'] ) : '';
+			$multiplier = isset( $definition['multiplier'] ) && is_numeric( $definition['multiplier'] ) ? (float) $definition['multiplier'] : 0.0;
+			if ( '' === $base || strlen( $base ) > 32 || ! is_finite( $multiplier ) || $multiplier <= 0 || $multiplier > 1000000000000.0 ) {
+				continue;
+			}
+			$out[ $key ] = array(
+				'base'       => $base,
+				'multiplier' => $multiplier,
+			);
+		}
+		return $out;
 	}
 
 	public static function parse_quantity_with_unit( $value ) {
@@ -544,28 +613,7 @@ final class Sidrena_Utils {
 			return array();
 		}
 
-		$units = array(
-			'mg'  => array( 'base' => 'kg', 'multiplier' => 0.000001 ),
-			'g'   => array( 'base' => 'kg', 'multiplier' => 0.001 ),
-			'dag' => array( 'base' => 'kg', 'multiplier' => 0.01 ),
-			'kg'  => array( 'base' => 'kg', 'multiplier' => 1.0 ),
-			'ml'  => array( 'base' => 'l', 'multiplier' => 0.001 ),
-			'cl'  => array( 'base' => 'l', 'multiplier' => 0.01 ),
-			'dl'  => array( 'base' => 'l', 'multiplier' => 0.1 ),
-			'l'   => array( 'base' => 'l', 'multiplier' => 1.0 ),
-			'mm'  => array( 'base' => 'm', 'multiplier' => 0.001 ),
-			'cm'  => array( 'base' => 'm', 'multiplier' => 0.01 ),
-			'dm'  => array( 'base' => 'm', 'multiplier' => 0.1 ),
-			'm'   => array( 'base' => 'm', 'multiplier' => 1.0 ),
-			'mm2' => array( 'base' => 'm²', 'multiplier' => 0.000001 ),
-			'cm2' => array( 'base' => 'm²', 'multiplier' => 0.0001 ),
-			'dm2' => array( 'base' => 'm²', 'multiplier' => 0.01 ),
-			'm2'  => array( 'base' => 'm²', 'multiplier' => 1.0 ),
-			'cm3' => array( 'base' => 'm³', 'multiplier' => 0.000001 ),
-			'dm3' => array( 'base' => 'm³', 'multiplier' => 0.001 ),
-			'm3'  => array( 'base' => 'm³', 'multiplier' => 1.0 ),
-			'kom' => array( 'base' => 'kom', 'multiplier' => 1.0 ),
-		);
+		$units = self::unit_definitions();
 		if ( ! isset( $units[ $unit_key ] ) ) {
 			return array();
 		}

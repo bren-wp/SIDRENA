@@ -27,6 +27,14 @@ function apply_filters( $tag, $value ) {
 	return $value;
 }
 
+$GLOBALS['sidrena_test_filters'] = array();
+function apply_filters( $tag, $value ) {
+	if ( isset( $GLOBALS['sidrena_test_filters'][ $tag ] ) && is_callable( $GLOBALS['sidrena_test_filters'][ $tag ] ) ) {
+		return call_user_func( $GLOBALS['sidrena_test_filters'][ $tag ], $value );
+	}
+	return $value;
+}
+
 function wp_strip_all_tags( $value ) {
 	return strip_tags( (string) $value );
 }
@@ -134,6 +142,31 @@ sidrena_assert_same( 'g', $quantity['unit'] ?? '', 'Package unit parsing failed.
 $unit_price = Sidrena_Utils::calculate_unit_price( '3,75', '750', 'g' );
 sidrena_assert_same( 'kg', $unit_price['unit'] ?? '', 'Base unit calculation failed.' );
 sidrena_assert_same( '5', $unit_price['unit_price'] ?? '', 'Unit price calculation failed.' );
+
+$GLOBALS['sidrena_test_filters']['sidrena_unit_definitions'] = static function ( $units ) {
+	$units['oz'] = array( 'base' => 'kg', 'multiplier' => 0.028349523125 );
+	$units['bad-negative'] = array( 'base' => 'kg', 'multiplier' => -1 );
+	$units['bad-empty-base'] = array( 'base' => '', 'multiplier' => 1 );
+	return $units;
+};
+$GLOBALS['sidrena_test_filters']['sidrena_unit_aliases'] = static function ( $aliases ) {
+	$aliases['unca'] = 'oz';
+	$aliases['bad alias!'] = '../broken';
+	return $aliases;
+};
+
+$custom_unit_price = Sidrena_Utils::calculate_unit_price( '10', '2', 'unca' );
+sidrena_assert_same( 'kg', $custom_unit_price['unit'] ?? '', 'Custom unit alias must resolve to the filtered unit definition.' );
+sidrena_assert_same( '176.3698', $custom_unit_price['unit_price'] ?? '', 'Custom unit conversion produced an unexpected price.' );
+$custom_units = Sidrena_Utils::unit_definitions();
+sidrena_assert_same( true, isset( $custom_units['oz'] ), 'Validated custom unit definition must be retained.' );
+sidrena_assert_same( false, isset( $custom_units['bad-negative'] ), 'Negative unit multipliers must be rejected.' );
+sidrena_assert_same( false, isset( $custom_units['bad-empty-base'] ), 'Unit definitions without a base unit must be rejected.' );
+$custom_aliases = Sidrena_Utils::unit_aliases();
+sidrena_assert_same( 'oz', $custom_aliases['unca'] ?? '', 'Validated custom unit alias must be retained.' );
+sidrena_assert_same( false, isset( $custom_aliases['bad alias!'] ), 'Unsafe unit alias keys must be rejected.' );
+
+$GLOBALS['sidrena_test_filters'] = array();
 
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1.234,56' ), 'Croatian thousands/decimal parsing failed.' );
 sidrena_assert_same( '1234.56', Sidrena_Utils::decimal( '1,234.56' ), 'International thousands/decimal parsing failed.' );
