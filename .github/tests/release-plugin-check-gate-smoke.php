@@ -29,14 +29,14 @@ sidrena_release_gate_assert(
 	'Release workflow must run deterministic real Plugin Check gates for both production editions.'
 );
 sidrena_release_gate_assert(
-	false !== strpos( $release, 'build/release-plugin-check/sidrena-wordpress' )
-	&& false !== strpos( $release, 'build/release-plugin-check/sidrena-woocommerce' ),
+	false !== strpos( $release, 'build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $release, 'build/release-plugin-check/brendigo-sidrena-cijena' ),
 	'Release Plugin Check must target staged production-shaped builds.'
 );
 sidrena_release_gate_assert(
-	false !== strpos( $release, 'cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-wordpress" build/release-plugin-check/' )
-	&& false !== strpos( $release, 'cp -a "$RUNNER_TEMP/.sidrena-build/sidrena-woocommerce" build/release-plugin-check/' ),
-	'Release Plugin Check staging must copy the exact build output used for ZIP publication.'
+	false !== strpos( $release, 'cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici" build/release-plugin-check/' )
+	&& false !== strpos( $release, 'cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena" build/release-plugin-check/' ),
+	'Release Plugin Check staging must copy exact public-slug package roots used for ZIP publication.'
 );
 
 $wp_gate    = strpos( $release, 'Plugin Check release gate — WordPress edition' );
