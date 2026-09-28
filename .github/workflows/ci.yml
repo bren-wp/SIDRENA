@@ -280,8 +280,8 @@ jobs:
 
           WP_ZIP="$OUT/sidrena-wordpress-$VERSION.zip"
           WOO_ZIP="$OUT/sidrena-woocommerce-$VERSION.zip"
-          WP="$OUT/.sidrena-build/sidrena-wordpress"
-          WOO="$OUT/.sidrena-build/sidrena-woocommerce"
+          WP="$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici"
+          WOO="$OUT/.sidrena-build/brendigo-sidrena-cijena"
 
           for ZIP in "$WP_ZIP" "$WOO_ZIP"; do
             test -s "$ZIP"

@@ -30,8 +30,10 @@ $bootstrap_source = file_get_contents( $root . '/includes/sidrena-bootstrap.php'
 $products_source = file_get_contents( $root . '/includes/class-sidrena-products.php' );
 $rest_source = file_get_contents( $root . '/includes/class-sidrena-rest.php' );
 $public_source = file_get_contents( $root . '/includes/class-sidrena-public.php' );
+$build_source = file_get_contents( $root . '/tools/build-editions.sh' );
+$plugin_check_runner = file_get_contents( $root . '/tools/run-plugin-check.sh' );
 
-foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source, $products_source, $rest_source, $public_source ) as $source ) {
+foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $plugin_check, $release, $bulk_source, $admin_source, $bootstrap_source, $products_source, $rest_source, $public_source, $build_source, $plugin_check_runner ) as $source ) {
 	sidrena_wporg_assert( false !== $source, 'WordPress.org review guard could not read a required source file.' );
 }
 
@@ -69,6 +71,15 @@ sidrena_wporg_assert(
 	false !== strpos( $wp_readme, '=== SIDRENA ===' )
 	&& false !== strpos( $woo_readme, '=== SIDRENA ===' ),
 	'Both WordPress.org readme titles must remain SIDRENA.'
+);
+
+sidrena_wporg_assert(
+	false !== strpos( $build_source, 'WP_SLUG="brendigo-sidrene-cijene-digitalni-cjenici"' )
+	&& false !== strpos( $build_source, 'WOO_SLUG="brendigo-sidrena-cijena"' )
+	&& false !== strpos( $build_source, 'WP_STAGE="$WORK/$WP_SLUG"' )
+	&& false !== strpos( $build_source, 'WOO_STAGE="$WORK/$WOO_SLUG"' )
+	&& false !== strpos( $plugin_check_runner, 'if [[ "$PLUGIN_SLUG" != "$PUBLIC_SLUG" ]]' ),
+	'Production ZIP roots must equal their public slugs so Plugin Check cannot mask text-domain or trademark findings.'
 );
 
 foreach ( array( $wp_readme, $woo_readme ) as $readme ) {
