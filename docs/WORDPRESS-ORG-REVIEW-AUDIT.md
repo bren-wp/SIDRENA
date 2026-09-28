@@ -181,6 +181,13 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Proof:** `.github/workflows/wporg-real-assets.yml` and its workflow result on the final SHA.
 
+## Deterministic Plugin Check runtime
+
+- Plugin Check remains the official WordPress `plugin-check` plugin executed through WP-CLI against the production-shaped package.
+- CI pins `@wordpress/env 11.15.0`, `@wp-playground/cli 3.1.55`, and `@php-wasm/node 3.1.55` because the unpinned upstream action attempted to resolve unpublished `@php-wasm/node 3.1.56` before Plugin Check could start.
+- No Plugin Check code, warning, error, trademark check, or category is suppressed.
+- `tools/run-plugin-check.sh` fails on any reported `ERROR` or `WARNING`; the release workflow uses the same runner as pull-request validation.
+
 ## Final submission rule
 
 The WooCommerce permalink requested in the reply to the existing WordPress.org review email thread is:
