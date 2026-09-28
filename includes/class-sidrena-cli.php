@@ -130,8 +130,9 @@ final class Sidrena_CLI {
 					}
 				}
 			}
+			$product_count = count( $products );
 			++$page;
-		} while ( 100 === count( $products ) );
+		} while ( 100 === $product_count );
 
 		if ( ! $dry_run && $filled ) {
 			Sidrena_Pricelist::queue_regeneration();
