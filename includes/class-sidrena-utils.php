@@ -68,14 +68,13 @@ final class Sidrena_Utils {
 		) {
 			unset( $settings[ $legacy_key ] );
 		}
-		$settings                     = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days']   = 30;
+		$settings                   = wp_parse_args( $settings, self::defaults() );
+		$settings['retention_days'] = 30;
 		// Backward-compatible read-only aliases for older internal callers.
 		$settings['default_ref_date'] = self::standard_reference_date();
 		$settings['fmcg_ref_date']    = self::fmcg_reference_date();
 		return $settings;
 	}
-
 
 	public static function admin_capability() {
 		$capability = apply_filters( 'sidrena_admin_capability', 'manage_sidrena' );
@@ -162,11 +161,9 @@ final class Sidrena_Utils {
 		return '80 EUR';
 	}
 
-
 	public static function installation_service_url() {
 		return 'mailto:' . self::support_email() . '?subject=' . rawurlencode( 'Sidrena - opcionalno jednokratno postavljanje 80 EUR' );
 	}
-
 
 	public static function support_pdf_url() {
 		return defined( 'SIDRENA_URL' ) ? SIDRENA_URL . 'docs/SIDRENA-UPUTE.pdf' : '';
@@ -208,7 +205,6 @@ final class Sidrena_Utils {
 		}
 		return $locations;
 	}
-
 
 	public static function uploaded_text_type_allowed( $tmp_name, $filename, $allowed_extensions ) {
 		$tmp_name           = (string) $tmp_name;
@@ -319,7 +315,6 @@ final class Sidrena_Utils {
 		}
 		return $fallback;
 	}
-
 
 	public static function format_mysql_datetime( $value ) {
 		$value = sanitize_text_field( (string) $value );
@@ -715,7 +710,6 @@ final class Sidrena_Utils {
 		);
 	}
 
-
 	public static function normalize_text_encoding( $contents ) {
 		$contents = (string) $contents;
 		if ( '' === $contents ) {
@@ -761,7 +755,6 @@ final class Sidrena_Utils {
 		}
 		return wp_check_invalid_utf8( $contents, true );
 	}
-
 
 	public static function format_iso_datetime( $value ) {
 		$value = trim( (string) $value );
