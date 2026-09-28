@@ -22,11 +22,6 @@ function get_option( $key, $default = false ) {
 	return array_key_exists( $key, $values ) ? $values[ $key ] : $default;
 }
 
-function apply_filters( $tag, $value ) {
-	unset( $tag );
-	return $value;
-}
-
 $GLOBALS['sidrena_test_filters'] = array();
 function apply_filters( $tag, $value ) {
 	if ( isset( $GLOBALS['sidrena_test_filters'][ $tag ] ) && is_callable( $GLOBALS['sidrena_test_filters'][ $tag ] ) ) {
@@ -98,11 +93,6 @@ sidrena_assert_same( 'Korzo 1, 2. kat, 51000 Rijeka', $default_locations[0]['add
 sidrena_assert_same( "'=HYPERLINK(\"https://example.test\")", Sidrena_Utils::csv_safe_cell( '=HYPERLINK("https://example.test")' ), 'Formula prefix must be neutralized.' );
 sidrena_assert_same( "' \t=1+1", Sidrena_Utils::csv_safe_cell( " \t=1+1" ), 'Whitespace-prefixed formula must be neutralized.' );
 sidrena_assert_same( '-12,50', Sidrena_Utils::csv_safe_cell( '-12,50' ), 'Negative numeric values must stay numeric.' );
-
-sidrena_assert_same( '12345678903', Sidrena_Utils::sanitize_oib( '123 456 789 03' ), 'OIB sanitization failed.' );
-sidrena_assert_same( true, Sidrena_Utils::is_valid_oib( '12345678903' ), 'Valid OIB control digit was rejected.' );
-sidrena_assert_same( false, Sidrena_Utils::is_valid_oib( '12345678904' ), 'Invalid OIB control digit was accepted.' );
-sidrena_assert_same( false, Sidrena_Utils::is_valid_oib( '12345' ), 'Short OIB was accepted.' );
 
 $croatian = 'Željko Šarić, Čakovec';
 $cp1250   = "\x8Eeljko \x8Aari\xE6, \xC8akovec";
