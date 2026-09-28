@@ -52,4 +52,35 @@ sidrena_plugin_check_workflow_assert(
 	'Install-folder names must not be reused as public Plugin Check slugs.'
 );
 
+$workflow_sources = '';
+foreach ( glob( $root . '/.github/workflows/*.yml' ) as $workflow_file ) {
+	$workflow_source = file_get_contents( $workflow_file );
+	if ( false === $workflow_source ) {
+		fwrite( STDERR, 'Unable to read workflow: ' . basename( $workflow_file ) . PHP_EOL );
+		exit( 1 );
+	}
+	$workflow_sources .= "\n" . $workflow_source;
+}
+
+foreach (
+	array(
+		'actions/checkout@v4',
+		'actions/setup-node@v4',
+		'actions/upload-artifact@v4',
+		'actions/download-artifact@v4',
+		'softprops/action-gh-release@v2',
+	) as $deprecated_action
+) {
+	sidrena_plugin_check_workflow_assert(
+		false === strpos( $workflow_sources, $deprecated_action ),
+		'Deprecated GitHub Actions runtime reference returned: ' . $deprecated_action
+	);
+}
+
+sidrena_plugin_check_workflow_assert( substr_count( $workflow_sources, 'actions/checkout@v7' ) >= 7, 'All repository workflows must use checkout v7.' );
+sidrena_plugin_check_workflow_assert( substr_count( $workflow_sources, 'actions/setup-node@v7' ) >= 2, 'Node-based workflows must use setup-node v7.' );
+sidrena_plugin_check_workflow_assert( substr_count( $workflow_sources, 'actions/upload-artifact@v7' ) >= 2, 'Artifact uploads must use upload-artifact v7.' );
+sidrena_plugin_check_workflow_assert( substr_count( $workflow_sources, 'actions/download-artifact@v8' ) >= 2, 'Artifact downloads must use download-artifact v8.' );
+sidrena_plugin_check_workflow_assert( 1 === substr_count( $workflow_sources, 'softprops/action-gh-release@v3' ), 'Release publishing must use action-gh-release v3.' );
+
 fwrite( STDOUT, "Sidrena Plugin Check workflow smoke test passed.\n" );
