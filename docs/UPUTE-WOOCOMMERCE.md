@@ -1,6 +1,6 @@
 <!--
 Sidrena source file.
-Author: Brendigo
+Author: brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
@@ -309,8 +309,8 @@ Prije produkcijske objave provjerite najmanje sljedeće:
 - WhatsApp: **+385 91 901 0092**
 - Plugin možete instalirati i postaviti sami.
 - Opcionalno jednokratno postavljanje od strane Brendiga: **80 EUR jednokratno**.
-- Detaljni PDF priručnik i podrška: `docs/SIDRENA-PODRSKA.pdf`
-- Autor: **Brendigo**
+- Detaljni PDF priručnik i podrška: `docs/SIDRENA-UPUTE.pdf`
+- Autor: **brendigo**
 
 ## Donacija
 
