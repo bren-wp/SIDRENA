@@ -13,4 +13,5 @@ web trgovini.</text>
 <text x="1031" y="197" fill="#082D5B" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="25" font-weight="800">Proizvodi i cijene</text>
 <g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" fill="#3E5D78"><rect x="1031" y="220" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="242">Aktualna cijena</text><circle cx="1411" cy="237" r="8" fill="#10B981"/><rect x="1031" y="265" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="287">Cijena na datum</text><circle cx="1411" cy="282" r="8" fill="#10B981"/><rect x="1031" y="310" width="408" height="34" rx="9" fill="#F5F9FC"/><text x="1047" y="332">Najniža cijena 30 dana</text><circle cx="1411" cy="327" r="8" fill="#10B981"/></g>
 <path d="M0 455C260 405 450 496 720 438c255-55 500 42 824-11v73H0z" fill="url(#accent)" opacity=".18"/>
+<text x="46" y="472" fill="#B9D9EC" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">by brendigo</text>
 </svg>
