@@ -25,4 +25,11 @@
 			<property name="text_domain" type="array" value="sidrena,brendigo-sidrena-cijena,brendigo-sidrene-cijene-digitalni-cjenici"/>
 		</properties>
 	</rule>
+
+	<!-- Internal edition identifiers are machine keys, not human-facing WordPress copy. -->
+	<rule ref="WordPress.WP.CapitalPDangit.Misspelled">
+		<exclude-pattern>includes/class-sidrena-utils.php</exclude-pattern>
+		<exclude-pattern>includes/sidrena-bootstrap.php</exclude-pattern>
+		<exclude-pattern>includes/sidrena-edition-guard.php</exclude-pattern>
+	</rule>
 </ruleset>
