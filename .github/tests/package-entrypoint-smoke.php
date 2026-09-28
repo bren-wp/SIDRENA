@@ -58,6 +58,7 @@ $expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
 preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
 $actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
 $expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrena-cijena';
+$package_slug    = basename( $root );
 
 require $main;
 
@@ -71,6 +72,7 @@ function sidrena_entry_assert( $condition, $message ) {
 sidrena_entry_assert( defined( 'SIDRENA_EDITION' ) && SIDRENA_EDITION === $edition, 'Entrypoint defined the wrong edition.' );
 sidrena_entry_assert( '' !== $expected_version && defined( 'SIDRENA_VERSION' ) && $expected_version === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
 sidrena_entry_assert( $expected_domain === $actual_domain, 'Entrypoint text domain does not match the public plugin slug.' );
+sidrena_entry_assert( $expected_domain === $package_slug, 'Package root folder must exactly match the public plugin slug/text domain.' );
 sidrena_entry_assert( defined( 'SIDRENA_DIR' ) && realpath( SIDRENA_DIR ) === realpath( $root ), 'SIDRENA_DIR does not point to the package root.' );
 sidrena_entry_assert( function_exists( 'sidrena_cijena' ), 'Template helper was not loaded through the package entrypoint.' );
 sidrena_entry_assert( class_exists( 'Sidrena_Plugin' ), 'Common plugin bootstrap did not load.' );
