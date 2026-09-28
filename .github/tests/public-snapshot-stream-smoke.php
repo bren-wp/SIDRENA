@@ -36,7 +36,7 @@ sidrena_stream_assert( false !== strpos( $pricelist, "array( 'jsonl', 'json' )" 
 sidrena_stream_assert( false !== strpos( $pricelist, "\$snapshot_cleanup = \$this->cleanup_public_snapshots( \$locations, 'yes' === \$settings['enable_public_html'] );" ), 'Snapshot cleanup must receive the public HTML enabled state and return a verifiable result.' );
 sidrena_stream_assert( false !== strpos( $pricelist, 'if ( $public_enabled ) {' ), 'Snapshot cleanup must only preserve enabled-location snapshots while public HTML is enabled.' );
 sidrena_stream_assert( false !== strpos( $pricelist, 'if ( is_wp_error( $snapshot_cleanup ) ) {' ), 'Snapshot cleanup failures must be surfaced into the generation warning flow.' );
-sidrena_stream_assert( false !== strpos( $pricelist, "$removed = unlink( $file )" ), 'Snapshot cleanup must verify physical file deletion.' );
+sidrena_stream_assert( false !== strpos( $pricelist, '$removed = unlink( $file )' ), 'Snapshot cleanup must verify physical file deletion.' );
 sidrena_stream_assert( false !== strpos( $pricelist, "'public_snapshot_cleanup'" ), 'Snapshot cleanup failures must be audit logged.' );
 
 fwrite( STDOUT, "Sidrena streaming public snapshot smoke test passed.\n" );
