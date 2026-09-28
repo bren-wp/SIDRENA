@@ -3,7 +3,7 @@
 # Author: brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://brendigo.com/sidrene-cijene/
-# Support: sidrena@brendigo.com
+# Support: info@brendigo.com
 
 import os
 import re
@@ -260,16 +260,12 @@ def support_buttons():
     table = Table(
         [
             [
-                button_link("Pošalji e-mail", "mailto:sidrena@brendigo.com"),
-                button_link("Otvori WhatsApp", "https://wa.me/385919010092"),
-            ],
-            [
-                Paragraph("<b>Donacija nije potrebna</b>", button),
-                button_link("Sidrena web", "https://brendigo.com/sidrene-cijene/"),
+                button_link("Pošalji e-mail", "mailto:info@brendigo.com"),
+                button_link("Web-stranica projekta", "https://brendigo.com/sidrene-cijene/"),
             ],
         ],
         colWidths=[85 * mm, 85 * mm],
-        rowHeights=[13 * mm, 13 * mm],
+        rowHeights=[13 * mm],
     )
     table.setStyle(
         TableStyle(
@@ -419,9 +415,7 @@ story = [
 contact = [
     [paragraph("VERZIJA", label), paragraph(version, value_style)],
     [paragraph("IZDANJE", label), paragraph(edition_label, value_style)],
-    [paragraph("E-MAIL PODRŠKA", label), link("sidrena@brendigo.com", "mailto:sidrena@brendigo.com")],
-    [paragraph("WHATSAPP PODRŠKA", label), link("+385 91 901 0092", "https://wa.me/385919010092")],
-    [paragraph("OPCIONALNO POČETNO POSTAVLJANJE", label), paragraph("80 EUR jednokratno", value_style)],
+    [paragraph("E-MAIL PODRŠKA", label), link("info@brendigo.com", "mailto:info@brendigo.com")],
 ]
 contact_table = Table(contact, colWidths=[68 * mm, 102 * mm], hAlign="LEFT")
 contact_table.setStyle(
@@ -444,11 +438,7 @@ story.extend(
         Spacer(1, 4 * mm),
         paragraph("Kako koristiti ovaj priručnik", h2),
         paragraph(
-            "Čitajte ga redom pri prvom postavljanju. Nakon toga koristite naslov poglavlja koji odgovara radnji koju želite napraviti. Zakonski važni tehnički izlazi u Sidreni automatizirani su kako ih krajnji korisnik ne bi slučajno isključio."
-        ),
-        paragraph(
-            "Plaćeno početno postavljanje i dobrovoljna donacija nisu uvjet za korištenje plugina niti znače pravno jamstvo. Plugin možete potpuno samostalno instalirati i koristiti prema ovim uputama.",
-            quote,
+            "Čitajte ga redom pri prvom postavljanju. Nakon toga koristite naslov poglavlja koji odgovara radnji koju želite napraviti. Ključni tehnički izlazi u SIDRENA modulu automatizirani su kako ih krajnji korisnik ne bi slučajno isključio."
         ),
         PageBreak(),
     ]
@@ -459,20 +449,13 @@ story.extend(markdown_story(guide_text))
 story.extend(
     [
         PageBreak(),
-        paragraph("Podrška, donacija i opcionalno postavljanje", h2),
+        paragraph("Podrška i pravna napomena", h2),
         paragraph(
-            "Ako nakon uputa trebate pomoć, pripremite adresu WordPress web-stranice, verziju WordPressa, naziv Sidrena izdanja, opis problema i relevantnu poruku iz Sidrena Dnevnika. Nemojte slati administratorske lozinke e-mailom ili WhatsAppom."
+            "Ako nakon uputa trebate pomoć, pripremite adresu WordPress web-stranice, verziju WordPressa, naziv SIDRENA izdanja, opis problema i relevantnu poruku iz SIDRENA Dnevnika. Nemojte slati administratorske lozinke ili privatne korisničke podatke e-mailom."
         ),
         Spacer(1, 2 * mm),
         support_buttons(),
         Spacer(1, 3 * mm),
-        paragraph("Opcionalno jednokratno početno postavljanje: 80 EUR.", value_style),
-        paragraph(
-            "Plaćeno postavljanje je dobrovoljna usluga brendigo podrške i nije uvjet za rad plugina, pristup funkcijama ili tehničku usklađenost."
-        ),
-        paragraph(
-            "Donacija nije potrebna za korištenje plugina i ne otključava funkcije, podršku niti pravnu potvrdu."
-        ),
         paragraph("Pravna napomena", h3),
         paragraph(
             "Sidrena tehnički podržava unos, provjeru, evidenciju, automatizaciju i objavu podataka prema ugrađenim pravilima. Softver ne može zamijeniti stvarnu poslovnu evidenciju ni pravni savjet. Primjenjivost na konkretne proizvode, usluge, lokacije i poslovni model mora provjeriti odgovorna osoba.",
