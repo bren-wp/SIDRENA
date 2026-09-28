@@ -293,7 +293,7 @@ jobs:
           test -f "$WP/sidrena-wordpress.php"
           test -f "$WP/readme.txt"
           test -s "$WP/docs/UPUTE.md"
-          test -s "$WP/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WP/docs/SIDRENA-UPUTE.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
           test ! -f "$WP/includes/class-sidrena-history.php"
@@ -310,7 +310,7 @@ jobs:
           test -f "$WOO/sidrena-woocommerce.php"
           test -f "$WOO/readme.txt"
           test -s "$WOO/docs/UPUTE.md"
-          test -s "$WOO/docs/SIDRENA-PODRSKA.pdf"
+          test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test -f "$WOO/includes/class-sidrena-history.php"
           test -f "$WOO/includes/class-sidrena-location-data.php"
@@ -364,7 +364,7 @@ jobs:
           set -euo pipefail
           RETIRED_NAME_A="cijena""guard"
           RETIRED_NAME_B="digi""adria"
-          RETIRED_BRENDIGO='Brendigo[[:space:]]+LTD([[:space:]]+Developer)?'
+          RETIRED_BRENDIGO='brendigo[[:space:]]+LTD([[:space:]]+Developer)?'
           if grep -RIniE "${RETIRED_NAME_A}|${RETIRED_NAME_B}|${RETIRED_BRENDIGO}" . --exclude-dir=.git; then
             echo 'Retired branding detected.' >&2
             exit 1
