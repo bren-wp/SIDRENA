@@ -129,8 +129,8 @@ final class Sidrena_REST {
 				'generated_at' => isset( $last['generated_at'] ) ? sanitize_text_field( (string) $last['generated_at'] ) : null,
 				'manifest_url' => 'yes' === $settings['publish_manifest'] ? esc_url_raw( $paths['manifest_url'] ) : null,
 				'realtime_url' => esc_url_raw( rest_url( 'sidrena/v1/cijene' ) ),
-				'current'      => Sidrena_Utils::public_index(),
-				'archive'      => Sidrena_Utils::archive_index(),
+				'current'      => Sidrena_Utils::public_file_index( Sidrena_Utils::public_index() ),
+				'archive'      => Sidrena_Utils::public_file_index( Sidrena_Utils::archive_index() ),
 			)
 		);
 	}
@@ -441,10 +441,10 @@ final class Sidrena_REST {
 			'parent_id'                    => $product->is_type( 'variation' ) ? $product->get_parent_id() : 0,
 			'lokacija_id'                  => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
 			'lokacija_sifra'               => sanitize_text_field( $location['code'] ?? '' ),
-			'naziv'                        => $product->get_name(),
-			'sifra'                        => Sidrena_Utils::get_product_code( $product ),
-			'marka'                        => Sidrena_Utils::get_brand( $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product ),
-			'jedinica_mjere'               => Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit' ),
+			'naziv'                        => sanitize_text_field( (string) $product->get_name() ),
+			'sifra'                        => sanitize_text_field( (string) Sidrena_Utils::get_product_code( $product ) ),
+			'marka'                        => sanitize_text_field( (string) Sidrena_Utils::get_brand( $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product ) ),
+			'jedinica_mjere'               => sanitize_text_field( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit' ) ),
 			'cijena_za_jedinicu_mjere'     => Sidrena_Utils::decimal( Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price' ) ),
 			'jedinicna_cijena_status'       => sanitize_key( (string) Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_unit_price_status', 'review' ) ),
 			'maloprodajna_cijena'          => Sidrena_Utils::decimal( $current ),
@@ -452,9 +452,9 @@ final class Sidrena_REST {
 			'naziv_posebnog_oblika_prodaje'=> $product->is_on_sale( 'edit' ) ? $sale_name : '',
 			'sidrena_cijena'               => Sidrena_Utils::decimal( $anchor ),
 			'datum_sidrene_cijene'         => '' === $anchor ? '' : Sidrena_Utils::current_reference_date( $product->get_id() ),
-			'barkod'                       => Sidrena_Utils::get_barcode( $product ),
-			'dostupnost'                   => $availability,
-			'updated_at'                   => isset( $override['updated_at'] ) ? $override['updated_at'] : get_post_modified_time( 'c', true, $product->get_id() ),
+			'barkod'                       => sanitize_text_field( (string) Sidrena_Utils::get_barcode( $product ) ),
+			'dostupnost'                   => in_array( $availability, array( 'dostupno', 'nedostupno' ), true ) ? $availability : '',
+			'updated_at'                   => sanitize_text_field( (string) ( isset( $override['updated_at'] ) ? $override['updated_at'] : get_post_modified_time( 'c', true, $product->get_id() ) ) ),
 		);
 	}
 
@@ -486,17 +486,17 @@ final class Sidrena_REST {
 				'id'                            => $service->ID,
 				'lokacija_id'                   => $location_id,
 				'lokacija_sifra'                => sanitize_text_field( $location['code'] ?? '' ),
-				'naziv_usluge'                  => get_the_title( $service ),
-				'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
-				'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
-				'pripadajuci_troskovi'          => get_post_meta( $service->ID, '_sidrena_service_costs', true ),
-				'ugradbena_zamjenska_roba'      => get_post_meta( $service->ID, '_sidrena_service_goods', true ),
+				'naziv_usluge'                  => sanitize_text_field( (string) get_the_title( $service ) ),
+				'vrsta_usluge'                  => sanitize_text_field( (string) get_post_meta( $service->ID, '_sidrena_service_type', true ) ),
+				'opseg_usluge'                  => sanitize_textarea_field( (string) get_post_meta( $service->ID, '_sidrena_service_scope', true ) ),
+				'pripadajuci_troskovi'          => sanitize_textarea_field( (string) get_post_meta( $service->ID, '_sidrena_service_costs', true ) ),
+				'ugradbena_zamjenska_roba'      => sanitize_textarea_field( (string) get_post_meta( $service->ID, '_sidrena_service_goods', true ) ),
 				'maloprodajna_cijena'           => Sidrena_Utils::decimal( $current ),
 				'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
-				'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
+				'naziv_posebnog_oblika_prodaje' => $sale ? sanitize_text_field( (string) get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) ) : '',
 				'sidrena_cijena'                 => Sidrena_Utils::decimal( $anchor ),
-				'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : ( $date ? $date : Sidrena_Utils::settings()['default_ref_date'] ),
-				'updated_at'                     => get_post_modified_time( 'c', true, $service->ID ),
+				'datum_sidrene_cijene'           => '' === Sidrena_Utils::decimal( $anchor ) ? '' : sanitize_text_field( (string) ( $date ? $date : Sidrena_Utils::settings()['default_ref_date'] ) ),
+				'updated_at'                     => sanitize_text_field( (string) get_post_modified_time( 'c', true, $service->ID ) ),
 			);
 		}
 
