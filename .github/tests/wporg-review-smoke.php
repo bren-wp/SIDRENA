@@ -178,7 +178,7 @@ sidrena_wporg_assert(
 sidrena_wporg_assert(
 	false !== strpos( $admin_source, "0 !== strpos( \$url, \$base )" )
 	&& false !== strpos( $admin_source, 'wp_http_validate_url( $url )' )
-	&& false !== strpos( $admin_source, "'reject_unsafe_urls' => true" ),
+	&& 1 === preg_match( "/'reject_unsafe_urls'\\s*=>\\s*true/", $admin_source ),
 	'The sole HTTP public-access check must remain constrained to validated same-site SIDRENA publication URLs.'
 );
 
