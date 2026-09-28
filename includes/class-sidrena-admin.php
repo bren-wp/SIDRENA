@@ -159,7 +159,7 @@ final class Sidrena_Admin {
 
 		array_unshift(
 			$links,
-			'<a href="' . esc_url( admin_url( 'admin.php?page=sidrena' ) ) . '">' . esc_html__( 'Otvori Sidrenu', 'sidrena' ) . '</a>'
+			'<a href="' . esc_url( admin_url( 'admin.php?page=sidrena' ) ) . '">' . esc_html__( 'Otvori SIDRENA', 'sidrena' ) . '</a>'
 		);
 		return $links;
 	}
@@ -478,7 +478,7 @@ final class Sidrena_Admin {
 			<div class="sid-note-icon"><span class="dashicons dashicons-book-alt"></span></div>
 			<div>
 				<h2><?php esc_html_e( 'Važno prije produkcije', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Sidrena je tehnički alat. Povijesne i referentne cijene moraju dolaziti iz stvarne poslovne evidencije. Nakon svake veće promjene kataloga provjerite javne CSV/XML datoteke, HTML prikaz, arhivu i dnevnik.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'SIDRENA je tehnički alat. Sidrene cijene moraju dolaziti iz stvarne poslovne evidencije. Nakon svake veće promjene kataloga provjerite javne CSV/XML datoteke, HTML prikaz, arhivu i dnevnik.', 'sidrena' ); ?></p>
 			</div>
 		</section>
 		<?php
@@ -1248,7 +1248,7 @@ final class Sidrena_Admin {
 				<section class="sid-card sid-tool-card">
 					<div class="sid-tool-icon"><span class="dashicons dashicons-products"></span></div>
 					<h2><?php esc_html_e( 'WordPress katalog proizvoda', 'sidrena' ); ?></h2>
-					<p><?php esc_html_e( 'Dodajte proizvode ručno ili uvezite CSV/XML izravno u Sidrena katalog. WooCommerce nije potreban.', 'sidrena' ); ?></p>
+					<p><?php esc_html_e( 'Dodajte proizvode ručno ili uvezite CSV/XML izravno u SIDRENA katalog. WooCommerce nije potreban.', 'sidrena' ); ?></p>
 					<a class="button button-primary sid-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ); ?>"><?php esc_html_e( 'Otvori katalog i uvoz', 'sidrena' ); ?></a>
 				</section>
 				<section class="sid-card sid-tool-card">
