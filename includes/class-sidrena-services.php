@@ -127,7 +127,7 @@ final class Sidrena_Services {
 			</p>
 			<p>
 				<label for="sidrena_service_sale_name"><strong><?php esc_html_e( 'Naziv posebnog oblika prodaje', 'sidrena' ); ?></strong></label><br>
-				<input class="regular-text" type="text" id="sidrena_service_sale_name" name="sidrena_service_sale_name" value="<?php echo esc_attr( $fields['sale_name'] ); ?>" placeholder="<?php esc_attr_e( 'npr. Akcija', 'sidrena' ); ?>">
+				<input class="regular-text" type="text" id="sidrena_service_sale_name" name="sidrena_service_sale_name" value="<?php echo esc_attr( $fields['sale_name'] ); ?>" placeholder="<?php esc_attr_e( 'npr. naziv posebnog oblika prodaje', 'sidrena' ); ?>">
 			</p>
 		</div>
 		<div class="sid-service-details">
