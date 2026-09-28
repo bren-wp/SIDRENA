@@ -417,7 +417,7 @@ final class Sidrena_Products {
 			array(
 				'id'            => "_sidrena_sale_reference_exemption_{$loop}",
 				'name'          => "_sidrena_sale_reference_exemption[{$loop}]",
-				'value'         => get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) ?: 'none',
+				'value'         => get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) ? get_post_meta( $variation_id, '_sidrena_sale_reference_exemption', true ) : 'none',
 				'label'         => __( 'Izuzeće 30 dana', 'sidrena' ),
 				'wrapper_class' => 'form-row form-row-last',
 				'options'       => array(
@@ -961,7 +961,7 @@ final class Sidrena_Products {
 		}
 		$parent_id = wp_get_post_parent_id( $variation_id );
 		$group     = $parent_id ? get_post_meta( $parent_id, '_sidrena_reference_group', true ) : '';
-		return $group ?: 'standard';
+		return $group ? $group : 'standard';
 	}
 
 	public function snapshot_new_variation( $variation_id ) {
