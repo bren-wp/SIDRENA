@@ -215,7 +215,10 @@
 			return;
 		}
 		fetchMarkup(id).then(function (html) {
-			if (id !== activeId || typeof html !== "string") {
+			if (id !== activeId) {
+				return;
+			}
+			if (typeof html !== "string") {
 				return;
 			}
 			applyMarkup(html, root, variationMode);
