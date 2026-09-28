@@ -35,8 +35,8 @@ $address_pos  = strpos( $generate, "if ( '' === \$address )" );
 sidrena_generation_transaction_assert( false !== $expected_pos && false !== $address_pos && $expected_pos < $address_pos, 'Expected current-index keys must be marked before location validation can fail.' );
 sidrena_generation_transaction_assert( false !== strpos( $generate, "'yes' === \$settings['enable_public_html']" ), 'HTML snapshot work must be skipped when public HTML is disabled.' );
 sidrena_generation_transaction_assert( false !== strpos( $source, 'private function discard_generated_files(' ), 'Generated-file rollback helper is missing.' );
-sidrena_generation_transaction_assert( false !== strpos( $source, "$removed = unlink( $path )" ), 'Retention cleanup must verify physical archive deletion before dropping metadata.' );
-sidrena_generation_transaction_assert( false !== strpos( $source, "$archive[] = $entry;" ), 'Retention cleanup must preserve the archive entry when deletion fails.' );
+sidrena_generation_transaction_assert( false !== strpos( $source, '$removed = unlink( $path )' ), 'Retention cleanup must verify physical archive deletion before dropping metadata.' );
+sidrena_generation_transaction_assert( false !== strpos( $source, '$archive[] = $entry;' ), 'Retention cleanup must preserve the archive entry when deletion fails.' );
 sidrena_generation_transaction_assert( false !== strpos( $source, "'archive_retention_cleanup'" ), 'Retention deletion failures must be recorded in the Sidrena audit log.' );
 
 fwrite( STDOUT, "Sidrena transactional generation smoke test passed.\n" );
