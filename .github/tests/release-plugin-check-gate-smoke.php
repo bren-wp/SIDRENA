@@ -66,6 +66,14 @@ sidrena_release_gate_assert(
 	'Missing release tags must be deferred until after validation gates.'
 );
 
+sidrena_release_gate_assert(
+	false !== strpos( $release, 'V1023_STALE_TARGET=c7a41fa9cf31e0c0f8fb3c43769b59fd474ab4c0' )
+	&& false !== strpos( $resolve_block, '"$VERSION" == "1.0.23" && "$EXISTING_TAG_TARGET" == "$V1023_STALE_TARGET"' )
+	&& false !== strpos( $release, 'CURRENT_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"' )
+	&& false !== strpos( $release, 'test "$CURRENT_TAG_TARGET" = "$V1023_STALE_TARGET"' ),
+	'1.0.23 release repair must be a one-time controlled refresh tied to the known premature tag target.'
+);
+
 
 $main_guard_start = strpos( $release, '- name: Require stable release branch to match main' );
 $main_guard_end   = strpos( $release, '- name: Refresh first public 0.1.0 release when rebuilding from release branch' );
