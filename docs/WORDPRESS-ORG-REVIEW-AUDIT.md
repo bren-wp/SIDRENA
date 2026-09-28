@@ -120,6 +120,7 @@ This file records the repository-side audit performed before the next WordPress.
 **Resolution:**
 - sidrena/reference price, lowest price in the previous 30 days and public 30-day archive are separate concepts.
 - the documentation states that machine-readable publication accepts XML **or** CSV; SIDRENA generates both as a technical interoperability choice without claiming both are simultaneously required.
+- the service-price-list timing wording is aligned to NN 101/2026-1213: on each change, no later than 08:00 on the day the service price-list amendment is published; the older “day the change enters into force” paraphrase is prohibited by regression coverage.
 - SIDRENA does not claim 100% legal compliance or guaranteed compliance.
 - future/base-price rules are not silently equated with the current SIDRENA reference-price model.
 - legal sources and effective dates are documented in `docs/legal-and-technical-notes.md`.
