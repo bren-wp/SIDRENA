@@ -152,6 +152,12 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
+	1 === substr_count( $admin_source, 'Sidrena_Utils::donation_url()' )
+	&& 2 === substr_count( $admin_source, 'Sidrena_Utils::installation_price()' ),
+	'Donation and optional paid setup must remain confined to the SIDRENA Support screen.'
+);
+
+sidrena_wporg_assert(
 	false !== strpos( $bootstrap_source, "'plugins' !== " . '$screen->id' )
 	&& false !== strpos( $bootstrap_source, 'notice notice-error is-dismissible' )
 	&& false === stripos( $bootstrap_source, 'donation' )
