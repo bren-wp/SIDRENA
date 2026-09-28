@@ -34,7 +34,7 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Plugin Name: brendigo Sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Sidrene cijene i cjenici za WooCommerce' ),
+	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Sidrene cijene i cjenici' ),
 	'Final Croatian plugin display names changed.'
 );
 
@@ -58,7 +58,7 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_readme, '=== brendigo Sidrene cijene i digitalni cjenici ===' )
-	&& false !== strpos( $woo_readme, '=== brendigo Sidrene cijene i cjenici za WooCommerce ===' ),
+	&& false !== strpos( $woo_readme, '=== brendigo Sidrene cijene i cjenici ===' ),
 	'WordPress.org readme titles must match plugin headers.'
 );
 
