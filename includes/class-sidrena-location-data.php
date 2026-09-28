@@ -72,8 +72,8 @@ final class Sidrena_Location_Data {
 
 	/**
 	 * Returns only product/variation IDs that have an explicit public availability
-	 * state for a physical location. The order mirrors WooCommerce parent/variation
-	 * catalog ordering without loading the whole WooCommerce catalog first.
+	 * state for a physical location. Variable products preserve WooCommerce's
+	 * configured child order without loading the whole WooCommerce catalog first.
 	 */
 	public static function available_item_ids_for_location( $location_id ) {
 		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
@@ -93,11 +93,56 @@ final class Sidrena_Location_Data {
 			ARRAY_A
 		);
 
-		$ids = array();
+		$groups = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$id = ! empty( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
-			if ( $id ) {
-				$ids[ $id ] = $id;
+			$product_id   = absint( $row['product_id'] ?? 0 );
+			$variation_id = absint( $row['variation_id'] ?? 0 );
+			if ( ! $product_id ) {
+				continue;
+			}
+
+			if ( ! isset( $groups[ $product_id ] ) ) {
+				$groups[ $product_id ] = array(
+					'simple'     => false,
+					'variations' => array(),
+				);
+			}
+
+			if ( $variation_id ) {
+				$groups[ $product_id ]['variations'][ $variation_id ] = $variation_id;
+			} else {
+				$groups[ $product_id ]['simple'] = true;
+			}
+		}
+
+		$ids = array();
+		foreach ( $groups as $product_id => $group ) {
+			if ( ! empty( $group['simple'] ) ) {
+				$ids[ $product_id ] = $product_id;
+			}
+
+			$variation_ids = $group['variations'];
+			if ( empty( $variation_ids ) ) {
+				continue;
+			}
+
+			$parent   = function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+			$children = $parent && is_callable( array( $parent, 'get_children' ) ) ? $parent->get_children() : array();
+			foreach ( is_array( $children ) ? $children : array() as $child_id ) {
+				$child_id = absint( $child_id );
+				if ( isset( $variation_ids[ $child_id ] ) ) {
+					$ids[ $child_id ] = $child_id;
+					unset( $variation_ids[ $child_id ] );
+				}
+			}
+
+			// Keep orphaned/legacy location rows deterministic when Woo cannot
+			// resolve the parent order, without changing valid Woo child order.
+			if ( $variation_ids ) {
+				ksort( $variation_ids, SORT_NUMERIC );
+				foreach ( $variation_ids as $variation_id ) {
+					$ids[ $variation_id ] = $variation_id;
+				}
 			}
 		}
 
