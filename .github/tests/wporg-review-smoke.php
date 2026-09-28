@@ -112,8 +112,8 @@ foreach ( $visuals as $visual ) {
 
 
 sidrena_wporg_assert(
-	false !== strpos( $bulk_source, "current_user_can( 'edit_post', $id )" )
-	&& substr_count( $admin_source, "current_user_can( 'edit_post', $product_id )" ) >= 2,
+	false !== strpos( $bulk_source, "current_user_can( 'edit_post', \$id )" )
+	&& substr_count( $admin_source, "current_user_can( 'edit_post', \$product_id )" ) >= 2,
 	'WooCommerce bulk/import write paths must enforce per-product edit capabilities in addition to action-level permissions.'
 );
 
