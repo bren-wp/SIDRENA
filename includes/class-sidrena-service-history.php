@@ -413,7 +413,7 @@ final class Sidrena_Service_History {
 				array(
 					'post_type'      => 'sidrena_service',
 					'post_status'    => 'publish',
-					'posts_per_page' => 250,
+					'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded history-seeding batch; pagination prevents full-catalog loading.
 					'paged'          => $page,
 					'fields'         => 'ids',
 					'orderby'        => 'ID',
