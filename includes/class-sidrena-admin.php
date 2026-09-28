@@ -623,7 +623,7 @@ final class Sidrena_Admin {
 					<div class="sid-section-head"><div><h2><span class="dashicons dashicons-tag"></span><?php esc_html_e( 'Status oznake cijene', 'sidrena' ); ?></h2></div><span class="sid-status-pill <?php echo $price_labels_ok ? 'is-ok' : 'is-warn'; ?>"><?php echo $price_labels_ok ? esc_html__( 'Ispravno', 'sidrena' ) : esc_html__( 'Provjeriti', 'sidrena' ); ?></span></div>
 					<ul class="sid-reference-checks">
 						<li class="<?php echo $current_price_ok ? 'is-ok' : 'is-warn'; ?>"><span class="dashicons <?php echo $current_price_ok ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><strong><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></strong><small><?php echo $current_price_ok ? esc_html__( 'Evidentirana', 'sidrena' ) : esc_html__( 'Nedostaje na jednoj ili više stavki', 'sidrena' ); ?></small></li>
-						<li class="<?php echo $lowest_price_ok ? 'is-ok' : 'is-warn'; ?>"><span class="dashicons <?php echo $lowest_price_ok ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><strong><?php esc_html_e( 'Najniža cijena u 30 dana', 'sidrena' ); ?></strong><small><?php echo $lowest_price_ok ? esc_html__( 'Nema nepotpunih aktivnih referenci', 'sidrena' ) : esc_html__( 'Aktivno sniženje traži provjeru', 'sidrena' ); ?></small></li>
+						<li class="<?php echo $lowest_price_ok ? 'is-ok' : 'is-warn'; ?>"><span class="dashicons <?php echo $lowest_price_ok ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><strong><?php esc_html_e( 'Najniža cijena u 30 dana', 'sidrena' ); ?></strong><small><?php echo $lowest_price_ok ? esc_html__( 'Nema nepotpunih aktivnih referenci', 'sidrena' ) : esc_html__( 'Aktivni posebni oblik prodaje traži provjeru', 'sidrena' ); ?></small></li>
 						<li class="<?php echo $dated_price_ok ? 'is-ok' : 'is-warn'; ?>"><span class="dashicons <?php echo $dated_price_ok ? 'dashicons-yes-alt' : 'dashicons-warning'; ?>"></span><strong><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></strong><small><?php echo $dated_price_ok ? esc_html__( 'Sidrena cijena evidentirana', 'sidrena' ) : esc_html__( 'Nedostaje na jednoj ili više stavki', 'sidrena' ); ?></small></li>
 					</ul>
 				</section>
@@ -752,17 +752,17 @@ final class Sidrena_Admin {
 		<?php
 	}
 
-	private function dashboard_price_education( $settings ) {
+	private function dashboard_price_education() {
 		$dated_price_caption = sprintf(
 			/* translators: %s: configured reference date. */
-			__( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ),
+			__( 'SIDRENA ruleset primjenjuje datum %s.', 'sidrena' ),
 			wp_date( 'd.m.Y.', strtotime( Sidrena_Legal_Automation::general_reference_date() ) )
 		);
 		?>
 		<div class="sid-price-guide sid-price-guide--reference">
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-cart"></span><h3><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja se trenutno prikazuje kupcu i koristi za prodaju.', 'sidrena' ); ?></p></div>
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-clock"></span><h3><?php esc_html_e( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Najniža provjerljiva cijena u prethodnom razdoblju kada je primjenjivo.', 'sidrena' ); ?></p></div>
-			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Cijena na datum', 'sidrena' ); ?></h3><p><?php echo esc_html( $dated_price_caption ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></h3><p><?php echo esc_html( $dated_price_caption ); ?></p></div>
 		</div>
 		<?php
 	}
@@ -920,7 +920,7 @@ final class Sidrena_Admin {
 			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 			<?php $this->metric_card( __( 'Sidrene cijene', 'sidrena' ), $anchor_ready . '/' . $total_items, 'dashicons-tag', $stats['missing_total'] ? sprintf( __( '%d stavki traži provjeru', 'sidrena' ), $stats['missing_total'] ) : __( 'sve evidentirane', 'sidrena' ), $stats['missing_total'] ? 'warn' : 'ok' ); ?>
 			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
-			<?php $this->metric_card( __( 'Aktivna sniženja', 'sidrena' ), $sales_ready . '/' . $sales_total, 'dashicons-chart-line', $sales_pending ? sprintf( __( '%d bez pune reference', 'sidrena' ), $sales_pending ) : __( 'bez otvorenih upozorenja', 'sidrena' ), $sales_pending ? 'warn' : 'ok' ); ?>
+			<?php $this->metric_card( __( 'Aktivni posebni oblici prodaje', 'sidrena' ), $sales_ready . '/' . $sales_total, 'dashicons-chart-line', $sales_pending ? sprintf( __( '%d bez pune reference', 'sidrena' ), $sales_pending ) : __( 'bez otvorenih upozorenja', 'sidrena' ), $sales_pending ? 'warn' : 'ok' ); ?>
 			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 			<?php $this->metric_card( __( 'Aktualni cjenici', 'sidrena' ), $file_coverage['ready'] . '/' . $file_coverage['expected'], 'dashicons-media-spreadsheet', $file_coverage['missing'] ? sprintf( __( '%d kombinacija nedostaje', 'sidrena' ), $file_coverage['missing'] ) : __( 'očekivane datoteke postoje', 'sidrena' ), $file_coverage['missing'] ? 'warn' : 'ok' ); ?>
 			<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
@@ -970,7 +970,7 @@ final class Sidrena_Admin {
 
 		<section class="sid-card sid-note">
 			<div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div>
-			<div><h2><?php esc_html_e( '30 dana arhive nije isto što i 30-dnevna najniža cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Javna arhiva čuva prethodno objavljene CSV/XML cjenike. Interna povijest cijena zasebno služi za provjeru najniže cijene prije sniženja. Sidrena namjerno ne rekonstruira niti izmišlja povijest koja nije zabilježena ili uvezena iz vjerodostojne evidencije.', 'sidrena' ); ?></p></div>
+			<div><h2><?php esc_html_e( '30 dana arhive nije isto što i 30-dnevna najniža cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Javna arhiva čuva prethodno objavljene CSV/XML cjenike. Interna povijest cijena zasebno služi za provjeru najniže cijene prije posebnog oblika prodaje. Sidrena namjerno ne rekonstruira niti izmišlja povijest koja nije zabilježena ili uvezena iz vjerodostojne evidencije.', 'sidrena' ); ?></p></div>
 		</section>
 		<?php
 	}
@@ -1079,9 +1079,9 @@ final class Sidrena_Admin {
 			array( ! $needs_products || 0 === $stats['unit_price_missing'], __( 'Stavke za koje je jedinična cijena obvezna imaju jedinicu i iznos', 'sidrena' ), __( 'Dopunite jedinicu mjere i cijenu za jedinicu mjere za označene proizvode/varijacije.', 'sidrena' ) ),
 			array( 0 === $stats['missing_service_anchor'], __( 'Objavljene usluge imaju sidrenu cijenu', 'sidrena' ), __( 'Dopunite usluge kojima nedostaje referentna cijena.', 'sidrena' ) ),
 			array( 0 === $stats['service_details_missing'], __( 'Objavljene usluge imaju vrstu i opseg za javni cjenik', 'sidrena' ), __( 'Dopunite vrstu i opseg usluge kako bi javni cjenik sadržavao podatke iz NN 105/2026.', 'sidrena' ) ),
-			array( 0 === $stats['sale_incomplete'], __( 'Aktivna sniženja proizvoda imaju provjerljivu 30-dnevnu referencu ili evidentirano izuzeće', 'sidrena' ), __( 'Za nepotpunu povijest proizvoda unesite provjerenu ručnu vrijednost.', 'sidrena' ) ),
-			array( 0 === $stats['perishable_expiry_missing'], __( 'Lako pokvarljiva roba i roba kojoj brzo istječe rok ima evidentiran krajnji rok uporabe', 'sidrena' ), __( 'Dopunite krajnji rok uporabe na aktivnim sniženjima označenim tim izuzećem.', 'sidrena' ) ),
-			array( 0 === $stats['service_sale_incomplete'], __( 'Aktivna sniženja usluga imaju provjerljivu 30-dnevnu referencu ili evidentiranu primjenjivu iznimku', 'sidrena' ), __( 'Za nepotpunu povijest usluge unesite provjerenu ručnu vrijednost ili, ako je stvarno primjenjivo, označite iznimku.', 'sidrena' ) ),
+			array( 0 === $stats['sale_incomplete'], __( 'Aktivni posebni oblici prodaje proizvoda imaju provjerljivu 30-dnevnu referencu ili evidentirano izuzeće', 'sidrena' ), __( 'Za nepotpunu povijest proizvoda unesite provjerenu ručnu vrijednost.', 'sidrena' ) ),
+			array( 0 === $stats['perishable_expiry_missing'], __( 'Lako pokvarljiva roba i roba kojoj brzo istječe rok ima evidentiran krajnji rok uporabe', 'sidrena' ), __( 'Dopunite krajnji rok uporabe kod aktivnih posebnih oblika prodaje označenih tim izuzećem.', 'sidrena' ) ),
+			array( 0 === $stats['service_sale_incomplete'], __( 'Aktivni posebni oblici prodaje usluga imaju provjerljivu 30-dnevnu referencu ili evidentiranu primjenjivu iznimku', 'sidrena' ), __( 'Za nepotpunu povijest usluge unesite provjerenu ručnu vrijednost ili, ako je stvarno primjenjivo, označite iznimku.', 'sidrena' ) ),
 			array( ! $coverage_issue, __( 'Fizičke lokacije imaju podatke o raspoloživosti po stavci', 'sidrena' ), __( 'Uvezite lokacijsku raspoloživost; globalno Woo stanje možda nije dovoljno za fizičku poslovnicu.', 'sidrena' ) ),
 			array( $output_enabled, __( 'Automatska objava CSV/XML formata je aktivna', 'sidrena' ), __( 'Sidrena treba automatski održavati strojno čitljive formate.', 'sidrena' ) ),
 			array( $before_eight, __( 'Automatsko dnevno generiranje postavljeno je prije 08:00', 'sidrena' ), __( 'Postavite vrijeme prije 08:00; preporuka Sidrene je 06:30 radi operativne rezerve.', 'sidrena' ) ),
@@ -1565,7 +1565,7 @@ final class Sidrena_Admin {
 			<?php $this->rule_card( '01', __( 'Dodatna / sidrena cijena', 'sidrena' ), __( 'Za novobuhvaćene proizvode i usluge referentna je redovna cijena na 10.09.2026.; ranije obuhvaćeni FMCG zadržava 02.05.2025. Ako je stavka na referentni dan bila na akciji, uzima se prethodna redovna cijena. Novouvedena stavka nakon referentnog dana koristi cijenu prvog uvrštenja i taj datum.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html', 'NN 101/2026, 1212' ); ?>
 			<?php $this->rule_card( '02', __( 'XML ili CSV cjenik i 30-dnevna arhiva', 'sidrena' ), __( 'Trgovci koji imaju mrežnu stranicu ažuriraju cjenik proizvoda jednom dnevno, najkasnije do 08:00 za tekući radni dan; pružatelji usluga ažuriraju cjenik usluga uslijed svake promjene, najkasnije do 08:00 dana kada objavljuju izmjenu cjenika usluga. Odluka dopušta XML ili CSV, a SIDRENA radi interoperabilnosti generira oba formata. Prethodne objave moraju ostati javno dostupne najmanje 30 dana, a tehničko rješenje mora omogućiti automatizirani dohvat aktualnih cijena u realnom vremenu.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html', 'NN 101/2026, 1213' ); ?>
 			<?php $this->rule_card( '03', __( 'Detaljna pojašnjenja Ministarstva', 'sidrena' ), __( 'Pojašnjenja pokrivaju webshopove i informativne web-stranice, zasebne podatke po poslovnici, stvarnu raspoloživost po lokaciji, novouvedene proizvode i usluge, promjene šifre/naziva, akcije, usluge bez unaprijed fiksne cijene te strukturu digitalnih cjenika. Profil na društvenoj mreži sam po sebi ne smatra se mrežnom stranicom.', 'sidrena' ), 'https://mingo.gov.hr/print.aspx?id=10440&url=print', __( 'Ministarstvo gospodarstva · 22.09.2026.', 'sidrena' ) ); ?>
-			<?php $this->rule_card( '04', __( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ), __( 'Kod posebnih oblika prodaje robe referentna je najniža cijena primjenjivana za isti proizvod tijekom 30 dana prije početka sniženja. Za lako pokvarljivu robu i robu kojoj brzo istječe rok vrijede posebna pravila; pri takvom sniženju mora biti istaknut i krajnji rok uporabe.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html', 'NN 59/2026, 728' ); ?>
+			<?php $this->rule_card( '04', __( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ), __( 'Kod posebnih oblika prodaje robe referentna je najniža cijena primjenjivana za isti proizvod tijekom 30 dana prije početka posebnog oblika prodaje. Za lako pokvarljivu robu i robu kojoj brzo istječe rok vrijede posebna pravila; pri takvom posebnom obliku prodaje mora biti istaknut i krajnji rok uporabe.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html', 'NN 59/2026, 728' ); ?>
 			<?php $this->rule_card( '05', __( 'Maloprodajna, jedinična i cijena usluge', 'sidrena' ), __( 'NN 105/2026 objavljen je 18.09.2026. i stupa na snagu osmoga dana od objave. Uređuje jasan prikaz maloprodajne i jedinične cijene te iznimke. Za usluge traži lako dostupan cjenik, naziv, vrstu i opseg usluge te uključivanje pripadajućih troškova u cijenu; cijena ugradbene ili zamjenske robe prikazuje se uz pripadajuću uslugu.', 'sidrena' ), 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html', 'NN 105/2026, 1270' ); ?>
 			<section class="sid-card sid-rule-card sid-rule-future"><div class="sid-rule-number">06</div><div><span class="sid-rule-tag"><?php esc_html_e( 'Praćenje promjena', 'sidrena' ); ?></span><h3><?php esc_html_e( 'Bazna cijena u Zakonu od 17.11.2026.', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Članak 7. stavci 1. do 9. izmijenjenog Zakona počinju se primjenjivati 17.11.2026. i uvode obvezu isticanja bazne cijene te objave važećih cjenika proizvoda na mrežnim stranicama. Bazna cijena nije isto što i dodatna/sidrena cijena iz NN 101/2026. Konkretan referentni dan, proizvodi i način isticanja bazne cijene uređuju se provedbenim pravilnikom, pa Sidrena ne pretpostavlja vrijednosti koje još nisu propisane.', 'sidrena' ); ?></p><a href="https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori službeni izvor', 'sidrena' ); ?><span class="dashicons dashicons-external"></span></a></div></section>
 		</div>
@@ -1579,7 +1579,7 @@ final class Sidrena_Admin {
 		<div class="sid-grid sid-grid-2">
 			<?php $this->rule_card( 'A', __( 'HOK — informacije za obrtnike', 'sidrena' ), __( 'HOK sažima obvezu isticanja dodatne/sidrene cijene od 1.10.2026., uključujući isticanje na mrežnim stranicama i referentne datume za novobuhvaćene te ranije obuhvaćene kategorije.', 'sidrena' ), 'https://www.hok.hr/novosti-iz-hok/dodatna-cijena-i-objava-cjenika-od-1-listopada-2026-najvaznije-informacije', 'Hrvatska obrtnička komora · 18.09.2026.' ); ?>
 		</div>
-		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div><div><h2><?php esc_html_e( 'Dvije različite “30 dana” obveze', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Arhiva cjenika i najniža cijena prije sniženja nisu ista stvar. Sidrena vodi oboje odvojeno: javne CSV/XML objave čuva najmanje 30 dana, a internu povijest proizvoda i usluga koristi kao tehničku podlogu za 30-dnevnu referencu prije sniženja.', 'sidrena' ); ?></p></div></section>
+		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div><div><h2><?php esc_html_e( 'Dvije različite “30 dana” obveze', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Arhiva cjenika i najniža cijena prije posebnog oblika prodaje nisu ista stvar. Sidrena vodi oboje odvojeno: javne CSV/XML objave čuva najmanje 30 dana, a internu povijest proizvoda i usluga koristi kao tehničku podlogu za 30-dnevnu referencu prije posebnog oblika prodaje.', 'sidrena' ); ?></p></div></section>
 		<?php
 	}
 

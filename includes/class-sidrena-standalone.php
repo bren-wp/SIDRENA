@@ -791,6 +791,10 @@ final class Sidrena_Standalone {
 			&& 'review' !== $status
 			&& $physical_locations_ready
 			&& $sale_reference_ready;
+		/* translators: %s: locked general SIDRENA reference date. */
+		$standard_reference_label = sprintf( __( 'Standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::general_reference_date() ) );
+		/* translators: %s: locked reference date for previously covered FMCG categories. */
+		$fmcg_reference_label = sprintf( __( 'Ranije obuhvaćeni FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::fmcg_reference_date() ) );
 		?>
 		<tr class="sidrena-standalone-row" data-sidrena-row-key="<?php echo esc_attr( $key ); ?>">
 			<td>
@@ -809,8 +813,8 @@ final class Sidrena_Standalone {
 			<td class="sid-standalone-anchor-cell">
 				<input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $key ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>">
 				<select aria-label="<?php esc_attr_e( 'Ruleset sidrene cijene', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][reference_group]">
-					<option value="standard" <?php selected( $reference_group, 'standard' ); ?>><?php echo esc_html( sprintf( __( 'Standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::general_reference_date() ) ) ); ?></option>
-					<option value="fmcg" <?php selected( $reference_group, 'fmcg' ); ?>><?php echo esc_html( sprintf( __( 'Ranije obuhvaćeni FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::fmcg_reference_date() ) ) ); ?></option>
+					<option value="standard" <?php selected( $reference_group, 'standard' ); ?>><?php echo esc_html( $standard_reference_label ); ?></option>
+					<option value="fmcg" <?php selected( $reference_group, 'fmcg' ); ?>><?php echo esc_html( $fmcg_reference_label ); ?></option>
 					<option value="custom" <?php selected( $reference_group, 'custom' ); ?>><?php esc_html_e( 'Novouvedena stavka nakon 10.09.2026.', 'sidrena' ); ?></option>
 				</select>
 				<input aria-label="<?php esc_attr_e( 'Datum prvog uvrštenja novouvedene stavke', 'sidrena' ); ?>" type="date" min="2026-09-11" name="items[<?php echo esc_attr( $key ); ?>][anchor_date]" value="<?php echo esc_attr( $anchor_date ); ?>">
@@ -1493,24 +1497,24 @@ else :
 		}
 
 		$aliases = array(
-			'name'           => array( 'name', 'naziv', 'naziv_proizvoda' ),
-			'code'           => array( 'code', 'sku', 'sifra', 'sifra_proizvoda', 'sifra_artikla' ),
-			'brand'          => array( 'brand', 'marka', 'marka_proizvoda' ),
-			'current'        => array( 'current', 'price', 'cijena', 'maloprodajna_cijena', 'mpc' ),
-			'anchor'         => array( 'anchor', 'anchor_price', 'sidrena_cijena', 'dodatna_cijena' ),
-			'anchor_date'      => array( 'anchor_date', 'datum_sidrene_cijene', 'referentni_datum' ),
-			'reference_group'  => array( 'reference_group', 'referentna_skupina', 'ruleset_sidrene_cijene' ),
-			'barcode'        => array( 'barcode', 'barkod', 'ean', 'gtin' ),
-			'unit_status'    => array( 'unit_status', 'jedinicna_status', 'jedinicna_cijena_status' ),
-			'quantity'       => array( 'quantity', 'kolicina', 'kolicina_pakiranja', 'neto_kolicina', 'neto_kolicina_proizvoda' ),
-			'quantity_unit'  => array( 'quantity_unit', 'jedinica_kolicine', 'jedinica_pakiranja' ),
-			'unit'           => array( 'unit', 'jedinica', 'jedinica_mjere' ),
-			'unit_price'     => array( 'unit_price', 'cijena_jedinice_mjere', 'cijena_za_jedinicu_mjere' ),
-			'availability'   => array( 'availability', 'dostupnost', 'raspolozivost', 'status_dostupnosti' ),
-			'sale_name'      => array( 'sale_name', 'naziv_posebnog_oblika', 'naziv_posebnog_oblika_prodaje' ),
-			'lowest_30'      => array( 'lowest_30', 'naj_niza_30', 'najniza_cijena_30_dana', 'najniza_cijena_prethodnih_30_dana' ),
-			'sale_exemption' => array( 'sale_exemption', 'iznimka_30_dana', 'iznimka_najnize_cijene' ),
-			'expiry_date'    => array( 'expiry_date', 'krajnji_rok_uporabe', 'rok_uporabe' ),
+			'name'            => array( 'name', 'naziv', 'naziv_proizvoda' ),
+			'code'            => array( 'code', 'sku', 'sifra', 'sifra_proizvoda', 'sifra_artikla' ),
+			'brand'           => array( 'brand', 'marka', 'marka_proizvoda' ),
+			'current'         => array( 'current', 'price', 'cijena', 'maloprodajna_cijena', 'mpc' ),
+			'anchor'          => array( 'anchor', 'anchor_price', 'sidrena_cijena', 'dodatna_cijena' ),
+			'anchor_date'     => array( 'anchor_date', 'datum_sidrene_cijene', 'referentni_datum' ),
+			'reference_group' => array( 'reference_group', 'referentna_skupina', 'ruleset_sidrene_cijene' ),
+			'barcode'         => array( 'barcode', 'barkod', 'ean', 'gtin' ),
+			'unit_status'     => array( 'unit_status', 'jedinicna_status', 'jedinicna_cijena_status' ),
+			'quantity'        => array( 'quantity', 'kolicina', 'kolicina_pakiranja', 'neto_kolicina_proizvoda' ),
+			'quantity_unit'   => array( 'quantity_unit', 'jedinica_kolicine', 'jedinica_pakiranja' ),
+			'unit'            => array( 'unit', 'jedinica', 'jedinica_mjere' ),
+			'unit_price'      => array( 'unit_price', 'cijena_jedinice_mjere', 'cijena_za_jedinicu_mjere' ),
+			'availability'    => array( 'availability', 'dostupnost', 'raspolozivost', 'status_dostupnosti' ),
+			'sale_name'       => array( 'sale_name', 'naziv_posebnog_oblika', 'naziv_posebnog_oblika_prodaje' ),
+			'lowest_30'       => array( 'lowest_30', 'naj_niza_30', 'najniza_cijena_30_dana', 'najniza_cijena_prethodnih_30_dana' ),
+			'sale_exemption'  => array( 'sale_exemption', 'iznimka_30_dana', 'iznimka_najnize_cijene' ),
+			'expiry_date'     => array( 'expiry_date', 'krajnji_rok_uporabe', 'rok_uporabe' ),
 		);
 		$out     = array();
 		foreach ( $aliases as $canonical => $names ) {
@@ -1629,11 +1633,11 @@ else :
 			$out .= '<span class="sidrena-expiry"><span class="sidrena-expiry__label">' . esc_html__( 'Krajnji rok uporabe', 'sidrena' ) . ':</span> <span class="sidrena-expiry__value">' . esc_html( Sidrena_Utils::date_display( $expiry_date ) ) . '</span></span>';
 		}
 		if ( '' !== $anchor ) {
-			$date = self::reference_date( $id );
-			$tooltip           = Sidrena_Utils::anchor_tooltip();
-			$tooltip_id        = 'sidrena-anchor-tip-s' . absint( $id );
-			$tip_html          = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
-			$out              .= '<span class="sidrena-anchor' . ( $tooltip ? ' sidrena-anchor--has-tooltip' : '' ) . '"' . ( $tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '' ) . '><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span>' . $tip_html . '</span>';
+			$date       = self::reference_date( $id );
+			$tooltip    = Sidrena_Utils::anchor_tooltip();
+			$tooltip_id = 'sidrena-anchor-tip-s' . absint( $id );
+			$tip_html   = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+			$out       .= '<span class="sidrena-anchor' . ( $tooltip ? ' sidrena-anchor--has-tooltip' : '' ) . '"' . ( $tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '' ) . '><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span>' . $tip_html . '</span>';
 		}
 		$out .= '</span>';
 		return $out;

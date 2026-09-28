@@ -115,12 +115,12 @@ final class Sidrena_Products {
 		);
 		woocommerce_wp_text_input(
 			array(
-				'id'          => '_sidrena_anchor_date',
-				'label'       => __( 'Datum prvog uvrštenja', 'sidrena' ),
-				'type'        => 'date',
-				'description' => __( 'Koristi se samo za novouvedeni proizvod uz skupinu “Novouvedeni proizvod nakon 10.09.2026.”. Za Standardno i FMCG datum određuje SIDRENA ruleset.', 'sidrena' ),
+				'id'                => '_sidrena_anchor_date',
+				'label'             => __( 'Datum prvog uvrštenja', 'sidrena' ),
+				'type'              => 'date',
+				'description'       => __( 'Koristi se samo za novouvedeni proizvod uz skupinu “Novouvedeni proizvod nakon 10.09.2026.”. Za Standardno i FMCG datum određuje SIDRENA ruleset.', 'sidrena' ),
 				'custom_attributes' => array( 'min' => '2026-09-11' ),
-				'desc_tip'    => true,
+				'desc_tip'          => true,
 			)
 		);
 		echo '</div>';
@@ -305,13 +305,13 @@ final class Sidrena_Products {
 		);
 		woocommerce_wp_text_input(
 			array(
-				'id'            => "_sidrena_anchor_date_{$loop}",
-				'name'          => "_sidrena_anchor_date[{$loop}]",
-				'value'         => get_post_meta( $variation_id, '_sidrena_anchor_date', true ),
-				'label'         => __( 'Datum prvog uvrštenja', 'sidrena' ),
-				'type'          => 'date',
+				'id'                => "_sidrena_anchor_date_{$loop}",
+				'name'              => "_sidrena_anchor_date[{$loop}]",
+				'value'             => get_post_meta( $variation_id, '_sidrena_anchor_date', true ),
+				'label'             => __( 'Datum prvog uvrštenja', 'sidrena' ),
+				'type'              => 'date',
 				'custom_attributes' => array( 'min' => '2026-09-11' ),
-				'wrapper_class' => 'form-row form-row-last',
+				'wrapper_class'     => 'form-row form-row-last',
 			)
 		);
 		woocommerce_wp_select(

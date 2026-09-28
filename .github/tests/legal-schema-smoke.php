@@ -32,6 +32,11 @@ if ( ! function_exists( '__' ) ) {
 		return $text;
 	}
 }
+if ( ! function_exists( 'wp_timezone' ) ) {
+	function wp_timezone() {
+		return new DateTimeZone( 'UTC' );
+	}
+}
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-legal-automation.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';

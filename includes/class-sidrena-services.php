@@ -98,7 +98,7 @@ final class Sidrena_Services {
 			'service_costs' => get_post_meta( $post->ID, '_sidrena_service_costs', true ),
 			'service_goods' => get_post_meta( $post->ID, '_sidrena_service_goods', true ),
 		);
-		$custom_anchor_date    = Sidrena_Legal_Automation::custom_reference_date( $fields['anchor_date'] );
+		$custom_anchor_date     = Sidrena_Legal_Automation::custom_reference_date( $fields['anchor_date'] );
 		$fields['anchor_date'] = $custom_anchor_date ? $custom_anchor_date : Sidrena_Legal_Automation::general_reference_date();
 		?>
 		<div class="sidrena-service-grid">
