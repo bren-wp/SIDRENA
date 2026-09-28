@@ -1,10 +1,25 @@
 Sidrena source file
-Author: Brendigo
+Author: brendigo
 Author URI: https://brendigo.com/
 Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 
 Sidrena changelog
+
+= 1.0.23 =
+* Uklonjena je duplicirana registracija shortcoda [sidrena_cjenici] iz REST klase; javni renderer sada ima jednog vlasnika i više se ne može tiho pregaziti redoslijedom hookova.
+* Dodani su regresijski testovi koji u oba izdanja provjeravaju vlasništvo nad javnim shortcodeom.
+* Uklonjen je zaostali marketinški claim o usklađenosti iz glavnog README-a.
+* PDF visual QA koristi aktualni Pillow API kada je dostupan i više ne emitira upozorenje za zastarjeli Image.getdata() put.
+* Source-metadata detekcija je postrožena na stvarne metadata retke, a zastarjeli duplicirani testni header je uklonjen.
+* Oba plugina podignuta su na 1.0.23 radi korektivnog izdanja nakon dodatnog code-audita.
+
+= 1.0.22 =
+* Pojednostavljen je hrvatski end-user workflow uz automatske publication safeguards i detaljne korisničke upute.
+* Ažurirani su WordPress.org nazivi, slugovi, branding, admin notices i trademark handling prema reviewerskim zahtjevima.
+* Dodani su public file integrity podaci, poboljšani arhiva/download prikazi i edition-specific PDF priručnici.
+* Prošireni su PHP 7.4/8.3/8.4 CI, Plugin Check, distribution/admin/legal i stvarni WordPress/WooCommerce runtime gateovi.
+* Oba plugina podignuta su na 1.0.22.
 
 = 1.0.21 =
 * Ispravljen je javni REST kada parametar location nije zadan: prazna vrijednost više se ne pretvara u sintetičku lokaciju nego se pravilno koristi prva omogućena javna lokacija/kanal.
