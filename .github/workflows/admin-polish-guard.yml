@@ -36,8 +36,8 @@ jobs:
           test -s assets/images/menu-anchor.svg
           test -s assets/images/app-icon.svg
           test -s assets/images/logo-horizontal-light.svg
-          test -s assets/images/logo-wordpress-light.svg
-          test -s assets/images/logo-woocommerce-light.svg
+          test -s assets/images/logo-brendigo-standalone-light.svg
+          test -s assets/images/logo-brendigo-store-light.svg
           test -s assets/images/brand-hero.svg
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
