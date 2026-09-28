@@ -138,6 +138,8 @@ sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidr
 sidrena_archive_assert( false !== strpos( $source, "add_shortcode( 'sidrena_cjenik_url'" ), 'Premium current-file URL shortcode is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'prikaz'   => 'kartice'" ), 'Premium public file layout attribute is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'arhiva'   => 'da'" ), 'Premium archive visibility attribute is missing.' );
+sidrena_archive_assert( false !== strpos( $source, "if ( \$show_archive ) : ?><div><span><?php esc_html_e( 'Arhiva', 'sidrena' )" ), 'Archive summary metric must be hidden when archive output is disabled.' );
+sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__summary--compact' ), 'Compact two-column summary styles are missing when archive output is disabled.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_file_entries'" ), 'Public file entry extension filter is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_archive_groups'" ), 'Public archive group extension filter is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'sidrena_public_files_html'" ), 'Public file HTML extension filter is missing.' );
