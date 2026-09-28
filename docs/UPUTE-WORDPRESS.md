@@ -341,7 +341,7 @@ SIDRENA je tehnički alat za vođenje i objavu podataka. Ne daje pravno jamstvo,
 
 ## Donacija
 
-Donacija za razvoj je **dobrovoljna** i otvara se izravno preko Revoluta.
+Donacija nije potrebna za korištenje SIDRENA funkcija. Plugin ne sadrži donacijski link niti donacija otključava funkcije, podršku ili pravnu potvrdu.
 
 ## Licenca
 
