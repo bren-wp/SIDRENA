@@ -332,7 +332,6 @@ final class Sidrena_Admin {
 		$email_url       = Sidrena_Utils::support_email_url();
 		$whatsapp_url    = Sidrena_Utils::whatsapp_url();
 		$install_url     = Sidrena_Utils::installation_service_url();
-		$donation_url    = Sidrena_Utils::donation_url();
 		?>
 		<div class="sid-page-head">
 			<div>
@@ -382,16 +381,6 @@ final class Sidrena_Admin {
 
 		</div>
 
-		<?php if ( $donation_url ) : ?>
-		<section class="sid-card sid-note">
-			<div class="sid-note-icon"><span class="dashicons dashicons-heart"></span></div>
-			<div>
-				<h2><?php esc_html_e( 'Dobrovoljna donacija za razvoj', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'Donacija je dobrovoljna i otvara se izravno na Revolutu.', 'sidrena' ); ?></p>
-				<a class="button sid-support-button" href="<?php echo esc_url( $donation_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori Revolut', 'sidrena' ); ?></a>
-			</div>
-		</section>
-		<?php endif; ?>
 
 		<?php
 	}
