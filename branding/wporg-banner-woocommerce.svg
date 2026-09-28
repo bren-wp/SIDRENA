@@ -6,7 +6,7 @@
 <rect width="930" height="500" fill="url(#bg)" opacity=".72"/>
 <image href="../assets/images/logo-horizontal-light.svg" x="42" y="34" width="330" height="85"/>
 <rect x="46" y="128" width="196" height="34" rx="17" fill="#9B4DFF" opacity=".18"/><text x="64" y="151" fill="#DDF7FF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="700">Integracija trgovine</text>
-<text x="46" y="214" fill="#FFFFFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="41" font-weight="800">Usklađene cijene u vašoj
+<text x="46" y="214" fill="#FFFFFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="41" font-weight="800">Sidrene cijene u vašoj
 web trgovini.</text>
 <g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" fill="#D8EAF7"><circle cx="58" cy="343" r="6" fill="#9B4DFF"/><text x="78" y="350">Postojeći proizvodi trgovine</text><circle cx="58" cy="381" r="6" fill="#9B4DFF"/><text x="78" y="388">Varijacije i povijest cijena</text><circle cx="58" cy="419" r="6" fill="#9B4DFF"/><text x="78" y="426">Javni cjenici i lokacije</text></g>
 <rect x="1005" y="104" width="460" height="286" rx="22" fill="#FFFFFF" fill-opacity=".95"/><rect x="1031" y="133" width="150" height="24" rx="12" fill="#9B4DFF" fill-opacity=".14"/><text x="1048" y="151" fill="#9B4DFF" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="800">INTEGRACIJA</text>
