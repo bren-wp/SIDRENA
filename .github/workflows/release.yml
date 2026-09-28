@@ -152,7 +152,7 @@ jobs:
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
-          Autor: Brendigo
+          Autor: brendigo
           Službena stranica: https://brendigo.com/sidrene-cijene/
           EOF
 
@@ -199,7 +199,6 @@ jobs:
           build-dir: build/release-plugin-check/sidrena-wordpress
           slug: brendigo-sidrena-digitalni-cjenici
           # Public standalone slug/text domain; install folder stays sidrena-wordpress for backward-compatible upgrades.
-          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'
@@ -211,7 +210,6 @@ jobs:
           build-dir: build/release-plugin-check/sidrena-woocommerce
           slug: brendigo-sidrena-cjenici
           # Public WooCommerce slug/text domain; install folder stays sidrena-woocommerce for backward-compatible upgrades.
-          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'
@@ -369,7 +367,7 @@ jobs:
           test ! -f "$WOO/sidrena.php"
           test ! -d "$WOO/static-php"
 
-          if grep -RIniE 'Brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
+          if grep -RIniE 'brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
             echo 'Retired branding detected inside published ZIP asset.' >&2
             exit 1
           fi
@@ -402,7 +400,7 @@ jobs:
           Dobrovoljna donacija za razvoj dostupna je izravno preko Revoluta u administraciji plugina.
 
           Podrška: sidrena@brendigo.com
-          Autor: Brendigo
+          Autor: brendigo
           Službena stranica: https://brendigo.com/sidrene-cijene/
           EOF
           )"
@@ -414,8 +412,8 @@ jobs:
             V010_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}")"
             test "$(jq -r '.draft' <<<"$V010_RELEASE")" = "false"
             test "$(jq -r '.prerelease' <<<"$V010_RELEASE")" = "false"
-            RETIRED_BRAND_A='Brendigo[[:space:]]+L''TD'
-            RETIRED_BRAND_B='Brendigo L''TD Developer'
+            RETIRED_BRAND_A='brendigo[[:space:]]+L''TD'
+            RETIRED_BRAND_B='brendigo L''TD Developer'
             RETIRED_VERSION_A='Sidrena 1\.[0-9]'
             RETIRED_VERSION_B='Sidrena 2\.0\.0'
             if grep -qiE "${RETIRED_BRAND_A}|${RETIRED_BRAND_B}|${RETIRED_VERSION_A}|${RETIRED_VERSION_B}" <<<"$(jq -r '.body // ""' <<<"$V010_RELEASE")"; then
