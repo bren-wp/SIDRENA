@@ -95,6 +95,21 @@ jobs:
           test -s docs/media/screenshot-wordpress.png
           test -s docs/media/screenshot-woocommerce.png
 
+          if grep -Ini 'WooCommerce' \
+            assets/images/logo-woocommerce.svg \
+            assets/images/logo-woocommerce-light.svg \
+            branding/app-card-woocommerce.svg \
+            branding/compact-woocommerce.svg \
+            branding/cta-woocommerce.svg \
+            branding/docs-cover-woocommerce.svg \
+            branding/plugin-cover-woocommerce.svg \
+            branding/social-woocommerce.svg \
+            branding/website-hero-woocommerce.svg \
+            branding/wporg-banner-woocommerce.svg; then
+            echo 'Third-party WooCommerce wording must not appear inside SIDRENA graphic assets.' >&2
+            exit 1
+          fi
+
           grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
           grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "sidrena-brandbar__edition" includes/class-sidrena-admin.php
