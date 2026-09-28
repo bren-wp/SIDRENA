@@ -681,6 +681,20 @@ final class Sidrena_Admin {
 				}
 			)
 		);
+		$archive_caption = sprintf(
+			/* translators: %d: number of indexed public price-list files. */
+			__( '%d indeksiranih datoteka', 'sidrena' ),
+			$archive_stats['files']
+		);
+		if ( 0 === $health_issues ) {
+			$health_badge = __( 'Nema tehničkih upozorenja', 'sidrena' );
+		} else {
+			$health_badge = sprintf(
+				/* translators: %d: number of technical checks that require attention. */
+				_n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ),
+				$health_issues
+			);
+		}
 		?>
 		<div class="sid-page-head">
 			<div><span class="sid-kicker"><?php esc_html_e( 'Tehnička kontrola podataka', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Centar usklađenosti', 'sidrena' ); ?></h2><p><?php esc_html_e( 'SIDRENA provjerava tehničke podatke potrebne za sidrene cijene, javne cjenike i arhivu. Ovo nije individualno pravno mišljenje.', 'sidrena' ); ?></p></div>
@@ -690,13 +704,13 @@ final class Sidrena_Admin {
 			<?php $this->metric_card( __( 'Sidrene cijene', 'sidrena' ), $anchor_ready . '/' . $total_items, 'dashicons-tag', $stats['missing_total'] ? __( 'potrebna dopuna', 'sidrena' ) : __( 'sve evidentirane', 'sidrena' ), $stats['missing_total'] ? 'warn' : 'ok' ); ?>
 			<?php $this->metric_card( __( 'Posebni oblici prodaje', 'sidrena' ), $special_forms, 'dashicons-megaphone', __( 'status i naziv, bez drugog referentnog sustava', 'sidrena' ), 'ok' ); ?>
 			<?php $this->metric_card( __( 'Aktualni cjenici', 'sidrena' ), $file_coverage['ready'] . '/' . $file_coverage['expected'], 'dashicons-media-spreadsheet', $file_coverage['missing'] ? __( 'nedostaju očekivane datoteke', 'sidrena' ) : __( 'očekivane datoteke postoje', 'sidrena' ), $file_coverage['missing'] ? 'warn' : 'ok' ); ?>
-			<?php $this->metric_card( __( 'Javna arhiva', 'sidrena' ), $archive_stats['distinct_days'] . ' d', 'dashicons-backup', sprintf( __( '%d indeksiranih datoteka', 'sidrena' ), $archive_stats['files'] ), $integrity['ok'] ? 'ok' : 'warn' ); ?>
+			<?php $this->metric_card( __( 'Javna arhiva', 'sidrena' ), $archive_stats['distinct_days'] . ' d', 'dashicons-backup', $archive_caption, $integrity['ok'] ? 'ok' : 'warn' ); ?>
 		</div>
 		<div class="sid-grid sid-grid-2 sid-grid-main">
-			<section class="sid-card"><div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Automatske provjere', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Kontrolna lista spremnosti', 'sidrena' ); ?></h2></div><span class="sid-status-pill <?php echo 0 === $health_issues ? 'is-ok' : 'is-warn'; ?>"><?php echo 0 === $health_issues ? esc_html__( 'Nema tehničkih upozorenja', 'sidrena' ) : esc_html( sprintf( _n( '%d stavka za provjeru', '%d stavki za provjeru', $health_issues, 'sidrena' ), $health_issues ) ); ?></span></div><?php $this->health_list( $stats, $last, $settings ); ?></section>
+			<section class="sid-card"><div class="sid-section-head"><div><span class="sid-kicker"><?php esc_html_e( 'Automatske provjere', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Kontrolna lista spremnosti', 'sidrena' ); ?></h2></div><span class="sid-status-pill <?php echo 0 === $health_issues ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $health_badge ); ?></span></div><?php $this->health_list( $stats, $last, $settings ); ?></section>
 			<section class="sid-card"><span class="sid-kicker"><?php esc_html_e( 'Zaključani ruleset', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Pravni datumi sidrene cijene', 'sidrena' ); ?></h2><div class="sid-history-stack"><div><span class="dashicons dashicons-lock"></span><span><?php esc_html_e( 'Standardni proizvodi i usluge', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ); ?></strong></div><div><span class="dashicons dashicons-lock"></span><span><?php esc_html_e( 'Ranije obuhvaćeni FMCG', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ); ?></strong></div><div><span class="dashicons dashicons-plus-alt"></span><span><?php esc_html_e( 'Nova stavka nakon referentnog datuma', 'sidrena' ); ?></span><strong><?php esc_html_e( 'datum prvog uvrštenja', 'sidrena' ); ?></strong></div><div><span class="dashicons dashicons-backup"></span><span><?php esc_html_e( 'Javna arhiva cjenika', 'sidrena' ); ?></span><strong>30 d</strong></div></div></section>
 		</div>
-		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div><div><h2><?php esc_html_e( '30 dana znači javnu arhivu cjenika', 'sidrena' ); ?></h2><p><?php esc_html_e( 'SIDRENA ne vodi paralelni sustav najniže ili snižene cijene. Poseban oblik prodaje evidentira se statusom i nazivom, dok sidrena cijena ostaje referentna redovna cijena određena rulesetom.', 'sidrena' ); ?></p></div></section>
+		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-info-outline"></span></div><div><h2><?php esc_html_e( '30 dana znači javnu arhivu cjenika', 'sidrena' ); ?></h2><p><?php esc_html_e( 'SIDRENA vodi jedan referentni cjenovni sustav: sidrenu cijenu određenu rulesetom. Poseban oblik prodaje evidentira se zasebno samo statusom i nazivom.', 'sidrena' ); ?></p></div></section>
 		<?php
 	}
 
