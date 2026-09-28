@@ -35,7 +35,6 @@ final class Sidrena_Pricelist {
 		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
 	}
 
-
 	public function publication_watch() {
 		$settings = Sidrena_Utils::settings();
 		if ( 'yes' !== $settings['generate_csv'] && 'yes' !== $settings['generate_xml'] ) {
@@ -68,7 +67,6 @@ final class Sidrena_Pricelist {
 			}
 		}
 	}
-
 
 	public function generate_all() {
 		$settings  = Sidrena_Utils::settings();
@@ -151,8 +149,8 @@ final class Sidrena_Pricelist {
 							break;
 						}
 
-						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
 						$location_files[]   = $filepath;
 						$location_entries[] = array(
 							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
@@ -245,7 +243,6 @@ final class Sidrena_Pricelist {
 			$this->release_generation_lock( $lock );
 		}
 	}
-
 
 	private function publication_alert_recipient() {
 		$settings   = Sidrena_Utils::settings();
@@ -353,7 +350,6 @@ final class Sidrena_Pricelist {
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 
-
 	private function discard_generated_files( $files ) {
 		foreach ( array_unique( (array) $files ) as $file ) {
 			if ( $file && is_file( $file ) ) {
@@ -361,7 +357,6 @@ final class Sidrena_Pricelist {
 			}
 		}
 	}
-
 
 	private function validated_rows( $catalog_type, $location, $rows ) {
 		$settings = Sidrena_Utils::settings();
@@ -465,6 +460,7 @@ final class Sidrena_Pricelist {
 	}
 
 	private function validate_service_row( $row, $location_kind = 'objekt' ) {
+		unset( $location_kind );
 		$issues = array();
 		$id     = absint( $row['_sidrena_item_id'] ?? 0 );
 		$name   = trim( (string) ( $row['naziv_usluge'] ?? '' ) );
@@ -495,8 +491,8 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
-		$path   = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$meta   = array(
+		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$meta = array(
 			'schema'       => 2,
 			'format'       => 'jsonl',
 			'generator'    => 'SIDRENA ' . SIDRENA_VERSION,
@@ -783,9 +779,9 @@ final class Sidrena_Pricelist {
 		$available                 = $has_location_availability
 			? $override['availability']
 			: ( $product->is_in_stock() ? 'dostupno' : 'nedostupno' );
-		$available                 = apply_filters( 'sidrena_product_availability', $available, $product, $location );
-		$current                   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
-		$sale_name                 = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
+		$available = apply_filters( 'sidrena_product_availability', $available, $product, $location );
+		$current   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
+		$sale_name = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
 		if ( ! $sale_name && $product->is_on_sale() ) {
 			$sale_name = __( 'Akcija', 'sidrena' );
 		}
@@ -808,21 +804,21 @@ final class Sidrena_Pricelist {
 			$unit_price = '';
 		}
 		return array(
-			'_sidrena_item_id'               => $product->get_id(),
-			'_sidrena_unit_status'           => $unit_status,
-			'_sidrena_location_explicit'     => $has_location_availability ? 'yes' : 'no',
-			'naziv'                          => $name,
-			'sifra'                          => Sidrena_Utils::get_product_code( $product ),
-			'marka'                          => Sidrena_Utils::get_brand( $brand_product ),
-			'jedinica_mjere'                 => $unit,
-			'cijena_za_jedinicu_mjere'       => Sidrena_Utils::money( $unit_price, 4 ),
-			'maloprodajna_cijena'            => Sidrena_Utils::money( $current ),
-			'posebni_oblik_prodaje'          => $special_sale ? 'da' : 'ne',
-			'naziv_posebnog_oblika_prodaje'  => $special_sale ? $sale_name : '',
-			'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
-			'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( Sidrena_Utils::current_reference_date( $product->get_id() ) ),
-			'barkod'                         => Sidrena_Utils::get_barcode( $product ),
-			'dostupnost'                     => sanitize_text_field( $available ),
+			'_sidrena_item_id'              => $product->get_id(),
+			'_sidrena_unit_status'          => $unit_status,
+			'_sidrena_location_explicit'    => $has_location_availability ? 'yes' : 'no',
+			'naziv'                         => $name,
+			'sifra'                         => Sidrena_Utils::get_product_code( $product ),
+			'marka'                         => Sidrena_Utils::get_brand( $brand_product ),
+			'jedinica_mjere'                => $unit,
+			'cijena_za_jedinicu_mjere'      => Sidrena_Utils::money( $unit_price, 4 ),
+			'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
+			'posebni_oblik_prodaje'         => $special_sale ? 'da' : 'ne',
+			'naziv_posebnog_oblika_prodaje' => $special_sale ? $sale_name : '',
+			'sidrena_cijena'                => Sidrena_Utils::money( $anchor ),
+			'datum_sidrene_cijene'          => '' === $anchor ? '' : Sidrena_Utils::date_display( Sidrena_Utils::current_reference_date( $product->get_id() ) ),
+			'barkod'                        => Sidrena_Utils::get_barcode( $product ),
+			'dostupnost'                    => sanitize_text_field( $available ),
 		);
 	}
 
@@ -856,21 +852,21 @@ final class Sidrena_Pricelist {
 					: get_post_meta( $service->ID, '_sidrena_service_anchor_price', true );
 				$date          = Sidrena_Utils::service_reference_date( $service->ID );
 
-				$current        = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
-				$sale           = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
+				$current = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
+				$sale    = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
 
 				yield array(
-					'_sidrena_item_id'               => $service->ID,
-					'naziv_usluge'                   => get_the_title( $service ),
-					'vrsta_usluge'                   => get_post_meta( $service->ID, '_sidrena_service_type', true ),
-					'opseg_usluge'                   => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
-					'pripadajuci_troskovi'           => get_post_meta( $service->ID, '_sidrena_service_costs', true ),
-					'ugradbena_zamjenska_roba'       => get_post_meta( $service->ID, '_sidrena_service_goods', true ),
-					'maloprodajna_cijena'            => Sidrena_Utils::money( $current ),
-					'posebni_oblik_prodaje'          => $sale ? 'da' : 'ne',
-					'naziv_posebnog_oblika_prodaje'  => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
-					'sidrena_cijena'                 => Sidrena_Utils::money( $anchor ),
-					'datum_sidrene_cijene'           => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
+					'_sidrena_item_id'              => $service->ID,
+					'naziv_usluge'                  => get_the_title( $service ),
+					'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
+					'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
+					'pripadajuci_troskovi'          => get_post_meta( $service->ID, '_sidrena_service_costs', true ),
+					'ugradbena_zamjenska_roba'      => get_post_meta( $service->ID, '_sidrena_service_goods', true ),
+					'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
+					'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
+					'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
+					'sidrena_cijena'                => Sidrena_Utils::money( $anchor ),
+					'datum_sidrene_cijene'          => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
 				);
 			}
 			$count = count( $query->posts );
