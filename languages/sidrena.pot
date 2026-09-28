@@ -1,12 +1,12 @@
 # Sidrena source file.
-# Author: Brendigo
+# Author: brendigo
 # Author URI: https://brendigo.com/
 # Plugin URI: https://brendigo.com/sidrene-cijene/
 # Support: sidrena@brendigo.com
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidrena 1.0.21\n"
+"Project-Id-Version: Sidrena 1.0.22\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-24 08:25+0200\\n"
 "MIME-Version: 1.0\n"
@@ -147,7 +147,7 @@ msgid "Bez tehničkih upozorenja"
 msgstr ""
 
 #: includes/class-sidrena-admin.php:90
-msgid "Brendigo · WordPress / WooCommerce"
+msgid "brendigo · WordPress / WooCommerce"
 msgstr ""
 
 #: includes/class-sidrena-products.php:245

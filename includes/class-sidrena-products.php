@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -415,7 +415,24 @@ final class Sidrena_Products {
 		);
 	}
 
+	private function can_process_product_form( $product_id ) {
+		$product_id = absint( $product_id );
+		if ( ! $product_id || ! current_user_can( 'edit_post', $product_id ) ) {
+			return false;
+		}
+		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) ) {
+			return false;
+		}
+
+		$nonce = sanitize_text_field( wp_unslash( $_POST['woocommerce_meta_nonce'] ) );
+		return (bool) wp_verify_nonce( $nonce, 'woocommerce_save_data' );
+	}
+
 	public function save_product( $product ) {
+		if ( ! $product instanceof WC_Product || ! $this->can_process_product_form( $product->get_id() ) ) {
+			return;
+		}
+
 		$map = array(
 			'_sidrena_anchor_price'             => 'decimal',
 			'_sidrena_anchor_date'              => 'date',
@@ -435,10 +452,9 @@ final class Sidrena_Products {
 			'_sidrena_cjenik_visibility'         => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
-			if ( ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request.
+			if ( ! isset( $_POST[ $key ] ) ) {
 				continue;
 			}
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies product-save request before this hook runs.
 			$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( null === $value ) {
@@ -454,6 +470,12 @@ final class Sidrena_Products {
 		Sidrena_Pricelist::queue_regeneration();
 	}
 	public function save_variation( $variation_id, $loop ) {
+		$variation_id = absint( $variation_id );
+		$parent_id    = wp_get_post_parent_id( $variation_id );
+		if ( ! $variation_id || ! $parent_id || ! $this->can_process_product_form( $parent_id ) || ! current_user_can( 'edit_post', $variation_id ) ) {
+			return;
+		}
+
 		$fields = array(
 			'_sidrena_code'                     => 'text',
 			'_sidrena_barcode'                  => 'text',
@@ -471,10 +493,9 @@ final class Sidrena_Products {
 			'_sidrena_expiry_date'              => 'date',
 		);
 		foreach ( $fields as $key => $type ) {
-			if ( ! isset( $_POST[ $key ][ $loop ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request.
+			if ( ! isset( $_POST[ $key ][ $loop ] ) ) {
 				continue;
 			}
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies variation-save request before this hook runs.
 			$value = sanitize_text_field( wp_unslash( $_POST[ $key ][ $loop ] ) );
 			$value = $this->sanitize_by_type( $value, $type );
 			if ( null === $value ) {

@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -100,9 +100,16 @@ add_action(
 			add_action(
 				'admin_notices',
 				static function () {
-					if ( current_user_can( 'activate_plugins' ) ) {
-						echo '<div class="notice notice-error"><p>' . esc_html__( 'Sidrena WooCommerce zahtijeva aktivan WooCommerce plugin.', 'sidrena' ) . '</p></div>';
+					if ( ! current_user_can( 'activate_plugins' ) || ! function_exists( 'get_current_screen' ) ) {
+						return;
 					}
+
+					$screen = get_current_screen();
+					if ( ! $screen || 'plugins' !== $screen->id ) {
+						return;
+					}
+
+					echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Cjenikomat izdanje za web trgovine zahtijeva aktivan WooCommerce dodatak. Aktivirajte WooCommerce ili deaktivirajte ovo Cjenikomat izdanje.', 'sidrena' ) . '</p></div>';
 				}
 			);
 			return;
