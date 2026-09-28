@@ -392,7 +392,8 @@ jobs:
             exit 1
           fi
           grep -Fq "return '80 EUR';" includes/class-sidrena-utils.php
-          grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
+          ! grep -Fq 'Dobrovoljna donacija' includes/class-sidrena-admin.php
+          ! grep -Fq 'donation_url' includes/class-sidrena-admin.php
           grep -Fq '[sidrena_objava_cjenika]' README.md
           grep -Fq 'sidrena@brendigo.com' tools/build-support-pdf.py
           if grep -RIniE '20 EUR|mjesečno tehničko održavanje|održavanje - 20|opcionalno tehničko održavanje|maintenance_price'             --include='*.php' --include='*.md' --include='*.txt' --include='*.py' .             --exclude-dir=.git --exclude-dir=.github; then
