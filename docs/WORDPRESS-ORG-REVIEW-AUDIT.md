@@ -19,12 +19,13 @@ This file records the repository-side audit performed before the next WordPress.
 **Occurrences audited:** plugin headers, both readmes, text domains, POT packaging, Plugin Check slugs, release workflow, package build, graphics, screenshot-facing copy and branding sources.
 
 **Resolution:**
-- standalone display name: **brendigo SIDRENA – sidrene cijene i digitalni cjenici**
-- WooCommerce display name: **brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce**
-- standalone public slug/text-domain: `brendigo-sidrena-digitalni-cjenici`
-- WooCommerce requested public slug/text-domain: `brendigo-sidrena-cjenici`
+- standalone display name: **brendigo Sidrene cijene i digitalni cjenici**
+- WooCommerce display name: **brendigo Sidrene cijene i cjenici za WooCommerce**
+- standalone public slug/text-domain: `brendigo-sidrene-cijene-digitalni-cjenici`
+- WooCommerce requested public slug/text-domain: `brendigo-sidrene-cijene-cjenici`
 - `brendigo` is the leading distinctive element.
-- WooCommerce is used only as a compatibility/dependency descriptor.
+- The public directory title deliberately uses the descriptive phrase `Sidrene cijene` rather than presenting `SIDRENA` as a standalone product-name token, because same-market products already use similar `Sidrena` branding. The in-plugin SIDRENA brand remains unchanged.
+- WooCommerce is used only as a trailing compatibility/dependency descriptor.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
 - Woo readme states that the plugin is independently developed by brendigo, is not affiliated with Automattic, and is not an official WooCommerce product.
 
@@ -182,6 +183,6 @@ This file records the repository-side audit performed before the next WordPress.
 
 The WooCommerce permalink requested in the reply to the existing WordPress.org review email thread is:
 
-`brendigo-sidrena-cjenici`
+`brendigo-sidrene-cijene-cjenici`
 
 No repository document claims approval is guaranteed. The submission target is zero known review blockers, zero relevant Plugin Check errors and green project QA on the same final SHA.
