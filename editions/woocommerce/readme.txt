@@ -48,7 +48,7 @@ SIDRENA provides technical tools for recording, checking and publishing price da
 7. Provjerite Sidrena > Postavke.
 8. U Sidrena > Cjenici generirajte prvu objavu i provjerite javni prikaz.
 
-Detaljne upute nalaze se u `docs/UPUTE.md`, a PDF podrška u `docs/SIDRENA-PODRSKA.pdf`.
+Detaljne upute nalaze se u `docs/UPUTE.md`, a izdanje-specifični detaljni PDF priručnik i podrška u `docs/SIDRENA-PODRSKA.pdf`.
 
 == Frequently Asked Questions ==
 
