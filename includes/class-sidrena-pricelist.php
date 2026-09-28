@@ -251,7 +251,6 @@ final class Sidrena_Pricelist {
 		$settings = Sidrena_Utils::settings();
 		$candidates = array(
 			$settings['failure_email'] ?? '',
-			$settings['business_email'] ?? '',
 			get_option( 'admin_email', '' ),
 		);
 		foreach ( $candidates as $candidate ) {
