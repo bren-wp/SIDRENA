@@ -26,6 +26,8 @@ This file records the repository-side audit performed before the next WordPress.
 - the installed plugin list, WordPress.org readme titles and SIDRENA admin menu use one consistent public brand: **SIDRENA**.
 - edition identity is communicated descriptively as WordPress or WooCommerce edition in descriptions, dependency messaging and conflict handling; it is not encoded as a second product brand.
 - existing public slugs are intentionally preserved for update compatibility, review continuity and stable package targeting.
+- each installable ZIP uses the matching public slug as its single root directory: `brendigo-sidrene-cijene-digitalni-cjenici/` and `brendigo-sidrena-cijena/`; release filenames remain `sidrena-wordpress-<version>.zip` and `sidrena-woocommerce-<version>.zip`.
+- the deterministic Plugin Check runner rejects any package whose root-directory basename differs from the public slug, preventing CI from masking text-domain or trademark findings that would appear after a real user upload.
 - the old `sidrena-for-woocommerce` slug is not reused.
 - `WooCommerce` is not part of the Plugin Name or public slug; it remains only in dependency metadata and descriptive compatibility text.
 - WooCommerce logos/third-party branding are not used in SIDRENA graphics.
