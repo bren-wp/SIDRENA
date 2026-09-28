@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -42,8 +42,8 @@ sidrena_plugin_check_workflow_assert(
 );
 
 sidrena_plugin_check_workflow_assert(
-	false !== strpos( $check, 'slug: sidrena' )
-	&& false !== strpos( $check, 'slug: sidrena-for-woocommerce' ),
+	false !== strpos( $check, 'slug: brendigo-sidrena-digitalni-cjenici' )
+	&& false !== strpos( $check, 'slug: brendigo-sidrena-cjenici' ),
 	'Plugin Check must use the public WordPress and WooCommerce slugs/text domains.'
 );
 sidrena_plugin_check_workflow_assert(
