@@ -9,7 +9,7 @@ Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference prices, 30-day sale-price references, products and services, public CSV/XML price lists, locations, and publication archives for the Croatian market.
+Reference prices, 30-day sale references, products, services, CSV/XML price lists, locations and archives for Croatian WordPress sites.
 
 == Description ==
 
