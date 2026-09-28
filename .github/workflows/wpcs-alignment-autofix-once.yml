@@ -1,0 +1,79 @@
+name: SIDRENA one-time WPCS alignment autofix
+
+on:
+  push:
+    branches:
+      - develop/1.0.27-sidrena-compliance-final
+    paths:
+      - '.github/workflows/wpcs-alignment-autofix-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: develop/1.0.27-sidrena-compliance-final
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+
+      - name: Install pinned WPCS tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          export COMPOSER_HOME="$RUNNER_TEMP/sidrena-wpcs-align"
+          composer global require --no-interaction --no-progress \
+            squizlabs/php_codesniffer:^3.13 \
+            wp-coding-standards/wpcs:^3.2
+          "$COMPOSER_HOME/vendor/bin/phpcs" --config-set installed_paths "$COMPOSER_HOME/vendor/wp-coding-standards/wpcs"
+
+      - name: Apply alignment-only fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          export COMPOSER_HOME="$RUNNER_TEMP/sidrena-wpcs-align"
+          "$COMPOSER_HOME/vendor/bin/phpcbf" \
+            --standard=phpcs.xml.dist \
+            --sniffs=Generic.Formatting.MultipleStatementAlignment,WordPress.Arrays.MultipleStatementAlignment \
+            includes/class-sidrena-products.php \
+            includes/class-sidrena-standalone.php \
+            includes/class-sidrena-pricelist.php \
+            includes/class-sidrena-services.php || test $? -eq 1
+          git diff --check
+
+      - name: Regression tests after formatter
+        shell: bash
+        run: |
+          set -euo pipefail
+          find includes editions .github/tests -name '*.php' -print0 | xargs -0 -n1 php -l >/dev/null
+          php .github/tests/anchor-ruleset-smoke.php
+          php .github/tests/legal-schema-smoke.php
+          php .github/tests/reference-admin-ui-smoke.php
+          php .github/tests/woocommerce-dependency-smoke.php
+          grep -Fq "const STANDARD_REFERENCE_DATE = '2026-09-10';" includes/class-sidrena-utils.php
+          grep -Fq "const FMCG_REFERENCE_DATE     = '2025-05-02';" includes/class-sidrena-utils.php
+          ! grep -RInF 'Sidrena_History::sale_reference' includes
+          ! grep -RInF 'Najniža 30 dana' includes
+
+      - name: Commit deterministic alignment fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No alignment changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add includes/class-sidrena-products.php includes/class-sidrena-standalone.php includes/class-sidrena-pricelist.php includes/class-sidrena-services.php
+          git commit -m "Apply WPCS alignment fixes"
+          git push origin HEAD:develop/1.0.27-sidrena-compliance-final
