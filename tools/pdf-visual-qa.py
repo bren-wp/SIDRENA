@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# Sidrena source file.
+# Author: brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
+# Support: sidrena@brendigo.com
+
 """Render and preflight a SIDRENA end-user PDF manual for release QA."""
 
 from __future__ import annotations
