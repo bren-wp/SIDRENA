@@ -288,11 +288,31 @@ final class Sidrena_Utils {
 			return '';
 		}
 
-		$decimal = self::decimal( $raw );
+		$compact = str_replace( array( "\xC2\xA0", ' ' ), '', $raw );
+		if (
+			preg_match( '/[eE]/', $compact )
+			|| preg_match( '/^[+-]/', $compact )
+			|| ! preg_match(
+				'/^(?:\d+(?:[.,]\d+)?|\d{1,3}(?:\.\d{3})+,\d+|\d{1,3}(?:,\d{3})+\.\d+)$/',
+				$compact
+			)
+		) {
+			return null;
+		}
+
+		$decimal = self::decimal( $compact );
 		if ( '' === $decimal || (float) $decimal < 0 ) {
 			return null;
 		}
 		return $decimal;
+	}
+
+	public static function sanitize_time( $time, $fallback = '' ) {
+		$time = is_scalar( $time ) ? sanitize_text_field( (string) $time ) : '';
+		if ( 1 === preg_match( '/^(?:[01]\d|2[0-3]):[0-5]\d$/', $time ) ) {
+			return $time;
+		}
+		return $fallback;
 	}
 
 	public static function money( $value, $decimals = 2 ) {
@@ -648,13 +668,12 @@ final class Sidrena_Utils {
 	public static function schedule_timestamp( $time_string = '' ) {
 		$settings    = self::settings();
 		$time_string = $time_string ? $time_string : $settings['generation_time'];
-		if ( ! preg_match( '/^(\d{2}):(\d{2})$/', $time_string, $matches ) ) {
-			$matches = array( '', '06', '30' );
-		}
+		$time_string = self::sanitize_time( $time_string, '06:30' );
+		list( $hour, $minute ) = array_map( 'intval', explode( ':', $time_string, 2 ) );
 
 		$timezone = wp_timezone();
 		$now      = new DateTimeImmutable( 'now', $timezone );
-		$next     = $now->setTime( (int) $matches[1], (int) $matches[2], 0 );
+		$next     = $now->setTime( $hour, $minute, 0 );
 		if ( $next <= $now ) {
 			$next = $next->modify( '+1 day' );
 		}
