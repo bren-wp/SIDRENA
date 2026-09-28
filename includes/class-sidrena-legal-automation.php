@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_Legal_Automation {
+	public const GENERAL_REFERENCE_DATE = '2026-09-10';
+	public const FMCG_REFERENCE_DATE    = '2025-05-02';
+
 	private const SAFE_GENERATION_TIME = '06:30';
 	private const PUBLICATION_DEADLINE = '08:00';
 
@@ -44,11 +47,10 @@ final class Sidrena_Legal_Automation {
 			return $settings;
 		}
 
-		$settings['generation_time']  = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
-		$settings['retention_days']   = max( 30, absint( $settings['retention_days'] ?? 45 ) );
-		$settings['default_ref_date'] = '2026-09-10';
-		$settings['fmcg_ref_date']    = '2025-05-02';
-		$settings['csv_delimiter']    = ';';
+		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
+		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 45 ) );
+		$settings['csv_delimiter']   = ';';
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
 
 		foreach ( self::required_publication_flags() as $key ) {
 			$settings[ $key ] = 'yes';
@@ -76,6 +78,37 @@ final class Sidrena_Legal_Automation {
 		}
 
 		return $settings;
+	}
+
+	public static function general_reference_date() {
+		return self::GENERAL_REFERENCE_DATE;
+	}
+
+	public static function fmcg_reference_date() {
+		return self::FMCG_REFERENCE_DATE;
+	}
+
+	public static function custom_reference_date( $date ) {
+		$date = is_scalar( $date ) ? trim( sanitize_text_field( (string) $date ) ) : '';
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+			return '';
+		}
+		$parsed = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
+		if ( ! $parsed || $parsed->format( 'Y-m-d' ) !== $date || $date <= self::GENERAL_REFERENCE_DATE ) {
+			return '';
+		}
+		return $date;
+	}
+
+	public static function reference_date_for_group( $group, $custom_date = '' ) {
+		$group = sanitize_key( (string) $group );
+		if ( 'fmcg' === $group ) {
+			return self::FMCG_REFERENCE_DATE;
+		}
+		if ( 'custom' === $group ) {
+			return self::custom_reference_date( $custom_date );
+		}
+		return self::GENERAL_REFERENCE_DATE;
 	}
 
 	public static function normalize_generation_time( $time ) {

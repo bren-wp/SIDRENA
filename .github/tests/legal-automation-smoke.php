@@ -53,8 +53,9 @@ foreach ( array( 'MAX_MESSAGE_BYTES', 'MAX_CONTEXT_BYTES', 'MAX_ROWS', 'table_ex
 	sidrena_legal_assert( false !== strpos( $audit_source, $marker ), 'Audit hardening marker missing: ' . $marker );
 }
 
-sidrena_legal_assert( 1 === preg_match( "/'default_ref_date'\\s*=>\\s*'2026-09-10'/", $utils_source ), 'Default reference date is not aligned with NN 101/2026.' );
-sidrena_legal_assert( 1 === preg_match( "/'fmcg_ref_date'\\s*=>\\s*'2025-05-02'/", $utils_source ), 'FMCG reference date is not preserved.' );
+sidrena_legal_assert( false === strpos( $utils_source, "'default_ref_date'      =>" ) && false === strpos( $utils_source, "'fmcg_ref_date'         =>" ), 'Legal dates must not return to administrator settings defaults.' );
+sidrena_legal_assert( false !== strpos( $root ? file_get_contents( $root . '/includes/class-sidrena-legal-automation.php' ) : '', "GENERAL_REFERENCE_DATE = '2026-09-10'" ), 'General legal reference date is not locked in the ruleset.' );
+sidrena_legal_assert( false !== strpos( $root ? file_get_contents( $root . '/includes/class-sidrena-legal-automation.php' ) : '', "FMCG_REFERENCE_DATE    = '2025-05-02'" ), 'FMCG legal reference date is not locked in the ruleset.' );
 sidrena_legal_assert( 1 === preg_match( "/'generation_time'\\s*=>\\s*'06:30'/", $utils_source ), 'Default generation time is not automated early enough.' );
 sidrena_legal_assert( 1 === preg_match( "/'strict_publication'\\s*=>\\s*'yes'/", $utils_source ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );

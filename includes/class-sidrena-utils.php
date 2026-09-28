@@ -18,8 +18,6 @@ final class Sidrena_Utils {
 			'business_mode'         => 'mixed',
 			'display_anchor'        => 'yes',
 			'display_lowest_30'     => 'yes',
-			'default_ref_date'      => '2026-09-10',
-			'fmcg_ref_date'         => '2025-05-02',
 			'generate_csv'          => 'yes',
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
@@ -38,10 +36,7 @@ final class Sidrena_Utils {
 	public static function settings() {
 		$settings = get_option( 'sidrena_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
-		if ( empty( $settings['fmcg_ref_date'] ) && ! empty( $settings['fmsid_ref_date'] ) ) {
-			$settings['fmcg_ref_date'] = self::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
-		}
-		unset( $settings['fmsid_ref_date'] );
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
 		foreach (
 			array(
 				'business_name',
@@ -335,7 +330,6 @@ final class Sidrena_Utils {
 	}
 
 	public static function current_reference_date( $product_id = 0 ) {
-		$settings = self::settings();
 		if ( $product_id ) {
 			$lookup_ids = array( (int) $product_id );
 			$parent_id  = wp_get_post_parent_id( $product_id );
@@ -343,24 +337,21 @@ final class Sidrena_Utils {
 				$lookup_ids[] = (int) $parent_id;
 			}
 
+			$group       = 'standard';
+			$custom_date = '';
 			foreach ( $lookup_ids as $lookup_id ) {
-				$custom = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );
-				if ( $custom ) {
-					return sanitize_text_field( $custom );
+				$saved_group = sanitize_key( (string) get_post_meta( $lookup_id, '_sidrena_reference_group', true ) );
+				if ( in_array( $saved_group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
+					$group = $saved_group;
+					if ( 'custom' === $group ) {
+						$custom_date = get_post_meta( $lookup_id, '_sidrena_anchor_date', true );
+					}
+					break;
 				}
 			}
-
-			foreach ( $lookup_ids as $lookup_id ) {
-				$group = get_post_meta( $lookup_id, '_sidrena_reference_group', true );
-				if ( 'fmcg' === $group ) {
-					return $settings['fmcg_ref_date'];
-				}
-				if ( 'standard' === $group ) {
-					return $settings['default_ref_date'];
-				}
-			}
+			return Sidrena_Legal_Automation::reference_date_for_group( $group, $custom_date );
 		}
-		return $settings['default_ref_date'];
+		return Sidrena_Legal_Automation::general_reference_date();
 	}
 
 	public static function anchor_label( $date ) {

@@ -94,8 +94,11 @@ foreach ( array( 'vrsta_usluge', 'opseg_usluge', 'pripadajuci_troskovi', 'ugradb
 }
 
 $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
-sidrena_schema_assert( 1 === preg_match( "/'default_ref_date'\\s*=>\\s*'2026-09-10'/", $utils_source ), 'Default reference date must remain 10.09.2026.' );
-sidrena_schema_assert( 1 === preg_match( "/'fmcg_ref_date'\\s*=>\\s*'2025-05-02'/", $utils_source ), 'Existing FMCG reference date must remain 02.05.2025.' );
+sidrena_schema_assert( false === strpos( $utils_source, "'default_ref_date'      =>" ) && false === strpos( $utils_source, "'fmcg_ref_date'         =>" ), 'Legal reference dates must not be stored as administrator-configurable defaults.' );
+sidrena_schema_assert( '2026-09-10' === Sidrena_Legal_Automation::general_reference_date(), 'General SIDRENA ruleset date must remain 10.09.2026.' );
+sidrena_schema_assert( '2025-05-02' === Sidrena_Legal_Automation::fmcg_reference_date(), 'Existing FMCG SIDRENA ruleset date must remain 02.05.2025.' );
+sidrena_schema_assert( '' === Sidrena_Legal_Automation::custom_reference_date( '2026-09-10' ), 'Custom reference date must not override the statutory general date.' );
+sidrena_schema_assert( '2026-09-11' === Sidrena_Legal_Automation::custom_reference_date( '2026-09-11' ), 'A genuinely new post-reference item may retain a later custom first-listing date.' );
 sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*45/", $utils_source ), 'Default archive retention should preserve an operational margin above 30 days.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Archive retention must never fall below 30 days.' );
 
@@ -137,6 +140,8 @@ sidrena_schema_assert( '08:00' === Sidrena_Legal_Automation::publication_deadlin
 
 $hardened = Sidrena_Legal_Automation::normalize_settings(
 	array(
+		'default_ref_date' => '2099-01-01',
+		'fmcg_ref_date'    => '2099-01-02',
 		'generation_time'       => '12:15',
 		'retention_days'        => 7,
 		'generate_csv'          => 'no',
@@ -147,6 +152,7 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 		'failure_notifications' => 'no',
 	)
 );
+sidrena_schema_assert( ! isset( $hardened['default_ref_date'], $hardened['fmcg_ref_date'] ), 'Legal reference dates must be removed from persisted settings.' );
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
 sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {

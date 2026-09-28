@@ -68,8 +68,8 @@ final class Sidrena_Compliance {
 	public static function automation_profile() {
 		$settings = Sidrena_Utils::settings();
 		return array(
-			'default_reference_date' => $settings['default_ref_date'],
-			'fmcg_reference_date'    => $settings['fmcg_ref_date'],
+			'default_reference_date' => Sidrena_Legal_Automation::general_reference_date(),
+			'fmcg_reference_date'    => Sidrena_Legal_Automation::fmcg_reference_date(),
 			'generation_time'        => $settings['generation_time'],
 			'archive_retention_days' => max( 30, absint( $settings['retention_days'] ) ),
 			'public_html_enabled'    => 'yes' === $settings['enable_public_html'],
@@ -152,13 +152,10 @@ final class Sidrena_Compliance {
 		$settings = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$repairs  = array();
 
-		foreach ( array(
-			'default_ref_date' => '2026-09-10',
-			'fmcg_ref_date'    => '2025-05-02',
-		) as $key => $value ) {
-			if ( ! isset( $settings[ $key ] ) || $value !== $settings[ $key ] ) {
-				$settings[ $key ] = $value;
-				$repairs[]        = 'settings:' . $key;
+		foreach ( array( 'default_ref_date', 'fmcg_ref_date', 'fmsid_ref_date' ) as $legacy_date_key ) {
+			if ( array_key_exists( $legacy_date_key, $settings ) ) {
+				unset( $settings[ $legacy_date_key ] );
+				$repairs[] = 'settings:remove_' . $legacy_date_key;
 			}
 		}
 

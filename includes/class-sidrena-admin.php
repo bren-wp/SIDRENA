@@ -756,7 +756,7 @@ final class Sidrena_Admin {
 		$dated_price_caption = sprintf(
 			/* translators: %s: configured reference date. */
 			__( 'Referentna cijena uz datum, zadano %s.', 'sidrena' ),
-			wp_date( 'd.m.Y.', strtotime( $settings['default_ref_date'] ) )
+			wp_date( 'd.m.Y.', strtotime( Sidrena_Legal_Automation::general_reference_date() ) )
 		);
 		?>
 		<div class="sid-price-guide sid-price-guide--reference">
@@ -1466,7 +1466,7 @@ final class Sidrena_Admin {
 				/* translators: %1$s: general reference date; %2$s: reference date for previously covered FMCG categories. */
 				$reference_dates_text = __( 'Referentni datumi koje Sidrena automatski primjenjuje: opći %1$s, ranije obuhvaćeni FMCG %2$s.', 'sidrena' );
 				?>
-				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( '2026-09-10' ), Sidrena_Utils::date_display( '2025-05-02' ) ) ); ?></p>
+				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( Sidrena_Legal_Automation::general_reference_date() ), Sidrena_Utils::date_display( Sidrena_Legal_Automation::fmcg_reference_date() ) ) ); ?></p>
 			</section>
 
 			<section class="sid-card sid-settings-section">
@@ -1607,8 +1607,6 @@ final class Sidrena_Admin {
 			'business_mode'         => $business_mode,
 			'display_anchor'        => 'yes',
 			'display_lowest_30'     => 'yes',
-			'default_ref_date'      => '2026-09-10',
-			'fmcg_ref_date'         => '2025-05-02',
 			'generate_csv'          => 'yes',
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
