@@ -1,4 +1,4 @@
-=== SIDRENA za WooCommerce – sidrene cijene i digitalni cjenici ===
+=== brendigo SIDRENA – sidrene cijene i cjenici za WooCommerce ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: woocommerce, cijene, cjenik, csv, xml
@@ -32,6 +32,8 @@ Author: brendigo
 = Privacy and external links =
 
 SIDRENA does not include telemetry or usage tracking. Public-availability checks use the WordPress HTTP API only for public SIDRENA files hosted by the same site.
+
+Ovaj dodatak razvija brendigo neovisno. Dodatak nije povezan, odobren niti službeni proizvod WooCommercea ili Automattica.
 
 This plugin is developed independently by brendigo. It is not affiliated with, endorsed by, or an official product of WooCommerce or Automattic.
 
