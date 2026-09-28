@@ -65,7 +65,13 @@ final class Sidrena_Public {
 		return home_url( user_trailingslashit( $route ) );
 	}
 
-	public static function ensure_public_page() {
+	/**
+	 * Return the managed public page or create it only after an explicit admin action.
+	 *
+	 * @param bool $create Whether a new page may be created.
+	 * @return int|WP_Error
+	 */
+	public static function ensure_public_page( $create = false ) {
 		$settings = Sidrena_Utils::settings();
 		if ( 'yes' !== $settings['enable_public_html'] ) {
 			return 0;
@@ -74,20 +80,22 @@ final class Sidrena_Public {
 		$existing_id = absint( get_option( 'sidrena_public_page_id', 0 ) );
 		if ( $existing_id ) {
 			$existing = get_post( $existing_id );
-			if ( $existing && 'page' === $existing->post_type && 'trash' !== $existing->post_status ) {
-				$legacy_content = trim( (string) $existing->post_content );
-				if ( in_array( $legacy_content, array( '[sidrena_cjenici]', '<!-- wp:shortcode -->[sidrena_cjenici]<!-- /wp:shortcode -->' ), true ) ) {
-					wp_update_post( array( 'ID' => $existing_id, 'post_content' => '<!-- wp:shortcode -->[sidrena_objava_cjenika]<!-- /wp:shortcode -->' ) );
-				}
+			if ( $existing instanceof WP_Post && 'page' === $existing->post_type && 'trash' !== $existing->post_status ) {
 				return $existing_id;
 			}
+		}
+
+		if ( ! $create ) {
+			return 0;
 		}
 
 		foreach ( array( 'objava-cjenika', 'cjenici' ) as $path ) {
 			$existing = get_page_by_path( $path, OBJECT, 'page' );
 			if ( $existing instanceof WP_Post && 'trash' !== $existing->post_status ) {
-				update_option( 'sidrena_public_page_id', absint( $existing->ID ), false );
-				return absint( $existing->ID );
+				return new WP_Error(
+					'sidrena_public_page_slug_conflict',
+					__( 'Stranica s adresom koju SIDRENA želi koristiti već postoji. Plugin je neće prepisati; promijenite slug postojeće stranice ili je ručno povežite prema potrebi.', 'sidrena' )
+				);
 			}
 		}
 
@@ -109,7 +117,7 @@ final class Sidrena_Public {
 
 		update_option( 'sidrena_public_page_id', absint( $page_id ), false );
 		if ( class_exists( 'Sidrena_Audit' ) ) {
-			Sidrena_Audit::log( 'public_page_create', 'success', __( 'Objavljena je javna stranica Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
+			Sidrena_Audit::log( 'public_page_create', 'success', __( 'Administrator je izradio javnu stranicu Objava cjenika.', 'sidrena' ), array( 'page_id' => absint( $page_id ) ) );
 		}
 		return absint( $page_id );
 	}
