@@ -1,7 +1,7 @@
 === brendigo SIDRENA – sidrene cijene i digitalni cjenici ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
-Tags: cijene, cjenik, hrvatska, csv, xml
+Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -9,108 +9,108 @@ Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sidrene cijene, 30-dnevna referenca, proizvodi i usluge, javni CSV/XML cjenici, lokacije i arhiva objava za hrvatsko tržište.
+Reference prices, 30-day sale-price references, products and services, public CSV/XML price lists, locations, and publication archives for the Croatian market.
 
 == Description ==
 
-**brendigo SIDRENA – sidrene cijene i digitalni cjenici** je samostalno izdanje za hrvatske WordPress stranice koje trebaju vlastiti katalog proizvoda i usluga bez vanjskog kataloga trgovine kao izvora podataka.
+**brendigo SIDRENA – sidrene cijene i digitalni cjenici** is the standalone SIDRENA edition for Croatian WordPress sites that need a dedicated product and service price catalogue without using an ecommerce catalogue as the source.
 
-Dodatak omogućuje:
+The plugin provides:
 
-* vlastiti katalog proizvoda i usluga
-* evidenciju aktualnih i sidrenih cijena
-* odvojenu 30-dnevnu referencu kod posebnih oblika prodaje kada je primjenjiva
-* više fizičkih lokacija i webshop kanala
-* izračun i objavu cijene za jedinicu mjere kada je primjenjiva
-* CSV/XML uvoz i izvoz kataloga
-* automatsko generiranje javnih CSV i XML cjenika
-* javnu pretraživu HTML stranicu cjenika
-* čuvanje prethodnih uspješnih objava u arhivi
-* JSON manifest i REST indeks za automatizirani dohvat
-* provjeru podataka prije zamjene zadnje valjane javne objave
-* dnevno generiranje, nadzor objave i e-mail upozorenja
-* prikaz veličine datoteke, broja redaka i SHA-256 podatka o integritetu
+* a dedicated product and service catalogue
+* current and reference-price records
+* a separate 30-day reference for special sale-price situations when applicable
+* multiple physical locations and webshop channels
+* unit-price calculation and publication when applicable
+* CSV/XML catalogue import and export
+* automatic public CSV and XML price-list generation
+* a searchable public HTML price-list page
+* an archive of previous successful publications
+* a JSON manifest and REST index for automated retrieval
+* validation before replacing the last valid public publication
+* scheduled daily generation, publication monitoring, and email alerts
+* stored file size, row count, and SHA-256 integrity metadata
 
-= Automatizirani profil objave =
+= Automated publication profile =
 
-Zakonski i tehnički važni izlazi namjerno su automatizirani kako ih krajnji korisnik ne bi slučajno isključio. CSV, XML, javni HTML cjenik, manifest, REST indeks, povijest cijena, stroga provjera objave i nadzor objave ostaju uključeni.
+Important publication and technical outputs are automated so an end user cannot accidentally disable them. CSV, XML, public HTML, the JSON manifest, REST index, price history, strict publication checks, and publication monitoring remain enabled.
 
-Korisnik u postavkama bira samo način rada, vrijeme dnevnog generiranja prije 08:00, duljinu arhive od najmanje 30 dana i e-mail za upozorenja.
+The simplified settings screen only asks the user to choose the business mode, a daily generation time before 08:00, an archive retention period of at least 30 days, and an alert email address.
 
-= Upute za krajnjeg korisnika =
+= Croatian end-user documentation =
 
-U instalacijskom ZIP-u nalaze se:
+The installable package includes detailed Croatian documentation:
 
-* `docs/UPUTE.md` — detaljne tekstualne upute
-* `docs/SIDRENA-UPUTE.pdf` — detaljni PDF priručnik za krajnjeg korisnika
+* `docs/UPUTE.md` — detailed step-by-step text guide
+* `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
-Upute obuhvaćaju instalaciju, prvo postavljanje, lokacije, unos proizvoda i usluga, sidrenu cijenu, 30-dnevnu referencu, jediničnu cijenu, generiranje cjenika, javnu objavu, arhivu, Dnevnik, cron, upozorenja i rješavanje najčešćih problema.
+The guide covers installation, first-time setup, locations, products and services, reference prices, 30-day sale-price references, unit prices, price-list generation, public publication, archives, the audit log, cron, alerts, and troubleshooting.
 
-= Podrška, donacija i opcionalno postavljanje =
+= Support, donation, and optional setup =
 
-Podrška: sidrena@brendigo.com
+Support email: sidrena@brendigo.com
 
 WhatsApp: +385 91 901 0092
 
-Opcionalno jednokratno početno postavljanje: **80 EUR**.
+Optional one-time initial setup: **80 EUR**.
 
-Plaćeno postavljanje nije uvjet za korištenje dodatka. Dobrovoljna donacija podržava razvoj i nije naknada za funkcije, podršku ili pravno jamstvo.
+Paid setup is not required to use the plugin. A voluntary donation supports continued development and does not unlock features, support rights, or legal certification.
 
-= Pravna napomena =
+= Legal note =
 
-SIDRENA tehnički pomaže pri unosu, provjeri, evidenciji, automatizaciji i objavi podataka. Ne predstavlja pravno jamstvo, pravnu certifikaciju niti zamjenu za stvarnu poslovnu evidenciju i stručni pravni savjet.
+SIDRENA provides technical tools for recording, checking, automating, and publishing price data. It does not provide legal certification or replace the merchant's source records or professional legal advice.
 
 == Installation ==
 
-1. U WordPressu otvorite **Dodaci > Dodaj novi dodatak > Prenesi dodatak**.
-2. Prenesite aktualni ZIP paket za samostalno SIDRENA izdanje.
-3. Aktivirajte dodatak.
-4. Otvorite **SIDRENA > Postavke** i odaberite način rada.
-5. Uredite **Lokacije**.
-6. Unesite prvi proizvod ili uslugu.
-7. Otvorite **Provjera** i riješite stvarna upozorenja.
-8. U **Cjenici** generirajte prvu objavu.
-9. Provjerite javne CSV/XML datoteke, arhivu i Dnevnik.
+1. In WordPress, open **Plugins > Add New Plugin > Upload Plugin**.
+2. Upload the current standalone SIDRENA ZIP package.
+3. Activate the plugin.
+4. Open **SIDRENA > Settings** and choose the operating mode.
+5. Configure **Locations**.
+6. Add the first product or service.
+7. Open **Check** and resolve genuine data warnings.
+8. Generate the first publication under **Price Lists**.
+9. Verify the public CSV/XML files, archive, and audit log.
 
-Detaljni postupak nalazi se u `docs/UPUTE.md` i `docs/SIDRENA-UPUTE.pdf`.
+Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA-UPUTE.pdf`.
 
 == Frequently Asked Questions ==
 
-= Treba li WooCommerce? =
+= Does this edition require WooCommerce? =
 
-Ne. Ovo izdanje koristi vlastiti SIDRENA katalog proizvoda i usluga.
+No. This edition uses its own SIDRENA product and service catalogue.
 
-= Mogu li isključiti CSV/XML ili nadzor objave? =
+= Can I disable CSV/XML output or publication monitoring? =
 
-Ne kroz pojednostavljeni korisnički ekran. Ti izlazi i sigurnosni mehanizmi ostaju uključeni kako ih krajnji korisnik ne bi slučajno onemogućio.
+Not from the simplified end-user settings screen. Those technical outputs and safeguards stay enabled to prevent accidental misconfiguration.
 
-= Je li sidrena cijena isto što i najniža cijena u prethodnih 30 dana? =
+= Is a SIDRENA reference price the same as the lowest price in the previous 30 days? =
 
-Ne. SIDRENA ih vodi kao odvojene podatke i prikazuje ih samo kada su za konkretnu situaciju stvarno primjenjivi.
+No. SIDRENA stores them as separate concepts and displays them only when the relevant rule is applicable.
 
-= Moram li platiti početno postavljanje? =
+= Is the 80 EUR initial setup required? =
 
-Ne. Početno postavljanje od 80 EUR je potpuno opcionalna usluga. Dodatak se može samostalno instalirati i koristiti prema priloženim uputama.
+No. It is a completely optional service. The plugin can be installed and configured independently using the included Croatian documentation.
 
 == Screenshots ==
 
-1. SIDRENA pregled i status objave.
-2. Samostalni katalog proizvoda.
-3. Digitalni cjenici i arhiva.
-4. Lokacije i prodajni objekti.
-5. Pojednostavljene automatizirane postavke.
-6. Podrška, dokumentacija i opcionalne usluge.
+1. SIDRENA dashboard and publication status.
+2. Standalone product catalogue.
+3. Digital price lists and publication archive.
+4. Locations and sales channels.
+5. Simplified automated settings.
+6. Support, documentation, and optional services.
 
 == Changelog ==
 
 = 1.0.21 =
 
-* Stabilizirana oba produkcijska izdanja i njihov zajednički sustav objave.
-* Poboljšani digitalni cjenici, arhiva, lokacije, provjera integriteta i javni prikaz.
-* Dodana detaljna dokumentacija za krajnjeg korisnika.
-* Pojačani CI, Plugin Check i produkcijski regression guardovi.
+* Stabilized both production editions and their shared publication system.
+* Improved digital price lists, archives, locations, integrity metadata, and the public price-list view.
+* Added detailed Croatian end-user documentation.
+* Strengthened CI, Plugin Check, and production regression guards.
 
 = 1.0.20 =
 
-* Poboljšana pravila sidrenih cijena, 30-dnevne reference i cijene za jedinicu mjere.
-* Poboljšani import/export, javna objava i sigurnosne provjere.
+* Improved reference-price rules, 30-day references, and unit-price handling.
+* Improved import/export, public publication, and security checks.
