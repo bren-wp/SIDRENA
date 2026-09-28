@@ -27,10 +27,13 @@ function sidrena_canonical_url_assert( $condition, $message ) {
 }
 
 $rest = file_get_contents( $root . '/includes/class-sidrena-rest.php' );
+$pricelist = file_get_contents( $root . '/includes/class-sidrena-pricelist.php' );
 sidrena_canonical_url_assert( false !== $rest, 'Unable to read REST source.' );
+sidrena_canonical_url_assert( false !== $pricelist, 'Unable to read price-list source.' );
 sidrena_canonical_url_assert(
-	false !== strpos( $rest, "'plugin_url'      => '" . $canonical . "'" ),
-	'REST index must expose the canonical Brendigo plugin URL.'
+	false === strpos( $rest, "'plugin_url'" )
+	&& false === strpos( $pricelist, "'plugin_url'" ),
+	'Public REST and manifest output must not inject an external plugin credit URL.'
 );
 
 $targets = array(
