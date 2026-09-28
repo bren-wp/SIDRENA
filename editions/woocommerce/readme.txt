@@ -1,4 +1,4 @@
-=== brendigo Sidrene cijene i cjenici za WooCommerce ===
+=== brendigo Sidrene cijene i cjenici ===
 Contributors: brendigo
 Donate link: https://revolut.me/catanyus?currency=EUR&amount=1000&note=SIDRENA%20plugin%20-%20donacija
 Tags: woocommerce, prices, price-list, croatia, csv
@@ -9,11 +9,11 @@ Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference prices, 30-day sale-price references, public CSV/XML price lists, locations, and publication archives for Croatian stores using WooCommerce.
+Reference prices, 30-day sale references, CSV/XML price lists, locations and archives for Croatian stores using WooCommerce.
 
 == Description ==
 
-**brendigo Sidrene cijene i cjenici za WooCommerce** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
+**brendigo Sidrene cijene i cjenici** is an independently developed SIDRENA edition for Croatian merchants who already use WooCommerce products and variations.
 
 WooCommerce remains the canonical product and variation source. SIDRENA does not create a duplicate product catalogue; it adds the price-record and publication tools needed around the existing store catalogue.
 
