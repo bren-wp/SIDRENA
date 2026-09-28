@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -172,7 +172,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function developer_label() {
-		return 'Brendigo';
+		return 'brendigo';
 	}
 
 	public static function woocommerce_store_address() {
@@ -652,8 +652,8 @@ final class Sidrena_Utils {
 
 	public static function runtime_mode_label() {
 		return self::is_woocommerce_edition()
-			? __( 'Sidrena WooCommerce', 'sidrena' )
-			: __( 'Sidrena WordPress', 'sidrena' );
+			? __( 'SIDRENA · web trgovina', 'sidrena' )
+			: __( 'SIDRENA · samostalni katalog', 'sidrena' );
 	}
 
 	public static function is_public_wc_product( $product ) {
