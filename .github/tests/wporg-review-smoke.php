@@ -30,8 +30,8 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 }
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_main, 'Plugin Name: brendigo SIDRENA – sidrene cijene i digitalni cjenici' )
-	&& false !== strpos( $woo_main, 'Plugin Name: brendigo SIDRENA – sidrene cijene i cjenici za web trgovine' ),
+	false !== strpos( $wp_main, 'Plugin Name: brendigo Cjenikomat – sidrene cijene i digitalni cjenici' )
+	&& false !== strpos( $woo_main, 'Plugin Name: brendigo Cjenikomat – sidrene cijene za web trgovine' ),
 	'Final Croatian plugin display names changed.'
 );
 
@@ -44,18 +44,18 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_main, 'Text Domain: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $woo_main, 'Text Domain: brendigo-sidrena-cjenici' )
-	&& false !== strpos( $plugin_check, 'slug: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $plugin_check, 'slug: brendigo-sidrena-cjenici' )
-	&& false !== strpos( $release, 'slug: brendigo-sidrena-digitalni-cjenici' )
-	&& false !== strpos( $release, 'slug: brendigo-sidrena-cjenici' ),
+	false !== strpos( $wp_main, 'Text Domain: brendigo-cjenikomat' )
+	&& false !== strpos( $woo_main, 'Text Domain: brendigo-cjenikomat-trgovine' )
+	&& false !== strpos( $plugin_check, 'slug: brendigo-cjenikomat' )
+	&& false !== strpos( $plugin_check, 'slug: brendigo-cjenikomat-trgovine' )
+	&& false !== strpos( $release, 'slug: brendigo-cjenikomat' )
+	&& false !== strpos( $release, 'slug: brendigo-cjenikomat-trgovine' ),
 	'Public text domains and Plugin Check/release slugs must stay synchronized.'
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_readme, '=== brendigo SIDRENA – sidrene cijene i digitalni cjenici ===' )
-	&& false !== strpos( $woo_readme, '=== brendigo SIDRENA – sidrene cijene i cjenici za web trgovine ===' ),
+	false !== strpos( $wp_readme, '=== brendigo Cjenikomat – sidrene cijene i digitalni cjenici ===' )
+	&& false !== strpos( $woo_readme, '=== brendigo Cjenikomat – sidrene cijene za web trgovine ===' ),
 	'WordPress.org readme titles must match plugin headers.'
 );
 
