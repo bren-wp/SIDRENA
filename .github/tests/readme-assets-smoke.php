@@ -56,8 +56,8 @@ sidrena_readme_assets_assert(
 
 sidrena_readme_assets_assert(
 	false === stripos( $readme, 'usklađene cijene, sigurno poslovanje' )
-	&& false === stripos( $readme, '100% usklađ' )
-	&& false === stripos( $readme, 'jamči usklađenost' ),
+	&& false === stripos( $readme, '100% ' . 'usklađ' )
+	&& false === stripos( $readme, 'jamči ' . 'usklađenost' ),
 	'Main README must not contain legal-compliance marketing claims.'
 );
 
