@@ -146,10 +146,7 @@ final class Sidrena_Compatibility {
 		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 			return;
 		}
-		$settings = Sidrena_Utils::settings();
-		if ( 'yes' !== ( $settings['enable_rest_index'] ?? 'yes' ) ) {
-			return;
-		}
+		$settings   = Sidrena_Utils::settings();
 		$product_id = get_queried_object_id();
 		if ( ! $product_id ) {
 			return;
@@ -161,7 +158,7 @@ final class Sidrena_Compatibility {
 			'SidrenaCompat',
 			array(
 				'productId' => absint( $product_id ),
-				'endpoint'  => esc_url_raw( rest_url( 'sidrena/v1/display/' ) ),
+				'endpoint'  => 'yes' === ( $settings['enable_rest_index'] ?? 'yes' ) ? esc_url_raw( rest_url( 'sidrena/v1/display/' ) ) : '',
 				'selectors' => array(
 					'.woocommerce-variation-price .price',
 					'.summary .price',
