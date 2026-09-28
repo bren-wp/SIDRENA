@@ -88,7 +88,6 @@ jobs:
           build-dir: build/plugin-check-packages/sidrena-wordpress
           slug: brendigo-sidrena-digitalni-cjenici
           # Plugin Check must use the public standalone slug/text domain; the install folder remains sidrena-wordpress for upgrade compatibility.
-          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'
@@ -110,7 +109,6 @@ jobs:
           build-dir: build/plugin-check-packages/sidrena-woocommerce
           slug: brendigo-sidrena-cjenici
           # Plugin Check must use the public WooCommerce slug/text domain; the install folder remains sidrena-woocommerce for upgrade compatibility.
-          ignore-codes: trademarked_term
           wp-version: latest
           ignore-errors: 'false'
           ignore-warnings: 'false'
