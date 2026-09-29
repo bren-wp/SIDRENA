@@ -49,7 +49,7 @@ Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runt
 2. Prenesite aktualni `sidrena-woocommerce-<verzija>.zip` paket.
 3. Aktivirajte **SIDRENA — WooCommerce izdanje**.
 
-Kod nadogradnje preko starijeg SIDRENA WooCommerce izdanja plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće proizvode, SIDRENA meta podatke, lokacije, arhivu i povijest.
+Kod nadogradnje preko starijeg izdanja SIDRENA — WooCommerce izdanje plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće proizvode, SIDRENA meta podatke, lokacije, arhivu i povijest.
 4. Otvorite **SIDRENA** u lijevom admin meniju.
 
 ## Postojeći WooCommerce proizvodi
