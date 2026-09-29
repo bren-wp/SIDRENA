@@ -48,6 +48,7 @@ final class Sidrena_Utils {
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
 			'generation_time'       => '06:30',
+			'automation_mode'       => 'wp_cron',
 			'retention_days'        => 30,
 			'enable_rest_index'     => 'yes',
 			'publish_manifest'      => 'yes',
