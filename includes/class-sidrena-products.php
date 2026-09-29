@@ -101,7 +101,7 @@ final class Sidrena_Products {
 				'id'                => '_sidrena_anchor_price',
 				'label'             => __( 'Sidrena cijena', 'sidrena' ),
 				'desc_tip'          => true,
-				'description'       => __( 'Referentna redovna cijena. Ako je artikl na mjerodavni datum bio na akciji ili drugom posebnom obliku prodaje, ovdje se upisuje prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' ),
+				'description'       => __( 'Sidrena cijena prema odabranom pravnom rulesetu. Poseban oblik prodaje vodi se odvojeno i ne određuje ovu vrijednost.', 'sidrena' ),
 				'type'              => 'number',
 				'custom_attributes' => array(
 					'step' => '0.01',
@@ -120,20 +120,11 @@ final class Sidrena_Products {
 					'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
 					/* translators: %s: formatted FMCG reference date. */
 					'fmcg'     => sprintf( __( 'Zaključano: postojeći FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ),
-					'custom'   => __( 'Novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
+					'custom'   => __( 'Automatski: novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
 				),
 			)
 		);
-		woocommerce_wp_text_input(
-			array(
-				'id'                => '_sidrena_anchor_date',
-				'label'             => __( 'Datum prvog uvrštenja novog proizvoda', 'sidrena' ),
-				'type'              => 'date',
-				'description'       => __( 'Koristi se isključivo za novouvedeni proizvod nakon 10.09.2026. Standardni i FMCG ruleset ignoriraju i brišu ovu vrijednost.', 'sidrena' ),
-				'desc_tip'          => true,
-				'custom_attributes' => array( 'min' => '2026-09-11' ),
-			)
-		);
+		echo '<p class="form-field"><span class="description">' . esc_html__( 'Datum za novouvedenu stavku ne upisuje se ručno. SIDRENA koristi dokazivi datum prvog objavljivanja; migrirani datum može se unijeti samo kroz strogo validirani CSV uvoz.', 'sidrena' ) . '</span></p>';
 		echo '</div>';
 	}
 
@@ -221,7 +212,7 @@ final class Sidrena_Products {
 		woocommerce_wp_text_input(
 			array(
 				'id'          => '_sidrena_sale_name',
-				'label'       => __( 'Naziv posebnog oblika prodaje', 'sidrena' ),
+				'label'       => __( 'Poseban oblik prodaje — naziv', 'sidrena' ),
 				'placeholder' => __( 'npr. Akcija', 'sidrena' ),
 			)
 		);
@@ -276,17 +267,7 @@ final class Sidrena_Products {
 				),
 			)
 		);
-		woocommerce_wp_text_input(
-			array(
-				'id'                => "_sidrena_anchor_date_{$loop}",
-				'name'              => "_sidrena_anchor_date[{$loop}]",
-				'value'             => get_post_meta( $variation_id, '_sidrena_anchor_date', true ),
-				'label'             => __( 'Datum prvog uvrštenja (samo nov proizvod)', 'sidrena' ),
-				'type'              => 'date',
-				'wrapper_class'     => 'form-row form-row-last',
-				'custom_attributes' => array( 'min' => '2026-09-11' ),
-			)
-		);
+		echo '<p class="form-row form-row-last"><span class="description">' . esc_html__( 'Datum novouvedene varijacije određuje SIDRENA iz stvarnog datuma objavljivanja; nije slobodno uređivo polje.', 'sidrena' ) . '</span></p>';
 		woocommerce_wp_select(
 			array(
 				'id'            => "_sidrena_reference_group_{$loop}",
@@ -297,7 +278,7 @@ final class Sidrena_Products {
 				'options'       => array(
 					'standard' => __( 'Zaključano: 10.09.2026.', 'sidrena' ),
 					'fmcg'     => __( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ),
-					'custom'   => __( 'Novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
+					'custom'   => __( 'Automatski: novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
 				),
 			)
 		);
@@ -405,7 +386,6 @@ final class Sidrena_Products {
 
 		$map = array(
 			'_sidrena_anchor_price'      => 'decimal',
-			'_sidrena_anchor_date'       => 'custom_date',
 			'_sidrena_reference_group'   => 'key',
 			'_sidrena_brand'             => 'text',
 			'_sidrena_code'              => 'text',
@@ -434,17 +414,21 @@ final class Sidrena_Products {
 			}
 		}
 		$group = Sidrena_Utils::sanitize_reference_group( $product->get_meta( '_sidrena_reference_group', true ) );
-		$product->update_meta_data( '_sidrena_reference_group', $group );
 		if ( 'custom' === $group ) {
 			$custom_date = Sidrena_Utils::custom_reference_date( $product->get_meta( '_sidrena_anchor_date', true ) );
+			if ( ! $custom_date ) {
+				$custom_date = Sidrena_Utils::first_publication_reference_date( $product->get_id() );
+			}
 			if ( $custom_date ) {
 				$product->update_meta_data( '_sidrena_anchor_date', $custom_date );
 			} else {
+				$group = 'standard';
 				$product->delete_meta_data( '_sidrena_anchor_date' );
 			}
 		} else {
 			$product->delete_meta_data( '_sidrena_anchor_date' );
 		}
+		$product->update_meta_data( '_sidrena_reference_group', $group );
 		$this->maybe_calculate_unit_price( $product );
 		Sidrena_Pricelist::queue_regeneration();
 	}
@@ -491,17 +475,21 @@ final class Sidrena_Products {
 		}
 
 		$group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $variation_id, '_sidrena_reference_group', true ) );
-		update_post_meta( $variation_id, '_sidrena_reference_group', $group );
 		if ( 'custom' === $group ) {
 			$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $variation_id, '_sidrena_anchor_date', true ) );
+			if ( ! $custom_date ) {
+				$custom_date = Sidrena_Utils::first_publication_reference_date( $variation_id );
+			}
 			if ( $custom_date ) {
 				update_post_meta( $variation_id, '_sidrena_anchor_date', $custom_date );
 			} else {
+				$group = 'standard';
 				delete_post_meta( $variation_id, '_sidrena_anchor_date' );
 			}
 		} else {
 			delete_post_meta( $variation_id, '_sidrena_anchor_date' );
 		}
+		update_post_meta( $variation_id, '_sidrena_reference_group', $group );
 
 		$variation = wc_get_product( $variation_id );
 		if ( $variation ) {

@@ -349,6 +349,18 @@ final class Sidrena_Utils {
 		return $date;
 	}
 
+	public static function first_publication_reference_date( $post_id ) {
+		$post_id = absint( $post_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+		$published = get_post_datetime( $post_id );
+		if ( ! $published ) {
+			return '';
+		}
+		return self::custom_reference_date( $published->format( 'Y-m-d' ) );
+	}
+
 	public static function resolved_reference_date( $group = 'standard', $custom_date = '' ) {
 		$group = self::sanitize_reference_group( $group );
 		if ( 'fmcg' === $group ) {
@@ -410,7 +422,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_tooltip() {
-		return __( 'Sidrena cijena je referentna redovna cijena za mjerodavni datum. Ako je proizvod ili usluga tada bio na akciji ili drugom posebnom obliku prodaje, sidrena cijena je prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' );
+		return __( 'Sidrena cijena je dodatna cijena prema važećem SIDRENA rulesetu: cijena koja nije cijena u posebnom obliku prodaje i koja je bila primjenjiva na mjerodavni referentni datum. Za stvarno novouvedenu stavku koristi se dokazivi datum prvog uvrštenja.', 'sidrena' );
 	}
 
 	public static function upload_paths() {

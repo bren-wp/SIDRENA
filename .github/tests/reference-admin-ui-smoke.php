@@ -60,6 +60,14 @@ foreach (
 }
 
 sidrena_reference_ui_assert(
+	false === strpos( $products, "name="_sidrena_anchor_date"" )
+	&& false === strpos( $products, "name="_sidrena_anchor_date[" )
+	&& false === strpos( $services, 'name="sidrena_service_anchor_date"' )
+	&& false === strpos( $standalone, '][anchor_date]"' ),
+	'Normal SIDRENA admin screens must not expose an arbitrary editable custom reference date.'
+);
+
+sidrena_reference_ui_assert(
 	false === strpos( $bulk, "Najniža 30 dana" )
 	&& false === strpos( $bulk, 'sale_reference' )
 	&& false === strpos( $bulk, "<th scope=\"col\"><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></th><th scope=\"col\"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>" ),

@@ -20,6 +20,7 @@ $GLOBALS['sidrena_test_options'] = array(
 );
 $GLOBALS['sidrena_test_meta']    = array();
 $GLOBALS['sidrena_test_parent']  = array();
+$GLOBALS['sidrena_test_dates']   = array();
 
 function get_option( $key, $default = false ) {
 	return $GLOBALS['sidrena_test_options'][ $key ] ?? $default;
@@ -45,6 +46,10 @@ function get_post_meta( $post_id, $key, $single = false ) {
 }
 function wp_get_post_parent_id( $post_id ) {
 	return $GLOBALS['sidrena_test_parent'][ (int) $post_id ] ?? 0;
+}
+function get_post_datetime( $post_id ) {
+	$date = $GLOBALS['sidrena_test_dates'][ (int) $post_id ] ?? '';
+	return $date ? new DateTimeImmutable( $date . ' 10:00:00', wp_timezone() ) : false;
 }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
@@ -104,5 +109,10 @@ sidrena_ruleset_assert( '2025-05-02' === Sidrena_Utils::current_reference_date( 
 
 sidrena_ruleset_assert( '' === Sidrena_Utils::custom_reference_date( '2026-09-09' ), 'Custom first-listing date before the statutory cutoff must be rejected.' );
 sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::custom_reference_date( '2026-09-11' ), 'Custom first-listing date after the cutoff must be accepted.' );
+
+$GLOBALS['sidrena_test_dates'][301] = '2026-09-29';
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::first_publication_reference_date( 301 ), 'A new-item reference date must be derivable from its actual publication date.' );
+$GLOBALS['sidrena_test_dates'][302] = '2026-09-10';
+sidrena_ruleset_assert( '' === Sidrena_Utils::first_publication_reference_date( 302 ), 'Publication on or before the statutory reference date must not become a custom new-item date.' );
 
 fwrite( STDOUT, "SIDRENA immutable reference-date ruleset smoke test passed.\n" );

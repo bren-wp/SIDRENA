@@ -749,9 +749,9 @@ final class Sidrena_Standalone {
 				<select aria-label="<?php esc_attr_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][reference_group]">
 					<option value="standard" <?php selected( $reference_group, 'standard' ); ?>><?php esc_html_e( '10.09.2026.', 'sidrena' ); ?></option>
 					<option value="fmcg" <?php selected( $reference_group, 'fmcg' ); ?>><?php esc_html_e( 'FMCG 02.05.2025.', 'sidrena' ); ?></option>
-					<option value="custom" <?php selected( $reference_group, 'custom' ); ?>><?php esc_html_e( 'Novouvedeni proizvod', 'sidrena' ); ?></option>
+					<option value="custom" <?php selected( $reference_group, 'custom' ); ?>><?php esc_html_e( 'Automatski: novouvedeni proizvod', 'sidrena' ); ?></option>
 				</select>
-				<input aria-label="<?php esc_attr_e( 'Datum prvog uvrštenja novog proizvoda', 'sidrena' ); ?>" type="date" min="2026-09-11" name="items[<?php echo esc_attr( $key ); ?>][anchor_date]" value="<?php echo esc_attr( $anchor_date ); ?>">
+				<small class="sid-cell-sub"><?php echo $anchor_date ? esc_html( Sidrena_Utils::date_display( $anchor_date ) ) . ' · ' : ''; ?><?php esc_html_e( 'Datum novouvedene stavke određuje SIDRENA iz prvog objavljivanja; ručni datum dopušten je samo kroz validirani migracijski uvoz.', 'sidrena' ); ?></small>
 			</td>
 			<td><select aria-label="<?php esc_attr_e( 'Zadana dostupnost / webshop', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][availability]"><option value="dostupno" <?php selected( $availability, 'dostupno' ); ?>><?php esc_html_e( 'Dostupno', 'sidrena' ); ?></option><option value="nedostupno" <?php selected( $availability, 'nedostupno' ); ?>><?php esc_html_e( 'Nedostupno', 'sidrena' ); ?></option></select></td>
 			<td><span class="sid-status-pill <?php echo $row_ready ? 'is-ok' : 'is-warn'; ?>"><?php echo $row_ready ? esc_html__( 'Spremno', 'sidrena' ) : esc_html__( 'Provjeriti', 'sidrena' ); ?></span></td>
@@ -887,8 +887,17 @@ else :
 			$this->set_meta( $saved_id, '_sidrena_standalone_current_price', $current );
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_price', $anchor );
 			$reference_group = Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ?? 'standard' );
+			$custom_date     = '';
+			if ( 'custom' === $reference_group ) {
+				$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $saved_id, '_sidrena_standalone_anchor_date', true ) );
+				if ( ! $custom_date ) {
+					$custom_date = Sidrena_Utils::first_publication_reference_date( $saved_id );
+				}
+				if ( ! $custom_date ) {
+					$reference_group = 'standard';
+				}
+			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_reference_group', $reference_group );
-			$custom_date = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ?? '' ) : '';
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_date', $custom_date );
 			$this->set_meta( $saved_id, '_sidrena_standalone_barcode', sanitize_text_field( $row['barcode'] ?? '' ) );
 
