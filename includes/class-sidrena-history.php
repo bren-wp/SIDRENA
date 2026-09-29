@@ -32,14 +32,19 @@ final class Sidrena_History {
 
 	public function hooks() {
 		if ( Sidrena_Utils::is_woocommerce_active() ) {
-			add_action( 'woocommerce_update_product', array( $this, 'capture_item' ), 20 );
-			add_action( 'woocommerce_update_product_variation', array( $this, 'capture_item' ), 20 );
+			add_action( 'woocommerce_update_product', array( $this, 'capture_woocommerce_update' ), 20 );
+			add_action( 'woocommerce_update_product_variation', array( $this, 'capture_woocommerce_update' ), 20 );
 		}
 		add_action( 'added_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'updated_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'deleted_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'shutdown', array( $this, 'flush_price_meta_changes' ), 5 );
 		add_action( 'sidrena_daily_generation', array( $this, 'daily_snapshot' ), 5 );
+	}
+
+	public function capture_woocommerce_update( $item_id ) {
+		$this->capture_item( $item_id, 'woocommerce-update' );
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	public function capture_price_meta_change( $meta_id, $object_id, $meta_key, $meta_value ) {
@@ -58,6 +63,7 @@ final class Sidrena_History {
 		}
 
 		self::$pending_items[ $object_id ] = true;
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	public function flush_price_meta_changes() {
