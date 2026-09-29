@@ -162,7 +162,7 @@ final class Sidrena_Pricelist {
 							'filename'        => $filename,
 							'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
 							'generated_ts'    => $timestamp,
-							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
+							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( 30 * DAY_IN_SECONDS ) ),
 							'retain_until_ts' => $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ),
 							'sequence'        => $sequence,
 							'rows'            => (int) $result,
