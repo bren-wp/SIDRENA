@@ -151,7 +151,8 @@ sidrena_reference_ui_assert(
 
 sidrena_reference_ui_assert(
 	false !== strpos( $admin, "Jednostavno postavljanje" )
-	&& false !== strpos( $admin, "Automatska zaštita objave" )
+	&& false !== strpos( $admin, "Zakonska pravila" )
+	&& false !== strpos( $admin, "Zaštita objave" )
 	&& false === strpos( $admin, "Podaci obrta / tvrtke" )
 	&& false === strpos( $admin, 'name="display_anchor"' ),
 	'Settings UI must remain focused on layperson-safe automatic legal publication.'
