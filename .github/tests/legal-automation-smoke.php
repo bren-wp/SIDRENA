@@ -62,6 +62,9 @@ sidrena_legal_assert(
 	'Legacy administrator date and retired 30-day sale-reference overrides are not stripped from settings.'
 );
 sidrena_legal_assert( 1 === preg_match( "/'generation_time'\\s*=>\\s*'06:30'/", $utils_source ), 'Default generation time is not automated early enough.' );
+sidrena_legal_assert( false !== strpos( $utils_source, "'automation_mode'       => 'wp_cron'" ), 'Internal WP-Cron must remain the safe default automation mode.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, "'external' === ( \$settings['automation_mode'] ?? 'wp_cron' )" ), 'Compliance repair must respect external server cron/WP-CLI mode instead of recreating the internal daily cron.' );
+sidrena_legal_assert( false !== strpos( $compliance_source, "wp_clear_scheduled_hook( 'sidrena_daily_generation' )" ), 'External automation mode must remove the internal daily generation hook.' );
 sidrena_legal_assert( 1 === preg_match( "/'strict_publication'\\s*=>\\s*'yes'/", $utils_source ), 'Strict publication is not enabled by default.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'failure_notifications' => 'yes'" ), 'Failure notifications are not enabled by default.' );
 sidrena_legal_assert( false === strpos( $utils_source, "'business_name'        =>" ) && false === strpos( $utils_source, "'show_business_identity' =>" ), 'Unrelated business identity settings must not return to Sidrena defaults.' );
