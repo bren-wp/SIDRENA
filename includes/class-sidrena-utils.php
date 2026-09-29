@@ -68,8 +68,8 @@ final class Sidrena_Utils {
 		) {
 			unset( $settings[ $legacy_key ] );
 		}
-		$settings                   = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days'] = 30;
+		$settings                    = wp_parse_args( $settings, self::defaults() );
+		$settings['retention_days']  = 30;
 		return $settings;
 	}
 
@@ -1091,7 +1091,7 @@ final class Sidrena_Utils {
 	public static function archive_retention_status() {
 		$settings = self::settings();
 		$stats    = self::archive_stats();
-		$days     = max( 30, absint( $settings['retention_days'] ) );
+		$days     = 30;
 		$age      = 0;
 
 		if ( ! empty( $stats['oldest_ts'] ) && ! empty( $stats['newest_ts'] ) ) {
