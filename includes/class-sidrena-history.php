@@ -311,6 +311,77 @@ final class Sidrena_History {
 	}
 
 
+	public static function recent_changes( $limit = 5 ) {
+		global $wpdb;
+		$table = $wpdb->prefix . 'sidrena_price_history';
+		$limit = min( 20, max( 1, absint( $limit ) ) );
+		$scan  = max( 120, $limit * 30 );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned price-history table requires bounded direct reads.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT id, product_id, variation_id, price, recorded_at
+				FROM %i
+				WHERE price IS NOT NULL
+				ORDER BY id DESC
+				LIMIT %d',
+				$table,
+				$scan
+			),
+			ARRAY_A
+		);
+
+		$newest  = array();
+		$changes = array();
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
+			if ( ! $item_id ) {
+				continue;
+			}
+			$key = ( absint( $row['variation_id'] ) ? 'v:' : 'p:' ) . $item_id;
+
+			if ( ! isset( $newest[ $key ] ) ) {
+				$newest[ $key ] = $row;
+				continue;
+			}
+
+			$new = $newest[ $key ];
+			if ( abs( (float) $new['price'] - (float) $row['price'] ) < 0.000001 ) {
+				$newest[ $key ] = $row;
+				continue;
+			}
+
+			$product   = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
+			$name      = $product ? $product->get_name() : get_the_title( $item_id );
+			$old       = (float) $row['price'];
+			$now       = (float) $new['price'];
+			$changes[] = array(
+				'item_id'     => $item_id,
+				/* translators: %d: product or variation ID. */
+				'name'        => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
+				'old_price'   => $old,
+				'new_price'   => $now,
+				'recorded_at' => sanitize_text_field( $new['recorded_at'] ),
+				'change_pct'  => 0.0 !== $old ? ( ( $now - $old ) / $old ) * 100 : 0,
+				'kind'        => 'product',
+			);
+			unset( $newest[ $key ] );
+
+			if ( count( $changes ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $changes;
+	}
+
+	public static function count_rows() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'sidrena_price_history';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned price-history table.
+		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
+	}
+
 	public function daily_snapshot() {
 		foreach ( $this->catalog_item_ids() as $item_id ) {
 			$this->capture_item( $item_id, 'daily' );
