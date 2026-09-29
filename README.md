@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.26</h1>
+<h1 align="center">SIDRENA 1.0.27</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,22 +150,27 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.26 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.27 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.26
+## Zašto SIDRENA 1.0.27
 
-**SIDRENA 1.0.26** nastavlja sigurnosni i produkcijski hardening uz potpuno jedinstven `SIDRENA` brand za oba izdanja, stabilne javne slugove i dodatne REST/import zaštite.
+**SIDRENA 1.0.27** je compliance i digital-price-list izdanje usmjereno na **SIDRENA cijenu** kao zaseban, dokaziv podatak — odvojen od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.
 
-Izdanje 1.0.26 donosi:
+Izdanje 1.0.27 donosi:
 
-- oba instalirana izdanja koriste isti javni i administratorski naziv **SIDRENA**, dok postojeći text-domaini i javni slugovi ostaju nepromijenjeni
-- `Requires Plugins: woocommerce` uz defensive runtime guard; Woo-specific klase više se ne učitavaju prije potvrđene dostupnosti WooCommercea
-- sigurno stanje bez WooCommercea: bez Woo hookova, upgrade/publication schedulinga i generiranja Woo cjenika
-- jasniji edition-conflict guard koji imenom navodi aktivno i pokušano izdanje i objašnjava siguran prijelaz bez brisanja poslovnih podataka
-- nove regresijske provjere za missing/deactivated dependency scenarij
-- `docs/SOURCES.md` i `docs/LEGAL-SOURCES.md` s primarnim pravnim, WordPress, WooCommerce i open-source referencama
-- odvojeno dokumentirane obveze od 1. 10. 2026. i budući režim bazne cijene od 17. 11. 2026.
-- uklonjenu zastarjelu dokumentaciju o financiranju; nema plaćenog otključavanja uključenih funkcija ni automatskog slanja podataka o korištenju.
+- zaključani pravni ruleset za 10.09.2026. i 02.05.2025. s read-only izvorima i audit-only migracijom starih editable datuma
+- dokazivu item-level iznimku za novu stavku, vezanu isključivo uz stvarni datum prvog objavljivanja
+- neograničenu povijest proizvoda, usluga i lokacijskih cijena uz bounded čitanja za velike kataloge
+- odvojeni aktualni cjenik i arhivu, hash duplicate detection i intraday refresh bez nepotrebnih arhivskih kopija
+- atomic write, file locking, rollback i očuvanje posljednje valjane javne verzije
+- interni WP-Cron ili vanjski server cron/WP-CLI način dnevne objave, uključujući `wp sidrena publish`
+- mode-aware Site Health i publication watchdog
+- WooCommerce lifecycle refresh za simple/variable/variation cijene, scheduled-sale prijelaze, import i izravne price-meta promjene
+- strožu server-side upload provjeru i REST location validaciju
+- retenciju javne arhive najmanje 30 dana, uz mogućnost sigurnog duljeg čuvanja
+- uklanjanje netestirane HPOS deklaracije do stvarnog integration testa
+- dokumentiranu funkcionalnu analizu referentnih GPL plugina bez kopiranja njihova koda, teksta, dizajna ili asseta
+
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -226,13 +231,13 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.26 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.27 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.26.zip`
-- `sidrena-woocommerce-1.0.26.zip`
+- `sidrena-wordpress-1.0.27.zip`
+- `sidrena-woocommerce-1.0.27.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
