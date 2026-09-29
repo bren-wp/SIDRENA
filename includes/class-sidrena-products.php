@@ -114,7 +114,7 @@ final class Sidrena_Products {
 				'id'          => '_sidrena_reference_group',
 				'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
 				'description' => __( '10.09.2026. i 02.05.2025. zaključani su pravilima plugina. Vlastiti datum dopušten je samo za proizvod koji je stvarno prvi put uveden u ponudu nakon 10.09.2026.', 'sidrena' ),
-				'desc_tip'          => true,
+				'desc_tip'    => true,
 				'options'     => array(
 					/* translators: %s: formatted reference date. */
 					'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
@@ -158,7 +158,7 @@ final class Sidrena_Products {
 			array(
 				'id'          => '_sidrena_unit_price_status',
 				'label'       => __( 'Jedinična cijena — primjenjivost', 'sidrena' ),
-				'desc_tip'    => true,
+				'desc_tip'          => true,
 				'description' => __( 'Provjerite primjenjivost čl. 8. NN 105/2026. Jedinična cijena obvezna je za propisane skupine robe, uz propisane iznimke. Sidrena ne zaključuje automatski pravni status proizvoda.', 'sidrena' ),
 				'options'     => array(
 					'review'       => __( 'Potrebna provjera', 'sidrena' ),

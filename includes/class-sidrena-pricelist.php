@@ -149,8 +149,8 @@ final class Sidrena_Pricelist {
 							break;
 						}
 
-						$hash             = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-						$bytes            = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
 						$location_files[]   = $filepath;
 						$location_entries[] = array(
 							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
