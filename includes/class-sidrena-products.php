@@ -46,7 +46,6 @@ final class Sidrena_Products {
 	public function register_meta() {
 		$keys = array(
 			'_sidrena_anchor_price'      => 'number',
-			'_sidrena_anchor_date'       => 'string',
 			'_sidrena_reference_group'   => 'string',
 			'_sidrena_brand'             => 'string',
 			'_sidrena_code'              => 'string',
@@ -60,9 +59,7 @@ final class Sidrena_Products {
 		foreach ( array( 'product', 'product_variation' ) as $post_type ) {
 			foreach ( $keys as $key => $type ) {
 				$sanitize_callback = 'number' === $type ? array( $this, 'sanitize_number_meta' ) : 'sanitize_text_field';
-				if ( '_sidrena_anchor_date' === $key ) {
-					$sanitize_callback = array( $this, 'sanitize_custom_reference_date_meta' );
-				} elseif ( '_sidrena_reference_group' === $key ) {
+				if ( '_sidrena_reference_group' === $key ) {
 					$sanitize_callback = array( $this, 'sanitize_reference_group_meta' );
 				}
 				register_post_meta(
@@ -449,7 +446,6 @@ final class Sidrena_Products {
 			'_sidrena_code'              => 'text',
 			'_sidrena_barcode'           => 'text',
 			'_sidrena_anchor_price'      => 'decimal',
-			'_sidrena_anchor_date'       => 'custom_date',
 			'_sidrena_reference_group'   => 'key',
 			'_sidrena_unit_price_status' => 'unit_status_inherit',
 			'_sidrena_quantity'          => 'decimal',
