@@ -789,6 +789,13 @@ final class Sidrena_Pricelist {
 		return sprintf( '%s_%s_%s_%06d_%s.%s', $kind, $address, $code, $sequence, $stamp, $format );
 	}
 
+	private function build_current_filename( $location, $catalog, $format ) {
+		$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['code'] ?? 'lokacija' );
+		$catalog     = sanitize_key( $catalog );
+		$format      = sanitize_key( $format );
+		return sprintf( 'aktualni-%s-%s.%s', $location_id, $catalog, $format );
+	}
+
 	private function product_headers() {
 		return array(
 			'naziv',
@@ -1198,6 +1205,35 @@ final class Sidrena_Pricelist {
 			$by_key[ $key ] = $file;
 		}
 		update_option( 'sidrena_public_index', array_values( $by_key ), false );
+	}
+
+	private function cleanup_current_files() {
+		$paths = Sidrena_Utils::upload_paths();
+		if ( ! is_dir( $paths['current_dir'] ) ) {
+			return;
+		}
+
+		$keep = array();
+		foreach ( Sidrena_Utils::public_index() as $entry ) {
+			$url = (string) ( $entry['url'] ?? '' );
+			if ( 0 !== strpos( $url, $paths['current_url'] ) ) {
+				continue;
+			}
+			$filename = basename( (string) ( $entry['filename'] ?? '' ) );
+			if ( $filename ) {
+				$keep[ $filename ] = true;
+			}
+		}
+
+		$files = glob( $paths['current_dir'] . '*.{csv,xml}', GLOB_BRACE );
+		if ( ! is_array( $files ) ) {
+			return;
+		}
+		foreach ( $files as $file ) {
+			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
+				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+		}
 	}
 
 	public function cleanup_archives() {
