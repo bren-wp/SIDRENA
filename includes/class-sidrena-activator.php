@@ -272,10 +272,7 @@ final class Sidrena_Activator {
 			$settings = array();
 		}
 
-		if ( empty( $settings['fmcg_ref_date'] ) && ! empty( $settings['fmsid_ref_date'] ) ) {
-			$settings['fmcg_ref_date'] = Sidrena_Utils::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
-		}
-		unset( $settings['fmsid_ref_date'] );
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
 
 		$settings                   = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
