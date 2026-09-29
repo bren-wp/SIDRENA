@@ -113,9 +113,10 @@ final class Sidrena_Pricelist {
 		}
 
 		try {
-			$timestamp = time();
-			$stamp     = wp_date( 'd.m.Y_H-i', $timestamp );
-			$formats   = $this->formats( $settings );
+			$timestamp      = time();
+			$retention_days = max( 30, absint( $settings['retention_days'] ?? 30 ) );
+			$stamp           = wp_date( 'd.m.Y_H-i', $timestamp );
+			$formats         = $this->formats( $settings );
 
 			if ( empty( $formats ) ) {
 				$errors[] = __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format.', 'sidrena' );
@@ -184,8 +185,8 @@ final class Sidrena_Pricelist {
 							'filename'        => $filename,
 							'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
 							'generated_ts'    => $timestamp,
-							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( 30 * DAY_IN_SECONDS ) ),
-							'retain_until_ts' => $timestamp + ( 30 * DAY_IN_SECONDS ),
+							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( $retention_days * DAY_IN_SECONDS ) ),
+							'retain_until_ts' => $timestamp + ( $retention_days * DAY_IN_SECONDS ),
 							'sequence'        => $sequence,
 							'rows'            => (int) $result,
 							'bytes'           => (int) $bytes,
@@ -1240,7 +1241,8 @@ final class Sidrena_Pricelist {
 	}
 
 	public function cleanup_archives() {
-		$days          = 30;
+		$settings      = Sidrena_Utils::settings();
+		$days          = max( 30, absint( $settings['retention_days'] ?? 30 ) );
 		$cutoff        = time() - ( DAY_IN_SECONDS * $days );
 		$paths         = Sidrena_Utils::upload_paths();
 		$current_names = array();
@@ -1268,7 +1270,7 @@ final class Sidrena_Pricelist {
 
 			// Never shorten a retention promise already stored in the archive index.
 			// A later increase of the configured retention extends older entries too.
-			$minimum_until = $generated ? $generated + ( 30 * DAY_IN_SECONDS ) : 0;
+			$minimum_until = $generated ? $generated + ( $days * DAY_IN_SECONDS ) : 0;
 			$stored_until  = isset( $entry['retain_until_ts'] ) ? absint( $entry['retain_until_ts'] ) : 0;
 			$retain_until  = max( $minimum_until, $stored_until );
 			$is_expired    = $retain_until
@@ -1346,7 +1348,7 @@ final class Sidrena_Pricelist {
 			'ruleset'        => SIDRENA_RULESET,
 			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
 			'generated_at'   => current_time( DATE_ATOM ),
-			'retention_days' => 30,
+			'retention_days' => max( 30, absint( $settings['retention_days'] ?? 30 ) ),
 			'current'        => Sidrena_Utils::public_file_index( Sidrena_Utils::public_index() ),
 			'archive'        => Sidrena_Utils::public_file_index( Sidrena_Utils::archive_index() ),
 		);
