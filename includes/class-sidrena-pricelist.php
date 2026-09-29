@@ -149,8 +149,8 @@ final class Sidrena_Pricelist {
 							break;
 						}
 
-						$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-						$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$hash             = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes            = is_file( $filepath ) ? filesize( $filepath ) : 0;
 						$location_files[]   = $filepath;
 						$location_entries[] = array(
 							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
@@ -491,8 +491,8 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
-		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$meta = array(
+		$path   = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$meta   = array(
 			'schema'       => 2,
 			'format'       => 'jsonl',
 			'generator'    => 'SIDRENA ' . SIDRENA_VERSION,
@@ -779,9 +779,9 @@ final class Sidrena_Pricelist {
 		$available                 = $has_location_availability
 			? $override['availability']
 			: ( $product->is_in_stock() ? 'dostupno' : 'nedostupno' );
-		$available = apply_filters( 'sidrena_product_availability', $available, $product, $location );
-		$current   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
-		$sale_name = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
+		$available                 = apply_filters( 'sidrena_product_availability', $available, $product, $location );
+		$current                   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
+		$sale_name                 = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
 		if ( ! $sale_name && $product->is_on_sale() ) {
 			$sale_name = __( 'Akcija', 'sidrena' );
 		}
