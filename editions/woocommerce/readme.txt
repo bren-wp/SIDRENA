@@ -38,7 +38,7 @@ CSV, XML, public HTML, the JSON manifest, REST index, price history, strict publ
 
 The Croatian machine-readable price-list rule accepts XML or CSV. SIDRENA generates both formats by design for interoperability; this does not state that the rule requires both formats at the same time.
 
-Users only configure the operating mode, a daily generation time before 08:00, archive retention of at least 30 days, and an alert email address.
+Users configure the operating mode, the daily publication scheduler (internal WP-Cron or external server cron/WP-CLI), a generation time before 08:00, archive retention of at least 30 days, and an alert email address.
 
 = Independence and trademarks =
 
@@ -109,6 +109,10 @@ The WooCommerce-specific SIDRENA runtime stays inactive and shows a scoped notic
 = Does variation switching require an additional REST request? =
 
 The standard variation payload contains SIDRENA reference-price markup without an additional request. REST remains a compatibility fallback for themes or builders that remove the standard payload.
+
+= How can I use a real server cron instead of WP-Cron? =
+
+Choose the external server cron / WP-CLI scheduler in **SIDRENA > Settings** and run `wp sidrena publish` from the server scheduler before the configured publication deadline. SIDRENA removes its internal daily generation event in this mode while keeping the watchdog active for delay detection and alerts.
 
 = Can I disable CSV/XML output or publication monitoring? =
 
