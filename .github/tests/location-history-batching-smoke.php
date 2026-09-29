@@ -27,5 +27,7 @@ sidrena_location_batch_assert(
 	false === strpos( $source, 'SELECT location_id, product_id, variation_id, price, anchor_price, availability FROM {$current_table} ORDER BY id ASC' ),
 	'Unbounded location-history full-table snapshot query must not return.'
 );
+sidrena_location_batch_assert( false === strpos( $source, 'prune_history' ), 'Location price history must remain unlimited and must not restore time-based pruning.' );
+sidrena_location_batch_assert( false === strpos( $source, 'DELETE FROM %i WHERE recorded_at < %s' ), 'Location price history must not delete older audit rows by age.' );
 
 fwrite( STDOUT, "Sidrena location-history batching smoke test passed.\n" );
