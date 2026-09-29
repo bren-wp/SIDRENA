@@ -55,7 +55,7 @@ sidrena_input_hardening_assert(
 );
 
 sidrena_input_hardening_assert(
-	false !== strpos( $admin, "array_slice( $this->post_array( 'locations' ), 0, 500, true )" )
+	false !== strpos( $admin, "array_slice( \$this->post_array( 'locations' ), 0, 500, true )" )
 	&& false !== strpos( $admin, '$used_selectors = array();' )
 	&& false !== strpos( $admin, 'Sidrena_Utils::sanitize_location_id( $code )' )
 	&& false !== strpos( $admin, 'isset( $used_selectors[ $selector_key ] )' ),
