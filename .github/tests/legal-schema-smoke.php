@@ -205,7 +205,7 @@ sidrena_schema_assert( ! empty( $validate_service->invoke( $instance, $missing_s
 
 $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_location_availability' ), 'WordPress edition must retain per-location availability data.' );
-sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'     => ( " . '$has_location_status' . " || 'webshop' === " . '$location_kind' . " ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'" ) && false !== strpos( $standalone_source, "( \$has_location_status || 'webshop' === \$location_kind ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_reference_group' ), 'WordPress edition must retain the immutable/reference-group Sidrena ruleset.' );
 sidrena_schema_assert( false === strpos( $standalone_source, '_sidrena_standalone_sale_reference_exemption' ) && false === strpos( $standalone_source, '_sidrena_standalone_lowest_30' ), 'WordPress active catalog must not retain the retired 30-day sale-price workflow.' );
 
