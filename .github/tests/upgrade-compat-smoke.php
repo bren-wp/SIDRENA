@@ -44,6 +44,9 @@ $source    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena
 $bootstrap = file_get_contents( dirname( __DIR__, 2 ) . '/includes/sidrena-bootstrap.php' );
 sidrena_upgrade_assert( false !== strpos( $source, "self::ensure_storage();" ), 'Upgrade path must repair upload storage.' );
 sidrena_upgrade_assert( false !== strpos( $source, "self::install_schema();" ), 'Upgrade path must repair missing database schema.' );
+sidrena_upgrade_assert( false !== strpos( $source, "'sidrena_legacy_legal_date_migration'" ), 'Upgrade must preserve retired administrator-entered legal dates in an audit-only migration snapshot before removing them from active settings.' );
+sidrena_upgrade_assert( false !== strpos( $source, 'Legacy administrator-entered legal dates preserved for audit only; never used as the active SIDRENA legal ruleset.' ), 'Legacy date snapshot must document that it is not a runtime legal source.' );
+sidrena_upgrade_assert( false !== strpos( $source, "unset( \$settings['default_ref_date'], \$settings['fmcg_ref_date'], \$settings['fmsid_ref_date'] );" ), 'Retired editable legal dates must still be removed from active runtime settings.' );
 sidrena_upgrade_assert( false !== strpos( $source, "update_option( self::PLUGIN_VERSION_OPTION, SIDRENA_VERSION, false );" ), 'Upgrade path must persist the installed Sidrena version.' );
 sidrena_upgrade_assert( false !== strpos( $bootstrap, "'init'," ), 'Upgrade repair must run on init, after WordPress rewrite globals are available.' );
 sidrena_upgrade_assert( false !== strpos( $bootstrap, "array( 'Sidrena_Activator', 'maybe_upgrade' )" ), 'Upgrade bootstrap callback registration is missing.' );
