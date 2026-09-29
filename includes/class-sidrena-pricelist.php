@@ -266,6 +266,128 @@ final class Sidrena_Pricelist {
 		}
 	}
 
+
+	public function refresh_current() {
+		$settings  = Sidrena_Utils::settings();
+		$locations = Sidrena_Utils::locations();
+		$paths     = Sidrena_Utils::upload_paths();
+		$index     = array();
+		$expected  = array();
+		$errors    = array();
+		$generated = 0;
+
+		wp_mkdir_p( $paths['current_dir'] );
+		wp_mkdir_p( $paths['snapshot_dir'] );
+		$lock = $this->acquire_generation_lock( $paths );
+		if ( is_wp_error( $lock ) ) {
+			Sidrena_Audit::log( 'pricelist_current_refresh', 'warning', $lock->get_error_message(), array( 'code' => $lock->get_error_code() ) );
+			return false;
+		}
+
+		try {
+			$timestamp = time();
+			$formats   = $this->formats( $settings );
+			if ( empty( $formats ) ) {
+				return false;
+			}
+
+			foreach ( $locations as $location ) {
+				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
+					continue;
+			}
+
+				$catalog_types     = $this->catalog_types( $settings['business_mode'] );
+				$location_entries  = array();
+				$snapshot_catalogs = array();
+				$location_failed   = false;
+
+				foreach ( $catalog_types as $catalog_type ) {
+					foreach ( $formats as $format ) {
+						$key              = $this->index_key( $location, $catalog_type, $format );
+						$expected[ $key ] = true;
+						$filename         = $this->build_current_filename( $location, $catalog_type, $format );
+						$filepath         = $paths['current_dir'] . $filename;
+						$result           = 'products' === $catalog_type
+							? $this->write_products( $filepath, $format, $location )
+							: $this->write_services( $filepath, $format, $location );
+
+						if ( is_wp_error( $result ) ) {
+							$errors[]        = $result->get_error_message();
+							$location_failed = true;
+							break;
+						}
+
+						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$location_entries[] = array(
+							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
+							'location_code' => sanitize_text_field( $location['code'] ?? '' ),
+							'kind'          => sanitize_key( $location['kind'] ?? 'objekt' ),
+							'catalog'       => $catalog_type,
+							'format'        => $format,
+							'url'           => $paths['current_url'] . rawurlencode( $filename ),
+							'filename'      => $filename,
+							'generated_at'  => wp_date( DATE_ATOM, $timestamp ),
+							'generated_ts'  => $timestamp,
+							'rows'          => (int) $result,
+							'bytes'         => (int) $bytes,
+							'sha256'        => $hash ? sanitize_text_field( $hash ) : '',
+						);
+					}
+
+					if ( $location_failed ) {
+						break;
+					}
+					$snapshot_catalogs[] = $catalog_type;
+				}
+
+				if ( ! $location_failed && 'yes' === $settings['enable_public_html'] && $snapshot_catalogs ) {
+					$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
+					if ( is_wp_error( $snapshot ) ) {
+						$errors[]        = $snapshot->get_error_message();
+						$location_failed = true;
+					}
+				}
+
+				if ( $location_failed ) {
+					continue;
+				}
+				$index      = array_merge( $index, $location_entries );
+				$generated += count( $location_entries );
+			}
+
+			$this->merge_current_index( $index, $expected );
+			$this->cleanup_current_files();
+			$snapshot_cleanup = $this->cleanup_public_snapshots( $locations, 'yes' === $settings['enable_public_html'] );
+			if ( is_wp_error( $snapshot_cleanup ) ) {
+				$errors[] = $snapshot_cleanup->get_error_message();
+			}
+			$manifest = $this->write_manifest();
+			if ( is_wp_error( $manifest ) ) {
+				$errors[] = $manifest->get_error_message();
+			}
+
+			update_option(
+				'sidrena_last_current_refresh',
+				array(
+					'generated_at' => wp_date( DATE_ATOM, $timestamp ),
+					'files'        => $generated,
+					'errors'       => $errors,
+				),
+				false
+			);
+			Sidrena_Audit::log(
+				'pricelist_current_refresh',
+				empty( $errors ) ? 'success' : 'warning',
+				empty( $errors ) ? __( 'Aktualni cjenik je osvježen bez stvaranja nove arhive.', 'sidrena' ) : __( 'Osvježavanje aktualnog cjenika završilo je s upozorenjima.', 'sidrena' ),
+				array( 'files' => $generated, 'errors' => $errors )
+			);
+			return empty( $errors );
+		} finally {
+			$this->release_generation_lock( $lock );
+		}
+	}
+
 	private function publication_alert_recipient() {
 		$settings   = Sidrena_Utils::settings();
 		$candidates = array(
