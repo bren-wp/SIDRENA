@@ -70,9 +70,6 @@ final class Sidrena_Utils {
 		}
 		$settings                   = wp_parse_args( $settings, self::defaults() );
 		$settings['retention_days'] = 30;
-		// Backward-compatible read-only aliases for older internal callers.
-		$settings['default_ref_date'] = self::standard_reference_date();
-		$settings['fmcg_ref_date']    = self::fmcg_reference_date();
 		return $settings;
 	}
 
