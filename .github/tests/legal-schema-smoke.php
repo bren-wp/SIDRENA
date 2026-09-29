@@ -98,8 +98,8 @@ $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidr
 sidrena_schema_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date must remain immutable at 10.09.2026.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'Existing FMCG reference date must remain immutable at 02.05.2025.' );
 sidrena_schema_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ) && ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'Legal reference dates must not be administrator defaults.' );
-sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*30/", $utils_source ), 'Public price-list archive must default to exactly 30 days.' );
-sidrena_schema_assert( false !== strpos( $utils_source, "\$settings['retention_days'] = 30;" ), 'Runtime archive retention must remain locked to 30 days.' );
+sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*30/", $utils_source ), 'Public price-list archive must default to 30 days.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Runtime archive retention must enforce a 30-day minimum without discarding a longer configured retention.' );
 
 $admin_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $compliance_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-compliance.php' );
@@ -147,7 +147,9 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 	)
 );
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
-sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
+sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention below the legal minimum must be hardened to 30 days.' );
+$extended_retention = Sidrena_Legal_Automation::normalize_settings( array( 'retention_days' => 90 ) );
+sidrena_schema_assert( 90 === $extended_retention['retention_days'], 'A safer archive retention above 30 days must be preserved.' );
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
 	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication safety flag not hardened: ' . $required_flag );
 }
