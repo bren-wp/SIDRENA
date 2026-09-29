@@ -1443,6 +1443,7 @@ final class Sidrena_Admin {
 
 	private function settings_tab() {
 		$settings = Sidrena_Utils::settings();
+		$ruleset  = Sidrena_Utils::legal_ruleset();
 		?>
 		<div class="sid-page-head"><div><span class="sid-kicker"><?php esc_html_e( 'Jednostavno postavljanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Postavke', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Zakonski važna objava i evidencija uključene su automatski. Vi određujete što objavljujete i vrijeme dnevnog generiranja. Zakonski referentni datumi i 30-dnevno čuvanje javne arhive zaključani su pravilima plugina.', 'sidrena' ); ?></p></div></div>
 		<form class="sid-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -1455,22 +1456,31 @@ final class Sidrena_Admin {
 			</section>
 
 			<section class="sid-card sid-settings-section">
-				<div class="sid-settings-title"><span class="dashicons dashicons-shield-alt"></span><div><h2><?php esc_html_e( '2. Automatska zaštita objave', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Ove funkcije više se ne mogu slučajno isključiti u administraciji.', 'sidrena' ); ?></p></div></div>
-				<div class="sid-grid sid-grid-2">
-					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-media-spreadsheet"></span></div><div><strong><?php esc_html_e( 'CSV + XML uvijek uključeni', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Sidrena automatski objavljuje oba strojno čitljiva formata i koristi stabilni CSV razdjelnik.', 'sidrena' ); ?></p></div></div>
-					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-rest-api"></span></div><div><strong><?php esc_html_e( 'Automatizirani dohvat uvijek uključen', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Javni HTML, JSON manifest i REST indeks ostaju aktivni za dohvat aktualnih podataka i datoteka.', 'sidrena' ); ?></p></div></div>
-					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-tag"></span></div><div><strong><?php esc_html_e( 'Fokus na sidrenu cijenu', 'sidrena' ); ?></strong><p><?php esc_html_e( 'SIDRENA vodi sidrenu cijenu odvojeno od posebnih oblika prodaje. U cjeniku se za poseban oblik prodaje čuvaju samo status i naziv oblika.', 'sidrena' ); ?></p></div></div>
-					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-lock"></span></div><div><strong><?php esc_html_e( 'Sigurna objava i nadzor', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Strict publication, 30-dnevna javna arhiva, watchdog i upozorenja ostaju uključeni kako neispravna nova objava ne bi zamijenila zadnju valjanu.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-settings-title"><span class="dashicons dashicons-lock"></span><div><h2><?php esc_html_e( '2. Zakonska pravila', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Aktualni pravni ruleset prikazan je samo za čitanje. Zakonski referentni datumi nisu administratorske postavke i ne mogu se globalno promijeniti.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-reference-setting-list">
+					<div><span><?php esc_html_e( 'Aktivni ruleset', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['id'] ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Standardni zakonski referentni datum', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['standard_reference_date'] ) ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Ranije obuhvaćene FMCG kategorije', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['fmcg_reference_date'] ) ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Primarni izvor', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['primary_source'] ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Službeno pojašnjenje', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['clarification_source'] ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Zadnja pravna provjera SIDRENA ruleseta', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['verified_date'] ) ); ?></strong></div>
 				</div>
-				<?php
-				/* translators: %1$s: general reference date; %2$s: reference date for previously covered FMCG categories. */
-				$reference_dates_text = __( 'Referentni datumi koje Sidrena automatski primjenjuje: opći %1$s, ranije obuhvaćeni FMCG %2$s.', 'sidrena' );
-				?>
-				<p class="description"><?php echo esc_html( sprintf( $reference_dates_text, Sidrena_Utils::date_display( '2026-09-10' ), Sidrena_Utils::date_display( '2025-05-02' ) ) ); ?></p>
+				<p><a class="button sid-secondary" href="<?php echo esc_url( $ruleset['primary_source_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori primarni pravni izvor', 'sidrena' ); ?></a> <a class="button sid-secondary" href="<?php echo esc_url( $ruleset['clarification_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori službeno pojašnjenje', 'sidrena' ); ?></a></p>
+				<p class="description"><?php esc_html_e( 'SIDRENA je tehnički alat za evidenciju i objavu podataka. Ruleset ne predstavlja pravno jamstvo niti zamjenjuje izvornu poslovnu evidenciju ili pravni savjet.', 'sidrena' ); ?></p>
 			</section>
 
 			<section class="sid-card sid-settings-section">
-				<div class="sid-settings-title"><span class="dashicons dashicons-clock"></span><div><h2><?php esc_html_e( '3. Raspored, arhiva i upozorenja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena korigira vrijeme na sigurnu vrijednost ako unesete 08:00 ili kasnije. Arhiva se ne može postaviti ispod 30 dana, ali je možete čuvati dulje.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-settings-title"><span class="dashicons dashicons-shield-alt"></span><div><h2><?php esc_html_e( '3. Zaštita objave', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sigurnosne i strojno čitljive površine ostaju uključene kako ih administrator ne bi slučajno isključio.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-grid sid-grid-2">
+					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-media-spreadsheet"></span></div><div><strong><?php esc_html_e( 'CSV + XML uključeni', 'sidrena' ); ?></strong><p><?php esc_html_e( 'SIDRENA objavljuje oba strojno čitljiva formata radi interoperabilnosti; time se ne tvrdi da propis zahtijeva oba formata istodobno.', 'sidrena' ); ?></p></div></div>
+					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-rest-api"></span></div><div><strong><?php esc_html_e( 'Javni i strojni pristup', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Javni HTML, JSON manifest i REST indeks ostaju aktivni za aktualne podatke i arhivu.', 'sidrena' ); ?></p></div></div>
+					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-tag"></span></div><div><strong><?php esc_html_e( 'SIDRENA cijena je zaseban podatak', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Sidrena/referentna cijena i njezin datum vode se odvojeno od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.', 'sidrena' ); ?></p></div></div>
+					<div class="sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-shield"></span></div><div><strong><?php esc_html_e( 'Sigurna objava', 'sidrena' ); ?></strong><p><?php esc_html_e( 'Atomic write, file locking, posljednja valjana verzija, watchdog i upozorenja štite javni cjenik od nepotpunog zapisa.', 'sidrena' ); ?></p></div></div>
+				</div>
+			</section>
+
+			<section class="sid-card sid-settings-section">
+				<div class="sid-settings-title"><span class="dashicons dashicons-clock"></span><div><h2><?php esc_html_e( '4. Raspored, arhiva i upozorenja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena korigira vrijeme na sigurnu vrijednost ako unesete 08:00 ili kasnije. Arhiva se ne može postaviti ispod 30 dana, ali je možete čuvati dulje.', 'sidrena' ); ?></p></div></div>
 				<div class="sid-fields">
 					<label><span><?php esc_html_e( 'Vrijeme dnevnog generiranja', 'sidrena' ); ?></span><input type="time" name="generation_time" value="<?php echo esc_attr( $settings['generation_time'] ); ?>"><small><?php esc_html_e( 'Preporučeno 06:30. Vrijednost mora biti prije 08:00.', 'sidrena' ); ?></small></label>
 					<label><span><?php esc_html_e( 'Čuvanje javne arhive (dana)', 'sidrena' ); ?></span><input type="number" min="30" step="1" name="retention_days" value="<?php echo esc_attr( max( 30, absint( $settings['retention_days'] ) ) ); ?>"><small><?php esc_html_e( 'Najmanje 30 dana. Veća vrijednost produljuje čuvanje postojećih i novih arhivskih zapisa.', 'sidrena' ); ?></small></label>
