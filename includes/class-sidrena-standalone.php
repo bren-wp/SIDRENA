@@ -977,7 +977,8 @@ else :
 		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
-		if ( (int) ( $file['size'] ?? 0 ) > 5 * MB_IN_BYTES ) {
+		$upload_size = $this->validate_uploaded_catalog_size( $file['tmp_name'], $file['size'] ?? 0 );
+		if ( is_wp_error( $upload_size ) ) {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
 
@@ -1144,6 +1145,29 @@ else :
 		Sidrena_Pricelist::queue_regeneration();
 		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_imported' ) );
 		exit;
+	}
+
+	private function validate_uploaded_catalog_size( $tmp_name, $reported_size ) {
+		$max_bytes = 5 * MB_IN_BYTES;
+		$tmp_name  = (string) $tmp_name;
+		$reported  = max( 0, (int) $reported_size );
+
+		if ( '' === $tmp_name || ! is_file( $tmp_name ) ) {
+			return new WP_Error( 'upload_missing', __( 'Privremena datoteka uvoza nije dostupna.', 'sidrena' ) );
+		}
+		if ( $reported > $max_bytes ) {
+			return new WP_Error( 'upload_too_large', __( 'Datoteka za uvoz prelazi dopuštenih 5 MB.', 'sidrena' ) );
+		}
+
+		$actual = wp_filesize( $tmp_name );
+		if ( false === $actual || $actual <= 0 ) {
+			return new WP_Error( 'upload_empty', __( 'Datoteka za uvoz je prazna ili joj nije moguće utvrditi veličinu.', 'sidrena' ) );
+		}
+		if ( $actual > $max_bytes ) {
+			return new WP_Error( 'upload_too_large', __( 'Stvarna datoteka na poslužitelju prelazi dopuštenih 5 MB.', 'sidrena' ) );
+		}
+
+		return (int) $actual;
 	}
 
 	private function prepare_csv_import_stream( $contents, $row_limit = 50000 ) {
