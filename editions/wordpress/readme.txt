@@ -8,7 +8,7 @@ Stable tag: 1.0.26
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference prices, 30-day sale references, products, services, CSV/XML price lists, locations and archives for Croatian WordPress sites.
+SIDRENA anchor prices, unlimited price-change history, products, services, CSV/XML price lists, locations and archives for Croatian WordPress sites.
 
 == Description ==
 
@@ -18,7 +18,7 @@ The plugin provides:
 
 * a dedicated product and service catalogue
 * current and reference-price records
-* a separate 30-day reference for special sale-price situations when applicable
+* an unlimited audit history of actual price changes, kept separate from the SIDRENA anchor-price ruleset
 * multiple physical locations and webshop channels
 * unit-price calculation and publication when applicable
 * CSV/XML catalogue import and export
@@ -45,7 +45,7 @@ The installable package includes detailed Croatian documentation:
 * `docs/UPUTE.md` — detailed step-by-step text guide
 * `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
-The guide covers installation, first-time setup, locations, products and services, reference prices, 30-day sale-price references, unit prices, price-list generation, public publication, archives, the audit log, cron, alerts, and troubleshooting.
+The guide covers installation, first-time setup, locations, products and services, SIDRENA anchor prices, price-change history, unit prices, price-list generation, public publication, archives, the audit log, cron, alerts, and troubleshooting.
 
 = Support and optional setup =
 
