@@ -50,7 +50,7 @@ Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runt
 3. Otvorite **SIDRENA** u lijevom admin meniju.
 4. Otvorite **SIDRENA > Katalog**.
 
-Kod nadogradnje preko starijeg SIDRENA WordPress izdanja plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
+Kod nadogradnje preko starijeg izdanja SIDRENA — WordPress izdanje plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
 
 ## Najbrži način za postojeću web stranicu
 
