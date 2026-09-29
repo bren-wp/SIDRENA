@@ -31,12 +31,12 @@ foreach ( array( $admin, $bulk, $standalone, $script, $style, $capture, $compat 
 
 foreach (
 	array(
-		'private function wordpress_dashboard( $data )',
-		'private function woocommerce_dashboard( $data )',
-		'sid-reference-dashboard--wordpress',
-		'sid-reference-dashboard--woocommerce',
-		'sid-reference-files-grid',
-		'sid-reference-public-preview',
+		'sidrena-brandbar',
+		'sidrena-contextbar',
+		'sid-dashboard-metrics--archive',
+		'private function archive_timeline( $archive )',
+		'Arhivirane objave',
+		'Uredi postavke arhive',
 	) as $needle
 ) {
 	sidrena_reference_ui_assert( false !== strpos( $admin, $needle ), 'Reference admin renderer regression: ' . $needle );
