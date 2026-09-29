@@ -124,9 +124,10 @@ sidrena_reference_ui_assert(
 );
 
 sidrena_reference_ui_assert(
-	false === strpos( $admin, 'style="--sid-score:' )
-	&& false !== strpos( $admin, 'sid-reference-ring__value' ),
-	'Compliance progress must not reintroduce inline CSS.'
+	false === strpos( $admin, 'style="' )
+	&& false !== strpos( $admin, 'sid-dashboard-metrics--archive' )
+	&& false !== strpos( $admin, 'sidrena-contextbar' ),
+	'Current SIDRENA dashboard must remain free of inline CSS.'
 );
 
 sidrena_reference_ui_assert(
@@ -164,25 +165,11 @@ sidrena_reference_ui_assert(
 	'Woo public-catalog status must honor native catalog visibility.'
 );
 
-$wordpress_dashboard_start = strpos( $admin, 'private function wordpress_dashboard( $data )' );
-$woocommerce_dashboard_start = strpos( $admin, 'private function woocommerce_dashboard( $data )' );
 sidrena_reference_ui_assert(
-	false !== $wordpress_dashboard_start
-	&& false !== $woocommerce_dashboard_start
-	&& $woocommerce_dashboard_start > $wordpress_dashboard_start,
-	'Unable to isolate the WordPress dashboard renderer.'
-);
-$wordpress_dashboard_source = substr( $admin, $wordpress_dashboard_start, $woocommerce_dashboard_start - $wordpress_dashboard_start );
-$first_php_close = strpos( $wordpress_dashboard_source, '?>' );
-$anchor_assignment = strpos( $wordpress_dashboard_source, '$anchor_caption = sprintf(' );
-$published_assignment = strpos( $wordpress_dashboard_source, '$published_caption = sprintf(' );
-sidrena_reference_ui_assert(
-	false !== $first_php_close
-	&& false !== $anchor_assignment
-	&& false !== $published_assignment
-	&& $anchor_assignment < $first_php_close
-	&& $published_assignment < $first_php_close,
-	'WordPress dashboard captions must be computed inside PHP and must never leak as visible source text.'
+	false !== strpos( $admin, 'private function archive_timeline( $archive )' )
+	&& false !== strpos( $admin, 'sid-dashboard-metrics--archive' )
+	&& false !== strpos( $admin, 'Arhivirane objave' ),
+	'Current SIDRENA archive dashboard renderer is incomplete.'
 );
 
 sidrena_reference_ui_assert(
