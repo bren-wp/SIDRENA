@@ -6,7 +6,7 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# WordPress.org review audit — SIDRENA 1.0.26
+# WordPress.org review audit — SIDRENA 1.0.27
 
 Review reference: `AUTOPREREVIEW ❗TRM-OWN sidrena-for-woocommerce/brendigo/28Sep26/T1 28Sep26/4.3 (P0TDX377029HGN)`
 
@@ -155,8 +155,8 @@ This file records the repository-side audit performed before the next WordPress.
 
 **Resolution:**
 - exactly two installable ZIPs are built:
-  - `sidrena-wordpress-1.0.26.zip`
-  - `sidrena-woocommerce-1.0.26.zip`
+  - `sidrena-wordpress-1.0.27.zip`
+  - `sidrena-woocommerce-1.0.27.zip`
 - each ZIP has exactly one edition root.
 - standalone ZIP excludes WooCommerce runtime catalogue/integration classes.
 - WooCommerce ZIP excludes the standalone catalogue runtime.
@@ -199,7 +199,7 @@ This file records the repository-side audit performed before the next WordPress.
 
 ## Final submission rule
 
-The current 1.0.26 public text-domain / Plugin Check targets remain:
+The current 1.0.27 public text-domain / Plugin Check targets remain:
 
 - standalone: `brendigo-sidrene-cijene-digitalni-cjenici`
 - WooCommerce: `brendigo-sidrena-cijena`
