@@ -28,6 +28,8 @@ final class Sidrena_Plugin {
 		Sidrena_Legal_Automation::instance()->hooks();
 		Sidrena_Audit::instance()->hooks();
 		Sidrena_Compliance::instance()->hooks();
+		Sidrena_History::instance()->hooks();
+		Sidrena_Service_History::instance()->hooks();
 		Sidrena_Services::instance()->hooks();
 		Sidrena_Pricelist::instance()->hooks();
 		Sidrena_REST::instance()->hooks();

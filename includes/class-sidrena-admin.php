@@ -35,6 +35,7 @@ final class Sidrena_Admin {
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
 		add_action( 'admin_post_sidrena_generate', array( $this, 'generate' ) );
 		add_action( 'admin_post_sidrena_export_archive_index', array( $this, 'export_archive_index' ) );
+		add_action( 'admin_post_sidrena_export_price_history', array( $this, 'export_price_history' ) );
 		add_action( 'admin_post_sidrena_create_public_page', array( $this, 'create_public_page' ) );
 		add_action( 'admin_post_sidrena_check_public_access', array( $this, 'check_public_access' ) );
 
@@ -455,6 +456,7 @@ final class Sidrena_Admin {
 
 		<div class="sid-grid sid-grid-2">
 			<section class="sid-card sid-tool-card"><div class="sid-tool-icon"><span class="dashicons dashicons-media-spreadsheet"></span></div><h2><?php esc_html_e( 'Evidencija javne arhive', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Izvezite indeks svih objavljenih cjenika s datumom, rokom čuvanja, brojem redaka, veličinom, SHA-256 zapisom i URL-om.', 'sidrena' ); ?></p><a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_export_archive_index' ), 'sidrena_export_archive_index' ) ); ?>"><?php esc_html_e( 'Preuzmi indeks arhive', 'sidrena' ); ?></a></section>
+			<section class="sid-card sid-tool-card"><div class="sid-tool-icon"><span class="dashicons dashicons-chart-line"></span></div><h2><?php esc_html_e( 'Povijest promjena cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Izvezite neograničenu evidenciju stvarnih promjena cijena. Ova povijest služi auditu i nije izračun najniže cijene u 30 dana.', 'sidrena' ); ?></p><a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_export_price_history' ), 'sidrena_export_price_history' ) ); ?>"><?php esc_html_e( 'Preuzmi povijest cijena', 'sidrena' ); ?></a></section>
 		</div>
 
 		<section class="sid-card sid-note"><div class="sid-note-icon"><span class="dashicons dashicons-shield"></span></div><div><h2><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'WooCommerce izdanje', 'sidrena' ) : esc_html__( 'WordPress izdanje', 'sidrena' ); ?></h2><p><?php echo Sidrena_Utils::is_woocommerce_edition() ? esc_html__( 'Ovaj plugin radi isključivo s WooCommerce katalogom. Za web bez WooCommercea instalirajte zasebni Sidrena WordPress paket.', 'sidrena' ) : esc_html__( 'Ovaj plugin koristi vlastiti WordPress katalog i ne integrira WooCommerce proizvode. Za WooCommerce trgovinu instalirajte zasebni Sidrena WooCommerce paket.', 'sidrena' ); ?></p></div></section>
@@ -717,21 +719,50 @@ final class Sidrena_Admin {
 				continue;
 			}
 
+			$existing_group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) );
+			$effective_group = $group ? $group : $existing_group;
+			if ( $has_anchor_date && $valid_date ) {
+				if ( ! $group ) {
+					if ( Sidrena_Utils::standard_reference_date() === $valid_date ) {
+						$effective_group = 'standard';
+					} elseif ( Sidrena_Utils::fmcg_reference_date() === $valid_date ) {
+						$effective_group = 'fmcg';
+					} elseif ( Sidrena_Utils::custom_reference_date( $valid_date ) ) {
+						$effective_group = 'custom';
+					} else {
+						++$skipped;
+						continue;
+					}
+				} elseif ( 'standard' === $effective_group && Sidrena_Utils::standard_reference_date() !== $valid_date ) {
+					++$skipped;
+					continue;
+				} elseif ( 'fmcg' === $effective_group && Sidrena_Utils::fmcg_reference_date() !== $valid_date ) {
+					++$skipped;
+					continue;
+				} elseif ( 'custom' === $effective_group && ! Sidrena_Utils::custom_reference_date( $valid_date ) ) {
+					++$skipped;
+					continue;
+				}
+			}
+			if ( 'custom' === $effective_group && $has_group && ! $valid_date ) {
+				++$skipped;
+				continue;
+			}
+
 			++$updated;
 			if ( '' === $price ) {
 				delete_post_meta( $product_id, '_sidrena_anchor_price' );
 			} else {
 				update_post_meta( $product_id, '_sidrena_anchor_price', $price );
 			}
-			if ( $has_anchor_date ) {
-				if ( '' === $valid_date ) {
-					delete_post_meta( $product_id, '_sidrena_anchor_date' );
-				} else {
-					update_post_meta( $product_id, '_sidrena_anchor_date', $valid_date );
-				}
+
+			if ( $group || ( $has_anchor_date && $valid_date ) ) {
+				update_post_meta( $product_id, '_sidrena_reference_group', $effective_group );
 			}
-			if ( $has_group && '' !== $group ) {
-				update_post_meta( $product_id, '_sidrena_reference_group', $group );
+			if ( 'custom' === $effective_group && $has_anchor_date && $valid_date ) {
+				update_post_meta( $product_id, '_sidrena_anchor_date', Sidrena_Utils::custom_reference_date( $valid_date ) );
+			} elseif ( 'custom' !== $effective_group && ( $has_group || $has_anchor_date ) ) {
+				delete_post_meta( $product_id, '_sidrena_anchor_date' );
 			}
 		}
 		fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -1014,18 +1045,17 @@ final class Sidrena_Admin {
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		$this->safe_fputcsv(
 			$out,
-			array( 'vrsta_zapisa', 'zabiljezeno', 'lokacija', 'product_id', 'variation_id', 'service_id', 'sifra', 'naziv', 'cijena', 'redovna_cijena', 'akcijska_cijena', 'sidrena_cijena', 'dostupnost', 'izvor' ),
+			array( 'vrsta_zapisa', 'zabiljezeno', 'product_id', 'variation_id', 'service_id', 'sifra', 'naziv', 'cijena', 'redovna_cijena', 'sidrena_cijena', 'izvor' ),
 			';'
 		);
 
-		if ( Sidrena_Utils::is_woocommerce_edition() ) {
-			$product_table = $wpdb->prefix . 'sidrena_price_history';
-			$offset        = 0;
-			do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
+		$product_table = $wpdb->prefix . 'sidrena_price_history';
+		$offset        = 0;
+		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded export from SIDRENA-owned history table.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT product_id, variation_id, price, regular_price, sale_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
+					'SELECT product_id, variation_id, price, regular_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
 					$product_table,
 					1000,
 					$offset
@@ -1034,37 +1064,32 @@ final class Sidrena_Admin {
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 				$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
-				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
+				if ( Sidrena_Utils::is_woocommerce_edition() ) {
+					$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
+					$code    = $product ? Sidrena_Utils::get_product_code( $product ) : '';
+					$name    = $product ? $product->get_name() : get_the_title( $item_id );
+					$anchor  = Sidrena_Utils::product_anchor_price( $item_id );
+					$kind    = 'woocommerce';
+				} else {
+					$code   = get_post_meta( $item_id, '_sidrena_standalone_code', true );
+					$name   = get_the_title( $item_id );
+					$anchor = get_post_meta( $item_id, '_sidrena_standalone_anchor_price', true );
+					$kind   = 'wordpress';
+				}
 				$this->safe_fputcsv(
 					$out,
-					array(
-						'woocommerce',
-						$row['recorded_at'],
-						'',
-						absint( $row['product_id'] ),
-						absint( $row['variation_id'] ),
-						'',
-						$product ? Sidrena_Utils::get_product_code( $product ) : '',
-						$product ? $product->get_name() : '',
-						$row['price'],
-						$row['regular_price'],
-						$row['sale_price'],
-						'',
-						'',
-						$row['source'],
-					),
+					array( $kind, $row['recorded_at'], absint( $row['product_id'] ), absint( $row['variation_id'] ), '', $code, $name, $row['price'], $row['regular_price'], $anchor, $row['source'] ),
 					';'
 				);
 			}
-				$count   = is_array( $rows ) ? count( $rows ) : 0;
-				$offset += 1000;
-			} while ( 1000 === $count );
-		}
+			$count   = is_array( $rows ) ? count( $rows ) : 0;
+			$offset += 1000;
+		} while ( 1000 === $count );
 
 		$service_table = $wpdb->prefix . 'sidrena_service_price_history';
 		$offset        = 0;
 		do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded export from SIDRENA-owned service history table.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
@@ -1075,24 +1100,10 @@ final class Sidrena_Admin {
 				ARRAY_A
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+				$service_id = absint( $row['service_id'] );
 				$this->safe_fputcsv(
 					$out,
-					array(
-						'usluga',
-						$row['recorded_at'],
-						'',
-						'',
-						'',
-						absint( $row['service_id'] ),
-						'',
-						get_the_title( absint( $row['service_id'] ) ),
-						$row['price'],
-						'',
-						'',
-						get_post_meta( absint( $row['service_id'] ), '_sidrena_service_anchor_price', true ),
-						'',
-						$row['source'],
-					),
+					array( 'usluga', $row['recorded_at'], '', '', $service_id, '', get_the_title( $service_id ), $row['price'], '', get_post_meta( $service_id, '_sidrena_service_anchor_price', true ), $row['source'] ),
 					';'
 				);
 			}
@@ -1100,59 +1111,8 @@ final class Sidrena_Admin {
 			$offset += 1000;
 		} while ( 1000 === $count );
 
-		if ( class_exists( 'Sidrena_Location_History' ) ) {
-			$location_table = Sidrena_Location_History::table_name();
-			$offset         = 0;
-			do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Sidrena uses bounded queries against its own plugin tables.
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT location_id, product_id, variation_id, price, anchor_price, availability, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
-					$location_table,
-					1000,
-					$offset
-				),
-				ARRAY_A
-			);
-			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
-				$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
-				$this->safe_fputcsv(
-					$out,
-					array(
-						'lokacija',
-						$row['recorded_at'],
-						$row['location_id'],
-						absint( $row['product_id'] ),
-						absint( $row['variation_id'] ),
-						'',
-						$product ? Sidrena_Utils::get_product_code( $product ) : '',
-						$product ? $product->get_name() : '',
-						$row['price'],
-						'',
-						'',
-						$row['anchor_price'],
-						$row['availability'],
-						$row['source'],
-					),
-					';'
-				);
-			}
-			$count   = is_array( $rows ) ? count( $rows ) : 0;
-				$offset += 1000;
-			} while ( 1000 === $count );
-		}
-
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
-	}
-
-	private function safe_fputcsv( $handle, $fields, $delimiter = ',' ) {
-		$safe = array();
-		foreach ( (array) $fields as $field ) {
-			$safe[] = Sidrena_Utils::csv_safe_cell( $field );
-		}
-		return false !== fputcsv( $handle, $safe, $delimiter );
 	}
 
 	public function export_archive_index() {

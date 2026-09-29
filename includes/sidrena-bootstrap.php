@@ -23,6 +23,7 @@ require_once SIDRENA_DIR . 'includes/class-sidrena-audit.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-compliance.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-site-health.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-cli.php';
+require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-service-history.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-services.php';
 require_once SIDRENA_DIR . 'includes/class-sidrena-pricelist.php';
@@ -109,7 +110,6 @@ add_action(
 			}
 
 			require_once SIDRENA_DIR . 'includes/class-sidrena-bulk.php';
-			require_once SIDRENA_DIR . 'includes/class-sidrena-history.php';
 			require_once SIDRENA_DIR . 'includes/class-sidrena-location-data.php';
 			require_once SIDRENA_DIR . 'includes/class-sidrena-location-history.php';
 			require_once SIDRENA_DIR . 'includes/class-sidrena-products.php';

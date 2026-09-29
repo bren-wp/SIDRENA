@@ -227,14 +227,16 @@ final class Sidrena_Services {
 
 		update_post_meta( $post_id, '_sidrena_service_sale', isset( $_POST['sidrena_service_sale'] ) ? 'yes' : 'no' );
 
-		$reference_group = isset( $_POST['sidrena_service_reference_group'] )
-			? Sidrena_Utils::sanitize_reference_group( wp_unslash( $_POST['sidrena_service_reference_group'] ), false )
+		$reference_group_raw = isset( $_POST['sidrena_service_reference_group'] )
+			? sanitize_text_field( wp_unslash( $_POST['sidrena_service_reference_group'] ) )
 			: 'standard';
+		$reference_group = Sidrena_Utils::sanitize_reference_group( $reference_group_raw, false );
 		update_post_meta( $post_id, '_sidrena_service_reference_group', $reference_group );
 		if ( 'custom' === $reference_group ) {
-			$custom_date = isset( $_POST['sidrena_service_anchor_date'] )
-				? Sidrena_Utils::custom_reference_date( wp_unslash( $_POST['sidrena_service_anchor_date'] ) )
+			$custom_date_raw = isset( $_POST['sidrena_service_anchor_date'] )
+				? sanitize_text_field( wp_unslash( $_POST['sidrena_service_anchor_date'] ) )
 				: '';
+			$custom_date = Sidrena_Utils::custom_reference_date( $custom_date_raw );
 			if ( $custom_date ) {
 				update_post_meta( $post_id, '_sidrena_service_anchor_date', $custom_date );
 			} else {

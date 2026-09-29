@@ -154,6 +154,8 @@ final class Sidrena_Activator {
 
 	private static function install_schema() {
 		self::create_audit_table();
+		self::create_history_table();
+		self::create_service_history_table();
 
 		if ( Sidrena_Utils::is_woocommerce_edition() ) {
 			self::create_location_table();
