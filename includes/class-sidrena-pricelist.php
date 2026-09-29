@@ -50,6 +50,34 @@ final class Sidrena_Pricelist {
 			return true;
 		}
 
+		// Publish the stable current files first. This lets us compare the actual
+		// machine-readable payload with the last successful archive generation
+		// without manufacturing another archive copy merely because a new day began.
+		if ( ! $this->refresh_current() ) {
+			return false;
+		}
+
+		if ( $this->current_matches_latest_archive() ) {
+			$current = Sidrena_Utils::public_index();
+			update_option(
+				'sidrena_last_run',
+				array(
+					'generated_at'              => current_time( DATE_ATOM ),
+					'files'                     => count( $current ),
+					'errors'                    => array(),
+					'duplicate_archive_skipped' => true,
+				),
+				false
+			);
+			Sidrena_Audit::log(
+				'pricelist_archive_duplicate',
+				'success',
+				__( 'Aktualni cjenik je osvježen, ali nova arhivska kopija nije stvorena jer je sadržaj jednak posljednjoj valjanoj arhivskoj publikaciji.', 'sidrena' ),
+				array( 'files' => count( $current ) )
+			);
+			return true;
+		}
+
 		$success = $this->generate_all();
 		if ( $success ) {
 			self::queue_regeneration();
@@ -321,7 +349,7 @@ final class Sidrena_Pricelist {
 						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
 						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
 						$location_entries[] = array(
-							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' ),
+							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['location_id'] ?? '' ),
 							'location_code' => sanitize_text_field( $location['code'] ?? '' ),
 							'kind'          => sanitize_key( $location['kind'] ?? 'objekt' ),
 							'catalog'       => $catalog_type,
@@ -1174,6 +1202,52 @@ final class Sidrena_Pricelist {
 			return new WP_Error( 'file_commit', sprintf( __( 'Nije moguće atomski objaviti datoteku: %s', 'sidrena' ), basename( $filepath ) ) );
 		}
 		return true;
+	}
+
+	private function current_matches_latest_archive() {
+		$current = Sidrena_Utils::public_index();
+		$archive = Sidrena_Utils::archive_index();
+		if ( empty( $current ) || empty( $archive ) ) {
+			return false;
+		}
+
+		$latest_ts = 0;
+		foreach ( $archive as $entry ) {
+			$latest_ts = max( $latest_ts, absint( $entry['generated_ts'] ?? 0 ) );
+		}
+		if ( ! $latest_ts ) {
+			return false;
+		}
+
+		$current_hashes = array();
+		foreach ( $current as $entry ) {
+			$key  = $this->index_key( $entry, $entry['catalog'] ?? '', $entry['format'] ?? '' );
+			$hash = sanitize_text_field( (string) ( $entry['sha256'] ?? '' ) );
+			if ( '' === $key || '' === $hash ) {
+				return false;
+			}
+			$current_hashes[ $key ] = $hash;
+		}
+
+		$archive_hashes = array();
+		foreach ( $archive as $entry ) {
+			if ( $latest_ts !== absint( $entry['generated_ts'] ?? 0 ) ) {
+				continue;
+			}
+			$key  = $this->index_key( $entry, $entry['catalog'] ?? '', $entry['format'] ?? '' );
+			$hash = sanitize_text_field( (string) ( $entry['sha256'] ?? '' ) );
+			if ( '' === $key || '' === $hash ) {
+				return false;
+			}
+			$archive_hashes[ $key ] = $hash;
+		}
+
+		if ( count( $current_hashes ) !== count( $archive_hashes ) ) {
+			return false;
+		}
+		ksort( $current_hashes );
+		ksort( $archive_hashes );
+		return hash_equals( hash( 'sha256', wp_json_encode( $archive_hashes ) ), hash( 'sha256', wp_json_encode( $current_hashes ) ) );
 	}
 
 	private function merge_archive_index( $new_files ) {
