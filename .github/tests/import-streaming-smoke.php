@@ -143,6 +143,10 @@ $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class
 $admin_source      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_csv_rows(' ), 'Legacy array-accumulating CSV parser must be removed.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_xml_rows(' ), 'Legacy array-accumulating XML parser must be removed.' );
+sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function code_index()' ), 'Standalone imports must not rebuild an unbounded whole-catalog code index in memory.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'private function code_index_for_codes( $codes )' ), 'Standalone imports must use bounded code lookups.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'if ( count( $chunk ) >= 250 )' ), 'Standalone imports must process rows in bounded chunks.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'if ( count( $keys ) >= 500 )' ), 'Standalone code lookup must retain a defensive lookup-key bound.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' ), 'Standalone code index must prepare the posts table identifier.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );

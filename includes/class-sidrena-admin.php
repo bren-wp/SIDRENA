@@ -1668,14 +1668,15 @@ final class Sidrena_Admin {
 
 	public function save_locations() {
 		$this->guard_post( 'sidrena_save_locations' );
-		$input = $this->post_array( 'locations' );
+		$input = array_slice( $this->post_array( 'locations' ), 0, 500, true );
 		if ( empty( $input ) ) {
 			$this->redirect( 'locations', 'locations_required' );
 		}
 
-		$out     = array();
-		$used    = array();
-		$old_ids = array();
+		$out            = array();
+		$used           = array();
+		$used_selectors = array();
+		$old_ids        = array();
 		foreach ( Sidrena_Utils::locations() as $old_location ) {
 			if ( ! empty( $old_location['id'] ) ) {
 				$old_ids[] = Sidrena_Utils::sanitize_location_id( $old_location['id'] );
@@ -1702,6 +1703,21 @@ final class Sidrena_Admin {
 				$this->redirect( 'locations', 'locations_invalid' );
 			}
 			$used[ $id ] = true;
+
+			if ( 'yes' === $enabled ) {
+				$selector_keys = array_unique(
+					array(
+						$id,
+						Sidrena_Utils::sanitize_location_id( $code ),
+					)
+				);
+				foreach ( $selector_keys as $selector_key ) {
+					if ( isset( $used_selectors[ $selector_key ] ) && $id !== $used_selectors[ $selector_key ] ) {
+						$this->redirect( 'locations', 'locations_invalid' );
+					}
+					$used_selectors[ $selector_key ] = $id;
+				}
+			}
 
 			$out[] = array(
 				'id'       => $id,

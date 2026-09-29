@@ -196,6 +196,7 @@ final class Sidrena_Bulk {
 		check_admin_referer( 'sidrena_bulk_save' );
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- check_admin_referer() verified this form submission immediately above.
 		$items   = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? map_deep( wp_unslash( $_POST['items'] ), 'sanitize_text_field' ) : array();
+		$items   = array_slice( $items, 0, 100, true );
 		$updated = 0;
 
 		foreach ( $items as $id => $row ) {
@@ -204,11 +205,16 @@ final class Sidrena_Bulk {
 				continue;
 			}
 
+			$anchor     = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
+			$quantity   = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
+			$unit_price = Sidrena_Utils::validated_nonnegative_decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
+			if ( null === $anchor || null === $quantity || null === $unit_price ) {
+				continue;
+			}
+
 			$this->set_text_meta( $id, '_sidrena_code', isset( $row['code'] ) ? $row['code'] : '' );
 			$this->set_text_meta( $id, '_sidrena_brand', isset( $row['brand'] ) ? $row['brand'] : '' );
 			$this->set_text_meta( $id, '_sidrena_barcode', isset( $row['barcode'] ) ? $row['barcode'] : '' );
-
-			$anchor = Sidrena_Utils::decimal( isset( $row['anchor'] ) ? $row['anchor'] : '' );
 			if ( '' === $anchor ) {
 				delete_post_meta( $id, '_sidrena_anchor_price' );
 			} else {
@@ -237,7 +243,6 @@ final class Sidrena_Bulk {
 				$unit_status = 'review';
 			}
 			update_post_meta( $id, '_sidrena_unit_price_status', $unit_status );
-			$quantity = Sidrena_Utils::decimal( isset( $row['quantity'] ) ? $row['quantity'] : '' );
 			if ( '' === $quantity ) {
 				delete_post_meta( $id, '_sidrena_quantity' );
 			} else {
@@ -251,7 +256,6 @@ final class Sidrena_Bulk {
 			}
 			$this->set_text_meta( $id, '_sidrena_unit', isset( $row['unit'] ) ? $row['unit'] : '' );
 
-			$unit_price = Sidrena_Utils::decimal( isset( $row['unit_price'] ) ? $row['unit_price'] : '' );
 			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
 				$product = wc_get_product( $id );
 				if ( $product ) {
