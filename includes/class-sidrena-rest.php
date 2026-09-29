@@ -519,7 +519,7 @@ final class Sidrena_REST {
 				'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
 				'naziv_posebnog_oblika_prodaje' => $sale ? sanitize_text_field( (string) get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) ) : '',
 				'sidrena_cijena'                => Sidrena_Utils::decimal( $anchor ),
-				'datum_sidrene_cijene'          => '' === Sidrena_Utils::decimal( $anchor ) ? '' : sanitize_text_field( (string) ( $date ? $date : Sidrena_Utils::settings()['default_ref_date'] ) ),
+				'datum_sidrene_cijene'          => '' === Sidrena_Utils::decimal( $anchor ) ? '' : sanitize_text_field( (string) ( $date ? $date : Sidrena_Utils::standard_reference_date() ) ),
 				'updated_at'                    => sanitize_text_field( (string) get_post_modified_time( 'c', true, $service->ID ) ),
 			);
 		}
