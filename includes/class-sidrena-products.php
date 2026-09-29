@@ -114,7 +114,7 @@ final class Sidrena_Products {
 				'id'          => '_sidrena_reference_group',
 				'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
 				'description' => __( '10.09.2026. i 02.05.2025. zaključani su pravilima plugina. Vlastiti datum dopušten je samo za proizvod koji je stvarno prvi put uveden u ponudu nakon 10.09.2026.', 'sidrena' ),
-				'desc_tip'    => true,
+				'desc_tip'          => true,
 				'options'     => array(
 					/* translators: %s: formatted reference date. */
 					'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
@@ -186,7 +186,7 @@ final class Sidrena_Products {
 					'step' => '0.0001',
 					'min'  => '0',
 				),
-				'description' => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
+				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
 				'desc_tip'    => true,
 			)
 		);
@@ -713,8 +713,8 @@ final class Sidrena_Products {
 			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
-			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
 			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}
