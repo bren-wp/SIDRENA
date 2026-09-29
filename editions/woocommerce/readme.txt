@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.27
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,68 +137,16 @@ No. It is completely optional. The plugin can be installed and configured indepe
 
 == Changelog ==
 
-= 1.0.27 =
+= 1.0.0 =
 
-* Refocused the compliance model on the SIDRENA anchor/reference price and its locked legal date, explicitly separate from current prices, WooCommerce regular/sale/current lifecycle and the lowest price in the previous 30 days.
-* Centralized the legal ruleset with immutable 10.09.2026 and 02.05.2025 dates, read-only official-source metadata, and safe audit-only migration of retired editable global date settings.
-* Added verifiable item-level first-publication exceptions for genuinely new products/variations and strengthened variable-product/variation handling.
-* Added lifecycle refresh coverage for WooCommerce product/variation price updates, including scheduled-sale transitions, imports and direct price-meta changes, so the stable current public pricelist is refreshed without unnecessary archive copies.
-* Strengthened unlimited product/service/location history, content-hash archive deduplication, atomic publication, locking, rollback and last-valid-publication recovery.
-* Added internal WP-Cron or external server cron/WP-CLI publication modes, the `wp sidrena publish` command, mode-aware watchdog behavior and Site Health diagnostics.
-* Removed the untested HPOS compatibility declaration until a real HPOS integration test exists, while retaining the required WooCommerce dependency guard.
-* Strengthened REST/import security and regression coverage across PHP 7.4, 8.3 and 8.4, and documented the GPL-compatible reference-plugin analysis without copying third-party code or assets.
-
-= 1.0.26 =
-
-* Unified the installed plugin name and WordPress.org readme brand to SIDRENA while keeping the established public slug/text domain unchanged.
-* Added REST location-code resolution so the public location code returned by SIDRENA can also be used as a REST filter.
-* Hardened CSV imports by validating the actual server-side temporary file size before reading content into memory.
-* Added regression coverage for REST location-code filters and server-side upload-size enforcement across supported PHP versions.
-
-= 1.0.25 =
-
-* Aligned the WooCommerce edition public text domain and Plugin Check slug to brendigo-sidrena-cijena.
-* Delayed all WooCommerce-specific runtime includes until WooCommerce is actually available on plugins_loaded.
-* Added a defensive missing-WooCommerce safe state and a scoped Plugins-screen notice without registering WooCommerce hooks or running upgrade/publication scheduling.
-* Improved the two-edition conflict guard so activation errors identify the active and attempted editions and explain the safe switch path without deleting business data.
-* Added regression coverage for a missing/deactivated WooCommerce dependency and refreshed legal/source provenance documentation from official Croatian, WordPress and WooCommerce sources.
-* Removed obsolete funding-related documentation; SIDRENA remains fully functional without paid activation or feature locks.
-
-= 1.0.24 =
-
-* Finalized the WordPress.org review-mail follow-up after the 1.0.23 release had already been published.
-* Expanded external-link disclosure for brendigo, WhatsApp, Narodne novine, the Ministry of Economy, HOK, and the historical DIRH review reference.
-* Added regression coverage preventing official Croatian legal/reference hosts from becoming automatic PHP HTTP or browser fetch endpoints.
-* Preserved the distinctive public name/slug, WooCommerce dependency header, lowercase brendigo ownership metadata, nonce/capability protections, scoped admin notices, and zero-telemetry model.
-* Includes the 1.0.23 code-audit fixes for canonical shortcode ownership, neutral legal marketing copy, stricter source metadata checks, and PDF QA compatibility.
-
-= 1.0.23 =
-
-* Removed duplicate legacy registration of the `[sidrena_cjenici]` shortcode from the REST class so the public renderer has a single owner.
-* Added runtime regression coverage that verifies the public download shortcode cannot be silently overwritten by another SIDRENA component.
-* Removed a repository-level compliance marketing claim and tightened release QA wording without changing the technical legal model.
-* Updated PDF visual QA for current Pillow APIs so release validation runs without the deprecated `Image.getdata()` path.
-* Strengthened source metadata detection and cleaned stale test metadata while preserving lowercase `brendigo` in public plugin headers.
-
-= 1.0.22 =
-
-* Simplified the Croatian end-user settings screen and locked publication-critical safeguards to automatic safe defaults.
-* Added safe WooCommerce store-address onboarding for empty webshop locations without overwriting saved data.
-* Improved variation reference-price hydration so the standard variation payload works without an additional request, with REST retained only as a compatibility fallback.
-* Added public file integrity metadata, improved archive/download layouts, and edition-specific detailed Croatian PDF instructions.
-* Added validated unit/alias extension hooks while preserving existing built-in conversions.
-* Updated WordPress.org-facing naming, slugs, branding, admin notices, readme copy, and trademark handling based on reviewer feedback.
-* Expanded PHP 7.4/8.3/8.4 CI, distribution/admin/legal, Plugin Check, and real WordPress/WooCommerce runtime regression coverage for the 1.0.22 release.
-
-= 1.0.21 =
-
-* Stabilized integration with existing store products and variations.
-* Improved variation reference-price output without an extra request in the standard WooCommerce flow.
-* Improved digital price lists, archives, locations, and integrity metadata.
-* Added detailed Croatian end-user documentation.
-* Strengthened CI, Plugin Check, and production regression guards.
-
-= 1.0.20 =
-
-* Improved price history, 30-day references, and unit-price handling.
-* Improved CSV import/export, location data, and public publication.
+* Consolidated production baseline focused on SIDRENA anchor/reference prices as a distinct concept from current, regular, sale and 30-day lowest-price data.
+* Locks the statutory 10.09.2026 and 02.05.2025 reference dates in the backend legal ruleset and preserves retired administrator-entered dates only as audit migration data.
+* Supports simple products, variable products and individual variations, including WooCommerce regular/sale/current lifecycle and scheduled-sale refresh handling.
+* Provides item-level first-publication exceptions for genuinely new products or variations without turning custom dates into a global rule.
+* Includes multiple locations, unit prices, WooCommerce CSV integration, public HTML price lists, CSV/XML machine-readable output, REST access and public archives.
+* Keeps unlimited product, variation and location price-change history with bounded reads for large catalogues.
+* Separates the stable current price list from controlled archive publication, with SHA-256 duplicate detection, atomic writes, file locking, rollback and last-valid-publication recovery.
+* Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
+* Hardens bulk input with server-side nonnegative numeric validation, bounded request payloads and valid-location checks.
+* Requires WooCommerce at install/runtime and remains inactive safely while that dependency is unavailable.
+* Ships without telemetry, license keys, feature paywalls or remote executable code.
