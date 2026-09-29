@@ -45,7 +45,7 @@ final class Sidrena_Legal_Automation {
 		}
 
 		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
-		$settings['retention_days']  = 30;
+		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 30 ) );
 		$settings['csv_delimiter']   = ';';
 		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 
