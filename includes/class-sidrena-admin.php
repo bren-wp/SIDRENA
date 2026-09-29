@@ -1073,6 +1073,7 @@ final class Sidrena_Admin {
 		$current          = Sidrena_Utils::public_index();
 		$paths            = Sidrena_Utils::upload_paths();
 		$last             = get_option( 'sidrena_last_run', array() );
+		$current_refresh  = get_option( 'sidrena_last_current_refresh', array() );
 		$settings         = Sidrena_Utils::settings();
 		$public_page_id   = absint( get_option( 'sidrena_public_page_id', 0 ) );
 		$public_page      = $public_page_id ? get_post( $public_page_id ) : null;
