@@ -12,6 +12,8 @@ declare( strict_types=1 );
 $root       = dirname( __DIR__, 2 );
 $admin      = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
 $bulk       = file_get_contents( $root . '/includes/class-sidrena-bulk.php' );
+$products   = file_get_contents( $root . '/includes/class-sidrena-products.php' );
+$services   = file_get_contents( $root . '/includes/class-sidrena-services.php' );
 $standalone = file_get_contents( $root . '/includes/class-sidrena-standalone.php' );
 $script     = file_get_contents( $root . '/admin/js/admin.js' );
 $style      = file_get_contents( $root . '/admin/css/brand.css' );
@@ -25,7 +27,7 @@ function sidrena_reference_ui_assert( $condition, $message ) {
 	}
 }
 
-foreach ( array( $admin, $bulk, $standalone, $script, $style, $capture, $compat ) as $contents ) {
+foreach ( array( $admin, $bulk, $products, $services, $standalone, $script, $style, $capture, $compat ) as $contents ) {
 	sidrena_reference_ui_assert( false !== $contents, 'Unable to read a reference UI source file.' );
 }
 
@@ -60,8 +62,8 @@ foreach (
 }
 
 sidrena_reference_ui_assert(
-	false === strpos( $products, "name="_sidrena_anchor_date"" )
-	&& false === strpos( $products, "name="_sidrena_anchor_date[" )
+	false === strpos( $products, 'name="_sidrena_anchor_date"' )
+	&& false === strpos( $products, 'name="_sidrena_anchor_date[' )
 	&& false === strpos( $services, 'name="sidrena_service_anchor_date"' )
 	&& false === strpos( $standalone, '][anchor_date]"' ),
 	'Normal SIDRENA admin screens must not expose an arbitrary editable custom reference date.'
