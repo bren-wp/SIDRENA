@@ -866,6 +866,7 @@ final class Sidrena_Products {
 				update_post_meta( $id, '_sidrena_reference_group', 'custom' );
 			}
 		}
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	private function variation_reference_group( $variation_id ) {
@@ -880,6 +881,7 @@ final class Sidrena_Products {
 
 	public function snapshot_new_variation( $variation_id ) {
 		$this->maybe_snapshot_new_variation( $variation_id );
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	private function maybe_snapshot_new_variation( $variation_id ) {
