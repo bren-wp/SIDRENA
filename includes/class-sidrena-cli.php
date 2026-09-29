@@ -23,6 +23,7 @@ final class Sidrena_CLI {
 
 		$instance = new self();
 		WP_CLI::add_command( 'sidrena generate', array( $instance, 'generate' ) );
+		WP_CLI::add_command( 'sidrena publish', array( $instance, 'publish' ) );
 		WP_CLI::add_command( 'sidrena status', array( $instance, 'status' ) );
 		WP_CLI::add_command( 'sidrena audit', array( $instance, 'audit' ) );
 
@@ -49,6 +50,26 @@ final class Sidrena_CLI {
 		WP_CLI::error( $errors );
 	}
 
+
+	/**
+	 * Publish today's archive and refresh the stable current price list.
+	 *
+	 * Intended for a real server cron when automation_mode=external.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp sidrena publish
+	 */
+	public function publish() {
+		$ok   = Sidrena_Pricelist::instance()->publish_daily_archive();
+		$last = get_option( 'sidrena_last_run', array() );
+		if ( $ok ) {
+			WP_CLI::success( sprintf( 'Dnevna SIDRENA objava dovršena. Datoteka: %d', isset( $last['files'] ) ? absint( $last['files'] ) : 0 ) );
+			return;
+		}
+		$errors = isset( $last['errors'] ) && is_array( $last['errors'] ) ? implode( '; ', $last['errors'] ) : 'Nepoznata pogreška.';
+		WP_CLI::error( $errors );
+	}
 
 	/**
 	 * Legacy compatibility command.
@@ -78,6 +99,10 @@ final class Sidrena_CLI {
 			array(
 				'key'   => 'generation_time',
 				'value' => $settings['generation_time'],
+			),
+			array(
+				'key'   => 'automation_mode',
+				'value' => $settings['automation_mode'] ?? 'wp_cron',
 			),
 			array(
 				'key'   => 'retention_days',
