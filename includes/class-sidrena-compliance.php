@@ -153,7 +153,7 @@ final class Sidrena_Compliance {
 
 		$before_normalize = $settings;
 		$settings         = Sidrena_Legal_Automation::normalize_settings( $settings );
-		foreach ( array( 'generation_time', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor' ) as $key ) {
+		foreach ( array( 'generation_time', 'automation_mode', 'retention_days', 'generate_csv', 'generate_xml', 'enable_rest_index', 'publish_manifest', 'enable_public_html', 'strict_publication', 'failure_notifications', 'display_anchor' ) as $key ) {
 			if ( (string) ( $before_normalize[ $key ] ?? '' ) !== (string) ( $settings[ $key ] ?? '' ) ) {
 				$repairs[] = 'settings:' . $key;
 			}
@@ -167,9 +167,15 @@ final class Sidrena_Compliance {
 	}
 
 	private function repair_schedules() {
-		$repairs = array();
+		$repairs  = array();
+		$settings = Sidrena_Utils::settings();
 
-		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
+		if ( 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ) {
+			if ( wp_next_scheduled( 'sidrena_daily_generation' ) ) {
+				wp_clear_scheduled_hook( 'sidrena_daily_generation' );
+				$repairs[] = 'schedule:removed_internal_daily_generation';
+			}
+		} elseif ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
 			$timestamp = is_callable( array( 'Sidrena_Utils', 'schedule_timestamp' ) ) ? Sidrena_Utils::schedule_timestamp() : time() + HOUR_IN_SECONDS;
 			wp_schedule_event( $timestamp, 'daily', 'sidrena_daily_generation' );
 			$repairs[] = 'schedule:sidrena_daily_generation';
