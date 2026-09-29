@@ -1,9 +1,11 @@
 <?php
 /**
- * Sidrena release-gate regression guard.
+ * Sidrena source file.
  *
  * @package Sidrena
  * @author brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
  */
 
 declare( strict_types=1 );
