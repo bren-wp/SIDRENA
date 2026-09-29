@@ -256,7 +256,7 @@ final class Sidrena_Site_Health {
 				'label' => __( 'Sljedeći interni dnevni zadatak', 'sidrena' ),
 				'value' => $next ? wp_date( DATE_ATOM, $next ) : __( 'nije zakazano / vanjski način', 'sidrena' ),
 			),
-			'watchdog'         => array(
+			'watchdog'        => array(
 				'label' => __( 'Nadzor objave', 'sidrena' ),
 				'value' => $watch ? wp_date( DATE_ATOM, $watch ) : __( 'nije zakazano', 'sidrena' ),
 			),
