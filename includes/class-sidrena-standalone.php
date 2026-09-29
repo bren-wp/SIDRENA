@@ -809,6 +809,7 @@ else :
 		}
 
 		$items           = isset( $_POST['items'] ) && is_array( $_POST['items'] ) ? wp_unslash( $_POST['items'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$items           = array_slice( $items, 0, 100, true );
 		$page            = max( 1, isset( $_POST['standalone_page'] ) ? absint( $_POST['standalone_page'] ) : 1 );
 		$saved           = 0;
 		$deleted         = 0;
