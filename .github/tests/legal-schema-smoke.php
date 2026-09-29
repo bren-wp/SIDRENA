@@ -108,6 +108,9 @@ sidrena_schema_assert( false !== strpos( $admin_source, 'Hrana i hrana za život
 sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g ili 50 ml' ), 'Unit-price exceptions guide is missing threshold exceptions.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 22.09.2026.' ), 'Official MINGO clarification date must remain 22.09.2026.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const LEGAL_VERIFIED_DATE     = '2026-09-29';" ), 'Legal ruleset verification date must match the current review.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Zakonska pravila' ) && false !== strpos( $admin_source, 'Zadnja pravna provjera SIDRENA ruleseta' ), 'Settings must expose the legal ruleset as a read-only reference panel.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Sidrena/referentna cijena i njezin datum vode se odvojeno od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.' ), 'Settings must explicitly separate anchor, current, 30-day and Woo sale-price concepts.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_22_clarifications' ), 'Official MINGO clarification source key must remain aligned to 22.09.2026.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, 'nn_59_2026_base_price_future' ), 'Future bazna-cijena source must remain separate from the NN 101/2026 sidrena-price layer.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, '17.11.2026' ), 'Bazna-price readiness must retain the statutory 17.11.2026 application marker.' );
