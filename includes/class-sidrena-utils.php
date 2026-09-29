@@ -21,7 +21,7 @@ final class Sidrena_Utils {
 
 	public static function legal_ruleset() {
 		return array(
-			'id'                     => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : 'SIDRENA legal ruleset',
+			'id'                      => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : 'SIDRENA legal ruleset',
 			'standard_reference_date' => self::STANDARD_REFERENCE_DATE,
 			'fmcg_reference_date'     => self::FMCG_REFERENCE_DATE,
 			'verified_date'           => self::LEGAL_VERIFIED_DATE,
