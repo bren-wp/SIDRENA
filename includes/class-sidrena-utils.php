@@ -15,6 +15,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Sidrena_Utils {
 	const STANDARD_REFERENCE_DATE = '2026-09-10';
 	const FMCG_REFERENCE_DATE     = '2025-05-02';
+	const LEGAL_VERIFIED_DATE     = '2026-09-29';
+	const LEGAL_SOURCE_URL        = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html';
+	const LEGAL_CLARIFICATION_URL = 'https://mingo.gov.hr/print.aspx?id=10440&url=print';
+
+	public static function legal_ruleset() {
+		return array(
+			'id'                     => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : 'SIDRENA legal ruleset',
+			'standard_reference_date' => self::STANDARD_REFERENCE_DATE,
+			'fmcg_reference_date'     => self::FMCG_REFERENCE_DATE,
+			'verified_date'           => self::LEGAL_VERIFIED_DATE,
+			'primary_source'          => 'NN 101/2026',
+			'primary_source_url'      => self::LEGAL_SOURCE_URL,
+			'clarification_source'    => 'Ministarstvo gospodarstva · 22.09.2026.',
+			'clarification_url'       => self::LEGAL_CLARIFICATION_URL,
+		);
+	}
 
 	public static function standard_reference_date() {
 		return self::STANDARD_REFERENCE_DATE;
