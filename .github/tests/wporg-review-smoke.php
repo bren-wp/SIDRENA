@@ -111,11 +111,15 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $wp_readme, 'Reference prices, 30-day sale references' )
+	false !== strpos( $wp_readme, 'SIDRENA anchor prices, unlimited price-change history' )
+	&& false !== strpos( $woo_readme, 'SIDRENA anchor prices, unlimited price-change history' )
+	&& false !== strpos( $wp_readme, 'Is a SIDRENA reference price the same as the lowest price in the previous 30 days?' )
+	&& false !== strpos( $woo_readme, 'Is a SIDRENA reference price the same as the lowest price in the previous 30 days?' )
+	&& false !== strpos( $wp_readme, 'No. SIDRENA stores them as separate concepts' )
+	&& false !== strpos( $woo_readme, 'No. They are stored and handled as separate concepts.' )
 	&& false !== strpos( $wp_readme, '== Description ==' )
-	&& false !== strpos( $woo_readme, 'Reference prices, 30-day sale references' )
 	&& false !== strpos( $woo_readme, '== Description ==' ),
-	'WordPress.org readme base language must remain standard English.'
+	'WordPress.org readmes must use English base copy and explicitly separate SIDRENA anchor prices from the 30-day sale reference.'
 );
 
 sidrena_wporg_assert(
