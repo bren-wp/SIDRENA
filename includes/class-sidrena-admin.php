@@ -1497,7 +1497,7 @@ final class Sidrena_Admin {
 			<div class="sid-grid sid-grid-2">
 				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_anchor"><?php wp_nonce_field( 'sidrena_import_anchor' ); ?>
-					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price, reference_group te anchor_date samo za kontroliranu migraciju stvarno novouvedene stavke. Zakonski datumi 10.09.2026. i 02.05.2025. ne uvoze se kao promjenjive postavke.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
+					<div class="sid-tool-icon"><span class="dashicons dashicons-tag"></span></div><h2><?php esc_html_e( 'Uvoz sidrenih cijena', 'sidrena' ); ?></h2><p><?php esc_html_e( 'CSV stupci: sku, anchor_price i opcionalni reference_group. Ako se za postojeći automatski custom zapis navede anchor_date, mora točno odgovarati dokazivom prvom objavljivanju stavke; proizvoljni datumi se odbijaju. Zakonski datumi 10.09.2026. i 02.05.2025. nisu promjenjive postavke.', 'sidrena' ); ?></p><label class="sid-file-control"><span><?php esc_html_e( 'CSV datoteka', 'sidrena' ); ?></span><input class="sid-file-input" type="file" name="anchor_csv" accept=".csv,text/csv,text/plain" aria-describedby="sid-anchor-csv-help" required><small id="sid-anchor-csv-help"><?php esc_html_e( 'Najviše 5 MB. Odaberite stvarnu CSV datoteku s podacima za uvoz.', 'sidrena' ); ?></small></label><button class="button button-primary sid-primary" type="submit"><?php esc_html_e( 'Uvezi sidrene cijene', 'sidrena' ); ?></button>
 				</form>
 				<form class="sid-card sid-tool-card sid-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="sidrena_import_location_data"><?php wp_nonce_field( 'sidrena_import_location_data' ); ?>
@@ -1798,19 +1798,22 @@ final class Sidrena_Admin {
 				continue;
 			}
 
-			$existing_group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) );
-			$effective_group = $group ? $group : $existing_group;
+			$existing_group       = Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) );
+			$effective_group      = $group ? $group : $existing_group;
+			$verified_custom_date = '';
 			if ( $has_anchor_date && $valid_date ) {
 				if ( ! $group ) {
 					if ( Sidrena_Utils::standard_reference_date() === $valid_date ) {
 						$effective_group = 'standard';
 					} elseif ( Sidrena_Utils::fmcg_reference_date() === $valid_date ) {
 						$effective_group = 'fmcg';
-					} elseif ( Sidrena_Utils::custom_reference_date( $valid_date ) ) {
-						$effective_group = 'custom';
 					} else {
-						++$skipped;
-						continue;
+						$verified_custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product_id, $valid_date );
+						if ( ! $verified_custom_date ) {
+							++$skipped;
+							continue;
+						}
+						$effective_group = 'custom';
 					}
 				} elseif ( 'standard' === $effective_group && Sidrena_Utils::standard_reference_date() !== $valid_date ) {
 					++$skipped;
@@ -1818,14 +1821,20 @@ final class Sidrena_Admin {
 				} elseif ( 'fmcg' === $effective_group && Sidrena_Utils::fmcg_reference_date() !== $valid_date ) {
 					++$skipped;
 					continue;
-				} elseif ( 'custom' === $effective_group && ! Sidrena_Utils::custom_reference_date( $valid_date ) ) {
+				} elseif ( 'custom' === $effective_group ) {
+					$verified_custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product_id, $valid_date );
+					if ( ! $verified_custom_date ) {
+						++$skipped;
+						continue;
+					}
+				}
+			}
+			if ( 'custom' === $effective_group && ! $verified_custom_date ) {
+				$verified_custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product_id );
+				if ( ! $verified_custom_date ) {
 					++$skipped;
 					continue;
 				}
-			}
-			if ( 'custom' === $effective_group && $has_group && ! $valid_date ) {
-				++$skipped;
-				continue;
 			}
 
 			++$updated;
@@ -1838,8 +1847,8 @@ final class Sidrena_Admin {
 			if ( $group || ( $has_anchor_date && $valid_date ) ) {
 				update_post_meta( $product_id, '_sidrena_reference_group', $effective_group );
 			}
-			if ( 'custom' === $effective_group && $has_anchor_date && $valid_date ) {
-				update_post_meta( $product_id, '_sidrena_anchor_date', Sidrena_Utils::custom_reference_date( $valid_date ) );
+			if ( 'custom' === $effective_group && $verified_custom_date ) {
+				update_post_meta( $product_id, '_sidrena_anchor_date', $verified_custom_date );
 			} elseif ( 'custom' !== $effective_group && ( $has_group || $has_anchor_date ) ) {
 				delete_post_meta( $product_id, '_sidrena_anchor_date' );
 			}
