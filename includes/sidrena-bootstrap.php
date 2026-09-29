@@ -74,16 +74,6 @@ if ( ! function_exists( 'sidrena_cijena' ) ) {
 register_activation_hook( SIDRENA_FILE, array( 'Sidrena_Activator', 'activate' ) );
 register_deactivation_hook( SIDRENA_FILE, array( 'Sidrena_Activator', 'deactivate' ) );
 
-if ( Sidrena_Utils::is_woocommerce_edition() ) {
-	add_action(
-		'before_woocommerce_init',
-		static function () {
-			if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
-				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', SIDRENA_FILE, true );
-			}
-		}
-	);
-}
 
 add_action(
 	'plugins_loaded',
