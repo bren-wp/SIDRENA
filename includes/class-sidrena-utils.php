@@ -361,6 +361,29 @@ final class Sidrena_Utils {
 		return self::custom_reference_date( $published->format( 'Y-m-d' ) );
 	}
 
+	/**
+	 * Resolve a custom first-listing reference date only when it is supported by
+	 * the exact WordPress publication timestamp of the item.
+	 *
+	 * An empty candidate derives the date from WordPress. A supplied candidate
+	 * must match that derived date exactly; arbitrary post-cutoff dates fail
+	 * closed.
+	 */
+	public static function verified_custom_reference_date_for_post( $post_id, $candidate = '' ) {
+		$expected = self::first_publication_reference_date( $post_id );
+		if ( ! $expected ) {
+			return '';
+		}
+
+		$candidate_raw = is_scalar( $candidate ) ? trim( (string) $candidate ) : '';
+		if ( '' === $candidate_raw ) {
+			return $expected;
+		}
+
+		$candidate_date = self::custom_reference_date( $candidate_raw );
+		return $candidate_date && $candidate_date === $expected ? $expected : '';
+	}
+
 	public static function resolved_reference_date( $group = 'standard', $custom_date = '' ) {
 		$group = self::sanitize_reference_group( $group );
 		if ( 'fmcg' === $group ) {
@@ -373,9 +396,10 @@ final class Sidrena_Utils {
 	}
 
 	public static function current_reference_date( $product_id = 0 ) {
-		$group      = 'standard';
-		$custom     = '';
-		$lookup_ids = array();
+		$group           = 'standard';
+		$custom          = '';
+		$group_source_id = 0;
+		$lookup_ids      = array();
 
 		if ( $product_id ) {
 			$lookup_ids[] = (int) $product_id;
@@ -387,18 +411,17 @@ final class Sidrena_Utils {
 			foreach ( $lookup_ids as $lookup_id ) {
 				$stored_group = sanitize_key( (string) get_post_meta( $lookup_id, '_sidrena_reference_group', true ) );
 				if ( in_array( $stored_group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
-					$group = $stored_group;
+					$group           = $stored_group;
+					$group_source_id = $lookup_id;
 					break;
 				}
 			}
 
-			if ( 'custom' === $group ) {
-				foreach ( $lookup_ids as $lookup_id ) {
-					$custom = self::custom_reference_date( get_post_meta( $lookup_id, '_sidrena_anchor_date', true ) );
-					if ( $custom ) {
-						break;
-					}
-				}
+			if ( 'custom' === $group && $group_source_id ) {
+				$custom = self::verified_custom_reference_date_for_post(
+					$group_source_id,
+					get_post_meta( $group_source_id, '_sidrena_anchor_date', true )
+				);
 			}
 		}
 
@@ -408,7 +431,9 @@ final class Sidrena_Utils {
 	public static function service_reference_date( $service_id = 0 ) {
 		$group  = $service_id ? sanitize_key( (string) get_post_meta( $service_id, '_sidrena_service_reference_group', true ) ) : 'standard';
 		$group  = self::sanitize_reference_group( $group, false );
-		$custom = 'custom' === $group && $service_id ? get_post_meta( $service_id, '_sidrena_service_anchor_date', true ) : '';
+		$custom = 'custom' === $group && $service_id
+			? self::verified_custom_reference_date_for_post( $service_id, get_post_meta( $service_id, '_sidrena_service_anchor_date', true ) )
+			: '';
 		return self::resolved_reference_date( $group, $custom );
 	}
 
