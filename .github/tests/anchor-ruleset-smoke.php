@@ -112,7 +112,11 @@ sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::custom_reference_date( '
 
 $GLOBALS['sidrena_test_dates'][301] = '2026-09-29';
 sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::first_publication_reference_date( 301 ), 'A new-item reference date must be derivable from its actual publication date.' );
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::verified_custom_reference_date_for_post( 301 ), 'Empty custom candidate must derive the exact first-publication date.' );
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::verified_custom_reference_date_for_post( 301, '2026-09-29' ), 'Matching custom candidate must be accepted.' );
+sidrena_ruleset_assert( '' === Sidrena_Utils::verified_custom_reference_date_for_post( 301, '2026-09-30' ), 'Arbitrary post-cutoff custom date must be rejected when it does not match first publication.' );
 $GLOBALS['sidrena_test_dates'][302] = '2026-09-10';
 sidrena_ruleset_assert( '' === Sidrena_Utils::first_publication_reference_date( 302 ), 'Publication on or before the statutory reference date must not become a custom new-item date.' );
+sidrena_ruleset_assert( '' === Sidrena_Utils::verified_custom_reference_date_for_post( 302, '2026-09-11' ), 'A post-cutoff candidate must be rejected when the item itself was not first published after the cutoff.' );
 
 fwrite( STDOUT, "SIDRENA immutable reference-date ruleset smoke test passed.\n" );
