@@ -23,8 +23,9 @@ final class Sidrena_Pricelist {
 	}
 
 	public function hooks() {
-		add_action( 'sidrena_daily_generation', array( $this, 'generate_all' ) );
-		add_action( 'sidrena_queued_generation', array( $this, 'generate_all' ) );
+		add_action( 'sidrena_daily_generation', array( $this, 'publish_daily_archive' ) );
+		add_action( 'sidrena_queued_archive_generation', array( $this, 'publish_daily_archive' ) );
+		add_action( 'sidrena_queued_generation', array( $this, 'refresh_current' ) );
 		add_action( 'sidrena_publication_watch', array( $this, 'publication_watch' ) );
 	}
 
@@ -33,6 +34,27 @@ final class Sidrena_Pricelist {
 			return true;
 		}
 		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
+	}
+
+	public static function queue_archive_publication() {
+		if ( wp_next_scheduled( 'sidrena_queued_archive_generation' ) ) {
+			return true;
+		}
+		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_archive_generation' );
+	}
+
+	public function publish_daily_archive() {
+		$last    = get_option( 'sidrena_last_run', array() );
+		$last_ts = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		if ( $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0 && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
+			return true;
+		}
+
+		$success = $this->generate_all();
+		if ( $success ) {
+			self::queue_regeneration();
+		}
+		return $success;
 	}
 
 	public function publication_watch() {
@@ -50,7 +72,7 @@ final class Sidrena_Pricelist {
 		if ( $last_ts && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
 			return;
 		}
-		if ( self::queue_regeneration() ) {
+		if ( self::queue_archive_publication() ) {
 			Sidrena_Audit::log(
 				'publication_watch',
 				'info',
