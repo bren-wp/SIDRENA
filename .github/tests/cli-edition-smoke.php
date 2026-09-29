@@ -58,7 +58,7 @@ function sidrena_cli_assert( $condition, $message ) {
 	}
 }
 
-foreach ( array( 'sidrena generate', 'sidrena status', 'sidrena audit' ) as $command ) {
+foreach ( array( 'sidrena generate', 'sidrena publish', 'sidrena status', 'sidrena audit' ) as $command ) {
 	sidrena_cli_assert( in_array( $command, $GLOBALS['sidrena_cli_commands'], true ), 'Missing common CLI command: ' . $command );
 }
 
