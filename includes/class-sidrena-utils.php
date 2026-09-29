@@ -45,8 +45,8 @@ final class Sidrena_Utils {
 	public static function settings() {
 		$settings = get_option( 'sidrena_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
-		// Legal reference dates and the 30-day public archive are ruleset values,
-		// never administrator-overridable compliance settings.
+		// Legal reference dates are ruleset values and are never administrator-overridable.
+		// Archive retention may be extended by the administrator but never shortened below 30 days.
 		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 		foreach (
 			array(
@@ -69,7 +69,7 @@ final class Sidrena_Utils {
 			unset( $settings[ $legacy_key ] );
 		}
 		$settings                   = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days'] = 30;
+		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
 		return $settings;
 	}
 
@@ -1118,7 +1118,7 @@ final class Sidrena_Utils {
 	public static function archive_retention_status() {
 		$settings = self::settings();
 		$stats    = self::archive_stats();
-		$days     = 30;
+		$days     = max( 30, absint( $settings['retention_days'] ) );
 		$age      = 0;
 
 		if ( ! empty( $stats['oldest_ts'] ) && ! empty( $stats['newest_ts'] ) ) {
