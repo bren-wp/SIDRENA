@@ -155,7 +155,7 @@ final class Sidrena_Products {
 			array(
 				'id'          => '_sidrena_unit_price_status',
 				'label'       => __( 'Jedinična cijena — primjenjivost', 'sidrena' ),
-				'desc_tip'          => true,
+				'desc_tip'    => true,
 				'description' => __( 'Provjerite primjenjivost čl. 8. NN 105/2026. Jedinična cijena obvezna je za propisane skupine robe, uz propisane iznimke. Sidrena ne zaključuje automatski pravni status proizvoda.', 'sidrena' ),
 				'options'     => array(
 					'review'       => __( 'Potrebna provjera', 'sidrena' ),
@@ -175,7 +175,7 @@ final class Sidrena_Products {
 					'min'  => '0',
 				),
 				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
-				'desc_tip'    => true,
+				'desc_tip'          => true,
 			)
 		);
 		woocommerce_wp_text_input(
