@@ -72,6 +72,9 @@ jobs:
       - name: Streaming import and row-limit smoke test
         run: php .github/tests/import-streaming-smoke.php
 
+      - name: Input validation and request-bound smoke test
+        run: php .github/tests/input-hardening-smoke.php
+
       - name: NN 101/2026 price-list schema smoke test
         run: php .github/tests/legal-schema-smoke.php
 
