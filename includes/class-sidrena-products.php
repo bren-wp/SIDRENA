@@ -614,6 +614,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$extra .= $this->anchor_html( $product );
 		}
+		$extra .= $this->lowest_30_html( $product );
 		return $extra ? $html . '<span class="sidrena-reference-prices">' . $extra . '</span>' : $html;
 	}
 
@@ -628,6 +629,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$out .= $this->anchor_html( $variation );
 		}
+		$out .= $this->lowest_30_html( $variation );
 
 		$html                           = $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 		$data['sidrena_reference_html'] = (string) apply_filters(
@@ -663,6 +665,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$out .= $this->anchor_html( $target );
 		}
+		$out .= $this->lowest_30_html( $target );
 		return $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 	}
 
@@ -678,6 +681,67 @@ final class Sidrena_Products {
 			return;
 		}
 		echo wp_kses_post( $this->shortcode( array( 'id' => $target_product->get_id() ) ) );
+	}
+
+	private function lowest_30_html( $product ) {
+		if ( ! class_exists( 'Sidrena_History' ) || ! $product instanceof WC_Product || ! $product->is_on_sale( 'edit' ) ) {
+			return '';
+		}
+		if ( $product->is_type( 'variable' ) ) {
+			return $this->variable_lowest_30_html( $product );
+		}
+
+		$result = Sidrena_History::instance()->lowest_30_day_reference( $product );
+		if ( 'ready' !== ( $result['status'] ?? '' ) || '' === ( $result['price'] ?? '' ) ) {
+			return '';
+		}
+
+		$display_price = (float) $result['price'];
+		if ( function_exists( 'wc_get_price_to_display' ) ) {
+			$display_price = wc_get_price_to_display( $product, array( 'price' => $display_price ) );
+		}
+		$source = 'manual' === ( $result['source'] ?? '' )
+			? __( 'provjerena vrijednost', 'sidrena' )
+			: __( 'iz povijesti cijena', 'sidrena' );
+		return sprintf(
+			'<span class="sidrena-lowest-30"><span class="sidrena-lowest-30__label">%1$s:</span> <span class="sidrena-lowest-30__value">%2$s</span><small>%3$s</small></span>',
+			esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+			wp_kses_post( wc_price( $display_price ) ),
+			esc_html( $source )
+		);
+	}
+
+	private function variable_lowest_30_html( $product ) {
+		$values       = array();
+		$on_sale      = 0;
+		$ready_values = 0;
+		foreach ( $product->get_children() as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( ! $variation || ! $variation->exists() || ! $variation->is_on_sale( 'edit' ) ) {
+				continue;
+			}
+			++$on_sale;
+			$result = Sidrena_History::instance()->lowest_30_day_reference( $variation );
+			if ( 'ready' !== ( $result['status'] ?? '' ) || '' === ( $result['price'] ?? '' ) ) {
+				continue;
+			}
+			$display = function_exists( 'wc_get_price_to_display' )
+				? wc_get_price_to_display( $variation, array( 'price' => (float) $result['price'] ) )
+				: (float) $result['price'];
+			$values[] = (float) $display;
+			++$ready_values;
+		}
+		if ( 0 === $on_sale || $ready_values !== $on_sale || ! $values ) {
+			return '';
+		}
+		$min    = min( $values );
+		$max    = max( $values );
+		$amount = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+		return sprintf(
+			'<span class="sidrena-lowest-30 sidrena-lowest-30--variable"><span class="sidrena-lowest-30__label">%1$s:</span> <span class="sidrena-lowest-30__value">%2$s</span></span>',
+			esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+			wp_kses_post( $amount )
+		);
 	}
 
 	private function anchor_html( $product ) {
