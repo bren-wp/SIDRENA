@@ -100,12 +100,32 @@ final class Sidrena_Pricelist {
 		if ( $last_ts && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
 			return;
 		}
+		if ( 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ) {
+			Sidrena_Audit::log(
+				'publication_watch',
+				'warning',
+				__( 'Vanjski raspored još nije objavio današnji cjenik nakon očekivanog vremena. SIDRENA nije pokrenula interni cron jer je odabran vanjski server cron/WP-CLI način.', 'sidrena' ),
+				array( 'target_time' => $target, 'automation_mode' => 'external' )
+			);
+			if ( $now_time >= '07:00' ) {
+				$this->maybe_send_publication_alert(
+					'late',
+					__( 'Vanjski raspored još nije uspješno objavio današnji cjenik.', 'sidrena' ),
+					array(
+						sprintf( __( 'Očekivano vrijeme objave: %s', 'sidrena' ), $target ),
+						__( 'Provjerite server cron ili pokrenite: wp sidrena publish', 'sidrena' ),
+					)
+				);
+			}
+			return;
+		}
+
 		if ( self::queue_archive_publication() ) {
 			Sidrena_Audit::log(
 				'publication_watch',
 				'info',
 				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
-				array( 'target_time' => $target )
+				array( 'target_time' => $target, 'automation_mode' => 'wp_cron' )
 			);
 			if ( $now_time >= '07:00' ) {
 				$this->maybe_send_publication_alert(
