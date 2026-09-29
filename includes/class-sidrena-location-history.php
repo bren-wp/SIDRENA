@@ -145,7 +145,6 @@ final class Sidrena_Location_History {
 			$row_count = count( $rows );
 		} while ( $row_count === $batch_size );
 
-		$this->prune_history();
 	}
 
 	public static function count_rows() {
@@ -165,17 +164,4 @@ final class Sidrena_Location_History {
 		return abs( (float) $stored - (float) $current ) < 0.000001;
 	}
 
-	private function prune_history() {
-		global $wpdb;
-		$table  = self::table_name();
-		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( 400 * DAY_IN_SECONDS ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location history table requires direct bounded CRUD.
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM %i WHERE recorded_at < %s',
-				$table,
-				$cutoff
-			)
-		);
-	}
 }
