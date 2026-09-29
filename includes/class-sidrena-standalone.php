@@ -698,10 +698,10 @@ final class Sidrena_Standalone {
 		$meta                      = static function ( $name ) use ( $id ) {
 			return $id ? get_post_meta( $id, $name, true ) : '';
 		};
-		$status_raw              = $meta( '_sidrena_standalone_unit_status' );
-		$status                  = $status_raw ? $status_raw : 'review';
-		$availability_raw        = $meta( '_sidrena_standalone_availability' );
-		$availability            = $availability_raw ? $availability_raw : 'dostupno';
+		$status_raw                = $meta( '_sidrena_standalone_unit_status' );
+		$status                    = $status_raw ? $status_raw : 'review';
+		$availability_raw          = $meta( '_sidrena_standalone_availability' );
+		$availability              = $availability_raw ? $availability_raw : 'dostupno';
 		$current                  = $meta( '_sidrena_standalone_current_price' );
 		$anchor                   = $meta( '_sidrena_standalone_anchor_price' );
 		$reference_group          = Sidrena_Utils::sanitize_reference_group( $meta( '_sidrena_standalone_reference_group' ) );
