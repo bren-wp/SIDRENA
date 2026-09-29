@@ -1273,11 +1273,13 @@ final class Sidrena_Admin {
 		unset( $settings );
 		$standard_date = Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() );
 		$fmcg_date     = Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() );
+		/* translators: 1: locked standard reference date, 2: locked FMCG reference date. */
+		$locked_dates_caption = sprintf( __( 'Standardno %1$s; ranije obuhvaćeni FMCG %2$s. Stvarno novouvedena stavka koristi dokazivi datum prvog uvrštenja kada je to primjenjivo.', 'sidrena' ), $standard_date, $fmcg_date );
 		?>
 		<div class="sid-price-guide sid-price-guide--reference">
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-cart"></span><h3><?php esc_html_e( 'Aktualna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja je trenutačno primjenjiva i objavljuje se u javnom cjeniku.', 'sidrena' ); ?></p></div>
 			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-tag"></span><h3><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Zasebna dodatna cijena prema SIDRENA rulesetu. Ne računa se kao najniža cijena u prethodnih 30 dana niti iz statusa posebnog oblika prodaje.', 'sidrena' ); ?></p></div>
-			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Zaključani pravni datum', 'sidrena' ); ?></h3><p><?php echo esc_html( sprintf( __( 'Standardno %1$s; ranije obuhvaćeni FMCG %2$s. Stvarno novouvedena stavka koristi dokazivi datum prvog uvrštenja kada je to primjenjivo.', 'sidrena' ), $standard_date, $fmcg_date ) ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Zaključani pravni datum', 'sidrena' ); ?></h3><p><?php echo esc_html( $locked_dates_caption ); ?></p></div>
 		</div>
 		<?php
 	}
