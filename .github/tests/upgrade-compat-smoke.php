@@ -9,7 +9,7 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_VERSION', '1.0.10' );
+define( 'SIDRENA_VERSION', '1.0.0' );
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php';
 
@@ -32,8 +32,12 @@ sidrena_upgrade_assert(
 	'An old Sidrena release must run the compatibility upgrade path.'
 );
 sidrena_upgrade_assert(
-	true === $method->invoke( null, '', '1.0.10' ),
+	true === $method->invoke( null, '', '1.0.0' ),
 	'A missing/old schema marker must run the compatibility repair path.'
+);
+sidrena_upgrade_assert(
+	true === $method->invoke( null, Sidrena_Activator::DB_VERSION, '1.0.27' ),
+	'An installation carrying the former 1.0.27 public marker must run the idempotent repair path when the consolidated public version is 1.0.0.'
 );
 sidrena_upgrade_assert(
 	false === $method->invoke( null, Sidrena_Activator::DB_VERSION, SIDRENA_VERSION ),
