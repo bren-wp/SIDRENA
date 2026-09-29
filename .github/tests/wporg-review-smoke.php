@@ -177,6 +177,11 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
+	false === strpos( $bootstrap_source, "declare_compatibility( 'custom_order_tables'" ),
+	'HPOS compatibility must not be declared until SIDRENA has a real HPOS integration test.'
+);
+
+sidrena_wporg_assert(
 	false === stripos( $bootstrap_source, 'Cjenikomat' )
 	&& false === stripos( $wp_main, 'Cjenikomat' )
 	&& false === stripos( $woo_main, 'Cjenikomat' )
