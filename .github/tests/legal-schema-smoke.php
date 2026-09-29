@@ -33,6 +33,7 @@ if ( ! function_exists( '__' ) ) {
 	}
 }
 
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-legal-automation.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 
