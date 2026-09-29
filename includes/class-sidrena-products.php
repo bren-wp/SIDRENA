@@ -107,22 +107,28 @@ final class Sidrena_Products {
 				),
 			)
 		);
-		woocommerce_wp_select(
-			array(
-				'id'          => '_sidrena_reference_group',
-				'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
-				'description' => __( '10.09.2026. i 02.05.2025. zaključani su pravilima plugina. Vlastiti datum dopušten je samo za proizvod koji je stvarno prvi put uveden u ponudu nakon 10.09.2026.', 'sidrena' ),
-				'desc_tip'    => true,
-				'options'     => array(
-					/* translators: %s: formatted reference date. */
-					'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
-					/* translators: %s: formatted FMCG reference date. */
-					'fmcg'     => sprintf( __( 'Zaključano: postojeći FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ),
-					'custom'   => __( 'Automatski: novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
-				),
-			)
-		);
-		echo '<p class="form-field"><span class="description">' . esc_html__( 'Datum za novouvedenu stavku ne upisuje se ručno. SIDRENA koristi dokazivi datum prvog objavljivanja; migrirani datum može se unijeti samo kroz strogo validirani CSV uvoz.', 'sidrena' ) . '</span></p>';
+		$product_id      = get_the_ID();
+		$reference_group = $product_id ? Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) ) : 'standard';
+		if ( 'custom' === $reference_group ) {
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product_id, get_post_meta( $product_id, '_sidrena_anchor_date', true ) );
+			echo '<p class="form-field"><label>' . esc_html__( 'Pravni datum sidrene cijene', 'sidrena' ) . '</label><strong>' . esc_html( Sidrena_Utils::date_display( $custom_date ) ) . '</strong><span class="description">' . esc_html__( 'Automatski zaključano iz dokazivog prvog objavljivanja proizvoda. Datum nije ručno promjenjiv.', 'sidrena' ) . '</span></p>';
+		} else {
+			woocommerce_wp_select(
+				array(
+					'id'          => '_sidrena_reference_group',
+					'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
+					'description' => __( 'Odaberite samo zakonski ruleset za postojeći proizvod. Novouvedeni proizvod SIDRENA prepoznaje automatski pri prvom objavljivanju.', 'sidrena' ),
+					'desc_tip'    => true,
+					'options'     => array(
+						/* translators: %s: formatted reference date. */
+						'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
+						/* translators: %s: formatted FMCG reference date. */
+						'fmcg'     => sprintf( __( 'Zaključano: postojeći FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ),
+					),
+				)
+			);
+		}
+		echo '<p class="form-field"><span class="description">' . esc_html__( '10.09.2026. i 02.05.2025. nisu postavke. Za stvarno novouvedenu stavku SIDRENA koristi i zaključava datum prvog objavljivanja.', 'sidrena' ) . '</span></p>';
 		woocommerce_wp_text_input(
 			array(
 				'id'                => '_sidrena_lowest_30_verified',
@@ -295,20 +301,25 @@ final class Sidrena_Products {
 				),
 			)
 		);
-		woocommerce_wp_select(
-			array(
-				'id'            => "_sidrena_reference_group_{$loop}",
-				'name'          => "_sidrena_reference_group[{$loop}]",
-				'value'         => $this->variation_reference_group( $variation_id ),
-				'label'         => __( 'Pravni datum sidrene cijene', 'sidrena' ),
-				'wrapper_class' => 'form-row form-row-first',
-				'options'       => array(
-					'standard' => __( 'Zaključano: 10.09.2026.', 'sidrena' ),
-					'fmcg'     => __( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ),
-					'custom'   => __( 'Automatski: novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
-				),
-			)
-		);
+		$variation_group = $this->variation_reference_group( $variation_id );
+		if ( 'custom' === $variation_group ) {
+			$variation_date = Sidrena_Utils::current_reference_date( $variation_id );
+			echo '<p class="form-row form-row-first"><label>' . esc_html__( 'Pravni datum sidrene cijene', 'sidrena' ) . '</label><strong>' . esc_html( Sidrena_Utils::date_display( $variation_date ) ) . '</strong><span class="description">' . esc_html__( 'Automatski zaključano iz prvog objavljivanja varijacije/proizvoda.', 'sidrena' ) . '</span></p>';
+		} else {
+			woocommerce_wp_select(
+				array(
+					'id'            => "_sidrena_reference_group_{$loop}",
+					'name'          => "_sidrena_reference_group[{$loop}]",
+					'value'         => $variation_group,
+					'label'         => __( 'Pravni datum sidrene cijene', 'sidrena' ),
+					'wrapper_class' => 'form-row form-row-first',
+					'options'       => array(
+						'standard' => __( 'Zaključano: 10.09.2026.', 'sidrena' ),
+						'fmcg'     => __( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ),
+					),
+				)
+			);
+		}
 		woocommerce_wp_select(
 			array(
 				'id'            => "_sidrena_unit_price_status_{$loop}",
@@ -443,10 +454,7 @@ final class Sidrena_Products {
 		}
 		$group = Sidrena_Utils::sanitize_reference_group( $product->get_meta( '_sidrena_reference_group', true ) );
 		if ( 'custom' === $group ) {
-			$custom_date = Sidrena_Utils::custom_reference_date( $product->get_meta( '_sidrena_anchor_date', true ) );
-			if ( ! $custom_date ) {
-				$custom_date = Sidrena_Utils::first_publication_reference_date( $product->get_id() );
-			}
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product->get_id(), $product->get_meta( '_sidrena_anchor_date', true ) );
 			if ( $custom_date ) {
 				$product->update_meta_data( '_sidrena_anchor_date', $custom_date );
 			} else {
@@ -504,10 +512,7 @@ final class Sidrena_Products {
 
 		$group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $variation_id, '_sidrena_reference_group', true ) );
 		if ( 'custom' === $group ) {
-			$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $variation_id, '_sidrena_anchor_date', true ) );
-			if ( ! $custom_date ) {
-				$custom_date = Sidrena_Utils::first_publication_reference_date( $variation_id );
-			}
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $variation_id, get_post_meta( $variation_id, '_sidrena_anchor_date', true ) );
 			if ( $custom_date ) {
 				update_post_meta( $variation_id, '_sidrena_anchor_date', $custom_date );
 			} else {
