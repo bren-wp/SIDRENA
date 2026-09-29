@@ -1360,7 +1360,7 @@ else :
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Identifier/value placeholders are prepared below; only the internally generated placeholder list is interpolated.
 		$prepared = $wpdb->prepare( $query, ...$args );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded lookup for at most 500 requested catalog codes.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Bounded query was fully prepared immediately above.
 		$rows = $wpdb->get_results( $prepared, ARRAY_A );
 
 		$index = array();
