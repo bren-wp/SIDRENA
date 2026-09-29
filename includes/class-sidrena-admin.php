@@ -220,7 +220,7 @@ final class Sidrena_Admin {
 					<span class="sid-context-chip"><?php esc_html_e( 'Produkcijsko okruženje', 'sidrena' ); ?></span>
 				</div>
 				<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-settings' ) ); ?>"><?php esc_html_e( 'Uredi postavke arhive', 'sidrena' ); ?></a>
-			</section>
+			</div>
 			<?php $this->support_card(); ?>
 		</div>
 
