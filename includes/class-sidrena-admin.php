@@ -239,6 +239,33 @@ final class Sidrena_Admin {
 		<?php
 	}
 
+
+	private function dashboard_metric( $label, $value, $icon, $caption, $tone = 'blue' ) {
+		?>
+		<section class="sid-dashboard-metric sid-dashboard-metric--<?php echo esc_attr( $tone ); ?>">
+			<span class="sid-dashboard-metric__icon dashicons <?php echo esc_attr( $icon ); ?>"></span>
+			<div><span><?php echo esc_html( $label ); ?></span><strong><?php echo esc_html( is_numeric( $value ) ? number_format_i18n( $value ) : $value ); ?></strong><small><?php echo esc_html( $caption ); ?></small></div>
+		</section>
+		<?php
+	}
+
+	private function support_card() {
+		?>
+		<section class="sid-card sid-support-card">
+			<div class="sid-support-card__icon"><span class="dashicons dashicons-editor-help"></span></div>
+			<div>
+				<span class="sid-kicker"><?php esc_html_e( 'Pomoć i dokumentacija', 'sidrena' ); ?></span>
+				<h2><?php esc_html_e( 'Trebate pomoć oko objave ili arhive?', 'sidrena' ); ?></h2>
+				<p><?php esc_html_e( 'Otvorite SIDRENA Podršku za upute, dijagnostiku, kontakt i opcionalne usluge. Ovaj ekran ostaje fokusiran na arhivu i tehničku spremnost.', 'sidrena' ); ?></p>
+				<div class="sid-card-actions">
+					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support' ) ); ?>"><?php esc_html_e( 'Otvori podršku', 'sidrena' ); ?></a>
+					<a class="button sid-secondary" href="<?php echo esc_url( Sidrena_Utils::support_pdf_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'PDF upute', 'sidrena' ); ?></a>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
 	private function archive_timeline( $archive ) {
 		$days = array();
 		foreach ( $archive as $entry ) {
@@ -1113,6 +1140,15 @@ final class Sidrena_Admin {
 
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
+	}
+
+
+	private function safe_fputcsv( $handle, $fields, $delimiter = ',' ) {
+		$safe = array();
+		foreach ( (array) $fields as $field ) {
+			$safe[] = Sidrena_Utils::csv_safe_cell( $field );
+		}
+		return false !== fputcsv( $handle, $safe, $delimiter );
 	}
 
 	public function export_archive_index() {
