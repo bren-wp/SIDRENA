@@ -47,7 +47,6 @@ foreach (
 		'sid-woo-compact-table',
 		'sid-row-details',
 		'Napredna SIDRENA polja',
-		'Sidrena_History::sale_reference( $product )',
 		'private function safe_suggestions( $product )',
 		"apply_filters( 'sidrena_safe_field_suggestions'",
 		'data-sidrena-safe-fill="code"',
@@ -61,7 +60,9 @@ foreach (
 }
 
 sidrena_reference_ui_assert(
-	false === strpos( $bulk, "<th scope=\"col\"><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></th><th scope=\"col\"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>" ),
+	false === strpos( $bulk, "Najniža 30 dana" )
+	&& false === strpos( $bulk, 'sale_reference' )
+	&& false === strpos( $bulk, "<th scope=\"col\"><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></th><th scope=\"col\"><?php esc_html_e( 'Jedinica', 'sidrena' ); ?></th>" ),
 	'The legacy 13-column Woo editor must not return as the main table.'
 );
 
