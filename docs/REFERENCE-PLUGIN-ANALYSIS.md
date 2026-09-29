@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: brendigo
+Author URI: https://brendigo.com/
+Plugin URI: https://brendigo.com/sidrene-cijene/
+Support: sidrena@brendigo.com
+-->
+
 # Analiza referentnih plugina
 
 Datum pregleda: 29. 9. 2026.
