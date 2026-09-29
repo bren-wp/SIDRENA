@@ -1159,6 +1159,7 @@ else :
 			return new WP_Error( 'upload_too_large', __( 'Datoteka za uvoz prelazi dopuštenih 5 MB.', 'sidrena' ) );
 		}
 
+		clearstatcache( true, $tmp_name );
 		$actual = wp_filesize( $tmp_name );
 		if ( false === $actual || $actual <= 0 ) {
 			return new WP_Error( 'upload_empty', __( 'Datoteka za uvoz je prazna ili joj nije moguće utvrditi veličinu.', 'sidrena' ) );
