@@ -814,7 +814,13 @@ else :
 		$saved           = 0;
 		$deleted         = 0;
 		$errors          = 0;
-		$code_index      = $this->code_index();
+		$code_candidates = array();
+		foreach ( $items as $candidate_row ) {
+			if ( is_array( $candidate_row ) && isset( $candidate_row['code'] ) ) {
+				$code_candidates[] = $candidate_row['code'];
+			}
+		}
+		$code_index      = $this->code_index_for_codes( $code_candidates );
 		$valid_locations = array();
 		foreach ( Sidrena_Utils::locations() as $location ) {
 			if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
@@ -1022,110 +1028,23 @@ else :
 			$rows = $this->iterate_csv_import_rows( $csv_resource, $delimiter, $head );
 		}
 
-		$created    = 0;
-		$updated    = 0;
-		$skipped    = 0;
-		$code_index = $this->code_index();
+		$created = 0;
+		$updated = 0;
+		$skipped = 0;
+		$chunk   = array();
 		foreach ( $rows as $raw ) {
-			$row      = $this->canonical_import_row( $raw );
-			$code     = sanitize_text_field( $row['code'] ?? '' );
-			$code_key = $this->code_key( $code );
-			$id       = $code_key && isset( $code_index[ $code_key ] ) ? absint( $code_index[ $code_key ] ) : 0;
-
-			if ( ! $id ) {
-				$name    = sanitize_text_field( $row['name'] ?? '' );
-				$current = Sidrena_Utils::validated_nonnegative_decimal( $row['current'] ?? '' );
-				$anchor  = Sidrena_Utils::validated_nonnegative_decimal( $row['anchor'] ?? '' );
-				if ( null === $current || null === $anchor || '' === $name || '' === $current || '' === $anchor ) {
-					++$skipped;
-					continue;
-				}
-				$id = wp_insert_post(
-					array(
-						'post_type'   => self::POST_TYPE,
-						'post_status' => 'publish',
-						'post_title'  => $name,
-					),
-					true
-				);
-				if ( is_wp_error( $id ) || ! $id ) {
-					++$skipped;
-					continue;
-				}
-				++$created;
-			} else {
-				++$updated;
-				if ( ! empty( $row['name'] ) ) {
-					wp_update_post(
-						array(
-							'ID'         => $id,
-							'post_title' => sanitize_text_field( $row['name'] ),
-						)
-					);
-				}
+			if ( ! is_array( $raw ) ) {
+				++$skipped;
+				continue;
 			}
-
-			$this->import_field( $id, '_sidrena_standalone_code', $row, 'code', 'text' );
-			if ( $code_key ) {
-				$code_index[ $code_key ] = $id;
+			$chunk[] = $raw;
+			if ( count( $chunk ) >= 250 ) {
+				$this->import_catalog_chunk( $chunk, $created, $updated, $skipped );
+				$chunk = array();
 			}
-			$this->import_field( $id, '_sidrena_standalone_brand', $row, 'brand', 'text' );
-			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
-			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
-			$reference_group = array_key_exists( 'reference_group', $row ) ? Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ) : 'standard';
-			$custom_date     = 'custom' === $reference_group
-				? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $row['anchor_date'] ?? '' )
-				: '';
-			if ( 'custom' === $reference_group && ! $custom_date ) {
-				$reference_group = 'standard';
-			}
-			update_post_meta( $id, '_sidrena_standalone_reference_group', $reference_group );
-			if ( $custom_date ) {
-				update_post_meta( $id, '_sidrena_standalone_anchor_date', $custom_date );
-			} else {
-				delete_post_meta( $id, '_sidrena_standalone_anchor_date' );
-			}
-			$this->import_field( $id, '_sidrena_standalone_barcode', $row, 'barcode', 'text' );
-			$this->import_field( $id, '_sidrena_standalone_quantity', $row, 'quantity', 'decimal' );
-			$this->import_field( $id, '_sidrena_standalone_quantity_unit', $row, 'quantity_unit', 'unit' );
-			$this->import_field( $id, '_sidrena_standalone_unit', $row, 'unit', 'text' );
-			$this->import_field( $id, '_sidrena_standalone_unit_price', $row, 'unit_price', 'decimal' );
-			$this->import_field( $id, '_sidrena_standalone_sale_name', $row, 'sale_name', 'text' );
-
-			if ( array_key_exists( 'unit_status', $row ) && '' !== trim( (string) $row['unit_status'] ) ) {
-				$status = sanitize_key( $row['unit_status'] );
-				if ( in_array( $status, array( 'review', 'required', 'not_required', 'exception' ), true ) ) {
-					update_post_meta( $id, '_sidrena_standalone_unit_status', $status );
-				}
-			}
-			$unit_status_raw = get_post_meta( $id, '_sidrena_standalone_unit_status', true );
-			$unit_status     = sanitize_key( $unit_status_raw ? $unit_status_raw : 'review' );
-			$unit_price      = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_unit_price', true ) );
-			$quantity        = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_quantity', true ) );
-			$quantity_unit   = Sidrena_Utils::normalize_unit( get_post_meta( $id, '_sidrena_standalone_quantity_unit', true ) );
-			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
-				$calculated = Sidrena_Utils::calculate_unit_price( get_post_meta( $id, '_sidrena_standalone_current_price', true ), $quantity, $quantity_unit );
-				if ( $calculated ) {
-					update_post_meta( $id, '_sidrena_standalone_unit', $calculated['unit'] );
-					update_post_meta( $id, '_sidrena_standalone_unit_price', $calculated['unit_price'] );
-				}
-			}
-
-			if ( array_key_exists( 'availability', $row ) && '' !== trim( (string) $row['availability'] ) ) {
-				$availability = sanitize_key( remove_accents( (string) $row['availability'] ) );
-				if ( in_array( $availability, array( 'dostupno', 'nedostupno' ), true ) ) {
-					update_post_meta( $id, '_sidrena_standalone_availability', $availability );
-				}
-			}
-
-			$final_name    = trim( (string) get_the_title( $id ) );
-			$final_current = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_current_price', true ) );
-			wp_update_post(
-				array(
-					'ID'          => $id,
-					'post_status' => $final_name && '' !== $final_current ? 'publish' : 'draft',
-				)
-			);
+		}
+		if ( $chunk ) {
+			$this->import_catalog_chunk( $chunk, $created, $updated, $skipped );
 		}
 
 		if ( is_resource( $csv_resource ) ) {
@@ -1404,36 +1323,173 @@ else :
 		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $code, 'UTF-8' ) : strtolower( $code );
 	}
 
-	private function code_index() {
+	private function code_index_for_codes( $codes ) {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded read across WordPress posts/postmeta for the standalone code index.
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT p.ID, pm.meta_value
-				FROM %i p
-				INNER JOIN %i pm ON pm.post_id = p.ID
-				WHERE p.post_type = %s
-					AND p.post_status IN ('publish','draft','pending','private')
-					AND pm.meta_key = %s
-					AND pm.meta_value <> ''
-				ORDER BY p.ID ASC",
-				$wpdb->posts,
-				$wpdb->postmeta,
-				self::POST_TYPE,
-				'_sidrena_standalone_code'
-			),
-			ARRAY_A
-		);
+		$keys = array();
+		foreach ( (array) $codes as $code ) {
+			$key = $this->code_key( $code );
+			if ( '' !== $key ) {
+				$keys[ $key ] = true;
+			}
+			if ( count( $keys ) >= 500 ) {
+				break;
+			}
+		}
+		$keys = array_keys( $keys );
+		if ( ! $keys ) {
+			return array();
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $keys ), '%s' ) );
+		$query        = "SELECT MIN(p.ID) AS ID, LOWER(pm.meta_value) AS code_key
+			FROM %i p
+			INNER JOIN %i pm ON pm.post_id = p.ID
+			WHERE p.post_type = %s
+				AND p.post_status IN ('publish','draft','pending','private')
+				AND pm.meta_key = %s
+				AND LOWER(pm.meta_value) IN ( $placeholders )
+			GROUP BY LOWER(pm.meta_value)
+			ORDER BY MIN(p.ID) ASC
+			LIMIT %d";
+		$args         = array( $wpdb->posts, $wpdb->postmeta, self::POST_TYPE, '_sidrena_standalone_code' );
+		foreach ( $keys as $key ) {
+			$args[] = $key;
+		}
+		$args[] = count( $keys );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Identifier/value placeholders are prepared below; only the internally generated placeholder list is interpolated.
+		$prepared = $wpdb->prepare( $query, ...$args );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded lookup for at most 500 requested catalog codes.
+		$rows = $wpdb->get_results( $prepared, ARRAY_A );
 
 		$index = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$key = $this->code_key( $row['meta_value'] ?? '' );
-			if ( $key && ! isset( $index[ $key ] ) ) {
-				$index[ $key ] = absint( $row['ID'] ?? 0 );
+			$key = $this->code_key( $row['code_key'] ?? '' );
+			$id  = absint( $row['ID'] ?? 0 );
+			if ( $key && $id && ! isset( $index[ $key ] ) ) {
+				$index[ $key ] = $id;
 			}
 		}
 		return $index;
+	}
+
+	private function import_catalog_chunk( $raw_rows, &$created, &$updated, &$skipped ) {
+		$rows  = array();
+		$codes = array();
+		foreach ( (array) $raw_rows as $raw ) {
+			if ( ! is_array( $raw ) ) {
+				++$skipped;
+				continue;
+			}
+			$row    = $this->canonical_import_row( $raw );
+			$rows[] = $row;
+			if ( isset( $row['code'] ) ) {
+				$codes[] = $row['code'];
+			}
+		}
+
+		$code_index = $this->code_index_for_codes( $codes );
+		foreach ( $rows as $row ) {
+			$code     = sanitize_text_field( $row['code'] ?? '' );
+			$code_key = $this->code_key( $code );
+			$id       = $code_key && isset( $code_index[ $code_key ] ) ? absint( $code_index[ $code_key ] ) : 0;
+
+			if ( ! $id ) {
+				$name    = sanitize_text_field( $row['name'] ?? '' );
+				$current = Sidrena_Utils::validated_nonnegative_decimal( $row['current'] ?? '' );
+				$anchor  = Sidrena_Utils::validated_nonnegative_decimal( $row['anchor'] ?? '' );
+				if ( null === $current || null === $anchor || '' === $name || '' === $current || '' === $anchor ) {
+					++$skipped;
+					continue;
+				}
+				$id = wp_insert_post(
+					array(
+						'post_type'   => self::POST_TYPE,
+						'post_status' => 'publish',
+						'post_title'  => $name,
+					),
+					true
+				);
+				if ( is_wp_error( $id ) || ! $id ) {
+					++$skipped;
+					continue;
+				}
+				++$created;
+			} else {
+				++$updated;
+				if ( ! empty( $row['name'] ) ) {
+					wp_update_post(
+						array(
+							'ID'         => $id,
+							'post_title' => sanitize_text_field( $row['name'] ),
+						)
+					);
+				}
+			}
+
+			$this->import_field( $id, '_sidrena_standalone_code', $row, 'code', 'text' );
+			if ( $code_key ) {
+				$code_index[ $code_key ] = $id;
+			}
+			$this->import_field( $id, '_sidrena_standalone_brand', $row, 'brand', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
+			$reference_group = array_key_exists( 'reference_group', $row ) ? Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ) : 'standard';
+			$custom_date     = 'custom' === $reference_group
+				? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $row['anchor_date'] ?? '' )
+				: '';
+			if ( 'custom' === $reference_group && ! $custom_date ) {
+				$reference_group = 'standard';
+			}
+			update_post_meta( $id, '_sidrena_standalone_reference_group', $reference_group );
+			if ( $custom_date ) {
+				update_post_meta( $id, '_sidrena_standalone_anchor_date', $custom_date );
+			} else {
+				delete_post_meta( $id, '_sidrena_standalone_anchor_date' );
+			}
+			$this->import_field( $id, '_sidrena_standalone_barcode', $row, 'barcode', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_quantity', $row, 'quantity', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_quantity_unit', $row, 'quantity_unit', 'unit' );
+			$this->import_field( $id, '_sidrena_standalone_unit', $row, 'unit', 'text' );
+			$this->import_field( $id, '_sidrena_standalone_unit_price', $row, 'unit_price', 'decimal' );
+			$this->import_field( $id, '_sidrena_standalone_sale_name', $row, 'sale_name', 'text' );
+
+			if ( array_key_exists( 'unit_status', $row ) && '' !== trim( (string) $row['unit_status'] ) ) {
+				$status = sanitize_key( $row['unit_status'] );
+				if ( in_array( $status, array( 'review', 'required', 'not_required', 'exception' ), true ) ) {
+					update_post_meta( $id, '_sidrena_standalone_unit_status', $status );
+				}
+			}
+			$unit_status_raw = get_post_meta( $id, '_sidrena_standalone_unit_status', true );
+			$unit_status     = sanitize_key( $unit_status_raw ? $unit_status_raw : 'review' );
+			$unit_price      = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_unit_price', true ) );
+			$quantity        = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_quantity', true ) );
+			$quantity_unit   = Sidrena_Utils::normalize_unit( get_post_meta( $id, '_sidrena_standalone_quantity_unit', true ) );
+			if ( 'required' === $unit_status && '' === $unit_price && '' !== $quantity && '' !== $quantity_unit ) {
+				$calculated = Sidrena_Utils::calculate_unit_price( get_post_meta( $id, '_sidrena_standalone_current_price', true ), $quantity, $quantity_unit );
+				if ( $calculated ) {
+					update_post_meta( $id, '_sidrena_standalone_unit', $calculated['unit'] );
+					update_post_meta( $id, '_sidrena_standalone_unit_price', $calculated['unit_price'] );
+				}
+			}
+
+			if ( array_key_exists( 'availability', $row ) && '' !== trim( (string) $row['availability'] ) ) {
+				$availability = sanitize_key( remove_accents( (string) $row['availability'] ) );
+				if ( in_array( $availability, array( 'dostupno', 'nedostupno' ), true ) ) {
+					update_post_meta( $id, '_sidrena_standalone_availability', $availability );
+				}
+			}
+
+			$final_name    = trim( (string) get_the_title( $id ) );
+			$final_current = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_standalone_current_price', true ) );
+			wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => $final_name && '' !== $final_current ? 'publish' : 'draft',
+				)
+			);
+		}
 	}
 
 	private function canonical_import_row( $row ) {
