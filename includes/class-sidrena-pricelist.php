@@ -143,8 +143,8 @@ final class Sidrena_Pricelist {
 		try {
 			$timestamp      = time();
 			$retention_days = max( 30, absint( $settings['retention_days'] ?? 30 ) );
-			$stamp           = wp_date( 'd.m.Y_H-i', $timestamp );
-			$formats         = $this->formats( $settings );
+			$stamp          = wp_date( 'd.m.Y_H-i', $timestamp );
+			$formats        = $this->formats( $settings );
 
 			if ( empty( $formats ) ) {
 				$errors[] = __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format.', 'sidrena' );
@@ -1231,7 +1231,7 @@ final class Sidrena_Pricelist {
 
 		$archive_hashes = array();
 		foreach ( $archive as $entry ) {
-			if ( $latest_ts !== absint( $entry['generated_ts'] ?? 0 ) ) {
+			if ( absint( $entry['generated_ts'] ?? 0 ) !== $latest_ts ) {
 				continue;
 			}
 			$key  = $this->index_key( $entry, $entry['catalog'] ?? '', $entry['format'] ?? '' );
