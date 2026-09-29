@@ -1470,9 +1470,10 @@ final class Sidrena_Admin {
 			</section>
 
 			<section class="sid-card sid-settings-section">
-				<div class="sid-settings-title"><span class="dashicons dashicons-clock"></span><div><h2><?php esc_html_e( '3. Raspored, arhiva i upozorenja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena korigira vrijeme na sigurnu vrijednost ako unesete 08:00 ili kasnije. Javna arhiva automatski se čuva 30 dana.', 'sidrena' ); ?></p></div></div>
+				<div class="sid-settings-title"><span class="dashicons dashicons-clock"></span><div><h2><?php esc_html_e( '3. Raspored, arhiva i upozorenja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena korigira vrijeme na sigurnu vrijednost ako unesete 08:00 ili kasnije. Arhiva se ne može postaviti ispod 30 dana, ali je možete čuvati dulje.', 'sidrena' ); ?></p></div></div>
 				<div class="sid-fields">
 					<label><span><?php esc_html_e( 'Vrijeme dnevnog generiranja', 'sidrena' ); ?></span><input type="time" name="generation_time" value="<?php echo esc_attr( $settings['generation_time'] ); ?>"><small><?php esc_html_e( 'Preporučeno 06:30. Vrijednost mora biti prije 08:00.', 'sidrena' ); ?></small></label>
+					<label><span><?php esc_html_e( 'Čuvanje javne arhive (dana)', 'sidrena' ); ?></span><input type="number" min="30" step="1" name="retention_days" value="<?php echo esc_attr( max( 30, absint( $settings['retention_days'] ) ) ); ?>"><small><?php esc_html_e( 'Najmanje 30 dana. Veća vrijednost produljuje čuvanje postojećih i novih arhivskih zapisa.', 'sidrena' ); ?></small></label>
 					<label class="sid-wide"><span><?php esc_html_e( 'E-mail za upozorenja', 'sidrena' ); ?></span><input type="email" maxlength="190" name="failure_email" value="<?php echo esc_attr( $settings['failure_email'] ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email', '' ) ); ?>"><small><?php esc_html_e( 'Ako ostavite prazno, koristi se WordPress administratorski e-mail.', 'sidrena' ); ?></small></label>
 				</div>
 			</section>
@@ -1594,7 +1595,7 @@ final class Sidrena_Admin {
 		}
 
 		$generation_time = Sidrena_Legal_Automation::normalize_generation_time( $this->post_value( 'generation_time', '06:30' ) );
-		$retention_days  = 30;
+		$retention_days  = max( 30, absint( $this->post_value( 'retention_days', 30 ) ) );
 		$failure_raw     = trim( sanitize_text_field( $this->post_value( 'failure_email', '' ) ) );
 		$failure_email   = sanitize_email( $failure_raw );
 		if ( '' !== $failure_raw && ( '' === $failure_email || ! is_email( $failure_email ) ) ) {
