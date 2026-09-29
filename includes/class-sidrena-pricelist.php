@@ -105,13 +105,17 @@ final class Sidrena_Pricelist {
 				'publication_watch',
 				'warning',
 				__( 'Vanjski raspored još nije objavio današnji cjenik nakon očekivanog vremena. SIDRENA nije pokrenula interni cron jer je odabran vanjski server cron/WP-CLI način.', 'sidrena' ),
-				array( 'target_time' => $target, 'automation_mode' => 'external' )
+				array(
+					'target_time'     => $target,
+					'automation_mode' => 'external',
+				)
 			);
 			if ( $now_time >= '07:00' ) {
 				$this->maybe_send_publication_alert(
 					'late',
 					__( 'Vanjski raspored još nije uspješno objavio današnji cjenik.', 'sidrena' ),
 					array(
+						/* translators: %s: configured expected publication time. */
 						sprintf( __( 'Očekivano vrijeme objave: %s', 'sidrena' ), $target ),
 						__( 'Provjerite server cron ili pokrenite: wp sidrena publish', 'sidrena' ),
 					)
@@ -125,7 +129,10 @@ final class Sidrena_Pricelist {
 				'publication_watch',
 				'info',
 				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
-				array( 'target_time' => $target, 'automation_mode' => 'wp_cron' )
+				array(
+					'target_time'     => $target,
+					'automation_mode' => 'wp_cron',
+				)
 			);
 			if ( $now_time >= '07:00' ) {
 				$this->maybe_send_publication_alert(
