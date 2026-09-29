@@ -123,7 +123,10 @@ final class Sidrena_Activator {
 	}
 
 	private static function ensure_schedules() {
-		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
+		$settings = Sidrena_Utils::settings();
+		if ( 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ) {
+			wp_clear_scheduled_hook( 'sidrena_daily_generation' );
+		} elseif ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
 			wp_schedule_event( Sidrena_Utils::schedule_timestamp(), 'daily', 'sidrena_daily_generation' );
 		}
 		if ( ! wp_next_scheduled( 'sidrena_publication_watch' ) ) {
