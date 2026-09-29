@@ -36,7 +36,7 @@ Important publication and technical outputs are automated so an end user cannot 
 
 The Croatian machine-readable price-list rule accepts XML or CSV. SIDRENA generates both formats by design for interoperability; this does not state that the rule requires both formats at the same time.
 
-The simplified settings screen only asks the user to choose the business mode, a daily generation time before 08:00, an archive retention period of at least 30 days, and an alert email address.
+The simplified settings screen asks the user to choose the business mode, the daily publication scheduler (internal WP-Cron or external server cron/WP-CLI), a generation time before 08:00, archive retention of at least 30 days, and an alert email address.
 
 = Croatian end-user documentation =
 
@@ -92,6 +92,10 @@ Detailed Croatian instructions are included in `docs/UPUTE.md` and `docs/SIDRENA
 = Does this edition require WooCommerce? =
 
 No. This edition uses its own SIDRENA product and service catalogue.
+
+= How can I use a real server cron instead of WP-Cron? =
+
+Choose the external server cron / WP-CLI scheduler in **SIDRENA > Settings** and run `wp sidrena publish` from the server scheduler before the configured publication deadline. SIDRENA removes its internal daily generation event in this mode while keeping the watchdog active for delay detection and alerts.
 
 = Can I disable CSV/XML output or publication monitoring? =
 
