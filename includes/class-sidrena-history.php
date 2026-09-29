@@ -65,6 +65,7 @@ final class Sidrena_History {
 			return;
 		}
 		$ids = array_keys( self::$pending_items );
+
 		self::$pending_items = array();
 		foreach ( $ids as $item_id ) {
 			$this->capture_item( absint( $item_id ), 'price-change' );
@@ -191,7 +192,7 @@ final class Sidrena_History {
 		}
 		$page = 1;
 		do {
-			$query = new WC_Product_Query(
+			$query    = new WC_Product_Query(
 				array(
 					'limit'   => 100,
 					'page'    => $page,
