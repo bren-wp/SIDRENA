@@ -15,7 +15,7 @@ Support: sidrena@brendigo.com
   <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA — WooCommerce izdanje vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.27</h1>
+<h1 align="center">SIDRENA 1.0.0</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -150,13 +150,13 @@ Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz ak
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.27 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.0 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-## Zašto SIDRENA 1.0.27
+## Zašto SIDRENA 1.0.0
 
-**SIDRENA 1.0.27** je compliance i digital-price-list izdanje usmjereno na **SIDRENA cijenu** kao zaseban, dokaziv podatak — odvojen od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.
+**SIDRENA 1.0.0** je compliance i digital-price-list izdanje usmjereno na **SIDRENA cijenu** kao zaseban, dokaziv podatak — odvojen od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.
 
-Izdanje 1.0.27 donosi:
+Izdanje 1.0.0 donosi:
 
 - zaključani pravni ruleset za 10.09.2026. i 02.05.2025. s read-only izvorima i audit-only migracijom starih editable datuma
 - dokazivu item-level iznimku za novu stavku, vezanu isključivo uz stvarni datum prvog objavljivanja
@@ -231,17 +231,17 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.27 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.0 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.27.zip`
-- `sidrena-woocommerce-1.0.27.zip`
+- `sidrena-wordpress-1.0.0.zip`
+- `sidrena-woocommerce-1.0.0.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
-## Nadogradnja sa starijih SIDRENA verzija
+## Nadogradnja postojeće SIDRENA instalacije
 
 SIDRENA koristi zaseban marker instalirane verzije za sigurne idempotentne nadogradnje. Ako se novije izdanje instalira preko bilo kojeg ranijeg izdanja SIDRENA — WordPress izdanje ili preko bilo kojeg ranijeg izdanja SIDRENA — WooCommerce izdanje, plugin pokreće idempotentni repair/migration prolaz: provjerava i po potrebi obnavlja tablice, postavke, upload direktorije, cron rasporede i javnu stranicu, bez brisanja postojećih poslovnih podataka. WordPress i WooCommerce izdanje i dalje se ne smiju istodobno aktivirati.
 
