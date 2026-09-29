@@ -294,7 +294,7 @@ final class Sidrena_Pricelist {
 			foreach ( $locations as $location ) {
 				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
 					continue;
-			}
+				}
 
 				$catalog_types     = $this->catalog_types( $settings['business_mode'] );
 				$location_entries  = array();
@@ -380,7 +380,10 @@ final class Sidrena_Pricelist {
 				'pricelist_current_refresh',
 				empty( $errors ) ? 'success' : 'warning',
 				empty( $errors ) ? __( 'Aktualni cjenik je osvježen bez stvaranja nove arhive.', 'sidrena' ) : __( 'Osvježavanje aktualnog cjenika završilo je s upozorenjima.', 'sidrena' ),
-				array( 'files' => $generated, 'errors' => $errors )
+				array(
+					'files'  => $generated,
+					'errors' => $errors,
+				)
 			);
 			return empty( $errors );
 		} finally {
@@ -1265,10 +1268,10 @@ final class Sidrena_Pricelist {
 
 			// Never shorten a retention promise already stored in the archive index.
 			// A later increase of the configured retention extends older entries too.
-			$minimum_until    = $generated ? $generated + ( 30 * DAY_IN_SECONDS ) : 0;
-			$stored_until = isset( $entry['retain_until_ts'] ) ? absint( $entry['retain_until_ts'] ) : 0;
-			$retain_until = max( $minimum_until, $stored_until );
-			$is_expired       = $retain_until
+			$minimum_until = $generated ? $generated + ( 30 * DAY_IN_SECONDS ) : 0;
+			$stored_until  = isset( $entry['retain_until_ts'] ) ? absint( $entry['retain_until_ts'] ) : 0;
+			$retain_until  = max( $minimum_until, $stored_until );
+			$is_expired    = $retain_until
 				? time() >= $retain_until
 				: ( is_file( $path ) && filemtime( $path ) < $cutoff );
 
