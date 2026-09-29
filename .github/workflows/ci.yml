@@ -186,6 +186,9 @@ jobs:
       - name: Woo automatic price output smoke test
         run: php .github/tests/woo-output-smoke.php
 
+      - name: Separate 30-day minimum runtime smoke test
+        run: php .github/tests/lowest-30-runtime-smoke.php
+
       - name: Support and public surface smoke test
         run: php .github/tests/support-surface-smoke.php
 
