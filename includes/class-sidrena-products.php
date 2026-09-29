@@ -48,14 +48,14 @@ final class Sidrena_Products {
 			'_sidrena_anchor_price'       => 'number',
 			'_sidrena_lowest_30_verified' => 'number',
 			'_sidrena_reference_group'    => 'string',
-			'_sidrena_brand'             => 'string',
-			'_sidrena_code'              => 'string',
-			'_sidrena_barcode'           => 'string',
-			'_sidrena_unit'              => 'string',
-			'_sidrena_unit_price'        => 'number',
-			'_sidrena_unit_price_status' => 'string',
-			'_sidrena_sale_name'         => 'string',
-			'_sidrena_cjenik_visibility' => 'string',
+			'_sidrena_brand'              => 'string',
+			'_sidrena_code'               => 'string',
+			'_sidrena_barcode'            => 'string',
+			'_sidrena_unit'               => 'string',
+			'_sidrena_unit_price'         => 'number',
+			'_sidrena_unit_price_status'  => 'string',
+			'_sidrena_sale_name'          => 'string',
+			'_sidrena_cjenik_visibility'  => 'string',
 		);
 		foreach ( array( 'product', 'product_variation' ) as $post_type ) {
 			foreach ( $keys as $key => $type ) {
@@ -415,16 +415,16 @@ final class Sidrena_Products {
 			'_sidrena_anchor_price'       => 'decimal',
 			'_sidrena_lowest_30_verified' => 'decimal',
 			'_sidrena_reference_group'    => 'key',
-			'_sidrena_brand'             => 'text',
-			'_sidrena_code'              => 'text',
-			'_sidrena_barcode'           => 'text',
-			'_sidrena_unit'              => 'text',
-			'_sidrena_unit_price'        => 'decimal',
-			'_sidrena_unit_price_status' => 'unit_status',
-			'_sidrena_quantity'          => 'decimal',
-			'_sidrena_quantity_unit'     => 'unit_key',
-			'_sidrena_sale_name'         => 'text',
-			'_sidrena_cjenik_visibility' => 'cjenik_visibility',
+			'_sidrena_brand'              => 'text',
+			'_sidrena_code'               => 'text',
+			'_sidrena_barcode'            => 'text',
+			'_sidrena_unit'               => 'text',
+			'_sidrena_unit_price'         => 'decimal',
+			'_sidrena_unit_price_status'  => 'unit_status',
+			'_sidrena_quantity'           => 'decimal',
+			'_sidrena_quantity_unit'      => 'unit_key',
+			'_sidrena_sale_name'          => 'text',
+			'_sidrena_cjenik_visibility'  => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
 			if ( ! isset( $posted[ $key ] ) ) {
@@ -474,17 +474,17 @@ final class Sidrena_Products {
 		}
 
 		$fields = array(
-			'_sidrena_code'              => 'text',
-			'_sidrena_barcode'           => 'text',
+			'_sidrena_code'               => 'text',
+			'_sidrena_barcode'            => 'text',
 			'_sidrena_anchor_price'       => 'decimal',
 			'_sidrena_lowest_30_verified' => 'decimal',
 			'_sidrena_reference_group'    => 'key',
-			'_sidrena_unit_price_status' => 'unit_status_inherit',
-			'_sidrena_quantity'          => 'decimal',
-			'_sidrena_quantity_unit'     => 'unit_key',
-			'_sidrena_unit'              => 'text',
-			'_sidrena_unit_price'        => 'decimal',
-			'_sidrena_sale_name'         => 'text',
+			'_sidrena_unit_price_status'  => 'unit_status_inherit',
+			'_sidrena_quantity'           => 'decimal',
+			'_sidrena_quantity_unit'      => 'unit_key',
+			'_sidrena_unit'               => 'text',
+			'_sidrena_unit_price'         => 'decimal',
+			'_sidrena_sale_name'          => 'text',
 		);
 		foreach ( $fields as $key => $type ) {
 			if ( ! isset( $posted[ $key ][ $loop ] ) ) {
@@ -725,7 +725,7 @@ final class Sidrena_Products {
 			if ( 'ready' !== ( $result['status'] ?? '' ) || '' === ( $result['price'] ?? '' ) ) {
 				continue;
 			}
-			$display = function_exists( 'wc_get_price_to_display' )
+			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $result['price'] ) )
 				: (float) $result['price'];
 			$values[] = (float) $display;
