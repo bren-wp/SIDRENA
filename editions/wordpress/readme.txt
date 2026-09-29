@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.26
+Stable tag: 1.0.27
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,16 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.27 =
+
+* Refocused the compliance model on the SIDRENA anchor/reference price and its locked legal date, explicitly separate from current prices, WooCommerce sale prices and the lowest price in the previous 30 days.
+* Centralized the legal ruleset with immutable 10.09.2026 and 02.05.2025 dates, read-only official-source metadata, and safe audit-only migration of retired editable global date settings.
+* Added item-level new-product/service exceptions that accept only a verifiable first-publication date after the statutory reference date.
+* Strengthened unlimited product, service and location price history, current/archive separation, content-hash duplicate archive detection, atomic publication, locking, rollback and last-valid-publication recovery.
+* Added internal WP-Cron or external server cron/WP-CLI publication modes, the `wp sidrena publish` command, mode-aware watchdog behavior and Site Health diagnostics.
+* Hardened standalone imports with actual server-side temporary-file size checks, strengthened REST location validation, and expanded regression coverage across PHP 7.4, 8.3 and 8.4.
+* Documented the GPL-compatible reference-plugin feature analysis without copying third-party code, text, design or assets.
 
 = 1.0.26 =
 
