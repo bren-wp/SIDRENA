@@ -21,7 +21,8 @@ Sidrena changelog
 * Cijene usluga po lokaciji prihvaćaju samo kanonske aktivne lokacije; proizvoljni location ključevi više se ne spremaju u meta podatke.
 * Upload provjera koristi stvarnu server-side veličinu privremene datoteke, MIME/ekstenziju, encoding i row-limit provjere prije obrade.
 * REST koristi validirane argumente, bounded paginaciju, kanonsko mapiranje javnog location codea i ne izlaže nepotrebne interne podatke.
-* Dnevna objava podržava interni WP-Cron ili vanjski server cron/WP-CLI, uz watchdog, Site Health, audit i failure notifications.
+* Dnevna objava podržava interni WP-Cron ili vanjski server cron/WP-CLI, uz compliance/automation watchdog, Site Health, audit i failure notifications.
+* Production hardening obuhvaća strožu ulaznu validaciju, bounded batch obradu, sigurnije lokacijske selektore, reproducible build i release provjere.
 * Deaktivacija ne briše poslovne podatke; uninstall ima eksplicitnu politiku zadržavanja ili namjernog brisanja podataka.
 * Oba izdanja zadržavaju javne slugove/text-domainove i svugdje se korisniku predstavljaju kao SIDRENA.
 * Plugin nema premium module, paywall, trial, license key, telemetriju, skriveni tracking ni remote executable code.
