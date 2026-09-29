@@ -62,6 +62,13 @@ foreach (
 }
 
 sidrena_reference_ui_assert(
+	false === strpos( $products, "<option value=\"custom\"" )
+	&& false === strpos( $services, "<option value=\"custom\"" )
+	&& false === strpos( $standalone, "<option value=\"custom\"" ),
+	'Normal product, service and standalone forms must not offer a manual custom reference-date choice.'
+);
+
+sidrena_reference_ui_assert(
 	false === strpos( $products, 'name="_sidrena_anchor_date"' )
 	&& false === strpos( $products, 'name="_sidrena_anchor_date[' )
 	&& false === strpos( $services, 'name="sidrena_service_anchor_date"' )
