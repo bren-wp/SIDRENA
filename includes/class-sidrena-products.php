@@ -684,7 +684,7 @@ final class Sidrena_Products {
 	}
 
 	private function lowest_30_html( $product ) {
-		if ( ! class_exists( 'Sidrena_History' ) || ! $product instanceof WC_Product || ! $product->is_on_sale( 'edit' ) ) {
+		if ( ! class_exists( 'Sidrena_History' ) || ! $product instanceof WC_Product || ! is_callable( array( $product, 'is_on_sale' ) ) || ! $product->is_on_sale( 'edit' ) ) {
 			return '';
 		}
 		if ( $product->is_type( 'variable' ) ) {
