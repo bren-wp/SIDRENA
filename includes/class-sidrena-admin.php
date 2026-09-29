@@ -1461,11 +1461,12 @@ final class Sidrena_Admin {
 					<div><span><?php esc_html_e( 'Aktivni ruleset', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['id'] ); ?></strong></div>
 					<div><span><?php esc_html_e( 'Standardni zakonski referentni datum', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['standard_reference_date'] ) ); ?></strong></div>
 					<div><span><?php esc_html_e( 'Ranije obuhvaćene FMCG kategorije', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['fmcg_reference_date'] ) ); ?></strong></div>
-					<div><span><?php esc_html_e( 'Primarni izvor', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['primary_source'] ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Izvor SIDRENA cijene', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['anchor_source'] ); ?></strong></div>
+					<div><span><?php esc_html_e( 'Izvor digitalnog cjenika', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['pricelist_source'] ); ?></strong></div>
 					<div><span><?php esc_html_e( 'Službeno pojašnjenje', 'sidrena' ); ?></span><strong><?php echo esc_html( $ruleset['clarification_source'] ); ?></strong></div>
 					<div><span><?php esc_html_e( 'Zadnja pravna provjera SIDRENA ruleseta', 'sidrena' ); ?></span><strong><?php echo esc_html( Sidrena_Utils::date_display( $ruleset['verified_date'] ) ); ?></strong></div>
 				</div>
-				<p><a class="button sid-secondary" href="<?php echo esc_url( $ruleset['primary_source_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori primarni pravni izvor', 'sidrena' ); ?></a> <a class="button sid-secondary" href="<?php echo esc_url( $ruleset['clarification_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori službeno pojašnjenje', 'sidrena' ); ?></a></p>
+				<p><a class="button sid-secondary" href="<?php echo esc_url( $ruleset['anchor_source_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori izvor SIDRENA cijene', 'sidrena' ); ?></a> <a class="button sid-secondary" href="<?php echo esc_url( $ruleset['pricelist_source_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori izvor digitalnog cjenika', 'sidrena' ); ?></a> <a class="button sid-secondary" href="<?php echo esc_url( $ruleset['clarification_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Otvori službeno pojašnjenje', 'sidrena' ); ?></a></p>
 				<p class="description"><?php esc_html_e( 'SIDRENA je tehnički alat za evidenciju i objavu podataka. Ruleset ne predstavlja pravno jamstvo niti zamjenjuje izvornu poslovnu evidenciju ili pravni savjet.', 'sidrena' ); ?></p>
 			</section>
 
