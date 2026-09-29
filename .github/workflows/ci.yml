@@ -114,6 +114,9 @@ jobs:
       - name: Admin asset routing smoke test
         run: php .github/tests/admin-assets-smoke.php
 
+      - name: Site Health scheduler smoke test
+        run: php .github/tests/site-health-scheduler-smoke.php
+
       - name: Admin form UX smoke test
         run: php .github/tests/admin-form-ux-smoke.php
 
