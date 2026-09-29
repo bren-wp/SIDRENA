@@ -93,6 +93,9 @@ jobs:
       - name: WooCommerce import state smoke test
         run: php .github/tests/woo-import-state-smoke.php
 
+      - name: Woo price lifecycle refresh smoke test
+        run: php .github/tests/woo-lifecycle-smoke.php
+
       - name: Woo REST flattened pagination smoke test
         run: php .github/tests/rest-woocommerce-pagination-smoke.php
 
