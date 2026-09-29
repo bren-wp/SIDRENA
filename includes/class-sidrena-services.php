@@ -112,13 +112,17 @@ final class Sidrena_Services {
 				<input class="regular-text" type="number" min="0" step="0.01" id="sidrena_service_anchor_price" name="sidrena_service_anchor_price" value="<?php echo esc_attr( $fields['anchor_price'] ); ?>">
 			</p>
 			<p>
-				<label for="sidrena_service_reference_group"><strong><?php esc_html_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?></strong></label><br>
-				<select id="sidrena_service_reference_group" name="sidrena_service_reference_group">
-					<option value="standard" <?php selected( $fields['reference_group'], 'standard' ); ?>><?php esc_html_e( 'Zaključano: 10.09.2026.', 'sidrena' ); ?></option>
-					<option value="custom" <?php selected( $fields['reference_group'], 'custom' ); ?>><?php esc_html_e( 'Automatski: novouvedena usluga nakon 10.09.2026.', 'sidrena' ); ?></option>
-				</select>
+				<strong><?php esc_html_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?></strong><br>
+				<?php if ( 'custom' === $fields['reference_group'] ) : ?>
+					<input type="hidden" name="sidrena_service_reference_group" value="custom">
+					<strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::service_reference_date( $post->ID ) ) ); ?></strong><br>
+					<small><?php esc_html_e( 'Automatski zaključano iz prvog objavljivanja usluge. Datum nije ručno promjenjiv.', 'sidrena' ); ?></small>
+				<?php else : ?>
+					<input type="hidden" name="sidrena_service_reference_group" value="standard">
+					<strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ); ?></strong><br>
+					<small><?php esc_html_e( 'Zakonski datum 10.09.2026. zaključan je rulesetom. Novouvedenu uslugu SIDRENA prepoznaje automatski pri prvom objavljivanju.', 'sidrena' ); ?></small>
+				<?php endif; ?>
 			</p>
-			<p><strong><?php esc_html_e( 'Datum novouvedene usluge', 'sidrena' ); ?></strong><br><small><?php echo $fields['anchor_date'] ? esc_html( Sidrena_Utils::date_display( $fields['anchor_date'] ) ) . ' · ' : ''; ?><?php esc_html_e( 'Datum se ne uređuje ručno; SIDRENA ga izvodi iz stvarnog datuma prvog objavljivanja. Migrirani datum prihvaća se samo kroz kontrolirani uvoz.', 'sidrena' ); ?></small></p>
 			<p>
 				<label><input type="checkbox" name="sidrena_service_sale" value="yes" <?php checked( $fields['sale'], 'yes' ); ?>> <?php esc_html_e( 'Označi da je aktualna cijena dio posebnog oblika prodaje (odvojeno od sidrene cijene)', 'sidrena' ); ?></label>
 			</p>
@@ -229,10 +233,7 @@ final class Sidrena_Services {
 			: 'standard';
 		$reference_group     = Sidrena_Utils::sanitize_reference_group( $reference_group_raw, false );
 		if ( 'custom' === $reference_group ) {
-			$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $post_id, '_sidrena_service_anchor_date', true ) );
-			if ( ! $custom_date ) {
-				$custom_date = Sidrena_Utils::first_publication_reference_date( $post_id );
-			}
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $post_id, get_post_meta( $post_id, '_sidrena_service_anchor_date', true ) );
 			if ( $custom_date ) {
 				update_post_meta( $post_id, '_sidrena_service_anchor_date', $custom_date );
 			} else {
