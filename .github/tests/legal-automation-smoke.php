@@ -23,6 +23,8 @@ $audit_source      = file_get_contents( $root . '/includes/class-sidrena-audit.p
 $bootstrap_source  = file_get_contents( $root . '/includes/sidrena-bootstrap.php' );
 $plugin_source     = file_get_contents( $root . '/includes/class-sidrena-plugin.php' );
 $services_source   = file_get_contents( $root . '/includes/class-sidrena-services.php' );
+$history_source    = file_get_contents( $root . '/includes/class-sidrena-history.php' );
+$service_history_source = file_get_contents( $root . '/includes/class-sidrena-service-history.php' );
 $utils_source      = file_get_contents( $root . '/includes/class-sidrena-utils.php' );
 $changelog_source  = file_get_contents( $root . '/changelog.txt' );
 
@@ -66,7 +68,9 @@ sidrena_legal_assert( false === strpos( $utils_source, "'business_name'        =
 sidrena_legal_assert( false === strpos( $utils_source, "'label_custom'         =>" ) && false === strpos( $utils_source, "'anchor_tooltip_text'    =>" ), 'User-customizable legal labels/tooltips must not return to Sidrena defaults.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "Sidrena cijena na %s" ), 'Sidrena reference label must stay fixed and date-based.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "'retention_days'        => 30" ), 'Public price-list archive must default to exactly 30 days.' );
-sidrena_legal_assert( false === strpos( $plugin_source, 'Sidrena_History::instance()->hooks();' ) && false === strpos( $plugin_source, 'Sidrena_Service_History::instance()->hooks();' ), 'Retired 30-day sale-price history hooks must not be active.' );
+sidrena_legal_assert( false !== strpos( $plugin_source, 'Sidrena_History::instance()->hooks();' ) && false !== strpos( $plugin_source, 'Sidrena_Service_History::instance()->hooks();' ), 'Unlimited audit price-history hooks must remain active.' );
+sidrena_legal_assert( false === strpos( $history_source, 'sale_reference' ) && false === strpos( $history_source, 'lowest_30' ) && false === strpos( $history_source, 'calculate_lowest_before' ) && false === strpos( $history_source, 'prune_history' ), 'Product audit history must not contain the retired 30-day sale-reference workflow.' );
+sidrena_legal_assert( false === strpos( $service_history_source, 'sale_reference' ) && false === strpos( $service_history_source, 'lowest_30' ) && false === strpos( $service_history_source, 'calculate_lowest_before' ) && false === strpos( $service_history_source, 'prune_history' ), 'Service audit history must not contain the retired 30-day sale-reference workflow.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '0.5.0' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '0.5.0 changelog does not mention legal automation watchdog.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '0.5.0 changelog does not mention production hardening.' );
 
