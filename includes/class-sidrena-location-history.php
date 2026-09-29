@@ -144,7 +144,6 @@ final class Sidrena_Location_History {
 			}
 			$row_count = count( $rows );
 		} while ( $row_count === $batch_size );
-
 	}
 
 	public static function count_rows() {
@@ -163,5 +162,4 @@ final class Sidrena_Location_History {
 		}
 		return abs( (float) $stored - (float) $current ) < 0.000001;
 	}
-
 }
