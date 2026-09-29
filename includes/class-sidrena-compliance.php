@@ -187,14 +187,14 @@ final class Sidrena_Compliance {
 		$repairs = array();
 		$paths   = Sidrena_Utils::upload_paths();
 
-		foreach ( array( 'archive_dir', 'snapshot_dir' ) as $path_key ) {
+		foreach ( array( 'archive_dir', 'current_dir', 'snapshot_dir' ) as $path_key ) {
 			if ( ! is_dir( $paths[ $path_key ] ) ) {
 				wp_mkdir_p( $paths[ $path_key ] );
 				$repairs[] = 'directory:' . $path_key;
 			}
 		}
 
-		foreach ( array( $paths['base_dir'], $paths['archive_dir'], $paths['snapshot_dir'] ) as $dir ) {
+		foreach ( array( $paths['base_dir'], $paths['archive_dir'], $paths['current_dir'], $paths['snapshot_dir'] ) as $dir ) {
 			if ( $this->protect_directory( $dir ) ) {
 				$repairs[] = 'directory:index';
 			}
