@@ -159,11 +159,11 @@ final class Sidrena_History {
 
 	public function lowest_30_day_reference( $product ) {
 		$result = array(
-			'status'     => 'inactive',
-			'price'      => '',
-			'source'     => '',
-			'sale_start' => 0,
-			'window_from'=> 0,
+			'status'      => 'inactive',
+			'price'       => '',
+			'source'      => '',
+			'sale_start'  => 0,
+			'window_from' => 0,
 		);
 
 		if ( ! Sidrena_Utils::is_woocommerce_active() || ! $product instanceof WC_Product || ! $product->is_on_sale( 'edit' ) ) {
@@ -189,9 +189,9 @@ final class Sidrena_History {
 			return $result;
 		}
 
-		$window_from          = $start - ( 30 * DAY_IN_SECONDS );
-		$result['sale_start'] = $start;
-		$result['window_from']= $window_from;
+		$window_from           = $start - ( 30 * DAY_IN_SECONDS );
+		$result['sale_start']  = $start;
+		$result['window_from'] = $window_from;
 
 		global $wpdb;
 		$table        = $wpdb->prefix . 'sidrena_price_history';
