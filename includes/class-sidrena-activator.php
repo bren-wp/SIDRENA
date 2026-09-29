@@ -272,6 +272,25 @@ final class Sidrena_Activator {
 			$settings = array();
 		}
 
+		$legacy_dates = array();
+		foreach ( array( 'default_ref_date', 'fmcg_ref_date', 'fmsid_ref_date' ) as $legacy_key ) {
+			if ( array_key_exists( $legacy_key, $settings ) && '' !== trim( (string) $settings[ $legacy_key ] ) ) {
+				$legacy_dates[ $legacy_key ] = sanitize_text_field( (string) $settings[ $legacy_key ] );
+			}
+		}
+		if ( $legacy_dates ) {
+			$existing_snapshot = get_option( 'sidrena_legacy_legal_date_migration', array() );
+			$existing_snapshot = is_array( $existing_snapshot ) ? $existing_snapshot : array();
+			update_option(
+				'sidrena_legacy_legal_date_migration',
+				array(
+					'captured_at' => $existing_snapshot['captured_at'] ?? current_time( DATE_ATOM ),
+					'values'      => array_merge( (array) ( $existing_snapshot['values'] ?? array() ), $legacy_dates ),
+					'note'        => 'Legacy administrator-entered legal dates preserved for audit only; never used as the active SIDRENA legal ruleset.',
+				),
+				false
+			);
+		}
 		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
 
 		$settings                   = wp_parse_args( $settings, Sidrena_Utils::defaults() );
