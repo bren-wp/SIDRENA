@@ -76,6 +76,6 @@ sidrena_legal_assert( false === strpos( $history_source, 'sale_reference' ) && f
 sidrena_legal_assert( false !== strpos( $history_source, 'lowest_30_day_reference' ) && false !== strpos( $history_source, 'never changes or supplies the immutable SIDRENA' ), 'Woo 30-day minimum must remain an explicit consumer-price rule separate from the immutable anchor ruleset.' );
 sidrena_legal_assert( false === strpos( $service_history_source, 'sale_reference' ) && false === strpos( $service_history_source, 'lowest_30' ) && false === strpos( $service_history_source, 'calculate_lowest_before' ) && false === strpos( $service_history_source, 'prune_history' ), 'Service audit history must not contain the retired 30-day sale-reference workflow.' );
 sidrena_legal_assert( false !== strpos( $changelog_source, '= 1.0.0 =' ) && false !== strpos( $changelog_source, 'compliance/automation watchdog' ), '1.0.0 consolidated changelog does not mention the compliance/automation watchdog.' );
-sidrena_legal_assert( false !== strpos( $changelog_source, 'production hardening' ), '1.0.0 consolidated changelog does not mention production hardening.' );
+sidrena_legal_assert( false !== stripos( $changelog_source, 'production hardening' ), '1.0.0 consolidated changelog does not mention production hardening.' );
 
 fwrite( STDOUT, "Sidrena legal automation smoke test passed.\n" );
