@@ -50,7 +50,6 @@ jobs:
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
           echo "REFRESH_RELEASE=false" >> "$GITHUB_ENV"
           echo "CREATE_RELEASE_TAG=false" >> "$GITHUB_ENV"
-          echo "V1023_STALE_TARGET=c7a41fa9cf31e0c0f8fb3c43769b59fd474ab4c0" >> "$GITHUB_ENV"
 
       - name: Require stable release branch to match main
         if: startsWith(github.ref, 'refs/heads/release/')
@@ -64,27 +63,6 @@ jobs:
             echo "release=$GITHUB_SHA main=$MAIN_SHA" >&2
             exit 1
           fi
-      - name: Refresh first public 0.1.0 release when rebuilding from release branch
-        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '0.1.0'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq ".[] | select(.tag_name == \"$TAG_NAME\") | .id" | head -n1)"
-          if [[ "$RELEASE_ID" =~ ^[0-9]+$ ]]; then
-            echo "Removing previous $TAG_NAME release before the final 0.1.0 rebuild."
-            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/$RELEASE_ID"
-          fi
-          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "Removing previous $TAG_NAME tag before the final 0.1.0 rebuild."
-            git push origin --delete "$TAG_NAME"
-          fi
-          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "Removing checkout-local $TAG_NAME tag before recreating it."
-            git tag -d "$TAG_NAME"
-          fi
-
       - name: Resolve or create release tag from release branch
         if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
@@ -98,11 +76,8 @@ jobs:
             EXISTING_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
             if [[ "$EXISTING_TAG_TARGET" == "$GITHUB_SHA" ]]; then
               echo "Tag $TAG_NAME already points at the release commit."
-            elif [[ "$VERSION" == "0.9.0" ]]; then
-              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled refresh is required."
-              echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
-            elif [[ "$VERSION" == "1.0.23" && "$EXISTING_TAG_TARGET" == "$V1023_STALE_TARGET" ]]; then
-              echo "Existing $TAG_NAME is the known premature 1.0.23 tag at $EXISTING_TAG_TARGET; one-time controlled refresh is required."
+            elif [[ "$VERSION" == "1.0.0" ]]; then
+              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled consolidated-release refresh is required."
               echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
             else
               echo "Tag $TAG_NAME already exists at a different commit; refusing implicit retarget." >&2
@@ -278,18 +253,6 @@ jobs:
           git tag -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
           git push origin "$TAG_NAME"
 
-      - name: Retarget stale 0.9.0 tag before a new release
-        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$VERSION" = "0.9.0"
-          test "$RELEASE_TARGET" = "$GITHUB_SHA"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
-          git push --force origin "refs/tags/$TAG_NAME"
-
       - name: Publish new GitHub release
         if: env.RELEASE_EXISTS != 'true'
         uses: softprops/action-gh-release@v3
@@ -307,8 +270,8 @@ jobs:
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
 
-      - name: Retarget controlled existing release tag before asset mutation
-        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
+      - name: Retarget controlled 1.0.0 release tag before asset mutation
+        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0' && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -317,18 +280,10 @@ jobs:
           REMOTE_TAG_REF="$(git ls-remote origin "refs/tags/$TAG_NAME" | awk '{print $1}')"
           test -n "$REMOTE_TAG_REF"
 
-          if [[ "$VERSION" == "1.0.23" ]]; then
-            REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk '{print $1}')"
-            test "$REMOTE_TAG_TARGET" = "$V1023_STALE_TARGET"
-          else
-            test "$VERSION" = "0.9.0"
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
           git push --force-with-lease="refs/tags/$TAG_NAME:$REMOTE_TAG_REF" origin "refs/tags/$TAG_NAME"
-
       - name: Refresh existing release metadata and controlled assets when required
         if: env.RELEASE_EXISTS == 'true'
         env:
@@ -338,12 +293,9 @@ jobs:
           set -euo pipefail
 
           if [[ "${REFRESH_RELEASE:-false}" == "true" ]]; then
-            if [[ "$VERSION" == "1.0.23" ]]; then
-              REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk '{print $1}')"
-              test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"
-            else
-              test "$VERSION" = "0.9.0"
-            fi
+            test "$VERSION" = "1.0.0"
+            REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk '{print $1}')"
+            test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"
             gh release upload "$TAG_NAME" \
               "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" \
               "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" \
@@ -452,45 +404,8 @@ jobs:
           test "$(jq -r '.prerelease' <<<"$CURRENT_RELEASE")" = "false"
           test "$(jq -r '.target_commitish' <<<"$CURRENT_RELEASE")" = "$RELEASE_TARGET"
 
-          V010_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[] | select(.tag_name == "v0.1.0") | .id' | head -n1)"
-          if [[ "$V010_ID" =~ ^[0-9]+$ ]]; then
-            V010_BODY="$(cat <<'EOF'
-          ## SIDRENA 0.1.0
-
-          Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
-
-          - **SIDRENA — WordPress izdanje** — za WordPress web bez WooCommercea.
-          - **SIDRENA — WooCommerce izdanje** — za WordPress + WooCommerce.
-
-          Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
-
-          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
-
-          Podrška: sidrena@brendigo.com
-          Autor: brendigo
-          Službena stranica: https://brendigo.com/sidrene-cijene/
-          EOF
-          )"
-            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}" \
-              -F draft=false \
-              -F prerelease=false \
-              -f body="$V010_BODY" >/dev/null
-
-            V010_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${V010_ID}")"
-            test "$(jq -r '.draft' <<<"$V010_RELEASE")" = "false"
-            test "$(jq -r '.prerelease' <<<"$V010_RELEASE")" = "false"
-            RETIRED_BRAND_A='brendigo[[:space:]]+L''TD'
-            RETIRED_BRAND_B='brendigo L''TD Developer'
-            RETIRED_VERSION_A='Sidrena 1\.[0-9]'
-            RETIRED_VERSION_B='Sidrena 2\.0\.0'
-            if grep -qiE "${RETIRED_BRAND_A}|${RETIRED_BRAND_B}|${RETIRED_VERSION_A}|${RETIRED_VERSION_B}" <<<"$(jq -r '.body // ""' <<<"$V010_RELEASE")"; then
-              echo 'Retired branding/version history leaked into v0.1.0 release body.' >&2
-              exit 1
-            fi
-          fi
-
-      - name: Keep only the 0.1.0 GitHub release and tag
-        if: env.VERSION == '0.1.0'
+      - name: Keep only the consolidated 1.0.0 GitHub release and version tag
+        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -505,16 +420,15 @@ jobs:
             fi
           done
 
-          git fetch --tags --force
           while IFS= read -r TAG; do
             if [[ -n "$TAG" && "$TAG" != "$TAG_NAME" ]]; then
-              echo "Removing retired tag $TAG"
+              echo "Removing retired release tag $TAG"
               git push origin --delete "$TAG"
             fi
-          done < <(git tag -l)
+          done < <(git ls-remote --tags --refs origin 'refs/tags/v*' | awk '{sub("refs/tags/","",$2); print $2}')
 
           REMAINING_RELEASES="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].tag_name')"
           test "$REMAINING_RELEASES" = "$TAG_NAME"
 
-          REMAINING_TAGS="$(git ls-remote --tags --refs origin | awk '{sub("refs/tags/","",$2); print $2}')"
-          test "$REMAINING_TAGS" = "$TAG_NAME"
+          REMAINING_VERSION_TAGS="$(git ls-remote --tags --refs origin 'refs/tags/v*' | awk '{sub("refs/tags/","",$2); print $2}')"
+          test "$REMAINING_VERSION_TAGS" = "$TAG_NAME"
