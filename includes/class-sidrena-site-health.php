@@ -156,10 +156,11 @@ final class Sidrena_Site_Health {
 	}
 
 	public function test_archive() {
-		$settings = Sidrena_Utils::settings();
-		$retain   = max( 30, absint( $settings['retention_days'] ) );
-		$paths    = Sidrena_Utils::upload_paths();
-		$writable = is_dir( $paths['archive_dir'] ) && wp_is_writable( $paths['archive_dir'] );
+		$retain           = 30;
+		$paths            = Sidrena_Utils::upload_paths();
+		$archive_writable = is_dir( $paths['archive_dir'] ) && wp_is_writable( $paths['archive_dir'] );
+		$current_writable = is_dir( $paths['current_dir'] ) && wp_is_writable( $paths['current_dir'] );
+		$writable         = $archive_writable && $current_writable;
 
 		if ( ! $writable ) {
 			return array(
@@ -169,7 +170,7 @@ final class Sidrena_Site_Health {
 					'label' => 'Sidrena',
 					'color' => 'red',
 				),
-				'description' => '<p>' . esc_html__( 'WordPress ne može zapisivati u Sidrena mapu arhive. Provjerite dozvole direktorija uploads/sidrena/arhiva.', 'sidrena' ) . '</p>',
+				'description' => '<p>' . esc_html__( 'WordPress ne može zapisivati u SIDRENA mapu aktualnog cjenika ili arhive. Provjerite dozvole direktorija uploads/sidrena/aktualno i uploads/sidrena/arhiva.', 'sidrena' ) . '</p>',
 				'actions'     => '',
 				'test'        => 'sidrena_archive',
 			);
