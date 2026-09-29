@@ -56,6 +56,7 @@ final class Sidrena_REST {
 						'default'           => '',
 						'type'              => 'string',
 						'sanitize_callback' => array( $this, 'sanitize_location_arg' ),
+						'validate_callback' => array( $this, 'validate_location_arg' ),
 					),
 					'page'     => array(
 						'default'           => 1,
@@ -94,6 +95,17 @@ final class Sidrena_REST {
 				),
 			)
 		);
+	}
+
+	public function validate_location_arg( $value ) {
+		if ( ! is_scalar( $value ) && null !== $value ) {
+			return false;
+		}
+		$value = trim( (string) $value );
+		if ( strlen( $value ) > 191 || false !== strpos( $value, "\0" ) ) {
+			return false;
+		}
+		return 1 !== preg_match( '/[\x00-\x1F\x7F]/', $value );
 	}
 
 	public function sanitize_location_arg( $value ) {
