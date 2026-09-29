@@ -39,6 +39,27 @@
 	font-weight: 600;
 }
 
+.sidrena-lowest-30 {
+	display: block;
+	margin-top: .2rem;
+	font-size: .84em;
+	line-height: 1.38;
+	font-weight: 600;
+	color: color-mix(in srgb, currentColor 78%, transparent);
+}
+
+.sidrena-lowest-30 small {
+	display: inline-block;
+	margin-left: .35em;
+	font-size: .86em;
+	font-weight: 400;
+	opacity: .72;
+}
+
+.sidrena-lowest-30__value {
+	white-space: nowrap;
+}
+
 .sidrena-anchor__value,
 .sidrena-lowest__value,
 .sidrena-expiry__value {
