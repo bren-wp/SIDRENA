@@ -1264,6 +1264,19 @@ final class Sidrena_Admin {
 	}
 
 
+	private function dashboard_price_education( $settings ) {
+		unset( $settings );
+		$standard_date = Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() );
+		$fmcg_date     = Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() );
+		?>
+		<div class="sid-price-guide sid-price-guide--reference">
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-cart"></span><h3><?php esc_html_e( 'Aktualna cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Cijena koja je trenutačno primjenjiva i objavljuje se u javnom cjeniku.', 'sidrena' ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-tag"></span><h3><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></h3><p><?php esc_html_e( 'Zasebna dodatna cijena prema SIDRENA rulesetu. Ne računa se kao najniža cijena u prethodnih 30 dana niti iz statusa posebnog oblika prodaje.', 'sidrena' ); ?></p></div>
+			<div class="sid-price-guide__item"><span class="sid-price-guide__icon dashicons dashicons-calendar-alt"></span><h3><?php esc_html_e( 'Zaključani pravni datum', 'sidrena' ); ?></h3><p><?php echo esc_html( sprintf( __( 'Standardno %1$s; ranije obuhvaćeni FMCG %2$s. Stvarno novouvedena stavka koristi dokazivi datum prvog uvrštenja kada je to primjenjivo.', 'sidrena' ), $standard_date, $fmcg_date ) ); ?></p></div>
+		</div>
+		<?php
+	}
+
 	private function dashboard_metric( $label, $value, $icon, $caption, $tone = 'blue' ) {
 		?>
 		<section class="sid-dashboard-metric sid-dashboard-metric--<?php echo esc_attr( $tone ); ?>">
