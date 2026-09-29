@@ -39,6 +39,20 @@ function sidrena_import_stream_assert( $condition, $message ) {
 
 $standalone = Sidrena_Standalone::instance();
 
+$standalone_upload_size = new ReflectionMethod( 'Sidrena_Standalone', 'validate_uploaded_catalog_size' );
+$standalone_upload_size->setAccessible( true );
+$standalone_fixture = tempnam( sys_get_temp_dir(), 'sidrena-standalone-upload-' );
+file_put_contents( $standalone_fixture, "sku;price\nA;1\n" );
+$standalone_actual = $standalone_upload_size->invoke( $standalone, $standalone_fixture, 1 );
+sidrena_import_stream_assert( is_int( $standalone_actual ) && $standalone_actual === filesize( $standalone_fixture ), 'Standalone upload validation must use the server-side temp file size.' );
+file_put_contents( $standalone_fixture, str_repeat( 'x', ( 5 * MB_IN_BYTES ) + 1 ) );
+$standalone_oversize = $standalone_upload_size->invoke( $standalone, $standalone_fixture, 1 );
+sidrena_import_stream_assert( is_wp_error( $standalone_oversize ) && 'upload_too_large' === $standalone_oversize->code, 'Standalone import must reject an oversized server-side temp file even when reported metadata is smaller.' );
+file_put_contents( $standalone_fixture, '' );
+$standalone_empty = $standalone_upload_size->invoke( $standalone, $standalone_fixture, 0 );
+sidrena_import_stream_assert( is_wp_error( $standalone_empty ) && 'upload_empty' === $standalone_empty->code, 'Standalone import must reject an empty server-side temp file before loading it into memory.' );
+unlink( $standalone_fixture );
+
 $prepare_csv = new ReflectionMethod( 'Sidrena_Standalone', 'prepare_csv_import_stream' );
 $prepare_csv->setAccessible( true );
 $iterate_csv = new ReflectionMethod( 'Sidrena_Standalone', 'iterate_csv_import_rows' );
