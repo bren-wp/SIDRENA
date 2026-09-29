@@ -174,7 +174,6 @@ final class Sidrena_Activator {
 			variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			price decimal(20,6) NULL,
 			regular_price decimal(20,6) NULL,
-			sale_price decimal(20,6) NULL,
 			recorded_at datetime NOT NULL,
 			source varchar(32) NOT NULL DEFAULT 'save',
 			PRIMARY KEY (id),
