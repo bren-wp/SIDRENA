@@ -140,6 +140,7 @@ sidrena_schema_assert( '08:00' === Sidrena_Legal_Automation::publication_deadlin
 $hardened = Sidrena_Legal_Automation::normalize_settings(
 	array(
 		'generation_time'       => '12:15',
+		'automation_mode'       => 'invalid-mode',
 		'retention_days'        => 7,
 		'generate_csv'          => 'no',
 		'generate_xml'          => 'no',
@@ -150,6 +151,9 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 	)
 );
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
+sidrena_schema_assert( 'wp_cron' === $hardened['automation_mode'], 'Unknown publication automation mode must fail safe to internal WP-Cron.' );
+$external_mode = Sidrena_Legal_Automation::normalize_settings( array( 'automation_mode' => 'external' ) );
+sidrena_schema_assert( 'external' === $external_mode['automation_mode'], 'Explicit external server cron/WP-CLI mode must be preserved.' );
 sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention below the legal minimum must be hardened to 30 days.' );
 $extended_retention = Sidrena_Legal_Automation::normalize_settings( array( 'retention_days' => 90 ) );
 sidrena_schema_assert( 90 === $extended_retention['retention_days'], 'A safer archive retention above 30 days must be preserved.' );
