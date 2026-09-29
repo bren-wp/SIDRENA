@@ -1482,6 +1482,7 @@ final class Sidrena_Admin {
 			<section class="sid-card sid-settings-section">
 				<div class="sid-settings-title"><span class="dashicons dashicons-clock"></span><div><h2><?php esc_html_e( '4. Raspored, arhiva i upozorenja', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Sidrena korigira vrijeme na sigurnu vrijednost ako unesete 08:00 ili kasnije. Arhiva se ne može postaviti ispod 30 dana, ali je možete čuvati dulje.', 'sidrena' ); ?></p></div></div>
 				<div class="sid-fields">
+					<label><span><?php esc_html_e( 'Način dnevne objave', 'sidrena' ); ?></span><select name="automation_mode"><option value="wp_cron" <?php selected( $settings['automation_mode'] ?? 'wp_cron', 'wp_cron' ); ?>><?php esc_html_e( 'Interni WordPress WP-Cron', 'sidrena' ); ?></option><option value="external" <?php selected( $settings['automation_mode'] ?? 'wp_cron', 'external' ); ?>><?php esc_html_e( 'Vanjski server cron / WP-CLI', 'sidrena' ); ?></option></select><small><?php esc_html_e( 'Vanjski način uklanja interni dnevni cron. Server cron treba pokrenuti naredbu “wp sidrena publish”; SIDRENA watchdog i dalje nadzire kašnjenje.', 'sidrena' ); ?></small></label>
 					<label><span><?php esc_html_e( 'Vrijeme dnevnog generiranja', 'sidrena' ); ?></span><input type="time" name="generation_time" value="<?php echo esc_attr( $settings['generation_time'] ); ?>"><small><?php esc_html_e( 'Preporučeno 06:30. Vrijednost mora biti prije 08:00.', 'sidrena' ); ?></small></label>
 					<label><span><?php esc_html_e( 'Čuvanje javne arhive (dana)', 'sidrena' ); ?></span><input type="number" min="30" step="1" name="retention_days" value="<?php echo esc_attr( max( 30, absint( $settings['retention_days'] ) ) ); ?>"><small><?php esc_html_e( 'Najmanje 30 dana. Veća vrijednost produljuje čuvanje postojećih i novih arhivskih zapisa.', 'sidrena' ); ?></small></label>
 					<label class="sid-wide"><span><?php esc_html_e( 'E-mail za upozorenja', 'sidrena' ); ?></span><input type="email" maxlength="190" name="failure_email" value="<?php echo esc_attr( $settings['failure_email'] ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email', '' ) ); ?>"><small><?php esc_html_e( 'Ako ostavite prazno, koristi se WordPress administratorski e-mail.', 'sidrena' ); ?></small></label>
@@ -1605,6 +1606,10 @@ final class Sidrena_Admin {
 		}
 
 		$generation_time = Sidrena_Legal_Automation::normalize_generation_time( $this->post_value( 'generation_time', '06:30' ) );
+		$automation_mode = sanitize_key( $this->post_value( 'automation_mode', 'wp_cron' ) );
+		if ( ! in_array( $automation_mode, array( 'wp_cron', 'external' ), true ) ) {
+			$automation_mode = 'wp_cron';
+		}
 		$retention_days  = max( 30, absint( $this->post_value( 'retention_days', 30 ) ) );
 		$failure_raw     = trim( sanitize_text_field( $this->post_value( 'failure_email', '' ) ) );
 		$failure_email   = sanitize_email( $failure_raw );
@@ -1619,6 +1624,7 @@ final class Sidrena_Admin {
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
 			'generation_time'       => $generation_time,
+			'automation_mode'       => $automation_mode,
 			'retention_days'        => $retention_days,
 			'enable_rest_index'     => 'yes',
 			'publish_manifest'      => 'yes',
@@ -1632,7 +1638,11 @@ final class Sidrena_Admin {
 		$saved = Sidrena_Utils::settings();
 
 		wp_clear_scheduled_hook( 'sidrena_daily_generation' );
-		$scheduled = wp_schedule_event( Sidrena_Utils::schedule_timestamp( $saved['generation_time'] ), 'daily', 'sidrena_daily_generation' );
+		$schedule_ok = true;
+		if ( 'wp_cron' === ( $saved['automation_mode'] ?? 'wp_cron' ) ) {
+			$scheduled   = wp_schedule_event( Sidrena_Utils::schedule_timestamp( $saved['generation_time'] ), 'daily', 'sidrena_daily_generation' );
+			$schedule_ok = false !== $scheduled && ! is_wp_error( $scheduled );
+		}
 		if ( ! wp_next_scheduled( 'sidrena_publication_watch' ) ) {
 			wp_schedule_event( time() + 300, 'hourly', 'sidrena_publication_watch' );
 		}
@@ -1640,11 +1650,19 @@ final class Sidrena_Admin {
 		Sidrena_Pricelist::queue_regeneration();
 		Sidrena_Audit::log(
 			'settings_save',
-			false === $scheduled || is_wp_error( $scheduled ) ? 'warning' : 'success',
-			false === $scheduled || is_wp_error( $scheduled ) ? __( 'Sidrena postavke su spremljene, ali dnevno generiranje nije ponovno zakazano.', 'sidrena' ) : __( 'Sidrena postavke su spremljene i zakonska automatizacija ostaje uključena.', 'sidrena' ),
-			array( 'generation_time' => $saved['generation_time'], 'retention_days' => $saved['retention_days'] )
+			$schedule_ok ? 'success' : 'warning',
+			$schedule_ok
+				? ( 'external' === ( $saved['automation_mode'] ?? 'wp_cron' )
+					? __( 'SIDRENA postavke su spremljene. Interni dnevni WP-Cron je isključen jer je odabran vanjski server cron/WP-CLI način; watchdog ostaje aktivan za nadzor.', 'sidrena' )
+					: __( 'SIDRENA postavke su spremljene i interni dnevni WP-Cron ostaje uključen.', 'sidrena' ) )
+				: __( 'SIDRENA postavke su spremljene, ali dnevni WP-Cron nije ponovno zakazan.', 'sidrena' ),
+			array(
+				'generation_time' => $saved['generation_time'],
+				'automation_mode' => $saved['automation_mode'] ?? 'wp_cron',
+				'retention_days'  => $saved['retention_days'],
+			)
 		);
-		$this->redirect( 'settings', false === $scheduled || is_wp_error( $scheduled ) ? 'settings_saved_cron_warning' : 'saved' );
+		$this->redirect( 'settings', $schedule_ok ? 'saved' : 'settings_saved_cron_warning' );
 	}
 
 	public function save_locations() {
