@@ -1,8 +1,11 @@
 <?php
 /**
- * Regression guard for SIDRENA current-vs-archive publication separation.
+ * Sidrena source file.
  *
  * @package Sidrena
+ * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
  */
 
 if ( PHP_SAPI !== 'cli' ) {
