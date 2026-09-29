@@ -290,7 +290,10 @@ final class Sidrena_Services {
 		$location_anchor_prices          = array();
 		$posted_anchor_prices            = isset( $_POST['sidrena_service_location_anchor_price'] ) && is_array( $_POST['sidrena_service_location_anchor_price'] ) ? map_deep( wp_unslash( $_POST['sidrena_service_location_anchor_price'] ), 'sanitize_text_field' ) : array();
 		foreach ( $posted_anchor_prices as $location_id => $location_price ) {
-			$location_id    = Sidrena_Utils::sanitize_location_id( $location_id );
+			$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
+			if ( ! $location_id || ! isset( $valid_location_ids[ $location_id ] ) ) {
+				continue;
+			}
 			$location_price = Sidrena_Utils::validated_nonnegative_decimal( $location_price );
 			if ( null === $location_price ) {
 				if ( isset( $existing_location_anchor_prices[ $location_id ] ) ) {
