@@ -76,6 +76,7 @@ final class Sidrena_Activator {
 	public static function deactivate() {
 		wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 		wp_clear_scheduled_hook( 'sidrena_queued_generation' );
+		wp_clear_scheduled_hook( 'sidrena_queued_archive_generation' );
 		wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 		wp_clear_scheduled_hook( 'sidrena_history_seed' );
 		wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
@@ -123,7 +124,10 @@ final class Sidrena_Activator {
 	}
 
 	private static function ensure_schedules() {
-		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
+		$settings = Sidrena_Utils::settings();
+		if ( 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ) {
+			wp_clear_scheduled_hook( 'sidrena_daily_generation' );
+		} elseif ( ! wp_next_scheduled( 'sidrena_daily_generation' ) ) {
 			wp_schedule_event( Sidrena_Utils::schedule_timestamp(), 'daily', 'sidrena_daily_generation' );
 		}
 		if ( ! wp_next_scheduled( 'sidrena_publication_watch' ) ) {
@@ -154,6 +158,8 @@ final class Sidrena_Activator {
 
 	private static function install_schema() {
 		self::create_audit_table();
+		self::create_history_table();
+		self::create_service_history_table();
 
 		if ( Sidrena_Utils::is_woocommerce_edition() ) {
 			self::create_location_table();
@@ -172,7 +178,6 @@ final class Sidrena_Activator {
 			variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			price decimal(20,6) NULL,
 			regular_price decimal(20,6) NULL,
-			sale_price decimal(20,6) NULL,
 			recorded_at datetime NOT NULL,
 			source varchar(32) NOT NULL DEFAULT 'save',
 			PRIMARY KEY (id),
@@ -271,10 +276,26 @@ final class Sidrena_Activator {
 			$settings = array();
 		}
 
-		if ( empty( $settings['fmcg_ref_date'] ) && ! empty( $settings['fmsid_ref_date'] ) ) {
-			$settings['fmcg_ref_date'] = Sidrena_Utils::sanitize_date( $settings['fmsid_ref_date'], '2025-05-02' );
+		$legacy_dates = array();
+		foreach ( array( 'default_ref_date', 'fmcg_ref_date', 'fmsid_ref_date' ) as $legacy_key ) {
+			if ( array_key_exists( $legacy_key, $settings ) && '' !== trim( (string) $settings[ $legacy_key ] ) ) {
+				$legacy_dates[ $legacy_key ] = sanitize_text_field( (string) $settings[ $legacy_key ] );
+			}
 		}
-		unset( $settings['fmsid_ref_date'] );
+		if ( $legacy_dates ) {
+			$existing_snapshot = get_option( 'sidrena_legacy_legal_date_migration', array() );
+			$existing_snapshot = is_array( $existing_snapshot ) ? $existing_snapshot : array();
+			update_option(
+				'sidrena_legacy_legal_date_migration',
+				array(
+					'captured_at' => $existing_snapshot['captured_at'] ?? current_time( DATE_ATOM ),
+					'values'      => array_merge( (array) ( $existing_snapshot['values'] ?? array() ), $legacy_dates ),
+					'note'        => 'Legacy administrator-entered legal dates preserved for audit only; never used as the active SIDRENA legal ruleset.',
+				),
+				false
+			);
+		}
+		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'] );
 
 		$settings                   = wp_parse_args( $settings, Sidrena_Utils::defaults() );
 		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );

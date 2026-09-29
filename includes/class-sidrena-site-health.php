@@ -109,19 +109,50 @@ final class Sidrena_Site_Health {
 	}
 	public function test_schedule() {
 		$settings = Sidrena_Utils::settings();
+		$mode     = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
 		$next     = wp_next_scheduled( 'sidrena_daily_generation' );
+		$watch    = wp_next_scheduled( 'sidrena_publication_watch' );
 		$time     = isset( $settings['generation_time'] ) ? (string) $settings['generation_time'] : '06:30';
 		$late     = preg_match( '/^(\d{2}):(\d{2})$/', $time, $parts ) && ( (int) $parts[1] > 7 || ( 7 === (int) $parts[1] && (int) $parts[2] > 59 ) );
 
-		if ( ! $next ) {
+		if ( ! $watch ) {
 			return array(
-				'label'       => __( 'Sidrena nema zakazan dnevni zadatak', 'sidrena' ),
+				'label'       => __( 'SIDRENA nadzor objave nije zakazan', 'sidrena' ),
 				'status'      => 'critical',
 				'badge'       => array(
-					'label' => 'Sidrena',
+					'label' => 'SIDRENA',
 					'color' => 'red',
 				),
-				'description' => '<p>' . esc_html__( 'Dnevno generiranje CSV/XML cjenika nije zakazano. Otvorite Sidrena > Postavke i ponovno spremite postavke ili koristite alat za popravak rasporeda.', 'sidrena' ) . '</p>',
+				'description' => '<p>' . esc_html__( 'Watchdog za nadzor dnevne objave nije aktivan. Otvorite SIDRENA > Postavke i ponovno spremite postavke ili pokrenite provjeru usklađenosti.', 'sidrena' ) . '</p>',
+				'actions'     => '',
+				'test'        => 'sidrena_schedule',
+			);
+		}
+
+		if ( 'external' === $mode ) {
+			return array(
+				'label'       => __( 'SIDRENA koristi vanjski server cron / WP-CLI', 'sidrena' ),
+				'status'      => 'recommended',
+				'badge'       => array(
+					'label' => 'SIDRENA',
+					'color' => 'orange',
+				),
+				/* translators: %s: expected daily publication time. */
+				'description' => '<p>' . sprintf( esc_html__( 'Interni dnevni WP-Cron namjerno je isključen. Vanjski scheduler treba pokrenuti “wp sidrena publish” prije očekivanog vremena %s. WordPress ne može sam potvrditi konfiguraciju server crona, ali SIDRENA watchdog ostaje aktivan za kašnjenje i upozorenja.', 'sidrena' ), esc_html( $time ) ) . '</p>',
+				'actions'     => '',
+				'test'        => 'sidrena_schedule',
+			);
+		}
+
+		if ( ! $next ) {
+			return array(
+				'label'       => __( 'SIDRENA nema zakazan dnevni WP-Cron zadatak', 'sidrena' ),
+				'status'      => 'critical',
+				'badge'       => array(
+					'label' => 'SIDRENA',
+					'color' => 'red',
+				),
+				'description' => '<p>' . esc_html__( 'Odabran je interni WP-Cron, ali dnevna objava nije zakazana. Otvorite SIDRENA > Postavke i ponovno spremite postavke ili koristite alat za popravak rasporeda.', 'sidrena' ) . '</p>',
 				'actions'     => '',
 				'test'        => 'sidrena_schedule',
 			);
@@ -129,37 +160,39 @@ final class Sidrena_Site_Health {
 
 		if ( $late ) {
 			return array(
-				'label'       => __( 'Sidrena je postavljena na generiranje nakon 08:00', 'sidrena' ),
+				'label'       => __( 'SIDRENA je postavljena na generiranje nakon 08:00', 'sidrena' ),
 				'status'      => 'recommended',
 				'badge'       => array(
-					'label' => 'Sidrena',
+					'label' => 'SIDRENA',
 					'color' => 'orange',
 				),
-				'description' => '<p>' . esc_html__( 'Za poslovne procese koji zahtijevaju objavu do 08:00 odaberite ranije vrijeme i osigurajte pouzdano izvršavanje WordPress crona ili vanjskog server crona.', 'sidrena' ) . '</p>',
+				'description' => '<p>' . esc_html__( 'Za poslovne procese koji zahtijevaju objavu do 08:00 odaberite ranije vrijeme i osigurajte pouzdano izvršavanje odabranog schedulera.', 'sidrena' ) . '</p>',
 				'actions'     => '',
 				'test'        => 'sidrena_schedule',
 			);
 		}
 
 		return array(
-			'label'       => __( 'Sidrena dnevni raspored je aktivan', 'sidrena' ),
+			'label'       => __( 'SIDRENA interni dnevni raspored je aktivan', 'sidrena' ),
 			'status'      => 'good',
 			'badge'       => array(
-				'label' => 'Sidrena',
+				'label' => 'SIDRENA',
 				'color' => 'blue',
 			),
-			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
-			'description' => '<p>' . sprintf( esc_html__( 'Sljedeće generiranje: %s. Za strogo vremenski pouzdano izvršavanje preporučuje se server cron koji poziva WordPress cron.', 'sidrena' ), esc_html( wp_date( 'd.m.Y. H:i', $next ) ) ) . '</p>',
+			/* translators: %s: next scheduled daily publication date and time. */
+			'description' => '<p>' . sprintf( esc_html__( 'Sljedeća interna dnevna objava: %s. Watchdog za nadzor objave je također aktivan.', 'sidrena' ), esc_html( wp_date( 'd.m.Y. H:i', $next ) ) ) . '</p>',
 			'actions'     => '',
 			'test'        => 'sidrena_schedule',
 		);
 	}
 
 	public function test_archive() {
-		$settings = Sidrena_Utils::settings();
-		$retain   = max( 30, absint( $settings['retention_days'] ) );
-		$paths    = Sidrena_Utils::upload_paths();
-		$writable = is_dir( $paths['archive_dir'] ) && wp_is_writable( $paths['archive_dir'] );
+		$settings         = Sidrena_Utils::settings();
+		$retain           = max( 30, absint( $settings['retention_days'] ?? 30 ) );
+		$paths            = Sidrena_Utils::upload_paths();
+		$archive_writable = is_dir( $paths['archive_dir'] ) && wp_is_writable( $paths['archive_dir'] );
+		$current_writable = is_dir( $paths['current_dir'] ) && wp_is_writable( $paths['current_dir'] );
+		$writable         = $archive_writable && $current_writable;
 
 		if ( ! $writable ) {
 			return array(
@@ -169,7 +202,7 @@ final class Sidrena_Site_Health {
 					'label' => 'Sidrena',
 					'color' => 'red',
 				),
-				'description' => '<p>' . esc_html__( 'WordPress ne može zapisivati u Sidrena mapu arhive. Provjerite dozvole direktorija uploads/sidrena/arhiva.', 'sidrena' ) . '</p>',
+				'description' => '<p>' . esc_html__( 'WordPress ne može zapisivati u SIDRENA mapu aktualnog cjenika ili arhive. Provjerite dozvole direktorija uploads/sidrena/aktualno i uploads/sidrena/arhiva.', 'sidrena' ) . '</p>',
 				'actions'     => '',
 				'test'        => 'sidrena_archive',
 			);
@@ -193,6 +226,7 @@ final class Sidrena_Site_Health {
 		$settings = Sidrena_Utils::settings();
 		$last     = get_option( 'sidrena_last_run', array() );
 		$next     = wp_next_scheduled( 'sidrena_daily_generation' );
+		$watch    = wp_next_scheduled( 'sidrena_publication_watch' );
 		$fields   = array(
 			'version'         => array(
 				'label' => __( 'Verzija', 'sidrena' ),
@@ -210,13 +244,21 @@ final class Sidrena_Site_Health {
 				'label' => __( 'Arhiva', 'sidrena' ),
 				'value' => max( 30, absint( $settings['retention_days'] ) ) . ' dana',
 			),
+			'automation_mode' => array(
+				'label' => __( 'Način automatizacije', 'sidrena' ),
+				'value' => 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ? __( 'vanjski server cron / WP-CLI', 'sidrena' ) : __( 'interni WP-Cron', 'sidrena' ),
+			),
 			'generation_time' => array(
 				'label' => __( 'Vrijeme generiranja', 'sidrena' ),
 				'value' => $settings['generation_time'],
 			),
 			'next_run'        => array(
-				'label' => __( 'Sljedeće generiranje', 'sidrena' ),
-				'value' => $next ? wp_date( DATE_ATOM, $next ) : __( 'nije zakazano', 'sidrena' ),
+				'label' => __( 'Sljedeći interni dnevni zadatak', 'sidrena' ),
+				'value' => $next ? wp_date( DATE_ATOM, $next ) : __( 'nije zakazano / vanjski način', 'sidrena' ),
+			),
+			'watchdog'        => array(
+				'label' => __( 'Nadzor objave', 'sidrena' ),
+				'value' => $watch ? wp_date( DATE_ATOM, $watch ) : __( 'nije zakazano', 'sidrena' ),
 			),
 			'last_run'        => array(
 				'label' => __( 'Posljednje generiranje', 'sidrena' ),

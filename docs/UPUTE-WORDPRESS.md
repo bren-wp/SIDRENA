@@ -50,7 +50,7 @@ Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runt
 3. Otvorite **SIDRENA** u lijevom admin meniju.
 4. Otvorite **SIDRENA > Katalog**.
 
-Kod nadogradnje preko starijeg SIDRENA WordPress izdanja plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
+Kod nadogradnje preko starijeg izdanja SIDRENA — WordPress izdanje plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće kataloge, postavke, arhivu i povijest.
 
 ## Najbrži način za postojeću web stranicu
 
@@ -215,11 +215,13 @@ Nemojte ručno brisati datoteke u uploads/sidrena, mijenjati manifest ili uređi
 
 - SIDRENA prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.26.zip` i `sidrena-woocommerce-1.0.26.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.27.zip` i `sidrena-woocommerce-1.0.27.zip`.
 
 ## WP-CLI
 
 `wp sidrena generate`
+
+`wp sidrena publish`
 
 `wp sidrena status`
 

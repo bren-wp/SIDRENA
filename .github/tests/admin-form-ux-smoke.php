@@ -102,8 +102,15 @@ sidrena_form_ux_assert(
 	'Publication alert email must retain server-side validation.'
 );
 sidrena_form_ux_assert(
-	false !== strpos( $admin, "CSV + XML uvijek uključeni" )
-	&& false !== strpos( $admin, "Automatizirani dohvat uvijek uključen" )
+	false !== strpos( $admin, 'name="automation_mode"' )
+	&& false !== strpos( $admin, 'Vanjski server cron / WP-CLI' )
+	&& false !== strpos( $admin, 'wp sidrena publish' )
+	&& false !== strpos( $admin, "wp_clear_scheduled_hook( 'sidrena_daily_generation' )" ),
+	'Publication settings must expose a validated external scheduler mode that explicitly removes the internal daily cron.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "CSV + XML uključeni" )
+	&& false !== strpos( $admin, "Javni i strojni pristup" )
 	&& false === strpos( $admin, 'name="generate_csv"' )
 	&& false === strpos( $admin, 'name="enable_rest_index"' ),
 	'Legal publication switches must be automatic rather than user-disableable settings.'

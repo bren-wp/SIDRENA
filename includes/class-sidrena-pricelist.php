@@ -23,8 +23,9 @@ final class Sidrena_Pricelist {
 	}
 
 	public function hooks() {
-		add_action( 'sidrena_daily_generation', array( $this, 'generate_all' ) );
-		add_action( 'sidrena_queued_generation', array( $this, 'generate_all' ) );
+		add_action( 'sidrena_daily_generation', array( $this, 'publish_daily_archive' ) );
+		add_action( 'sidrena_queued_archive_generation', array( $this, 'publish_daily_archive' ) );
+		add_action( 'sidrena_queued_generation', array( $this, 'refresh_current' ) );
 		add_action( 'sidrena_publication_watch', array( $this, 'publication_watch' ) );
 	}
 
@@ -33,6 +34,55 @@ final class Sidrena_Pricelist {
 			return true;
 		}
 		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_generation' );
+	}
+
+	public static function queue_archive_publication() {
+		if ( wp_next_scheduled( 'sidrena_queued_archive_generation' ) ) {
+			return true;
+		}
+		return false !== wp_schedule_single_event( time() + 60, 'sidrena_queued_archive_generation' );
+	}
+
+	public function publish_daily_archive() {
+		$last    = get_option( 'sidrena_last_run', array() );
+		$last_ts = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		if ( $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0 && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
+			return true;
+		}
+
+		// Publish the stable current files first. This lets us compare the actual
+		// machine-readable payload with the last successful archive generation
+		// without manufacturing another archive copy merely because a new day began.
+		if ( ! $this->refresh_current() ) {
+			return false;
+		}
+
+		if ( $this->current_matches_latest_archive() ) {
+			$current = Sidrena_Utils::public_index();
+			update_option(
+				'sidrena_last_run',
+				array(
+					'generated_at'              => current_time( DATE_ATOM ),
+					'files'                     => count( $current ),
+					'errors'                    => array(),
+					'duplicate_archive_skipped' => true,
+				),
+				false
+			);
+			Sidrena_Audit::log(
+				'pricelist_archive_duplicate',
+				'success',
+				__( 'Aktualni cjenik je osvježen, ali nova arhivska kopija nije stvorena jer je sadržaj jednak posljednjoj valjanoj arhivskoj publikaciji.', 'sidrena' ),
+				array( 'files' => count( $current ) )
+			);
+			return true;
+		}
+
+		$success = $this->generate_all();
+		if ( $success ) {
+			self::queue_regeneration();
+		}
+		return $success;
 	}
 
 	public function publication_watch() {
@@ -50,12 +100,39 @@ final class Sidrena_Pricelist {
 		if ( $last_ts && wp_date( 'Y-m-d', $last_ts ) === wp_date( 'Y-m-d' ) ) {
 			return;
 		}
-		if ( self::queue_regeneration() ) {
+		if ( 'external' === ( $settings['automation_mode'] ?? 'wp_cron' ) ) {
+			Sidrena_Audit::log(
+				'publication_watch',
+				'warning',
+				__( 'Vanjski raspored još nije objavio današnji cjenik nakon očekivanog vremena. SIDRENA nije pokrenula interni cron jer je odabran vanjski server cron/WP-CLI način.', 'sidrena' ),
+				array(
+					'target_time'     => $target,
+					'automation_mode' => 'external',
+				)
+			);
+			if ( $now_time >= '07:00' ) {
+				$this->maybe_send_publication_alert(
+					'late',
+					__( 'Vanjski raspored još nije uspješno objavio današnji cjenik.', 'sidrena' ),
+					array(
+						/* translators: %s: configured expected publication time. */
+						sprintf( __( 'Očekivano vrijeme objave: %s', 'sidrena' ), $target ),
+						__( 'Provjerite server cron ili pokrenite: wp sidrena publish', 'sidrena' ),
+					)
+				);
+			}
+			return;
+		}
+
+		if ( self::queue_archive_publication() ) {
 			Sidrena_Audit::log(
 				'publication_watch',
 				'info',
 				__( 'Sigurnosna provjera je uočila da današnji cjenik još nije objavljen nakon planiranog vremena te je pokrenula ponovno generiranje.', 'sidrena' ),
-				array( 'target_time' => $target )
+				array(
+					'target_time'     => $target,
+					'automation_mode' => 'wp_cron',
+				)
 			);
 			if ( $now_time >= '07:00' ) {
 				$this->maybe_send_publication_alert(
@@ -91,9 +168,10 @@ final class Sidrena_Pricelist {
 		}
 
 		try {
-			$timestamp = time();
-			$stamp     = wp_date( 'd.m.Y_H-i', $timestamp );
-			$formats   = $this->formats( $settings );
+			$timestamp      = time();
+			$retention_days = max( 30, absint( $settings['retention_days'] ?? 30 ) );
+			$stamp          = wp_date( 'd.m.Y_H-i', $timestamp );
+			$formats        = $this->formats( $settings );
 
 			if ( empty( $formats ) ) {
 				$errors[] = __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format.', 'sidrena' );
@@ -149,8 +227,8 @@ final class Sidrena_Pricelist {
 							break;
 						}
 
-						$hash  = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-						$bytes = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
 						$location_files[]   = $filepath;
 						$location_entries[] = array(
 							'location_id'     => sanitize_key( isset( $location['id'] ) ? $location['id'] : '' ),
@@ -162,8 +240,8 @@ final class Sidrena_Pricelist {
 							'filename'        => $filename,
 							'generated_at'    => wp_date( DATE_ATOM, $timestamp ),
 							'generated_ts'    => $timestamp,
-							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ) ),
-							'retain_until_ts' => $timestamp + ( max( 30, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS ),
+							'retain_until'    => wp_date( DATE_ATOM, $timestamp + ( $retention_days * DAY_IN_SECONDS ) ),
+							'retain_until_ts' => $timestamp + ( $retention_days * DAY_IN_SECONDS ),
 							'sequence'        => $sequence,
 							'rows'            => (int) $result,
 							'bytes'           => (int) $bytes,
@@ -238,6 +316,131 @@ final class Sidrena_Pricelist {
 					$errors
 				);
 			}
+			return empty( $errors );
+		} finally {
+			$this->release_generation_lock( $lock );
+		}
+	}
+
+
+	public function refresh_current() {
+		$settings  = Sidrena_Utils::settings();
+		$locations = Sidrena_Utils::locations();
+		$paths     = Sidrena_Utils::upload_paths();
+		$index     = array();
+		$expected  = array();
+		$errors    = array();
+		$generated = 0;
+
+		wp_mkdir_p( $paths['current_dir'] );
+		wp_mkdir_p( $paths['snapshot_dir'] );
+		$lock = $this->acquire_generation_lock( $paths );
+		if ( is_wp_error( $lock ) ) {
+			Sidrena_Audit::log( 'pricelist_current_refresh', 'warning', $lock->get_error_message(), array( 'code' => $lock->get_error_code() ) );
+			return false;
+		}
+
+		try {
+			$timestamp = time();
+			$formats   = $this->formats( $settings );
+			if ( empty( $formats ) ) {
+				return false;
+			}
+
+			foreach ( $locations as $location ) {
+				if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
+					continue;
+				}
+
+				$catalog_types     = $this->catalog_types( $settings['business_mode'] );
+				$location_entries  = array();
+				$snapshot_catalogs = array();
+				$location_failed   = false;
+
+				foreach ( $catalog_types as $catalog_type ) {
+					foreach ( $formats as $format ) {
+						$key              = $this->index_key( $location, $catalog_type, $format );
+						$expected[ $key ] = true;
+						$filename         = $this->build_current_filename( $location, $catalog_type, $format );
+						$filepath         = $paths['current_dir'] . $filename;
+						$result           = 'products' === $catalog_type
+							? $this->write_products( $filepath, $format, $location )
+							: $this->write_services( $filepath, $format, $location );
+
+						if ( is_wp_error( $result ) ) {
+							$errors[]        = $result->get_error_message();
+							$location_failed = true;
+							break;
+						}
+
+						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
+						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
+						$location_entries[] = array(
+							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['location_id'] ?? '' ),
+							'location_code' => sanitize_text_field( $location['code'] ?? '' ),
+							'kind'          => sanitize_key( $location['kind'] ?? 'objekt' ),
+							'catalog'       => $catalog_type,
+							'format'        => $format,
+							'url'           => $paths['current_url'] . rawurlencode( $filename ),
+							'filename'      => $filename,
+							'generated_at'  => wp_date( DATE_ATOM, $timestamp ),
+							'generated_ts'  => $timestamp,
+							'rows'          => (int) $result,
+							'bytes'         => (int) $bytes,
+							'sha256'        => $hash ? sanitize_text_field( $hash ) : '',
+						);
+					}
+
+					if ( $location_failed ) {
+						break;
+					}
+					$snapshot_catalogs[] = $catalog_type;
+				}
+
+				if ( ! $location_failed && 'yes' === $settings['enable_public_html'] && $snapshot_catalogs ) {
+					$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
+					if ( is_wp_error( $snapshot ) ) {
+						$errors[]        = $snapshot->get_error_message();
+						$location_failed = true;
+					}
+				}
+
+				if ( $location_failed ) {
+					continue;
+				}
+				$index      = array_merge( $index, $location_entries );
+				$generated += count( $location_entries );
+			}
+
+			$this->merge_current_index( $index, $expected );
+			$this->cleanup_current_files();
+			$snapshot_cleanup = $this->cleanup_public_snapshots( $locations, 'yes' === $settings['enable_public_html'] );
+			if ( is_wp_error( $snapshot_cleanup ) ) {
+				$errors[] = $snapshot_cleanup->get_error_message();
+			}
+			$manifest = $this->write_manifest();
+			if ( is_wp_error( $manifest ) ) {
+				$errors[] = $manifest->get_error_message();
+			}
+
+			update_option(
+				'sidrena_last_current_refresh',
+				array(
+					'generated_at' => wp_date( DATE_ATOM, $timestamp ),
+					'files'        => $generated,
+					'errors'       => $errors,
+				),
+				false
+			);
+			Sidrena_Audit::log(
+				'pricelist_current_refresh',
+				empty( $errors ) ? 'success' : 'warning',
+				empty( $errors ) ? __( 'Aktualni cjenik je osvježen bez stvaranja nove arhive.', 'sidrena' ) : __( 'Osvježavanje aktualnog cjenika završilo je s upozorenjima.', 'sidrena' ),
+				array(
+					'files'  => $generated,
+					'errors' => $errors,
+				)
+			);
 			return empty( $errors );
 		} finally {
 			$this->release_generation_lock( $lock );
@@ -491,8 +694,8 @@ final class Sidrena_Pricelist {
 	}
 
 	private function write_public_snapshot( $location, $catalogs, $timestamp ) {
-		$path = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
-		$meta = array(
+		$path   = Sidrena_Utils::public_snapshot_path( $location['id'] ?? '' );
+		$meta   = array(
 			'schema'       => 2,
 			'format'       => 'jsonl',
 			'generator'    => 'SIDRENA ' . SIDRENA_VERSION,
@@ -645,6 +848,13 @@ final class Sidrena_Pricelist {
 		return sprintf( '%s_%s_%s_%06d_%s.%s', $kind, $address, $code, $sequence, $stamp, $format );
 	}
 
+	private function build_current_filename( $location, $catalog, $format ) {
+		$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['code'] ?? 'lokacija' );
+		$catalog     = sanitize_key( $catalog );
+		$format      = sanitize_key( $format );
+		return sprintf( 'aktualni-%s-%s.%s', $location_id, $catalog, $format );
+	}
+
 	private function product_headers() {
 		return array(
 			'naziv',
@@ -779,9 +989,9 @@ final class Sidrena_Pricelist {
 		$available                 = $has_location_availability
 			? $override['availability']
 			: ( $product->is_in_stock() ? 'dostupno' : 'nedostupno' );
-		$available = apply_filters( 'sidrena_product_availability', $available, $product, $location );
-		$current   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
-		$sale_name = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
+		$available                 = apply_filters( 'sidrena_product_availability', $available, $product, $location );
+		$current                   = apply_filters( 'sidrena_product_retail_price', $price, $product, $location );
+		$sale_name                 = Sidrena_Utils::product_meta_with_parent( $product, '_sidrena_sale_name' );
 		if ( ! $sale_name && $product->is_on_sale() ) {
 			$sale_name = __( 'Akcija', 'sidrena' );
 		}
@@ -1021,6 +1231,52 @@ final class Sidrena_Pricelist {
 		return true;
 	}
 
+	private function current_matches_latest_archive() {
+		$current = Sidrena_Utils::public_index();
+		$archive = Sidrena_Utils::archive_index();
+		if ( empty( $current ) || empty( $archive ) ) {
+			return false;
+		}
+
+		$latest_ts = 0;
+		foreach ( $archive as $entry ) {
+			$latest_ts = max( $latest_ts, absint( $entry['generated_ts'] ?? 0 ) );
+		}
+		if ( ! $latest_ts ) {
+			return false;
+		}
+
+		$current_hashes = array();
+		foreach ( $current as $entry ) {
+			$key  = $this->index_key( $entry, $entry['catalog'] ?? '', $entry['format'] ?? '' );
+			$hash = sanitize_text_field( (string) ( $entry['sha256'] ?? '' ) );
+			if ( '' === $key || '' === $hash ) {
+				return false;
+			}
+			$current_hashes[ $key ] = $hash;
+		}
+
+		$archive_hashes = array();
+		foreach ( $archive as $entry ) {
+			if ( absint( $entry['generated_ts'] ?? 0 ) !== $latest_ts ) {
+				continue;
+			}
+			$key  = $this->index_key( $entry, $entry['catalog'] ?? '', $entry['format'] ?? '' );
+			$hash = sanitize_text_field( (string) ( $entry['sha256'] ?? '' ) );
+			if ( '' === $key || '' === $hash ) {
+				return false;
+			}
+			$archive_hashes[ $key ] = $hash;
+		}
+
+		if ( count( $current_hashes ) !== count( $archive_hashes ) ) {
+			return false;
+		}
+		ksort( $current_hashes );
+		ksort( $archive_hashes );
+		return hash_equals( hash( 'sha256', wp_json_encode( $archive_hashes ) ), hash( 'sha256', wp_json_encode( $current_hashes ) ) );
+	}
+
 	private function merge_archive_index( $new_files ) {
 		$archive = Sidrena_Utils::archive_index();
 		$by_name = array();
@@ -1056,9 +1312,38 @@ final class Sidrena_Pricelist {
 		update_option( 'sidrena_public_index', array_values( $by_key ), false );
 	}
 
+	private function cleanup_current_files() {
+		$paths = Sidrena_Utils::upload_paths();
+		if ( ! is_dir( $paths['current_dir'] ) ) {
+			return;
+		}
+
+		$keep = array();
+		foreach ( Sidrena_Utils::public_index() as $entry ) {
+			$url = (string) ( $entry['url'] ?? '' );
+			if ( 0 !== strpos( $url, $paths['current_url'] ) ) {
+				continue;
+			}
+			$filename = basename( (string) ( $entry['filename'] ?? '' ) );
+			if ( $filename ) {
+				$keep[ $filename ] = true;
+			}
+		}
+
+		$files = glob( $paths['current_dir'] . '*.{csv,xml}', GLOB_BRACE );
+		if ( ! is_array( $files ) ) {
+			return;
+		}
+		foreach ( $files as $file ) {
+			if ( ! isset( $keep[ basename( $file ) ] ) && is_file( $file ) ) {
+				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+		}
+	}
+
 	public function cleanup_archives() {
 		$settings      = Sidrena_Utils::settings();
-		$days          = max( 30, absint( $settings['retention_days'] ) );
+		$days          = max( 30, absint( $settings['retention_days'] ?? 30 ) );
 		$cutoff        = time() - ( DAY_IN_SECONDS * $days );
 		$paths         = Sidrena_Utils::upload_paths();
 		$current_names = array();
@@ -1086,11 +1371,10 @@ final class Sidrena_Pricelist {
 
 			// Never shorten a retention promise already stored in the archive index.
 			// A later increase of the configured retention extends older entries too.
-			$minimum_until    = $generated ? $generated + ( 30 * DAY_IN_SECONDS ) : 0;
-			$configured_until = $generated ? $generated + ( $days * DAY_IN_SECONDS ) : 0;
-			$stored_until     = isset( $entry['retain_until_ts'] ) ? absint( $entry['retain_until_ts'] ) : 0;
-			$retain_until     = max( $minimum_until, $configured_until, $stored_until );
-			$is_expired       = $retain_until
+			$minimum_until = $generated ? $generated + ( $days * DAY_IN_SECONDS ) : 0;
+			$stored_until  = isset( $entry['retain_until_ts'] ) ? absint( $entry['retain_until_ts'] ) : 0;
+			$retain_until  = max( $minimum_until, $stored_until );
+			$is_expired    = $retain_until
 				? time() >= $retain_until
 				: ( is_file( $path ) && filemtime( $path ) < $cutoff );
 
@@ -1165,7 +1449,7 @@ final class Sidrena_Pricelist {
 			'ruleset'        => SIDRENA_RULESET,
 			'realtime_url'   => rest_url( 'sidrena/v1/cijene' ),
 			'generated_at'   => current_time( DATE_ATOM ),
-			'retention_days' => max( 30, absint( $settings['retention_days'] ) ),
+			'retention_days' => max( 30, absint( $settings['retention_days'] ?? 30 ) ),
 			'current'        => Sidrena_Utils::public_file_index( Sidrena_Utils::public_index() ),
 			'archive'        => Sidrena_Utils::public_file_index( Sidrena_Utils::archive_index() ),
 		);

@@ -15,6 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Sidrena_Utils {
 	const STANDARD_REFERENCE_DATE = '2026-09-10';
 	const FMCG_REFERENCE_DATE     = '2025-05-02';
+	const LEGAL_VERIFIED_DATE     = '2026-09-29';
+	const ANCHOR_SOURCE_URL       = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html';
+	const PRICELIST_SOURCE_URL    = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html';
+	const LEGAL_CLARIFICATION_URL = 'https://mingo.gov.hr/print.aspx?id=10440&url=print';
+
+	public static function legal_ruleset() {
+		return array(
+			'id'                      => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : 'SIDRENA legal ruleset',
+			'standard_reference_date' => self::STANDARD_REFERENCE_DATE,
+			'fmcg_reference_date'     => self::FMCG_REFERENCE_DATE,
+			'verified_date'           => self::LEGAL_VERIFIED_DATE,
+			'anchor_source'           => 'NN 101/2026-1212 · isticanje dodatne/sidrene cijene',
+			'anchor_source_url'       => self::ANCHOR_SOURCE_URL,
+			'pricelist_source'        => 'NN 101/2026-1213 · objava cjenika proizvoda i usluga',
+			'pricelist_source_url'    => self::PRICELIST_SOURCE_URL,
+			'clarification_source'    => 'Ministarstvo gospodarstva · 22.09.2026.',
+			'clarification_url'       => self::LEGAL_CLARIFICATION_URL,
+		);
+	}
 
 	public static function standard_reference_date() {
 		return self::STANDARD_REFERENCE_DATE;
@@ -32,6 +51,7 @@ final class Sidrena_Utils {
 			'generate_xml'          => 'yes',
 			'csv_delimiter'         => ';',
 			'generation_time'       => '06:30',
+			'automation_mode'       => 'wp_cron',
 			'retention_days'        => 30,
 			'enable_rest_index'     => 'yes',
 			'publish_manifest'      => 'yes',
@@ -45,8 +65,8 @@ final class Sidrena_Utils {
 	public static function settings() {
 		$settings = get_option( 'sidrena_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
-		// Legal reference dates and the 30-day public archive are ruleset values,
-		// never administrator-overridable compliance settings.
+		// Legal reference dates are ruleset values and are never administrator-overridable.
+		// Archive retention may be extended by the administrator but never shortened below 30 days.
 		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 		foreach (
 			array(
@@ -69,10 +89,7 @@ final class Sidrena_Utils {
 			unset( $settings[ $legacy_key ] );
 		}
 		$settings                   = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days'] = 30;
-		// Backward-compatible read-only aliases for older internal callers.
-		$settings['default_ref_date'] = self::standard_reference_date();
-		$settings['fmcg_ref_date']    = self::fmcg_reference_date();
+		$settings['retention_days'] = max( 30, absint( $settings['retention_days'] ) );
 		return $settings;
 	}
 
@@ -352,6 +369,41 @@ final class Sidrena_Utils {
 		return $date;
 	}
 
+	public static function first_publication_reference_date( $post_id ) {
+		$post_id = absint( $post_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+		$published = get_post_datetime( $post_id );
+		if ( ! $published ) {
+			return '';
+		}
+		return self::custom_reference_date( $published->format( 'Y-m-d' ) );
+	}
+
+	/**
+	 * Resolve a custom first-listing reference date only when it is supported by
+	 * the exact WordPress publication timestamp of the item.
+	 *
+	 * An empty candidate derives the date from WordPress. A supplied candidate
+	 * must match that derived date exactly; arbitrary post-cutoff dates fail
+	 * closed.
+	 */
+	public static function verified_custom_reference_date_for_post( $post_id, $candidate = '' ) {
+		$expected = self::first_publication_reference_date( $post_id );
+		if ( ! $expected ) {
+			return '';
+		}
+
+		$candidate_raw = is_scalar( $candidate ) ? trim( (string) $candidate ) : '';
+		if ( '' === $candidate_raw ) {
+			return $expected;
+		}
+
+		$candidate_date = self::custom_reference_date( $candidate_raw );
+		return $candidate_date && $candidate_date === $expected ? $expected : '';
+	}
+
 	public static function resolved_reference_date( $group = 'standard', $custom_date = '' ) {
 		$group = self::sanitize_reference_group( $group );
 		if ( 'fmcg' === $group ) {
@@ -364,9 +416,10 @@ final class Sidrena_Utils {
 	}
 
 	public static function current_reference_date( $product_id = 0 ) {
-		$group      = 'standard';
-		$custom     = '';
-		$lookup_ids = array();
+		$group           = 'standard';
+		$custom          = '';
+		$group_source_id = 0;
+		$lookup_ids      = array();
 
 		if ( $product_id ) {
 			$lookup_ids[] = (int) $product_id;
@@ -378,18 +431,17 @@ final class Sidrena_Utils {
 			foreach ( $lookup_ids as $lookup_id ) {
 				$stored_group = sanitize_key( (string) get_post_meta( $lookup_id, '_sidrena_reference_group', true ) );
 				if ( in_array( $stored_group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
-					$group = $stored_group;
+					$group           = $stored_group;
+					$group_source_id = $lookup_id;
 					break;
 				}
 			}
 
-			if ( 'custom' === $group ) {
-				foreach ( $lookup_ids as $lookup_id ) {
-					$custom = self::custom_reference_date( get_post_meta( $lookup_id, '_sidrena_anchor_date', true ) );
-					if ( $custom ) {
-						break;
-					}
-				}
+			if ( 'custom' === $group && $group_source_id ) {
+				$custom = self::verified_custom_reference_date_for_post(
+					$group_source_id,
+					get_post_meta( $group_source_id, '_sidrena_anchor_date', true )
+				);
 			}
 		}
 
@@ -399,7 +451,9 @@ final class Sidrena_Utils {
 	public static function service_reference_date( $service_id = 0 ) {
 		$group  = $service_id ? sanitize_key( (string) get_post_meta( $service_id, '_sidrena_service_reference_group', true ) ) : 'standard';
 		$group  = self::sanitize_reference_group( $group, false );
-		$custom = 'custom' === $group && $service_id ? get_post_meta( $service_id, '_sidrena_service_anchor_date', true ) : '';
+		$custom = 'custom' === $group && $service_id
+			? self::verified_custom_reference_date_for_post( $service_id, get_post_meta( $service_id, '_sidrena_service_anchor_date', true ) )
+			: '';
 		return self::resolved_reference_date( $group, $custom );
 	}
 
@@ -413,7 +467,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_tooltip() {
-		return __( 'Sidrena cijena je referentna redovna cijena za mjerodavni datum. Ako je proizvod ili usluga tada bio na akciji ili drugom posebnom obliku prodaje, sidrena cijena je prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' );
+		return __( 'Sidrena cijena je dodatna cijena prema važećem SIDRENA rulesetu: cijena koja nije cijena u posebnom obliku prodaje i koja je bila primjenjiva na mjerodavni referentni datum. Za stvarno novouvedenu stavku koristi se dokazivi datum prvog uvrštenja.', 'sidrena' );
 	}
 
 	public static function upload_paths() {
@@ -425,6 +479,8 @@ final class Sidrena_Utils {
 			'archive_dir'  => $base . 'arhiva/',
 			'base_url'     => $url,
 			'archive_url'  => $url . 'arhiva/',
+			'current_dir'  => $base . 'aktualno/',
+			'current_url'  => $url . 'aktualno/',
 			'manifest'     => $base . 'manifest.json',
 			'manifest_url' => $url . 'manifest.json',
 			'snapshot_dir' => $base . 'public/',

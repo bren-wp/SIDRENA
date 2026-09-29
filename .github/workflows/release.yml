@@ -141,14 +141,14 @@ jobs:
         shell: bash
         run: |
           cat > "$RUNNER_TEMP/sidrena-release-body.md" <<EOF
-          ## Sidrena $VERSION
+          ## SIDRENA $VERSION
 
-          Sidrena $VERSION je stabilno 1.0 izdanje koje objedinjuje završni produkcijski UI/UX, sigurnosno i release poliranje te jedinstven Sidrena branding za dva odvojena WordPress plugina:
+          SIDRENA $VERSION je produkcijsko izdanje compliance i digital-price-list sustava s dva zasebna instalacijska plugina:
 
-          - **Sidrena WordPress** — za postojeći WordPress sadržaj i vlastiti katalog.
-          - **Sidrena WooCommerce** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
+          - **SIDRENA — WordPress izdanje** — za WordPress bez WooCommerce dependencyja, s vlastitim katalogom proizvoda i usluga.
+          - **SIDRENA — WooCommerce izdanje** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
 
-          Oba instalacijska paketa uključuju samo runtime potreban za rad, lokalni SIDRENA identitet, responzivno administratorsko sučelje, javne cjenike, CSV/XML, arhivu, tekstualne upute i PDF podršku. Teški WordPress.org screenshotovi i marketinški branding asseti ostaju u izvornom repozitoriju i nisu dio instalacijskog ZIP-a.
+          Oba instalacijska paketa uključuju zaključani SIDRENA ruleset, odvojene aktualne i arhivske cjenike, neograničenu povijest promjena cijena, atomic publication, CSV/XML, javni HTML/REST pristup, lokacije, automatizaciju, responzivno administratorsko sučelje i dokumentaciju. Teški WordPress.org screenshotovi i marketinški branding asseti ostaju u izvornom repozitoriju i nisu dio instalacijskog ZIP-a.
 
           Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
 
@@ -200,12 +200,12 @@ jobs:
           python3 tools/pdf-visual-qa.py \
             --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/wordpress" \
-            --label "SIDRENA WordPress release"
+            --label "SIDRENA — WordPress izdanje release"
 
           python3 tools/pdf-visual-qa.py \
             --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/woocommerce" \
-            --label "SIDRENA WooCommerce release"
+            --label "SIDRENA — WooCommerce izdanje release"
 
       - name: Upload release PDF visual QA renders
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -275,7 +275,7 @@ jobs:
           test "$RELEASE_TARGET" = "$GITHUB_SHA"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git tag -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
           git push origin "$TAG_NAME"
 
       - name: Retarget stale 0.9.0 tag before a new release
@@ -287,7 +287,7 @@ jobs:
           test "$RELEASE_TARGET" = "$GITHUB_SHA"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "Sidrena $VERSION"
+          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
           git push --force origin "refs/tags/$TAG_NAME"
 
       - name: Publish new GitHub release
@@ -296,7 +296,7 @@ jobs:
         with:
           tag_name: ${{ env.TAG_NAME }}
           target_commitish: ${{ env.RELEASE_TARGET }}
-          name: Sidrena ${{ env.VERSION }}
+          name: SIDRENA ${{ env.VERSION }}
           prerelease: false
           make_latest: true
           generate_release_notes: false
@@ -355,7 +355,7 @@ jobs:
           jq -n \
             --arg tag "$TAG_NAME" \
             --arg target "$RELEASE_TARGET" \
-            --arg name "Sidrena $VERSION" \
+            --arg name "SIDRENA $VERSION" \
             --rawfile body "$RUNNER_TEMP/sidrena-release-body.md" \
             '{tag_name:$tag,target_commitish:$target,name:$name,body:$body,draft:false,prerelease:false,make_latest:"true"}' \
             > "$RUNNER_TEMP/release-update.json"
@@ -455,12 +455,12 @@ jobs:
           V010_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[] | select(.tag_name == "v0.1.0") | .id' | head -n1)"
           if [[ "$V010_ID" =~ ^[0-9]+$ ]]; then
             V010_BODY="$(cat <<'EOF'
-          ## Sidrena 0.1.0
+          ## SIDRENA 0.1.0
 
           Prvo javno izdanje Sidrene isporučuje dva odvojena WordPress plugina:
 
-          - **Sidrena WordPress** — za WordPress web bez WooCommercea.
-          - **Sidrena WooCommerce** — za WordPress + WooCommerce.
+          - **SIDRENA — WordPress izdanje** — za WordPress web bez WooCommercea.
+          - **SIDRENA — WooCommerce izdanje** — za WordPress + WooCommerce.
 
           Automatski prikaz sidrene cijene, javna Objava cjenika, CSV/XML, arhiva i ugrađena podrška uključeni su u odgovarajući paket.
 

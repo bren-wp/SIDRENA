@@ -45,7 +45,9 @@ final class Sidrena_Legal_Automation {
 		}
 
 		$settings['generation_time'] = self::normalize_generation_time( $settings['generation_time'] ?? self::SAFE_GENERATION_TIME );
-		$settings['retention_days']  = 30;
+		$automation_mode             = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$settings['automation_mode'] = in_array( $automation_mode, array( 'wp_cron', 'external' ), true ) ? $automation_mode : 'wp_cron';
+		$settings['retention_days']  = max( 30, absint( $settings['retention_days'] ?? 30 ) );
 		$settings['csv_delimiter']   = ';';
 		unset( $settings['default_ref_date'], $settings['fmcg_ref_date'], $settings['fmsid_ref_date'], $settings['display_lowest_30'], $settings['track_price_history'] );
 

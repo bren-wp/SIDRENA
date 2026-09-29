@@ -94,7 +94,7 @@ sidrena_woo_assert(
 	'SIDRENA public download shortcode must have exactly one canonical owner.'
 );
 
-sidrena_woo_assert( empty( $GLOBALS['sidrena_actions']['woocommerce_update_product'] ), 'Retired 30-day Woo price-history hook must not register in the active SIDRENA workflow.' );
+sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_update_product'] ), 'WooCommerce edition must retain unlimited product price-history capture; that audit history remains separate from the immutable Sidrena-price ruleset.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['woocommerce_product_options_pricing'] ), 'Woo product fields must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['admin_post_sidrena_bulk_save'] ), 'Woo bulk save must register.' );
 sidrena_woo_assert( ! empty( $GLOBALS['sidrena_actions']['sidrena_publication_watch'] ), 'Publication watchdog must register.' );

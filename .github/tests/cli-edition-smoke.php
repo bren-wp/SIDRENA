@@ -58,12 +58,15 @@ function sidrena_cli_assert( $condition, $message ) {
 	}
 }
 
-foreach ( array( 'sidrena generate', 'sidrena status', 'sidrena audit' ) as $command ) {
+foreach ( array( 'sidrena generate', 'sidrena publish', 'sidrena status', 'sidrena audit' ) as $command ) {
 	sidrena_cli_assert( in_array( $command, $GLOBALS['sidrena_cli_commands'], true ), 'Missing common CLI command: ' . $command );
 }
 
 if ( 'woocommerce' === $edition ) {
-	sidrena_cli_assert( in_array( 'sidrena fill', $GLOBALS['sidrena_cli_commands'], true ), 'WooCommerce edition must register sidrena fill.' );
+	sidrena_cli_assert( in_array( 'sidrena fill', $GLOBALS['sidrena_cli_commands'], true ), 'WooCommerce edition must keep the legacy sidrena fill command for compatibility.' );
+	$cli_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-cli.php' );
+	sidrena_cli_assert( false === strpos( $cli_source, '--today' ), 'Woo CLI must not expose a today-date override for Sidrena prices.' );
+	sidrena_cli_assert( false !== strpos( $cli_source, 'Automatsko popunjavanje sidrene cijene iz trenutačne WooCommerce cijene onemogućeno je' ), 'Legacy fill command must fail closed instead of fabricating historical Sidrena prices.' );
 } else {
 	sidrena_cli_assert( ! in_array( 'sidrena fill', $GLOBALS['sidrena_cli_commands'], true ), 'WordPress edition must not expose Woo-only sidrena fill.' );
 }

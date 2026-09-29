@@ -45,24 +45,22 @@ final class Sidrena_Products {
 
 	public function register_meta() {
 		$keys = array(
-			'_sidrena_anchor_price'      => 'number',
-			'_sidrena_anchor_date'       => 'string',
-			'_sidrena_reference_group'   => 'string',
-			'_sidrena_brand'             => 'string',
-			'_sidrena_code'              => 'string',
-			'_sidrena_barcode'           => 'string',
-			'_sidrena_unit'              => 'string',
-			'_sidrena_unit_price'        => 'number',
-			'_sidrena_unit_price_status' => 'string',
-			'_sidrena_sale_name'         => 'string',
-			'_sidrena_cjenik_visibility' => 'string',
+			'_sidrena_anchor_price'       => 'number',
+			'_sidrena_lowest_30_verified' => 'number',
+			'_sidrena_reference_group'    => 'string',
+			'_sidrena_brand'              => 'string',
+			'_sidrena_code'               => 'string',
+			'_sidrena_barcode'            => 'string',
+			'_sidrena_unit'               => 'string',
+			'_sidrena_unit_price'         => 'number',
+			'_sidrena_unit_price_status'  => 'string',
+			'_sidrena_sale_name'          => 'string',
+			'_sidrena_cjenik_visibility'  => 'string',
 		);
 		foreach ( array( 'product', 'product_variation' ) as $post_type ) {
 			foreach ( $keys as $key => $type ) {
 				$sanitize_callback = 'number' === $type ? array( $this, 'sanitize_number_meta' ) : 'sanitize_text_field';
-				if ( '_sidrena_anchor_date' === $key ) {
-					$sanitize_callback = array( $this, 'sanitize_custom_reference_date_meta' );
-				} elseif ( '_sidrena_reference_group' === $key ) {
+				if ( '_sidrena_reference_group' === $key ) {
 					$sanitize_callback = array( $this, 'sanitize_reference_group_meta' );
 				}
 				register_post_meta(
@@ -101,7 +99,7 @@ final class Sidrena_Products {
 				'id'                => '_sidrena_anchor_price',
 				'label'             => __( 'Sidrena cijena', 'sidrena' ),
 				'desc_tip'          => true,
-				'description'       => __( 'Referentna redovna cijena. Ako je artikl na mjerodavni datum bio na akciji ili drugom posebnom obliku prodaje, ovdje se upisuje prethodna redovna cijena prije tog posebnog oblika prodaje, a ne akcijska cijena.', 'sidrena' ),
+				'description'       => __( 'Sidrena cijena prema odabranom pravnom rulesetu. Poseban oblik prodaje vodi se odvojeno i ne određuje ovu vrijednost.', 'sidrena' ),
 				'type'              => 'number',
 				'custom_attributes' => array(
 					'step' => '0.01',
@@ -109,29 +107,39 @@ final class Sidrena_Products {
 				),
 			)
 		);
-		woocommerce_wp_select(
-			array(
-				'id'          => '_sidrena_reference_group',
-				'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
-				'description' => __( '10.09.2026. i 02.05.2025. zaključani su pravilima plugina. Vlastiti datum dopušten je samo za proizvod koji je stvarno prvi put uveden u ponudu nakon 10.09.2026.', 'sidrena' ),
-				'desc_tip'    => true,
-				'options'     => array(
-					/* translators: %s: formatted reference date. */
-					'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
-					/* translators: %s: formatted FMCG reference date. */
-					'fmcg'     => sprintf( __( 'Zaključano: postojeći FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ),
-					'custom'   => __( 'Novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
-				),
-			)
-		);
+		$product_id      = get_the_ID();
+		$reference_group = $product_id ? Sidrena_Utils::sanitize_reference_group( get_post_meta( $product_id, '_sidrena_reference_group', true ) ) : 'standard';
+		if ( 'custom' === $reference_group ) {
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product_id, get_post_meta( $product_id, '_sidrena_anchor_date', true ) );
+			echo '<p class="form-field"><label>' . esc_html__( 'Pravni datum sidrene cijene', 'sidrena' ) . '</label><strong>' . esc_html( Sidrena_Utils::date_display( $custom_date ) ) . '</strong><span class="description">' . esc_html__( 'Automatski zaključano iz dokazivog prvog objavljivanja proizvoda. Datum nije ručno promjenjiv.', 'sidrena' ) . '</span></p>';
+		} else {
+			woocommerce_wp_select(
+				array(
+					'id'          => '_sidrena_reference_group',
+					'label'       => __( 'Pravni datum sidrene cijene', 'sidrena' ),
+					'description' => __( 'Odaberite samo zakonski ruleset za postojeći proizvod. Novouvedeni proizvod SIDRENA prepoznaje automatski pri prvom objavljivanju.', 'sidrena' ),
+					'desc_tip'    => true,
+					'options'     => array(
+						/* translators: %s: formatted reference date. */
+						'standard' => sprintf( __( 'Zaključano: standardno (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ),
+						/* translators: %s: formatted FMCG reference date. */
+						'fmcg'     => sprintf( __( 'Zaključano: postojeći FMCG (%s)', 'sidrena' ), Sidrena_Utils::date_display( Sidrena_Utils::fmcg_reference_date() ) ),
+					),
+				)
+			);
+		}
+		echo '<p class="form-field"><span class="description">' . esc_html__( '10.09.2026. i 02.05.2025. nisu postavke. Za stvarno novouvedenu stavku SIDRENA koristi i zaključava datum prvog objavljivanja.', 'sidrena' ) . '</span></p>';
 		woocommerce_wp_text_input(
 			array(
-				'id'                => '_sidrena_anchor_date',
-				'label'             => __( 'Datum prvog uvrštenja novog proizvoda', 'sidrena' ),
-				'type'              => 'date',
-				'description'       => __( 'Koristi se isključivo za novouvedeni proizvod nakon 10.09.2026. Standardni i FMCG ruleset ignoriraju i brišu ovu vrijednost.', 'sidrena' ),
+				'id'                => '_sidrena_lowest_30_verified',
+				'label'             => __( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+				'description'       => __( 'Odvojeno od sidrene cijene. Koristi se samo tijekom posebnog oblika prodaje ako SIDRENA nema potpunu povijest za automatski izračun. Unesite samo poslovno provjerenu vrijednost.', 'sidrena' ),
 				'desc_tip'          => true,
-				'custom_attributes' => array( 'min' => '2026-09-11' ),
+				'type'              => 'number',
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
+				),
 			)
 		);
 		echo '</div>';
@@ -186,8 +194,8 @@ final class Sidrena_Products {
 					'step' => '0.0001',
 					'min'  => '0',
 				),
-				'description' => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
-				'desc_tip'    => true,
+				'description'       => __( 'Npr. 750 za 750 g ili 1,5 za 1,5 l. Ako je jedinična cijena obvezna, a iznos je prazan, Sidrena je može izračunati automatski.', 'sidrena' ),
+				'desc_tip'          => true,
 			)
 		);
 		woocommerce_wp_text_input(
@@ -221,7 +229,7 @@ final class Sidrena_Products {
 		woocommerce_wp_text_input(
 			array(
 				'id'          => '_sidrena_sale_name',
-				'label'       => __( 'Naziv posebnog oblika prodaje', 'sidrena' ),
+				'label'       => __( 'Poseban oblik prodaje — naziv', 'sidrena' ),
 				'placeholder' => __( 'npr. Akcija', 'sidrena' ),
 			)
 		);
@@ -276,31 +284,42 @@ final class Sidrena_Products {
 				),
 			)
 		);
+		echo '<p class="form-row form-row-last"><span class="description">' . esc_html__( 'Datum novouvedene varijacije određuje SIDRENA iz stvarnog datuma objavljivanja; nije slobodno uređivo polje.', 'sidrena' ) . '</span></p>';
 		woocommerce_wp_text_input(
 			array(
-				'id'                => "_sidrena_anchor_date_{$loop}",
-				'name'              => "_sidrena_anchor_date[{$loop}]",
-				'value'             => get_post_meta( $variation_id, '_sidrena_anchor_date', true ),
-				'label'             => __( 'Datum prvog uvrštenja (samo nov proizvod)', 'sidrena' ),
-				'type'              => 'date',
+				'id'                => "_sidrena_lowest_30_verified_{$loop}",
+				'name'              => "_sidrena_lowest_30_verified[{$loop}]",
+				'value'             => get_post_meta( $variation_id, '_sidrena_lowest_30_verified', true ),
+				'label'             => __( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+				'description'       => __( 'Odvojeno od sidrene cijene; ručni fallback samo ako automatska 30-dnevna povijest nije potpuna.', 'sidrena' ),
+				'desc_tip'          => true,
+				'type'              => 'number',
 				'wrapper_class'     => 'form-row form-row-last',
-				'custom_attributes' => array( 'min' => '2026-09-11' ),
-			)
-		);
-		woocommerce_wp_select(
-			array(
-				'id'            => "_sidrena_reference_group_{$loop}",
-				'name'          => "_sidrena_reference_group[{$loop}]",
-				'value'         => $this->variation_reference_group( $variation_id ),
-				'label'         => __( 'Pravni datum sidrene cijene', 'sidrena' ),
-				'wrapper_class' => 'form-row form-row-first',
-				'options'       => array(
-					'standard' => __( 'Zaključano: 10.09.2026.', 'sidrena' ),
-					'fmcg'     => __( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ),
-					'custom'   => __( 'Novouvedeni proizvod nakon 10.09.2026.', 'sidrena' ),
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '0',
 				),
 			)
 		);
+		$variation_group = $this->variation_reference_group( $variation_id );
+		if ( 'custom' === $variation_group ) {
+			$variation_date = Sidrena_Utils::current_reference_date( $variation_id );
+			echo '<p class="form-row form-row-first"><label>' . esc_html__( 'Pravni datum sidrene cijene', 'sidrena' ) . '</label><strong>' . esc_html( Sidrena_Utils::date_display( $variation_date ) ) . '</strong><span class="description">' . esc_html__( 'Automatski zaključano iz prvog objavljivanja varijacije/proizvoda.', 'sidrena' ) . '</span></p>';
+		} else {
+			woocommerce_wp_select(
+				array(
+					'id'            => "_sidrena_reference_group_{$loop}",
+					'name'          => "_sidrena_reference_group[{$loop}]",
+					'value'         => $variation_group,
+					'label'         => __( 'Pravni datum sidrene cijene', 'sidrena' ),
+					'wrapper_class' => 'form-row form-row-first',
+					'options'       => array(
+						'standard' => __( 'Zaključano: 10.09.2026.', 'sidrena' ),
+						'fmcg'     => __( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ),
+					),
+				)
+			);
+		}
 		woocommerce_wp_select(
 			array(
 				'id'            => "_sidrena_unit_price_status_{$loop}",
@@ -404,19 +423,19 @@ final class Sidrena_Products {
 		}
 
 		$map = array(
-			'_sidrena_anchor_price'      => 'decimal',
-			'_sidrena_anchor_date'       => 'custom_date',
-			'_sidrena_reference_group'   => 'key',
-			'_sidrena_brand'             => 'text',
-			'_sidrena_code'              => 'text',
-			'_sidrena_barcode'           => 'text',
-			'_sidrena_unit'              => 'text',
-			'_sidrena_unit_price'        => 'decimal',
-			'_sidrena_unit_price_status' => 'unit_status',
-			'_sidrena_quantity'          => 'decimal',
-			'_sidrena_quantity_unit'     => 'unit_key',
-			'_sidrena_sale_name'         => 'text',
-			'_sidrena_cjenik_visibility' => 'cjenik_visibility',
+			'_sidrena_anchor_price'       => 'decimal',
+			'_sidrena_lowest_30_verified' => 'decimal',
+			'_sidrena_reference_group'    => 'key',
+			'_sidrena_brand'              => 'text',
+			'_sidrena_code'               => 'text',
+			'_sidrena_barcode'            => 'text',
+			'_sidrena_unit'               => 'text',
+			'_sidrena_unit_price'         => 'decimal',
+			'_sidrena_unit_price_status'  => 'unit_status',
+			'_sidrena_quantity'           => 'decimal',
+			'_sidrena_quantity_unit'      => 'unit_key',
+			'_sidrena_sale_name'          => 'text',
+			'_sidrena_cjenik_visibility'  => 'cjenik_visibility',
 		);
 		foreach ( $map as $key => $type ) {
 			if ( ! isset( $posted[ $key ] ) ) {
@@ -434,17 +453,18 @@ final class Sidrena_Products {
 			}
 		}
 		$group = Sidrena_Utils::sanitize_reference_group( $product->get_meta( '_sidrena_reference_group', true ) );
-		$product->update_meta_data( '_sidrena_reference_group', $group );
 		if ( 'custom' === $group ) {
-			$custom_date = Sidrena_Utils::custom_reference_date( $product->get_meta( '_sidrena_anchor_date', true ) );
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $product->get_id(), $product->get_meta( '_sidrena_anchor_date', true ) );
 			if ( $custom_date ) {
 				$product->update_meta_data( '_sidrena_anchor_date', $custom_date );
 			} else {
+				$group = 'standard';
 				$product->delete_meta_data( '_sidrena_anchor_date' );
 			}
 		} else {
 			$product->delete_meta_data( '_sidrena_anchor_date' );
 		}
+		$product->update_meta_data( '_sidrena_reference_group', $group );
 		$this->maybe_calculate_unit_price( $product );
 		Sidrena_Pricelist::queue_regeneration();
 	}
@@ -462,17 +482,17 @@ final class Sidrena_Products {
 		}
 
 		$fields = array(
-			'_sidrena_code'              => 'text',
-			'_sidrena_barcode'           => 'text',
-			'_sidrena_anchor_price'      => 'decimal',
-			'_sidrena_anchor_date'       => 'custom_date',
-			'_sidrena_reference_group'   => 'key',
-			'_sidrena_unit_price_status' => 'unit_status_inherit',
-			'_sidrena_quantity'          => 'decimal',
-			'_sidrena_quantity_unit'     => 'unit_key',
-			'_sidrena_unit'              => 'text',
-			'_sidrena_unit_price'        => 'decimal',
-			'_sidrena_sale_name'         => 'text',
+			'_sidrena_code'               => 'text',
+			'_sidrena_barcode'            => 'text',
+			'_sidrena_anchor_price'       => 'decimal',
+			'_sidrena_lowest_30_verified' => 'decimal',
+			'_sidrena_reference_group'    => 'key',
+			'_sidrena_unit_price_status'  => 'unit_status_inherit',
+			'_sidrena_quantity'           => 'decimal',
+			'_sidrena_quantity_unit'      => 'unit_key',
+			'_sidrena_unit'               => 'text',
+			'_sidrena_unit_price'         => 'decimal',
+			'_sidrena_sale_name'          => 'text',
 		);
 		foreach ( $fields as $key => $type ) {
 			if ( ! isset( $posted[ $key ][ $loop ] ) ) {
@@ -491,17 +511,18 @@ final class Sidrena_Products {
 		}
 
 		$group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $variation_id, '_sidrena_reference_group', true ) );
-		update_post_meta( $variation_id, '_sidrena_reference_group', $group );
 		if ( 'custom' === $group ) {
-			$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $variation_id, '_sidrena_anchor_date', true ) );
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $variation_id, get_post_meta( $variation_id, '_sidrena_anchor_date', true ) );
 			if ( $custom_date ) {
 				update_post_meta( $variation_id, '_sidrena_anchor_date', $custom_date );
 			} else {
+				$group = 'standard';
 				delete_post_meta( $variation_id, '_sidrena_anchor_date' );
 			}
 		} else {
 			delete_post_meta( $variation_id, '_sidrena_anchor_date' );
 		}
+		update_post_meta( $variation_id, '_sidrena_reference_group', $group );
 
 		$variation = wc_get_product( $variation_id );
 		if ( $variation ) {
@@ -598,6 +619,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$extra .= $this->anchor_html( $product );
 		}
+		$extra .= $this->lowest_30_html( $product );
 		return $extra ? $html . '<span class="sidrena-reference-prices">' . $extra . '</span>' : $html;
 	}
 
@@ -612,6 +634,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$out .= $this->anchor_html( $variation );
 		}
+		$out .= $this->lowest_30_html( $variation );
 
 		$html                           = $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 		$data['sidrena_reference_html'] = (string) apply_filters(
@@ -647,6 +670,7 @@ final class Sidrena_Products {
 		if ( 'yes' === $settings['display_anchor'] ) {
 			$out .= $this->anchor_html( $target );
 		}
+		$out .= $this->lowest_30_html( $target );
 		return $out ? '<span class="sidrena-reference-prices">' . $out . '</span>' : '';
 	}
 
@@ -662,6 +686,67 @@ final class Sidrena_Products {
 			return;
 		}
 		echo wp_kses_post( $this->shortcode( array( 'id' => $target_product->get_id() ) ) );
+	}
+
+	private function lowest_30_html( $product ) {
+		if ( ! class_exists( 'Sidrena_History' ) || ! $product instanceof WC_Product || ! is_callable( array( $product, 'is_on_sale' ) ) || ! $product->is_on_sale( 'edit' ) ) {
+			return '';
+		}
+		if ( $product->is_type( 'variable' ) ) {
+			return $this->variable_lowest_30_html( $product );
+		}
+
+		$result = Sidrena_History::instance()->lowest_30_day_reference( $product );
+		if ( 'ready' !== ( $result['status'] ?? '' ) || '' === ( $result['price'] ?? '' ) ) {
+			return '';
+		}
+
+		$display_price = (float) $result['price'];
+		if ( function_exists( 'wc_get_price_to_display' ) ) {
+			$display_price = wc_get_price_to_display( $product, array( 'price' => $display_price ) );
+		}
+		$source = 'manual' === ( $result['source'] ?? '' )
+			? __( 'provjerena vrijednost', 'sidrena' )
+			: __( 'iz povijesti cijena', 'sidrena' );
+		return sprintf(
+			'<span class="sidrena-lowest-30"><span class="sidrena-lowest-30__label">%1$s:</span> <span class="sidrena-lowest-30__value">%2$s</span><small>%3$s</small></span>',
+			esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+			wp_kses_post( wc_price( $display_price ) ),
+			esc_html( $source )
+		);
+	}
+
+	private function variable_lowest_30_html( $product ) {
+		$values       = array();
+		$on_sale      = 0;
+		$ready_values = 0;
+		foreach ( $product->get_children() as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( ! $variation || ! $variation->exists() || ! $variation->is_on_sale( 'edit' ) ) {
+				continue;
+			}
+			++$on_sale;
+			$result = Sidrena_History::instance()->lowest_30_day_reference( $variation );
+			if ( 'ready' !== ( $result['status'] ?? '' ) || '' === ( $result['price'] ?? '' ) ) {
+				continue;
+			}
+			$display  = function_exists( 'wc_get_price_to_display' )
+				? wc_get_price_to_display( $variation, array( 'price' => (float) $result['price'] ) )
+				: (float) $result['price'];
+			$values[] = (float) $display;
+			++$ready_values;
+		}
+		if ( 0 === $on_sale || $ready_values !== $on_sale || ! $values ) {
+			return '';
+		}
+		$min    = min( $values );
+		$max    = max( $values );
+		$amount = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+		return sprintf(
+			'<span class="sidrena-lowest-30 sidrena-lowest-30--variable"><span class="sidrena-lowest-30__label">%1$s:</span> <span class="sidrena-lowest-30__value">%2$s</span></span>',
+			esc_html__( 'Najniža cijena u prethodnih 30 dana', 'sidrena' ),
+			wp_kses_post( $amount )
+		);
 	}
 
 	private function anchor_html( $product ) {
@@ -713,8 +798,8 @@ final class Sidrena_Products {
 			$display  = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
-			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display  = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
 			$values[] = (float) $display;
 			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
 		}
@@ -781,6 +866,7 @@ final class Sidrena_Products {
 				update_post_meta( $id, '_sidrena_reference_group', 'custom' );
 			}
 		}
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	private function variation_reference_group( $variation_id ) {
@@ -795,6 +881,7 @@ final class Sidrena_Products {
 
 	public function snapshot_new_variation( $variation_id ) {
 		$this->maybe_snapshot_new_variation( $variation_id );
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	private function maybe_snapshot_new_variation( $variation_id ) {

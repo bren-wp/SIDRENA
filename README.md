@@ -11,11 +11,11 @@ Support: sidrena@brendigo.com
 </p>
 
 <p align="center">
-  <img src="branding/rendered/website-hero-wordpress.png" alt="SIDRENA WordPress vizual" width="49%">
-  <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA WooCommerce vizual" width="49%">
+  <img src="branding/rendered/website-hero-wordpress.png" alt="SIDRENA — WordPress izdanje vizual" width="49%">
+  <img src="branding/rendered/website-hero-woocommerce.png" alt="SIDRENA — WooCommerce izdanje vizual" width="49%">
 </p>
 
-<h1 align="center">SIDRENA 1.0.26</h1>
+<h1 align="center">SIDRENA 1.0.27</h1>
 
 <p align="center">
   <strong>Upravljanje cijenama. Jasna evidencija. Sigurnija objava.</strong><br>
@@ -32,12 +32,12 @@ Svi vizuali ispod učitavaju se **izravno iz produkcijskih asseta ovog repozitor
 
 <table>
 <tr>
-<td width="50%" align="center"><img src="assets/images/logo-wordpress.svg" alt="SIDRENA WordPress — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WordPress logo</strong></td>
-<td width="50%" align="center"><img src="assets/images/logo-woocommerce.svg" alt="SIDRENA WooCommerce — stvarni produkcijski logo" width="420"><br><strong>SIDRENA WooCommerce logo</strong></td>
+<td width="50%" align="center"><img src="assets/images/logo-wordpress.svg" alt="SIDRENA — WordPress izdanje — stvarni produkcijski logo" width="420"><br><strong>SIDRENA — WordPress izdanje</strong></td>
+<td width="50%" align="center"><img src="assets/images/logo-woocommerce.svg" alt="SIDRENA — WooCommerce izdanje — stvarni produkcijski logo" width="420"><br><strong>SIDRENA — WooCommerce izdanje</strong></td>
 </tr>
 <tr>
-<td width="50%" align="center"><img src="branding/rendered/plugin-cover-wordpress.png" alt="SIDRENA WordPress — aktualni plugin cover" width="100%"><br><strong>WordPress plugin cover</strong></td>
-<td width="50%" align="center"><img src="branding/rendered/plugin-cover-woocommerce.png" alt="SIDRENA WooCommerce — aktualni plugin cover" width="100%"><br><strong>WooCommerce plugin cover</strong></td>
+<td width="50%" align="center"><img src="branding/rendered/plugin-cover-wordpress.png" alt="SIDRENA — WordPress izdanje — aktualni plugin cover" width="100%"><br><strong>WordPress plugin cover</strong></td>
+<td width="50%" align="center"><img src="branding/rendered/plugin-cover-woocommerce.png" alt="SIDRENA — WooCommerce izdanje — aktualni plugin cover" width="100%"><br><strong>WooCommerce plugin cover</strong></td>
 </tr>
 </table>
 
@@ -48,7 +48,7 @@ Svi vizuali ispod učitavaju se **izravno iz produkcijskih asseta ovog repozitor
 <td align="center"><img src="assets/images/logo-mark.svg" alt="SIDRENA logo mark" width="96"><br><strong>Logo mark</strong></td>
 <td align="center"><img src="assets/images/app-icon.svg" alt="SIDRENA app ikona" width="96"><br><strong>App ikona</strong></td>
 <td align="center"><img src="assets/images/favicon.svg" alt="SIDRENA favicon" width="72"><br><strong>Favicon</strong></td>
-<td align="center"><img src="assets/images/menu-anchor.svg" alt="SIDRENA WordPress admin menu ikona" width="72"><br><strong>Admin menu ikona</strong></td>
+<td align="center"><img src="assets/images/menu-anchor.svg" alt="SIDRENA — WordPress izdanje admin menu ikona" width="72"><br><strong>Admin menu ikona</strong></td>
 <td align="center"><img src="wporg-assets/sidrena-wordpress/assets/icon-128x128.png" alt="SIDRENA WordPress.org WordPress ikona" width="96"><br><strong>WP.org WordPress</strong></td>
 <td align="center"><img src="wporg-assets/sidrena-woocommerce/assets/icon-128x128.png" alt="SIDRENA WordPress.org WooCommerce ikona" width="96"><br><strong>WP.org WooCommerce</strong></td>
 </tr>
@@ -58,8 +58,8 @@ Svi vizuali ispod učitavaju se **izravno iz produkcijskih asseta ovog repozitor
 
 <table>
 <tr>
-<td width="50%" align="center"><img src="wporg-assets/sidrena-wordpress/assets/banner-772x250.png" alt="SIDRENA WordPress — stvarni WordPress.org banner" width="100%"></td>
-<td width="50%" align="center"><img src="wporg-assets/sidrena-woocommerce/assets/banner-772x250.png" alt="SIDRENA WooCommerce — stvarni WordPress.org banner" width="100%"></td>
+<td width="50%" align="center"><img src="wporg-assets/sidrena-wordpress/assets/banner-772x250.png" alt="SIDRENA — WordPress izdanje — stvarni WordPress.org banner" width="100%"></td>
+<td width="50%" align="center"><img src="wporg-assets/sidrena-woocommerce/assets/banner-772x250.png" alt="SIDRENA — WooCommerce izdanje — stvarni WordPress.org banner" width="100%"></td>
 </tr>
 </table>
 
@@ -84,8 +84,8 @@ SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji že
 <table>
 <tr>
 <td width="50%" valign="top">
-<p align="center"><img src="assets/images/logo-wordpress.svg" alt="Sidrena WordPress" width="390"></p>
-<p><strong>Sidrena WordPress</strong> namijenjena je web stranicama koje žele upravljati cijenama kroz vlastiti katalog ili postojeći javni WordPress sadržaj.</p>
+<p align="center"><img src="assets/images/logo-wordpress.svg" alt="SIDRENA — WordPress izdanje" width="390"></p>
+<p><strong>SIDRENA — WordPress izdanje</strong> namijenjena je web stranicama koje žele upravljati cijenama kroz vlastiti katalog ili postojeći javni WordPress sadržaj.</p>
 <ul>
 <li>proizvodi i usluge</li>
 <li>povezivanje s postojećim WordPress sadržajem</li>
@@ -96,8 +96,8 @@ SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji že
 </ul>
 </td>
 <td width="50%" valign="top">
-<p align="center"><img src="assets/images/logo-woocommerce.svg" alt="Sidrena WooCommerce" width="390"></p>
-<p><strong>Sidrena WooCommerce</strong> radi izravno s postojećim WooCommerce proizvodima i varijacijama.</p>
+<p align="center"><img src="assets/images/logo-woocommerce.svg" alt="SIDRENA — WooCommerce izdanje" width="390"></p>
+<p><strong>SIDRENA — WooCommerce izdanje</strong> radi izravno s postojećim WooCommerce proizvodima i varijacijama.</p>
 <ul>
 <li>bez zasebnog duplog kataloga</li>
 <li>proizvodi i varijacije</li>
@@ -114,58 +114,63 @@ SIDRENA je namijenjena vlasnicima i administratorima WordPress stranica koji že
 
 ## Stvarni ekrani plugina — bez mockupova
 
-Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz aktivnog WordPress administratorskog sučelja. Nisu mockupovi niti generirani prikazi. WordPress galerija nastaje s aktivnim SIDRENA WordPress izdanjem, a WooCommerce galerija s aktivnim WooCommerceom i SIDRENA WooCommerce izdanjem.
+Slike ispod su **stvarni runtime screenshotovi SIDRENA plugina** snimljeni iz aktivnog WordPress administratorskog sučelja. Nisu mockupovi niti generirani prikazi. WordPress galerija nastaje s aktivnim izdanjem SIDRENA — WordPress izdanje, a WooCommerce galerija s aktivnim WooCommerceom i izdanjem SIDRENA — WooCommerce izdanje.
 
-### SIDRENA WordPress — stvarni wp-admin
-
-<table>
-<tr>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-1.png" alt="Sidrena WordPress — pregled"></td>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-2.png" alt="Sidrena WordPress — katalog"></td>
-</tr>
-<tr>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-3.png" alt="Sidrena WordPress — cjenici"></td>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-4.png" alt="Sidrena WordPress — lokacije"></td>
-</tr>
-<tr>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-5.png" alt="Sidrena WordPress — postavke"></td>
-<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-6.png" alt="Sidrena WordPress — pomoć"></td>
-</tr>
-</table>
-
-### SIDRENA WooCommerce — stvarni wp-admin
+### SIDRENA — WordPress izdanje — stvarni wp-admin
 
 <table>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-1.png" alt="Sidrena WooCommerce — pregled"></td>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-2.png" alt="Sidrena WooCommerce — proizvodi"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-1.png" alt="SIDRENA — WordPress izdanje — pregled"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-2.png" alt="SIDRENA — WordPress izdanje — katalog"></td>
 </tr>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-3.png" alt="Sidrena WooCommerce — cjenici"></td>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-4.png" alt="Sidrena WooCommerce — lokacije"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-3.png" alt="SIDRENA — WordPress izdanje — cjenici"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-4.png" alt="SIDRENA — WordPress izdanje — lokacije"></td>
 </tr>
 <tr>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-5.png" alt="Sidrena WooCommerce — postavke"></td>
-<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-6.png" alt="Sidrena WooCommerce — pomoć"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-5.png" alt="SIDRENA — WordPress izdanje — postavke"></td>
+<td width="50%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-6.png" alt="SIDRENA — WordPress izdanje — pomoć"></td>
 </tr>
 </table>
 
-Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.26 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
+### SIDRENA — WooCommerce izdanje — stvarni wp-admin
 
-## Zašto SIDRENA 1.0.26
+<table>
+<tr>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-1.png" alt="SIDRENA — WooCommerce izdanje — pregled"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-2.png" alt="SIDRENA — WooCommerce izdanje — proizvodi"></td>
+</tr>
+<tr>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-3.png" alt="SIDRENA — WooCommerce izdanje — cjenici"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-4.png" alt="SIDRENA — WooCommerce izdanje — lokacije"></td>
+</tr>
+<tr>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-5.png" alt="SIDRENA — WooCommerce izdanje — postavke"></td>
+<td width="50%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-6.png" alt="SIDRENA — WooCommerce izdanje — pomoć"></td>
+</tr>
+</table>
 
-**SIDRENA 1.0.26** nastavlja sigurnosni i produkcijski hardening uz potpuno jedinstven `SIDRENA` brand za oba izdanja, stabilne javne slugove i dodatne REST/import zaštite.
+Kompletan vizualni sustav i WordPress.org marketinški asseti ostaju u izvornom repozitoriju (`branding/` i `wporg-assets/`). Instalacijski ZIP 1.0.27 sadrži samo runtime logotipe/ikone iz `assets/images/`, kod, prijevode, tekstualne upute i PDF podršku. Time se ne gubi izgled plugina, ali se iz instalacijskog paketa uklanja nekoliko megabajta sadržaja koji WordPressu nije potreban za rad.
 
-Izdanje 1.0.26 donosi:
+## Zašto SIDRENA 1.0.27
 
-- oba instalirana izdanja koriste isti javni i administratorski naziv **SIDRENA**, dok postojeći text-domaini i javni slugovi ostaju nepromijenjeni
-- `Requires Plugins: woocommerce` uz defensive runtime guard; Woo-specific klase više se ne učitavaju prije potvrđene dostupnosti WooCommercea
-- sigurno stanje bez WooCommercea: bez Woo hookova, upgrade/publication schedulinga i generiranja Woo cjenika
-- jasniji edition-conflict guard koji imenom navodi aktivno i pokušano izdanje i objašnjava siguran prijelaz bez brisanja poslovnih podataka
-- nove regresijske provjere za missing/deactivated dependency scenarij
-- `docs/SOURCES.md` i `docs/LEGAL-SOURCES.md` s primarnim pravnim, WordPress, WooCommerce i open-source referencama
-- odvojeno dokumentirane obveze od 1. 10. 2026. i budući režim bazne cijene od 17. 11. 2026.
-- uklonjenu zastarjelu dokumentaciju o financiranju; nema plaćenog otključavanja uključenih funkcija ni automatskog slanja podataka o korištenju.
+**SIDRENA 1.0.27** je compliance i digital-price-list izdanje usmjereno na **SIDRENA cijenu** kao zaseban, dokaziv podatak — odvojen od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.
+
+Izdanje 1.0.27 donosi:
+
+- zaključani pravni ruleset za 10.09.2026. i 02.05.2025. s read-only izvorima i audit-only migracijom starih editable datuma
+- dokazivu item-level iznimku za novu stavku, vezanu isključivo uz stvarni datum prvog objavljivanja
+- neograničenu povijest proizvoda, usluga i lokacijskih cijena uz bounded čitanja za velike kataloge
+- odvojeni aktualni cjenik i arhivu, hash duplicate detection i intraday refresh bez nepotrebnih arhivskih kopija
+- atomic write, file locking, rollback i očuvanje posljednje valjane javne verzije
+- interni WP-Cron ili vanjski server cron/WP-CLI način dnevne objave, uključujući `wp sidrena publish`
+- mode-aware Site Health i publication watchdog
+- WooCommerce lifecycle refresh za simple/variable/variation cijene, scheduled-sale prijelaze, import i izravne price-meta promjene
+- strožu server-side upload provjeru i REST location validaciju
+- retenciju javne arhive najmanje 30 dana, uz mogućnost sigurnog duljeg čuvanja
+- uklanjanje netestirane HPOS deklaracije do stvarnog integration testa
+- dokumentiranu funkcionalnu analizu referentnih GPL plugina bez kopiranja njihova koda, teksta, dizajna ili asseta
+
 
 ## Sve bitno za rad s cijenama na jednom mjestu
 
@@ -226,19 +231,19 @@ Svaki set uključuje šest stvarnih runtime screenshotova glavnih Sidrena ekrana
 ## Build
 
 ```bash
-./tools/build-editions.sh 1.0.26 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.27 /tmp/sidrena-build
 ```
 
 Build proizvodi dva službena instalacijska ZIP paketa:
 
-- `sidrena-wordpress-1.0.26.zip`
-- `sidrena-woocommerce-1.0.26.zip`
+- `sidrena-wordpress-1.0.27.zip`
+- `sidrena-woocommerce-1.0.27.zip`
 
 Uz ZIP-ove lokalno nastaju i SHA-256 kontrolne datoteke za provjeru reproduktivnog builda. Build prekida ako je bilo koji instalacijski ZIP veći od 1,5 MiB.
 
 ## Nadogradnja sa starijih SIDRENA verzija
 
-SIDRENA koristi zaseban marker instalirane verzije za sigurne idempotentne nadogradnje. Ako se novije izdanje instalira preko bilo kojeg ranijeg SIDRENA WordPress izdanja ili preko bilo kojeg ranijeg SIDRENA WooCommerce izdanja, plugin pokreće idempotentni repair/migration prolaz: provjerava i po potrebi obnavlja tablice, postavke, upload direktorije, cron rasporede i javnu stranicu, bez brisanja postojećih poslovnih podataka. WordPress i WooCommerce izdanje i dalje se ne smiju istodobno aktivirati.
+SIDRENA koristi zaseban marker instalirane verzije za sigurne idempotentne nadogradnje. Ako se novije izdanje instalira preko bilo kojeg ranijeg izdanja SIDRENA — WordPress izdanje ili preko bilo kojeg ranijeg izdanja SIDRENA — WooCommerce izdanje, plugin pokreće idempotentni repair/migration prolaz: provjerava i po potrebi obnavlja tablice, postavke, upload direktorije, cron rasporede i javnu stranicu, bez brisanja postojećih poslovnih podataka. WordPress i WooCommerce izdanje i dalje se ne smiju istodobno aktivirati.
 
 ## Privatnost bez ugrađenog praćenja
 

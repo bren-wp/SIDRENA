@@ -33,6 +33,7 @@ if ( ! function_exists( '__' ) ) {
 	}
 }
 
+require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-legal-automation.php';
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php';
 
@@ -97,8 +98,8 @@ $utils_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidr
 sidrena_schema_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date must remain immutable at 10.09.2026.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'Existing FMCG reference date must remain immutable at 02.05.2025.' );
 sidrena_schema_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ) && ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'Legal reference dates must not be administrator defaults.' );
-sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*30/", $utils_source ), 'Public price-list archive must default to exactly 30 days.' );
-sidrena_schema_assert( false !== strpos( $utils_source, "\$settings['retention_days']   = 30;" ), 'Runtime archive retention must remain locked to 30 days.' );
+sidrena_schema_assert( 1 === preg_match( "/'retention_days'\\s*=>\\s*30/", $utils_source ), 'Public price-list archive must default to 30 days.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "max( 30, absint( \$settings['retention_days'] ) )" ), 'Runtime archive retention must enforce a 30-day minimum without discarding a longer configured retention.' );
 
 $admin_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
 $compliance_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-compliance.php' );
@@ -107,6 +108,12 @@ sidrena_schema_assert( false !== strpos( $admin_source, 'Hrana i hrana za život
 sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g ili 50 ml' ), 'Unit-price exceptions guide is missing threshold exceptions.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 22.09.2026.' ), 'Official MINGO clarification date must remain 22.09.2026.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const LEGAL_VERIFIED_DATE     = '2026-09-29';" ), 'Legal ruleset verification date must match the current review.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const ANCHOR_SOURCE_URL       = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html';" ), 'SIDRENA anchor-price ruleset must link to the dedicated NN 101/2026-1212 decision.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const PRICELIST_SOURCE_URL    = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html';" ), 'Digital-pricelist ruleset must link to the separate NN 101/2026-1213 decision.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Izvor SIDRENA cijene' ) && false !== strpos( $admin_source, 'Izvor digitalnog cjenika' ), 'Settings must display the anchor-price and digital-pricelist legal sources separately.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Zakonska pravila' ) && false !== strpos( $admin_source, 'Zadnja pravna provjera SIDRENA ruleseta' ), 'Settings must expose the legal ruleset as a read-only reference panel.' );
+sidrena_schema_assert( false !== strpos( $admin_source, 'Sidrena/referentna cijena i njezin datum vode se odvojeno od aktualne cijene, 30-dnevne najniže cijene i WooCommerce akcijske cijene.' ), 'Settings must explicitly separate anchor, current, 30-day and Woo sale-price concepts.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, 'mingo_2026_09_22_clarifications' ), 'Official MINGO clarification source key must remain aligned to 22.09.2026.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, 'nn_59_2026_base_price_future' ), 'Future bazna-cijena source must remain separate from the NN 101/2026 sidrena-price layer.' );
 sidrena_schema_assert( false !== strpos( $compliance_source, '17.11.2026' ), 'Bazna-price readiness must retain the statutory 17.11.2026 application marker.' );
@@ -136,6 +143,7 @@ sidrena_schema_assert( '08:00' === Sidrena_Legal_Automation::publication_deadlin
 $hardened = Sidrena_Legal_Automation::normalize_settings(
 	array(
 		'generation_time'       => '12:15',
+		'automation_mode'       => 'invalid-mode',
 		'retention_days'        => 7,
 		'generate_csv'          => 'no',
 		'generate_xml'          => 'no',
@@ -146,7 +154,12 @@ $hardened = Sidrena_Legal_Automation::normalize_settings(
 	)
 );
 sidrena_schema_assert( '06:30' === $hardened['generation_time'], 'Unsafe generation time was not automatically hardened.' );
-sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention must be hardened to at least 30 days.' );
+sidrena_schema_assert( 'wp_cron' === $hardened['automation_mode'], 'Unknown publication automation mode must fail safe to internal WP-Cron.' );
+$external_mode = Sidrena_Legal_Automation::normalize_settings( array( 'automation_mode' => 'external' ) );
+sidrena_schema_assert( 'external' === $external_mode['automation_mode'], 'Explicit external server cron/WP-CLI mode must be preserved.' );
+sidrena_schema_assert( 30 === $hardened['retention_days'], 'Archive retention below the legal minimum must be hardened to 30 days.' );
+$extended_retention = Sidrena_Legal_Automation::normalize_settings( array( 'retention_days' => 90 ) );
+sidrena_schema_assert( 90 === $extended_retention['retention_days'], 'A safer archive retention above 30 days must be preserved.' );
 foreach ( Sidrena_Legal_Automation::required_publication_flags() as $required_flag ) {
 	sidrena_schema_assert( 'yes' === $hardened[ $required_flag ], 'Required publication safety flag not hardened: ' . $required_flag );
 }
@@ -204,7 +217,7 @@ sidrena_schema_assert( ! empty( $validate_service->invoke( $instance, $missing_s
 
 $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_location_availability' ), 'WordPress edition must retain per-location availability data.' );
-sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'     => ( " . '$has_location_status' . " || 'webshop' === " . '$location_kind' . " ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
+sidrena_schema_assert( false !== strpos( $standalone_source, "'_sidrena_location_explicit'" ) && false !== strpos( $standalone_source, "( \$has_location_status || 'webshop' === \$location_kind ) ? 'yes' : 'no'" ), 'Physical WordPress locations must not reuse global availability as an explicit per-location status.' );
 sidrena_schema_assert( false !== strpos( $standalone_source, '_sidrena_standalone_reference_group' ), 'WordPress edition must retain the immutable/reference-group Sidrena ruleset.' );
 sidrena_schema_assert( false === strpos( $standalone_source, '_sidrena_standalone_sale_reference_exemption' ) && false === strpos( $standalone_source, '_sidrena_standalone_lowest_30' ), 'WordPress active catalog must not retain the retired 30-day sale-price workflow.' );
 

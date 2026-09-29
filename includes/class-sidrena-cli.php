@@ -23,6 +23,7 @@ final class Sidrena_CLI {
 
 		$instance = new self();
 		WP_CLI::add_command( 'sidrena generate', array( $instance, 'generate' ) );
+		WP_CLI::add_command( 'sidrena publish', array( $instance, 'publish' ) );
 		WP_CLI::add_command( 'sidrena status', array( $instance, 'status' ) );
 		WP_CLI::add_command( 'sidrena audit', array( $instance, 'audit' ) );
 
@@ -51,111 +52,36 @@ final class Sidrena_CLI {
 
 
 	/**
-	 * Fill empty Sidrena anchor prices from the current WooCommerce regular price.
+	 * Publish today's archive and refresh the stable current price list.
 	 *
-	 * Existing Sidrena values are never overwritten.
-	 *
-	 * ## OPTIONS
-	 *
-	 * [--today]
-	 * : Also stores today's date as the custom reference date when the date is empty.
-	 *
-	 * [--dry-run]
-	 * : Show how many rows would be changed without saving anything.
+	 * Intended for a real server cron when automation_mode=external.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp sidrena fill --dry-run
-	 *     wp sidrena fill
-	 *     wp sidrena fill --today
+	 *     wp sidrena publish
 	 */
-	public function fill( $args, $assoc_args ) {
-		unset( $args );
-		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
-			WP_CLI::error( 'WooCommerce nije aktivan.' );
+	public function publish() {
+		$ok   = Sidrena_Pricelist::instance()->publish_daily_archive();
+		$last = get_option( 'sidrena_last_run', array() );
+		if ( $ok ) {
+			WP_CLI::success( sprintf( 'Dnevna SIDRENA objava dovršena. Datoteka: %d', isset( $last['files'] ) ? absint( $last['files'] ) : 0 ) );
+			return;
 		}
+		$errors = isset( $last['errors'] ) && is_array( $last['errors'] ) ? implode( '; ', $last['errors'] ) : 'Nepoznata pogreška.';
+		WP_CLI::error( $errors );
+	}
 
-		$today   = ! empty( $assoc_args['today'] );
-		$dry_run = ! empty( $assoc_args['dry-run'] );
-		$page    = 1;
-		$seen    = 0;
-		$filled  = 0;
-		$skipped = 0;
-		$date    = wp_date( 'Y-m-d' );
-
-		do {
-			$query    = new WC_Product_Query(
-				array(
-					'limit'   => 100,
-					'page'    => $page,
-					'status'  => array( 'publish', 'private', 'draft', 'pending' ),
-					'return'  => 'objects',
-					'orderby' => 'ID',
-					'order'   => 'ASC',
-				)
-			);
-			$products = $query->get_products();
-
-			foreach ( $products as $product ) {
-				$items = $product->is_type( 'variable' )
-					? array_filter( array_map( 'wc_get_product', $product->get_children() ) )
-					: array( $product );
-
-				foreach ( $items as $item ) {
-					if ( ! $item instanceof WC_Product || $item->is_type( 'variable' ) || $item->is_type( 'grouped' ) ) {
-						continue;
-					}
-					++$seen;
-
-					if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
-						++$skipped;
-						continue;
-					}
-
-					$regular = $item->get_regular_price( 'edit' );
-					if ( '' === $regular ) {
-						++$skipped;
-						continue;
-					}
-
-					++$filled;
-					if ( $dry_run ) {
-						continue;
-					}
-
-					update_post_meta( $item->get_id(), '_sidrena_anchor_price', wc_format_decimal( $regular ) );
-					if ( $today && '' === get_post_meta( $item->get_id(), '_sidrena_anchor_date', true ) ) {
-						update_post_meta( $item->get_id(), '_sidrena_anchor_date', $date );
-						update_post_meta( $item->get_id(), '_sidrena_reference_group', 'custom' );
-					}
-				}
-			}
-			$product_count = count( $products );
-			++$page;
-		} while ( 100 === $product_count );
-
-		if ( ! $dry_run && $filled ) {
-			Sidrena_Pricelist::queue_regeneration();
-			Sidrena_Audit::log(
-				'cli_fill',
-				'success',
-				sprintf( 'WP-CLI popunio je %d praznih Sidrena cijena.', $filled ),
-				array(
-					'today'   => $today ? 'yes' : 'no',
-					'seen'    => $seen,
-					'skipped' => $skipped,
-				)
-			);
-		}
-
-		$message = sprintf(
-			'%s Pregledano: %d, za popuniti/popunjeno: %d, preskočeno: %d.',
-			$dry_run ? 'Probni pregled dovršen.' : 'Popunjavanje dovršeno.',
-			$seen,
-			$filled,
-			$skipped
-		);
-		WP_CLI::success( $message );
+	/**
+	 * Legacy compatibility command.
+	 *
+	 * Automatic backfilling from the current WooCommerce price is intentionally
+	 * disabled. A present-day catalog price is not evidence of the statutory
+	 * Sidrena price on 10.09.2026. / 02.05.2025. and must never manufacture a
+	 * compliance value or a custom legal date.
+	 */
+	public function fill( $args = array(), $assoc_args = array() ) {
+		unset( $args, $assoc_args );
+		WP_CLI::error( 'Automatsko popunjavanje sidrene cijene iz trenutačne WooCommerce cijene onemogućeno je radi compliance sigurnosti. Koristite provjerenu povijesnu evidenciju/CSV ili automatski snapshot stvarno novouvedene stavke pri prvom objavljivanju.' );
 	}
 
 	/**
@@ -173,6 +99,10 @@ final class Sidrena_CLI {
 			array(
 				'key'   => 'generation_time',
 				'value' => $settings['generation_time'],
+			),
+			array(
+				'key'   => 'automation_mode',
+				'value' => $settings['automation_mode'] ?? 'wp_cron',
 			),
 			array(
 				'key'   => 'retention_days',

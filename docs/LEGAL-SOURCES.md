@@ -8,7 +8,7 @@ Support: sidrena@brendigo.com
 
 # SIDRENA — službeni pravni izvori i tehničke posljedice
 
-**Provjereno:** 28. 9. 2026.  
+**Provjereno:** 29. 9. 2026.  
 **Jurisdikcija:** Republika Hrvatska  
 **Status dokumenta:** tehnička dokumentacija projekta; nije pravni savjet niti jamstvo usklađenosti.
 
@@ -71,7 +71,7 @@ Generiranje treba biti atomsko: novi export prvo se generira i validira u privre
 
 ### SIDRENA odluka
 
-SIDRENA koristi validaciju → snapshot → export → privremenu datoteku → validaciju → atomic publish → arhivu → manifest. CSV i XML ostaju javno dostupni bez potrebe za prijavom. Arhiviranje je najmanje 30 dana; korisnik može zadržati dulje razdoblje.
+SIDRENA koristi validaciju → snapshot → export → privremenu datoteku → validaciju → atomic publish → arhivu → manifest. CSV i XML ostaju javno dostupni bez potrebe za prijavom. Arhiviranje je najmanje 30 dana; korisnik može zadržati dulje razdoblje. Stabilni aktualni cjenik može se osvježiti tijekom dana bez stvaranja nove arhivske kopije za svaku promjenu; to je odvojeno od kontrolirane dnevne/arhivske publikacije i usklađeno je sa službenim pojašnjenjem Ministarstva od 22. 9. 2026. da promjena cijene tijekom dana sama po sebi ne zahtijeva novu objavu datoteke istoga dana.
 
 ## 3. Posebni oblici prodaje i 30-dnevna najniža cijena
 

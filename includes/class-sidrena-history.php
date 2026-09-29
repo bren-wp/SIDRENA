@@ -13,14 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * WooCommerce price history and the frozen reference used for a price-reduction
- * campaign. The history is intentionally longer than 30 days so that a future
- * reduction can be calculated from the price state that was valid at the start
- * of the statutory look-back window.
+ * Unlimited audit history of actual product price changes.
+ *
+ * The 30-day minimum for an active special sale is derived here as a separate
+ * consumer-price rule. It never changes or supplies the immutable SIDRENA
+ * anchor-price ruleset.
  */
 final class Sidrena_History {
 	private static $instance;
-	private static $pending_meta_products = array();
+	private static $pending_items = array();
 
 	public static function instance() {
 		if ( ! self::$instance ) {
@@ -30,95 +31,96 @@ final class Sidrena_History {
 	}
 
 	public function hooks() {
-		add_action( 'woocommerce_update_product', array( $this, 'capture_product' ), 20 );
-		add_action( 'woocommerce_update_product_variation', array( $this, 'capture_product' ), 20 );
-		add_action( 'sidrena_daily_generation', array( $this, 'daily_snapshot' ), 5 );
-		add_action( 'sidrena_history_seed', array( $this, 'seed_history' ) );
-		add_action( 'wc_product_start_scheduled_sale', array( $this, 'capture_scheduled_sale_start' ), 20 );
-		add_action( 'wc_product_end_scheduled_sale', array( $this, 'capture_scheduled_sale_end' ), 20 );
+		if ( Sidrena_Utils::is_woocommerce_active() ) {
+			add_action( 'woocommerce_update_product', array( $this, 'capture_woocommerce_update' ), 20 );
+			add_action( 'woocommerce_update_product_variation', array( $this, 'capture_woocommerce_update' ), 20 );
+		}
 		add_action( 'added_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'updated_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'deleted_post_meta', array( $this, 'capture_price_meta_change' ), 20, 4 );
 		add_action( 'shutdown', array( $this, 'flush_price_meta_changes' ), 5 );
+		add_action( 'sidrena_daily_generation', array( $this, 'daily_snapshot' ), 5 );
 	}
 
+	public function capture_woocommerce_update( $item_id ) {
+		$this->capture_item( $item_id, 'woocommerce-update' );
+		Sidrena_Pricelist::queue_regeneration();
+	}
 
 	public function capture_price_meta_change( $meta_id, $object_id, $meta_key, $meta_value ) {
 		unset( $meta_id, $meta_value );
-		if ( 'yes' !== Sidrena_Utils::settings()['track_price_history'] || ! Sidrena_Utils::is_woocommerce_active() ) {
-			return;
-		}
-
-		$tracked = array( '_regular_price', '_sale_price', '_price', '_sale_price_dates_from', '_sale_price_dates_to', '_tax_class', '_tax_status' );
-		if ( ! in_array( $meta_key, $tracked, true ) ) {
-			return;
-		}
-
 		$object_id = absint( $object_id );
-		if ( ! $object_id || ! in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ), true ) ) {
+		if ( ! $object_id ) {
 			return;
 		}
-		self::$pending_meta_products[ $object_id ] = true;
+
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
+			if ( '_sidrena_standalone_current_price' !== $meta_key || ! class_exists( 'Sidrena_Standalone' ) || Sidrena_Standalone::POST_TYPE !== get_post_type( $object_id ) ) {
+				return;
+			}
+		} elseif ( ! Sidrena_Utils::is_woocommerce_active() || ! in_array( $meta_key, array( '_regular_price', '_sale_price', '_price' ), true ) || ! in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ), true ) ) {
+			return;
+		}
+
+		self::$pending_items[ $object_id ] = true;
+		Sidrena_Pricelist::queue_regeneration();
 	}
 
 	public function flush_price_meta_changes() {
-		if ( empty( self::$pending_meta_products ) || ! Sidrena_Utils::is_woocommerce_active() ) {
+		if ( empty( self::$pending_items ) ) {
+			return;
+		}
+		$ids = array_keys( self::$pending_items );
+
+		self::$pending_items = array();
+		foreach ( $ids as $item_id ) {
+			$this->capture_item( absint( $item_id ), 'price-change' );
+		}
+	}
+
+	public function capture_item( $item_id, $source = 'save' ) {
+		$item_id = absint( $item_id );
+		if ( ! $item_id ) {
 			return;
 		}
 
-		$ids                         = array_keys( self::$pending_meta_products );
-		self::$pending_meta_products = array();
-		foreach ( $ids as $product_id ) {
-			$this->capture_product( absint( $product_id ), 'price-meta-change' );
-		}
-		Sidrena_Pricelist::queue_regeneration();
-	}
-
-
-	public function capture_scheduled_sale_start( $product_id ) {
-		$this->capture_product( $product_id, 'scheduled-sale-start' );
-		Sidrena_Pricelist::queue_regeneration();
-	}
-
-	public function capture_scheduled_sale_end( $product_id ) {
-		$this->capture_product( $product_id, 'scheduled-sale-end' );
-		Sidrena_Pricelist::queue_regeneration();
-	}
-
-	public function capture_product( $product_id, $source = 'save' ) {
-		$settings = Sidrena_Utils::settings();
-		if ( 'yes' !== $settings['track_price_history'] || ! Sidrena_Utils::is_woocommerce_active() ) {
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
+			if ( ! class_exists( 'Sidrena_Standalone' ) || Sidrena_Standalone::POST_TYPE !== get_post_type( $item_id ) || 'publish' !== get_post_status( $item_id ) ) {
+				return;
+			}
+			$price = get_post_meta( $item_id, '_sidrena_standalone_current_price', true );
+			$this->insert_if_changed( $item_id, 0, $price, null, $source );
 			return;
 		}
 
-		$product = wc_get_product( $product_id );
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			return;
+		}
+		$product = wc_get_product( $item_id );
 		if ( ! $product ) {
 			return;
 		}
-
-		$parent_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
-		$var_id    = $product->is_type( 'variation' ) ? $product->get_id() : 0;
+		$parent_id    = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+		$variation_id = $product->is_type( 'variation' ) ? $product->get_id() : 0;
 		$this->insert_if_changed(
 			$parent_id,
-			$var_id,
+			$variation_id,
 			$product->get_price( 'edit' ),
 			$product->get_regular_price( 'edit' ),
-			$product->get_sale_price( 'edit' ),
 			$source
 		);
-
-		$this->sync_sale_reference( $product );
 	}
 
-	private function insert_if_changed( $product_id, $variation_id, $price, $regular, $sale, $source ) {
+	private function insert_if_changed( $product_id, $variation_id, $price, $regular_price, $source ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
 		$key   = $variation_id ? 'variation_id' : 'product_id';
 		$id    = $variation_id ? $variation_id : $product_id;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires bounded direct CRUD.
 		$last = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT price, regular_price, sale_price FROM %i WHERE %i = %d ORDER BY recorded_at DESC, id DESC LIMIT 1',
+				'SELECT price, regular_price FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 1',
 				$table,
 				$key,
 				$id
@@ -126,31 +128,27 @@ final class Sidrena_History {
 			ARRAY_A
 		);
 
-		$price   = '' === $price ? null : (float) $price;
-		$regular = '' === $regular ? null : (float) $regular;
-		$sale    = '' === $sale ? null : (float) $sale;
-		if (
-			$last
+		$price         = '' === $price ? null : (float) $price;
+		$regular_price = '' === $regular_price ? null : (float) $regular_price;
+		if ( $last
 			&& $this->same_numeric_value( $last['price'], $price )
-			&& $this->same_numeric_value( $last['regular_price'], $regular )
-			&& $this->same_numeric_value( $last['sale_price'], $sale )
+			&& $this->same_numeric_value( $last['regular_price'], $regular_price )
 		) {
 			return;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires bounded direct CRUD.
 		$wpdb->insert(
 			$table,
 			array(
-				'product_id'    => $product_id,
-				'variation_id'  => $variation_id,
+				'product_id'    => absint( $product_id ),
+				'variation_id'  => absint( $variation_id ),
 				'price'         => $price,
-				'regular_price' => $regular,
-				'sale_price'    => $sale,
+				'regular_price' => $regular_price,
 				'recorded_at'   => current_time( 'mysql' ),
 				'source'        => sanitize_key( $source ),
 			),
-			array( '%d', '%d', '%f', '%f', '%f', '%s', '%s' )
+			array( '%d', '%d', '%f', '%f', '%s', '%s' )
 		);
 	}
 
@@ -164,205 +162,158 @@ final class Sidrena_History {
 		return abs( (float) $stored - (float) $current ) < 0.000001;
 	}
 
-	/**
-	 * Freeze the lowest pre-reduction price when a new sale starts. The frozen
-	 * value remains stable for one uninterrupted reduction campaign.
-	 */
-	private function sync_sale_reference( $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			return;
+
+	public function lowest_30_day_reference( $product ) {
+		$result = array(
+			'status'      => 'inactive',
+			'price'       => '',
+			'source'      => '',
+			'sale_start'  => 0,
+			'window_from' => 0,
+		);
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() || ! $product instanceof WC_Product || ! $product->is_on_sale( 'edit' ) ) {
+			return $result;
 		}
 
-		$id        = $product->get_id();
-		$is_sale   = $product->is_on_sale( 'edit' );
-		$was_sale  = 'yes' === get_post_meta( $id, '_sidrena_sale_active', true );
-		$exemption = sanitize_key( (string) get_post_meta( $id, '_sidrena_sale_reference_exemption', true ) );
+		$sale_price    = Sidrena_Utils::decimal( $product->get_sale_price( 'edit' ) );
+		$regular_price = Sidrena_Utils::decimal( $product->get_regular_price( 'edit' ) );
+		if ( '' === $sale_price || '' === $regular_price || (float) $sale_price >= (float) $regular_price ) {
+			return $result;
+		}
 
-		if ( ! $is_sale ) {
-			if ( $was_sale ) {
-				delete_post_meta( $id, '_sidrena_sale_reference_price' );
-				delete_post_meta( $id, '_sidrena_sale_reference_source' );
-				delete_post_meta( $id, '_sidrena_sale_reference_started_at' );
-				delete_post_meta( $id, '_sidrena_sale_reference_coverage_from' );
+		$manual = Sidrena_Utils::decimal( $product->get_meta( '_sidrena_lowest_30_verified', true ) );
+		$start  = $this->sale_start_timestamp( $product, (float) $sale_price );
+		if ( ! $start ) {
+			if ( '' !== $manual ) {
+				$result['status'] = 'ready';
+				$result['price']  = $manual;
+				$result['source'] = 'manual';
+			} else {
+				$result['status'] = 'incomplete';
 			}
-			update_post_meta( $id, '_sidrena_sale_active', 'no' );
-			return;
+			return $result;
 		}
 
-		update_post_meta( $id, '_sidrena_sale_active', 'yes' );
-		if ( $was_sale && get_post_meta( $id, '_sidrena_sale_reference_source', true ) ) {
-			return;
-		}
+		$window_from           = $start - ( 30 * DAY_IN_SECONDS );
+		$result['sale_start']  = $start;
+		$result['window_from'] = $window_from;
 
-		$start = $this->sale_start_datetime( $product );
-		update_post_meta( $id, '_sidrena_sale_reference_started_at', $start->format( 'Y-m-d H:i:s' ) );
-
-		if ( in_array( $exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
-			update_post_meta( $id, '_sidrena_sale_reference_source', 'exempt' );
-			delete_post_meta( $id, '_sidrena_sale_reference_price' );
-			return;
-		}
-
-		$manual = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_lowest_30_manual', true ) );
-		if ( '' !== $manual ) {
-			update_post_meta( $id, '_sidrena_sale_reference_price', $manual );
-			update_post_meta( $id, '_sidrena_sale_reference_source', 'manual' );
-			return;
-		}
-
-		$calculated = $this->calculate_lowest_before( $product, $start );
-		if ( $calculated['ready'] ) {
-			update_post_meta( $id, '_sidrena_sale_reference_price', Sidrena_Utils::decimal( $calculated['price'] ) );
-			update_post_meta( $id, '_sidrena_sale_reference_source', 'auto' );
-			update_post_meta( $id, '_sidrena_sale_reference_coverage_from', $calculated['coverage_from'] );
-			return;
-		}
-
-		delete_post_meta( $id, '_sidrena_sale_reference_price' );
-		update_post_meta( $id, '_sidrena_sale_reference_source', 'incomplete' );
-		if ( ! empty( $calculated['coverage_from'] ) ) {
-			update_post_meta( $id, '_sidrena_sale_reference_coverage_from', $calculated['coverage_from'] );
-		}
-	}
-
-	private function sale_start_datetime( $product ) {
-		$from = $product->get_date_on_sale_from( 'edit' );
-		if ( $from instanceof WC_DateTime ) {
-			try {
-				return new DateTimeImmutable( $from->date( 'Y-m-d H:i:s' ), wp_timezone() );
-			} catch ( Exception $e ) {
-				unset( $e );
-				// Fall through to the current WordPress time.
-			}
-		}
-		return new DateTimeImmutable( 'now', wp_timezone() );
-	}
-
-	/**
-	 * Calculate the lowest effective price in the 30 days immediately preceding
-	 * the campaign. We require a known price state at or before the beginning of
-	 * the window; otherwise the plugin reports an incomplete history rather than
-	 * inventing a legal reference value.
-	 */
-	private function calculate_lowest_before( $product, DateTimeImmutable $start ) {
 		global $wpdb;
 		$table        = $wpdb->prefix . 'sidrena_price_history';
-		$id           = $product->get_id();
-		$key          = $product->is_type( 'variation' ) ? 'variation_id' : 'product_id';
-		$window_start = $start->modify( '-30 days' );
-		$start_sql    = $start->format( 'Y-m-d H:i:s' );
-		$window_sql   = $window_start->format( 'Y-m-d H:i:s' );
+		$variation_id = $product->is_type( 'variation' ) ? absint( $product->get_id() ) : 0;
+		$product_id   = $variation_id ? absint( $product->get_parent_id() ) : absint( $product->get_id() );
+		$key          = $variation_id ? 'variation_id' : 'product_id';
+		$id           = $variation_id ? $variation_id : $product_id;
+		$window_mysql = wp_date( 'Y-m-d H:i:s', $window_from );
+		$start_mysql  = wp_date( 'Y-m-d H:i:s', $start );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded read from SIDRENA-owned audit table.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
+				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY id DESC LIMIT 1',
 				$table,
 				$key,
 				$id,
-				$window_sql
+				$window_mysql
 			),
 			ARRAY_A
 		);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-		$first = $wpdb->get_var(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded 30-day read from SIDRENA-owned audit table.
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT MIN(recorded_at) FROM %i WHERE %i = %d',
-				$table,
-				$key,
-				$id
-			)
-		);
-
-		if ( ! $baseline || null === $baseline['price'] || '' === $baseline['price'] ) {
-			return array(
-				'ready'         => false,
-				'price'         => '',
-				'coverage_from' => $first ? sanitize_text_field( $first ) : '',
-			);
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-		$rows = $wpdb->get_col(
-			$wpdb->prepare(
-				'SELECT price FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL ORDER BY recorded_at ASC, id ASC',
+				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s ORDER BY id ASC LIMIT 2000',
 				$table,
 				$key,
 				$id,
-				$window_sql,
-				$start_sql
-			)
+				$window_mysql,
+				$start_mysql
+			),
+			ARRAY_A
 		);
 
-		$values = array( (float) $baseline['price'] );
-		foreach ( is_array( $rows ) ? $rows : array() as $value ) {
-			if ( '' !== $value && null !== $value ) {
-				$values[] = (float) $value;
+		$values = array();
+		if ( is_array( $baseline ) && null !== $baseline['price'] && '' !== $baseline['price'] ) {
+			$values[] = (float) $baseline['price'];
+		}
+		foreach ( (array) $rows as $row ) {
+			if ( null !== $row['price'] && '' !== $row['price'] ) {
+				$values[] = (float) $row['price'];
 			}
 		}
 
-		return array(
-			'ready'         => true,
-			'price'         => min( $values ),
-			'coverage_from' => sanitize_text_field( $baseline['recorded_at'] ),
-		);
+		$auto_ready = ! empty( $baseline ) && ! empty( $values );
+		$auto_price = $values ? min( $values ) : '';
+
+		if ( '' !== $manual ) {
+			$result['status'] = 'ready';
+			$result['price']  = $manual;
+			$result['source'] = 'manual';
+			if ( $auto_ready ) {
+				$result['calculated_price'] = $auto_price;
+			}
+			return $result;
+		}
+
+		if ( ! $auto_ready ) {
+			$result['status'] = 'incomplete';
+			$result['price']  = $auto_price;
+			$result['source'] = 'history';
+			return $result;
+		}
+
+		$result['status'] = 'ready';
+		$result['price']  = $auto_price;
+		$result['source'] = 'history';
+		return $result;
 	}
 
-	/**
-	 * Public status object for front-end display and admin diagnostics.
-	 */
-	public static function sale_reference( $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			return array(
-				'status' => 'not_applicable',
-				'price'  => '',
-				'source' => '',
-			);
+	private function sale_start_timestamp( $product, $sale_price ) {
+		$date = $product->get_date_on_sale_from( 'edit' );
+		if ( $date && is_callable( array( $date, 'getTimestamp' ) ) ) {
+			return absint( $date->getTimestamp() );
 		}
 
-		$id        = $product->get_id();
-		$exemption = sanitize_key( (string) get_post_meta( $id, '_sidrena_sale_reference_exemption', true ) );
-		if ( in_array( $exemption, array( 'perishable', 'fast_expiry' ), true ) ) {
-			return array(
-				'status' => 'exempt',
-				'price'  => '',
-				'source' => $exemption,
-			);
-		}
-		if ( ! $product->is_on_sale() ) {
-			return array(
-				'status' => 'not_applicable',
-				'price'  => '',
-				'source' => '',
-			);
-		}
+		global $wpdb;
+		$table        = $wpdb->prefix . 'sidrena_price_history';
+		$variation_id = $product->is_type( 'variation' ) ? absint( $product->get_id() ) : 0;
+		$key          = $variation_id ? 'variation_id' : 'product_id';
+		$id           = $variation_id ? $variation_id : absint( $product->get_id() );
 
-		$manual = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_lowest_30_manual', true ) );
-		if ( '' !== $manual ) {
-			return array(
-				'status' => 'ready',
-				'price'  => (float) $manual,
-				'source' => 'manual',
-			);
-		}
-
-		$source = sanitize_key( (string) get_post_meta( $id, '_sidrena_sale_reference_source', true ) );
-		$price  = Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_sale_reference_price', true ) );
-		if ( 'auto' === $source && '' !== $price ) {
-			return array(
-				'status' => 'ready',
-				'price'  => (float) $price,
-				'source' => 'auto',
-			);
-		}
-
-		return array(
-			'status'        => 'incomplete',
-			'price'         => '',
-			'source'        => $source ? $source : 'incomplete',
-			'coverage_from' => sanitize_text_field( (string) get_post_meta( $id, '_sidrena_sale_reference_coverage_from', true ) ),
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded inference from SIDRENA-owned audit history.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT price, recorded_at FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 500',
+				$table,
+				$key,
+				$id
+			),
+			ARRAY_A
 		);
+
+		$start          = 0;
+		$matched        = false;
+		$previous_found = false;
+		foreach ( (array) $rows as $row ) {
+			if ( null === $row['price'] || '' === $row['price'] ) {
+				continue;
+			}
+			if ( abs( (float) $row['price'] - (float) $sale_price ) < 0.000001 ) {
+				$matched = true;
+				$parsed  = strtotime( (string) $row['recorded_at'] );
+				if ( $parsed ) {
+					$start = $parsed;
+				}
+				continue;
+			}
+			if ( $matched ) {
+				$previous_found = true;
+				break;
+			}
+		}
+
+		return $matched && $previous_found ? $start : 0;
 	}
 
 
@@ -372,7 +323,7 @@ final class Sidrena_History {
 		$limit = min( 20, max( 1, absint( $limit ) ) );
 		$scan  = max( 120, $limit * 30 );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned price-history table requires bounded direct reads.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT id, product_id, variation_id, price, recorded_at
@@ -408,14 +359,16 @@ final class Sidrena_History {
 
 			$product   = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
 			$name      = $product ? $product->get_name() : get_the_title( $item_id );
+			$old       = (float) $row['price'];
+			$now       = (float) $new['price'];
 			$changes[] = array(
 				'item_id'     => $item_id,
-				/* translators: %d: WooCommerce product or variation ID. */
+				/* translators: %d: product or variation ID. */
 				'name'        => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
-				'old_price'   => (float) $row['price'],
-				'new_price'   => (float) $new['price'],
+				'old_price'   => $old,
+				'new_price'   => $now,
 				'recorded_at' => sanitize_text_field( $new['recorded_at'] ),
-				'change_pct'  => 0.0 !== (float) $row['price'] ? ( ( (float) $new['price'] - (float) $row['price'] ) / (float) $row['price'] ) * 100 : 0,
+				'change_pct'  => 0.0 !== $old ? ( ( $now - $old ) / $old ) * 100 : 0,
 				'kind'        => 'product',
 			);
 			unset( $newest[ $key ] );
@@ -428,121 +381,47 @@ final class Sidrena_History {
 		return $changes;
 	}
 
-	public static function latest_series( $days = 30 ) {
-		global $wpdb;
-		$table = $wpdb->prefix . 'sidrena_price_history';
-		$days  = min( 90, max( 7, absint( $days ) ) );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-		$latest = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT product_id, variation_id, price, recorded_at
-				FROM %i
-				WHERE price IS NOT NULL
-				ORDER BY id DESC LIMIT 1',
-				$table
-			),
-			ARRAY_A
-		);
-
-		if ( ! $latest ) {
-			return array();
-		}
-
-		$item_id   = absint( $latest['variation_id'] ) ? absint( $latest['variation_id'] ) : absint( $latest['product_id'] );
-		$cutoff_dt = new DateTimeImmutable( '-' . $days . ' days', wp_timezone() );
-		$cutoff    = $cutoff_dt->format( 'Y-m-d H:i:s' );
-
-		if ( absint( $latest['variation_id'] ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT price, recorded_at FROM %i
-					WHERE variation_id = %d AND price IS NOT NULL AND recorded_at >= %s
-					ORDER BY recorded_at ASC, id ASC',
-					$table,
-					absint( $latest['variation_id'] ),
-					$cutoff
-				),
-				ARRAY_A
-			);
-		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT price, recorded_at FROM %i
-					WHERE product_id = %d AND variation_id = 0 AND price IS NOT NULL AND recorded_at >= %s
-					ORDER BY recorded_at ASC, id ASC',
-					$table,
-					absint( $latest['product_id'] ),
-					$cutoff
-				),
-				ARRAY_A
-			);
-		}
-
-		if ( empty( $rows ) ) {
-			$rows = array( $latest );
-		}
-
-		$points = array();
-		foreach ( $rows as $row ) {
-			$points[] = array(
-				'price'       => (float) $row['price'],
-				'recorded_at' => sanitize_text_field( $row['recorded_at'] ),
-			);
-		}
-
-		$prices  = wp_list_pluck( $points, 'price' );
-		$product = function_exists( 'wc_get_product' ) ? wc_get_product( $item_id ) : null;
-		$name    = $product ? $product->get_name() : get_the_title( $item_id );
-		$first   = reset( $prices );
-		$current = end( $prices );
-
-		return array(
-			'item_id'    => $item_id,
-			/* translators: %d: WooCommerce product or variation ID. */
-			'name'       => $name ? wp_strip_all_tags( $name ) : sprintf( __( 'Stavka #%d', 'sidrena' ), $item_id ),
-			'current'    => (float) $current,
-			'minimum'    => (float) min( $prices ),
-			'maximum'    => (float) max( $prices ),
-			'change_pct' => 0.0 !== (float) $first ? ( ( (float) $current - (float) $first ) / (float) $first ) * 100 : 0,
-			'points'     => $points,
-			'days'       => $days,
-		);
-	}
-
 	public static function count_rows() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned WooCommerce price-history table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Count from plugin-owned price-history table.
 		return absint( $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ) );
 	}
 
 	public function daily_snapshot() {
-		$settings = Sidrena_Utils::settings();
-		if ( 'yes' !== $settings['track_price_history'] || ! Sidrena_Utils::is_woocommerce_active() ) {
-			return;
+		foreach ( $this->catalog_item_ids() as $item_id ) {
+			$this->capture_item( $item_id, 'daily' );
 		}
-
-		foreach ( $this->catalog_item_ids() as $id ) {
-			$this->capture_product( $id, 'daily' );
-		}
-		$this->prune_history();
-	}
-
-	public function seed_history() {
-		$settings = Sidrena_Utils::settings();
-		if ( 'yes' !== $settings['track_price_history'] || ! Sidrena_Utils::is_woocommerce_active() ) {
-			return;
-		}
-		foreach ( $this->catalog_item_ids() as $id ) {
-			$this->capture_product( $id, 'seed' );
-		}
-		update_option( 'sidrena_history_seeded_at', current_time( 'mysql' ), false );
 	}
 
 	private function catalog_item_ids() {
+		if ( Sidrena_Utils::is_wordpress_edition() ) {
+			$page = 1;
+			do {
+				$query = new WP_Query(
+					array(
+						'post_type'      => Sidrena_Standalone::POST_TYPE,
+						'post_status'    => 'publish',
+						'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded audit-history batch.
+						'paged'          => $page,
+						'fields'         => 'ids',
+						'orderby'        => 'ID',
+						'order'          => 'ASC',
+						'no_found_rows'  => true,
+					)
+				);
+				foreach ( $query->posts as $item_id ) {
+					yield absint( $item_id );
+				}
+				$count = count( $query->posts );
+				++$page;
+			} while ( 250 === $count );
+			return;
+		}
+
+		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
+			return;
+		}
 		$page = 1;
 		do {
 			$query    = new WC_Product_Query(
@@ -565,22 +444,8 @@ final class Sidrena_History {
 					yield absint( $product->get_id() );
 				}
 			}
-			$product_count = count( $products );
+			$count = count( $products );
 			++$page;
-		} while ( 100 === $product_count );
-	}
-
-	private function prune_history() {
-		global $wpdb;
-		$table  = $wpdb->prefix . 'sidrena_price_history';
-		$cutoff = wp_date( 'Y-m-d H:i:s', time() - ( 400 * DAY_IN_SECONDS ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned WooCommerce price-history table requires direct bounded CRUD.
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM %i WHERE recorded_at < %s',
-				$table,
-				$cutoff
-			)
-		);
+		} while ( 100 === $count );
 	}
 }

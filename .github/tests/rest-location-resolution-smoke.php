@@ -101,6 +101,10 @@ function sidrena_rest_location_assert( $condition, $message ) {
 }
 
 $rest = Sidrena_REST::instance();
+sidrena_rest_location_assert( true === $rest->validate_location_arg( 'RI-C' ), 'Normal public location code must pass REST validation.' );
+sidrena_rest_location_assert( false === $rest->validate_location_arg( str_repeat( 'a', 192 ) ), 'Overlong REST location input must be rejected before sanitization.' );
+sidrena_rest_location_assert( false === $rest->validate_location_arg( "RI\0C" ), 'REST location input containing a null byte must be rejected.' );
+sidrena_rest_location_assert( false === $rest->validate_location_arg( "RI\nC" ), 'REST location input containing control characters must be rejected.' );
 $method = new ReflectionMethod( 'Sidrena_REST', 'resolve_location' );
 $method->setAccessible( true );
 

@@ -1,8 +1,11 @@
 <?php
 /**
- * Immutable SIDRENA reference-date ruleset regression test.
+ * Sidrena source file.
  *
  * @package Sidrena
+ * @author Brendigo
+ * @link https://brendigo.com/sidrene-cijene/
+ * @see https://brendigo.com/
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
@@ -17,6 +20,7 @@ $GLOBALS['sidrena_test_options'] = array(
 );
 $GLOBALS['sidrena_test_meta']    = array();
 $GLOBALS['sidrena_test_parent']  = array();
+$GLOBALS['sidrena_test_dates']   = array();
 
 function get_option( $key, $default = false ) {
 	return $GLOBALS['sidrena_test_options'][ $key ] ?? $default;
@@ -43,6 +47,10 @@ function get_post_meta( $post_id, $key, $single = false ) {
 function wp_get_post_parent_id( $post_id ) {
 	return $GLOBALS['sidrena_test_parent'][ (int) $post_id ] ?? 0;
 }
+function get_post_datetime( $post_id ) {
+	$date = $GLOBALS['sidrena_test_dates'][ (int) $post_id ] ?? '';
+	return $date ? new DateTimeImmutable( $date . ' 10:00:00', wp_timezone() ) : false;
+}
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php';
 
@@ -54,11 +62,13 @@ function sidrena_ruleset_assert( $condition, $message ) {
 }
 
 $settings = Sidrena_Utils::settings();
-sidrena_ruleset_assert( '2026-09-10' === $settings['default_ref_date'], 'Persisted settings must never override the standard legal reference date.' );
-sidrena_ruleset_assert( '2025-05-02' === $settings['fmcg_ref_date'], 'Persisted settings must never override the FMCG legal reference date.' );
+sidrena_ruleset_assert( ! array_key_exists( 'default_ref_date', $settings ), 'Standard legal reference date must not exist in runtime settings.' );
+sidrena_ruleset_assert( ! array_key_exists( 'fmcg_ref_date', $settings ), 'FMCG legal reference date must not exist in runtime settings.' );
+sidrena_ruleset_assert( '2026-09-10' === Sidrena_Utils::standard_reference_date(), 'Standard legal reference date must remain locked to 10.09.2026.' );
+sidrena_ruleset_assert( '2025-05-02' === Sidrena_Utils::fmcg_reference_date(), 'FMCG legal reference date must remain locked to 02.05.2025.' );
 sidrena_ruleset_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ), 'Standard legal date must not be an administrator default setting.' );
 sidrena_ruleset_assert( ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'FMCG legal date must not be an administrator default setting.' );
-sidrena_ruleset_assert( 30 === $settings['retention_days'], 'Persisted archive retention must not override the 30-day public archive ruleset.' );
+sidrena_ruleset_assert( 45 === $settings['retention_days'], 'Persisted archive retention above 30 days must be preserved while legal reference dates stay locked.' );
 
 $GLOBALS['sidrena_test_meta'][101] = array(
 	'_sidrena_reference_group' => 'standard',
@@ -76,7 +86,15 @@ $GLOBALS['sidrena_test_meta'][103] = array(
 	'_sidrena_reference_group' => 'custom',
 	'_sidrena_anchor_date'     => '2026-09-11',
 );
-sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::current_reference_date( 103 ), 'A genuinely new item may use its first-listing date after 10.09.2026.' );
+$GLOBALS['sidrena_test_dates'][103] = '2026-09-11';
+sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::current_reference_date( 103 ), 'A genuinely new item may use its verified first-listing date after 10.09.2026.' );
+
+$GLOBALS['sidrena_test_meta'][106] = array(
+	'_sidrena_reference_group' => 'custom',
+	'_sidrena_anchor_date'     => '2026-09-12',
+);
+$GLOBALS['sidrena_test_dates'][106] = '2026-09-11';
+sidrena_ruleset_assert( '' === Sidrena_Utils::current_reference_date( 106 ), 'A stored custom date must be rejected when it differs from the item first-publication date.' );
 
 $GLOBALS['sidrena_test_meta'][104] = array(
 	'_sidrena_reference_group' => 'custom',
@@ -99,5 +117,14 @@ sidrena_ruleset_assert( '2025-05-02' === Sidrena_Utils::current_reference_date( 
 
 sidrena_ruleset_assert( '' === Sidrena_Utils::custom_reference_date( '2026-09-09' ), 'Custom first-listing date before the statutory cutoff must be rejected.' );
 sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::custom_reference_date( '2026-09-11' ), 'Custom first-listing date after the cutoff must be accepted.' );
+
+$GLOBALS['sidrena_test_dates'][301] = '2026-09-29';
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::first_publication_reference_date( 301 ), 'A new-item reference date must be derivable from its actual publication date.' );
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::verified_custom_reference_date_for_post( 301 ), 'Empty custom candidate must derive the exact first-publication date.' );
+sidrena_ruleset_assert( '2026-09-29' === Sidrena_Utils::verified_custom_reference_date_for_post( 301, '2026-09-29' ), 'Matching custom candidate must be accepted.' );
+sidrena_ruleset_assert( '' === Sidrena_Utils::verified_custom_reference_date_for_post( 301, '2026-09-30' ), 'Arbitrary post-cutoff custom date must be rejected when it does not match first publication.' );
+$GLOBALS['sidrena_test_dates'][302] = '2026-09-10';
+sidrena_ruleset_assert( '' === Sidrena_Utils::first_publication_reference_date( 302 ), 'Publication on or before the statutory reference date must not become a custom new-item date.' );
+sidrena_ruleset_assert( '' === Sidrena_Utils::verified_custom_reference_date_for_post( 302, '2026-09-11' ), 'A post-cutoff candidate must be rejected when the item itself was not first published after the cutoff.' );
 
 fwrite( STDOUT, "SIDRENA immutable reference-date ruleset smoke test passed.\n" );

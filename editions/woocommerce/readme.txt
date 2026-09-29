@@ -4,11 +4,11 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.26
+Stable tag: 1.0.27
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Reference prices, 30-day sale references, CSV/XML price lists, locations and archives for Croatian stores using WooCommerce.
+SIDRENA anchor prices, unlimited price-change history, CSV/XML price lists, locations and archives for Croatian stores using WooCommerce.
 
 == Description ==
 
@@ -19,7 +19,7 @@ WooCommerce remains the canonical product and variation source. SIDRENA does not
 The plugin provides:
 
 * current and reference-price records for existing products and variations
-* a separate 30-day reference for special sale-price situations when applicable
+* an unlimited audit history of actual WooCommerce price changes, kept separate from the SIDRENA anchor-price ruleset
 * availability and price data by physical location
 * unit-price calculation and publication when applicable
 * public CSV and XML price lists
@@ -38,7 +38,7 @@ CSV, XML, public HTML, the JSON manifest, REST index, price history, strict publ
 
 The Croatian machine-readable price-list rule accepts XML or CSV. SIDRENA generates both formats by design for interoperability; this does not state that the rule requires both formats at the same time.
 
-Users only configure the operating mode, a daily generation time before 08:00, archive retention of at least 30 days, and an alert email address.
+Users configure the operating mode, the daily publication scheduler (internal WP-Cron or external server cron/WP-CLI), a generation time before 08:00, archive retention of at least 30 days, and an alert email address.
 
 = Independence and trademarks =
 
@@ -53,7 +53,7 @@ The installable package includes detailed Croatian documentation:
 * `docs/UPUTE.md` — detailed step-by-step text guide
 * `docs/SIDRENA-UPUTE.pdf` — detailed PDF manual for non-technical end users
 
-The guide covers installation, existing products and variations, bulk editing, locations, reference prices, 30-day sale-price references, unit prices, CSV import/export, generation, public publication, archives, cron, the audit log, and troubleshooting.
+The guide covers installation, existing products and variations, bulk editing, locations, SIDRENA anchor prices, price-change history, unit prices, CSV import/export, generation, public publication, archives, cron, the audit log, and troubleshooting.
 
 = Support and optional setup =
 
@@ -110,6 +110,10 @@ The WooCommerce-specific SIDRENA runtime stays inactive and shows a scoped notic
 
 The standard variation payload contains SIDRENA reference-price markup without an additional request. REST remains a compatibility fallback for themes or builders that remove the standard payload.
 
+= How can I use a real server cron instead of WP-Cron? =
+
+Choose the external server cron / WP-CLI scheduler in **SIDRENA > Settings** and run `wp sidrena publish` from the server scheduler before the configured publication deadline. SIDRENA removes its internal daily generation event in this mode while keeping the watchdog active for delay detection and alerts.
+
 = Can I disable CSV/XML output or publication monitoring? =
 
 Not from the simplified end-user settings screen. These technical outputs and safeguards remain enabled for stable publication and interoperability.
@@ -132,6 +136,17 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.27 =
+
+* Refocused the compliance model on the SIDRENA anchor/reference price and its locked legal date, explicitly separate from current prices, WooCommerce regular/sale/current lifecycle and the lowest price in the previous 30 days.
+* Centralized the legal ruleset with immutable 10.09.2026 and 02.05.2025 dates, read-only official-source metadata, and safe audit-only migration of retired editable global date settings.
+* Added verifiable item-level first-publication exceptions for genuinely new products/variations and strengthened variable-product/variation handling.
+* Added lifecycle refresh coverage for WooCommerce product/variation price updates, including scheduled-sale transitions, imports and direct price-meta changes, so the stable current public pricelist is refreshed without unnecessary archive copies.
+* Strengthened unlimited product/service/location history, content-hash archive deduplication, atomic publication, locking, rollback and last-valid-publication recovery.
+* Added internal WP-Cron or external server cron/WP-CLI publication modes, the `wp sidrena publish` command, mode-aware watchdog behavior and Site Health diagnostics.
+* Removed the untested HPOS compatibility declaration until a real HPOS integration test exists, while retaining the required WooCommerce dependency guard.
+* Strengthened REST/import security and regression coverage across PHP 7.4, 8.3 and 8.4, and documented the GPL-compatible reference-plugin analysis without copying third-party code or assets.
 
 = 1.0.26 =
 

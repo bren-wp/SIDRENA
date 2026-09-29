@@ -42,6 +42,7 @@ foreach ( array_unique( $sidrena_active_plugins ) as $sidrena_active_plugin ) {
 // Business records remain preserved unless explicit destructive cleanup is enabled.
 wp_clear_scheduled_hook( 'sidrena_daily_generation' );
 wp_clear_scheduled_hook( 'sidrena_queued_generation' );
+wp_clear_scheduled_hook( 'sidrena_queued_archive_generation' );
 wp_clear_scheduled_hook( 'sidrena_publication_watch' );
 wp_clear_scheduled_hook( 'sidrena_history_seed' );
 wp_clear_scheduled_hook( 'sidrena_standalone_sync_batch' );
@@ -64,6 +65,10 @@ delete_option( 'sidrena_locations' );
 delete_option( 'sidrena_public_index' );
 delete_option( 'sidrena_archive_index' );
 delete_option( 'sidrena_last_run' );
+delete_option( 'sidrena_last_current_refresh' );
+delete_option( 'sidrena_compliance_last_status' );
+delete_option( 'sidrena_standalone_sync_state' );
+delete_option( 'sidrena_legacy_legal_date_migration' );
 delete_option( 'sidrena_db_version' );
 delete_option( 'sidrena_plugin_version' );
 delete_option( 'sidrena_history_seeded_at' );

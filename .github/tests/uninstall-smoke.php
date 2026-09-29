@@ -76,6 +76,7 @@ function sidrena_uninstall_assert( $condition, $message ) {
 $expected_runtime_hooks = array(
 	'sidrena_daily_generation',
 	'sidrena_queued_generation',
+	'sidrena_queued_archive_generation',
 	'sidrena_publication_watch',
 	'sidrena_history_seed',
 	'sidrena_standalone_sync_batch',
@@ -90,6 +91,9 @@ if ( 'other-active' !== $scenario ) {
 
 if ( 'destroy' === $scenario ) {
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_deleted_options'] ), 'Explicit destructive uninstall did not remove options.' );
+	foreach ( array( 'sidrena_last_current_refresh', 'sidrena_compliance_last_status', 'sidrena_standalone_sync_state', 'sidrena_legacy_legal_date_migration' ) as $option ) {
+		sidrena_uninstall_assert( in_array( $option, $GLOBALS['sidrena_deleted_options'], true ), 'Explicit destructive uninstall did not remove runtime option: ' . $option );
+	}
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Explicit destructive uninstall did not clear schedules.' );
 	sidrena_uninstall_assert( 5 === count( $GLOBALS['sidrena_queries'] ), 'Explicit destructive uninstall did not drop all plugin tables.' );
 } elseif ( 'other-active' === $scenario ) {

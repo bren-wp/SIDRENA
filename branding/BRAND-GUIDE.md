@@ -8,7 +8,7 @@ Support: sidrena@brendigo.com
 
 # Sidrena brand system 1.0.21
 
-Ovaj direktorij je izvorni branding paket za Sidrena WordPress i Sidrena WooCommerce. Vizualni sustav prati produkcijske reference: tamno plava pomorska baza, svjetionik kao signal sigurnosti, Sidrena znak (S + sidro), plavi WordPress akcent i ljubičasti WooCommerce akcent.
+Ovaj direktorij je izvorni branding paket za SIDRENA — WordPress izdanje i SIDRENA — WooCommerce izdanje. Vizualni sustav prati produkcijske reference: tamno plava pomorska baza, svjetionik kao signal sigurnosti, Sidrena znak (S + sidro), plavi WordPress akcent i ljubičasti WooCommerce akcent.
 
 ## Primarne boje
 

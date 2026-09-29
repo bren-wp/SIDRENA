@@ -72,11 +72,11 @@ final class Sidrena_Standalone {
 		do {
 			$query = new WP_Query(
 				array(
-					'post_type'      => self::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => $batch_size,
-					'paged'          => $page,
-					'orderby'        => array(
+					'post_type'              => self::POST_TYPE,
+					'post_status'            => 'publish',
+					'posts_per_page'         => $batch_size,
+					'paged'                  => $page,
+					'orderby'                => array(
 						'menu_order' => 'ASC',
 						'ID'         => 'ASC',
 					),
@@ -145,7 +145,7 @@ final class Sidrena_Standalone {
 		$current         = get_post_meta( $id, '_sidrena_standalone_current_price', true );
 		$anchor          = get_post_meta( $id, '_sidrena_standalone_anchor_price', true );
 		$reference_group = Sidrena_Utils::sanitize_reference_group( get_post_meta( $id, '_sidrena_standalone_reference_group', true ) );
-		$anchor_date     = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ) : '';
+		$anchor_date     = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ) : '';
 		$unit_status     = sanitize_key( (string) get_post_meta( $id, '_sidrena_standalone_unit_status', true ) );
 		$sale_name       = trim( (string) get_post_meta( $id, '_sidrena_standalone_sale_name', true ) );
 		$availability    = sanitize_key( (string) get_post_meta( $id, '_sidrena_standalone_availability', true ) );
@@ -547,9 +547,9 @@ final class Sidrena_Standalone {
 			return;
 		}
 
-		$page     = max( 1, isset( $_GET['standalone_page'] ) ? absint( $_GET['standalone_page'] ) : 1 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$per_page = 60;
-		$query    = new WP_Query(
+		$page                  = max( 1, isset( $_GET['standalone_page'] ) ? absint( $_GET['standalone_page'] ) : 1 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$per_page              = 60;
+		$query                 = new WP_Query(
 			array(
 				'post_type'      => self::POST_TYPE,
 				'post_status'    => array( 'publish', 'draft' ),
@@ -693,9 +693,9 @@ final class Sidrena_Standalone {
 	}
 	private function row( $id = 0, $key = '', $template = false ) {
 		unset( $template );
-		$id   = absint( $id );
-		$key  = $id ? (string) $id : ( $key ? $key : uniqid( 'new-', false ) );
-		$meta = static function ( $name ) use ( $id ) {
+		$id                       = absint( $id );
+		$key                      = $id ? (string) $id : ( $key ? $key : uniqid( 'new-', false ) );
+		$meta                     = static function ( $name ) use ( $id ) {
 			return $id ? get_post_meta( $id, $name, true ) : '';
 		};
 		$status_raw               = $meta( '_sidrena_standalone_unit_status' );
@@ -705,7 +705,7 @@ final class Sidrena_Standalone {
 		$current                  = $meta( '_sidrena_standalone_current_price' );
 		$anchor                   = $meta( '_sidrena_standalone_anchor_price' );
 		$reference_group          = Sidrena_Utils::sanitize_reference_group( $meta( '_sidrena_standalone_reference_group' ) );
-		$anchor_date              = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( $meta( '_sidrena_standalone_anchor_date' ) ) : '';
+		$anchor_date              = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $meta( '_sidrena_standalone_anchor_date' ) ) : '';
 		$location_availability    = $meta( '_sidrena_standalone_location_availability' );
 		$location_availability    = is_array( $location_availability ) ? $location_availability : array();
 		$locations                = Sidrena_Utils::locations();
@@ -746,12 +746,17 @@ final class Sidrena_Standalone {
 			<td><input aria-label="<?php esc_attr_e( 'Trenutna cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $key ); ?>][current]" value="<?php echo esc_attr( $current ); ?>"></td>
 			<td class="sid-standalone-anchor-cell">
 				<input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $key ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>">
-				<select aria-label="<?php esc_attr_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][reference_group]">
-					<option value="standard" <?php selected( $reference_group, 'standard' ); ?>><?php esc_html_e( '10.09.2026.', 'sidrena' ); ?></option>
-					<option value="fmcg" <?php selected( $reference_group, 'fmcg' ); ?>><?php esc_html_e( 'FMCG 02.05.2025.', 'sidrena' ); ?></option>
-					<option value="custom" <?php selected( $reference_group, 'custom' ); ?>><?php esc_html_e( 'Novouvedeni proizvod', 'sidrena' ); ?></option>
-				</select>
-				<input aria-label="<?php esc_attr_e( 'Datum prvog uvrštenja novog proizvoda', 'sidrena' ); ?>" type="date" min="2026-09-11" name="items[<?php echo esc_attr( $key ); ?>][anchor_date]" value="<?php echo esc_attr( $anchor_date ); ?>">
+				<?php if ( 'custom' === $reference_group ) : ?>
+					<input type="hidden" name="items[<?php echo esc_attr( $key ); ?>][reference_group]" value="custom">
+					<strong><?php echo esc_html( Sidrena_Utils::date_display( $anchor_date ) ); ?></strong>
+					<small class="sid-cell-sub"><?php esc_html_e( 'Automatski zaključano iz dokazivog prvog objavljivanja stavke.', 'sidrena' ); ?></small>
+				<?php else : ?>
+					<select aria-label="<?php esc_attr_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][reference_group]">
+						<option value="standard" <?php selected( $reference_group, 'standard' ); ?>><?php esc_html_e( '10.09.2026.', 'sidrena' ); ?></option>
+						<option value="fmcg" <?php selected( $reference_group, 'fmcg' ); ?>><?php esc_html_e( 'FMCG 02.05.2025.', 'sidrena' ); ?></option>
+					</select>
+					<small class="sid-cell-sub"><?php esc_html_e( 'Novouvedenu stavku SIDRENA prepoznaje automatski pri prvom objavljivanju; datum nije ručno promjenjiv.', 'sidrena' ); ?></small>
+				<?php endif; ?>
 			</td>
 			<td><select aria-label="<?php esc_attr_e( 'Zadana dostupnost / webshop', 'sidrena' ); ?>" name="items[<?php echo esc_attr( $key ); ?>][availability]"><option value="dostupno" <?php selected( $availability, 'dostupno' ); ?>><?php esc_html_e( 'Dostupno', 'sidrena' ); ?></option><option value="nedostupno" <?php selected( $availability, 'nedostupno' ); ?>><?php esc_html_e( 'Nedostupno', 'sidrena' ); ?></option></select></td>
 			<td><span class="sid-status-pill <?php echo $row_ready ? 'is-ok' : 'is-warn'; ?>"><?php echo $row_ready ? esc_html__( 'Spremno', 'sidrena' ) : esc_html__( 'Provjeriti', 'sidrena' ); ?></span></td>
@@ -887,8 +892,14 @@ else :
 			$this->set_meta( $saved_id, '_sidrena_standalone_current_price', $current );
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_price', $anchor );
 			$reference_group = Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ?? 'standard' );
+			$custom_date     = '';
+			if ( 'custom' === $reference_group ) {
+				$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $saved_id, get_post_meta( $saved_id, '_sidrena_standalone_anchor_date', true ) );
+				if ( ! $custom_date ) {
+					$reference_group = 'standard';
+				}
+			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_reference_group', $reference_group );
-			$custom_date = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ?? '' ) : '';
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_date', $custom_date );
 			$this->set_meta( $saved_id, '_sidrena_standalone_barcode', sanitize_text_field( $row['barcode'] ?? '' ) );
 
@@ -966,7 +977,8 @@ else :
 		if ( UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
-		if ( (int) ( $file['size'] ?? 0 ) > 5 * MB_IN_BYTES ) {
+		$upload_size = $this->validate_uploaded_catalog_size( $file['tmp_name'], $file['size'] ?? 0 );
+		if ( is_wp_error( $upload_size ) ) {
 			$this->redirect_import( 'standalone_import_failed' );
 		}
 
@@ -1060,8 +1072,13 @@ else :
 			$this->import_field( $id, '_sidrena_standalone_current_price', $row, 'current', 'decimal' );
 			$this->import_field( $id, '_sidrena_standalone_anchor_price', $row, 'anchor', 'decimal' );
 			$reference_group = array_key_exists( 'reference_group', $row ) ? Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ) : 'standard';
+			$custom_date     = 'custom' === $reference_group
+				? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $row['anchor_date'] ?? '' )
+				: '';
+			if ( 'custom' === $reference_group && ! $custom_date ) {
+				$reference_group = 'standard';
+			}
 			update_post_meta( $id, '_sidrena_standalone_reference_group', $reference_group );
-			$custom_date = 'custom' === $reference_group && array_key_exists( 'anchor_date', $row ) ? Sidrena_Utils::custom_reference_date( $row['anchor_date'] ) : '';
 			if ( $custom_date ) {
 				update_post_meta( $id, '_sidrena_standalone_anchor_date', $custom_date );
 			} else {
@@ -1128,6 +1145,30 @@ else :
 		Sidrena_Pricelist::queue_regeneration();
 		wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_imported' ) );
 		exit;
+	}
+
+	private function validate_uploaded_catalog_size( $tmp_name, $reported_size ) {
+		$max_bytes = 5 * MB_IN_BYTES;
+		$tmp_name  = (string) $tmp_name;
+		$reported  = max( 0, (int) $reported_size );
+
+		if ( '' === $tmp_name || ! is_file( $tmp_name ) ) {
+			return new WP_Error( 'upload_missing', __( 'Privremena datoteka uvoza nije dostupna.', 'sidrena' ) );
+		}
+		if ( $reported > $max_bytes ) {
+			return new WP_Error( 'upload_too_large', __( 'Datoteka za uvoz prelazi dopuštenih 5 MB.', 'sidrena' ) );
+		}
+
+		clearstatcache( true, $tmp_name );
+		$actual = wp_filesize( $tmp_name );
+		if ( false === $actual || $actual <= 0 ) {
+			return new WP_Error( 'upload_empty', __( 'Datoteka za uvoz je prazna ili joj nije moguće utvrditi veličinu.', 'sidrena' ) );
+		}
+		if ( $actual > $max_bytes ) {
+			return new WP_Error( 'upload_too_large', __( 'Stvarna datoteka na poslužitelju prelazi dopuštenih 5 MB.', 'sidrena' ) );
+		}
+
+		return (int) $actual;
 	}
 
 	private function prepare_csv_import_stream( $contents, $row_limit = 50000 ) {
@@ -1505,8 +1546,8 @@ else :
 			$atts,
 			'sidrena_cijena'
 		);
-		$raw = (string) $atts['id'];
-		$id  = absint( preg_replace( '/\D+/', '', $raw ) );
+		$raw  = (string) $atts['id'];
+		$id   = absint( preg_replace( '/\D+/', '', $raw ) );
 		if ( ! $id || self::POST_TYPE !== get_post_type( $id ) || 'publish' !== get_post_status( $id ) ) {
 			return '';
 		}
@@ -1526,7 +1567,7 @@ else :
 		$sale_name = trim( (string) get_post_meta( $id, '_sidrena_standalone_sale_name', true ) );
 		if ( '' !== $anchor ) {
 			$reference_group   = Sidrena_Utils::sanitize_reference_group( get_post_meta( $id, '_sidrena_standalone_reference_group', true ) );
-			$saved_anchor_date = 'custom' === $reference_group ? Sidrena_Utils::custom_reference_date( get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ) : '';
+			$saved_anchor_date = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ) : '';
 			$date              = Sidrena_Utils::resolved_reference_date( $reference_group, $saved_anchor_date );
 			$tooltip           = Sidrena_Utils::anchor_tooltip();
 			$tooltip_id        = 'sidrena-anchor-tip-s' . absint( $id );

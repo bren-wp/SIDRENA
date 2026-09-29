@@ -6,6 +6,22 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.27 =
+* Središnji compliance model preusmjeren je na SIDRENA cijenu: aktualna cijena, sidrena/referentna cijena i njezin datum, 30-dnevna najniža cijena te WooCommerce regular/sale/current cijene sada se vode kao zasebni koncepti.
+* Zakonski datumi 10.09.2026. i 02.05.2025. centralizirani su u zaključanom rulesetu; stare administratorske vrijednosti više nisu pravni izvor, ali se prije uklanjanja iz aktivnih postavki čuvaju u audit-only migracijskom snapshotu.
+* Iznimka za stvarno novu stavku dopušta samo dokazivi datum prvog objavljivanja nakon zakonskog referentnog datuma i ostaje vezana uz konkretnu stavku.
+* Neograničena povijest proširena je na proizvode, usluge i lokacijske cijene bez vremenskog pruning-a; dashboard/CLI koriste bounded čitanja.
+* Aktualni cjenik i arhiva potpuno su razdvojeni: intraday osvježavanje ne stvara novu arhivu, a sadržajni SHA-256 hash sprječava identične arhivske kopije.
+* Atomic publication koristi privremenu datoteku, flush/fsync, rename/commit, process lock, rollback i zadržavanje zadnje valjane javne verzije.
+* Dodan je izbor internog WP-Crona ili vanjskog server crona/WP-CLI-ja; nova naredba `wp sidrena publish` izvršava kontroliranu dnevnu objavu, a watchdog i Site Health razumiju oba načina.
+* WooCommerce price lifecycle sada queuea aktualni cjenik za product/variation update, scheduled-sale prijelaze, import i izravne _regular_price/_sale_price/_price promjene.
+* Standalone import sada provjerava stvarnu veličinu server-side privremene datoteke uz osvježavanje PHP stat cachea prije čitanja u memoriju.
+* REST location parametar dobio je zasebnu validate provjeru duljine, NUL-a i kontrolnih znakova uz postojeće kanonsko ID/code mapiranje.
+* Arhivska retencija ostaje najmanje 30 dana, ali administrator može sigurno odabrati dulje čuvanje.
+* Uklonjena je netestirana HPOS compatibility deklaracija dok ne postoji stvarni HPOS integration test.
+* Dokumentirana je funkcionalna/licencna analiza dvaju referentnih GPLv2-or-later plugina; nije preuzet njihov kod, tekst, dizajn ni asseti.
+* Prošireni su regression testovi za scheduler, Site Health, Woo lifecycle, upload-size, REST, neograničenu povijest, upgrade migraciju i uninstall cleanup.
+
 = 1.0.26 =
 * Oba instalirana izdanja sada koriste jedinstven naziv i brand "SIDRENA" u plugin headeru, WordPress.org readme naslovu, admin meniju i runtime porukama; postojeći javni slugovi i text-domaini ostaju nepromijenjeni.
 * REST dohvat cijena sada prihvaća i javni kod lokacije koji SIDRENA vraća u location payloadu, uz mapiranje na kanonski interni ID.

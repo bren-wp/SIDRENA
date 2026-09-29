@@ -93,6 +93,9 @@ jobs:
       - name: WooCommerce import state smoke test
         run: php .github/tests/woo-import-state-smoke.php
 
+      - name: Woo price lifecycle refresh smoke test
+        run: php .github/tests/woo-lifecycle-smoke.php
+
       - name: Woo REST flattened pagination smoke test
         run: php .github/tests/rest-woocommerce-pagination-smoke.php
 
@@ -110,6 +113,9 @@ jobs:
 
       - name: Admin asset routing smoke test
         run: php .github/tests/admin-assets-smoke.php
+
+      - name: Site Health scheduler smoke test
+        run: php .github/tests/site-health-scheduler-smoke.php
 
       - name: Admin form UX smoke test
         run: php .github/tests/admin-form-ux-smoke.php
@@ -171,6 +177,9 @@ jobs:
       - name: Transactional generation smoke test
         run: php .github/tests/generation-transaction-smoke.php
 
+      - name: Current/archive separation smoke test
+        run: php .github/tests/current-archive-separation-smoke.php
+
       - name: Streaming public snapshot smoke test
         run: php .github/tests/public-snapshot-stream-smoke.php
 
@@ -182,6 +191,9 @@ jobs:
 
       - name: Woo automatic price output smoke test
         run: php .github/tests/woo-output-smoke.php
+
+      - name: Separate 30-day minimum runtime smoke test
+        run: php .github/tests/lowest-30-runtime-smoke.php
 
       - name: Support and public surface smoke test
         run: php .github/tests/support-surface-smoke.php

@@ -44,12 +44,12 @@ final class Sidrena_Services {
 					'add_new_item'  => __( 'Dodaj uslugu', 'sidrena' ),
 					'edit_item'     => __( 'Uredi uslugu', 'sidrena' ),
 				),
-				'public'          => false,
-				'show_ui'         => true,
-				'show_in_menu'    => 'sidrena',
-				'supports'        => array( 'title' ),
-				'capability_type' => 'post',
-				'capabilities'    => array(
+				'public'              => false,
+				'show_ui'             => true,
+				'show_in_menu'        => 'sidrena',
+				'supports'            => array( 'title' ),
+				'capability_type'     => 'post',
+				'capabilities'        => array(
 					'edit_post'              => $capability,
 					'read_post'              => $capability,
 					'delete_post'            => $capability,
@@ -96,6 +96,7 @@ final class Sidrena_Services {
 			'service_costs' => get_post_meta( $post->ID, '_sidrena_service_costs', true ),
 			'service_goods' => get_post_meta( $post->ID, '_sidrena_service_goods', true ),
 		);
+
 		$fields['reference_group'] = Sidrena_Utils::sanitize_reference_group( get_post_meta( $post->ID, '_sidrena_service_reference_group', true ), false );
 		if ( 'custom' !== $fields['reference_group'] ) {
 			$fields['anchor_date'] = '';
@@ -111,19 +112,19 @@ final class Sidrena_Services {
 				<input class="regular-text" type="number" min="0" step="0.01" id="sidrena_service_anchor_price" name="sidrena_service_anchor_price" value="<?php echo esc_attr( $fields['anchor_price'] ); ?>">
 			</p>
 			<p>
-				<label for="sidrena_service_reference_group"><strong><?php esc_html_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?></strong></label><br>
-				<select id="sidrena_service_reference_group" name="sidrena_service_reference_group">
-					<option value="standard" <?php selected( $fields['reference_group'], 'standard' ); ?>><?php esc_html_e( 'Zaključano: 10.09.2026.', 'sidrena' ); ?></option>
-					<option value="custom" <?php selected( $fields['reference_group'], 'custom' ); ?>><?php esc_html_e( 'Novouvedena usluga nakon 10.09.2026.', 'sidrena' ); ?></option>
-				</select>
+				<strong><?php esc_html_e( 'Pravni datum sidrene cijene', 'sidrena' ); ?></strong><br>
+				<?php if ( 'custom' === $fields['reference_group'] ) : ?>
+					<input type="hidden" name="sidrena_service_reference_group" value="custom">
+					<strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::service_reference_date( $post->ID ) ) ); ?></strong><br>
+					<small><?php esc_html_e( 'Automatski zaključano iz prvog objavljivanja usluge. Datum nije ručno promjenjiv.', 'sidrena' ); ?></small>
+				<?php else : ?>
+					<input type="hidden" name="sidrena_service_reference_group" value="standard">
+					<strong><?php echo esc_html( Sidrena_Utils::date_display( Sidrena_Utils::standard_reference_date() ) ); ?></strong><br>
+					<small><?php esc_html_e( 'Zakonski datum 10.09.2026. zaključan je rulesetom. Novouvedenu uslugu SIDRENA prepoznaje automatski pri prvom objavljivanju.', 'sidrena' ); ?></small>
+				<?php endif; ?>
 			</p>
 			<p>
-				<label for="sidrena_service_anchor_date"><strong><?php esc_html_e( 'Datum prvog uvrštenja nove usluge', 'sidrena' ); ?></strong></label><br>
-				<input type="date" min="2026-09-11" id="sidrena_service_anchor_date" name="sidrena_service_anchor_date" value="<?php echo esc_attr( $fields['anchor_date'] ); ?>">
-				<small><?php esc_html_e( 'Koristi se samo za stvarno novouvedenu uslugu nakon 10.09.2026.; inače se datum zaključava na 10.09.2026.', 'sidrena' ); ?></small>
-			</p>
-			<p>
-				<label><input type="checkbox" name="sidrena_service_sale" value="yes" <?php checked( $fields['sale'], 'yes' ); ?>> <?php esc_html_e( 'Aktualna cijena primjenjuje se tijekom posebnog oblika prodaje', 'sidrena' ); ?></label>
+				<label><input type="checkbox" name="sidrena_service_sale" value="yes" <?php checked( $fields['sale'], 'yes' ); ?>> <?php esc_html_e( 'Označi da je aktualna cijena dio posebnog oblika prodaje (odvojeno od sidrene cijene)', 'sidrena' ); ?></label>
 			</p>
 			<p>
 				<label for="sidrena_service_sale_name"><strong><?php esc_html_e( 'Naziv posebnog oblika prodaje', 'sidrena' ); ?></strong></label><br>
@@ -227,22 +228,22 @@ final class Sidrena_Services {
 
 		update_post_meta( $post_id, '_sidrena_service_sale', isset( $_POST['sidrena_service_sale'] ) ? 'yes' : 'no' );
 
-		$reference_group = isset( $_POST['sidrena_service_reference_group'] )
-			? Sidrena_Utils::sanitize_reference_group( wp_unslash( $_POST['sidrena_service_reference_group'] ), false )
+		$reference_group_raw = isset( $_POST['sidrena_service_reference_group'] )
+			? sanitize_text_field( wp_unslash( $_POST['sidrena_service_reference_group'] ) )
 			: 'standard';
-		update_post_meta( $post_id, '_sidrena_service_reference_group', $reference_group );
+		$reference_group     = Sidrena_Utils::sanitize_reference_group( $reference_group_raw, false );
 		if ( 'custom' === $reference_group ) {
-			$custom_date = isset( $_POST['sidrena_service_anchor_date'] )
-				? Sidrena_Utils::custom_reference_date( wp_unslash( $_POST['sidrena_service_anchor_date'] ) )
-				: '';
+			$custom_date = Sidrena_Utils::verified_custom_reference_date_for_post( $post_id, get_post_meta( $post_id, '_sidrena_service_anchor_date', true ) );
 			if ( $custom_date ) {
 				update_post_meta( $post_id, '_sidrena_service_anchor_date', $custom_date );
 			} else {
+				$reference_group = 'standard';
 				delete_post_meta( $post_id, '_sidrena_service_anchor_date' );
 			}
 		} else {
 			delete_post_meta( $post_id, '_sidrena_service_anchor_date' );
 		}
+		update_post_meta( $post_id, '_sidrena_service_reference_group', $reference_group );
 		// Legacy 30-day sale-reference metadata is intentionally not part of the active SIDRENA workflow.
 		delete_post_meta( $post_id, '_sidrena_service_lowest_30_manual' );
 		delete_post_meta( $post_id, '_sidrena_service_lowest_30_exception' );
@@ -383,11 +384,11 @@ final class Sidrena_Services {
 		$last        = min( $total, $first + count( $query->posts ) - 1 );
 		$out         = '<div class="sidrena-services" role="region" aria-label="' . esc_attr__( 'Cjenik usluga', 'sidrena' ) . '">';
 		/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
-		$out        .= '<p class="sidrena-services__summary">' . esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d usluga.', 'sidrena' ), $first, $last, $total ) ) . '</p>';
-		$out        .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table">';
-		$out        .= '<caption class="sidrena-visually-hidden">' . esc_html__( 'Aktualni cjenik usluga', 'sidrena' ) . '</caption><thead><tr>';
-		$out        .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
-		$out        .= '<th scope="col">' . esc_html__( 'Aktualna cijena', 'sidrena' ) . '</th>';
+		$out .= '<p class="sidrena-services__summary">' . esc_html( sprintf( __( 'Prikazano %1$d–%2$d od %3$d usluga.', 'sidrena' ), $first, $last, $total ) ) . '</p>';
+		$out .= '<div class="sidrena-services__table-wrap"><table class="sidrena-services__table">';
+		$out .= '<caption class="sidrena-visually-hidden">' . esc_html__( 'Aktualni cjenik usluga', 'sidrena' ) . '</caption><thead><tr>';
+		$out .= '<th scope="col">' . esc_html__( 'Usluga', 'sidrena' ) . '</th>';
+		$out .= '<th scope="col">' . esc_html__( 'Aktualna cijena', 'sidrena' ) . '</th>';
 		$out .= '<th scope="col">' . esc_html__( 'Sidrena cijena', 'sidrena' ) . '</th>';
 		$out .= '</tr></thead><tbody>';
 
@@ -395,12 +396,12 @@ final class Sidrena_Services {
 			$current = get_post_meta( $service->ID, '_sidrena_service_current_price', true );
 			$anchor  = get_post_meta( $service->ID, '_sidrena_service_anchor_price', true );
 			$date    = Sidrena_Utils::service_reference_date( $service->ID );
-			$out  .= '<tr>';
-			$type  = trim( (string) get_post_meta( $service->ID, '_sidrena_service_type', true ) );
-			$scope = trim( (string) get_post_meta( $service->ID, '_sidrena_service_scope', true ) );
-			$costs = trim( (string) get_post_meta( $service->ID, '_sidrena_service_costs', true ) );
-			$goods = trim( (string) get_post_meta( $service->ID, '_sidrena_service_goods', true ) );
-			$out  .= '<th scope="row"><span class="sidrena-service-name">' . esc_html( get_the_title( $service ) ) . '</span>';
+			$out    .= '<tr>';
+			$type    = trim( (string) get_post_meta( $service->ID, '_sidrena_service_type', true ) );
+			$scope   = trim( (string) get_post_meta( $service->ID, '_sidrena_service_scope', true ) );
+			$costs   = trim( (string) get_post_meta( $service->ID, '_sidrena_service_costs', true ) );
+			$goods   = trim( (string) get_post_meta( $service->ID, '_sidrena_service_goods', true ) );
+			$out    .= '<th scope="row"><span class="sidrena-service-name">' . esc_html( get_the_title( $service ) ) . '</span>';
 			if ( $type ) {
 				$out .= '<small class="sidrena-service-meta"><strong>' . esc_html__( 'Vrsta:', 'sidrena' ) . '</strong> ' . esc_html( $type ) . '</small>';
 			}
@@ -417,7 +418,7 @@ final class Sidrena_Services {
 			$current_text = '' === $current ? '—' : Sidrena_Utils::money( $current ) . ' €';
 			$anchor_text  = '' === $anchor ? '—' : Sidrena_Utils::money( $anchor ) . ' €';
 			$out         .= '<td data-label="' . esc_attr__( 'Aktualna cijena', 'sidrena' ) . '">' . esc_html( $current_text ) . '</td>';
-			$out .= '<td data-label="' . esc_attr__( 'Sidrena cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
+			$out         .= '<td data-label="' . esc_attr__( 'Sidrena cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
 			if ( '' !== $anchor ) {
 				$out .= '<small>' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . '</small>';
 			}
