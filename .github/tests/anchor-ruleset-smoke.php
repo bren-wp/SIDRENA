@@ -86,7 +86,15 @@ $GLOBALS['sidrena_test_meta'][103] = array(
 	'_sidrena_reference_group' => 'custom',
 	'_sidrena_anchor_date'     => '2026-09-11',
 );
-sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::current_reference_date( 103 ), 'A genuinely new item may use its first-listing date after 10.09.2026.' );
+$GLOBALS['sidrena_test_dates'][103] = '2026-09-11';
+sidrena_ruleset_assert( '2026-09-11' === Sidrena_Utils::current_reference_date( 103 ), 'A genuinely new item may use its verified first-listing date after 10.09.2026.' );
+
+$GLOBALS['sidrena_test_meta'][106] = array(
+	'_sidrena_reference_group' => 'custom',
+	'_sidrena_anchor_date'     => '2026-09-12',
+);
+$GLOBALS['sidrena_test_dates'][106] = '2026-09-11';
+sidrena_ruleset_assert( '' === Sidrena_Utils::current_reference_date( 106 ), 'A stored custom date must be rejected when it differs from the item first-publication date.' );
 
 $GLOBALS['sidrena_test_meta'][104] = array(
 	'_sidrena_reference_group' => 'custom',
