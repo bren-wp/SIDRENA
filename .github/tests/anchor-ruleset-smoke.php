@@ -57,8 +57,10 @@ function sidrena_ruleset_assert( $condition, $message ) {
 }
 
 $settings = Sidrena_Utils::settings();
-sidrena_ruleset_assert( '2026-09-10' === $settings['default_ref_date'], 'Persisted settings must never override the standard legal reference date.' );
-sidrena_ruleset_assert( '2025-05-02' === $settings['fmcg_ref_date'], 'Persisted settings must never override the FMCG legal reference date.' );
+sidrena_ruleset_assert( ! array_key_exists( 'default_ref_date', $settings ), 'Standard legal reference date must not exist in runtime settings.' );
+sidrena_ruleset_assert( ! array_key_exists( 'fmcg_ref_date', $settings ), 'FMCG legal reference date must not exist in runtime settings.' );
+sidrena_ruleset_assert( '2026-09-10' === Sidrena_Utils::standard_reference_date(), 'Standard legal reference date must remain locked to 10.09.2026.' );
+sidrena_ruleset_assert( '2025-05-02' === Sidrena_Utils::fmcg_reference_date(), 'FMCG legal reference date must remain locked to 02.05.2025.' );
 sidrena_ruleset_assert( ! array_key_exists( 'default_ref_date', Sidrena_Utils::defaults() ), 'Standard legal date must not be an administrator default setting.' );
 sidrena_ruleset_assert( ! array_key_exists( 'fmcg_ref_date', Sidrena_Utils::defaults() ), 'FMCG legal date must not be an administrator default setting.' );
 sidrena_ruleset_assert( 30 === $settings['retention_days'], 'Persisted archive retention must not override the 30-day public archive ruleset.' );
