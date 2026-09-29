@@ -47,6 +47,10 @@ sidrena_current_archive_assert(
 );
 sidrena_current_archive_assert( false !== strpos( $pricelist, "return sprintf( 'aktualni-%s-%s.%s'" ), 'Stable current filename convention is missing.' );
 sidrena_current_archive_assert( false !== strpos( $pricelist, "wp_date( 'Y-m-d', \$last_ts ) === wp_date( 'Y-m-d' )" ), 'Daily archive duplicate guard is missing.' );
+sidrena_current_archive_assert( false !== strpos( $pricelist, 'private function current_matches_latest_archive()' ), 'Content-hash duplicate archive detection is missing.' );
+sidrena_current_archive_assert( false !== strpos( $pricelist, "'duplicate_archive_skipped' => true" ), 'Duplicate archive publication must be recorded explicitly.' );
+sidrena_current_archive_assert( false !== strpos( $pricelist, "'pricelist_archive_duplicate'" ), 'Duplicate archive suppression must be auditable.' );
+sidrena_current_archive_assert( false !== strpos( $pricelist, "hash_equals( hash( 'sha256', wp_json_encode( \$archive_hashes ) ), hash( 'sha256', wp_json_encode( \$current_hashes ) ) )" ), 'Duplicate archive detection must compare canonical content-hash maps.' );
 
 sidrena_current_archive_assert(
 	false !== strpos( $admin, 'Osvježi aktualni cjenik' )
