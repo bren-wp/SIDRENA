@@ -47,7 +47,7 @@ final class Sidrena_Service_History {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_service_price_history';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires bounded direct CRUD.
-		$last = $wpdb->get_var(
+		$last  = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT price FROM %i WHERE service_id = %d ORDER BY id DESC LIMIT 1',
 				$table,
