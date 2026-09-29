@@ -114,7 +114,7 @@ final class Sidrena_Bulk {
 						<?php
 						$id                 = $product->get_id();
 						$anchor             = get_post_meta( $id, '_sidrena_anchor_price', true );
-						$anchor_date        = get_post_meta( $id, '_sidrena_anchor_date', true );
+						$anchor_date        = Sidrena_Utils::current_reference_date( $id );
 						$visibility_raw     = get_post_meta( $id, '_sidrena_cjenik_visibility', true );
 						$visibility         = $visibility_raw ? $visibility_raw : 'auto';
 						$catalog_visibility = is_callable( array( $product, 'get_catalog_visibility' ) ) ? $product->get_catalog_visibility() : 'visible';
@@ -133,7 +133,7 @@ final class Sidrena_Bulk {
 							<td><code><?php echo esc_html( $sku ? $sku : '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
-							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
+							<td><strong><?php echo esc_html( Sidrena_Utils::date_display( $anchor_date ) ); ?></strong><small class="sid-cell-sub"><?php esc_html_e( 'Zaključano SIDRENA pravilima', 'sidrena' ); ?></small></td>
 							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span>
 							<?php
 							if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) :
@@ -148,7 +148,7 @@ final class Sidrena_Bulk {
 										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][barcode]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_barcode', true ) ); ?>" placeholder="<?php echo esc_attr( Sidrena_Utils::get_barcode( $product ) ); ?>" data-sidrena-safe-fill="barcode" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['barcode'] ?? '' ); ?>"></label>
-										<label><span><?php esc_html_e( 'Referentna grupa', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( $group, 'standard' ); ?>><?php esc_html_e( 'Standard', 'sidrena' ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>>FMCG</option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Prilagođeno', 'sidrena' ); ?></option></select></label>
+										<label><span><?php esc_html_e( 'Pravni ruleset sidrene cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][group]"><option value="standard" <?php selected( $group, 'standard' ); ?>><?php esc_html_e( 'Zaključano: 10.09.2026.', 'sidrena' ); ?></option><option value="fmcg" <?php selected( $group, 'fmcg' ); ?>><?php esc_html_e( 'Zaključano FMCG: 02.05.2025.', 'sidrena' ); ?></option><option value="custom" <?php selected( $group, 'custom' ); ?>><?php esc_html_e( 'Novouveden nakon 10.09.2026. — datum automatski', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $id ); ?>][unit_status]"><option value="review" <?php selected( $unit_status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $unit_status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $unit_status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $unit_status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
 										<label><span><?php esc_html_e( 'Količina', 'sidrena' ); ?></span><input type="number" min="0" step="0.0001" name="items[<?php echo esc_attr( $id ); ?>][quantity]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity', true ) ); ?>"></label>
 										<label><span><?php esc_html_e( 'Pakiranje', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][quantity_unit]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_quantity_unit', true ) ); ?>" placeholder="g / kg / ml / l"></label>
@@ -211,16 +211,23 @@ final class Sidrena_Bulk {
 				update_post_meta( $id, '_sidrena_anchor_price', $anchor );
 			}
 
-			$date = Sidrena_Utils::sanitize_date( isset( $row['date'] ) ? $row['date'] : '' );
-			if ( $date ) {
-				update_post_meta( $id, '_sidrena_anchor_date', $date );
-			} else {
-				delete_post_meta( $id, '_sidrena_anchor_date' );
-			}
-
 			$group = sanitize_key( isset( $row['group'] ) ? $row['group'] : 'standard' );
 			if ( ! in_array( $group, array( 'standard', 'fmcg', 'custom' ), true ) ) {
 				$group = 'standard';
+			}
+			if ( 'custom' === $group ) {
+				$custom_date = Sidrena_Utils::custom_reference_date( get_post_meta( $id, '_sidrena_anchor_date', true ) );
+				if ( ! $custom_date ) {
+					$custom_date = Sidrena_Utils::first_publication_reference_date( $id );
+				}
+				if ( $custom_date ) {
+					update_post_meta( $id, '_sidrena_anchor_date', $custom_date );
+				} else {
+					$group = 'standard';
+					delete_post_meta( $id, '_sidrena_anchor_date' );
+				}
+			} else {
+				delete_post_meta( $id, '_sidrena_anchor_date' );
 			}
 			update_post_meta( $id, '_sidrena_reference_group', $group );
 
