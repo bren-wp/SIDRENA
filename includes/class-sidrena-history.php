@@ -53,10 +53,8 @@ final class Sidrena_History {
 			if ( '_sidrena_standalone_current_price' !== $meta_key || ! class_exists( 'Sidrena_Standalone' ) || Sidrena_Standalone::POST_TYPE !== get_post_type( $object_id ) ) {
 				return;
 			}
-		} else {
-			if ( ! Sidrena_Utils::is_woocommerce_active() || ! in_array( $meta_key, array( '_regular_price', '_sale_price', '_price' ), true ) || ! in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ), true ) ) {
-				return;
-			}
+		} elseif ( ! Sidrena_Utils::is_woocommerce_active() || ! in_array( $meta_key, array( '_regular_price', '_sale_price', '_price' ), true ) || ! in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ), true ) ) {
+			return;
 		}
 
 		self::$pending_items[ $object_id ] = true;
@@ -84,7 +82,7 @@ final class Sidrena_History {
 				return;
 			}
 			$price = get_post_meta( $item_id, '_sidrena_standalone_current_price', true );
-			$this->insert_if_changed( $item_id, 0, $price, $price, null, $source );
+			$this->insert_if_changed( $item_id, 0, $price, null, $source );
 			return;
 		}
 
@@ -95,19 +93,18 @@ final class Sidrena_History {
 		if ( ! $product ) {
 			return;
 		}
-		$parent_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+		$parent_id    = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
 		$variation_id = $product->is_type( 'variation' ) ? $product->get_id() : 0;
 		$this->insert_if_changed(
 			$parent_id,
 			$variation_id,
 			$product->get_price( 'edit' ),
 			$product->get_regular_price( 'edit' ),
-			$product->get_sale_price( 'edit' ),
 			$source
 		);
 	}
 
-	private function insert_if_changed( $product_id, $variation_id, $price, $regular_price, $sale_price, $source ) {
+	private function insert_if_changed( $product_id, $variation_id, $price, $regular_price, $source ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
 		$key   = $variation_id ? 'variation_id' : 'product_id';
@@ -116,7 +113,7 @@ final class Sidrena_History {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires bounded direct CRUD.
 		$last = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT price, regular_price, sale_price FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 1',
+				'SELECT price, regular_price FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 1',
 				$table,
 				$key,
 				$id
@@ -126,11 +123,9 @@ final class Sidrena_History {
 
 		$price         = '' === $price ? null : (float) $price;
 		$regular_price = '' === $regular_price ? null : (float) $regular_price;
-		$sale_price    = '' === $sale_price ? null : (float) $sale_price;
 		if ( $last
 			&& $this->same_numeric_value( $last['price'], $price )
 			&& $this->same_numeric_value( $last['regular_price'], $regular_price )
-			&& $this->same_numeric_value( $last['sale_price'], $sale_price )
 		) {
 			return;
 		}
@@ -143,11 +138,10 @@ final class Sidrena_History {
 				'variation_id'  => absint( $variation_id ),
 				'price'         => $price,
 				'regular_price' => $regular_price,
-				'sale_price'    => $sale_price,
 				'recorded_at'   => current_time( 'mysql' ),
 				'source'        => sanitize_key( $source ),
 			),
-			array( '%d', '%d', '%f', '%f', '%f', '%s', '%s' )
+			array( '%d', '%d', '%f', '%f', '%s', '%s' )
 		);
 	}
 
