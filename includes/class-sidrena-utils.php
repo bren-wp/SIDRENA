@@ -68,8 +68,8 @@ final class Sidrena_Utils {
 		) {
 			unset( $settings[ $legacy_key ] );
 		}
-		$settings                    = wp_parse_args( $settings, self::defaults() );
-		$settings['retention_days']  = 30;
+		$settings                   = wp_parse_args( $settings, self::defaults() );
+		$settings['retention_days'] = 30;
 		return $settings;
 	}
 
@@ -434,8 +434,8 @@ final class Sidrena_Utils {
 			'archive_dir'  => $base . 'arhiva/',
 			'base_url'     => $url,
 			'archive_url'  => $url . 'arhiva/',
-			'current_dir'   => $base . 'aktualno/',
-			'current_url'   => $url . 'aktualno/',
+			'current_dir'  => $base . 'aktualno/',
+			'current_url'  => $url . 'aktualno/',
 			'manifest'     => $base . 'manifest.json',
 			'manifest_url' => $url . 'manifest.json',
 			'snapshot_dir' => $base . 'public/',
