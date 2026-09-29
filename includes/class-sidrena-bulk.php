@@ -102,7 +102,6 @@ final class Sidrena_Bulk {
 							<th scope="col"><?php esc_html_e( 'Trenutna cijena', 'sidrena' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'Sidrena cijena', 'sidrena' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'Datum', 'sidrena' ); ?></th>
-							<th scope="col"><?php esc_html_e( 'Najniža 30 dana', 'sidrena' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'Javni cjenik', 'sidrena' ); ?></th>
 						</tr>
 					</thead>
@@ -110,16 +109,12 @@ final class Sidrena_Bulk {
 					<?php
 					if ( empty( $items ) ) :
 						?>
-						<tr><td class="sid-table-empty-cell" colspan="7"><strong><?php esc_html_e( 'Katalog web trgovine je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u web trgovinu; SIDRENA će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
+						<tr><td class="sid-table-empty-cell" colspan="6"><strong><?php esc_html_e( 'Katalog web trgovine je prazan', 'sidrena' ); ?></strong><span><?php esc_html_e( 'Dodajte proizvod u web trgovinu; SIDRENA će ga koristiti bez stvaranja paralelnog kataloga.', 'sidrena' ); ?></span></td></tr><?php endif; ?>
 					<?php foreach ( $items as $product ) : ?>
 						<?php
 						$id                 = $product->get_id();
 						$anchor             = get_post_meta( $id, '_sidrena_anchor_price', true );
 						$anchor_date        = get_post_meta( $id, '_sidrena_anchor_date', true );
-						$reference          = class_exists( 'Sidrena_History' ) ? Sidrena_History::sale_reference( $product ) : array(
-							'status' => 'not_applicable',
-							'price'  => '',
-						);
 						$visibility_raw     = get_post_meta( $id, '_sidrena_cjenik_visibility', true );
 						$visibility         = $visibility_raw ? $visibility_raw : 'auto';
 						$catalog_visibility = is_callable( array( $product, 'get_catalog_visibility' ) ) ? $product->get_catalog_visibility() : 'visible';
@@ -139,17 +134,6 @@ final class Sidrena_Bulk {
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
 							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
 							<td><input aria-label="<?php esc_attr_e( 'Datum sidrene cijene', 'sidrena' ); ?>" type="date" name="items[<?php echo esc_attr( $id ); ?>][date]" value="<?php echo esc_attr( $anchor_date ); ?>"></td>
-							<td>
-							<?php
-							if ( 'ready' === ( $reference['status'] ?? '' ) && '' !== ( $reference['price'] ?? '' ) ) :
-								?>
-								<strong><?php echo esc_html( Sidrena_Utils::money( $reference['price'] ) . ' €' ); ?></strong>
-								<?php elseif ( 'incomplete' === ( $reference['status'] ?? '' ) ) : ?>
-								<span class="sid-status-pill is-warn"><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></span>
-								<?php else : ?>
-								—
-								<?php endif; ?>
-							</td>
 							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span>
 							<?php
 							if ( ! $public_included && 'hidden' === $catalog_visibility && 'auto' === $visibility ) :
@@ -157,7 +141,7 @@ final class Sidrena_Bulk {
 								<small class="sid-cell-sub"><?php esc_html_e( 'Trgovina: skriveno', 'sidrena' ); ?></small><?php endif; ?></td>
 						</tr>
 						<tr class="sid-woo-product-details-row">
-							<td colspan="7">
+							<td colspan="6">
 								<details class="sid-row-details">
 									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'šifra, marka, barkod, jedinice i pravilo javnog cjenika', 'sidrena' ); ?></span></summary>
 									<div class="sid-row-details__grid">
