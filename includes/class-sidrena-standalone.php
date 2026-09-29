@@ -698,14 +698,14 @@ final class Sidrena_Standalone {
 		$meta                     = static function ( $name ) use ( $id ) {
 			return $id ? get_post_meta( $id, $name, true ) : '';
 		};
-			$status_raw              = $meta( '_sidrena_standalone_unit_status' );
-			$status                  = $status_raw ? $status_raw : 'review';
-			$availability_raw        = $meta( '_sidrena_standalone_availability' );
-			$availability            = $availability_raw ? $availability_raw : 'dostupno';
-			$current                 = $meta( '_sidrena_standalone_current_price' );
-			$anchor                  = $meta( '_sidrena_standalone_anchor_price' );
-			$reference_group         = Sidrena_Utils::sanitize_reference_group( $meta( '_sidrena_standalone_reference_group' ) );
-			$anchor_date             = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $meta( '_sidrena_standalone_anchor_date' ) ) : '';
+		$status_raw               = $meta( '_sidrena_standalone_unit_status' );
+		$status                   = $status_raw ? $status_raw : 'review';
+		$availability_raw         = $meta( '_sidrena_standalone_availability' );
+		$availability             = $availability_raw ? $availability_raw : 'dostupno';
+		$current                  = $meta( '_sidrena_standalone_current_price' );
+		$anchor                   = $meta( '_sidrena_standalone_anchor_price' );
+		$reference_group          = Sidrena_Utils::sanitize_reference_group( $meta( '_sidrena_standalone_reference_group' ) );
+		$anchor_date              = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, $meta( '_sidrena_standalone_anchor_date' ) ) : '';
 		$location_availability    = $meta( '_sidrena_standalone_location_availability' );
 		$location_availability    = is_array( $location_availability ) ? $location_availability : array();
 		$locations                = Sidrena_Utils::locations();
