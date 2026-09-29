@@ -34,6 +34,7 @@ final class Sidrena_Admin {
 		add_action( 'admin_post_sidrena_save_settings', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_sidrena_save_locations', array( $this, 'save_locations' ) );
 		add_action( 'admin_post_sidrena_generate', array( $this, 'generate' ) );
+		add_action( 'admin_post_sidrena_publish_daily_archive', array( $this, 'publish_daily_archive' ) );
 		add_action( 'admin_post_sidrena_export_archive_index', array( $this, 'export_archive_index' ) );
 		add_action( 'admin_post_sidrena_export_price_history', array( $this, 'export_price_history' ) );
 		add_action( 'admin_post_sidrena_create_public_page', array( $this, 'create_public_page' ) );
@@ -493,6 +494,7 @@ final class Sidrena_Admin {
 	private function dashboard_tab() {
 		$stats            = $this->audit_stats();
 		$last             = get_option( 'sidrena_last_run', array() );
+		$current_refresh  = get_option( 'sidrena_last_current_refresh', array() );
 		$settings         = Sidrena_Utils::settings();
 		$archive_stats    = Sidrena_Utils::archive_stats();
 		$integrity        = Sidrena_Utils::archive_integrity();
@@ -1083,6 +1085,7 @@ final class Sidrena_Admin {
 		}
 
 		$last_ts          = ! empty( $last['generated_at'] ) ? strtotime( (string) $last['generated_at'] ) : 0;
+		$current_ts       = ! empty( $current_refresh['generated_at'] ) ? strtotime( (string) $current_refresh['generated_at'] ) : 0;
 		$last_success     = $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0;
 		$is_stale         = $last_ts && ( time() - $last_ts ) > ( 26 * HOUR_IN_SECONDS );
 		$wp_cron_disabled = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
@@ -1121,14 +1124,16 @@ final class Sidrena_Admin {
 					<p><?php esc_html_e( 'Upravljajte objavom, automatskim generiranjem, distribucijom i arhivom stvarnih cjenika.', 'sidrena' ); ?></p>
 				</div>
 				<div class="sid-head-inline-actions">
-					<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-controls-play"></span><?php esc_html_e( 'Generiraj cjenik odmah', 'sidrena' ); ?></a>
+					<a class="button button-primary sid-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_generate' ), 'sidrena_generate' ) ); ?>"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Osvježi aktualni cjenik', 'sidrena' ); ?></a>
+					<a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_publish_daily_archive' ), 'sidrena_publish_daily_archive' ) ); ?>"><span class="dashicons dashicons-backup"></span><?php esc_html_e( 'Objavi današnji arhivski cjenik', 'sidrena' ); ?></a>
 					<a class="button sid-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=sidrena_check_public_access' ), 'sidrena_check_public_access' ) ); ?>"><span class="dashicons dashicons-shield-alt"></span><?php esc_html_e( 'Provjeri javnu dostupnost', 'sidrena' ); ?></a>
 					<a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-settings' ) ); ?>"><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Postavke objave', 'sidrena' ); ?></a>
 				</div>
 			</div>
 
 			<div class="sid-reference-metrics sid-reference-files-metrics">
-				<?php $this->dashboard_metric( __( 'Zadnja publikacija', 'sidrena' ), $last_ts ? wp_date( 'd.m.Y. H:i', $last_ts ) : '—', $last_success ? 'dashicons-yes-alt' : 'dashicons-warning', $last_success ? __( 'zadnja uspješna objava', 'sidrena' ) : ( $last_ts ? __( 'zadnji pokušaj s upozorenjima', 'sidrena' ) : __( 'još nema objave', 'sidrena' ) ), $last_success && ! $is_stale ? 'ok' : 'warn' ); ?>
+				<?php $this->dashboard_metric( __( 'Dnevna arhiva', 'sidrena' ), $last_ts ? wp_date( 'd.m.Y. H:i', $last_ts ) : '—', $last_success ? 'dashicons-yes-alt' : 'dashicons-warning', $last_success ? __( 'zadnja uspješna objava', 'sidrena' ) : ( $last_ts ? __( 'zadnji pokušaj s upozorenjima', 'sidrena' ) : __( 'još nema objave', 'sidrena' ) ), $last_success && ! $is_stale ? 'ok' : 'warn' ); ?>
+				<?php $this->dashboard_metric( __( 'Aktualni cjenik', 'sidrena' ), $current_ts ? wp_date( 'd.m.Y. H:i', $current_ts ) : '—', 'dashicons-update', $current_ts ? __( 'zadnje osvježavanje bez nove arhive', 'sidrena' ) : __( 'još nije zasebno osvježen', 'sidrena' ), $current_ts ? 'ok' : 'blue' ); ?>
 				<?php $this->dashboard_metric( __( 'Sljedeća publikacija', 'sidrena' ), $next_cron ? wp_date( 'd.m.Y. H:i', $next_cron ) : '—', 'dashicons-clock', $next_cron ? __( 'automatski raspored', 'sidrena' ) : __( 'raspored nije aktivan', 'sidrena' ), $next_cron ? 'blue' : 'warn' ); ?>
 				<?php $this->dashboard_metric( __( 'Aktivne datoteke', 'sidrena' ), count( $current ), 'dashicons-database', $formats ? implode( ' / ', $formats ) : __( 'nema uključenog formata', 'sidrena' ), 'purple' ); ?>
 				<?php $this->dashboard_metric( __( 'Javni cjenik', 'sidrena' ), $html_enabled ? __( 'Dostupan', 'sidrena' ) : __( 'Isključen', 'sidrena' ), 'dashicons-admin-site-alt3', $html_enabled ? __( 'HTML prikaz je uključen', 'sidrena' ) : __( 'uključite ga u Postavkama', 'sidrena' ), $html_enabled ? 'ok' : 'warn' ); ?>
@@ -1695,7 +1700,15 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_generate' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
-		$success = Sidrena_Pricelist::instance()->generate_all();
+		$success = Sidrena_Pricelist::instance()->refresh_current();
+		$this->redirect( 'files', $success ? 'generated' : 'generated_with_errors' );
+	}
+
+	public function publish_daily_archive() {
+		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_publish_daily_archive' ) ) {
+			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
+		}
+		$success = Sidrena_Pricelist::instance()->publish_daily_archive();
 		$this->redirect( 'files', $success ? 'generated' : 'generated_with_errors' );
 	}
 
