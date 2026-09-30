@@ -36,6 +36,9 @@ sidrena_release_gate_assert(
 	'Release Plugin Check must target the exact public-slug production builds.'
 );
 
+$build      = strpos( $release, 'Build WordPress and WooCommerce ZIPs' );
+$repro      = strpos( $release, 'Verify reproducible release build' );
+$fresh      = strpos( $release, 'Verify fresh release build before publishing' );
 $wp_gate    = strpos( $release, 'Plugin Check release gate — WordPress edition' );
 $woo_gate   = strpos( $release, 'Plugin Check release gate — WooCommerce edition' );
 $create_tag = strpos( $release, 'Create verified release tag' );
@@ -44,12 +47,25 @@ $verify     = strpos( $release, 'Verify published GitHub release assets' );
 $cleanup    = strpos( $release, 'Keep only the current GitHub release and version tag' );
 
 sidrena_release_gate_assert(
-	false !== $wp_gate && false !== $woo_gate && false !== $create_tag && false !== $publish && false !== $verify && false !== $cleanup,
-	'Required release validation, publication or cleanup steps are missing.'
+	false !== $build && false !== $repro && false !== $fresh
+	&& false !== $wp_gate && false !== $woo_gate && false !== $create_tag && false !== $publish && false !== $verify && false !== $cleanup,
+	'Required release validation, reproducibility, publication or cleanup steps are missing.'
 );
 sidrena_release_gate_assert(
-	$wp_gate < $create_tag && $woo_gate < $create_tag && $create_tag < $publish && $publish < $verify && $verify < $cleanup,
-	'Release order must validate Plugin Check before tagging/publication and verify published assets before destructive history cleanup.'
+	$build < $repro && $repro < $fresh && $fresh < $wp_gate && $fresh < $woo_gate
+	&& $wp_gate < $create_tag && $woo_gate < $create_tag && $create_tag < $publish && $publish < $verify && $verify < $cleanup,
+	'Release order must prove reproducibility and Plugin Check before tagging/publication and verify published assets before destructive history cleanup.'
+);
+
+$repro_block = substr( $release, $repro, $fresh - $repro );
+sidrena_release_gate_assert(
+	false !== strpos( $repro_block, 'sidrena-release-repeat' )
+	&& 2 === substr_count( $repro_block, './tools/build-editions.sh' )
+	&& false !== strpos( $repro_block, 'SOURCE_DATE_EPOCH=' )
+	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip"' )
+	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip"' )
+	&& false !== strpos( $repro_block, '.zip.sha256' ),
+	'Release workflow must rebuild from the same release target and byte-compare both ZIPs and checksum files before publication.'
 );
 
 $main_guard_start = strpos( $release, '- name: Require stable release branch to match main' );
@@ -72,40 +88,41 @@ sidrena_release_gate_assert(
 
 $resolve_block = substr( $release, $resolve_start, $resolve_end - $resolve_start );
 sidrena_release_gate_assert(
-	false !== strpos( $resolve_block, '"$VERSION" == "1.0.0"' )
+	false === strpos( $resolve_block, '"$VERSION" == "1.0.0"' )
 	&& false !== strpos( $resolve_block, 'REFRESH_RELEASE=true' )
 	&& false !== strpos( $resolve_block, 'CREATE_RELEASE_TAG=true' )
+	&& false !== strpos( $resolve_block, 'controlled verified release refresh is required' )
 	&& false === strpos( $resolve_block, '0.9.0' )
 	&& false === strpos( $resolve_block, '1.0.23' )
 	&& false === strpos( $resolve_block, 'git push origin "$TAG_NAME"' ),
-	'Only the consolidated 1.0.0 release may use the controlled existing-tag refresh path, and tag creation must remain deferred.'
+	'Any existing current-version tag may use the controlled refresh path only after the stable release branch matches main; tag creation must remain deferred.'
 );
 
-$retarget_start = strpos( $release, '- name: Retarget controlled 1.0.0 release tag before asset mutation' );
+$retarget_start = strpos( $release, '- name: Retarget controlled release tag before asset mutation' );
 $refresh_start  = strpos( $release, '- name: Refresh existing release metadata and controlled assets when required' );
 sidrena_release_gate_assert(
 	false !== $retarget_start && false !== $refresh_start && $retarget_start < $refresh_start && $refresh_start < $verify,
-	'Controlled 1.0.0 retarget must occur before release asset mutation and published-asset verification.'
+	'Controlled release retarget must occur before release asset mutation and published-asset verification.'
 );
 
 $retarget_block = substr( $release, $retarget_start, $refresh_start - $retarget_start );
 sidrena_release_gate_assert(
-	false !== strpos( $retarget_block, "env.VERSION == '1.0.0'" )
+	false === strpos( $retarget_block, "env.VERSION == '1.0.0'" )
 	&& false !== strpos( $retarget_block, 'test "$RELEASE_TARGET" = "$GITHUB_SHA"' )
 	&& false !== strpos( $retarget_block, 'REMOTE_TAG_REF="$(git ls-remote origin "refs/tags/$TAG_NAME"' )
 	&& false !== strpos( $retarget_block, '--force-with-lease="refs/tags/$TAG_NAME:$REMOTE_TAG_REF"' )
 	&& false === strpos( $retarget_block, 'git push --force origin' ),
-	'Existing 1.0.0 tag refresh must be main-bound and protected by remote-ref force-with-lease.'
+	'Existing current-version tag refresh must be main-bound and protected by remote-ref force-with-lease.'
 );
 
 $refresh_block = substr( $release, $refresh_start, $verify - $refresh_start );
 sidrena_release_gate_assert(
-	false !== strpos( $refresh_block, 'test "$VERSION" = "1.0.0"' )
+	false === strpos( $refresh_block, 'test "$VERSION" = "1.0.0"' )
 	&& false !== strpos( $refresh_block, 'REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}"' )
 	&& false !== strpos( $refresh_block, 'test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"' )
 	&& false !== strpos( $refresh_block, 'gh release upload "$TAG_NAME"' )
 	&& false !== strpos( $refresh_block, '--clobber --repo "$GITHUB_REPOSITORY"' ),
-	'Existing 1.0.0 assets may be replaced only after the remote tag resolves to the validated release target.'
+	'Existing release assets may be replaced only after the remote tag resolves to the validated release target.'
 );
 
 $cleanup_block = substr( $release, $cleanup );
