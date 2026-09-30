@@ -136,6 +136,20 @@ rewind( $roundtrip );
 sidrena_import_stream_assert( $roundtrip_fields === Sidrena_Utils::csv_read_row( $roundtrip, ';' ), 'Central CSV reader/writer dialect must roundtrip quoted fields.' );
 fclose( $roundtrip );
 
+$iterate_admin_rows = new ReflectionMethod( 'Sidrena_Admin', 'iterate_import_rows_with_product_ids' );
+$iterate_admin_rows->setAccessible( true );
+$chunk_stream = fopen( 'php://temp', 'w+b' );
+fwrite( $chunk_stream, "sku;price\n" );
+for ( $i = 1; $i <= 251; ++$i ) {
+	fwrite( $chunk_stream, "SKU{$i};{$i}\n" );
+}
+rewind( $chunk_stream );
+Sidrena_Utils::csv_read_row( $chunk_stream, ';' );
+$chunked_rows = iterator_to_array( $iterate_admin_rows->invoke( $admin, $chunk_stream, ';', null, 250 ), false );
+sidrena_import_stream_assert( 251 === count( $chunked_rows ), 'Woo admin chunk iterator must cross a 250-row batch boundary without dropping rows.' );
+sidrena_import_stream_assert( isset( $chunked_rows[250]['row'][0] ) && 'SKU251' === $chunked_rows[250]['row'][0], 'Woo admin chunk iterator must preserve deterministic row order across batches.' );
+fclose( $chunk_stream );
+
 $validate_price = new ReflectionMethod( 'Sidrena_Admin', 'validated_import_price' );
 $validate_price->setAccessible( true );
 sidrena_import_stream_assert( '1234.56' === $validate_price->invoke( $admin, '1.234,56' ), 'Woo financial CSV validation must preserve a valid Croatian decimal.' );
@@ -182,6 +196,14 @@ sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' 
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );
 sidrena_import_stream_assert( false === strpos( $admin_source, 'if ( $processed > 50000 )' ), 'Woo imports must not partially import then silently stop at the row limit.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'private function iterate_import_rows_with_product_ids( $stream, $delimiter, $sku_index, $chunk_size = 250 )' ), 'Woo imports must stream bounded product-lookup chunks.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, '$chunk_size = min( 250, max( 1, absint( $chunk_size ) ) );' ), 'Woo import chunk size must remain bounded to 250 rows.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'private function product_id_index_for_codes( $codes )' ), 'Woo imports must use a bounded batch product-code index.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'if ( count( $keys ) >= 500 )' ), 'Woo batch product-code lookup must retain a 500-key defensive bound.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, "wc_product_meta_lookup" ), 'Woo batch SKU lookup must use the indexed WooCommerce product lookup table.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'GROUP BY sku' ) && false !== strpos( $admin_source, 'GROUP BY pm.meta_value' ), 'Woo batch lookup must return at most one deterministic row per SKU or SIDRENA code.' );
+sidrena_import_stream_assert( 3 === substr_count( $admin_source, 'iterate_import_rows_with_product_ids(' ), 'Both Woo CSV import paths must use the shared bounded chunk iterator.' );
+sidrena_import_stream_assert( false === strpos( $admin_source, 'Sidrena_Utils::find_product_id_by_code( $sku )' ), 'Woo CSV imports must not restore per-row product-code lookups.' );
 sidrena_import_stream_assert( false !== strpos( $admin_source, 'private function prepare_uploaded_csv_stream( $tmp_name, $row_limit = 50000 )' ), 'Woo admin CSV import must prepare the validated upload file as a direct stream.' );
 sidrena_import_stream_assert( false !== strpos( $admin_source, "fopen( \$tmp_name, 'rb' )" ), 'Woo admin CSV import must open the validated upload temp file directly.' );
 sidrena_import_stream_assert( false === strpos( $admin_source, "fopen( 'php://temp/maxmemory:1048576', 'w+b' )" ), 'Woo admin CSV import must not copy the complete upload into a second temp stream.' );
