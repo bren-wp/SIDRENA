@@ -220,27 +220,24 @@ final class Sidrena_History {
 			ARRAY_A
 		);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded 30-day read from SIDRENA-owned audit table.
-		$rows = $wpdb->get_results(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact aggregate over the indexed 30-day history window; avoids truncating high-frequency price histories.
+		$window_min = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s ORDER BY id ASC LIMIT 2000',
+				'SELECT MIN(price) FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL',
 				$table,
 				$key,
 				$id,
 				$window_mysql,
 				$start_mysql
-			),
-			ARRAY_A
+			)
 		);
 
 		$values = array();
 		if ( is_array( $baseline ) && null !== $baseline['price'] && '' !== $baseline['price'] ) {
 			$values[] = (float) $baseline['price'];
 		}
-		foreach ( (array) $rows as $row ) {
-			if ( null !== $row['price'] && '' !== $row['price'] ) {
-				$values[] = (float) $row['price'];
-			}
+		if ( null !== $window_min && '' !== $window_min ) {
+			$values[] = (float) $window_min;
 		}
 
 		$auto_ready = ! empty( $baseline ) && ! empty( $values );
