@@ -10,7 +10,7 @@
 
 
 $root = isset( $argv[1] ) && is_dir( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : dirname( __DIR__, 2 );
-$main = is_file( $root . '/sidrena-woocommerce.php' ) ? $root . '/sidrena-woocommerce.php' : $root . '/editions/woocommerce/sidrena-woocommerce.php';
+$main = is_file( $root . '/brendigo-sidrena-cijena.php' ) ? $root . '/brendigo-sidrena-cijena.php' : $root . '/editions/woocommerce/brendigo-sidrena-cijena.php';
 
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
@@ -18,7 +18,7 @@ define( 'SIDRENA_VERSION', '0.4.0' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
 define( 'SIDRENA_FILE', $main );
 define( 'SIDRENA_DIR', $root . '/' );
-define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/sidrena-woocommerce/' );
+define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/brendigo-sidrena-cijena/' );
 
 class WooCommerce {}
 class WC_Product {}
