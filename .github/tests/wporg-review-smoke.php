@@ -250,10 +250,16 @@ sidrena_wporg_assert(
 );
 
 sidrena_wporg_assert(
-	false !== strpos( $admin_source, "0 !== strpos( \$url, \$base )" )
+	false !== strpos( $admin_source, 'private function is_allowed_public_check_url( $url, $base )' )
 	&& false !== strpos( $admin_source, 'wp_http_validate_url( $url )' )
-	&& 1 === preg_match( "/'reject_unsafe_urls'\\s*=>\\s*true/", $admin_source ),
-	'The sole HTTP public-access check must remain constrained to validated same-site SIDRENA publication URLs.'
+	&& false !== strpos( $admin_source, '$url_scheme !== $base_scheme' )
+	&& false !== strpos( $admin_source, '$url_host !== $base_host' )
+	&& false !== strpos( $admin_source, '$url_port !== $base_port' )
+	&& false !== strpos( $admin_source, 'normalize_public_check_path' )
+	&& 1 === preg_match( "/'reject_unsafe_urls'\\s*=>\\s*true/", $admin_source )
+	&& 1 === preg_match( "/'redirection'\\s*=>\\s*0/", $admin_source )
+	&& false === strpos( $admin_source, "0 !== strpos( \$url, \$base )" ),
+	'The sole HTTP public-access check must remain constrained to a canonical same-origin SIDRENA publication path without redirects.'
 );
 
 sidrena_wporg_assert(
