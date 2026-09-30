@@ -108,16 +108,17 @@ def normalize_pot_project_id() -> bool:
 
     version = current_plugin_version()
     text = pot.read_text(encoding="utf-8")
-    replacement = f'"Project-Id-Version: Sidrena {version}\n"'
-    updated, count = re.subn(
-        r'"Project-Id-Version: Sidrena [^"\n]*\n"',
-        replacement,
-        text,
-        count=1,
-    )
-    if count == 0 and 'msgstr ""\n' in text:
+    replacement = f'"Project-Id-Version: Sidrena {version}\\n"'
+    lines = text.splitlines(keepends=True)
+    updated = None
+    for index, line in enumerate(lines):
+        if line.startswith('"Project-Id-Version: Sidrena '):
+            lines[index] = replacement + "\n"
+            updated = "".join(lines)
+            break
+    if updated is None and 'msgstr ""\n' in text:
         updated = text.replace('msgstr ""\n', 'msgstr ""\n' + replacement + "\n", 1)
-    if updated != text:
+    if updated is not None and updated != text:
         pot.write_text(updated, encoding="utf-8")
         return True
     return False
