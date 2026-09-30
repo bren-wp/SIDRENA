@@ -71,4 +71,15 @@ sidrena_input_hardening_assert(
 	'Every admin CSV export must use the centralized checked download stream and nosniff header.'
 );
 
+sidrena_input_hardening_assert(
+	false !== strpos( $admin, 'private function is_allowed_public_check_url( $url, $base )' )
+	&& false !== strpos( $admin, "wp_parse_url( $url )" )
+	&& false !== strpos( $admin, "rtrim( (string) ( $url_parts['host'] ?? '' ), '.' )" )
+	&& false !== strpos( $admin, '$url_port !== $base_port' )
+	&& false !== strpos( $admin, 'normalize_public_check_path' )
+	&& false !== strpos( $admin, "'redirection'         => 0" )
+	&& false === strpos( $admin, "0 !== strpos( $url, $base )" ),
+	'Public HTTP self-check must validate an exact same-origin canonical path and must not follow redirects.'
+);
+
 fwrite( STDOUT, "SIDRENA input hardening smoke test passed.\n" );
