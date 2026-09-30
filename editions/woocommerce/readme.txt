@@ -1,10 +1,10 @@
-=== SIDRENA ===
+=== Brendigo Sidrena Cijena ===
 Contributors: brendigo
 Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,15 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.3 =
+
+* Uses the WordPress.org public identity **Brendigo Sidrena Cijena** with slug/text-domain `brendigo-sidrena-cijena` and canonical main plugin file `brendigo-sidrena-cijena.php`.
+* Declares WooCommerce High-Performance Order Storage (HPOS) compatibility only after source audit confirmed SIDRENA does not read or write legacy order posts/order meta directly.
+* Adds real WooCommerce HPOS QA that verifies the compatibility declaration, enables HPOS with SIDRENA active and exercises order create/read/delete through WooCommerce CRUD APIs.
+* Keeps `Requires Plugins: woocommerce` and the runtime dependency guard.
+* Keeps WooCommerce references descriptive only; the plugin name and public slug do not use WooCommerce as the plugin identity.
+* Retains the native WordPress admin color scheme for the SIDRENA menu and icon.
 
 = 1.0.2 =
 
