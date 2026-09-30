@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.3 =
+* WooCommerce izdanje sada koristi WordPress.org javni identitet `Brendigo Sidrena Cijena`, slug/text-domain `brendigo-sidrena-cijena` i canonical main plugin file `brendigo-sidrena-cijena.php`.
+* Woo release ZIP koristi slug-prefiks `brendigo-sidrena-cijena-<verzija>.zip`; stari `sidrena-woocommerce.php` entrypoint više se ne distribuira.
+* Edition-conflict guard više ne određuje izdanje iz imena datoteke nego iz eksplicitnog entrypoint markera, pa canonical rename ne slabi zaštitu od istodobne aktivacije oba izdanja.
+* Dodana je eksplicitna WooCommerce HPOS deklaracija za `custom_order_tables`, nakon audita koji potvrđuje da SIDRENA ne čita niti piše legacy order post/order meta putove.
+* Real wp-admin QA sada uključuje HPOS, provjerava da WooCommerce prepoznaje SIDRENA kao kompatibilnu te izvršava WooCommerce order create/read/delete kroz CRUD API dok je SIDRENA aktivna.
+* Zadržani su `Requires Plugins: woocommerce`, runtime dependency guard, PHP 7.4 kompatibilnost i odvojeni WordPress/WooCommerce paketi.
+* WordPress.org review guardovi provjeravaju exact Plugin Name, slug/text-domain, canonical entrypoint, readme naslov i release naziv paketa.
+
 = 1.0.2 =
 * Standalone CSV import sada čita upload izravno kao stream iz privremene datoteke uz bounded obradu redaka, bez učitavanja cijelog importa u memoriju.
 * CSV delimiter/dialect obrada dodatno je učvršćena za PHP 8.4, uz regression testove za rubne i neispravne ulaze.
