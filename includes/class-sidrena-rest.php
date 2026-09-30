@@ -36,6 +36,9 @@ final class Sidrena_REST {
 			add_action( 'woocommerce_new_product_variation', array( $this, 'invalidate_woocommerce_catalog_index' ), 30 );
 			add_action( 'transition_post_status', array( $this, 'maybe_invalidate_product_status' ), 30, 3 );
 			add_action( 'before_delete_post', array( $this, 'maybe_invalidate_deleted_product' ), 30, 2 );
+			add_action( 'added_post_meta', array( $this, 'maybe_invalidate_catalog_membership_meta' ), 30, 4 );
+			add_action( 'updated_post_meta', array( $this, 'maybe_invalidate_catalog_membership_meta' ), 30, 4 );
+			add_action( 'deleted_post_meta', array( $this, 'maybe_invalidate_catalog_membership_meta' ), 30, 4 );
 		}
 	}
 
@@ -56,6 +59,18 @@ final class Sidrena_REST {
 		$post_type = is_object( $post ) && isset( $post->post_type )
 			? (string) $post->post_type
 			: (string) get_post_type( absint( $post_id ) );
+		if ( in_array( $post_type, array( 'product', 'product_variation' ), true ) ) {
+			$this->invalidate_woocommerce_catalog_index();
+		}
+	}
+
+	public function maybe_invalidate_catalog_membership_meta( $meta_id, $object_id, $meta_key, $meta_value ) {
+		unset( $meta_id, $meta_value );
+		if ( '_sidrena_cjenik_visibility' !== (string) $meta_key ) {
+			return;
+		}
+
+		$post_type = (string) get_post_type( absint( $object_id ) );
 		if ( in_array( $post_type, array( 'product', 'product_variation' ), true ) ) {
 			$this->invalidate_woocommerce_catalog_index();
 		}
