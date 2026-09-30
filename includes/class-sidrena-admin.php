@@ -2162,11 +2162,7 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_missing' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-nedostajuce-sidrene-cijene.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-nedostajuce-sidrene-cijene.csv' );
 		$this->safe_fputcsv( $out, array( 'sku', 'naziv', 'anchor_price', 'anchor_date', 'reference_group' ), ';' );
 		foreach ( $this->catalog_items() as $item ) {
 			if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
@@ -2185,14 +2181,7 @@ final class Sidrena_Admin {
 		}
 
 		global $wpdb;
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-povijest-cijena-' . esc_attr( wp_date( 'Y-m-d' ) ) . '.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $out ) {
-			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
-		}
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-povijest-cijena-' . wp_date( 'Y-m-d' ) . '.csv' );
 		$this->safe_fputcsv(
 			$out,
 			array( 'vrsta_zapisa', 'zabiljezeno', 'product_id', 'variation_id', 'service_id', 'sifra', 'naziv', 'cijena', 'redovna_cijena', 'sidrena_cijena', 'izvor' ),
@@ -2266,6 +2255,29 @@ final class Sidrena_Admin {
 	}
 
 
+	private function open_csv_download( $filename ) {
+		$filename = sanitize_file_name( (string) $filename );
+		if ( '' === $filename || '.csv' !== strtolower( substr( $filename, -4 ) ) ) {
+			wp_die( esc_html__( 'Neispravan naziv izvozne datoteke.', 'sidrena' ) );
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'X-Content-Type-Options: nosniff' );
+
+		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! is_resource( $out ) ) {
+			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
+		}
+		if ( false === fwrite( $out, "\xEF\xBB\xBF" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			wp_die( esc_html__( 'Nije moguće zapisati izlaznu datoteku.', 'sidrena' ) );
+		}
+
+		return $out;
+	}
+
 	private function safe_fputcsv( $handle, $fields, $delimiter = ',' ) {
 		$safe = array();
 		foreach ( (array) $fields as $field ) {
@@ -2279,14 +2291,7 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-evidencija-arhive-' . esc_attr( wp_date( 'Y-m-d' ) ) . '.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $out ) {
-			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
-		}
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-evidencija-arhive-' . wp_date( 'Y-m-d' ) . '.csv' );
 		$this->safe_fputcsv( $out, array( 'lokacija', 'vrsta_objekta', 'katalog', 'format', 'naziv_datoteke', 'objavljeno', 'cuvati_do', 'redaka', 'velicina_bajta', 'sha256', 'javni_url' ), ';' );
 
 		foreach ( Sidrena_Utils::archive_index() as $entry ) {
@@ -2316,11 +2321,7 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-lokacije-predlozak.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-lokacije-predlozak.csv' );
 		$this->safe_fputcsv( $out, array( 'location_id', 'location_code', 'product_id', 'sku', 'naziv', 'price', 'anchor_price', 'availability' ), ';' );
 		foreach ( Sidrena_Utils::locations() as $location ) {
 			if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
