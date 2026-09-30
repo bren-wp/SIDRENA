@@ -154,6 +154,4 @@ final class Sidrena_Service_History {
 			$this->capture_service( $service_id, null, 'daily' );
 		}
 	}
-
-
 }
