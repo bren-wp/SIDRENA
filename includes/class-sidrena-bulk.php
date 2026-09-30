@@ -288,6 +288,9 @@ final class Sidrena_Bulk {
 		}
 
 		Sidrena_Audit::log( 'bulk_catalog_save', 'success', sprintf( 'Masovno spremljeno %d proizvoda.', $updated ), array( 'count' => $updated ) );
+		if ( $updated > 0 && class_exists( 'Sidrena_REST' ) ) {
+			Sidrena_REST::instance()->invalidate_woocommerce_catalog_index();
+		}
 		Sidrena_Pricelist::queue_regeneration();
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Same verified sidrena_bulk_save form submission.
 		$page = max( 1, isset( $_POST['catalog_page'] ) ? absint( $_POST['catalog_page'] ) : 1 );

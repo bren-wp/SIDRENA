@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_REST {
+	private const WC_INDEX_TRANSIENT   = 'sidrena_rest_wc_catalog_index_v1';
+	private const WC_INDEX_CACHE_TTL   = 300;
+	private const WC_INDEX_CACHE_LIMIT = 10000;
+
 	private static $instance;
 
 	public static function instance() {
@@ -24,6 +28,37 @@ final class Sidrena_REST {
 
 	public function hooks() {
 		add_action( 'rest_api_init', array( $this, 'routes' ) );
+
+		if ( Sidrena_Utils::is_woocommerce_edition() ) {
+			add_action( 'woocommerce_update_product', array( $this, 'invalidate_woocommerce_catalog_index' ), 30 );
+			add_action( 'woocommerce_update_product_variation', array( $this, 'invalidate_woocommerce_catalog_index' ), 30 );
+			add_action( 'woocommerce_new_product', array( $this, 'invalidate_woocommerce_catalog_index' ), 30 );
+			add_action( 'woocommerce_new_product_variation', array( $this, 'invalidate_woocommerce_catalog_index' ), 30 );
+			add_action( 'transition_post_status', array( $this, 'maybe_invalidate_product_status' ), 30, 3 );
+			add_action( 'before_delete_post', array( $this, 'maybe_invalidate_deleted_product' ), 30, 2 );
+		}
+	}
+
+	public function invalidate_woocommerce_catalog_index() {
+		delete_transient( self::WC_INDEX_TRANSIENT );
+	}
+
+	public function maybe_invalidate_product_status( $new_status, $old_status, $post ) {
+		if ( $new_status === $old_status || ! is_object( $post ) || ! isset( $post->post_type ) ) {
+			return;
+		}
+		if ( in_array( $post->post_type, array( 'product', 'product_variation' ), true ) ) {
+			$this->invalidate_woocommerce_catalog_index();
+		}
+	}
+
+	public function maybe_invalidate_deleted_product( $post_id, $post = null ) {
+		$post_type = is_object( $post ) && isset( $post->post_type )
+			? (string) $post->post_type
+			: (string) get_post_type( absint( $post_id ) );
+		if ( in_array( $post_type, array( 'product', 'product_variation' ), true ) ) {
+			$this->invalidate_woocommerce_catalog_index();
+		}
 	}
 
 	public function routes() {
@@ -294,18 +329,61 @@ final class Sidrena_REST {
 			return $this->realtime_woocommerce_location_products( $location, $page, $per_page );
 		}
 
-		$offset = ( $page - 1 ) * $per_page;
-		$items  = array();
-		$total  = 0;
+		$cached_ids = get_transient( self::WC_INDEX_TRANSIENT );
+		if ( is_array( $cached_ids ) ) {
+			$cached_page = $this->realtime_woocommerce_cached_page( $cached_ids, $location, $page, $per_page );
+			if ( null !== $cached_page ) {
+				return $cached_page;
+			}
+			$this->invalidate_woocommerce_catalog_index();
+		}
+
+		$offset    = ( $page - 1 ) * $per_page;
+		$items     = array();
+		$total     = 0;
+		$cache_ids = array();
+		$cacheable = true;
 
 		foreach ( $this->realtime_woocommerce_products() as $product ) {
 			if ( ! $this->has_realtime_location_availability( $product, $location ) ) {
 				continue;
 			}
+			if ( $cacheable ) {
+				if ( count( $cache_ids ) < self::WC_INDEX_CACHE_LIMIT ) {
+					$cache_ids[] = absint( $product->get_id() );
+				} else {
+					$cacheable = false;
+					$cache_ids = array();
+				}
+			}
 			if ( $total >= $offset && count( $items ) < $per_page ) {
 				$items[] = $this->product_item( $product, $location );
 			}
 			++$total;
+		}
+
+		if ( $cacheable ) {
+			set_transient( self::WC_INDEX_TRANSIENT, $cache_ids, self::WC_INDEX_CACHE_TTL );
+		}
+
+		return array(
+			'items'       => $items,
+			'total'       => $total,
+			'total_pages' => $total ? (int) ceil( $total / $per_page ) : 0,
+		);
+	}
+
+	private function realtime_woocommerce_cached_page( $ids, $location, $page, $per_page ) {
+		$total  = count( $ids );
+		$offset = ( $page - 1 ) * $per_page;
+		$items  = array();
+
+		foreach ( array_slice( $ids, $offset, $per_page ) as $product_id ) {
+			$product = wc_get_product( absint( $product_id ) );
+			if ( ! $product || ! $product->exists() || ! $this->is_realtime_woocommerce_product_allowed( $product ) ) {
+				return null;
+			}
+			$items[] = $this->product_item( $product, $location );
 		}
 
 		return array(

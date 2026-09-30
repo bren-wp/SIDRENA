@@ -25,6 +25,7 @@ Sidrena changelog
 * Production hardening obuhvaća strožu ulaznu validaciju, bounded batch obradu, sigurnije lokacijske selektore, reproducible build i release provjere.
 * External server cron / WP-CLI način sada je potpuno mode-aware i u dashboardu/Cjenicima: izostanak internog dnevnog WP-Crona više se ne prikazuje kao greška kada je external scheduler namjerno odabran.
 * Svi administratorski CSV exporti koriste zajednički provjereni output stream, sanitizirani naziv datoteke, nosniff zaglavlje i eksplicitnu provjeru otvaranja/BOM zapisa prije izvoza.
+* WooCommerce javni REST cjenik sada cacheira samo bounded ravni indeks javnih product/variation ID-eva, invalidira ga na promjenama kataloga i izbjegava ponovno skeniranje cijelog kataloga za svaku sljedeću stranicu.
 * Deaktivacija ne briše poslovne podatke; uninstall ima eksplicitnu politiku zadržavanja ili namjernog brisanja podataka.
 * Oba izdanja zadržavaju javne slugove/text-domainove i svugdje se korisniku predstavljaju kao SIDRENA.
 * Plugin nema premium module, paywall, trial, license key, telemetriju, skriveni tracking ni remote executable code.

@@ -79,6 +79,7 @@ $GLOBALS['sidrena_wc_products'] = array(
 	22 => new Mock_Sidrena_Product( 22, 'variation', array(), 2 ),
 );
 $GLOBALS['sidrena_wc_queries'] = array();
+$GLOBALS['sidrena_transients'] = array();
 
 function wc_get_products( $args ) {
 	$GLOBALS['sidrena_wc_queries'][] = $args;
@@ -104,8 +105,13 @@ function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_-]
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
 function absint( $value ) { return abs( (int) $value ); }
 function get_post_modified_time( $format, $gmt, $id ) { unset( $format, $gmt ); return '2026-09-24T10:00:00+00:00'; }
+function get_transient( $key ) { return array_key_exists( $key, $GLOBALS['sidrena_transients'] ) ? $GLOBALS['sidrena_transients'][ $key ] : false; }
+function set_transient( $key, $value, $expiration ) { unset( $expiration ); $GLOBALS['sidrena_transients'][ $key ] = $value; return true; }
+function delete_transient( $key ) { unset( $GLOBALS['sidrena_transients'][ $key ] ); return true; }
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-rest.php';
+
+$bulk_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-bulk.php' );
 
 function sidrena_rest_page_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -151,5 +157,23 @@ sidrena_rest_page_assert( array( 1, 22 ) === array_column( $webshop_page['items'
 sidrena_rest_page_assert( ! isset( $GLOBALS['sidrena_wc_queries'][0]['paginate'] ), 'Woo REST flattened iterator must not use parent-product paginate totals.' );
 sidrena_rest_page_assert( 100 === $GLOBALS['sidrena_wc_queries'][0]['limit'], 'Webshop Woo REST iterator must fetch bounded catalog batches.' );
 sidrena_rest_page_assert( 7 === $GLOBALS['sidrena_anchor_calls'], 'Woo REST must hydrate expensive product metadata only for requested physical pages, the explicit webshop item, and the requested webshop page.' );
+sidrena_rest_page_assert(
+	array( 1, 22, 20, 21, 5 ) === ( $GLOBALS['sidrena_transients']['sidrena_rest_wc_catalog_index_v1'] ?? array() ),
+	'First webshop REST scan must cache only the flattened public product IDs.'
+);
+
+$query_count = count( $GLOBALS['sidrena_wc_queries'] );
+$webshop_page2 = $method->invoke( $rest, array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ), 2, 2 );
+sidrena_rest_page_assert( array( 20, 21 ) === array_column( $webshop_page2['items'], 'id' ), 'Cached Woo REST second page must preserve flattened variation ordering.' );
+sidrena_rest_page_assert( $query_count === count( $GLOBALS['sidrena_wc_queries'] ), 'Cached Woo REST pages must not rescan the complete Woo catalog.' );
+sidrena_rest_page_assert( 5 === $webshop_page2['total'], 'Cached Woo REST page must preserve the exact public catalog total.' );
+
+$rest->invalidate_woocommerce_catalog_index();
+sidrena_rest_page_assert( false === get_transient( 'sidrena_rest_wc_catalog_index_v1' ), 'Woo catalog update invalidation must remove the REST catalog index cache.' );
+sidrena_rest_page_assert(
+	false !== $bulk_source
+	&& false !== strpos( $bulk_source, 'Sidrena_REST::instance()->invalidate_woocommerce_catalog_index();' ),
+	'Bulk catalog visibility edits must explicitly invalidate the Woo REST catalog index.'
+);
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );
