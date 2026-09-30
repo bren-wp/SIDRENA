@@ -38,20 +38,20 @@ jobs:
           else
             VERSION="${GITHUB_REF_NAME#release/}"
           fi
-          WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
-          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
-          WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1)"
-          WOO_STABLE="$(sed -n 's/^Stable tag: //p' editions/woocommerce/readme.txt | head -n1)"
+          WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1 | tr -d '\r')"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1 | tr -d '\r')"
+          WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1 | tr -d '\r')"
+          WOO_STABLE="$(sed -n 's/^Stable tag: //p' editions/woocommerce/readme.txt | head -n1 | tr -d '\r')"
+          test -n "$VERSION"
           test "$VERSION" = "$WP_VERSION"
           test "$VERSION" = "$WOO_VERSION"
           test "$VERSION" = "$WP_STABLE"
           test "$VERSION" = "$WOO_STABLE"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "TAG_NAME=v$VERSION" >> "$GITHUB_ENV"
-          echo "REFRESH_RELEASE=false" >> "$GITHUB_ENV"
-          echo "CREATE_RELEASE_TAG=false" >> "$GITHUB_ENV"
+          echo "RELEASE_TARGET=$GITHUB_SHA" >> "$GITHUB_ENV"
 
-      - name: Require stable release branch to match main
+      - name: Require release branch to match main
         if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
         run: |
@@ -63,51 +63,6 @@ jobs:
             echo "release=$GITHUB_SHA main=$MAIN_SHA" >&2
             exit 1
           fi
-      - name: Resolve or create release tag from release branch
-        if: startsWith(github.ref, 'refs/heads/release/')
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch --tags --force
-
-          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            EXISTING_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
-            if [[ "$EXISTING_TAG_TARGET" == "$GITHUB_SHA" ]]; then
-              echo "Tag $TAG_NAME already points at the release commit."
-            else
-              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled verified release refresh is required."
-              echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
-            fi
-          else
-            echo "Tag $TAG_NAME does not exist; it will be created only after the fresh build and Plugin Check gates pass."
-            echo "CREATE_RELEASE_TAG=true" >> "$GITHUB_ENV"
-          fi
-
-      - name: Resolve tag target and release state
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          git fetch --tags --force
-          if [[ "${REFRESH_RELEASE:-false}" == "true" || "${CREATE_RELEASE_TAG:-false}" == "true" ]]; then
-            RELEASE_TARGET="$GITHUB_SHA"
-          else
-            RELEASE_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
-          fi
-          test -n "$RELEASE_TARGET"
-          echo "RELEASE_TARGET=$RELEASE_TARGET" >> "$GITHUB_ENV"
-
-          RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}" --jq '.id' 2>/dev/null || true)"
-          if [[ "$RELEASE_ID" =~ ^[0-9]+$ ]]; then
-            echo "RELEASE_EXISTS=true" >> "$GITHUB_ENV"
-            echo "EXISTING_RELEASE_ID=$RELEASE_ID" >> "$GITHUB_ENV"
-          else
-            echo "RELEASE_EXISTS=false" >> "$GITHUB_ENV"
-            echo "EXISTING_RELEASE_ID=" >> "$GITHUB_ENV"
-          fi
 
       - name: Prepare release body
         shell: bash
@@ -115,24 +70,21 @@ jobs:
           cat > "$RUNNER_TEMP/sidrena-release-body.md" <<EOF
           ## SIDRENA $VERSION
 
-          SIDRENA $VERSION je produkcijsko izdanje compliance i digital-price-list sustava s dva zasebna instalacijska plugina:
+          SIDRENA $VERSION je produkcijsko izdanje compliance i digital-price-list sustava s dva zasebna instalacijska plugina.
 
-          - **SIDRENA — WordPress izdanje** — za WordPress bez WooCommerce dependencyja, s vlastitim katalogom proizvoda i usluga.
-          - **SIDRENA — WooCommerce izdanje** — za postojeće WooCommerce proizvode i varijacije, bez dupliciranja kataloga.
+          - **SIDRENA — WordPress izdanje** — samostalni WordPress katalog proizvoda i usluga bez WooCommerce dependencyja.
+          - **SIDRENA — WooCommerce izdanje** — postojeći WooCommerce proizvodi i varijacije ostaju izvor kataloga.
 
-          Oba instalacijska paketa uključuju zaključani SIDRENA ruleset, odvojene aktualne i arhivske cjenike, neograničenu povijest promjena cijena, atomic publication, CSV/XML, javni HTML/REST pristup, lokacije, automatizaciju, responzivno administratorsko sučelje i dokumentaciju. Teški WordPress.org screenshotovi i marketinški branding asseti ostaju u izvornom repozitoriju i nisu dio instalacijskog ZIP-a.
+          Ovo izdanje usklađuje instalacijske pakete s WordPress.org slug pravilima: glavni PHP file u svakom ZIP-u prati javni slug/folder, dok javni naziv plugina ostaje `SIDRENA`.
 
-          Time su instalacijski ZIP-ovi namjerno zadržani ispod 1,5 MiB radi kompatibilnosti s čestim shared-hosting PHP upload ograničenjima. WordPress.org screenshotovi i dalje se snimaju iz stvarnog aktivnog wp-admin okruženja.
-
-          Opcionalna jednokratna instalacija i početno postavljanje od strane brendiga: 80 EUR. Nije uvjet za rad plugina niti za pristup funkcijama.
+          Release gate gradi reproducibilne ZIP pakete, provjerava SHA-256, testira dokumentacijske PDF-ove, pokreće WordPress Plugin Check za oba izdanja i provjerava da objavljeni release asseti sadrže samo očekivane datoteke.
 
           Podrška: sidrena@brendigo.com
           Autor: brendigo
           Službena stranica: https://brendigo.com/sidrene-cijene/
           EOF
 
-      - name: Install PDF build and render dependencies
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+      - name: Install build and render dependencies
         shell: bash
         run: |
           set -euo pipefail
@@ -141,14 +93,12 @@ jobs:
           sudo apt-get install -y --no-install-recommends poppler-utils
 
       - name: Build WordPress and WooCommerce ZIPs
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
 
       - name: Verify reproducible release build
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -161,8 +111,7 @@ jobs:
           cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
           cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
 
-      - name: Verify fresh release build before publishing
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+      - name: Verify release ZIPs and slug entrypoints
         shell: bash
         run: |
           set -euo pipefail
@@ -174,35 +123,44 @@ jobs:
           unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
           unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
 
+          WP="$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici"
+          WOO="$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena"
+          test -f "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          test -f "$WOO/brendigo-sidrena-cijena.php"
+          test ! -f "$WP/sidrena-wordpress.php"
+          test ! -f "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'Plugin Name: SIDRENA' "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          grep -Fq 'Plugin Name: SIDRENA' "$WOO/brendigo-sidrena-cijena.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/brendigo-sidrena-cijena.php"
+          grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WOO/brendigo-sidrena-cijena.php"
+          ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+
       - name: Render and validate release PDF manuals
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
           RENDER="$RUNNER_TEMP/sidrena-release-pdf-visual-qa"
           rm -rf "$RENDER"
           mkdir -p "$RENDER"
-
           python3 tools/pdf-visual-qa.py \
             --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/wordpress" \
             --label "SIDRENA — WordPress izdanje release"
-
           python3 tools/pdf-visual-qa.py \
             --pdf "$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf" \
             --output-dir "$RENDER/woocommerce" \
             --label "SIDRENA — WooCommerce izdanje release"
 
       - name: Upload release PDF visual QA renders
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: sidrena-release-pdf-visual-qa-${{ env.VERSION }}
           if-no-files-found: error
           retention-days: 14
           path: ${{ runner.temp }}/sidrena-release-pdf-visual-qa/
+
       - name: Stage exact release builds for Plugin Check
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -210,22 +168,19 @@ jobs:
           mkdir -p build/release-plugin-check
           cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici" build/release-plugin-check/
           cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena" build/release-plugin-check/
-          test -f build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php
-          test -f build/release-plugin-check/brendigo-sidrena-cijena/sidrena-woocommerce.php
+          test -f build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php
+          test -f build/release-plugin-check/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
 
       - name: Set up Node for release Plugin Check
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         uses: actions/setup-node@v7
         with:
           node-version: '24'
 
       - name: Install deterministic WordPress runtime tooling
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: bash tools/install-wp-env.sh "$RUNNER_TEMP/sidrena-wp-env"
 
       - name: Plugin Check release gate — WordPress edition
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -235,7 +190,6 @@ jobs:
             "$RUNNER_TEMP/plugin-check-release-wordpress.json"
 
       - name: Plugin Check release gate — WooCommerce edition
-        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -245,7 +199,7 @@ jobs:
             "$RUNNER_TEMP/plugin-check-release-woocommerce.json"
 
       - name: Upload release Plugin Check results
-        if: always() && (env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true')
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: sidrena-release-plugin-check-${{ env.VERSION }}
@@ -253,19 +207,24 @@ jobs:
             ${{ runner.temp }}/plugin-check-release-wordpress.json
             ${{ runner.temp }}/plugin-check-release-woocommerce.json
           if-no-files-found: warn
-      - name: Create verified release tag
-        if: startsWith(github.ref, 'refs/heads/release/') && env.CREATE_RELEASE_TAG == 'true'
+
+      - name: Create verified release tag from release branch
+        if: startsWith(github.ref, 'refs/heads/release/')
         shell: bash
         run: |
           set -euo pipefail
-          test "$RELEASE_TARGET" = "$GITHUB_SHA"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
-          git push origin "$TAG_NAME"
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            TARGET="$(git rev-list -n 1 "$TAG_NAME")"
+            test "$TARGET" = "$RELEASE_TARGET"
+          else
+            git tag -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
+            git push origin "$TAG_NAME"
+          fi
 
-      - name: Publish new GitHub release
-        if: env.RELEASE_EXISTS != 'true'
+      - name: Publish GitHub release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.TAG_NAME }}
@@ -280,50 +239,6 @@ jobs:
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
-
-      - name: Retarget controlled release tag before asset mutation
-        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$RELEASE_TARGET" = "$GITHUB_SHA"
-
-          REMOTE_TAG_REF="$(git ls-remote origin "refs/tags/$TAG_NAME" | awk '{print $1}')"
-          test -n "$REMOTE_TAG_REF"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -f -a "$TAG_NAME" "$RELEASE_TARGET" -m "SIDRENA $VERSION"
-          git push --force-with-lease="refs/tags/$TAG_NAME:$REMOTE_TAG_REF" origin "refs/tags/$TAG_NAME"
-      - name: Refresh existing release metadata and controlled assets when required
-        if: env.RELEASE_EXISTS == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ "${REFRESH_RELEASE:-false}" == "true" ]]; then
-            REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk '{print $1}')"
-            test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"
-            gh release upload "$TAG_NAME" \
-              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" \
-              "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" \
-              --clobber --repo "$GITHUB_REPOSITORY"
-          fi
-
-          jq -n \
-            --arg tag "$TAG_NAME" \
-            --arg target "$RELEASE_TARGET" \
-            --arg name "SIDRENA $VERSION" \
-            --rawfile body "$RUNNER_TEMP/sidrena-release-body.md" \
-            '{tag_name:$tag,target_commitish:$target,name:$name,body:$body,draft:false,prerelease:false,make_latest:"true"}' \
-            > "$RUNNER_TEMP/release-update.json"
-
-          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${EXISTING_RELEASE_ID}" \
-            --input "$RUNNER_TEMP/release-update.json" >/dev/null
 
       - name: Verify published GitHub release assets
         env:
@@ -361,15 +276,16 @@ jobs:
 
           unzip -t "$WP_ZIP" >/dev/null
           unzip -t "$WOO_ZIP" >/dev/null
-
           mkdir -p "$VERIFY_DIR/wp" "$VERIFY_DIR/woo"
           unzip -q "$WP_ZIP" -d "$VERIFY_DIR/wp"
           unzip -q "$WOO_ZIP" -d "$VERIFY_DIR/woo"
 
           WP="$VERIFY_DIR/wp/brendigo-sidrene-cijene-digitalni-cjenici"
           WOO="$VERIFY_DIR/woo/brendigo-sidrena-cijena"
-
-          test -f "$WP/sidrena-wordpress.php"
+          test -f "$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          test -f "$WOO/brendigo-sidrena-cijena.php"
+          test ! -f "$WP/sidrena-wordpress.php"
+          test ! -f "$WOO/sidrena-woocommerce.php"
           test -s "$WP/assets/images/logo-wordpress.svg"
           test -s "$WP/assets/images/logo-wordpress-light.svg"
           test ! -e "$WP/assets/images/logo-woocommerce.svg"
@@ -378,12 +294,6 @@ jobs:
           test -s "$WP/docs/SIDRENA-UPUTE.pdf"
           test -f "$WP/includes/class-sidrena-standalone.php"
           test ! -f "$WP/includes/class-sidrena-products.php"
-          test ! -d "$WP/branding"
-          test ! -d "$WP/docs/images"
-          test ! -f "$WP/sidrena.php"
-          test ! -d "$WP/static-php"
-
-          test -f "$WOO/sidrena-woocommerce.php"
           test -s "$WOO/assets/images/logo-woocommerce.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           test ! -e "$WOO/assets/images/logo-wordpress.svg"
@@ -392,53 +302,3 @@ jobs:
           test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
           test -f "$WOO/includes/class-sidrena-products.php"
           test ! -f "$WOO/includes/class-sidrena-standalone.php"
-          test ! -d "$WOO/branding"
-          test ! -d "$WOO/docs/images"
-          test ! -f "$WOO/sidrena.php"
-          test ! -d "$WOO/static-php"
-
-          if grep -RIniE 'brendigo[[:space:]]+LTD([[:space:]]+Developer)?' "$WP" "$WOO"; then
-            echo 'Retired branding detected inside published ZIP asset.' >&2
-            exit 1
-          fi
-      - name: Verify and normalize stable release metadata
-        if: startsWith(github.ref, 'refs/heads/release/')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          CURRENT_RELEASE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}")"
-          test "$(jq -r '.draft' <<<"$CURRENT_RELEASE")" = "false"
-          test "$(jq -r '.prerelease' <<<"$CURRENT_RELEASE")" = "false"
-          test "$(jq -r '.target_commitish' <<<"$CURRENT_RELEASE")" = "$RELEASE_TARGET"
-
-      - name: Keep only the current GitHub release and version tag
-        if: startsWith(github.ref, 'refs/heads/release/')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[] | [.id, .tag_name] | @tsv' |
-          while IFS=$'\t' read -r RELEASE_ID RELEASE_TAG; do
-            if [[ -n "$RELEASE_ID" && "$RELEASE_TAG" != "$TAG_NAME" ]]; then
-              echo "Removing retired release $RELEASE_TAG"
-              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"
-            fi
-          done
-
-          while IFS= read -r TAG; do
-            if [[ -n "$TAG" && "$TAG" != "$TAG_NAME" ]]; then
-              echo "Removing retired release tag $TAG"
-              git push origin --delete "$TAG"
-            fi
-          done < <(git ls-remote --tags --refs origin 'refs/tags/v*' | awk '{sub("refs/tags/","",$2); print $2}')
-
-          REMAINING_RELEASES="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].tag_name')"
-          test "$REMAINING_RELEASES" = "$TAG_NAME"
-
-          REMAINING_VERSION_TAGS="$(git ls-remote --tags --refs origin 'refs/tags/v*' | awk '{sub("refs/tags/","",$2); print $2}')"
-          test "$REMAINING_VERSION_TAGS" = "$TAG_NAME"
