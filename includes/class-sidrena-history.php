@@ -337,8 +337,8 @@ final class Sidrena_History {
 		$latest_id = absint( $latest['id'] );
 
 		if ( $variation_id ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-row lookup for the immediately preceding different variation price.
 			$previous_id = absint(
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-row lookup for the immediately preceding different variation price.
 				$wpdb->get_var(
 					$wpdb->prepare(
 						'SELECT id FROM %i WHERE variation_id = %d AND id < %d AND price IS NOT NULL AND ABS(price - %f) >= 0.000001 ORDER BY id DESC LIMIT 1',
@@ -350,8 +350,8 @@ final class Sidrena_History {
 				)
 			);
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple lookup excludes all variation history.
 			$previous_id = absint(
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple lookup excludes all variation history.
 				$wpdb->get_var(
 					$wpdb->prepare(
 						'SELECT id FROM %i WHERE product_id = %d AND variation_id = 0 AND id < %d AND price IS NOT NULL AND ABS(price - %f) >= 0.000001 ORDER BY id DESC LIMIT 1',
