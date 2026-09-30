@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_REST {
-	private const WC_INDEX_TRANSIENT = 'sidrena_rest_wc_catalog_index_v1';
-	private const WC_INDEX_CACHE_TTL = 300;
+	private const WC_INDEX_TRANSIENT   = 'sidrena_rest_wc_catalog_index_v1';
+	private const WC_INDEX_CACHE_TTL   = 300;
 	private const WC_INDEX_CACHE_LIMIT = 10000;
 
 	private static $instance;
