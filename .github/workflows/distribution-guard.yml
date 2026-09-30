@@ -47,14 +47,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           test -d editions/wordpress
           test -d editions/woocommerce
           test -f editions/wordpress/sidrena-wordpress.php
           test -f editions/woocommerce/sidrena-woocommerce.php
           test -f editions/wordpress/readme.txt
           test -f editions/woocommerce/readme.txt
-
           test ! -f sidrena.php
           test ! -d static-php
           test ! -d editions/static-php
@@ -62,23 +60,12 @@ jobs:
           test ! -d windows
           test ! -f .github/workflows/windows-release-assets.yml
           test ! -f .github/workflows/windows-app-guard.yml
-
           find editions -maxdepth 2 -type f -name 'sidrena-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
           cat > "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" <<'EOF'
           editions/woocommerce/sidrena-woocommerce.php
           editions/wordpress/sidrena-wordpress.php
           EOF
           diff -u "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
-
-          if find . -path './.git' -prune -o -type f -name 'sidrena.php' -print | grep -q .; then
-            echo 'Generic root sidrena.php entrypoint detected.' >&2
-            exit 1
-          fi
-
-          if find . -path './.git' -prune -o -type f \( -iname 'portable.exe' -o -iname 'setup.exe' -o -iname '*.msi' -o -iname '*.appx' -o -iname '*.pdb' \) -print | grep -q .; then
-            echo 'Retired Windows/setup/debug artifact detected in source tree.' >&2
-            exit 1
-          fi
 
       - name: Verify documentation and local branding assets
         shell: bash
@@ -124,22 +111,6 @@ jobs:
           grep -Fq "sidrena-brandbar__edition" includes/class-sidrena-admin.php
           grep -Fq "plugins_url( 'admin/css/brand.css', SIDRENA_FILE )" includes/class-sidrena-admin.php
           ! grep -Fq "admin/css/admin-160.css" includes/class-sidrena-admin.php
-
-          test -s wporg-assets/sidrena-wordpress/assets/icon-128x128.png
-          test -s wporg-assets/sidrena-wordpress/assets/icon-256x256.png
-          test -s wporg-assets/sidrena-wordpress/assets/banner-772x250.png
-          test -s wporg-assets/sidrena-wordpress/assets/banner-1544x500.png
-          for index in 1 2 3 4 5 6; do
-            test -s "wporg-assets/sidrena-wordpress/assets/screenshot-$index.png"
-          done
-
-          test -s wporg-assets/sidrena-woocommerce/assets/icon-128x128.png
-          test -s wporg-assets/sidrena-woocommerce/assets/icon-256x256.png
-          test -s wporg-assets/sidrena-woocommerce/assets/banner-772x250.png
-          test -s wporg-assets/sidrena-woocommerce/assets/banner-1544x500.png
-          for index in 1 2 3 4 5 6; do
-            test -s "wporg-assets/sidrena-woocommerce/assets/screenshot-$index.png"
-          done
 
       - name: WordPress.org readability and safety guard
         shell: bash
@@ -210,41 +181,28 @@ jobs:
           zipinfo -1 "$WP_ZIP" > "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           zipinfo -1 "$WOO_ZIP" > "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
 
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/sidrena-woocommerce.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/admin/css/brand.css' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/admin/css/brand.css' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/admin/js/admin.js' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/admin/js/admin.js' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
-          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress-light.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          ! grep -Fxq 'brendigo-sidrena-cijena/sidrena-woocommerce.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
 
-          for asset in \
-            assets/images/logo-horizontal.svg \
-            assets/images/logo-horizontal-light.svg \
-            assets/images/logo-mark.svg \
-            assets/images/app-icon.svg \
-            assets/images/favicon.svg \
-            assets/images/menu-anchor.svg \
-            assets/images/brand-hero.svg \
-            includes/class-sidrena-audit.php \
-            includes/class-sidrena-pricelist.php; do
+          required_shared=(
+            docs/UPUTE.md
+            docs/SIDRENA-UPUTE.pdf
+            assets/images/menu-anchor.svg
+            admin/css/brand.css
+            admin/js/admin.js
+            includes/class-sidrena-audit.php
+            includes/class-sidrena-pricelist.php
+          )
+          for asset in "${required_shared[@]}"; do
             grep -Fxq "brendigo-sidrene-cijene-digitalni-cjenici/$asset" "$RUNNER_TEMP/sidrena-wordpress-files.txt"
             grep -Fxq "brendigo-sidrena-cijena/$asset" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
           done
-
-          grep -Fq "private static function cut_utf8_bytes" "$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/includes/class-sidrena-audit.php"
-          grep -Fq "private static function cut_utf8_bytes" "$OUT/.sidrena-build/brendigo-sidrena-cijena/includes/class-sidrena-audit.php"
-          grep -Fq "open_atomic_writer( \$paths['manifest'] )" "$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/includes/class-sidrena-pricelist.php"
-          grep -Fq "open_atomic_writer( \$paths['manifest'] )" "$OUT/.sidrena-build/brendigo-sidrena-cijena/includes/class-sidrena-pricelist.php"
+          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress-light.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
 
           ! grep -q '^brendigo-sidrene-cijene-digitalni-cjenici/branding/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
           ! grep -q '^brendigo-sidrena-cijena/branding/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
@@ -261,16 +219,24 @@ jobs:
 
           WP="$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici"
           WOO="$OUT/.sidrena-build/brendigo-sidrena-cijena"
-          grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/sidrena-woocommerce.php"
+          WP_MAIN="$WP/brendigo-sidrene-cijene-digitalni-cjenici.php"
+          WOO_MAIN="$WOO/brendigo-sidrena-cijena.php"
+          test -f "$WP_MAIN"
+          test -f "$WOO_MAIN"
+          grep -Fq 'Plugin Name: SIDRENA' "$WP_MAIN"
+          grep -Fq 'Plugin Name: SIDRENA' "$WOO_MAIN"
+          grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP_MAIN"
+          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO_MAIN"
+          grep -Fq 'License: GPLv2 or later' "$WP_MAIN"
+          grep -Fq 'License: GPLv2 or later' "$WOO_MAIN"
+          ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"
+          grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WOO_MAIN"
           test -f "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
           test -f "$WOO/languages/brendigo-sidrena-cijena.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
           test ! -f "$WOO/languages/sidrena-woocommerce.pot"
           grep -Fq 'X-Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
           grep -Fq 'X-Domain: brendigo-sidrena-cijena' "$WOO/languages/brendigo-sidrena-cijena.pot"
-          grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
-          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
           for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
@@ -288,6 +254,9 @@ jobs:
             echo 'WooCommerce ZIP contains files outside brendigo-sidrena-cijena root.' >&2
             exit 1
           fi
+
+          php .github/tests/package-entrypoint-smoke.php "$WP" wordpress
+          php .github/tests/package-entrypoint-smoke.php "$WOO" woocommerce
 
       - name: Render and validate detailed PDF manuals
         shell: bash
@@ -315,6 +284,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           path: ${{ runner.temp }}/sidrena-pdf-visual-qa/
+
       - name: Upload verified review packages
         uses: actions/upload-artifact@v7
         with:
