@@ -396,6 +396,7 @@ Production ZIP ne uključuje razvojne workflowe, source-only branding materijal,
 
 - **Web:** https://brendigo.com/sidrene-cijene/
 - **E-mail:** sidrena@brendigo.com
+- **Telefon / WhatsApp:** +385 91 901 0092
 - **Autor:** brendigo
 
 ## Licenca
