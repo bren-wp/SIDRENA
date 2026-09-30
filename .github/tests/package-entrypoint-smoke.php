@@ -51,25 +51,26 @@ function sidrena_entry_assert( $condition, $message ) {
 	}
 }
 
-$expected_entrypoints = array(
-	'wordpress'   => 'sidrena-wordpress.php',
-	'woocommerce' => 'sidrena-woocommerce.php',
+$expected_domains = array(
+	'wordpress'   => 'brendigo-sidrene-cijene-digitalni-cjenici',
+	'woocommerce' => 'brendigo-sidrena-cijena',
 );
 
-$forbidden_entrypoints = array(
-	'wordpress'   => array( 'sidrena-woocommerce.php', 'brendigo-sidrena-cijena.php' ),
-	'woocommerce' => array( 'sidrena-wordpress.php', 'brendigo-sidrena-cijena.php' ),
+$legacy_entrypoints = array(
+	'wordpress'   => array( 'sidrena-wordpress.php', 'sidrena-woocommerce.php', 'brendigo-sidrena-cijena.php' ),
+	'woocommerce' => array( 'sidrena-wordpress.php', 'sidrena-woocommerce.php', 'brendigo-sidrene-cijene-digitalni-cjenici.php' ),
 );
 
-$expected_entrypoint = $expected_entrypoints[ $edition ];
+$expected_domain     = $expected_domains[ $edition ];
+$expected_entrypoint = $expected_domain . '.php';
 $main                = $root . '/' . $expected_entrypoint;
 
-sidrena_entry_assert( is_file( $main ), "Package entrypoint missing: {$main}" );
+sidrena_entry_assert( is_file( $main ), "Package slug entrypoint missing: {$main}" );
 
-foreach ( $forbidden_entrypoints[ $edition ] as $forbidden_entrypoint ) {
+foreach ( $legacy_entrypoints[ $edition ] as $legacy_entrypoint ) {
 	sidrena_entry_assert(
-		! is_file( $root . '/' . $forbidden_entrypoint ),
-		"Unexpected package entrypoint found: {$forbidden_entrypoint}"
+		! is_file( $root . '/' . $legacy_entrypoint ),
+		"Unexpected non-slug package entrypoint found: {$legacy_entrypoint}"
 	);
 }
 
@@ -81,8 +82,7 @@ preg_match( '/^ \\* Version: ([^\\r\\n]+)/m', (string) $header, $version_match )
 $expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
 
 preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
-$actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
-$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrena-cijena';
+$actual_domain = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
 
 sidrena_entry_assert( 'SIDRENA' === $actual_name, 'Runtime plugin brand must remain SIDRENA.' );
 sidrena_entry_assert( $expected_domain === $actual_domain, 'Entrypoint text domain does not match the public plugin slug.' );
