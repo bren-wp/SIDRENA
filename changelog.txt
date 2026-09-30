@@ -14,6 +14,7 @@ Sidrena changelog
 * Zajednički published-post keyset iterator centraliziran je u Sidrena_Utils i ponovno se koristi u history i export putovima, čime je uklonjen duplicirani kod.
 * Produkcijski Woo product i service CSV/XML export više ne koristi page/OFFSET iteraciju, uz očuvana publish/visibility/filter/variation pravila i postojeći javni format.
 * Database schema marker ostaje 0.2.0; 1.0.2 ne uvodi destruktivnu migraciju podataka.
+* WordPress admin sidebar, aktivni SIDRENA menu item, hover/focus stanja i top-level ikona sada koriste isključivo WordPress core/admin color scheme; SIDRENA brending ostaje unutar sadržaja plugin stranica.
 * Release se ponovno validira na PHP 7.4/8.3/8.4, WPCS/PHPStan, distribution/legal/admin guardovima, oba WordPress Plugin Check paketa i stvarnom wp-admin QA okruženju.
 
 = 1.0.1 =
