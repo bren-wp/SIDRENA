@@ -9,13 +9,13 @@
  */
 
 $scenario = isset( $argv[1] ) ? (string) $argv[1] : 'preserve';
-if ( ! in_array( $scenario, array( 'preserve', 'other-active', 'destroy' ), true ) ) {
+if ( ! in_array( $scenario, array( 'preserve', 'other-active', 'legacy-active', 'destroy' ), true ) ) {
 	fwrite( STDERR, "Unknown scenario.\n" );
 	exit( 2 );
 }
 
 define( 'WP_UNINSTALL_PLUGIN', 'sidrena-wordpress/sidrena-wordpress.php' );
-if ( in_array( $scenario, array( 'other-active', 'destroy' ), true ) ) {
+if ( in_array( $scenario, array( 'other-active', 'legacy-active', 'destroy' ), true ) ) {
 	define( 'SIDRENA_DELETE_DATA_ON_UNINSTALL', true );
 }
 
@@ -26,7 +26,13 @@ $GLOBALS['sidrena_queries'] = array();
 function get_option( $key, $default = false ) {
 	global $scenario;
 	if ( 'active_plugins' === $key ) {
-		return 'other-active' === $scenario ? array( 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' ) : array();
+		if ( 'other-active' === $scenario ) {
+			return array( 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' );
+		}
+		if ( 'legacy-active' === $scenario ) {
+			return array( 'legacy-sidrena/sidrena-woocommerce.php' );
+		}
+		return array();
 	}
 	return $default;
 }
@@ -82,7 +88,7 @@ $expected_runtime_hooks = array(
 	'sidrena_standalone_sync_batch',
 );
 
-if ( 'other-active' !== $scenario ) {
+if ( ! in_array( $scenario, array( 'other-active', 'legacy-active' ), true ) ) {
 	foreach ( $expected_runtime_hooks as $hook ) {
 		sidrena_uninstall_assert( in_array( $hook, $GLOBALS['sidrena_cleared_hooks'], true ), 'Final-edition uninstall did not clear runtime hook: ' . $hook );
 	}
@@ -96,7 +102,7 @@ if ( 'destroy' === $scenario ) {
 	}
 	sidrena_uninstall_assert( ! empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Explicit destructive uninstall did not clear schedules.' );
 	sidrena_uninstall_assert( 5 === count( $GLOBALS['sidrena_queries'] ), 'Explicit destructive uninstall did not drop all plugin tables.' );
-} elseif ( 'other-active' === $scenario ) {
+} elseif ( in_array( $scenario, array( 'other-active', 'legacy-active' ), true ) ) {
 	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_deleted_options'] ), 'Sibling edition uninstall unexpectedly removed shared options.' );
 	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_cleared_hooks'] ), 'Sibling edition uninstall unexpectedly cleared shared schedules.' );
 	sidrena_uninstall_assert( empty( $GLOBALS['sidrena_queries'] ), 'Sibling edition uninstall unexpectedly dropped shared tables.' );
