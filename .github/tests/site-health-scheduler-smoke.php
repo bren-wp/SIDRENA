@@ -112,19 +112,21 @@ $internal = $health->test_schedule();
 sidrena_health_assert( 'good' === $internal['status'], 'Healthy internal scheduler and watchdog must report a good Site Health status.' );
 
 sidrena_health_assert(
-	false !== strpos( $admin_source, '\'external\' === $automation_mode || (bool) wp_next_scheduled( \'sidrena_daily_generation\' )' ),
-	'Admin dashboard health must treat external scheduler mode as intentionally having no internal daily WP-Cron event.'
+	false !== strpos( $admin_source, '$daily_schedule_ok = \'external\' === $automation_mode || (bool) wp_next_scheduled' )
+	&& false !== strpos( $admin_source, '$watchdog_scheduled = (bool) wp_next_scheduled( \'sidrena_publication_watch\' );' ),
+	'Admin dashboard must exempt only the internal daily event in external mode while still requiring the publication watchdog.'
 );
 sidrena_health_assert(
-	false !== strpos( $admin_source, '$daily_schedule_ok = \'external\' === $automation_mode || (bool) wp_next_scheduled' ),
-	'Admin audit issue count must not flag external scheduler mode merely because internal daily WP-Cron is absent.'
+	false !== strpos( $admin_source, '$watchdog_schedule_ok = (bool) wp_next_scheduled( \'sidrena_publication_watch\' );' )
+	&& false !== strpos( $admin_source, '! $daily_schedule_ok || ! $watchdog_schedule_ok || ! $generation_time_ok' ),
+	'Admin audit issue count must require the publication watchdog in both scheduler modes.'
 );
-
 sidrena_health_assert(
-	false !== strpos( $admin_source, '$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );' )
+	false !== strpos( $admin_source, '$schedule_warning  = ! $watchdog_scheduled || ( ! $external_scheduler' )
+	&& false !== strpos( $admin_source, 'elseif ( ! $watchdog_scheduled )' )
 	&& false !== strpos( $admin_source, 'elseif ( $external_scheduler )' )
 	&& false !== strpos( $admin_source, 'Interni dnevni WP-Cron namjerno nije zakazan.' ),
-	'Price-list screen must show external scheduler mode as intentional instead of a missing internal-cron warning.'
+	'Price-list screen must exempt the internal daily event in external mode but warn when the publication watchdog is missing.'
 );
 
 $archive = $health->test_archive();
