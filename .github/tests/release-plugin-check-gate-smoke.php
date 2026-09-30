@@ -60,12 +60,13 @@ sidrena_release_gate_assert(
 $repro_block = substr( $release, $repro, $fresh - $repro );
 sidrena_release_gate_assert(
 	false !== strpos( $repro_block, 'sidrena-release-repeat' )
-	&& 2 === substr_count( $repro_block, './tools/build-editions.sh' )
+	&& 1 === substr_count( $repro_block, './tools/build-editions.sh' )
+	&& 2 <= substr_count( $release, 'SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh' )
 	&& false !== strpos( $repro_block, 'SOURCE_DATE_EPOCH=' )
 	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip"' )
 	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip"' )
 	&& false !== strpos( $repro_block, '.zip.sha256' ),
-	'Release workflow must rebuild from the same release target and byte-compare both ZIPs and checksum files before publication.'
+	'Release workflow must build twice from the same release target and byte-compare both ZIPs and checksum files before publication.'
 );
 
 $main_guard_start = strpos( $release, '- name: Require stable release branch to match main' );
