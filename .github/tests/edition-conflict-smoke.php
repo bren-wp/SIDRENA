@@ -65,7 +65,9 @@ function wp_die( $message, $title = '', $args = array() ) {
 	throw new RuntimeException( (string) $message );
 }
 
-$file = dirname( __DIR__, 2 ) . '/editions/' . $target . '/sidrena-' . $target . '.php';
+$file = 'wordpress' === $target
+	? dirname( __DIR__, 2 ) . '/editions/wordpress/sidrena-wordpress.php'
+	: dirname( __DIR__, 2 ) . '/editions/woocommerce/brendigo-sidrena-cijena.php';
 require $file;
 
 function sidrena_conflict_assert( $condition, $message ) {
@@ -89,7 +91,7 @@ $GLOBALS['sidrena_can_activate_plugins'] = true;
 foreach ( $GLOBALS['sidrena_actions']['admin_init'] as $callback ) {
 	call_user_func( $callback );
 }
-$expected = 'sidrena-' . $target . '.php';
+$expected = 'wordpress' === $target ? 'sidrena-wordpress.php' : 'brendigo-sidrena-cijena.php';
 sidrena_conflict_assert( in_array( $expected, $GLOBALS['sidrena_deactivated'], true ), 'Conflicting edition did not deactivate itself for an authorized plugin manager.' );
 
 $expected_active = 'legacy' === $mode
