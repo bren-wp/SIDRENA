@@ -56,16 +56,23 @@ final class Sidrena_Test_WPDB {
 	public $prefix = 'wp_';
 	public $baseline = null;
 	public $window_min = null;
-	public $inference_rows = array();
+	public $inference_latest = null;
+	public $inference_previous_id = 0;
+	public $inference_start = null;
 	public $queries = array();
 
 	public function prepare( $query ) { $this->queries[] = $query; return $query; }
-	public function get_row( $query, $output ) { unset( $query, $output ); return $this->baseline; }
-	public function get_var( $query ) { unset( $query ); return $this->window_min; }
-	public function get_results( $query, $output ) {
+	public function get_row( $query, $output ) {
 		unset( $output );
-		return false !== strpos( $query, 'ORDER BY id DESC LIMIT 500' ) ? $this->inference_rows : array();
+		if ( false !== strpos( $query, 'SELECT id, price, recorded_at' ) ) { return $this->inference_latest; }
+		if ( false !== strpos( $query, 'SELECT recorded_at FROM' ) ) { return $this->inference_start; }
+		return $this->baseline;
 	}
+	public function get_var( $query ) {
+		if ( false !== strpos( $query, 'SELECT id FROM' ) ) { return $this->inference_previous_id; }
+		return $this->window_min;
+	}
+	public function get_results( $query, $output ) { unset( $query, $output ); return array(); }
 }
 
 function sidrena_lowest_30_assert( $condition, $message ) {
@@ -116,6 +123,23 @@ $missing_baseline_price = Sidrena_History::instance()->lowest_30_day_reference( 
 sidrena_lowest_30_assert(
 	'incomplete' === $missing_baseline_price['status'],
 	'A baseline row without an actual price must not be treated as complete 30-day history.'
+);
+
+$product->configure( '', 0 );
+$wpdb->inference_latest      = array( 'id' => 2505, 'price' => '80.00', 'recorded_at' => '2026-09-29 08:00:00' );
+$wpdb->inference_previous_id = 5;
+$wpdb->inference_start       = array( 'recorded_at' => '2026-09-01 09:15:00' );
+$method = new ReflectionMethod( 'Sidrena_History', 'sale_start_timestamp' );
+$method->setAccessible( true );
+$inferred_start = $method->invoke( Sidrena_History::instance(), $product, 80.0 );
+sidrena_lowest_30_assert(
+	strtotime( '2026-09-01 09:15:00 UTC' ) === $inferred_start,
+	'Sale-start inference must resolve the complete current price run without a 500-row cutoff.'
+);
+sidrena_lowest_30_assert(
+	false === strpos( implode( "\n", $wpdb->queries ), 'LIMIT 500' )
+	&& false !== strpos( implode( "\n", $wpdb->queries ), 'ABS(price - %f)' ),
+	'Sale-start inference must use targeted single-row queries instead of loading a capped history array.'
 );
 
 fwrite( STDOUT, "SIDRENA separate 30-day minimum runtime smoke test passed.\n" );
