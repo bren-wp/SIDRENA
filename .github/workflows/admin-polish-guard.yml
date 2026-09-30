@@ -41,7 +41,7 @@ jobs:
           test -s assets/images/brand-hero.svg
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
-          grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
+          grep -Fq "'dashicons-tag'" includes/class-sidrena-admin-menu.php
           grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "sidrena-brandbar__edition" includes/class-sidrena-admin.php
           grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
@@ -50,6 +50,7 @@ jobs:
           grep -Fq "pending = {}" public/js/compat.js
           grep -Fq "Sidrena_Admin_UX::SERVICE_MENU_SLUG === \$item[0]" includes/class-sidrena-admin-menu.php
           grep -Fq "dataset.sidrenaSubmitting" admin/js/admin.js
+          php .github/tests/admin-menu-access-smoke.php
           php .github/tests/admin-form-ux-smoke.php
           php .github/tests/reference-admin-ui-smoke.php
           grep -Fq "assertFormRuntime" tools/capture-wporg-assets.mjs
@@ -60,6 +61,10 @@ jobs:
 
           if grep -q '\.sidrena-wrap' admin/css/admin.css; then
             echo "Legacy .sidrena-wrap CSS must not return to the editor-only stylesheet."
+            exit 1
+          fi
+          if grep -q 'body\.toplevel_page_sidrena #adminmenu\|\.sidrena-admin-screen #adminmenuback\|\.toplevel_page_sidrena>a\.menu-top\|\.wp-menu-image img' admin/css/brand.css; then
+            echo "SIDRENA must not recolor WordPress admin chrome or its menu icon."
             exit 1
           fi
           if grep -RInF 'sidrena_neutralize_admin_menu_icon' includes; then
