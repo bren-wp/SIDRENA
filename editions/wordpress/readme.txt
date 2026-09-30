@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.3 =
+
+* Declares verified WooCommerce High-Performance Order Storage (HPOS) compatibility for the WooCommerce edition.
+* Adds CI coverage ensuring only the WooCommerce edition declares the `custom_order_tables` feature.
+* Real wp-admin QA now enables HPOS with SIDRENA active and exercises WooCommerce order CRUD before capturing the release candidate.
+* Keeps the standalone WordPress edition free of WooCommerce-specific compatibility declarations.
+* No database schema migration is introduced; the existing SIDRENA schema marker remains unchanged.
 
 = 1.0.2 =
 
