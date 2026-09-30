@@ -150,25 +150,39 @@ final class Sidrena_Service_History {
 	}
 
 	public function daily_snapshot() {
-		$page = 1;
+		foreach ( $this->published_service_ids_keyset( 250 ) as $service_id ) {
+			$this->capture_service( $service_id, null, 'daily' );
+		}
+	}
+
+	private function published_service_ids_keyset( $batch_size = 250 ) {
+		global $wpdb;
+
+		$batch_size = min( 500, max( 25, absint( $batch_size ) ) );
+		$last_id    = 0;
 		do {
-			$query = new WP_Query(
-				array(
-					'post_type'      => 'sidrena_service',
-					'post_status'    => 'publish',
-					'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded audit-history batch.
-					'paged'          => $page,
-					'fields'         => 'ids',
-					'orderby'        => 'ID',
-					'order'          => 'ASC',
-					'no_found_rows'  => true,
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated bounded read avoids progressively expensive OFFSET scans during the daily service-history snapshot.
+			$ids = $wpdb->get_col(
+				$wpdb->prepare(
+					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND ID > %d ORDER BY ID ASC LIMIT %d',
+					$wpdb->posts,
+					'sidrena_service',
+					'publish',
+					$last_id,
+					$batch_size
 				)
 			);
-			foreach ( $query->posts as $service_id ) {
-				$this->capture_service( absint( $service_id ), null, 'daily' );
+			$ids   = is_array( $ids ) ? $ids : array();
+			$count = count( $ids );
+
+			foreach ( $ids as $service_id ) {
+				$service_id = absint( $service_id );
+				if ( ! $service_id ) {
+					continue;
+				}
+				$last_id = $service_id;
+				yield $service_id;
 			}
-			$count = count( $query->posts );
-			++$page;
-		} while ( 250 === $count );
+		} while ( $count === $batch_size );
 	}
 }
