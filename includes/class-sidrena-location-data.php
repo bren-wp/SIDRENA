@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sidrena_Location_Data {
 	private static $item_cache          = array();
-	private static $available_ids_cache = array();
 
 	public static function table_name() {
 		global $wpdb;
@@ -81,21 +80,6 @@ final class Sidrena_Location_Data {
 	 * state for a physical location. Variable products preserve WooCommerce's
 	 * configured child order without loading the whole WooCommerce catalog first.
 	 */
-	public static function available_item_ids_for_location( $location_id ) {
-		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
-		if ( isset( self::$available_ids_cache[ $location_id ] ) ) {
-			return self::$available_ids_cache[ $location_id ];
-		}
-
-		$ids = array();
-		foreach ( self::iterate_available_item_ids_for_location( $location_id ) as $item_id ) {
-			$ids[] = $item_id;
-		}
-
-		self::$available_ids_cache[ $location_id ] = $ids;
-		return $ids;
-	}
-
 	public static function iterate_available_item_ids_for_location( $location_id, $batch_size = 250 ) {
 		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
 		$batch_size  = min( 500, max( 25, absint( $batch_size ) ) );
@@ -225,7 +209,7 @@ final class Sidrena_Location_Data {
 		);
 
 		$item_id = $variation_id ? $variation_id : $product_id;
-		unset( self::$available_ids_cache[ $location_id ], self::$item_cache[ $location_id ][ $item_id ] );
+		unset( self::$item_cache[ $location_id ][ $item_id ] );
 		if ( false !== $result && class_exists( 'Sidrena_Location_History' ) ) {
 			Sidrena_Location_History::capture( $location_id, $product_id, $variation_id, $price, $anchor_price, $availability, 'import' );
 		}
@@ -238,7 +222,7 @@ final class Sidrena_Location_Data {
 		$table       = self::table_name();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Explicit deletion from the plugin-owned per-location table.
 		$wpdb->delete( $table, array( 'location_id' => $location_id ), array( '%s' ) );
-		unset( self::$item_cache[ $location_id ], self::$available_ids_cache[ $location_id ] );
+		unset( self::$item_cache[ $location_id ] );
 	}
 
 	public static function coverage( $location_id ) {
