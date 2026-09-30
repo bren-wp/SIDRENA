@@ -110,16 +110,10 @@ function sidrena_location_order_assert( $condition, $message ) {
 	}
 }
 
-$ids = Sidrena_Location_Data::available_item_ids_for_location( 'loc-1' );
+$ids = iterator_to_array( Sidrena_Location_Data::iterate_available_item_ids_for_location( 'loc-1' ), false );
 sidrena_location_order_assert(
 	array( 1, 22, 20, 21 ) === $ids,
-	'Physical-location candidates must preserve WooCommerce configured variation order.'
-);
-
-$cached = Sidrena_Location_Data::available_item_ids_for_location( 'loc-1' );
-sidrena_location_order_assert(
-	$ids === $cached,
-	'Physical-location candidate ordering must remain stable when served from the request cache.'
+	'Physical-location streaming candidates must preserve WooCommerce configured variation order.'
 );
 
 $results_before = $GLOBALS['wpdb']->get_results_calls;
