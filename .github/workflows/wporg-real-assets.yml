@@ -167,7 +167,29 @@ jobs:
               fwrite( STDERR, "HPOS did not become the authoritative WooCommerce order store.\n" );
               exit( 1 );
           }
-          echo "WooCommerce HPOS enabled with SIDRENA active.\n";
+
+          $product = new WC_Product_Simple();
+          $product->set_name( "SIDRENA HPOS QA product" );
+          $product->set_regular_price( "10.00" );
+          $product_id = $product->save();
+          if ( ! $product_id ) {
+              fwrite( STDERR, "Unable to create HPOS QA product.\n" );
+              exit( 1 );
+          }
+
+          $order = wc_create_order();
+          $order->add_product( wc_get_product( $product_id ), 1 );
+          $order->calculate_totals();
+          $order_id = $order->save();
+          $stored = wc_get_order( $order_id );
+          if ( ! $order_id || ! $stored || count( $stored->get_items() ) !== 1 ) {
+              fwrite( STDERR, "HPOS order CRUD failed with SIDRENA active.\n" );
+              exit( 1 );
+          }
+
+          $stored->delete( true );
+          wc_get_product( $product_id )->delete( true );
+          echo "WooCommerce HPOS enabled and order CRUD passed with SIDRENA active.\n";
           '
 
           SIDRENA_QA_EDITION=woocommerce SIDRENA_RUNTIME_URL=http://localhost:8888 node tools/runtime-rest-qa.mjs
