@@ -2554,7 +2554,20 @@ final class Sidrena_Admin {
 	}
 
 	private function normalize_public_check_path( $path ) {
-		$path = rawurldecode( (string) $path );
+		$path   = (string) $path;
+		$passes = 0;
+		do {
+			$decoded = rawurldecode( $path );
+			if ( $decoded === $path ) {
+				break;
+			}
+			$path = $decoded;
+			++$passes;
+			if ( $passes > 5 ) {
+				return '';
+			}
+		} while ( true );
+
 		if ( false !== strpos( $path, "\0" ) ) {
 			return '';
 		}
