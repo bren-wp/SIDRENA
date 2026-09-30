@@ -2607,7 +2607,7 @@ final class Sidrena_Admin {
 			return false;
 		}
 		$base_path = trailingslashit( $base_path );
-		return 0 === strpos( $url_path, $base_path ) && $url_path !== untrailingslashit( $base_path );
+		return strlen( $url_path ) > strlen( $base_path ) && 0 === strpos( $url_path, $base_path );
 	}
 
 	public function check_public_access() {
