@@ -53,20 +53,28 @@ $standalone_empty = $standalone_upload_size->invoke( $standalone, $standalone_fi
 sidrena_import_stream_assert( is_wp_error( $standalone_empty ) && 'upload_empty' === $standalone_empty->code, 'Standalone import must reject an empty server-side temp file before loading it into memory.' );
 unlink( $standalone_fixture );
 
-$prepare_csv = new ReflectionMethod( 'Sidrena_Standalone', 'prepare_csv_import_stream' );
+$prepare_csv = new ReflectionMethod( 'Sidrena_Standalone', 'prepare_csv_import_file_stream' );
 $prepare_csv->setAccessible( true );
 $iterate_csv = new ReflectionMethod( 'Sidrena_Standalone', 'iterate_csv_import_rows' );
 $iterate_csv->setAccessible( true );
 
-$prepared = $prepare_csv->invoke( $standalone, "šifra;cijena\nA1;10,50\nA2;11,50\n", 10 );
-sidrena_import_stream_assert( is_array( $prepared ) && 2 === $prepared[3], 'Standalone CSV preflight must count rows before import.' );
+$csv_fixture = tempnam( sys_get_temp_dir(), 'sidrena-standalone-csv-' );
+file_put_contents( $csv_fixture, "šifra;cijena\nA1;10,50\nA2;11,50\n" );
+$prepared = $prepare_csv->invoke( $standalone, $csv_fixture, 10 );
+sidrena_import_stream_assert( is_array( $prepared ) && 2 === $prepared[3], 'Standalone CSV preflight must count rows directly from the uploaded file stream.' );
 $csv_rows = iterator_to_array( $iterate_csv->invoke( $standalone, $prepared[0], $prepared[1], $prepared[2] ), false );
 sidrena_import_stream_assert( 2 === count( $csv_rows ), 'Standalone CSV iterator must stream data rows.' );
 sidrena_import_stream_assert( 'A1' === $csv_rows[0]['sifra'], 'Standalone CSV header normalization failed.' );
 fclose( $prepared[0] );
 
-$too_many = $prepare_csv->invoke( $standalone, "sku;price\nA;1\nB;2\nC;3\n", 2 );
+file_put_contents( $csv_fixture, "sku;price\nA;1\nB;2\nC;3\n" );
+$too_many = $prepare_csv->invoke( $standalone, $csv_fixture, 2 );
 sidrena_import_stream_assert( is_wp_error( $too_many ) && 'csv_row_limit' === $too_many->code, 'Standalone CSV must reject an over-limit file before import.' );
+
+file_put_contents( $csv_fixture, "sku;price\nA;1\0bad\n" );
+$binary_csv = $prepare_csv->invoke( $standalone, $csv_fixture, 10 );
+sidrena_import_stream_assert( is_wp_error( $binary_csv ) && 'csv_binary' === $binary_csv->code, 'Standalone CSV preflight must reject NUL/binary content while streaming.' );
+unlink( $csv_fixture );
 
 $validate_xml = new ReflectionMethod( 'Sidrena_Standalone', 'validate_xml_import' );
 $validate_xml->setAccessible( true );
@@ -147,6 +155,10 @@ sidrena_import_stream_assert( false === strpos( $standalone_source, 'private fun
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'private function code_index_for_codes( $codes )' ), 'Standalone imports must use bounded code lookups.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'if ( count( $chunk ) >= 250 )' ), 'Standalone imports must process rows in bounded chunks.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'if ( count( $keys ) >= 500 )' ), 'Standalone code lookup must retain a defensive lookup-key bound.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, 'private function prepare_csv_import_file_stream( $tmp_name, $row_limit = 50000 )' ), 'Standalone CSV import must prepare a direct uploaded-file stream.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, "fopen( \$tmp_name, 'rb' )" ), 'Standalone CSV import must open the validated upload temp file directly.' );
+sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function prepare_csv_import_stream( $contents' ), 'Standalone CSV import must not restore the full-buffer php://temp copy helper.' );
+sidrena_import_stream_assert( false !== strpos( $standalone_source, "Sidrena_Utils::normalize_text_encoding( \$value )" ), 'Standalone streamed CSV cells must retain legacy text-encoding normalization.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' ), 'Standalone code index must prepare the posts table identifier.' );
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );
