@@ -122,11 +122,10 @@ No. It is a completely optional service. The plugin can be installed and configu
 
 = 1.0.1 =
 
-* Adds central Woo REST cache invalidation for direct public-catalog membership meta changes, including REST and third-party updates.
-* Replaces physical-location candidate materialization with a keyset-batched iterator that preserves WooCommerce variation order.
-* Uses targeted indexed location-row lookups with request-local caching instead of loading the full location dataset for each item.
-* Keeps the public REST response contract unchanged while reducing memory growth for large multi-location catalogues.
-* Adds regression coverage for direct meta invalidation, targeted location reads and streaming physical-location pagination.
+* Aligns the standalone WordPress edition with the paired SIDRENA 1.0.1 release version without introducing a WooCommerce dependency.
+* Refreshes version metadata, documentation, POT metadata and release-validation guards for the 1.0.1 production package.
+* Revalidates the standalone production ZIP across PHP 7.4/8.3/8.4, WPCS/PHPStan and WordPress Plugin Check.
+* Keeps the standalone products/services catalog, public price lists, archive, REST contract and stored data backward compatible with 1.0.0.
 
 = 1.0.0 =
 
