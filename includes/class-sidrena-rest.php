@@ -340,7 +340,7 @@ final class Sidrena_REST {
 		$per_page    = min( 100, max( 1, absint( $per_page ) ) );
 		$kind        = sanitize_key( (string) ( $location['kind'] ?? 'objekt' ) );
 		$location_id = trim( (string) ( $location['id'] ?? '' ) );
-		if ( 'webshop' !== $kind && '' !== $location_id && is_callable( array( 'Sidrena_Location_Data', 'available_item_ids_for_location' ) ) ) {
+		if ( 'webshop' !== $kind && '' !== $location_id && is_callable( array( 'Sidrena_Location_Data', 'iterate_available_item_ids_for_location' ) ) ) {
 			return $this->realtime_woocommerce_location_products( $location, $page, $per_page );
 		}
 

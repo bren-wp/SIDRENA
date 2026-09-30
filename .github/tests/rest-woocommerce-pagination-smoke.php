@@ -26,10 +26,6 @@ class Sidrena_Location_Data {
 			? array( 'availability' => 'dostupno', 'updated_at' => '2026-09-24T10:00:00+00:00' )
 			: array();
 	}
-	public static function available_item_ids_for_location( $location_id ) {
-		unset( $location_id );
-		return array( 1, 22, 20, 21 );
-	}
 }
 $GLOBALS['sidrena_anchor_calls'] = 0;
 $GLOBALS['sidrena_location_iterator_calls'] = 0;
