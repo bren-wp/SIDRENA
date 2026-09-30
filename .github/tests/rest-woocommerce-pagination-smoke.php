@@ -131,6 +131,14 @@ function sidrena_rest_page_assert( $condition, $message ) {
 
 $method = new ReflectionMethod( 'Sidrena_REST', 'realtime_products' );
 $method->setAccessible( true );
+$rest_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-rest.php' );
+sidrena_rest_page_assert(
+	false !== $rest_source
+	&& false !== strpos( $rest_source, "iterate_available_item_ids_for_location' ) )" )
+	&& false === strpos( $rest_source, "available_item_ids_for_location' ) )" ),
+	'Physical-location REST routing must guard the streaming iterator method, not the removed full-ID helper.'
+);
+
 $rest = Sidrena_REST::instance();
 
 $physical_location = array( 'id' => 'loc-1', 'code' => 'L1', 'kind' => 'objekt' );
