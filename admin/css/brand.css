@@ -33,51 +33,10 @@
 	--sid-accent-soft:#eef5ff;
 }
 
-body.toplevel_page_sidrena,
-body[class*="sidrena_page_sidrena-"] {
-	--sid-menu-start:#1275e8;
-	--sid-menu-end:#2563eb;
-	background:#f6f9fc;
-	color:var(--sid-ink);
-}
-
-body.sidrena-edition-body-woocommerce {
-	--sid-menu-start:#6d28d9;
-	--sid-menu-end:#7c3aed;
-}
-
-body.toplevel_page_sidrena #wpcontent,
-body[class*="sidrena_page_sidrena-"] #wpcontent { padding-left:0; }
-
-body.toplevel_page_sidrena #wpfooter,
-body[class*="sidrena_page_sidrena-"] #wpfooter { display:none; }
-
-body.toplevel_page_sidrena #wpadminbar,
-body[class*="sidrena_page_sidrena-"] #wpadminbar,
-body.toplevel_page_sidrena #adminmenuback,
-body.toplevel_page_sidrena #adminmenuwrap,
-body[class*="sidrena_page_sidrena-"] #adminmenuback,
-body[class*="sidrena_page_sidrena-"] #adminmenuwrap { background:var(--sid-navy-deep); }
-
-body.toplevel_page_sidrena #adminmenu,
-body[class*="sidrena_page_sidrena-"] #adminmenu { background:transparent; }
-
-body.toplevel_page_sidrena #adminmenu a,
-body[class*="sidrena_page_sidrena-"] #adminmenu a { color:#d8e7f4; }
-
-body.toplevel_page_sidrena #adminmenu .wp-submenu,
-body[class*="sidrena_page_sidrena-"] #adminmenu .wp-submenu { background:#071f3b; }
-
-body.toplevel_page_sidrena #adminmenu .toplevel_page_sidrena>a.menu-top,
-body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-top {
-	background:linear-gradient(90deg,var(--sid-menu-start),var(--sid-menu-end));
-	color:#fff;
-}
-#adminmenu .toplevel_page_sidrena .wp-menu-image { display:grid;place-items:center; }
-#adminmenu .toplevel_page_sidrena .wp-menu-image img { display:block;width:18px!important;height:18px!important;margin:0!important;padding:0!important;object-fit:contain;opacity:.86; }
-#adminmenu .toplevel_page_sidrena.current .wp-menu-image img,
-#adminmenu .toplevel_page_sidrena.wp-has-current-submenu .wp-menu-image img { filter:brightness(0) invert(1);opacity:1; }
-#adminmenu .toplevel_page_sidrena .wp-submenu a.current { color:#fff;font-weight:700; }
+/* Keep WordPress admin chrome fully native.
+ * SIDRENA branding starts inside .sidrena-app and never recolors the WordPress
+ * sidebar, top bar, active menu item, hover state or menu icon.
+ */
 
 .sidrena-app,.sidrena-app *,.sidrena-app *::before,.sidrena-app *::after { box-sizing:border-box; }
 
@@ -1091,30 +1050,7 @@ body[class*="sidrena_page_sidrena-"] #adminmenu .toplevel_page_sidrena>a.menu-to
 	box-shadow:0 0 0 3px rgba(239,68,68,.11);
 }
 
-/* Keep WordPress chrome usable while matching the approved dark SIDRENA framing. */
-.sidrena-admin-screen #adminmenuback,
-.sidrena-admin-screen #adminmenuwrap,
-.sidrena-admin-screen #adminmenu {
-	background:#071f3d;
-}
-.sidrena-admin-screen #adminmenu .wp-submenu {
-	background:#0a294e;
-}
-.sidrena-admin-screen #adminmenu a {
-	color:#dbe8f5;
-}
-.sidrena-admin-screen #adminmenu li.menu-top:hover,
-.sidrena-admin-screen #adminmenu li.opensub>a.menu-top,
-.sidrena-admin-screen #adminmenu li>a.menu-top:focus {
-	background:#0d3563;
-	color:#fff;
-}
-.sidrena-admin-screen #adminmenu .wp-has-current-submenu>a.wp-has-current-submenu,
-.sidrena-admin-screen #adminmenu .current a.menu-top,
-.sidrena-admin-screen #adminmenu .toplevel_page_sidrena.wp-has-current-submenu>a {
-	background:linear-gradient(90deg,#0e70f3,#0a5bd1);
-	color:#fff;
-}
+/* WordPress sidebar and toolbar intentionally inherit the active core/admin color scheme. */
 
 @media (max-width:1320px) {
 	.sidrena-admin-screen .sid-reference-grid--woo-main { grid-template-columns:1fr 1fr; }

@@ -10,7 +10,7 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="SIDRENA" width="520">
 </p>
 
-<h1 align="center">SIDRENA 1.0.1</h1>
+<h1 align="center">SIDRENA 1.0.2</h1>
 
 <p align="center">
   <strong>Sidrena cijena, povijest cijena i digitalni cjenici — ozbiljno riješeni za WordPress.</strong><br>
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 </p>
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.1"><strong>Preuzmi 1.0.1</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.2"><strong>Preuzmi 1.0.2</strong></a>
   ·
   <a href="https://brendigo.com/sidrene-cijene/"><strong>Službena stranica</strong></a>
   ·
@@ -28,7 +28,7 @@ Support: sidrena@brendigo.com
 <p align="center">
   <img src="assets/images/app-icon.svg" alt="SIDRENA aplikacijska ikona" width="76">
   &nbsp;&nbsp;
-  <img src="assets/images/menu-anchor.svg" alt="SIDRENA wp-admin ikona" width="68">
+  <img src="assets/images/menu-anchor.svg" alt="SIDRENA sidro — branding asset" width="68">
   &nbsp;&nbsp;
   <img src="assets/images/logo-mark.svg" alt="SIDRENA znak" width="76">
   &nbsp;&nbsp;
@@ -36,6 +36,19 @@ Support: sidrena@brendigo.com
 </p>
 
 ---
+
+## Novo u 1.0.2
+
+Izdanje **1.0.2** fokusirano je na stabilnost i rad s velikim katalozima bez promjene javnog SIDRENA modela podataka:
+
+- standalone CSV import čita upload kao stream i ne učitava cijelu datoteku u memoriju
+- CSV dialect/delimiter obrada dodatno je učvršćena za PHP 8.4
+- WooCommerce import koristi batch lookupove šifri proizvoda
+- dnevni history snapshoti proizvoda i usluga koriste ID keyset iteraciju umjesto page/OFFSET upita
+- produkcijska generacija WooCommerce proizvoda i usluga za CSV/XML koristi isti bounded keyset iterator
+- zajednički iterator je centraliziran kako bi se uklonio duplicirani kod i smanjio rizik regresija
+- WordPress sidebar, aktivni SIDRENA meni i top-level ikona ostaju u standardnim WordPress admin bojama; SIDRENA brending počinje tek unutar sadržaja plugin stranice
+- javni format, visibility pravila, redoslijed variation zapisa i postojeća baza ostaju kompatibilni
 
 ## Cijene nisu samo broj. SIDRENA čuva kontekst.
 
@@ -324,7 +337,7 @@ WordPress.org odobrenje uvijek uključuje i ručni pregled Plugin Review tima; p
 - **PHP:** 7.4+
 - **WooCommerce izdanje:** WooCommerce 8.0+
 - **WC tested up to:** 11.1.2
-- **SIDRENA:** 1.0.1
+- **SIDRENA:** 1.0.2
 
 ---
 
@@ -363,13 +376,13 @@ Instalacijski paketi uključuju i edition-specific PDF upute generirane i vizual
 ## Build
 
 ~~~bash
-./tools/build-editions.sh 1.0.1 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.2 /tmp/sidrena-build
 ~~~
 
 Dobivaju se dva čista instalacijska paketa:
 
-- <code>sidrena-wordpress-1.0.1.zip</code>
-- <code>sidrena-woocommerce-1.0.1.zip</code>
+- <code>sidrena-wordpress-1.0.2.zip</code>
+- <code>sidrena-woocommerce-1.0.2.zip</code>
 
 i pripadajuće <code>.sha256</code> kontrolne datoteke.
 
@@ -380,9 +393,9 @@ Production ZIP ne uključuje razvojne workflowe, source-only branding materijal,
 ## Preuzimanje
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.1/sidrena-wordpress-1.0.1.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.2/sidrena-wordpress-1.0.2.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.1/sidrena-woocommerce-1.0.1.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.2/sidrena-woocommerce-1.0.2.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
 </p>
 
 <p align="center">
