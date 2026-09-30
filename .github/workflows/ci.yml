@@ -148,6 +148,7 @@ jobs:
         run: |
           php .github/tests/uninstall-smoke.php preserve
           php .github/tests/uninstall-smoke.php other-active
+          php .github/tests/uninstall-smoke.php legacy-active
           php .github/tests/uninstall-smoke.php destroy
 
       - name: Edition-specific WP-CLI smoke tests
