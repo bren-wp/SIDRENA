@@ -114,19 +114,29 @@ final class Sidrena_History {
 	private function insert_if_changed( $product_id, $variation_id, $price, $regular_price, $source ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'sidrena_price_history';
-		$key   = $variation_id ? 'variation_id' : 'product_id';
-		$id    = $variation_id ? $variation_id : $product_id;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires bounded direct CRUD.
-		$last = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT price, regular_price FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 1',
-				$table,
-				$key,
-				$id
-			),
-			ARRAY_A
-		);
+		// Product rows and variation rows share product_id, so parent/simple lookups
+		// must explicitly exclude variation history.
+		if ( $variation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires a bounded lookup for one variation.
+			$last = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT price, regular_price FROM %i WHERE variation_id = %d ORDER BY id DESC LIMIT 1',
+					$table,
+					$variation_id
+				),
+				ARRAY_A
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- SIDRENA-owned audit table requires a bounded lookup for one parent/simple product.
+			$last = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT price, regular_price FROM %i WHERE product_id = %d AND variation_id = 0 ORDER BY id DESC LIMIT 1',
+					$table,
+					$product_id
+				),
+				ARRAY_A
+			);
+		}
 
 		$price         = '' === $price ? null : (float) $price;
 		$regular_price = '' === $regular_price ? null : (float) $regular_price;
@@ -203,34 +213,54 @@ final class Sidrena_History {
 		$table        = $wpdb->prefix . 'sidrena_price_history';
 		$variation_id = $product->is_type( 'variation' ) ? absint( $product->get_id() ) : 0;
 		$product_id   = $variation_id ? absint( $product->get_parent_id() ) : absint( $product->get_id() );
-		$key          = $variation_id ? 'variation_id' : 'product_id';
-		$id           = $variation_id ? $variation_id : $product_id;
 		$window_mysql = wp_date( 'Y-m-d H:i:s', $window_from );
 		$start_mysql  = wp_date( 'Y-m-d H:i:s', $start );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Indexed baseline lookup from SIDRENA-owned audit history.
-		$baseline = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
-				$table,
-				$key,
-				$id,
-				$window_mysql
-			),
-			ARRAY_A
-		);
+		if ( $variation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Indexed baseline lookup for one variation.
+			$baseline = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT price, recorded_at FROM %i WHERE variation_id = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
+					$table,
+					$variation_id,
+					$window_mysql
+				),
+				ARRAY_A
+			);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact indexed aggregate avoids truncating high-frequency price histories.
-		$window_min = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT MIN(price) FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL',
-				$table,
-				$key,
-				$id,
-				$window_mysql,
-				$start_mysql
-			)
-		);
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact indexed aggregate for one variation avoids truncating high-frequency history.
+			$window_min = $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT MIN(price) FROM %i WHERE variation_id = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL',
+					$table,
+					$variation_id,
+					$window_mysql,
+					$start_mysql
+				)
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple scope excludes child variation rows.
+			$baseline = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT price, recorded_at FROM %i WHERE product_id = %d AND variation_id = 0 AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
+					$table,
+					$product_id,
+					$window_mysql
+				),
+				ARRAY_A
+			);
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact parent/simple aggregate excludes child variation rows.
+			$window_min = $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT MIN(price) FROM %i WHERE product_id = %d AND variation_id = 0 AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL',
+					$table,
+					$product_id,
+					$window_mysql,
+					$start_mysql
+				)
+			);
+		}
 
 		$baseline_ready = is_array( $baseline ) && array_key_exists( 'price', $baseline ) && null !== $baseline['price'] && '' !== $baseline['price'];
 		$values         = array();
@@ -276,19 +306,29 @@ final class Sidrena_History {
 		global $wpdb;
 		$table        = $wpdb->prefix . 'sidrena_price_history';
 		$variation_id = $product->is_type( 'variation' ) ? absint( $product->get_id() ) : 0;
-		$key          = $variation_id ? 'variation_id' : 'product_id';
-		$id           = $variation_id ? $variation_id : absint( $product->get_id() );
+		$product_id   = $variation_id ? absint( $product->get_parent_id() ) : absint( $product->get_id() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded inference from SIDRENA-owned audit history.
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 500',
-				$table,
-				$key,
-				$id
-			),
-			ARRAY_A
-		);
+		if ( $variation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded inference for one variation.
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT price, recorded_at FROM %i WHERE variation_id = %d ORDER BY id DESC LIMIT 500',
+					$table,
+					$variation_id
+				),
+				ARRAY_A
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple inference must exclude child variation rows.
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT price, recorded_at FROM %i WHERE product_id = %d AND variation_id = 0 ORDER BY id DESC LIMIT 500',
+					$table,
+					$product_id
+				),
+				ARRAY_A
+			);
+		}
 
 		$start          = 0;
 		$matched        = false;
