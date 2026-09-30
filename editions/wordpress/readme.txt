@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,16 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Streams standalone CSV imports directly from the uploaded temporary file with bounded row handling instead of loading the full import into memory.
+* Hardens CSV delimiter/dialect handling for PHP 8.4 and adds regression coverage for malformed and edge-case input.
+* Batches WooCommerce product-code lookups during import to reduce repeated catalogue lookup overhead on large files.
+* Replaces page/OFFSET iteration in daily product and service price-history snapshots with bounded ID keyset iteration.
+* Centralizes the published-post keyset iterator and reuses it for WooCommerce product export and service export, keeping daily CSV/XML generation efficient as catalogues grow.
+* Preserves publish, product visibility, variable-product child ordering, filters, public output formats and the existing database schema marker.
+* Revalidates the production packages across PHP 7.4/8.3/8.4, WPCS/PHPStan, distribution guards, WordPress Plugin Check and real wp-admin QA.
 
 = 1.0.1 =
 
