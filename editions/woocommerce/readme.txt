@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,14 @@ No. It is completely optional. The plugin can be installed and configured indepe
 
 == Changelog ==
 
+= 1.0.1 =
+
+* Adds central Woo REST cache invalidation for direct public-catalog membership meta changes, including REST and third-party updates.
+* Replaces physical-location candidate materialization with a keyset-batched iterator that preserves WooCommerce variation order.
+* Uses targeted indexed location-row lookups with request-local caching instead of loading the full location dataset for each item.
+* Keeps the public REST response contract unchanged while reducing memory growth for large multi-location catalogues.
+* Adds regression coverage for direct meta invalidation, targeted location reads and streaming physical-location pagination.
+
 = 1.0.0 =
 
 * Consolidated production baseline focused on SIDRENA anchor/reference prices as a distinct concept from current, regular, sale and 30-day lowest-price data.
@@ -149,7 +157,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
 * Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.
 * Hardens administrator CSV downloads with a checked output stream, sanitized filenames and a nosniff response header.
-* Optimizes WooCommerce public REST pagination with invalidated bounded indexes plus keyset-batched physical-location candidates and targeted indexed location-row lookups.
+* Optimizes WooCommerce public REST pagination with a bounded invalidated product-index cache so repeated pages do not rescan the complete catalog.
 * Hardens bulk input with server-side nonnegative numeric validation, bounded request payloads and valid-location checks.
 * Requires WooCommerce at install/runtime and remains inactive safely while that dependency is unavailable.
 * Ships without telemetry, license keys, feature paywalls or remote executable code.

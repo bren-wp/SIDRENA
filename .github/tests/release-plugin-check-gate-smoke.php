@@ -41,7 +41,7 @@ $woo_gate   = strpos( $release, 'Plugin Check release gate — WooCommerce editi
 $create_tag = strpos( $release, 'Create verified release tag' );
 $publish    = strpos( $release, 'Publish new GitHub release' );
 $verify     = strpos( $release, 'Verify published GitHub release assets' );
-$cleanup    = strpos( $release, 'Keep only the consolidated 1.0.0 GitHub release and version tag' );
+$cleanup    = strpos( $release, 'Keep only the current GitHub release and version tag' );
 
 sidrena_release_gate_assert(
 	false !== $wp_gate && false !== $woo_gate && false !== $create_tag && false !== $publish && false !== $verify && false !== $cleanup,
@@ -111,13 +111,13 @@ sidrena_release_gate_assert(
 $cleanup_block = substr( $release, $cleanup );
 sidrena_release_gate_assert(
 	false !== strpos( $cleanup_block, "startsWith(github.ref, 'refs/heads/release/')" )
-	&& false !== strpos( $cleanup_block, "env.VERSION == '1.0.0'" )
+	&& false === strpos( $cleanup_block, "env.VERSION == '1.0.0'" )
 	&& false !== strpos( $cleanup_block, 'gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"' )
 	&& false !== strpos( $cleanup_block, "git ls-remote --tags --refs origin 'refs/tags/v*'" )
 	&& false !== strpos( $cleanup_block, 'git push origin --delete "$TAG"' )
 	&& false !== strpos( $cleanup_block, 'REMAINING_VERSION_TAGS=' )
 	&& false === strpos( $cleanup_block, 'done < <(git tag -l)' ),
-	'History cleanup must remove only retired GitHub releases and v* release tags, never arbitrary repository tags.'
+	'Verified stable-release cleanup must keep only the current release while removing only retired GitHub releases and v* release tags, never arbitrary repository tags.'
 );
 
 sidrena_release_gate_assert(

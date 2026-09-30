@@ -6,6 +6,14 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.1 =
+* Centralizirana je invalidacija Woo REST membership cachea za izravne promjene _sidrena_cjenik_visibility meta podatka, uključujući REST i third-party integracije.
+* Fizičke poslovnice više ne materijaliziraju cijeli skup dostupnih ID-eva u REST hot pathu: candidate retci čitaju se keyset-batch iteratorom uz očuvan WooCommerce redoslijed varijacija.
+* Pojedinačni location override sada se dohvaća ciljanim indexed upitom po location/product/variation ključu i request-local cacheom umjesto učitavanja svih redaka poslovnice.
+* Uklonjeni su nekorišteni full-location/full-ID helperi iz javnog REST puta kako bi potrošnja memorije ostala bounded na velikim katalozima.
+* Dodani su regression testovi za direct-meta invalidation, streaming fizičkih lokacija, targeted lookup i stabilan variation ordering.
+* Javni REST odgovor i postojeći podaci ostaju kompatibilni; promjena je fokusirana na skalabilnost, stabilnost i konzistentnu invalidaciju cachea.
+
 = 1.0.0 =
 * Konsolidirano produkcijsko izdanje SIDRENA sustava s dva odvojena instalacijska plugina i jednim javnim brojem verzije 1.0.0.
 * Središnji podatak je SIDRENA/sidrena referentna cijena, jasno odvojena od aktualne cijene, WooCommerce regular/sale/current lifecyclea i najniže cijene prethodnih 30 dana.
@@ -25,7 +33,7 @@ Sidrena changelog
 * Production hardening obuhvaća strožu ulaznu validaciju, bounded batch obradu, sigurnije lokacijske selektore, reproducible build i release provjere.
 * External server cron / WP-CLI način sada je potpuno mode-aware i u dashboardu/Cjenicima: izostanak internog dnevnog WP-Crona više se ne prikazuje kao greška kada je external scheduler namjerno odabran.
 * Svi administratorski CSV exporti koriste zajednički provjereni output stream, sanitizirani naziv datoteke, nosniff zaglavlje i eksplicitnu provjeru otvaranja/BOM zapisa prije izvoza.
-* WooCommerce javni REST cjenik sada cacheira samo bounded ravni indeks javnih product/variation ID-eva, invalidira ga na Woo CRUD/status/delete događajima, bulk promjenama i direktnim promjenama `_sidrena_cjenik_visibility` meta podatka; fizičke lokacije koriste keyset-batch candidate iterator i ciljani indexed lookup jednog location overridea, a uklonjeni su nekorišteni full-location/full-ID helperi koji su mogli materijalizirati cijelu poslovnicu u RAM.
+* WooCommerce javni REST cjenik cacheira bounded ravni indeks javnih product/variation ID-eva, invalidira ga na Woo CRUD/status/delete događajima i bulk promjenama te izbjegava ponovno skeniranje cijelog kataloga za svaku sljedeću stranicu.
 * Deaktivacija ne briše poslovne podatke; uninstall ima eksplicitnu politiku zadržavanja ili namjernog brisanja podataka.
 * Oba izdanja zadržavaju javne slugove/text-domainove i svugdje se korisniku predstavljaju kao SIDRENA.
 * Plugin nema premium module, paywall, trial, license key, telemetriju, skriveni tracking ni remote executable code.
