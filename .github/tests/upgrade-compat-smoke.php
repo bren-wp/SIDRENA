@@ -9,7 +9,7 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SIDRENA_VERSION', '1.0.1' );
+define( 'SIDRENA_VERSION', '1.0.2' );
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php';
 
@@ -32,16 +32,20 @@ sidrena_upgrade_assert(
 	'An old Sidrena release must run the compatibility upgrade path.'
 );
 sidrena_upgrade_assert(
-	true === $method->invoke( null, '', '1.0.1' ),
+	true === $method->invoke( null, '', '1.0.2' ),
 	'A missing/old schema marker must run the compatibility repair path.'
 );
 sidrena_upgrade_assert(
 	true === $method->invoke( null, Sidrena_Activator::DB_VERSION, '1.0.0' ),
-	'An installation on 1.0.0 must run the idempotent 1.0.1 compatibility path once.'
+	'An installation on 1.0.0 must run the idempotent compatibility path when upgrading to 1.0.2.'
+);
+sidrena_upgrade_assert(
+	true === $method->invoke( null, Sidrena_Activator::DB_VERSION, '1.0.1' ),
+	'An installation on 1.0.1 must refresh the plugin version marker once when upgrading to 1.0.2.'
 );
 sidrena_upgrade_assert(
 	true === $method->invoke( null, Sidrena_Activator::DB_VERSION, '1.0.27' ),
-	'An installation carrying the former 1.0.27 public marker must run the idempotent repair path when upgrading to 1.0.1.'
+	'An installation carrying the former 1.0.27 public marker must run the idempotent repair path when upgrading to 1.0.2.'
 );
 sidrena_upgrade_assert(
 	false === $method->invoke( null, Sidrena_Activator::DB_VERSION, SIDRENA_VERSION ),
@@ -49,7 +53,7 @@ sidrena_upgrade_assert(
 );
 
 $source    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php' );
-sidrena_upgrade_assert( '0.2.0' === Sidrena_Activator::DB_VERSION, '1.0.1 hardening must carry the indexed history schema marker.' );
+sidrena_upgrade_assert( '0.2.0' === Sidrena_Activator::DB_VERSION, '1.0.2 must preserve the indexed history schema marker.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY product_seq (product_id, id)' ), 'Product history must index product/id sequence lookups.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY variation_seq (variation_id, id)' ), 'Variation history must index variation/id sequence lookups.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY service_seq (service_id, id)' ), 'Service history must index service/id sequence lookups.' );
