@@ -2553,6 +2553,69 @@ final class Sidrena_Admin {
 		return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
 	}
 
+	private function normalize_public_check_path( $path ) {
+		$path = rawurldecode( (string) $path );
+		if ( false !== strpos( $path, "\0" ) ) {
+			return '';
+		}
+		$path     = str_replace( '\\', '/', $path );
+		$parts    = explode( '/', $path );
+		$segments = array();
+		foreach ( $parts as $part ) {
+			if ( '' === $part || '.' === $part ) {
+				continue;
+			}
+			if ( '..' === $part ) {
+				if ( empty( $segments ) ) {
+					return '';
+				}
+				array_pop( $segments );
+				continue;
+			}
+			$segments[] = $part;
+		}
+		$normalized = '/' . implode( '/', $segments );
+		return '/' === substr( $path, -1 ) ? trailingslashit( $normalized ) : $normalized;
+	}
+
+	private function is_allowed_public_check_url( $url, $base ) {
+		if ( ! $url || ! wp_http_validate_url( $url ) ) {
+			return false;
+		}
+
+		$url_parts  = wp_parse_url( $url );
+		$base_parts = wp_parse_url( $base );
+		if ( ! is_array( $url_parts ) || ! is_array( $base_parts ) ) {
+			return false;
+		}
+		if ( isset( $url_parts['user'] ) || isset( $url_parts['pass'] ) ) {
+			return false;
+		}
+
+		$url_scheme  = strtolower( (string) ( $url_parts['scheme'] ?? '' ) );
+		$base_scheme = strtolower( (string) ( $base_parts['scheme'] ?? '' ) );
+		$url_host    = strtolower( rtrim( (string) ( $url_parts['host'] ?? '' ), '.' ) );
+		$base_host   = strtolower( rtrim( (string) ( $base_parts['host'] ?? '' ), '.' ) );
+		if ( ! $url_scheme || $url_scheme !== $base_scheme || ! $url_host || $url_host !== $base_host ) {
+			return false;
+		}
+
+		$default_port = 'https' === $url_scheme ? 443 : 80;
+		$url_port     = isset( $url_parts['port'] ) ? absint( $url_parts['port'] ) : $default_port;
+		$base_port    = isset( $base_parts['port'] ) ? absint( $base_parts['port'] ) : $default_port;
+		if ( $url_port !== $base_port ) {
+			return false;
+		}
+
+		$url_path  = $this->normalize_public_check_path( $url_parts['path'] ?? '/' );
+		$base_path = $this->normalize_public_check_path( trailingslashit( (string) ( $base_parts['path'] ?? '/' ) ) );
+		if ( ! $url_path || ! $base_path ) {
+			return false;
+		}
+		$base_path = trailingslashit( $base_path );
+		return strlen( $url_path ) > strlen( $base_path ) && 0 === strpos( $url_path, $base_path );
+	}
+
 	public function check_public_access() {
 		$this->guard_post( 'sidrena_check_public_access' );
 		$entries = Sidrena_Utils::public_index();
@@ -2568,7 +2631,7 @@ final class Sidrena_Admin {
 
 		foreach ( $entries as $entry ) {
 			$url = isset( $entry['url'] ) ? esc_url_raw( $entry['url'] ) : '';
-			if ( ! $url || 0 !== strpos( $url, $base ) || ! wp_http_validate_url( $url ) ) {
+			if ( ! $this->is_allowed_public_check_url( $url, $base ) ) {
 				$failed[] = basename( (string) ( $entry['filename'] ?? $url ) );
 				continue;
 			}
@@ -2577,7 +2640,7 @@ final class Sidrena_Admin {
 				$url,
 				array(
 					'timeout'             => 10,
-					'redirection'         => 3,
+					'redirection'         => 0,
 					'reject_unsafe_urls'  => true,
 					'limit_response_size' => 262144,
 					'headers'     => array(
