@@ -8,7 +8,6 @@
  * @see https://brendigo.com/
  */
 
-
 $root    = isset( $argv[1] ) ? rtrim( (string) $argv[1], '/\\' ) : '';
 $edition = isset( $argv[2] ) ? (string) $argv[2] : '';
 
@@ -45,22 +44,6 @@ function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 	$GLOBALS['sidrena_entry_actions'][ $hook ][] = $callback;
 }
 
-$main = $root . '/sidrena-' . $edition . '.php';
-if ( ! is_file( $main ) ) {
-	fwrite( STDERR, "Package entrypoint missing: {$main}\n" );
-	exit( 1 );
-}
-
-$header = file_get_contents( $main );
-preg_match( '/^ \\* Version: ([^\\r\\n]+)/m', (string) $header, $version_match );
-$expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
-
-preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
-$actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
-$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrena-cijena';
-
-require $main;
-
 function sidrena_entry_assert( $condition, $message ) {
 	if ( ! $condition ) {
 		fwrite( STDERR, $message . "\n" );
@@ -68,9 +51,52 @@ function sidrena_entry_assert( $condition, $message ) {
 	}
 }
 
+$expected_entrypoints = array(
+	'wordpress'   => 'sidrena-wordpress.php',
+	'woocommerce' => 'sidrena-woocommerce.php',
+);
+
+$forbidden_entrypoints = array(
+	'wordpress'   => array( 'sidrena-woocommerce.php', 'brendigo-sidrena-cijena.php' ),
+	'woocommerce' => array( 'sidrena-wordpress.php', 'brendigo-sidrena-cijena.php' ),
+);
+
+$expected_entrypoint = $expected_entrypoints[ $edition ];
+$main                = $root . '/' . $expected_entrypoint;
+
+sidrena_entry_assert( is_file( $main ), "Package entrypoint missing: {$main}" );
+
+foreach ( $forbidden_entrypoints[ $edition ] as $forbidden_entrypoint ) {
+	sidrena_entry_assert(
+		! is_file( $root . '/' . $forbidden_entrypoint ),
+		"Unexpected package entrypoint found: {$forbidden_entrypoint}"
+	);
+}
+
+$header = file_get_contents( $main );
+preg_match( '/^ \\* Plugin Name: ([^\\r\\n]+)/m', (string) $header, $name_match );
+$actual_name = isset( $name_match[1] ) ? trim( $name_match[1] ) : '';
+
+preg_match( '/^ \\* Version: ([^\\r\\n]+)/m', (string) $header, $version_match );
+$expected_version = isset( $version_match[1] ) ? trim( $version_match[1] ) : '';
+
+preg_match( '/^ \\* Text Domain: ([^\\r\\n]+)/m', (string) $header, $domain_match );
+$actual_domain   = isset( $domain_match[1] ) ? trim( $domain_match[1] ) : '';
+$expected_domain = 'wordpress' === $edition ? 'brendigo-sidrene-cijene-digitalni-cjenici' : 'brendigo-sidrena-cijena';
+
+sidrena_entry_assert( 'SIDRENA' === $actual_name, 'Runtime plugin brand must remain SIDRENA.' );
+sidrena_entry_assert( $expected_domain === $actual_domain, 'Entrypoint text domain does not match the public plugin slug.' );
+
+if ( 'woocommerce' === $edition ) {
+	preg_match( '/^ \\* Requires Plugins: ([^\\r\\n]+)/m', (string) $header, $requires_match );
+	$actual_requires = isset( $requires_match[1] ) ? trim( $requires_match[1] ) : '';
+	sidrena_entry_assert( 'woocommerce' === $actual_requires, 'WooCommerce package must declare the WooCommerce dependency header.' );
+}
+
+require $main;
+
 sidrena_entry_assert( defined( 'SIDRENA_EDITION' ) && SIDRENA_EDITION === $edition, 'Entrypoint defined the wrong edition.' );
 sidrena_entry_assert( '' !== $expected_version && defined( 'SIDRENA_VERSION' ) && $expected_version === SIDRENA_VERSION, 'Entrypoint version mismatch.' );
-sidrena_entry_assert( $expected_domain === $actual_domain, 'Entrypoint text domain does not match the public plugin slug.' );
 sidrena_entry_assert( defined( 'SIDRENA_DIR' ) && realpath( SIDRENA_DIR ) === realpath( $root ), 'SIDRENA_DIR does not point to the package root.' );
 sidrena_entry_assert( function_exists( 'sidrena_cijena' ), 'Template helper was not loaded through the package entrypoint.' );
 sidrena_entry_assert( class_exists( 'Sidrena_Plugin' ), 'Common plugin bootstrap did not load.' );
