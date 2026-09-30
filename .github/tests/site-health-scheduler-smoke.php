@@ -10,6 +10,9 @@
 
 define( 'ABSPATH', __DIR__ . '/' );
 
+$root = dirname( __DIR__, 2 );
+$admin_source = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
+
 $GLOBALS['sidrena_health_settings'] = array(
 	'automation_mode' => 'external',
 	'generation_time' => '06:30',
@@ -107,6 +110,15 @@ sidrena_health_assert( 'critical' === $missing_daily['status'], 'Internal WP-Cro
 $GLOBALS['sidrena_health_schedules']['sidrena_daily_generation'] = 1800003600;
 $internal = $health->test_schedule();
 sidrena_health_assert( 'good' === $internal['status'], 'Healthy internal scheduler and watchdog must report a good Site Health status.' );
+
+sidrena_health_assert(
+	false !== strpos( $admin_source, "'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' )" ),
+	'Admin dashboard health must treat external scheduler mode as intentionally having no internal daily WP-Cron event.'
+);
+sidrena_health_assert(
+	false !== strpos( $admin_source, '$daily_schedule_ok = \'external\' === $automation_mode || (bool) wp_next_scheduled' ),
+	'Admin audit issue count must not flag external scheduler mode merely because internal daily WP-Cron is absent.'
+);
 
 $archive = $health->test_archive();
 sidrena_health_assert( 'good' === $archive['status'], 'Writable current/archive directories must pass Site Health.' );
