@@ -96,6 +96,9 @@ jobs:
       - name: WooCommerce missing-dependency smoke test
         run: php .github/tests/woocommerce-dependency-smoke.php
 
+      - name: WooCommerce HPOS compatibility smoke test
+        run: php .github/tests/woocommerce-hpos-compat-smoke.php
+
       - name: WooCommerce import state smoke test
         run: php .github/tests/woo-import-state-smoke.php
 

@@ -41,4 +41,13 @@ define( 'SIDRENA_FILE', __FILE__ );
 define( 'SIDRENA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIDRENA_URL', plugin_dir_url( __FILE__ ) );
 
+add_action(
+	'before_woocommerce_init',
+	static function () {
+		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+
 require_once SIDRENA_DIR . 'includes/sidrena-bootstrap.php';
