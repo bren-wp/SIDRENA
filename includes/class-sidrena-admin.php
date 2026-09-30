@@ -1831,22 +1831,19 @@ final class Sidrena_Admin {
 		$processed = 0;
 		$updated   = 0;
 		$skipped   = 0;
-		while ( true ) {
-			$row = $this->read_normalized_csv_row( $resource, $delimiter );
-			if ( is_wp_error( $row ) ) {
+		foreach ( $this->iterate_import_rows_with_product_ids( $resource, $delimiter, $map['sku'] ) as $entry ) {
+			if ( is_wp_error( $entry ) ) {
 				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 				$this->redirect( 'tools', 'import_failed' );
 			}
-			if ( false === $row ) {
-				break;
-			}
+			$row        = $entry['row'];
+			$product_id = absint( $entry['product_id'] );
 			++$processed;
 			$sku = isset( $row[ $map['sku'] ] ) ? sanitize_text_field( $row[ $map['sku'] ] ) : '';
 			if ( ! $sku ) {
 				++$skipped;
 				continue;
 			}
-			$product_id = Sidrena_Utils::find_product_id_by_code( $sku );
 			if ( ! $product_id || ! current_user_can( 'edit_post', $product_id ) ) {
 				++$skipped;
 				continue;
@@ -1971,27 +1968,19 @@ final class Sidrena_Admin {
 		$processed = 0;
 		$updated   = 0;
 		$skipped   = 0;
-		while ( true ) {
-			$row = $this->read_normalized_csv_row( $resource, $delimiter );
-			if ( is_wp_error( $row ) ) {
+		$sku_index = isset( $map['sku'] ) ? $map['sku'] : null;
+		foreach ( $this->iterate_import_rows_with_product_ids( $resource, $delimiter, $sku_index ) as $entry ) {
+			if ( is_wp_error( $entry ) ) {
 				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 				$this->redirect( 'tools', 'location_import_failed' );
 			}
-			if ( false === $row ) {
-				break;
-			}
+			$row        = $entry['row'];
+			$product_id = absint( $entry['product_id'] );
 			++$processed;
 			$location_id = Sidrena_Utils::sanitize_location_id( $row[ $map['location_id'] ] ?? '' );
 			if ( ! isset( $valid_locations[ $location_id ] ) ) {
 				++$skipped;
 				continue;
-			}
-			$product_id = 0;
-			if ( isset( $map['sku'] ) ) {
-				$sku = sanitize_text_field( $row[ $map['sku'] ] ?? '' );
-				if ( $sku ) {
-					$product_id = Sidrena_Utils::find_product_id_by_code( $sku );
-				}
 			}
 			if ( ! $product_id && isset( $map['product_id'] ) ) {
 				$product_id = absint( $row[ $map['product_id'] ] ?? 0 );
@@ -2158,6 +2147,169 @@ final class Sidrena_Admin {
 			return new WP_Error( 'upload_header' );
 		}
 		return $count;
+	}
+
+	private function import_product_code_key( $code ) {
+		$code = trim( sanitize_text_field( (string) $code ) );
+		if ( '' === $code ) {
+			return '';
+		}
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $code, 'UTF-8' ) : strtolower( $code );
+	}
+
+	private function product_id_index_for_codes( $codes ) {
+		global $wpdb;
+
+		$keys     = array();
+		$original = array();
+		foreach ( (array) $codes as $code ) {
+			$code = trim( sanitize_text_field( (string) $code ) );
+			$key  = $this->import_product_code_key( $code );
+			if ( '' !== $key && ! isset( $keys[ $key ] ) ) {
+				$keys[ $key ]     = true;
+				$original[ $key ] = $code;
+			}
+			if ( count( $keys ) >= 500 ) {
+				break;
+			}
+		}
+		if ( ! $keys ) {
+			return array();
+		}
+
+		$index        = array();
+		$values       = array_values( $original );
+		$placeholders = implode( ', ', array_fill( 0, count( $values ), '%s' ) );
+		$lookup_table = $wpdb->prefix . 'wc_product_meta_lookup';
+		$query        = "SELECT MIN(product_id) AS product_id, sku
+			FROM %i
+			WHERE sku IN ( $placeholders )
+			GROUP BY sku
+			ORDER BY MIN(product_id) ASC
+			LIMIT %d";
+		$args         = array( $lookup_table );
+		foreach ( $values as $value ) {
+			$args[] = $value;
+		}
+		$args[] = count( $values );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Identifier/value placeholders are prepared below; only the internally generated bounded placeholder list is interpolated.
+		$prepared = $wpdb->prepare( $query, ...$args );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Bounded Woo lookup-table query was fully prepared immediately above.
+		$rows = $wpdb->get_results( $prepared, ARRAY_A );
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$key = $this->import_product_code_key( $row['sku'] ?? '' );
+			$id  = absint( $row['product_id'] ?? 0 );
+			if ( $key && $id && ! isset( $index[ $key ] ) ) {
+				$index[ $key ] = $id;
+			}
+		}
+
+		foreach ( $original as $key => $code ) {
+			if ( isset( $index[ $key ] ) || ! preg_match( '/^WP-(\d+)$/i', $code, $matches ) ) {
+				continue;
+			}
+			$product = wc_get_product( absint( $matches[1] ) );
+			if ( $product ) {
+				$index[ $key ] = absint( $product->get_id() );
+			}
+		}
+
+		$remaining = array();
+		foreach ( $original as $key => $code ) {
+			if ( ! isset( $index[ $key ] ) ) {
+				$remaining[ $key ] = $code;
+			}
+		}
+		if ( ! $remaining ) {
+			return $index;
+		}
+
+		$values       = array_values( $remaining );
+		$placeholders = implode( ', ', array_fill( 0, count( $values ), '%s' ) );
+		$query        = "SELECT MIN(p.ID) AS ID, pm.meta_value AS code
+			FROM %i p
+			INNER JOIN %i pm ON pm.post_id = p.ID
+			WHERE p.post_type IN (%s, %s)
+				AND p.post_status IN (%s, %s, %s)
+				AND pm.meta_key = %s
+				AND pm.meta_value IN ( $placeholders )
+			GROUP BY pm.meta_value
+			ORDER BY MIN(p.ID) ASC
+			LIMIT %d";
+		$args         = array(
+			$wpdb->posts,
+			$wpdb->postmeta,
+			'product',
+			'product_variation',
+			'publish',
+			'private',
+			'draft',
+			'_sidrena_code',
+		);
+		foreach ( $values as $value ) {
+			$args[] = $value;
+		}
+		$args[] = count( $values );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Identifier/value placeholders are prepared below; only the internally generated bounded placeholder list is interpolated.
+		$prepared = $wpdb->prepare( $query, ...$args );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Bounded exact-code fallback query was fully prepared immediately above.
+		$rows = $wpdb->get_results( $prepared, ARRAY_A );
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$key = $this->import_product_code_key( $row['code'] ?? '' );
+			$id  = absint( $row['ID'] ?? 0 );
+			if ( $key && $id && ! isset( $index[ $key ] ) ) {
+				$index[ $key ] = $id;
+			}
+		}
+		return $index;
+	}
+
+	private function iterate_import_rows_with_product_ids( $stream, $delimiter, $sku_index, $chunk_size = 250 ) {
+		$chunk_size = min( 250, max( 1, absint( $chunk_size ) ) );
+		while ( is_resource( $stream ) ) {
+			$rows  = array();
+			$codes = array();
+			for ( $i = 0; $i < $chunk_size; ++$i ) {
+				$row = $this->read_normalized_csv_row( $stream, $delimiter );
+				if ( is_wp_error( $row ) ) {
+					yield $row;
+					return;
+				}
+				if ( false === $row ) {
+					break;
+				}
+				$rows[] = $row;
+				if ( null !== $sku_index && isset( $row[ $sku_index ] ) ) {
+					$code = sanitize_text_field( (string) $row[ $sku_index ] );
+					if ( '' !== $code ) {
+						$codes[] = $code;
+					}
+				}
+			}
+			if ( ! $rows ) {
+				return;
+			}
+
+			$index = $this->product_id_index_for_codes( $codes );
+			foreach ( $rows as $row ) {
+				$product_id = 0;
+				if ( null !== $sku_index && isset( $row[ $sku_index ] ) ) {
+					$key = $this->import_product_code_key( $row[ $sku_index ] );
+					if ( $key && isset( $index[ $key ] ) ) {
+						$product_id = absint( $index[ $key ] );
+					}
+				}
+				yield array(
+					'row'        => $row,
+					'product_id' => $product_id,
+				);
+			}
+			if ( count( $rows ) < $chunk_size ) {
+				return;
+			}
+		}
 	}
 
 	private function resolve_aliases( $map, $aliases ) {
