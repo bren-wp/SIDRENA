@@ -10,7 +10,7 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="SIDRENA" width="520">
 </p>
 
-<h1 align="center">SIDRENA 1.0.0</h1>
+<h1 align="center">SIDRENA 1.0.1</h1>
 
 <p align="center">
   <strong>Sidrena cijena, povijest cijena i digitalni cjenici — ozbiljno riješeni za WordPress.</strong><br>
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 </p>
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.0"><strong>Preuzmi 1.0.0</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.1"><strong>Preuzmi 1.0.1</strong></a>
   ·
   <a href="https://brendigo.com/sidrene-cijene/"><strong>Službena stranica</strong></a>
   ·
@@ -324,7 +324,7 @@ WordPress.org odobrenje uvijek uključuje i ručni pregled Plugin Review tima; p
 - **PHP:** 7.4+
 - **WooCommerce izdanje:** WooCommerce 8.0+
 - **WC tested up to:** 11.1.2
-- **SIDRENA:** 1.0.0
+- **SIDRENA:** 1.0.1
 
 ---
 
@@ -363,13 +363,13 @@ Instalacijski paketi uključuju i edition-specific PDF upute generirane i vizual
 ## Build
 
 ~~~bash
-./tools/build-editions.sh 1.0.0 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.1 /tmp/sidrena-build
 ~~~
 
 Dobivaju se dva čista instalacijska paketa:
 
-- <code>sidrena-wordpress-1.0.0.zip</code>
-- <code>sidrena-woocommerce-1.0.0.zip</code>
+- <code>sidrena-wordpress-1.0.1.zip</code>
+- <code>sidrena-woocommerce-1.0.1.zip</code>
 
 i pripadajuće <code>.sha256</code> kontrolne datoteke.
 
@@ -380,9 +380,9 @@ Production ZIP ne uključuje razvojne workflowe, source-only branding materijal,
 ## Preuzimanje
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.0/sidrena-wordpress-1.0.0.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.1/sidrena-wordpress-1.0.1.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.0/sidrena-woocommerce-1.0.0.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.1/sidrena-woocommerce-1.0.1.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
 </p>
 
 <p align="center">
