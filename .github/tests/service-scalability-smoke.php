@@ -37,6 +37,10 @@ sidrena_service_scale_assert( false !== strpos( $services, "add_action( 'wp_afte
 sidrena_service_scale_assert( false !== strpos( $services, 'private function snapshot_newly_published' ), 'Service first-publication anchor snapshot helper is missing.' );
 sidrena_service_scale_assert( false !== strpos( $history, "\$wpdb->prepare( 'SELECT COUNT(*) FROM %i', \$table )" ), 'Service history count query must prepare the custom table identifier.' );
 sidrena_service_scale_assert( false === strpos( $history, 'SELECT COUNT(*) FROM {$table}' ), 'Service history count query must not interpolate the custom table identifier.' );
+sidrena_service_scale_assert( false !== strpos( $history, 'private function published_service_ids_keyset( $batch_size = 250 )' ), 'Service daily history snapshot needs a bounded keyset iterator.' );
+sidrena_service_scale_assert( false !== strpos( $history, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Service daily history snapshot must advance by ID keyset.' );
+sidrena_service_scale_assert( false !== strpos( $history, '$this->published_service_ids_keyset( 250 )' ), 'Service daily history snapshot must use bounded 250-item keyset batches.' );
+sidrena_service_scale_assert( false === strpos( $history, "'paged'          => \$page" ), 'Service daily history snapshot must not restore page/OFFSET pagination.' );
 sidrena_service_scale_assert( false !== strpos( $price_history, 'private function catalog_parent_ids_keyset( $post_type, $batch_size )' ), 'Daily price-history snapshot needs a shared keyset catalog iterator.' );
 sidrena_service_scale_assert( false !== strpos( $price_history, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Daily price-history catalog scan must advance by ID keyset.' );
 sidrena_service_scale_assert( false !== strpos( $price_history, '$this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 )' ), 'WordPress history snapshot must use bounded 250-item keyset batches.' );
