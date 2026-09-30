@@ -2626,7 +2626,12 @@ final class Sidrena_Admin {
 			return false;
 		}
 		$base_path = trailingslashit( $base_path );
-		return strlen( $url_path ) > strlen( $base_path ) && 0 === strpos( $url_path, $base_path );
+		$extension = strtolower( (string) pathinfo( $url_path, PATHINFO_EXTENSION ) );
+		return strlen( $url_path ) > strlen( $base_path )
+			&& 0 === strpos( $url_path, $base_path )
+			&& in_array( $extension, array( 'csv', 'xml' ), true )
+			&& empty( $url_parts['query'] )
+			&& empty( $url_parts['fragment'] );
 	}
 
 	public function check_public_access() {
