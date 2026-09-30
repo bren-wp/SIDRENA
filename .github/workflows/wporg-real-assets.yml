@@ -97,8 +97,8 @@ jobs:
           unzip -q "$BUILD_DIR/sidrena-wordpress-$VERSION.zip" -d .wp-env-runtime
           unzip -q "$BUILD_DIR/sidrena-woocommerce-$VERSION.zip" -d .wp-env-runtime
 
-          test -f .wp-env-runtime/brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php
-          test -f .wp-env-runtime/brendigo-sidrena-cijena/sidrena-woocommerce.php
+          test -f .wp-env-runtime/brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php
+          test -f .wp-env-runtime/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
 
           echo "SIDRENA_RC_VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "SIDRENA_RC_BUILD_DIR=$BUILD_DIR" >> "$GITHUB_ENV"
@@ -153,7 +153,7 @@ jobs:
 
           wp-env run cli wp eval '
           $controller = wc_get_container()->get( \Automattic\WooCommerce\Internal\Features\FeaturesController::class );
-          $compat = $controller->get_compatible_features_for_plugin( "brendigo-sidrena-cijena/sidrena-woocommerce.php" );
+          $compat = $controller->get_compatible_features_for_plugin( "brendigo-sidrena-cijena/brendigo-sidrena-cijena.php" );
           if ( ! in_array( "custom_order_tables", $compat["compatible"] ?? array(), true ) ) {
               fwrite( STDERR, "SIDRENA is not registered as HPOS compatible.\n" );
               exit( 1 );
