@@ -12,6 +12,13 @@ define( 'ABSPATH', __DIR__ . '/' );
 
 class WP_REST_Request {}
 class Sidrena_Location_Data {
+	public static function iterate_available_item_ids_for_location( $location_id ) {
+		unset( $location_id );
+		++$GLOBALS['sidrena_location_iterator_calls'];
+		foreach ( array( 1, 22, 20, 21 ) as $item_id ) {
+			yield $item_id;
+		}
+	}
 	public static function get_for_product( $location_id, $product ) {
 		unset( $location_id );
 		$explicit = array( 1, 20, 21, 22 );
@@ -25,6 +32,7 @@ class Sidrena_Location_Data {
 	}
 }
 $GLOBALS['sidrena_anchor_calls'] = 0;
+$GLOBALS['sidrena_location_iterator_calls'] = 0;
 
 class Sidrena_Utils {
 	public static function is_wordpress_edition() { return false; }
@@ -151,6 +159,7 @@ $webshop_item = $product_method->invoke( $rest, $GLOBALS['sidrena_wc_products'][
 sidrena_rest_page_assert( 'dostupno' === $webshop_item['dostupnost'], 'Webshop REST item must retain the global Woo stock fallback.' );
 
 sidrena_rest_page_assert( array() === $GLOBALS['sidrena_wc_queries'], 'Physical-location REST must use explicit location candidates instead of scanning the complete Woo catalog.' );
+sidrena_rest_page_assert( 3 === $GLOBALS['sidrena_location_iterator_calls'], 'Physical-location REST pages must consume the streaming location candidate iterator.' );
 
 $webshop_page = $method->invoke( $rest, array( 'id' => 'webshop', 'code' => 'WEB', 'kind' => 'webshop' ), 1, 2 );
 sidrena_rest_page_assert( 5 === $webshop_page['total'], 'Webshop REST must retain the complete public Woo catalog total.' );
