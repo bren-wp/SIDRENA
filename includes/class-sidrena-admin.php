@@ -1018,8 +1018,9 @@ final class Sidrena_Admin {
 		$output_enabled = 'yes' === $settings['generate_csv'] || 'yes' === $settings['generate_xml'];
 		$integrity      = Sidrena_Utils::archive_integrity();
 		$before_eight   = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
-		$automation_mode = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
-		$cron_scheduled = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$automation_mode    = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$daily_schedule_ok = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_scheduled = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
 		$product_catalog_ready = Sidrena_Utils::is_wordpress_edition()
 			? class_exists( 'Sidrena_Standalone' )
 			: ( Sidrena_Utils::is_woocommerce_active() && class_exists( 'Sidrena_Products' ) );
@@ -1038,13 +1039,18 @@ final class Sidrena_Admin {
 			array( $output_enabled, __( 'Automatska objava CSV/XML formata je aktivna', 'sidrena' ), __( 'Sidrena treba automatski održavati strojno čitljive formate.', 'sidrena' ) ),
 			array( $before_eight, __( 'Automatsko dnevno generiranje postavljeno je prije 08:00', 'sidrena' ), __( 'Postavite vrijeme prije 08:00; preporuka SIDRENA-e je 06:30 radi operativne rezerve.', 'sidrena' ) ),
 			array(
-				$cron_scheduled,
+				$daily_schedule_ok,
 				'external' === $automation_mode
 					? __( 'Vanjski server cron / WP-CLI način je aktivan', 'sidrena' )
 					: __( 'Dnevni WP-Cron događaj za generiranje cjenika je zakazan', 'sidrena' ),
 				'external' === $automation_mode
-					? __( 'Pokrenite “wp sidrena publish” iz poslužiteljskog rasporeda prije zadanog vremena; SIDRENA watchdog ostaje aktivan.', 'sidrena' )
+					? __( 'Pokrenite “wp sidrena publish” iz poslužiteljskog rasporeda prije zadanog vremena.', 'sidrena' )
 					: __( 'Ponovno spremite postavke ili reaktivirajte dodatak. Za strogo vrijeme izvršenja možete odabrati vanjski server cron / WP-CLI način.', 'sidrena' ),
+			),
+			array(
+				$watchdog_scheduled,
+				__( 'Watchdog nadzora objave je zakazan', 'sidrena' ),
+				__( 'Ponovno spremite postavke ili reaktivirajte dodatak kako bi SIDRENA mogla nadzirati kašnjenje i neuspjeh objave.', 'sidrena' ),
 			),
 			array( max( 30, absint( $settings['retention_days'] ) ) >= 30, __( 'Arhiva je postavljena na najmanje 30 dana', 'sidrena' ), __( 'Povećajte razdoblje čuvanja.', 'sidrena' ) ),
 			array( ! empty( Sidrena_Utils::public_index() ), __( 'Postoji barem jedan aktualni javni cjenik', 'sidrena' ), __( 'Generirajte prvi cjenik.', 'sidrena' ) ),
@@ -1098,11 +1104,12 @@ final class Sidrena_Admin {
 		$current_ts       = ! empty( $current_refresh['generated_at'] ) ? strtotime( (string) $current_refresh['generated_at'] ) : 0;
 		$last_success     = $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0;
 		$is_stale         = $last_ts && ( time() - $last_ts ) > ( 26 * HOUR_IN_SECONDS );
-		$automation_mode   = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$automation_mode    = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
 		$external_scheduler = 'external' === $automation_mode;
-		$wp_cron_disabled = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
-		$next_cron        = wp_next_scheduled( 'sidrena_daily_generation' );
-		$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );
+		$wp_cron_disabled  = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
+		$next_cron         = wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_scheduled = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
+		$schedule_warning  = ! $watchdog_scheduled || ( ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron ) );
 		$rest_enabled     = 'yes' === $settings['enable_rest_index'];
 		$html_enabled     = 'yes' === $settings['enable_public_html'];
 		$current_files_caption = sprintf(
@@ -1197,9 +1204,12 @@ final class Sidrena_Admin {
 					<?php if ( $is_stale ) : ?>
 						<h2><?php esc_html_e( 'Zadnji uspješni cjenik stariji je od 26 sati', 'sidrena' ); ?></h2>
 						<p><?php esc_html_e( 'Provjerite odabrani scheduler i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p>
+					<?php elseif ( ! $watchdog_scheduled ) : ?>
+						<h2><?php esc_html_e( 'Nadzor objave nije zakazan', 'sidrena' ); ?></h2>
+						<p><?php esc_html_e( 'Ponovno spremite Postavke ili reaktivirajte dodatak kako bi watchdog mogao pratiti kašnjenje i neuspjeh objave.', 'sidrena' ); ?></p>
 					<?php elseif ( $external_scheduler ) : ?>
 						<h2><?php esc_html_e( 'Vanjski server cron / WP-CLI način je aktivan', 'sidrena' ); ?></h2>
-						<p><?php esc_html_e( 'Interni dnevni WP-Cron namjerno nije zakazan. Server treba pokrenuti “wp sidrena publish” prema rasporedu; watchdog ostaje aktivan.', 'sidrena' ); ?></p>
+						<p><?php esc_html_e( 'Interni dnevni WP-Cron namjerno nije zakazan. Server treba pokrenuti “wp sidrena publish” prema rasporedu; watchdog je aktivan.', 'sidrena' ); ?></p>
 					<?php elseif ( $wp_cron_disabled ) : ?>
 						<h2><?php esc_html_e( 'WordPress WP-Cron je isključen', 'sidrena' ); ?></h2>
 						<p><?php esc_html_e( 'Odaberite vanjski server cron / WP-CLI način ili omogućite WordPress cron izvršavanje.', 'sidrena' ); ?></p>
@@ -2445,10 +2455,11 @@ final class Sidrena_Admin {
 		if ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) {
 			++$issues;
 		}
-		$automation_mode = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
-		$daily_schedule_ok = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
-		$generation_time_ok = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
-		if ( ! $daily_schedule_ok || ! $generation_time_ok ) {
+		$automation_mode      = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$daily_schedule_ok   = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_schedule_ok = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
+		$generation_time_ok  = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
+		if ( ! $daily_schedule_ok || ! $watchdog_schedule_ok || ! $generation_time_ok ) {
 			++$issues;
 		}
 		return array(
