@@ -111,6 +111,8 @@ function delete_transient( $key ) { unset( $GLOBALS['sidrena_transients'][ $key 
 
 require dirname( __DIR__, 2 ) . '/includes/class-sidrena-rest.php';
 
+$bulk_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-bulk.php' );
+
 function sidrena_rest_page_assert( $condition, $message ) {
 	if ( ! $condition ) {
 		fwrite( STDERR, $message . "\n" );
@@ -168,5 +170,10 @@ sidrena_rest_page_assert( 5 === $webshop_page2['total'], 'Cached Woo REST page m
 
 $rest->invalidate_woocommerce_catalog_index();
 sidrena_rest_page_assert( false === get_transient( 'sidrena_rest_wc_catalog_index_v1' ), 'Woo catalog update invalidation must remove the REST catalog index cache.' );
+sidrena_rest_page_assert(
+	false !== $bulk_source
+	&& false !== strpos( $bulk_source, 'Sidrena_REST::instance()->invalidate_woocommerce_catalog_index();' ),
+	'Bulk catalog visibility edits must explicitly invalidate the Woo REST catalog index.'
+);
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );
