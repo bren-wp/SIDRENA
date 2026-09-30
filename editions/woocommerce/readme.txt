@@ -149,7 +149,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
 * Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.
 * Hardens administrator CSV downloads with a checked output stream, sanitized filenames and a nosniff response header.
-* Optimizes WooCommerce public REST pagination with a bounded product-index cache that is invalidated on Woo CRUD/status/delete events, bulk edits and direct public-catalog membership meta changes.
+* Optimizes WooCommerce public REST pagination with invalidated bounded indexes plus keyset-batched physical-location candidates and targeted indexed location-row lookups.
 * Hardens bulk input with server-side nonnegative numeric validation, bounded request payloads and valid-location checks.
 * Requires WooCommerce at install/runtime and remains inactive safely while that dependency is unavailable.
 * Ships without telemetry, license keys, feature paywalls or remote executable code.
