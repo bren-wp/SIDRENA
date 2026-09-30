@@ -105,6 +105,7 @@ function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_-]
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
 function absint( $value ) { return abs( (int) $value ); }
 function get_post_modified_time( $format, $gmt, $id ) { unset( $format, $gmt ); return '2026-09-24T10:00:00+00:00'; }
+function get_post_type( $id ) { return 999 === (int) $id ? 'post' : 'product'; }
 function get_transient( $key ) { return array_key_exists( $key, $GLOBALS['sidrena_transients'] ) ? $GLOBALS['sidrena_transients'][ $key ] : false; }
 function set_transient( $key, $value, $expiration ) { unset( $expiration ); $GLOBALS['sidrena_transients'][ $key ] = $value; return true; }
 function delete_transient( $key ) { unset( $GLOBALS['sidrena_transients'][ $key ] ); return true; }
@@ -175,5 +176,16 @@ sidrena_rest_page_assert(
 	&& false !== strpos( $bulk_source, 'Sidrena_REST::instance()->invalidate_woocommerce_catalog_index();' ),
 	'Bulk catalog visibility edits must explicitly invalidate the Woo REST catalog index.'
 );
+
+set_transient( 'sidrena_rest_wc_catalog_index_v1', array( 1, 5 ), 300 );
+$rest->maybe_invalidate_catalog_membership_meta( 10, 1, '_sidrena_cjenik_visibility', 'exclude' );
+sidrena_rest_page_assert( false === get_transient( 'sidrena_rest_wc_catalog_index_v1' ), 'Direct membership meta updates must invalidate the Woo REST catalog index.' );
+
+set_transient( 'sidrena_rest_wc_catalog_index_v1', array( 1, 5 ), 300 );
+$rest->maybe_invalidate_catalog_membership_meta( 11, 1, '_sidrena_anchor_price', '99.00' );
+sidrena_rest_page_assert( array( 1, 5 ) === get_transient( 'sidrena_rest_wc_catalog_index_v1' ), 'Unrelated product metadata must not churn the Woo REST membership cache.' );
+
+$rest->maybe_invalidate_catalog_membership_meta( 12, 999, '_sidrena_cjenik_visibility', 'exclude' );
+sidrena_rest_page_assert( array( 1, 5 ) === get_transient( 'sidrena_rest_wc_catalog_index_v1' ), 'Non-product metadata must not invalidate the Woo REST catalog index.' );
 
 fwrite( STDOUT, "Sidrena Woo REST pagination smoke test passed.\n" );
