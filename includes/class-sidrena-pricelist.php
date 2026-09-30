@@ -943,6 +943,7 @@ final class Sidrena_Pricelist {
 			yield $this->product_row( $product, $location );
 		}
 	}
+
 	private function product_row( $product, $location ) {
 		$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
 		$override    = Sidrena_Location_Data::get_for_product( $location_id, $product );
@@ -1054,6 +1055,7 @@ final class Sidrena_Pricelist {
 			);
 		}
 	}
+
 	private function write_csv( $filepath, $headers, $rows ) {
 		$settings  = Sidrena_Utils::settings();
 		$delimiter = isset( $settings['csv_delimiter'] ) && in_array( $settings['csv_delimiter'], array( ';', ',', '\t' ), true ) ? $settings['csv_delimiter'] : ';';
