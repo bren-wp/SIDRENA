@@ -1018,7 +1018,9 @@ final class Sidrena_Admin {
 		$output_enabled = 'yes' === $settings['generate_csv'] || 'yes' === $settings['generate_xml'];
 		$integrity      = Sidrena_Utils::archive_integrity();
 		$before_eight   = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
-		$cron_scheduled = (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$automation_mode    = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$daily_schedule_ok = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_scheduled = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
 		$product_catalog_ready = Sidrena_Utils::is_wordpress_edition()
 			? class_exists( 'Sidrena_Standalone' )
 			: ( Sidrena_Utils::is_woocommerce_active() && class_exists( 'Sidrena_Products' ) );
@@ -1036,7 +1038,20 @@ final class Sidrena_Admin {
 			array( ! $coverage_issue, __( 'Fizičke lokacije imaju podatke o raspoloživosti po stavci', 'sidrena' ), __( 'Uvezite lokacijsku raspoloživost; globalno Woo stanje možda nije dovoljno za fizičku poslovnicu.', 'sidrena' ) ),
 			array( $output_enabled, __( 'Automatska objava CSV/XML formata je aktivna', 'sidrena' ), __( 'Sidrena treba automatski održavati strojno čitljive formate.', 'sidrena' ) ),
 			array( $before_eight, __( 'Automatsko dnevno generiranje postavljeno je prije 08:00', 'sidrena' ), __( 'Postavite vrijeme prije 08:00; preporuka SIDRENA-e je 06:30 radi operativne rezerve.', 'sidrena' ) ),
-			array( $cron_scheduled, __( 'Dnevni WP-Cron događaj za generiranje cjenika je zakazan', 'sidrena' ), __( 'Ponovno spremite postavke ili reaktivirajte dodatak. Za strogo vrijeme izvršenja koristite pravi poslužiteljski cron koji pokreće WP-Cron.', 'sidrena' ) ),
+			array(
+				$daily_schedule_ok,
+				'external' === $automation_mode
+					? __( 'Vanjski server cron / WP-CLI način je aktivan', 'sidrena' )
+					: __( 'Dnevni WP-Cron događaj za generiranje cjenika je zakazan', 'sidrena' ),
+				'external' === $automation_mode
+					? __( 'Pokrenite “wp sidrena publish” iz poslužiteljskog rasporeda prije zadanog vremena.', 'sidrena' )
+					: __( 'Ponovno spremite postavke ili reaktivirajte dodatak. Za strogo vrijeme izvršenja možete odabrati vanjski server cron / WP-CLI način.', 'sidrena' ),
+			),
+			array(
+				$watchdog_scheduled,
+				__( 'Watchdog nadzora objave je zakazan', 'sidrena' ),
+				__( 'Ponovno spremite postavke ili reaktivirajte dodatak kako bi SIDRENA mogla nadzirati kašnjenje i neuspjeh objave.', 'sidrena' ),
+			),
 			array( max( 30, absint( $settings['retention_days'] ) ) >= 30, __( 'Arhiva je postavljena na najmanje 30 dana', 'sidrena' ), __( 'Povećajte razdoblje čuvanja.', 'sidrena' ) ),
 			array( ! empty( Sidrena_Utils::public_index() ), __( 'Postoji barem jedan aktualni javni cjenik', 'sidrena' ), __( 'Generirajte prvi cjenik.', 'sidrena' ) ),
 			array( $integrity['ok'], __( 'Indeksirane arhivske datoteke postoje i provjereni SHA-256 zapisi se podudaraju', 'sidrena' ), __( 'Otvorite Arhiva 30+ dana i provjerite nedostajuće ili promijenjene datoteke.', 'sidrena' ) ),
@@ -1089,8 +1104,12 @@ final class Sidrena_Admin {
 		$current_ts       = ! empty( $current_refresh['generated_at'] ) ? strtotime( (string) $current_refresh['generated_at'] ) : 0;
 		$last_success     = $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0;
 		$is_stale         = $last_ts && ( time() - $last_ts ) > ( 26 * HOUR_IN_SECONDS );
-		$wp_cron_disabled = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
-		$next_cron        = wp_next_scheduled( 'sidrena_daily_generation' );
+		$automation_mode    = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$external_scheduler = 'external' === $automation_mode;
+		$wp_cron_disabled  = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
+		$next_cron         = wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_scheduled = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
+		$schedule_warning  = ! $watchdog_scheduled || ( ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron ) );
 		$rest_enabled     = 'yes' === $settings['enable_rest_index'];
 		$html_enabled     = 'yes' === $settings['enable_public_html'];
 		$current_files_caption = sprintf(
@@ -1179,15 +1198,21 @@ final class Sidrena_Admin {
 				</section>
 			</div>
 
-			<section class="sid-card sid-note <?php echo $is_stale || $wp_cron_disabled || ! $next_cron ? 'sid-note-warning' : ''; ?>">
-				<div class="sid-note-icon"><span class="dashicons <?php echo $is_stale || $wp_cron_disabled || ! $next_cron ? 'dashicons-warning' : 'dashicons-clock'; ?>"></span></div>
+			<section class="sid-card sid-note <?php echo $is_stale || $schedule_warning ? 'sid-note-warning' : ''; ?>">
+				<div class="sid-note-icon"><span class="dashicons <?php echo $is_stale || $schedule_warning ? 'dashicons-warning' : 'dashicons-clock'; ?>"></span></div>
 				<div>
 					<?php if ( $is_stale ) : ?>
 						<h2><?php esc_html_e( 'Zadnji uspješni cjenik stariji je od 26 sati', 'sidrena' ); ?></h2>
-						<p><?php esc_html_e( 'Provjerite WP-Cron, server cron i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p>
+						<p><?php esc_html_e( 'Provjerite odabrani scheduler i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p>
+					<?php elseif ( ! $watchdog_scheduled ) : ?>
+						<h2><?php esc_html_e( 'Nadzor objave nije zakazan', 'sidrena' ); ?></h2>
+						<p><?php esc_html_e( 'Ponovno spremite Postavke ili reaktivirajte dodatak kako bi watchdog mogao pratiti kašnjenje i neuspjeh objave.', 'sidrena' ); ?></p>
+					<?php elseif ( $external_scheduler ) : ?>
+						<h2><?php esc_html_e( 'Vanjski server cron / WP-CLI način je aktivan', 'sidrena' ); ?></h2>
+						<p><?php esc_html_e( 'Interni dnevni WP-Cron namjerno nije zakazan. Server treba pokrenuti “wp sidrena publish” prema rasporedu; watchdog je aktivan.', 'sidrena' ); ?></p>
 					<?php elseif ( $wp_cron_disabled ) : ?>
 						<h2><?php esc_html_e( 'WordPress WP-Cron je isključen', 'sidrena' ); ?></h2>
-						<p><?php esc_html_e( 'Automatsko dnevno generiranje tada ovisi o vašem server cron zadatku ili WP-CLI automatizaciji.', 'sidrena' ); ?></p>
+						<p><?php esc_html_e( 'Odaberite vanjski server cron / WP-CLI način ili omogućite WordPress cron izvršavanje.', 'sidrena' ); ?></p>
 					<?php elseif ( ! $next_cron ) : ?>
 						<h2><?php esc_html_e( 'Dnevno generiranje nije zakazano', 'sidrena' ); ?></h2>
 						<p><?php esc_html_e( 'Ponovno spremite Postavke ili provjerite cron konfiguraciju poslužitelja.', 'sidrena' ); ?></p>
@@ -2147,11 +2172,7 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_missing' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-nedostajuce-sidrene-cijene.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-nedostajuce-sidrene-cijene.csv' );
 		$this->safe_fputcsv( $out, array( 'sku', 'naziv', 'anchor_price', 'anchor_date', 'reference_group' ), ';' );
 		foreach ( $this->catalog_items() as $item ) {
 			if ( '' !== get_post_meta( $item->get_id(), '_sidrena_anchor_price', true ) ) {
@@ -2170,14 +2191,7 @@ final class Sidrena_Admin {
 		}
 
 		global $wpdb;
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-povijest-cijena-' . esc_attr( wp_date( 'Y-m-d' ) ) . '.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $out ) {
-			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
-		}
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-povijest-cijena-' . wp_date( 'Y-m-d' ) . '.csv' );
 		$this->safe_fputcsv(
 			$out,
 			array( 'vrsta_zapisa', 'zabiljezeno', 'product_id', 'variation_id', 'service_id', 'sifra', 'naziv', 'cijena', 'redovna_cijena', 'sidrena_cijena', 'izvor' ),
@@ -2251,6 +2265,29 @@ final class Sidrena_Admin {
 	}
 
 
+	private function open_csv_download( $filename ) {
+		$filename = sanitize_file_name( (string) $filename );
+		if ( '' === $filename || '.csv' !== strtolower( substr( $filename, -4 ) ) ) {
+			wp_die( esc_html__( 'Neispravan naziv izvozne datoteke.', 'sidrena' ) );
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'X-Content-Type-Options: nosniff' );
+
+		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! is_resource( $out ) ) {
+			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
+		}
+		if ( false === fwrite( $out, "\xEF\xBB\xBF" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+			fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			wp_die( esc_html__( 'Nije moguće zapisati izlaznu datoteku.', 'sidrena' ) );
+		}
+
+		return $out;
+	}
+
 	private function safe_fputcsv( $handle, $fields, $delimiter = ',' ) {
 		$safe = array();
 		foreach ( (array) $fields as $field ) {
@@ -2264,14 +2301,7 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-evidencija-arhive-' . esc_attr( wp_date( 'Y-m-d' ) ) . '.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( ! $out ) {
-			wp_die( esc_html__( 'Nije moguće otvoriti izlaznu datoteku.', 'sidrena' ) );
-		}
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-evidencija-arhive-' . wp_date( 'Y-m-d' ) . '.csv' );
 		$this->safe_fputcsv( $out, array( 'lokacija', 'vrsta_objekta', 'katalog', 'format', 'naziv_datoteke', 'objavljeno', 'cuvati_do', 'redaka', 'velicina_bajta', 'sha256', 'javni_url' ), ';' );
 
 		foreach ( Sidrena_Utils::archive_index() as $entry ) {
@@ -2301,11 +2331,7 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::current_user_can_manage() || ! check_admin_referer( 'sidrena_export_location_template' ) ) {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
-		nocache_headers();
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="sidrena-lokacije-predlozak.csv"' );
-		$out = fopen( 'php://output', 'wb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		$out = $this->open_csv_download( 'sidrena-lokacije-predlozak.csv' );
 		$this->safe_fputcsv( $out, array( 'location_id', 'location_code', 'product_id', 'sku', 'naziv', 'price', 'anchor_price', 'availability' ), ';' );
 		foreach ( Sidrena_Utils::locations() as $location ) {
 			if ( 'yes' !== ( $location['enabled'] ?? '' ) ) {
@@ -2429,7 +2455,11 @@ final class Sidrena_Admin {
 		if ( 'no' === $settings['generate_csv'] && 'no' === $settings['generate_xml'] ) {
 			++$issues;
 		}
-		if ( ! wp_next_scheduled( 'sidrena_daily_generation' ) || ! isset( $settings['generation_time'] ) || strcmp( (string) $settings['generation_time'], '08:00' ) >= 0 ) {
+		$automation_mode      = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$daily_schedule_ok   = 'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' );
+		$watchdog_schedule_ok = (bool) wp_next_scheduled( 'sidrena_publication_watch' );
+		$generation_time_ok  = isset( $settings['generation_time'] ) && strcmp( (string) $settings['generation_time'], '08:00' ) < 0;
+		if ( ! $daily_schedule_ok || ! $watchdog_schedule_ok || ! $generation_time_ok ) {
 			++$issues;
 		}
 		return array(

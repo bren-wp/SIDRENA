@@ -10,6 +10,9 @@
 
 define( 'ABSPATH', __DIR__ . '/' );
 
+$root = dirname( __DIR__, 2 );
+$admin_source = file_get_contents( $root . '/includes/class-sidrena-admin.php' );
+
 $GLOBALS['sidrena_health_settings'] = array(
 	'automation_mode' => 'external',
 	'generation_time' => '06:30',
@@ -107,6 +110,24 @@ sidrena_health_assert( 'critical' === $missing_daily['status'], 'Internal WP-Cro
 $GLOBALS['sidrena_health_schedules']['sidrena_daily_generation'] = 1800003600;
 $internal = $health->test_schedule();
 sidrena_health_assert( 'good' === $internal['status'], 'Healthy internal scheduler and watchdog must report a good Site Health status.' );
+
+sidrena_health_assert(
+	false !== strpos( $admin_source, '$daily_schedule_ok = \'external\' === $automation_mode || (bool) wp_next_scheduled' )
+	&& false !== strpos( $admin_source, '$watchdog_scheduled = (bool) wp_next_scheduled( \'sidrena_publication_watch\' );' ),
+	'Admin dashboard must exempt only the internal daily event in external mode while still requiring the publication watchdog.'
+);
+sidrena_health_assert(
+	false !== strpos( $admin_source, '$watchdog_schedule_ok = (bool) wp_next_scheduled( \'sidrena_publication_watch\' );' )
+	&& false !== strpos( $admin_source, '! $daily_schedule_ok || ! $watchdog_schedule_ok || ! $generation_time_ok' ),
+	'Admin audit issue count must require the publication watchdog in both scheduler modes.'
+);
+sidrena_health_assert(
+	false !== strpos( $admin_source, '$schedule_warning  = ! $watchdog_scheduled || ( ! $external_scheduler' )
+	&& false !== strpos( $admin_source, 'elseif ( ! $watchdog_scheduled )' )
+	&& false !== strpos( $admin_source, 'elseif ( $external_scheduler )' )
+	&& false !== strpos( $admin_source, 'Interni dnevni WP-Cron namjerno nije zakazan.' ),
+	'Price-list screen must exempt the internal daily event in external mode but warn when the publication watchdog is missing.'
+);
 
 $archive = $health->test_archive();
 sidrena_health_assert( 'good' === $archive['status'], 'Writable current/archive directories must pass Site Health.' );

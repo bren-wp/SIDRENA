@@ -62,4 +62,13 @@ sidrena_input_hardening_assert(
 	'Location settings must bound the request and reject ambiguous enabled ID/code selectors.'
 );
 
+sidrena_input_hardening_assert(
+	false !== strpos( $admin, 'private function open_csv_download( $filename )' )
+	&& 4 === substr_count( $admin, '$this->open_csv_download(' )
+	&& false !== strpos( $admin, "header( 'X-Content-Type-Options: nosniff' );" )
+	&& false !== strpos( $admin, 'if ( ! is_resource( $out ) )' )
+	&& false !== strpos( $admin, 'if ( false === fwrite( $out, "\\xEF\\xBB\\xBF" ) )' ),
+	'Every admin CSV export must use the centralized checked download stream and nosniff header.'
+);
+
 fwrite( STDOUT, "SIDRENA input hardening smoke test passed.\n" );

@@ -49,8 +49,9 @@ for ( $i = 1; $i <= 6; ++$i ) {
 }
 
 sidrena_readme_assets_assert(
-	false !== strpos( $readme, 'Stvarni ekrani plugina — bez mockupova' )
-	&& false !== strpos( $readme, 'Stvarni SIDRENA vizualni identitet' ),
+	false !== strpos( $readme, 'Ovako SIDRENA stvarno izgleda' )
+	&& false !== strpos( $readme, 'WordPress.org spremnost' )
+	&& false !== strpos( $readme, 'Ovo nisu mockupovi niti generirane ilustracije.' ),
 	'Main README must clearly distinguish real runtime screenshots and production brand assets.'
 );
 

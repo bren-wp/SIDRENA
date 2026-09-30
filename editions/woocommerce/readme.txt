@@ -147,6 +147,8 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Keeps unlimited product, variation and location price-change history with bounded reads for large catalogues.
 * Separates the stable current price list from controlled archive publication, with SHA-256 duplicate detection, atomic writes, file locking, rollback and last-valid-publication recovery.
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
+* Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.
+* Hardens administrator CSV downloads with a checked output stream, sanitized filenames and a nosniff response header.
 * Hardens bulk input with server-side nonnegative numeric validation, bounded request payloads and valid-location checks.
 * Requires WooCommerce at install/runtime and remains inactive safely while that dependency is unavailable.
 * Ships without telemetry, license keys, feature paywalls or remote executable code.
