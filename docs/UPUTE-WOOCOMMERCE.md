@@ -281,6 +281,10 @@ Kod migracije weba zajedno prenesite bazu podataka i cijeli uploads/sidrena sadr
 - Release liniju dodatno čuva Admin polish guard workflow.
 - Službeni release smije sadržavati samo `sidrena-wordpress-1.0.3.zip` i `sidrena-woocommerce-1.0.3.zip`.
 
+### WooCommerce HPOS
+
+SIDRENA WooCommerce izdanje 1.0.3 deklarira kompatibilnost s WooCommerce High-Performance Order Storage (HPOS). Release QA uključuje HPOS bez zaobilaženja plugin-compatibility provjere i provjerava create/read/delete narudžbe kroz WooCommerce CRUD API dok je SIDRENA aktivna.
+
 ## WP-CLI
 
 `wp sidrena generate`
