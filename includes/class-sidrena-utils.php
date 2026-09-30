@@ -964,7 +964,7 @@ final class Sidrena_Utils {
 	 *
 	 * @param string $post_type  Post type to scan.
 	 * @param int    $batch_size Maximum IDs per database read.
-	 * @return Generator<int>
+	 * @return Generator
 	 */
 	public static function iterate_published_post_ids( $post_type, $batch_size = 250 ) {
 		global $wpdb;
