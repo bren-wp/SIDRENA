@@ -30,6 +30,7 @@ sidrena_release_gate_assert(
 	&& false === strpos( $release, 'WordPress/plugin-check-action@v1' ),
 	'Release workflow must run deterministic real Plugin Check gates for both production editions.'
 );
+
 sidrena_release_gate_assert(
 	false !== strpos( $release, 'build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici' )
 	&& false !== strpos( $release, 'build/release-plugin-check/brendigo-sidrena-cijena' ),
@@ -38,23 +39,26 @@ sidrena_release_gate_assert(
 
 $build      = strpos( $release, 'Build WordPress and WooCommerce ZIPs' );
 $repro      = strpos( $release, 'Verify reproducible release build' );
-$fresh      = strpos( $release, 'Verify fresh release build before publishing' );
+$fresh      = strpos( $release, 'Verify release ZIPs and slug entrypoints' );
+$pdf        = strpos( $release, 'Render and validate release PDF manuals' );
+$stage      = strpos( $release, 'Stage exact release builds for Plugin Check' );
 $wp_gate    = strpos( $release, 'Plugin Check release gate — WordPress edition' );
 $woo_gate   = strpos( $release, 'Plugin Check release gate — WooCommerce edition' );
-$create_tag = strpos( $release, 'Create verified release tag' );
-$publish    = strpos( $release, 'Publish new GitHub release' );
+$create_tag = strpos( $release, 'Create verified release tag from release branch' );
+$publish    = strpos( $release, 'Publish GitHub release' );
 $verify     = strpos( $release, 'Verify published GitHub release assets' );
-$cleanup    = strpos( $release, 'Keep only the current GitHub release and version tag' );
 
 sidrena_release_gate_assert(
-	false !== $build && false !== $repro && false !== $fresh
-	&& false !== $wp_gate && false !== $woo_gate && false !== $create_tag && false !== $publish && false !== $verify && false !== $cleanup,
-	'Required release validation, reproducibility, publication or cleanup steps are missing.'
+	false !== $build && false !== $repro && false !== $fresh && false !== $pdf && false !== $stage
+	&& false !== $wp_gate && false !== $woo_gate && false !== $create_tag && false !== $publish && false !== $verify,
+	'Required release validation, reproducibility, publication or verification steps are missing.'
 );
+
 sidrena_release_gate_assert(
-	$build < $repro && $repro < $fresh && $fresh < $wp_gate && $fresh < $woo_gate
-	&& $wp_gate < $create_tag && $woo_gate < $create_tag && $create_tag < $publish && $publish < $verify && $verify < $cleanup,
-	'Release order must prove reproducibility and Plugin Check before tagging/publication and verify published assets before destructive history cleanup.'
+	$build < $repro && $repro < $fresh && $fresh < $pdf && $pdf < $stage
+	&& $stage < $wp_gate && $stage < $woo_gate && $wp_gate < $create_tag && $woo_gate < $create_tag
+	&& $create_tag < $publish && $publish < $verify,
+	'Release order must prove reproducibility, validate ZIPs and run Plugin Check before tagging/publication, then verify published assets.'
 );
 
 $repro_block = substr( $release, $repro, $fresh - $repro );
@@ -62,103 +66,81 @@ sidrena_release_gate_assert(
 	false !== strpos( $repro_block, 'sidrena-release-repeat' )
 	&& 1 === substr_count( $repro_block, './tools/build-editions.sh' )
 	&& 2 <= substr_count( $release, 'SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh' )
-	&& false !== strpos( $repro_block, 'SOURCE_DATE_EPOCH=' )
 	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip"' )
 	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip"' )
 	&& false !== strpos( $repro_block, '.zip.sha256' ),
 	'Release workflow must build twice from the same release target and byte-compare both ZIPs and checksum files before publication.'
 );
 
-$main_guard_start = strpos( $release, '- name: Require stable release branch to match main' );
-$resolve_start    = strpos( $release, '- name: Resolve or create release tag from release branch' );
-$resolve_end      = strpos( $release, '- name: Resolve tag target and release state' );
+$main_guard_start = strpos( $release, '- name: Require release branch to match main' );
+$body_start       = strpos( $release, '- name: Prepare release body' );
 sidrena_release_gate_assert(
-	false !== $main_guard_start && false !== $resolve_start && false !== $resolve_end
-	&& $main_guard_start < $resolve_start && $resolve_start < $resolve_end,
-	'Stable release branch/main guard or release-tag resolver is missing.'
+	false !== $main_guard_start && false !== $body_start && $main_guard_start < $body_start,
+	'Release branch/main guard is missing.'
 );
 
-$main_guard_block = substr( $release, $main_guard_start, $resolve_start - $main_guard_start );
+$main_guard_block = substr( $release, $main_guard_start, $body_start - $main_guard_start );
 sidrena_release_gate_assert(
 	false !== strpos( $main_guard_block, "if: startsWith(github.ref, 'refs/heads/release/')" )
 	&& false !== strpos( $main_guard_block, 'git fetch origin main --no-tags' )
 	&& false !== strpos( $main_guard_block, 'MAIN_SHA="$(git rev-parse origin/main)"' )
 	&& false !== strpos( $main_guard_block, 'if [[ "$GITHUB_SHA" != "$MAIN_SHA" ]]' ),
-	'Every stable release branch must exactly match current main before publishing.'
+	'Every release branch must exactly match current main before publishing.'
 );
 
-$resolve_block = substr( $release, $resolve_start, $resolve_end - $resolve_start );
+$fresh_block = substr( $release, $fresh, $pdf - $fresh );
 sidrena_release_gate_assert(
-	false === strpos( $resolve_block, '"$VERSION" == "1.0.0"' )
-	&& false !== strpos( $resolve_block, 'REFRESH_RELEASE=true' )
-	&& false !== strpos( $resolve_block, 'CREATE_RELEASE_TAG=true' )
-	&& false !== strpos( $resolve_block, 'controlled verified release refresh is required' )
-	&& false === strpos( $resolve_block, '0.9.0' )
-	&& false === strpos( $resolve_block, '1.0.23' )
-	&& false === strpos( $resolve_block, 'git push origin "$TAG_NAME"' ),
-	'Any existing current-version tag may use the controlled refresh path only after the stable release branch matches main; tag creation must remain deferred.'
+	false !== strpos( $fresh_block, 'brendigo-sidrene-cijene-digitalni-cjenici.php' )
+	&& false !== strpos( $fresh_block, 'brendigo-sidrena-cijena.php' )
+	&& false !== strpos( $fresh_block, 'test ! -f "$WP/sidrena-wordpress.php"' )
+	&& false !== strpos( $fresh_block, 'test ! -f "$WOO/sidrena-woocommerce.php"' )
+	&& false !== strpos( $fresh_block, 'Plugin Name: SIDRENA' )
+	&& false !== strpos( $fresh_block, 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' )
+	&& false !== strpos( $fresh_block, 'Text Domain: brendigo-sidrena-cijena' )
+	&& false !== strpos( $fresh_block, 'Requires Plugins:.*woocommerce' ),
+	'Release ZIP validation must require slug-named entrypoints, SIDRENA branding, slug text domains and the WooCommerce dependency header only for the WooCommerce package.'
 );
 
-$retarget_start = strpos( $release, '- name: Retarget controlled release tag before asset mutation' );
-$refresh_start  = strpos( $release, '- name: Refresh existing release metadata and controlled assets when required' );
+$stage_block = substr( $release, $stage, $wp_gate - $stage );
 sidrena_release_gate_assert(
-	false !== $retarget_start && false !== $refresh_start && $retarget_start < $refresh_start && $refresh_start < $verify,
-	'Controlled release retarget must occur before release asset mutation and published-asset verification.'
+	false !== strpos( $stage_block, 'brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php' )
+	&& false !== strpos( $stage_block, 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' ),
+	'Release Plugin Check staging must assert slug-named package entrypoints.'
 );
 
-$retarget_block = substr( $release, $retarget_start, $refresh_start - $retarget_start );
+$publish_block = substr( $release, $publish, $verify - $publish );
 sidrena_release_gate_assert(
-	false === strpos( $retarget_block, "env.VERSION == '1.0.0'" )
-	&& false !== strpos( $retarget_block, 'test "$RELEASE_TARGET" = "$GITHUB_SHA"' )
-	&& false !== strpos( $retarget_block, 'REMOTE_TAG_REF="$(git ls-remote origin "refs/tags/$TAG_NAME"' )
-	&& false !== strpos( $retarget_block, '--force-with-lease="refs/tags/$TAG_NAME:$REMOTE_TAG_REF"' )
-	&& false === strpos( $retarget_block, 'git push --force origin' ),
-	'Existing current-version tag refresh must be main-bound and protected by remote-ref force-with-lease.'
+	false !== strpos( $publish_block, 'softprops/action-gh-release@v3' )
+	&& false !== strpos( $publish_block, 'make_latest: true' )
+	&& false !== strpos( $publish_block, 'sidrena-wordpress-${{ env.VERSION }}.zip' )
+	&& false !== strpos( $publish_block, 'sidrena-woocommerce-${{ env.VERSION }}.zip' )
+	&& false !== strpos( $publish_block, '.zip.sha256' ),
+	'Release publication must publish both ZIPs and checksum files as the latest stable GitHub release.'
 );
 
-$refresh_block = substr( $release, $refresh_start, $verify - $refresh_start );
+$verify_block = substr( $release, $verify );
 sidrena_release_gate_assert(
-	false === strpos( $refresh_block, 'test "$VERSION" = "1.0.0"' )
-	&& false !== strpos( $refresh_block, 'REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}"' )
-	&& false !== strpos( $refresh_block, 'test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"' )
-	&& false !== strpos( $refresh_block, 'gh release upload "$TAG_NAME"' )
-	&& false !== strpos( $refresh_block, '--clobber --repo "$GITHUB_REPOSITORY"' ),
-	'Existing release assets may be replaced only after the remote tag resolves to the validated release target.'
-);
-
-$cleanup_block = substr( $release, $cleanup );
-sidrena_release_gate_assert(
-	false !== strpos( $cleanup_block, "startsWith(github.ref, 'refs/heads/release/')" )
-	&& false === strpos( $cleanup_block, "env.VERSION == '1.0.0'" )
-	&& false !== strpos( $cleanup_block, 'gh api --method DELETE "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"' )
-	&& false !== strpos( $cleanup_block, "git ls-remote --tags --refs origin 'refs/tags/v*'" )
-	&& false !== strpos( $cleanup_block, 'git push origin --delete "$TAG"' )
-	&& false !== strpos( $cleanup_block, 'REMAINING_VERSION_TAGS=' )
-	&& false === strpos( $cleanup_block, 'done < <(git tag -l)' ),
-	'Verified stable-release cleanup must keep only the current release while removing only retired GitHub releases and v* release tags, never arbitrary repository tags.'
+	false !== strpos( $verify_block, 'gh release download "$TAG_NAME"' )
+	&& false !== strpos( $verify_block, 'sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"' )
+	&& false !== strpos( $verify_block, 'sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"' )
+	&& false !== strpos( $verify_block, 'brendigo-sidrene-cijene-digitalni-cjenici.php' )
+	&& false !== strpos( $verify_block, 'brendigo-sidrena-cijena.php' )
+	&& false !== strpos( $verify_block, 'test ! -f "$WP/sidrena-wordpress.php"' )
+	&& false !== strpos( $verify_block, 'test ! -f "$WOO/sidrena-woocommerce.php"' ),
+	'Published release verification must download assets, verify checksums and assert slug-named entrypoints without old package entrypoints.'
 );
 
 sidrena_release_gate_assert(
-	false === strpos( $release, 'V1023_STALE_TARGET' )
-	&& false === strpos( $release, 'Refresh first public 0.1.0 release' )
-	&& false === strpos( $release, 'Retarget stale 0.9.0 tag' ),
-	'Obsolete one-off historical release repair paths must not remain in the consolidated workflow.'
+	false === strpos( $release, 'slug: sidrena-wordpress' )
+	&& false === strpos( $release, 'slug: sidrena-woocommerce' )
+	&& false === strpos( $release, 'ignore-codes: trademarked_term' )
+	&& false === strpos( $release, 'WordPress/plugin-check-action@v1' ),
+	'Release workflow must not use retired slugs or suppress trademark checks.'
 );
 
 sidrena_release_gate_assert(
 	false !== strpos( $check, "- 'release/**'" ) && false !== strpos( $check, "- 'v*'" ),
 	'Plugin Check must observe release branches and version tags.'
-);
-sidrena_release_gate_assert(
-	false !== strpos( $release, 'brendigo-sidrene-cijene-digitalni-cjenici' )
-	&& false !== strpos( $release, 'brendigo-sidrena-cijena' )
-	&& false === strpos( $release, 'slug: sidrena-wordpress' )
-	&& false === strpos( $release, 'slug: sidrena-woocommerce' ),
-	'Release Plugin Check must use the established public plugin slugs/text domains.'
-);
-sidrena_release_gate_assert(
-	false === strpos( $release, 'ignore-codes: trademarked_term' ),
-	'Trademark checks must not be suppressed.'
 );
 
 fwrite( STDOUT, "SIDRENA release gate smoke test passed.\n" );
