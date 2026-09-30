@@ -235,7 +235,7 @@ jobs:
         run: |
           set -euo pipefail
           WP_MAIN='editions/wordpress/sidrena-wordpress.php'
-          WOO_MAIN='editions/woocommerce/sidrena-woocommerce.php'
+          WOO_MAIN='editions/woocommerce/brendigo-sidrena-cijena.php'
           WP_VERSION="$(sed -n 's/^ \* Version: //p' "$WP_MAIN" | head -n1)"
           WOO_VERSION="$(sed -n 's/^ \* Version: //p' "$WOO_MAIN" | head -n1)"
           WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1)"
@@ -245,7 +245,7 @@ jobs:
           test "$WP_VERSION" = "$WP_STABLE"
           test "$WP_VERSION" = "$WOO_STABLE"
           grep -Fq 'Plugin Name: SIDRENA' "$WP_MAIN"
-          grep -Fq 'Plugin Name: SIDRENA' "$WOO_MAIN"
+          grep -Fq 'Plugin Name: Brendigo Sidrena Cijena' "$WOO_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrene-cijene-digitalni-cjenici$' "$WP_MAIN"
           grep -q '^ \* Text Domain: brendigo-sidrena-cijena$' "$WOO_MAIN"
           ! grep -qiE '^ \* Requires Plugins:.*woocommerce' "$WP_MAIN"
@@ -298,12 +298,12 @@ jobs:
           ./tools/build-editions.sh "$VERSION" "$REPEAT_OUT"
 
           cmp "$OUT/sidrena-wordpress-$VERSION.zip" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip"
-          cmp "$OUT/sidrena-woocommerce-$VERSION.zip" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip"
+          cmp "$OUT/brendigo-sidrena-cijena-$VERSION.zip" "$REPEAT_OUT/brendigo-sidrena-cijena-$VERSION.zip"
           cmp "$OUT/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
-          cmp "$OUT/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
+          cmp "$OUT/brendigo-sidrena-cijena-$VERSION.zip.sha256" "$REPEAT_OUT/brendigo-sidrena-cijena-$VERSION.zip.sha256"
 
           WP_ZIP="$OUT/sidrena-wordpress-$VERSION.zip"
-          WOO_ZIP="$OUT/sidrena-woocommerce-$VERSION.zip"
+          WOO_ZIP="$OUT/brendigo-sidrena-cijena-$VERSION.zip"
           WP="$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici"
           WOO="$OUT/.sidrena-build/brendigo-sidrena-cijena"
 
@@ -317,7 +317,7 @@ jobs:
           (
             cd "$OUT"
             sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrena-cijena-$VERSION.zip.sha256"
           )
           unzip -t "$WP_ZIP" >/dev/null
           unzip -t "$WOO_ZIP" >/dev/null
@@ -339,7 +339,7 @@ jobs:
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/editions"
 
-          test -f "$WOO/sidrena-woocommerce.php"
+          test -f "$WOO/brendigo-sidrena-cijena.php"
           test -f "$WOO/readme.txt"
           test -s "$WOO/docs/UPUTE.md"
           test -s "$WOO/docs/SIDRENA-UPUTE.pdf"
@@ -365,7 +365,7 @@ jobs:
           test -s "$WP/assets/images/logo-wordpress-light.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/brendigo-sidrena-cijena.php"
           test -f "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
           test -f "$WOO/languages/brendigo-sidrena-cijena.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
@@ -412,7 +412,7 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq 'License: GPLv2 or later' editions/wordpress/sidrena-wordpress.php
-          grep -Fq 'License: GPLv2 or later' editions/woocommerce/sidrena-woocommerce.php
+          grep -Fq 'License: GPLv2 or later' editions/woocommerce/brendigo-sidrena-cijena.php
           grep -Fq 'brendigo' README.md
           grep -Fq 'sidrena@brendigo.com' README.md
           grep -Fq '+385 91 901 0092' README.md
