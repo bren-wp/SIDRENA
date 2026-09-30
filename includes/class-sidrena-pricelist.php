@@ -1098,7 +1098,7 @@ final class Sidrena_Pricelist {
 		}
 		list( $handle, $temp ) = $opened;
 
-		if ( ! $this->write_stream_all( $handle, "\xEF\xBB\xBF" ) || false === fputcsv( $handle, $headers, $delimiter ) ) {
+		if ( ! $this->write_stream_all( $handle, "\xEF\xBB\xBF" ) || false === Sidrena_Utils::csv_write_row( $handle, $headers, $delimiter ) ) {
 			$this->discard_atomic_writer( $handle, $temp );
 			/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 			return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati zaglavlje datoteke: %s', 'sidrena' ), basename( $filepath ) ) );
@@ -1114,7 +1114,7 @@ final class Sidrena_Pricelist {
 			foreach ( $headers as $header ) {
 				$line[] = Sidrena_Utils::csv_safe_cell( isset( $row[ $header ] ) ? $row[ $header ] : '' );
 			}
-			if ( false === fputcsv( $handle, $line, $delimiter ) ) {
+			if ( false === Sidrena_Utils::csv_write_row( $handle, $line, $delimiter ) ) {
 				$this->discard_atomic_writer( $handle, $temp );
 				/* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */
 				return new WP_Error( 'file_write', sprintf( __( 'Nije moguće zapisati redak datoteke: %s', 'sidrena' ), basename( $filepath ) ) );

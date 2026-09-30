@@ -526,6 +526,38 @@ final class Sidrena_Utils {
 		return $value;
 	}
 
+	/**
+	 * Read one CSV row with the historical SIDRENA dialect made explicit.
+	 *
+	 * PHP 8.4 deprecates relying on the implicit escape argument. Keeping the
+	 * backslash escape explicit preserves the plugin's existing CSV behavior.
+	 *
+	 * @param resource $stream    Readable stream.
+	 * @param string   $delimiter CSV delimiter.
+	 * @return array|false
+	 */
+	public static function csv_read_row( $stream, $delimiter = ',' ) {
+		if ( ! is_resource( $stream ) ) {
+			return false;
+		}
+		return fgetcsv( $stream, 0, $delimiter, '"', '\\' );
+	}
+
+	/**
+	 * Write one CSV row with the historical SIDRENA dialect made explicit.
+	 *
+	 * @param resource $stream    Writable stream.
+	 * @param array    $fields    CSV fields.
+	 * @param string   $delimiter CSV delimiter.
+	 * @return int|false
+	 */
+	public static function csv_write_row( $stream, $fields, $delimiter = ',' ) {
+		if ( ! is_resource( $stream ) ) {
+			return false;
+		}
+		return fputcsv( $stream, (array) $fields, $delimiter, '"', '\\' );
+	}
+
 	public static function import_header_key( $header ) {
 		$header = trim( (string) $header );
 		if ( '' === $header ) {

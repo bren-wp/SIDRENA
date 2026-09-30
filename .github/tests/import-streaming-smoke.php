@@ -109,15 +109,32 @@ $empty_upload = $validate_upload_size->invoke( $admin, $upload_fixture, 0 );
 sidrena_import_stream_assert( is_wp_error( $empty_upload ) && 'upload_empty' === $empty_upload->code, 'Woo CSV upload must reject an empty server-side temp file before reading it into memory.' );
 unlink( $upload_fixture );
 
-$write_stream_all = new ReflectionMethod( 'Sidrena_Admin', 'write_stream_all' );
-$write_stream_all->setAccessible( true );
-$payload  = str_repeat( 'sidrena-stream-', 131072 );
-$resource = fopen( 'php://temp/maxmemory:1048576', 'w+b' );
-sidrena_import_stream_assert( is_resource( $resource ), 'Woo admin CSV temp stream must be available.' );
-sidrena_import_stream_assert( true === $write_stream_all->invoke( $admin, $resource, $payload ), 'Woo admin CSV helper must report a complete stream write.' );
-rewind( $resource );
-sidrena_import_stream_assert( $payload === stream_get_contents( $resource ), 'Woo admin CSV helper must preserve the complete payload across memory/disk temp buffering.' );
-fclose( $resource );
+$prepare_admin_csv = new ReflectionMethod( 'Sidrena_Admin', 'prepare_uploaded_csv_stream' );
+$prepare_admin_csv->setAccessible( true );
+$admin_csv_fixture = tempnam( sys_get_temp_dir(), 'sidrena-admin-csv-' );
+file_put_contents( $admin_csv_fixture, "sku;price\nA;1\nB;2\n" );
+$admin_prepared = $prepare_admin_csv->invoke( $admin, $admin_csv_fixture, 10 );
+sidrena_import_stream_assert( is_array( $admin_prepared ) && 'sku' === array_key_first( $admin_prepared[2] ), 'Woo admin CSV import must prepare the validated upload file directly.' );
+$admin_first_row = Sidrena_Utils::csv_read_row( $admin_prepared[0], $admin_prepared[1] );
+sidrena_import_stream_assert( is_array( $admin_first_row ) && 'A' === $admin_first_row[0], 'Woo admin CSV direct stream must remain positioned at the first data row.' );
+fclose( $admin_prepared[0] );
+
+file_put_contents( $admin_csv_fixture, "sku;price\nA;1\nB;2\nC;3\n" );
+$admin_too_many = $prepare_admin_csv->invoke( $admin, $admin_csv_fixture, 2 );
+sidrena_import_stream_assert( is_wp_error( $admin_too_many ) && 'upload_row_limit' === $admin_too_many->code, 'Woo admin direct CSV stream must enforce the pre-import row bound.' );
+
+file_put_contents( $admin_csv_fixture, "sku;price\nA;1\0bad\n" );
+$admin_binary = $prepare_admin_csv->invoke( $admin, $admin_csv_fixture, 10 );
+sidrena_import_stream_assert( is_wp_error( $admin_binary ) && 'upload_binary' === $admin_binary->code, 'Woo admin direct CSV stream must reject NUL/binary content.' );
+unlink( $admin_csv_fixture );
+
+$roundtrip = fopen( 'php://temp', 'w+b' );
+sidrena_import_stream_assert( is_resource( $roundtrip ), 'CSV dialect roundtrip stream must be available.' );
+$roundtrip_fields = array( 'sku', 'A;1', 'Naziv "test"' );
+sidrena_import_stream_assert( false !== Sidrena_Utils::csv_write_row( $roundtrip, $roundtrip_fields, ';' ), 'Central CSV writer must write the explicit SIDRENA dialect.' );
+rewind( $roundtrip );
+sidrena_import_stream_assert( $roundtrip_fields === Sidrena_Utils::csv_read_row( $roundtrip, ';' ), 'Central CSV reader/writer dialect must roundtrip quoted fields.' );
+fclose( $roundtrip );
 
 $validate_price = new ReflectionMethod( 'Sidrena_Admin', 'validated_import_price' );
 $validate_price->setAccessible( true );
@@ -132,7 +149,7 @@ $limit->setAccessible( true );
 $resource = fopen( 'php://temp', 'w+b' );
 fwrite( $resource, "sku;price\nA;1\nB;2\nC;3\n" );
 rewind( $resource );
-fgetcsv( $resource, 0, ';' );
+Sidrena_Utils::csv_read_row( $resource, ';' );
 $limit_result = $limit->invoke( $admin, $resource, ';', 2 );
 sidrena_import_stream_assert( is_wp_error( $limit_result ) && 'upload_row_limit' === $limit_result->code, 'Woo admin CSV must reject over-limit input before processing.' );
 fclose( $resource );
@@ -140,15 +157,17 @@ fclose( $resource );
 $resource = fopen( 'php://temp', 'w+b' );
 fwrite( $resource, "sku;price\nA;1\nB;2\n" );
 rewind( $resource );
-fgetcsv( $resource, 0, ';' );
+Sidrena_Utils::csv_read_row( $resource, ';' );
 $limit_result = $limit->invoke( $admin, $resource, ';', 10 );
 sidrena_import_stream_assert( 2 === $limit_result, 'Woo admin CSV preflight row count is incorrect.' );
-$first_data = fgetcsv( $resource, 0, ';' );
+$first_data = Sidrena_Utils::csv_read_row( $resource, ';' );
 sidrena_import_stream_assert( 'A' === $first_data[0], 'Woo admin CSV preflight must rewind to the first data row.' );
 fclose( $resource );
 
 $standalone_source = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
 $admin_source      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+$utils_source      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
+$pricelist_source  = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-pricelist.php' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_csv_rows(' ), 'Legacy array-accumulating CSV parser must be removed.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function parse_xml_rows(' ), 'Legacy array-accumulating XML parser must be removed.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'private function code_index()' ), 'Standalone imports must not rebuild an unbounded whole-catalog code index in memory.' );
@@ -163,8 +182,22 @@ sidrena_import_stream_assert( false !== strpos( $standalone_source, 'FROM %i p' 
 sidrena_import_stream_assert( false !== strpos( $standalone_source, 'INNER JOIN %i pm' ), 'Standalone code index must prepare the postmeta table identifier.' );
 sidrena_import_stream_assert( false === strpos( $standalone_source, 'FROM {$wpdb->posts} p' ), 'Standalone code index must not interpolate the posts table identifier.' );
 sidrena_import_stream_assert( false === strpos( $admin_source, 'if ( $processed > 50000 )' ), 'Woo imports must not partially import then silently stop at the row limit.' );
-sidrena_import_stream_assert( false !== strpos( $admin_source, "fopen( 'php://temp/maxmemory:1048576', 'w+b' )" ), 'Woo admin CSV import must cap in-memory temp buffering before spilling to disk.' );
-sidrena_import_stream_assert( false !== strpos( $admin_source, 'if ( ! $this->write_stream_all( $resource, $contents ) )' ), 'Woo admin CSV import must reject incomplete temp-stream writes.' );
-sidrena_import_stream_assert( false === strpos( $admin_source, 'fwrite( $resource, $contents )' ), 'Woo admin CSV import must not rely on one unchecked fwrite call.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, 'private function prepare_uploaded_csv_stream( $tmp_name, $row_limit = 50000 )' ), 'Woo admin CSV import must prepare the validated upload file as a direct stream.' );
+sidrena_import_stream_assert( false !== strpos( $admin_source, "fopen( \$tmp_name, 'rb' )" ), 'Woo admin CSV import must open the validated upload temp file directly.' );
+sidrena_import_stream_assert( false === strpos( $admin_source, "fopen( 'php://temp/maxmemory:1048576', 'w+b' )" ), 'Woo admin CSV import must not copy the complete upload into a second temp stream.' );
+sidrena_import_stream_assert( false === strpos( $admin_source, "file_get_contents( \$file['tmp_name'] )" ), 'Woo admin CSV import must not read the complete upload into memory.' );
+sidrena_import_stream_assert( false === strpos( $admin_source, 'private function write_stream_all( $stream, $contents )' ), 'Retired Woo full-buffer stream-copy helper must remain removed.' );
+sidrena_import_stream_assert( 0 === preg_match( '/(?<![A-Za-z0-9_])fgetcsv\\s*\\(/', $standalone_source . $admin_source ), 'Production importers must use the centralized explicit CSV reader.' );
+sidrena_import_stream_assert( 0 === preg_match( '/(?<![A-Za-z0-9_])fputcsv\\s*\\(/', $admin_source . $pricelist_source ), 'Production CSV exporters must use the centralized explicit CSV writer.' );
+sidrena_import_stream_assert(
+	1 === preg_match( '/return fgetcsv\\(([^;]+)\\);/', $utils_source, $csv_read_call )
+	&& 4 <= substr_count( $csv_read_call[1], ',' ),
+	'Central CSV reader must pass delimiter, enclosure and escape explicitly for PHP 8.4 compatibility.'
+);
+sidrena_import_stream_assert(
+	1 === preg_match( '/return fputcsv\\(([^;]+)\\);/', $utils_source, $csv_write_call )
+	&& 4 <= substr_count( $csv_write_call[1], ',' ),
+	'Central CSV writer must pass delimiter, enclosure and escape explicitly for PHP 8.4 compatibility.'
+);
 
 fwrite( STDOUT, "Sidrena streaming import smoke test passed.\n" );

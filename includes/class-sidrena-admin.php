@@ -1832,7 +1832,11 @@ final class Sidrena_Admin {
 		$updated   = 0;
 		$skipped   = 0;
 		while ( true ) {
-			$row = fgetcsv( $resource, 0, $delimiter );
+			$row = $this->read_normalized_csv_row( $resource, $delimiter );
+			if ( is_wp_error( $row ) ) {
+				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				$this->redirect( 'tools', 'import_failed' );
+			}
 			if ( false === $row ) {
 				break;
 			}
@@ -1968,7 +1972,11 @@ final class Sidrena_Admin {
 		$updated   = 0;
 		$skipped   = 0;
 		while ( true ) {
-			$row = fgetcsv( $resource, 0, $delimiter );
+			$row = $this->read_normalized_csv_row( $resource, $delimiter );
+			if ( is_wp_error( $row ) ) {
+				fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				$this->redirect( 'tools', 'location_import_failed' );
+			}
 			if ( false === $row ) {
 				break;
 			}
@@ -2061,43 +2069,43 @@ final class Sidrena_Admin {
 		if ( ! Sidrena_Utils::uploaded_text_type_allowed( $file['tmp_name'], $filename, array( 'csv' ) ) ) {
 			return new WP_Error( 'upload_mime' );
 		}
-		$contents = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		if ( false === $contents || '' === $contents || false !== strpos( $contents, "\0" ) ) {
-			return new WP_Error( 'upload_empty' );
+		return $this->prepare_uploaded_csv_stream( $file['tmp_name'], 50000 );
+	}
+
+	private function prepare_uploaded_csv_stream( $tmp_name, $row_limit = 50000 ) {
+		$tmp_name = (string) $tmp_name;
+		if ( '' === $tmp_name || ! is_file( $tmp_name ) ) {
+			return new WP_Error( 'upload_missing' );
 		}
-		$contents = Sidrena_Utils::normalize_text_encoding( $contents );
-		if ( '' === $contents ) {
-			return new WP_Error( 'upload_encoding' );
-		}
-		$resource = fopen( 'php://temp/maxmemory:1048576', 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+
+		$resource = fopen( $tmp_name, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Validated upload temp file is intentionally streamed directly.
 		if ( ! $resource ) {
 			return new WP_Error( 'upload_open' );
 		}
-		if ( ! $this->write_stream_all( $resource, $contents ) ) {
-			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-			return new WP_Error( 'upload_write' );
-		}
-		rewind( $resource );
 		$first_line = fgets( $resource );
-		if ( false === $first_line ) {
+		if ( false === $first_line || false !== strpos( $first_line, "\0" ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-			return new WP_Error( 'upload_empty' );
+			return new WP_Error( false === $first_line ? 'upload_empty' : 'upload_binary' );
 		}
 		$delimiter = $this->detect_delimiter( $first_line );
 		rewind( $resource );
-		$head = fgetcsv( $resource, 0, $delimiter );
-		if ( ! $head ) {
+		$head = $this->read_normalized_csv_row( $resource, $delimiter );
+		if ( is_wp_error( $head ) ) {
+			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return $head;
+		}
+		if ( ! is_array( $head ) || empty( $head ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'upload_header' );
 		}
-		$head[0] = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
-		$head    = array_map( array( 'Sidrena_Utils', 'import_header_key' ), $head );
+		$head[0]  = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $head[0] );
+		$head     = array_map( array( 'Sidrena_Utils', 'import_header_key' ), $head );
 		$nonempty = array_values( array_filter( $head ) );
 		if ( count( $nonempty ) !== count( array_unique( $nonempty ) ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'upload_duplicate_headers' );
 		}
-		$row_count = $this->enforce_csv_row_limit( $resource, $delimiter, 50000 );
+		$row_count = $this->enforce_csv_row_limit( $resource, $delimiter, $row_limit );
 		if ( is_wp_error( $row_count ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return $row_count;
@@ -2105,25 +2113,29 @@ final class Sidrena_Admin {
 		return array( $resource, $delimiter, array_flip( $head ) );
 	}
 
-	private function write_stream_all( $stream, $contents ) {
-		$contents = (string) $contents;
-		$length   = strlen( $contents );
-		$offset   = 0;
-		while ( $offset < $length ) {
-			$written = fwrite( $stream, substr( $contents, $offset ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-			if ( false === $written || 0 === $written ) {
-				return false;
-			}
-			$offset += $written;
+	private function read_normalized_csv_row( $stream, $delimiter ) {
+		$row = Sidrena_Utils::csv_read_row( $stream, $delimiter );
+		if ( ! is_array( $row ) ) {
+			return $row;
 		}
-		return true;
+		foreach ( $row as $index => $value ) {
+			$value = Sidrena_Utils::normalize_text_encoding( (string) $value );
+			if ( false !== strpos( $value, "\0" ) ) {
+				return new WP_Error( 'upload_binary', __( 'CSV sadrži nedopušteni binarni sadržaj.', 'sidrena' ) );
+			}
+			$row[ $index ] = $value;
+		}
+		return $row;
 	}
 
 	private function enforce_csv_row_limit( $stream, $delimiter, $row_limit = 50000 ) {
 		$row_limit = min( 50000, max( 1, absint( $row_limit ) ) );
 		$count     = 0;
 		while ( is_resource( $stream ) ) {
-			$row = fgetcsv( $stream, 0, $delimiter );
+			$row = $this->read_normalized_csv_row( $stream, $delimiter );
+			if ( is_wp_error( $row ) ) {
+				return $row;
+			}
 			if ( false === $row ) {
 				break;
 			}
@@ -2138,7 +2150,11 @@ final class Sidrena_Admin {
 			return new WP_Error( 'upload_open' );
 		}
 		rewind( $stream );
-		if ( false === fgetcsv( $stream, 0, $delimiter ) ) {
+		$header = $this->read_normalized_csv_row( $stream, $delimiter );
+		if ( is_wp_error( $header ) ) {
+			return $header;
+		}
+		if ( false === $header ) {
 			return new WP_Error( 'upload_header' );
 		}
 		return $count;
@@ -2299,7 +2315,7 @@ final class Sidrena_Admin {
 		foreach ( (array) $fields as $field ) {
 			$safe[] = Sidrena_Utils::csv_safe_cell( $field );
 		}
-		return false !== fputcsv( $handle, $safe, $delimiter );
+		return false !== Sidrena_Utils::csv_write_row( $handle, $safe, $delimiter );
 	}
 
 	public function export_archive_index() {
