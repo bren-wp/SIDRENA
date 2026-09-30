@@ -23,6 +23,8 @@ Sidrena changelog
 * REST koristi validirane argumente, bounded paginaciju, kanonsko mapiranje javnog location codea i ne izlaže nepotrebne interne podatke.
 * Dnevna objava podržava interni WP-Cron ili vanjski server cron/WP-CLI, uz compliance/automation watchdog, Site Health, audit i failure notifications.
 * Production hardening obuhvaća strožu ulaznu validaciju, bounded batch obradu, sigurnije lokacijske selektore, reproducible build i release provjere.
+* External server cron / WP-CLI način sada je potpuno mode-aware i u dashboardu/Cjenicima: izostanak internog dnevnog WP-Crona više se ne prikazuje kao greška kada je external scheduler namjerno odabran.
+* Svi administratorski CSV exporti koriste zajednički provjereni output stream, sanitizirani naziv datoteke, nosniff zaglavlje i eksplicitnu provjeru otvaranja/BOM zapisa prije izvoza.
 * Deaktivacija ne briše poslovne podatke; uninstall ima eksplicitnu politiku zadržavanja ili namjernog brisanja podataka.
 * Oba izdanja zadržavaju javne slugove/text-domainove i svugdje se korisniku predstavljaju kao SIDRENA.
 * Plugin nema premium module, paywall, trial, license key, telemetriju, skriveni tracking ni remote executable code.
