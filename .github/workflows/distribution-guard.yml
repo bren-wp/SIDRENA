@@ -51,7 +51,7 @@ jobs:
           test -d editions/wordpress
           test -d editions/woocommerce
           test -f editions/wordpress/sidrena-wordpress.php
-          test -f editions/woocommerce/sidrena-woocommerce.php
+          test -f editions/woocommerce/brendigo-sidrena-cijena.php
           test -f editions/wordpress/readme.txt
           test -f editions/woocommerce/readme.txt
 
@@ -65,7 +65,7 @@ jobs:
 
           find editions -maxdepth 2 -type f -name 'sidrena-*.php' | sort > "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
           cat > "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" <<'EOF'
-          editions/woocommerce/sidrena-woocommerce.php
+          editions/woocommerce/brendigo-sidrena-cijena.php
           editions/wordpress/sidrena-wordpress.php
           EOF
           diff -u "$RUNNER_TEMP/sidrena-expected-entrypoints.txt" "$RUNNER_TEMP/sidrena-edition-entrypoints.txt"
@@ -175,7 +175,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
-          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/brendigo-sidrena-cijena.php | head -n1)"
           test -n "$VERSION"
           test "$VERSION" = "$WOO_VERSION"
 
@@ -185,13 +185,13 @@ jobs:
 
           find "$OUT" -maxdepth 1 -type f -name '*.zip' -printf '%f\n' | sort > "$RUNNER_TEMP/sidrena-zip-assets.txt"
           cat > "$RUNNER_TEMP/sidrena-expected-zip-assets.txt" <<EOF
-          sidrena-woocommerce-$VERSION.zip
+          brendigo-sidrena-cijena-$VERSION.zip
           sidrena-wordpress-$VERSION.zip
           EOF
           diff -u "$RUNNER_TEMP/sidrena-expected-zip-assets.txt" "$RUNNER_TEMP/sidrena-zip-assets.txt"
 
           WP_ZIP="$OUT/sidrena-wordpress-$VERSION.zip"
-          WOO_ZIP="$OUT/sidrena-woocommerce-$VERSION.zip"
+          WOO_ZIP="$OUT/brendigo-sidrena-cijena-$VERSION.zip"
           for ZIP in "$WP_ZIP" "$WOO_ZIP"; do
             test -s "$ZIP"
             SIZE="$(stat -c%s "$ZIP")"
@@ -202,30 +202,30 @@ jobs:
           (
             cd "$OUT"
             sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrena-cijena-$VERSION.zip.sha256"
           )
           unzip -t "$WP_ZIP" >/dev/null
           unzip -t "$WOO_ZIP" >/dev/null
 
           zipinfo -1 "$WP_ZIP" > "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          zipinfo -1 "$WOO_ZIP" > "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          zipinfo -1 "$WOO_ZIP" > "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
 
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/sidrena-woocommerce.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/docs/UPUTE.md' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/docs/UPUTE.md' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/menu-anchor.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/assets/images/menu-anchor.svg' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce.svg' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/admin/css/brand.css' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/admin/css/brand.css' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/admin/css/brand.css' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/admin/js/admin.js' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/admin/js/admin.js' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/admin/js/admin.js' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-wordpress-light.svg' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          grep -Fxq 'brendigo-sidrena-cijena/assets/images/logo-woocommerce-light.svg' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
 
           for asset in \
             assets/images/logo-horizontal.svg \
@@ -238,7 +238,7 @@ jobs:
             includes/class-sidrena-audit.php \
             includes/class-sidrena-pricelist.php; do
             grep -Fxq "brendigo-sidrene-cijene-digitalni-cjenici/$asset" "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-            grep -Fxq "brendigo-sidrena-cijena/$asset" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+            grep -Fxq "brendigo-sidrena-cijena/$asset" "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           done
 
           grep -Fq "private static function cut_utf8_bytes" "$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/includes/class-sidrena-audit.php"
@@ -247,22 +247,22 @@ jobs:
           grep -Fq "open_atomic_writer( \$paths['manifest'] )" "$OUT/.sidrena-build/brendigo-sidrena-cijena/includes/class-sidrena-pricelist.php"
 
           ! grep -q '^brendigo-sidrene-cijene-digitalni-cjenici/branding/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -q '^brendigo-sidrena-cijena/branding/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^brendigo-sidrena-cijena/branding/' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           ! grep -q '^brendigo-sidrene-cijene-digitalni-cjenici/docs/images/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -q '^brendigo-sidrena-cijena/docs/images/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^brendigo-sidrena-cijena/docs/images/' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           ! grep -q '^brendigo-sidrene-cijene-digitalni-cjenici/assets/images/logo-woocommerce' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -q '^brendigo-sidrena-cijena/assets/images/logo-wordpress' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^brendigo-sidrena-cijena/assets/images/logo-wordpress' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           ! grep -Fxq 'brendigo-sidrene-cijene-digitalni-cjenici/sidrena.php' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -Fxq 'brendigo-sidrena-cijena/sidrena.php' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -Fxq 'brendigo-sidrena-cijena/sidrena.php' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           ! grep -q '^brendigo-sidrene-cijene-digitalni-cjenici/editions/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -q '^brendigo-sidrena-cijena/editions/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '^brendigo-sidrena-cijena/editions/' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
           ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-wordpress-files.txt"
-          ! grep -q '/static-php/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"
+          ! grep -q '/static-php/' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"
 
           WP="$OUT/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici"
           WOO="$OUT/.sidrena-build/brendigo-sidrena-cijena"
           grep -Fq 'Text Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/sidrena-wordpress.php"
-          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'Text Domain: brendigo-sidrena-cijena' "$WOO/brendigo-sidrena-cijena.php"
           test -f "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
           test -f "$WOO/languages/brendigo-sidrena-cijena.pot"
           test ! -f "$WP/languages/sidrena-wordpress.pot"
@@ -270,10 +270,10 @@ jobs:
           grep -Fq 'X-Domain: brendigo-sidrene-cijene-digitalni-cjenici' "$WP/languages/brendigo-sidrene-cijene-digitalni-cjenici.pot"
           grep -Fq 'X-Domain: brendigo-sidrena-cijena' "$WOO/languages/brendigo-sidrena-cijena.pot"
           grep -Fq 'License: GPLv2 or later' "$WP/sidrena-wordpress.php"
-          grep -Fq 'License: GPLv2 or later' "$WOO/sidrena-woocommerce.php"
+          grep -Fq 'License: GPLv2 or later' "$WOO/brendigo-sidrena-cijena.php"
           ! grep -RInF 'https://sidrene-cijene.com.hr/' "$WP" "$WOO"
 
-          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; do
+          for files in "$RUNNER_TEMP/sidrena-wordpress-files.txt" "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"; do
             ! grep -Eiq '(^|/)(portable|setup)[.]exe' "$files"
             ! grep -Eiq '(^|/)windows/' "$files"
             ! grep -Eiq '[.](exe|msi|appx|pdb|map)' "$files"
@@ -284,7 +284,7 @@ jobs:
             echo 'WordPress ZIP contains files outside brendigo-sidrene-cijene-digitalni-cjenici root.' >&2
             exit 1
           fi
-          if grep -v '^brendigo-sidrena-cijena/' "$RUNNER_TEMP/sidrena-woocommerce-files.txt"; then
+          if grep -v '^brendigo-sidrena-cijena/' "$RUNNER_TEMP/brendigo-sidrena-cijena-files.txt"; then
             echo 'WooCommerce ZIP contains files outside brendigo-sidrena-cijena root.' >&2
             exit 1
           fi
@@ -323,6 +323,6 @@ jobs:
           retention-days: 7
           path: |
             ${{ runner.temp }}/sidrena-distribution/sidrena-wordpress-*.zip
-            ${{ runner.temp }}/sidrena-distribution/sidrena-woocommerce-*.zip
+            ${{ runner.temp }}/sidrena-distribution/brendigo-sidrena-cijena-*.zip
             ${{ runner.temp }}/sidrena-distribution/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/docs/SIDRENA-UPUTE.pdf
             ${{ runner.temp }}/sidrena-distribution/.sidrena-build/brendigo-sidrena-cijena/docs/SIDRENA-UPUTE.pdf
