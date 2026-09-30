@@ -22,11 +22,11 @@ This file records the repository-side audit performed before the next WordPress.
 - standalone display name: **SIDRENA**
 - WooCommerce display name: **SIDRENA**
 - standalone public slug/text-domain remains: `brendigo-sidrene-cijene-digitalni-cjenici`
-- WooCommerce public slug/text-domain remains: `brendigo-sidrena-cijena`
+- WooCommerce public identity is: Plugin Name `Brendigo Sidrena Cijena`, slug/text-domain `brendigo-sidrena-cijena`, main file `brendigo-sidrena-cijena.php`
 - the installed plugin list, WordPress.org readme titles and SIDRENA admin menu use one consistent public brand: **SIDRENA**.
 - edition identity is communicated descriptively as WordPress or WooCommerce edition in descriptions, dependency messaging and conflict handling; it is not encoded as a second product brand.
 - existing public slugs are intentionally preserved for update compatibility, review continuity and stable package targeting.
-- each installable ZIP uses the matching public slug as its single root directory: `brendigo-sidrene-cijene-digitalni-cjenici/` and `brendigo-sidrena-cijena/`; release filenames remain `sidrena-wordpress-<version>.zip` and `sidrena-woocommerce-<version>.zip`.
+- each installable ZIP uses the matching public slug as its single root directory: `brendigo-sidrene-cijene-digitalni-cjenici/` and `brendigo-sidrena-cijena/`; the Woo release filename is `brendigo-sidrena-cijena-<version>.zip` and its main file matches the slug.
 - the deterministic Plugin Check runner rejects any package whose root-directory basename differs from the public slug, preventing CI from masking text-domain or trademark findings that would appear after a real user upload.
 - the old `sidrena-for-woocommerce` slug is not reused.
 - `WooCommerce` is not part of the Plugin Name or public slug; it remains only in dependency metadata and descriptive compatibility text.
@@ -156,7 +156,7 @@ This file records the repository-side audit performed before the next WordPress.
 **Resolution:**
 - exactly two installable ZIPs are built:
   - `sidrena-wordpress-1.0.1.zip`
-  - `sidrena-woocommerce-1.0.1.zip`
+  - `brendigo-sidrena-cijena-1.0.3.zip`
 - each ZIP has exactly one edition root.
 - standalone ZIP excludes WooCommerce runtime catalogue/integration classes.
 - WooCommerce ZIP excludes the standalone catalogue runtime.
