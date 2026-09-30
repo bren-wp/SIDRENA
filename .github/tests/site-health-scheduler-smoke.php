@@ -120,6 +120,13 @@ sidrena_health_assert(
 	'Admin audit issue count must not flag external scheduler mode merely because internal daily WP-Cron is absent.'
 );
 
+sidrena_health_assert(
+	false !== strpos( $admin_source, "$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );" )
+	&& false !== strpos( $admin_source, "elseif ( $external_scheduler )" )
+	&& false !== strpos( $admin_source, 'Interni dnevni WP-Cron namjerno nije zakazan.' ),
+	'Price-list screen must show external scheduler mode as intentional instead of a missing internal-cron warning.'
+);
+
 $archive = $health->test_archive();
 sidrena_health_assert( 'good' === $archive['status'], 'Writable current/archive directories must pass Site Health.' );
 sidrena_health_assert( false !== strpos( $archive['description'], '90' ), 'Site Health archive status must report the configured retention above the 30-day minimum.' );
