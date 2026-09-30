@@ -162,7 +162,7 @@ final class Sidrena_Service_History {
 		$last_id    = 0;
 		do {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated bounded read avoids progressively expensive OFFSET scans during the daily service-history snapshot.
-			$ids = $wpdb->get_col(
+			$ids   = $wpdb->get_col(
 				$wpdb->prepare(
 					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND ID > %d ORDER BY ID ASC LIMIT %d',
 					$wpdb->posts,
