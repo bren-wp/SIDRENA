@@ -144,6 +144,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Replaces page/OFFSET iteration in daily product and service price-history snapshots with bounded ID keyset iteration.
 * Centralizes the published-post keyset iterator and reuses it for WooCommerce product export and service export, keeping daily CSV/XML generation efficient as catalogues grow.
 * Preserves public-product visibility rules, variable-product child ordering, location overrides, filters, public output formats and the existing database schema marker.
+* Keeps the WordPress admin sidebar, active menu state and SIDRENA top-level icon on the native WordPress admin color scheme; SIDRENA branding remains inside plugin content screens.
 * Revalidates the production packages across PHP 7.4/8.3/8.4, WPCS/PHPStan, distribution guards, WordPress Plugin Check and real wp-admin QA.
 
 = 1.0.1 =
