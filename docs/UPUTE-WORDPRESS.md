@@ -215,7 +215,7 @@ Nemojte ručno brisati datoteke u uploads/sidrena, mijenjati manifest ili uređi
 
 - SIDRENA prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.2.zip` i `sidrena-woocommerce-1.0.2.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.3.zip` i `sidrena-woocommerce-1.0.3.zip`.
 
 ## WP-CLI
 
