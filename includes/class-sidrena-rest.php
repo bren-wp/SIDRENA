@@ -410,7 +410,9 @@ final class Sidrena_REST {
 
 	private function realtime_woocommerce_location_products( $location, $page, $per_page ) {
 		$location_id = trim( (string) ( $location['id'] ?? '' ) );
-		$candidates  = Sidrena_Location_Data::available_item_ids_for_location( $location_id );
+		$candidates  = is_callable( array( 'Sidrena_Location_Data', 'iterate_available_item_ids_for_location' ) )
+			? Sidrena_Location_Data::iterate_available_item_ids_for_location( $location_id )
+			: Sidrena_Location_Data::available_item_ids_for_location( $location_id );
 		$offset      = ( $page - 1 ) * $per_page;
 		$items       = array();
 		$total       = 0;
