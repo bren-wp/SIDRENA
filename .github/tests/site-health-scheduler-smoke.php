@@ -112,7 +112,7 @@ $internal = $health->test_schedule();
 sidrena_health_assert( 'good' === $internal['status'], 'Healthy internal scheduler and watchdog must report a good Site Health status.' );
 
 sidrena_health_assert(
-	false !== strpos( $admin_source, "'external' === $automation_mode || (bool) wp_next_scheduled( 'sidrena_daily_generation' )" ),
+	false !== strpos( $admin_source, '\'external\' === $automation_mode || (bool) wp_next_scheduled( \'sidrena_daily_generation\' )' ),
 	'Admin dashboard health must treat external scheduler mode as intentionally having no internal daily WP-Cron event.'
 );
 sidrena_health_assert(
@@ -121,8 +121,8 @@ sidrena_health_assert(
 );
 
 sidrena_health_assert(
-	false !== strpos( $admin_source, "$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );" )
-	&& false !== strpos( $admin_source, "elseif ( $external_scheduler )" )
+	false !== strpos( $admin_source, '$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );' )
+	&& false !== strpos( $admin_source, 'elseif ( $external_scheduler )' )
 	&& false !== strpos( $admin_source, 'Interni dnevni WP-Cron namjerno nije zakazan.' ),
 	'Price-list screen must show external scheduler mode as intentional instead of a missing internal-cron warning.'
 );
