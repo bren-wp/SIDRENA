@@ -189,7 +189,15 @@ sidrena_import_stream_assert( false === strpos( $admin_source, "file_get_content
 sidrena_import_stream_assert( false === strpos( $admin_source, 'private function write_stream_all( $stream, $contents )' ), 'Retired Woo full-buffer stream-copy helper must remain removed.' );
 sidrena_import_stream_assert( 0 === preg_match( '/(?<![A-Za-z0-9_])fgetcsv\\s*\\(/', $standalone_source . $admin_source ), 'Production importers must use the centralized explicit CSV reader.' );
 sidrena_import_stream_assert( 0 === preg_match( '/(?<![A-Za-z0-9_])fputcsv\\s*\\(/', $admin_source . $pricelist_source ), 'Production CSV exporters must use the centralized explicit CSV writer.' );
-sidrena_import_stream_assert( false !== strpos( $utils_source, "fgetcsv( \$stream, 0, \$delimiter, '"', '\\\\' )" ), 'Central CSV reader must pass enclosure and escape explicitly for PHP 8.4 compatibility.' );
-sidrena_import_stream_assert( false !== strpos( $utils_source, "fputcsv( \$stream, (array) \$fields, \$delimiter, '"', '\\\\' )" ), 'Central CSV writer must pass enclosure and escape explicitly for PHP 8.4 compatibility.' );
+sidrena_import_stream_assert(
+	1 === preg_match( '/return fgetcsv\\(([^;]+)\\);/', $utils_source, $csv_read_call )
+	&& 4 <= substr_count( $csv_read_call[1], ',' ),
+	'Central CSV reader must pass delimiter, enclosure and escape explicitly for PHP 8.4 compatibility.'
+);
+sidrena_import_stream_assert(
+	1 === preg_match( '/return fputcsv\\(([^;]+)\\);/', $utils_source, $csv_write_call )
+	&& 4 <= substr_count( $csv_write_call[1], ',' ),
+	'Central CSV writer must pass delimiter, enclosure and escape explicitly for PHP 8.4 compatibility.'
+);
 
 fwrite( STDOUT, "Sidrena streaming import smoke test passed.\n" );
