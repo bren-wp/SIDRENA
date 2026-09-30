@@ -155,7 +155,7 @@ final class Sidrena_Location_Data {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated read from the plugin-owned indexed location table keeps memory bounded.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT product_id, variation_id FROM %i WHERE location_id = %s AND availability IN ('dostupno','nedostupno') AND (product_id > %d OR (product_id = %d AND variation_id > %d)) ORDER BY product_id ASC, variation_id ASC LIMIT %d",
+					"SELECT product_id, variation_id FROM %i WHERE location_id = %s AND product_id > 0 AND availability IN ('dostupno','nedostupno') AND (product_id > %d OR (product_id = %d AND variation_id > %d)) ORDER BY product_id ASC, variation_id ASC LIMIT %d",
 					$table,
 					$location_id,
 					$last_product,
