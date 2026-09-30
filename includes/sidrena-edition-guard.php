@@ -20,7 +20,9 @@ if ( ! defined( 'SIDRENA_EDITION' ) && ! class_exists( 'Sidrena_Plugin', false )
 }
 
 $sidrena_conflicting_file = $sidrena_entry_file;
-$sidrena_attempted_key    = false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'wordpress';
+$sidrena_attempted_key    = isset( $sidrena_entry_edition ) && in_array( $sidrena_entry_edition, array( 'wordpress', 'woocommerce' ), true )
+	? $sidrena_entry_edition
+	: ( false !== stripos( basename( $sidrena_conflicting_file ), 'woocommerce' ) ? 'woocommerce' : 'wordpress' );
 $sidrena_active_key       = defined( 'SIDRENA_EDITION' ) ? (string) SIDRENA_EDITION : 'legacy';
 
 $sidrena_edition_labels = array(
