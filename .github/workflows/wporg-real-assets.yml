@@ -97,6 +97,7 @@ jobs:
           unzip -q "$BUILD_DIR/sidrena-wordpress-$VERSION.zip" -d .wp-env-runtime
           unzip -q "$BUILD_DIR/sidrena-woocommerce-$VERSION.zip" -d .wp-env-runtime
 
+          # WordPress.org package main files intentionally follow each public slug.
           test -f .wp-env-runtime/brendigo-sidrene-cijene-digitalni-cjenici/brendigo-sidrene-cijene-digitalni-cjenici.php
           test -f .wp-env-runtime/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
 
