@@ -56,23 +56,29 @@ final class Sidrena_Test_WPDB {
 	public $prefix = 'wp_';
 	public $baseline = null;
 	public $window_min = null;
-	public $inference_rows = array();
+	public $latest_history = null;
+	public $previous_different_id = 0;
+	public $inferred_start = '';
 	public $queries = array();
 
 	public function prepare( $query ) { return $query; }
 	public function get_row( $query, $output ) {
 		unset( $output );
 		$this->queries[] = $query;
-		return $this->baseline;
+		return false !== strpos( $query, 'SELECT id, price' ) ? $this->latest_history : $this->baseline;
 	}
 	public function get_var( $query ) {
 		$this->queries[] = $query;
-		return false !== strpos( $query, 'MIN(price)' ) ? $this->window_min : null;
-	}
-	public function get_results( $query, $output ) {
-		unset( $output );
-		$this->queries[] = $query;
-		return false !== strpos( $query, 'ORDER BY id DESC LIMIT 500' ) ? $this->inference_rows : array();
+		if ( false !== strpos( $query, 'MIN(price)' ) ) {
+			return $this->window_min;
+		}
+		if ( false !== strpos( $query, 'ABS(price - %f) >= 0.000001' ) ) {
+			return $this->previous_different_id;
+		}
+		if ( false !== strpos( $query, 'SELECT recorded_at' ) ) {
+			return $this->inferred_start;
+		}
+		return null;
 	}
 }
 
@@ -116,5 +122,23 @@ sidrena_lowest_30_assert( abs( (float) $manual['price'] - 88.5 ) < 0.0001, 'Veri
 $product->configure( '', $sale_start );
 $incomplete = Sidrena_History::instance()->lowest_30_day_reference( $product );
 sidrena_lowest_30_assert( 'incomplete' === $incomplete['status'], 'Incomplete history without a verified fallback must never fabricate a compliant value.' );
+
+$product->configure( '', 0 );
+$wpdb->queries = array();
+$wpdb->latest_history = array( 'id' => 5005, 'price' => '80.00' );
+$wpdb->previous_different_id = 4;
+$wpdb->inferred_start = '2026-09-01 09:15:00';
+$wpdb->baseline = array( 'price' => '95.00', 'recorded_at' => '2026-08-02 09:15:00' );
+$wpdb->window_min = '90.00';
+$inferred = Sidrena_History::instance()->lowest_30_day_reference( $product );
+sidrena_lowest_30_assert( 'ready' === $inferred['status'], 'Sale-start inference must remain ready even when the current price run is longer than 500 history rows.' );
+sidrena_lowest_30_assert(
+	0 === count( array_filter( $wpdb->queries, static function ( $query ) { return false !== strpos( $query, 'LIMIT 500' ); } ) ),
+	'Sale-start inference must not truncate the history scan at 500 rows.'
+);
+sidrena_lowest_30_assert(
+	1 === count( array_filter( $wpdb->queries, static function ( $query ) { return false !== strpos( $query, 'ABS(price - %f) >= 0.000001' ); } ) ),
+	'Sale-start inference must use an exact previous-price boundary lookup.'
+);
 
 fwrite( STDOUT, "SIDRENA separate 30-day minimum runtime smoke test passed.\n" );
