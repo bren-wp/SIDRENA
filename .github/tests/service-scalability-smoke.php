@@ -9,11 +9,11 @@
  */
 
 
-$services = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
+$services      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
 $history       = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-service-history.php' );
 $price_history = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-history.php' );
-$admin    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
-$css      = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
+$admin          = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+$css            = file_get_contents( dirname( __DIR__, 2 ) . '/public/css/frontend.css' );
 
 function sidrena_service_scale_assert( $condition, $message ) {
 	if ( ! $condition ) {
@@ -39,9 +39,9 @@ sidrena_service_scale_assert( false !== strpos( $history, "\$wpdb->prepare( 'SEL
 sidrena_service_scale_assert( false === strpos( $history, 'SELECT COUNT(*) FROM {$table}' ), 'Service history count query must not interpolate the custom table identifier.' );
 sidrena_service_scale_assert( false !== strpos( $price_history, 'private function catalog_parent_ids_keyset( $post_type, $batch_size )' ), 'Daily price-history snapshot needs a shared keyset catalog iterator.' );
 sidrena_service_scale_assert( false !== strpos( $price_history, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Daily price-history catalog scan must advance by ID keyset.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, "$this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 )" ), 'WordPress history snapshot must use bounded 250-item keyset batches.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, "$this->catalog_parent_ids_keyset( 'product', 100 )" ), 'WooCommerce history snapshot must use bounded 100-product keyset batches.' );
-sidrena_service_scale_assert( false === strpos( $price_history, "'paged'          => $page" ), 'Daily WordPress history snapshot must not restore page/OFFSET pagination.' );
-sidrena_service_scale_assert( false === strpos( $price_history, "'page'    => $page" ), 'Daily WooCommerce history snapshot must not restore page/OFFSET pagination.' );
+sidrena_service_scale_assert( false !== strpos( $price_history, '$this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 )' ), 'WordPress history snapshot must use bounded 250-item keyset batches.' );
+sidrena_service_scale_assert( false !== strpos( $price_history, '$this->catalog_parent_ids_keyset( \'product\', 100 )' ), 'WooCommerce history snapshot must use bounded 100-product keyset batches.' );
+sidrena_service_scale_assert( false === strpos( $price_history, "'paged'          => \$page" ), 'Daily WordPress history snapshot must not restore page/OFFSET pagination.' );
+sidrena_service_scale_assert( false === strpos( $price_history, "'page'    => \$page" ), 'Daily WooCommerce history snapshot must not restore page/OFFSET pagination.' );
 
 fwrite( STDOUT, "Sidrena service scalability smoke test passed.\n" );
