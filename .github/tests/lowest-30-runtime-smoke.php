@@ -94,6 +94,10 @@ sidrena_lowest_30_assert(
 	&& false === strpos( implode( "\n", $wpdb->queries ), 'LIMIT 2000' ),
 	'30-day calculation must aggregate the complete indexed window instead of truncating history rows.'
 );
+sidrena_lowest_30_assert(
+	false !== strpos( implode( "\n", $wpdb->queries ), 'product_id = %d AND variation_id = 0' ),
+	'Parent/simple 30-day history queries must exclude child variation rows.'
+);
 
 $wpdb->baseline   = null;
 $wpdb->window_min = '91.00';
