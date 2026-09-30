@@ -14,7 +14,7 @@ define( 'ABSPATH', __DIR__ . '/' );
 define( 'WP_CLI', false );
 define( 'SIDRENA_VERSION', 'test' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
-define( 'SIDRENA_FILE', $root . '/editions/woocommerce/sidrena-woocommerce.php' );
+define( 'SIDRENA_FILE', $root . '/editions/woocommerce/brendigo-sidrena-cijena.php' );
 define( 'SIDRENA_DIR', $root . '/' );
 define( 'SIDRENA_URL', 'https://example.test/wp-content/plugins/brendigo-sidrena-cijena/' );
 
