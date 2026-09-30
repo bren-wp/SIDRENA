@@ -6,6 +6,15 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.4 =
+* Instalacijski WordPress paket sada koristi glavni PHP file usklađen s javnim slugom: brendigo-sidrene-cijene-digitalni-cjenici.php.
+* Instalacijski WooCommerce paket sada koristi glavni PHP file usklađen s javnim slugom: brendigo-sidrena-cijena.php.
+* Javni naziv plugina ostaje SIDRENA, a text-domainovi ostaju jednaki javnim slugovima pojedinih izdanja.
+* WordPress.org asset workflow, HPOS runtime provjera, distribution guard, Plugin Check guard i release workflow sada provjeravaju slug-named entrypointe umjesto starih instalacijskih fileova.
+* Realni wp-admin screenshot workflow ponovno prolazi za WordPress i WooCommerce izdanje, uključujući WooCommerce HPOS runtime dio.
+* Release gate za 1.0.4 gradi reproducibilne ZIP pakete, pokreće WordPress Plugin Check za oba izdanja i provjerava objavljene GitHub release assete.
+* Database schema marker ostaje 0.2.0; 1.0.4 ne uvodi migraciju podataka.
+
 = 1.0.3 =
 * WooCommerce izdanje deklarira provjerenu kompatibilnost s High-Performance Order Storage (HPOS) značajkom `custom_order_tables` preko službenog WooCommerce FeaturesUtil API-ja.
 * Dodan je regression guard koji sprječava WooCommerce deklaraciju u standalone WordPress izdanju i sprječava neprovjerene deklaracije za druge WooCommerce značajke.
