@@ -126,6 +126,9 @@ No. It is a completely optional service. The plugin can be installed and configu
 * Refreshes version metadata, documentation, POT metadata and release-validation guards for the 1.0.1 production package.
 * Revalidates the standalone production ZIP across PHP 7.4/8.3/8.4, WPCS/PHPStan and WordPress Plugin Check.
 * Keeps the standalone products/services catalog, public price lists, archive, REST contract and stored data backward compatible with 1.0.0.
+* Hardens the administrator public-file health check to exact same-origin URLs under the SIDRENA uploads path, with redirects disabled and bounded responses.
+* Verifies the idempotent 1.0.0 → 1.0.1 upgrade path and current schema marker without repeatedly running the expensive upgrade on current installations.
+* Adds a release-level reproducible-build gate so the WordPress ZIP and checksum must match a second build from the same verified release target before publication.
 
 = 1.0.0 =
 
@@ -134,7 +137,6 @@ No. It is a completely optional service. The plugin can be installed and configu
 * Provides item-level first-publication exceptions for genuinely new products or services without turning custom dates into a global rule.
 * Includes products, services, multiple locations, unit prices, safe CSV/XML import and export, public HTML price lists, machine-readable output, REST access and public archives.
 * Keeps unlimited product, service and location price-change history with bounded reads for large catalogues.
-* Calculates the 30-day minimum from the complete indexed history window, isolates parent/simple history from variation rows, infers sale starts without a fixed row cutoff, and exports large history tables through stable keyset batches.
 * Separates the stable current price list from controlled archive publication, with SHA-256 duplicate detection, atomic writes, file locking, rollback and last-valid-publication recovery.
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
 * Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.

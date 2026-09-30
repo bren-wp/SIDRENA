@@ -13,6 +13,11 @@ Sidrena changelog
 * Uklonjeni su nekorišteni full-location/full-ID helperi iz javnog REST puta kako bi potrošnja memorije ostala bounded na velikim katalozima.
 * Dodani su regression testovi za direct-meta invalidation, streaming fizičkih lokacija, targeted lookup i stabilan variation ordering.
 * Javni REST odgovor i postojeći podaci ostaju kompatibilni; promjena je fokusirana na skalabilnost, stabilnost i konzistentnu invalidaciju cachea.
+* Najniža cijena prethodnih 30 dana sada koristi točan indeksirani `MIN(price)` agregat nad cijelim relevantnim prozorom bez 2000-row truncationa; parent/simple povijest strogo isključuje variation zapise, inference početka sniženja nema 500-row cutoff, a CSV izvoz povijesti koristi stabilne keyset snapshot batchove umjesto OFFSET paginacije.
+* Schema marker 0.2.0 dodaje idempotentne product/variation/service sequence indekse potrebne za exact boundary upite i siguran 1.0.0 → 1.0.1 upgrade.
+* Administratorski HTTP self-check javnih SIDRENA datoteka sada zahtijeva isti scheme/host/port, kanonski put unutar SIDRENA uploads baze, blokira query/fragment i redirecte te zadržava timeout i response-size limit.
+* Ispravljena je fizička-location REST capability provjera tako da koristi streaming `iterate_available_item_ids_for_location` helper, a regression test više ne dopušta povratak na uklonjenu full-ID putanju.
+* Release pipeline za 1.0.1 sada sigurno osvježava postojeći current-version tag samo s release brancha koji je identičan `main`, uz force-with-lease, ponovljivi dvostruki build i byte-for-byte provjeru ZIP/.sha256 izlaza prije objave.
 
 = 1.0.0 =
 * Konsolidirano produkcijsko izdanje SIDRENA sustava s dva odvojena instalacijska plugina i jednim javnim brojem verzije 1.0.0.
@@ -22,7 +27,6 @@ Sidrena changelog
 * Digitalni cjenik ima odvojeni current/archive lifecycle, content-hash duplicate detection, atomic write, process lock, rollback i očuvanje zadnje valjane javne verzije.
 * Arhiva se čuva najmanje 30 dana i može se produljiti; intraday osvježavanje aktualnog cjenika ne stvara nepotrebne arhivske kopije.
 * Povijest cijena proizvoda, usluga, varijacija i lokacijskih cijena ostaje neograničena, dok dashboard/import/publication slojevi koriste bounded čitanja i batch obradu.
-* Najniža cijena prethodnih 30 dana računa se točnim indeksiranim `MIN(price)` agregatom nad cijelim relevantnim prozorom bez 2000-row truncationa; parent/simple povijest strogo isključuje variation zapise, inference početka sniženja nema 500-row cutoff, a CSV izvoz povijesti koristi stabilne keyset snapshot batchove umjesto OFFSET paginacije.
 * Standalone katalog podržava proizvode i usluge, više lokacija, siguran CSV/XML uvoz/izvoz, mjerne jedinice, jedinične cijene, javni HTML, REST i strojno čitljive cjenike.
 * Standalone import više ne gradi cijeli indeks kataloga u memoriji: redovi se obrađuju u chunkovima, a lookup šifri ograničen je na traženi skup.
 * WooCommerce izdanje podržava simple/variable proizvode, svaku variation, regular/sale/current lifecycle, scheduled sale prijelaze, import i promjene price meta podataka.

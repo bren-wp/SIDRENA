@@ -49,7 +49,7 @@ sidrena_upgrade_assert(
 );
 
 $source    = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-activator.php' );
-sidrena_upgrade_assert( '0.2.0' === Sidrena_Activator::DB_VERSION, '1.0.2 hardening must carry the indexed history schema marker.' );
+sidrena_upgrade_assert( '0.2.0' === Sidrena_Activator::DB_VERSION, '1.0.1 hardening must carry the indexed history schema marker.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY product_seq (product_id, id)' ), 'Product history must index product/id sequence lookups.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY variation_seq (variation_id, id)' ), 'Variation history must index variation/id sequence lookups.' );
 sidrena_upgrade_assert( false !== strpos( $source, 'KEY service_seq (service_id, id)' ), 'Service history must index service/id sequence lookups.' );

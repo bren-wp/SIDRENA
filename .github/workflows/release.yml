@@ -76,12 +76,9 @@ jobs:
             EXISTING_TAG_TARGET="$(git rev-list -n 1 "$TAG_NAME")"
             if [[ "$EXISTING_TAG_TARGET" == "$GITHUB_SHA" ]]; then
               echo "Tag $TAG_NAME already points at the release commit."
-            elif [[ "$VERSION" == "1.0.0" ]]; then
-              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled consolidated-release refresh is required."
-              echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
             else
-              echo "Tag $TAG_NAME already exists at a different commit; refusing implicit retarget." >&2
-              exit 1
+              echo "Existing $TAG_NAME points at $EXISTING_TAG_TARGET; controlled verified release refresh is required."
+              echo "REFRESH_RELEASE=true" >> "$GITHUB_ENV"
             fi
           else
             echo "Tag $TAG_NAME does not exist; it will be created only after the fresh build and Plugin Check gates pass."
@@ -149,6 +146,20 @@ jobs:
         run: |
           set -euo pipefail
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$RUNNER_TEMP"
+
+      - name: Verify reproducible release build
+        if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPEAT_OUT="$RUNNER_TEMP/sidrena-release-repeat"
+          rm -rf "$REPEAT_OUT"
+          mkdir -p "$REPEAT_OUT"
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$REPEAT_OUT"
+          cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip"
+          cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip"
+          cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
+          cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
 
       - name: Verify fresh release build before publishing
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -270,8 +281,8 @@ jobs:
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
 
-      - name: Retarget controlled 1.0.0 release tag before asset mutation
-        if: startsWith(github.ref, 'refs/heads/release/') && env.VERSION == '1.0.0' && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
+      - name: Retarget controlled release tag before asset mutation
+        if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -293,7 +304,6 @@ jobs:
           set -euo pipefail
 
           if [[ "${REFRESH_RELEASE:-false}" == "true" ]]; then
-            test "$VERSION" = "1.0.0"
             REMOTE_TAG_TARGET="$(git ls-remote origin "refs/tags/$TAG_NAME^{}" | awk '{print $1}')"
             test "$REMOTE_TAG_TARGET" = "$RELEASE_TARGET"
             gh release upload "$TAG_NAME" \
