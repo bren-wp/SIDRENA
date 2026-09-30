@@ -208,10 +208,10 @@ final class Sidrena_History {
 		$window_mysql = wp_date( 'Y-m-d H:i:s', $window_from );
 		$start_mysql  = wp_date( 'Y-m-d H:i:s', $start );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded read from SIDRENA-owned audit table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Indexed baseline lookup from SIDRENA-owned audit history.
 		$baseline = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY id DESC LIMIT 1',
+				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at <= %s ORDER BY recorded_at DESC, id DESC LIMIT 1',
 				$table,
 				$key,
 				$id,
@@ -220,30 +220,28 @@ final class Sidrena_History {
 			ARRAY_A
 		);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded 30-day read from SIDRENA-owned audit table.
-		$rows = $wpdb->get_results(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact indexed aggregate avoids truncating high-frequency price histories.
+		$window_min = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s ORDER BY id ASC LIMIT 2000',
+				'SELECT MIN(price) FROM %i WHERE %i = %d AND recorded_at > %s AND recorded_at < %s AND price IS NOT NULL',
 				$table,
 				$key,
 				$id,
 				$window_mysql,
 				$start_mysql
-			),
-			ARRAY_A
+			)
 		);
 
-		$values = array();
-		if ( is_array( $baseline ) && null !== $baseline['price'] && '' !== $baseline['price'] ) {
+		$baseline_ready = is_array( $baseline ) && array_key_exists( 'price', $baseline ) && null !== $baseline['price'] && '' !== $baseline['price'];
+		$values         = array();
+		if ( $baseline_ready ) {
 			$values[] = (float) $baseline['price'];
 		}
-		foreach ( (array) $rows as $row ) {
-			if ( null !== $row['price'] && '' !== $row['price'] ) {
-				$values[] = (float) $row['price'];
-			}
+		if ( null !== $window_min && '' !== $window_min ) {
+			$values[] = (float) $window_min;
 		}
 
-		$auto_ready = ! empty( $baseline ) && ! empty( $values );
+		$auto_ready = $baseline_ready && ! empty( $values );
 		$auto_price = $values ? min( $values ) : '';
 
 		if ( '' !== $manual ) {
