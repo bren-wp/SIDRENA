@@ -22,11 +22,12 @@ $sidrena_guard_root = dirname( __DIR__, 2 );
 if ( ! is_file( $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) ) {
 	$sidrena_guard_root = __DIR__;
 }
-$sidrena_entry_file = __FILE__;
+$sidrena_entry_file    = __FILE__;
+$sidrena_entry_edition = 'wordpress';
 if ( require $sidrena_guard_root . '/includes/sidrena-edition-guard.php' ) {
 	return;
 }
-unset( $sidrena_entry_file, $sidrena_guard_root );
+unset( $sidrena_entry_file, $sidrena_entry_edition, $sidrena_guard_root );
 
 define( 'SIDRENA_VERSION', '1.0.2' );
 define( 'SIDRENA_EDITION', 'wordpress' );
