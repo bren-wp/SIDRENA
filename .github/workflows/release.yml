@@ -383,7 +383,7 @@ jobs:
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/static-php"
 
-          test -f "$WOO/sidrena-woocommerce.php"
+          test -f "$WOO/brendigo-sidrena-cijena.php"
           test -s "$WOO/assets/images/logo-woocommerce.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           test ! -e "$WOO/assets/images/logo-wordpress.svg"
