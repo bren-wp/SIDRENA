@@ -33,7 +33,7 @@ foreach ( array_unique( $sidrena_active_plugins ) as $sidrena_active_plugin ) {
 	if ( (string) WP_UNINSTALL_PLUGIN === $sidrena_active_plugin ) {
 		continue;
 	}
-	if ( preg_match( '#(^|/)(sidrena-wordpress|sidrena-woocommerce)\.php$#', $sidrena_active_plugin ) ) {
+	if ( preg_match( '#(^|/)(sidrena-wordpress|brendigo-sidrena-cijena|sidrena-woocommerce)\.php$#', $sidrena_active_plugin ) ) {
 		return;
 	}
 }
