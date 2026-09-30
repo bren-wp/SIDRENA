@@ -108,9 +108,9 @@ def normalize_pot_project_id() -> bool:
 
     version = current_plugin_version()
     text = pot.read_text(encoding="utf-8")
-    replacement = f'"Project-Id-Version: Sidrena {version}\\n"'
+    replacement = f'"Project-Id-Version: Sidrena {version}\n"'
     updated, count = re.subn(
-        r'"Project-Id-Version: Sidrena [0-9]+[.][0-9]+[.][0-9]+\\n"',
+        r'"Project-Id-Version: Sidrena [^"\n]*\n"',
         replacement,
         text,
         count=1,
