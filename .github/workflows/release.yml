@@ -39,7 +39,7 @@ jobs:
             VERSION="${GITHUB_REF_NAME#release/}"
           fi
           WP_VERSION="$(sed -n 's/^ \* Version: //p' editions/wordpress/sidrena-wordpress.php | head -n1)"
-          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/sidrena-woocommerce.php | head -n1)"
+          WOO_VERSION="$(sed -n 's/^ \* Version: //p' editions/woocommerce/brendigo-sidrena-cijena.php | head -n1)"
           WP_STABLE="$(sed -n 's/^Stable tag: //p' editions/wordpress/readme.txt | head -n1)"
           WOO_STABLE="$(sed -n 's/^Stable tag: //p' editions/woocommerce/readme.txt | head -n1)"
           test "$VERSION" = "$WP_VERSION"
@@ -157,9 +157,9 @@ jobs:
           mkdir -p "$REPEAT_OUT"
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh "$VERSION" "$REPEAT_OUT"
           cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip"
-          cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip"
+          cmp "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip" "$REPEAT_OUT/brendigo-sidrena-cijena-$VERSION.zip"
           cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-wordpress-$VERSION.zip.sha256"
-          cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" "$REPEAT_OUT/sidrena-woocommerce-$VERSION.zip.sha256"
+          cmp "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip.sha256" "$REPEAT_OUT/brendigo-sidrena-cijena-$VERSION.zip.sha256"
 
       - name: Verify fresh release build before publishing
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -169,10 +169,10 @@ jobs:
           (
             cd "$RUNNER_TEMP"
             sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrena-cijena-$VERSION.zip.sha256"
           )
           unzip -t "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" >/dev/null
-          unzip -t "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" >/dev/null
+          unzip -t "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip" >/dev/null
 
       - name: Render and validate release PDF manuals
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -211,7 +211,7 @@ jobs:
           cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici" build/release-plugin-check/
           cp -a "$RUNNER_TEMP/.sidrena-build/brendigo-sidrena-cijena" build/release-plugin-check/
           test -f build/release-plugin-check/brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php
-          test -f build/release-plugin-check/brendigo-sidrena-cijena/sidrena-woocommerce.php
+          test -f build/release-plugin-check/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
 
       - name: Set up Node for release Plugin Check
         if: env.RELEASE_EXISTS != 'true' || env.REFRESH_RELEASE == 'true'
@@ -278,8 +278,8 @@ jobs:
           files: |
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip
             ${{ runner.temp }}/sidrena-wordpress-${{ env.VERSION }}.zip.sha256
-            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip
-            ${{ runner.temp }}/sidrena-woocommerce-${{ env.VERSION }}.zip.sha256
+            ${{ runner.temp }}/brendigo-sidrena-cijena-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/brendigo-sidrena-cijena-${{ env.VERSION }}.zip.sha256
 
       - name: Retarget controlled release tag before asset mutation
         if: startsWith(github.ref, 'refs/heads/release/') && env.REFRESH_RELEASE == 'true' && env.RELEASE_EXISTS == 'true'
@@ -309,8 +309,8 @@ jobs:
             gh release upload "$TAG_NAME" \
               "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip" \
               "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip.sha256" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip" \
-              "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip.sha256" \
+              "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip" \
+              "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip.sha256" \
               --clobber --repo "$GITHUB_REPOSITORY"
           fi
 
@@ -338,11 +338,11 @@ jobs:
           gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --dir "$VERIFY_DIR"
 
           WP_ZIP="$VERIFY_DIR/sidrena-wordpress-$VERSION.zip"
-          WOO_ZIP="$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip"
+          WOO_ZIP="$VERIFY_DIR/brendigo-sidrena-cijena-$VERSION.zip"
           test -f "$WP_ZIP"
           test -f "$VERIFY_DIR/sidrena-wordpress-$VERSION.zip.sha256"
           test -f "$WOO_ZIP"
-          test -f "$VERIFY_DIR/sidrena-woocommerce-$VERSION.zip.sha256"
+          test -f "$VERIFY_DIR/brendigo-sidrena-cijena-$VERSION.zip.sha256"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.zip' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f -name '*.sha256' | wc -l | tr -d ' ')" = "2"
           test "$(find "$VERIFY_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "4"
@@ -356,7 +356,7 @@ jobs:
           (
             cd "$VERIFY_DIR"
             sha256sum -c "sidrena-wordpress-$VERSION.zip.sha256"
-            sha256sum -c "sidrena-woocommerce-$VERSION.zip.sha256"
+            sha256sum -c "brendigo-sidrena-cijena-$VERSION.zip.sha256"
           )
 
           unzip -t "$WP_ZIP" >/dev/null
@@ -383,7 +383,7 @@ jobs:
           test ! -f "$WP/sidrena.php"
           test ! -d "$WP/static-php"
 
-          test -f "$WOO/sidrena-woocommerce.php"
+          test -f "$WOO/brendigo-sidrena-cijena.php"
           test -s "$WOO/assets/images/logo-woocommerce.svg"
           test -s "$WOO/assets/images/logo-woocommerce-light.svg"
           test ! -e "$WOO/assets/images/logo-wordpress.svg"

@@ -26,7 +26,7 @@ $GLOBALS['sidrena_queries'] = array();
 function get_option( $key, $default = false ) {
 	global $scenario;
 	if ( 'active_plugins' === $key ) {
-		return 'other-active' === $scenario ? array( 'sidrena-woocommerce/sidrena-woocommerce.php' ) : array();
+		return 'other-active' === $scenario ? array( 'brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' ) : array();
 	}
 	return $default;
 }

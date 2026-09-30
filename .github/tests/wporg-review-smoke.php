@@ -18,7 +18,7 @@ function sidrena_wporg_assert( $condition, $message ) {
 }
 
 $wp_main  = file_get_contents( $root . '/editions/wordpress/sidrena-wordpress.php' );
-$woo_main = file_get_contents( $root . '/editions/woocommerce/sidrena-woocommerce.php' );
+$woo_main = file_get_contents( $root . '/editions/woocommerce/brendigo-sidrena-cijena.php' );
 $wp_readme = file_get_contents( $root . '/editions/wordpress/readme.txt' );
 $woo_readme = file_get_contents( $root . '/editions/woocommerce/readme.txt' );
 $edition_guard = file_get_contents( $root . '/includes/sidrena-edition-guard.php' );
@@ -39,7 +39,7 @@ foreach ( array( $wp_main, $woo_main, $wp_readme, $woo_readme, $edition_guard, $
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Plugin Name: SIDRENA' )
-	&& false !== strpos( $woo_main, 'Plugin Name: SIDRENA' ),
+	&& false !== strpos( $woo_main, 'Plugin Name: Brendigo Sidrena Cijena' ),
 	'Both installed plugin display names must remain SIDRENA.'
 );
 
@@ -69,13 +69,16 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_readme, '=== SIDRENA ===' )
-	&& false !== strpos( $woo_readme, '=== SIDRENA ===' ),
+	&& false !== strpos( $woo_readme, '=== Brendigo Sidrena Cijena ===' ),
 	'Both WordPress.org readme titles must remain SIDRENA.'
 );
 
 sidrena_wporg_assert(
 	false !== strpos( $build_source, 'WP_SLUG="brendigo-sidrene-cijene-digitalni-cjenici"' )
 	&& false !== strpos( $build_source, 'WOO_SLUG="brendigo-sidrena-cijena"' )
+	&& false !== strpos( $build_source, 'brendigo-sidrena-cijena.php' )
+	&& false !== strpos( $build_source, 'brendigo-sidrena-cijena-$VERSION.zip' )
+	&& false === strpos( $build_source, '$WOO_STAGE/sidrena-woocommerce.php' )
 	&& false !== strpos( $build_source, 'WP_STAGE="$WORK/$WP_SLUG"' )
 	&& false !== strpos( $build_source, 'WOO_STAGE="$WORK/$WOO_SLUG"' )
 	&& false !== strpos( $plugin_check_runner, 'if [[ "$PLUGIN_SLUG" != "$PUBLIC_SLUG" ]]' ),

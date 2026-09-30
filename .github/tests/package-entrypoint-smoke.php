@@ -45,7 +45,9 @@ function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 	$GLOBALS['sidrena_entry_actions'][ $hook ][] = $callback;
 }
 
-$main = $root . '/sidrena-' . $edition . '.php';
+$main = 'wordpress' === $edition
+	? $root . '/sidrena-wordpress.php'
+	: $root . '/brendigo-sidrena-cijena.php';
 if ( ! is_file( $main ) ) {
 	fwrite( STDERR, "Package entrypoint missing: {$main}\n" );
 	exit( 1 );

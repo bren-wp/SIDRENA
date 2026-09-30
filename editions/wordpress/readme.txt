@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,12 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.3 =
+
+* Aligns the standalone WordPress edition with the shared SIDRENA 1.0.3 release train.
+* Keeps the standalone package independent of WooCommerce and unchanged in public slug/text-domain.
+* Retains the native WordPress admin color scheme for the SIDRENA menu and icon.
 
 = 1.0.2 =
 

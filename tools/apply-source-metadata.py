@@ -27,7 +27,7 @@ SKIP_FILES = {
 TEXT_SUFFIXES = {".php", ".css", ".js", ".yml", ".yaml", ".sh", ".py", ".svg", ".md", ".txt", ".pot"}
 ENTRYPOINTS = {
     pathlib.Path("editions/wordpress/sidrena-wordpress.php"),
-    pathlib.Path("editions/woocommerce/sidrena-woocommerce.php"),
+    pathlib.Path("editions/woocommerce/brendigo-sidrena-cijena.php"),
 }
 
 PHP_HEADER = """/**
@@ -120,7 +120,7 @@ def add_after_shebang(text: str, header: str) -> str:
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
     if rel in ENTRYPOINTS:
-        entrypoint_author = "Brendigo" if rel == pathlib.Path("editions/woocommerce/sidrena-woocommerce.php") else AUTHOR
+        entrypoint_author = "Brendigo" if rel == pathlib.Path("editions/woocommerce/brendigo-sidrena-cijena.php") else AUTHOR
         return apply_entrypoint(text, entrypoint_author)
     if has_metadata(text):
         return text

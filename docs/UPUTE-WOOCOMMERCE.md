@@ -46,7 +46,7 @@ SIDRENA — WooCommerce izdanje namijenjena je WordPress trgovinama s aktivnim W
 Instalacijski ZIP je namjerno optimiziran za shared hosting: admin CSS/JS i runtime logotipi ostaju obvezan dio paketa, dok WordPress.org screenshotovi i marketinški asseti ostaju izvan ZIP-a. WordPress.org screenshotovi i marketinški asseti nisu u ZIP-u jer nisu potrebni za rad plugina. Build ga ograničava na najviše 1,5 MiB kako bi stao ispod čestog PHP `upload_max_filesize = 2M` limita.
 
 1. Instalirajte i aktivirajte WooCommerce.
-2. Prenesite aktualni `sidrena-woocommerce-<verzija>.zip` paket.
+2. Prenesite aktualni `brendigo-sidrena-cijena-<verzija>.zip` paket.
 3. Aktivirajte **SIDRENA — WooCommerce izdanje**.
 
 Kod nadogradnje preko starijeg izdanja SIDRENA — WooCommerce izdanje plugin automatski pokreće sigurni repair/migration prolaz i čuva postojeće proizvode, SIDRENA meta podatke, lokacije, arhivu i povijest.
@@ -279,7 +279,7 @@ Kod migracije weba zajedno prenesite bazu podataka i cijeli uploads/sidrena sadr
 
 - SIDRENA prikazuje malu lokalnu sidro ikonicu u WordPress bočnom meniju, bez vanjskih asseta i bez dodatnog dupliciranja brenda.
 - Release liniju dodatno čuva Admin polish guard workflow.
-- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.2.zip` i `sidrena-woocommerce-1.0.2.zip`.
+- Službeni release smije sadržavati samo `sidrena-wordpress-1.0.3.zip` i `brendigo-sidrena-cijena-1.0.3.zip`.
 
 ## WP-CLI
 

@@ -24,7 +24,7 @@ rm -rf "$WORK"
 mkdir -p "$WORK"
 
 WP_MAIN="$ROOT/editions/wordpress/sidrena-wordpress.php"
-WOO_MAIN="$ROOT/editions/woocommerce/sidrena-woocommerce.php"
+WOO_MAIN="$ROOT/editions/woocommerce/brendigo-sidrena-cijena.php"
 WP_README="$ROOT/editions/wordpress/readme.txt"
 WOO_README="$ROOT/editions/woocommerce/readme.txt"
 WP_SLUG="brendigo-sidrene-cijene-digitalni-cjenici"
@@ -145,7 +145,7 @@ rm -f \
 
 WOO_STAGE="$WORK/$WOO_SLUG"
 copy_common "$WOO_STAGE"
-cp "$WOO_MAIN" "$WOO_STAGE/sidrena-woocommerce.php"
+cp "$WOO_MAIN" "$WOO_STAGE/brendigo-sidrena-cijena.php"
 cp "$WOO_README" "$WOO_STAGE/readme.txt"
 prepare_install_docs "$ROOT/docs/UPUTE-WOOCOMMERCE.md" "$WOO_STAGE/docs/UPUTE.md"
 python3 "$ROOT/tools/build-support-pdf.py" "$VERSION" "$WOO_STAGE/docs/SIDRENA-UPUTE.pdf" "woocommerce" "$WOO_STAGE/docs/UPUTE.md"
@@ -168,14 +168,14 @@ for root in sys.argv[2:]:
         os.utime(current, (epoch, epoch), follow_symlinks=False)
 PY
 
-rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"
+rm -f "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/brendigo-sidrena-cijena-$VERSION.zip"
 (
   cd "$WORK"
   LC_ALL=C find "$WP_SLUG" -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-wordpress-$VERSION.zip" -@
-  LC_ALL=C find "$WOO_SLUG" -print | LC_ALL=C sort | zip -X -q "$OUTDIR/sidrena-woocommerce-$VERSION.zip" -@
+  LC_ALL=C find "$WOO_SLUG" -print | LC_ALL=C sort | zip -X -q "$OUTDIR/brendigo-sidrena-cijena-$VERSION.zip" -@
 )
 
-for zip_path in "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/sidrena-woocommerce-$VERSION.zip"; do
+for zip_path in "$OUTDIR/sidrena-wordpress-$VERSION.zip" "$OUTDIR/brendigo-sidrena-cijena-$VERSION.zip"; do
   zip_size="$(stat -c%s "$zip_path")"
   echo "$(basename "$zip_path"): $zip_size bytes"
   if (( zip_size > MAX_ZIP_BYTES )); then
@@ -187,7 +187,7 @@ done
 (
   cd "$OUTDIR"
   sha256sum "sidrena-wordpress-$VERSION.zip" > "sidrena-wordpress-$VERSION.zip.sha256"
-  sha256sum "sidrena-woocommerce-$VERSION.zip" > "sidrena-woocommerce-$VERSION.zip.sha256"
+  sha256sum "brendigo-sidrena-cijena-$VERSION.zip" > "brendigo-sidrena-cijena-$VERSION.zip.sha256"
 )
 
 echo "$WP_STAGE"

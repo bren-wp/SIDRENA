@@ -59,7 +59,7 @@ jobs:
           mkdir -p build/plugin-check
           ./tools/build-editions.sh "${{ steps.version.outputs.version }}" build/plugin-check
           test -f build/plugin-check/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici/sidrena-wordpress.php
-          test -f build/plugin-check/.sidrena-build/brendigo-sidrena-cijena/sidrena-woocommerce.php
+          test -f build/plugin-check/.sidrena-build/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
           mkdir -p build/plugin-check-packages
           cp -a build/plugin-check/.sidrena-build/brendigo-sidrene-cijene-digitalni-cjenici build/plugin-check-packages/
           cp -a build/plugin-check/.sidrena-build/brendigo-sidrena-cijena build/plugin-check-packages/

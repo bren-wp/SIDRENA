@@ -64,7 +64,7 @@ sidrena_release_gate_assert(
 	&& 2 <= substr_count( $release, 'SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$RELEASE_TARGET")" ./tools/build-editions.sh' )
 	&& false !== strpos( $repro_block, 'SOURCE_DATE_EPOCH=' )
 	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-wordpress-$VERSION.zip"' )
-	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/sidrena-woocommerce-$VERSION.zip"' )
+	&& false !== strpos( $repro_block, 'cmp "$RUNNER_TEMP/brendigo-sidrena-cijena-$VERSION.zip"' )
 	&& false !== strpos( $repro_block, '.zip.sha256' ),
 	'Release workflow must build twice from the same release target and byte-compare both ZIPs and checksum files before publication.'
 );

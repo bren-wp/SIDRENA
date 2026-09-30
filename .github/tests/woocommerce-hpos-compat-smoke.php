@@ -9,7 +9,7 @@
  */
 
 $root = dirname( __DIR__, 2 );
-$woo  = file_get_contents( $root . '/editions/woocommerce/sidrena-woocommerce.php' );
+$woo  = file_get_contents( $root . '/editions/woocommerce/brendigo-sidrena-cijena.php' );
 $wp   = file_get_contents( $root . '/editions/wordpress/sidrena-wordpress.php' );
 
 function sidrena_hpos_assert( $condition, $message ) {
