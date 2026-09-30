@@ -119,7 +119,7 @@ jobs:
             exit 1
           fi
 
-          grep -Fq "plugins_url( 'assets/images/menu-anchor.svg', SIDRENA_FILE )" includes/class-sidrena-admin-menu.php
+          grep -Fq "'dashicons-tag'" includes/class-sidrena-admin-menu.php
           grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
           grep -Fq "sidrena-brandbar__edition" includes/class-sidrena-admin.php
           grep -Fq "plugins_url( 'admin/css/brand.css', SIDRENA_FILE )" includes/class-sidrena-admin.php
