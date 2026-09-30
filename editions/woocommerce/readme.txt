@@ -144,6 +144,11 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Uses targeted indexed location-row lookups with request-local caching instead of loading the full location dataset for each item.
 * Keeps the public REST response contract unchanged while reducing memory growth for large multi-location catalogues.
 * Adds regression coverage for direct meta invalidation, targeted location reads and streaming physical-location pagination.
+* Calculates the 30-day minimum from the complete indexed history window, strictly isolates parent/simple history from variation rows, infers sale starts without a fixed row cutoff, and exports large history tables through stable keyset batches.
+* Adds idempotent product/variation history sequence indexes for exact boundary lookups and verifies the 1.0.0 → 1.0.1 upgrade path.
+* Hardens the administrator public-file health check to exact same-origin SIDRENA publication URLs, with canonical path validation, redirects disabled and bounded responses.
+* Corrects physical-location REST routing to guard the streaming candidate iterator rather than the removed full-ID helper while preserving the public response contract.
+* Adds a release-level reproducible-build gate so the WooCommerce ZIP and checksum must match a second build from the same verified release target before publication.
 
 = 1.0.0 =
 
@@ -153,7 +158,6 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Provides item-level first-publication exceptions for genuinely new products or variations without turning custom dates into a global rule.
 * Includes multiple locations, unit prices, WooCommerce CSV integration, public HTML price lists, CSV/XML machine-readable output, REST access and public archives.
 * Keeps unlimited product, variation and location price-change history with bounded reads for large catalogues.
-* Calculates the 30-day minimum from the complete indexed history window, isolates parent/simple history from variation rows, infers sale starts without a fixed row cutoff, and exports large history tables through stable keyset batches.
 * Separates the stable current price list from controlled archive publication, with SHA-256 duplicate detection, atomic writes, file locking, rollback and last-valid-publication recovery.
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
 * Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.
