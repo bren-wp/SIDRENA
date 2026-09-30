@@ -505,6 +505,4 @@ final class Sidrena_History {
 			}
 		}
 	}
-
-
 }
