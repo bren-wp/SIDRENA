@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Sidrena_Activator {
-	const DB_VERSION            = '0.1.0';
+	const DB_VERSION            = '0.2.0';
 	const PLUGIN_VERSION_OPTION = 'sidrena_plugin_version';
 
 	public static function activate() {
@@ -182,7 +182,9 @@ final class Sidrena_Activator {
 			source varchar(32) NOT NULL DEFAULT 'save',
 			PRIMARY KEY (id),
 			KEY product_date (product_id, recorded_at),
-			KEY variation_date (variation_id, recorded_at)
+			KEY variation_date (variation_id, recorded_at),
+			KEY product_seq (product_id, id),
+			KEY variation_seq (variation_id, id)
 		) {$charset};";
 		dbDelta( $sql );
 	}
@@ -200,7 +202,8 @@ final class Sidrena_Activator {
 			recorded_at datetime NOT NULL,
 			source varchar(32) NOT NULL DEFAULT 'save',
 			PRIMARY KEY (id),
-			KEY service_date (service_id, recorded_at)
+			KEY service_date (service_id, recorded_at),
+			KEY service_seq (service_id, id)
 		) {$charset};";
 		dbDelta( $sql );
 	}
