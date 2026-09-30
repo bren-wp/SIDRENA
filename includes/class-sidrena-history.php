@@ -307,22 +307,23 @@ final class Sidrena_History {
 		$table        = $wpdb->prefix . 'sidrena_price_history';
 		$variation_id = $product->is_type( 'variation' ) ? absint( $product->get_id() ) : 0;
 		$product_id   = $variation_id ? absint( $product->get_parent_id() ) : absint( $product->get_id() );
+		$sale_price   = (float) $sale_price;
 
 		if ( $variation_id ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded inference for one variation.
-			$rows = $wpdb->get_results(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Three single-row indexed lookups infer the current contiguous sale-price run without an arbitrary history cutoff.
+			$latest = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT price, recorded_at FROM %i WHERE variation_id = %d ORDER BY id DESC LIMIT 500',
+					'SELECT id, price, recorded_at FROM %i WHERE variation_id = %d AND price IS NOT NULL ORDER BY id DESC LIMIT 1',
 					$table,
 					$variation_id
 				),
 				ARRAY_A
 			);
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple inference must exclude child variation rows.
-			$rows = $wpdb->get_results(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple scope explicitly excludes child variations.
+			$latest = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT price, recorded_at FROM %i WHERE product_id = %d AND variation_id = 0 ORDER BY id DESC LIMIT 500',
+					'SELECT id, price, recorded_at FROM %i WHERE product_id = %d AND variation_id = 0 AND price IS NOT NULL ORDER BY id DESC LIMIT 1',
 					$table,
 					$product_id
 				),
@@ -330,30 +331,76 @@ final class Sidrena_History {
 			);
 		}
 
-		$start          = 0;
-		$matched        = false;
-		$previous_found = false;
-		foreach ( (array) $rows as $row ) {
-			if ( null === $row['price'] || '' === $row['price'] ) {
-				continue;
-			}
-			if ( abs( (float) $row['price'] - (float) $sale_price ) < 0.000001 ) {
-				$matched = true;
-				$parsed  = strtotime( (string) $row['recorded_at'] );
-				if ( $parsed ) {
-					$start = $parsed;
-				}
-				continue;
-			}
-			if ( $matched ) {
-				$previous_found = true;
-				break;
-			}
+		if ( ! is_array( $latest ) || empty( $latest['id'] ) || null === $latest['price'] || abs( (float) $latest['price'] - $sale_price ) >= 0.000001 ) {
+			return 0;
+		}
+		$latest_id = absint( $latest['id'] );
+
+		if ( $variation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-row lookup for the immediately preceding different variation price.
+			$previous_id = absint(
+				$wpdb->get_var(
+					$wpdb->prepare(
+						'SELECT id FROM %i WHERE variation_id = %d AND id < %d AND price IS NOT NULL AND ABS(price - %f) >= 0.000001 ORDER BY id DESC LIMIT 1',
+						$table,
+						$variation_id,
+						$latest_id,
+						$sale_price
+					)
+				)
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple lookup excludes all variation history.
+			$previous_id = absint(
+				$wpdb->get_var(
+					$wpdb->prepare(
+						'SELECT id FROM %i WHERE product_id = %d AND variation_id = 0 AND id < %d AND price IS NOT NULL AND ABS(price - %f) >= 0.000001 ORDER BY id DESC LIMIT 1',
+						$table,
+						$product_id,
+						$latest_id,
+						$sale_price
+					)
+				)
+			);
 		}
 
-		return $matched && $previous_found ? $start : 0;
-	}
+		// Without a preceding different price there is not enough evidence to infer
+		// when the reduction began; keep the result incomplete rather than guessing.
+		if ( ! $previous_id ) {
+			return 0;
+		}
 
+		if ( $variation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-row lookup for the first current sale-price record after the preceding different value.
+			$start_row = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT recorded_at FROM %i WHERE variation_id = %d AND id > %d AND id <= %d AND ABS(price - %f) < 0.000001 ORDER BY id ASC LIMIT 1',
+					$table,
+					$variation_id,
+					$previous_id,
+					$latest_id,
+					$sale_price
+				),
+				ARRAY_A
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Parent/simple lookup excludes all variation history.
+			$start_row = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT recorded_at FROM %i WHERE product_id = %d AND variation_id = 0 AND id > %d AND id <= %d AND ABS(price - %f) < 0.000001 ORDER BY id ASC LIMIT 1',
+					$table,
+					$product_id,
+					$previous_id,
+					$latest_id,
+					$sale_price
+				),
+				ARRAY_A
+			);
+		}
+
+		$parsed = is_array( $start_row ) && ! empty( $start_row['recorded_at'] ) ? strtotime( (string) $start_row['recorded_at'] ) : false;
+		return $parsed ? absint( $parsed ) : 0;
+	}
 
 	public static function recent_changes( $limit = 5 ) {
 		global $wpdb;
