@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * state by default, while the public cjenik requires availability per location.
  */
 final class Sidrena_Location_Data {
-	private static $item_cache          = array();
+	private static $item_cache = array();
 
 	public static function table_name() {
 		global $wpdb;
@@ -97,7 +97,7 @@ final class Sidrena_Location_Data {
 
 		do {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated read from the plugin-owned indexed location table keeps memory bounded.
-			$rows = $wpdb->get_results(
+			$rows      = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT product_id, variation_id FROM %i WHERE location_id = %s AND product_id > 0 AND availability IN ('dostupno','nedostupno') AND (product_id > %d OR (product_id = %d AND variation_id > %d)) ORDER BY product_id ASC, variation_id ASC LIMIT %d",
 					$table,
