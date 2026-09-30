@@ -57,6 +57,8 @@ $blocked = array(
 	'https://shop.example.test/wp-content/uploads/sidrena-evil/cjenik.csv',
 	'https://shop.example.test/wp-content/uploads/sidrena/../private/secret.csv',
 	'https://shop.example.test/wp-content/uploads/sidrena/%2e%2e/private/secret.csv',
+	'https://shop.example.test/wp-content/uploads/sidrena/%252e%252e/private/secret.csv',
+	'https://shop.example.test/wp-content/uploads/sidrena/%25252e%25252e/private/secret.csv',
 	'https://shop.example.test/wp-content/uploads/sidrena/',
 );
 foreach ( $blocked as $url ) {
