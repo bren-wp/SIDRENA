@@ -22,6 +22,7 @@ Sidrena changelog
 * Digitalni cjenik ima odvojeni current/archive lifecycle, content-hash duplicate detection, atomic write, process lock, rollback i očuvanje zadnje valjane javne verzije.
 * Arhiva se čuva najmanje 30 dana i može se produljiti; intraday osvježavanje aktualnog cjenika ne stvara nepotrebne arhivske kopije.
 * Povijest cijena proizvoda, usluga, varijacija i lokacijskih cijena ostaje neograničena, dok dashboard/import/publication slojevi koriste bounded čitanja i batch obradu.
+* Najniža cijena prethodnih 30 dana računa se točnim indeksiranim `MIN(price)` agregatom nad cijelim relevantnim prozorom bez 2000-row truncationa; parent/simple povijest strogo isključuje variation zapise, inference početka sniženja nema 500-row cutoff, a CSV izvoz povijesti koristi stabilne keyset snapshot batchove umjesto OFFSET paginacije.
 * Standalone katalog podržava proizvode i usluge, više lokacija, siguran CSV/XML uvoz/izvoz, mjerne jedinice, jedinične cijene, javni HTML, REST i strojno čitljive cjenike.
 * Standalone import više ne gradi cijeli indeks kataloga u memoriji: redovi se obrađuju u chunkovima, a lookup šifri ograničen je na traženi skup.
 * WooCommerce izdanje podržava simple/variable proizvode, svaku variation, regular/sale/current lifecycle, scheduled sale prijelaze, import i promjene price meta podataka.

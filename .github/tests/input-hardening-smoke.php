@@ -71,4 +71,11 @@ sidrena_input_hardening_assert(
 	'Every admin CSV export must use the centralized checked download stream and nosniff header.'
 );
 
+sidrena_input_hardening_assert(
+	false !== strpos( $admin, 'SELECT MAX(id) FROM %i' )
+	&& false !== strpos( $admin, 'WHERE id > %d AND id <= %d ORDER BY id ASC LIMIT %d' )
+	&& false === strpos( $admin, 'ORDER BY id ASC LIMIT %d OFFSET %d' ),
+	'History CSV export must use a stable keyset snapshot instead of OFFSET pagination.'
+);
+
 fwrite( STDOUT, "SIDRENA input hardening smoke test passed.\n" );

@@ -2199,20 +2199,24 @@ final class Sidrena_Admin {
 		);
 
 		$product_table = $wpdb->prefix . 'sidrena_price_history';
-		$offset        = 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Snapshot boundary for a stable bounded export from the plugin-owned history table.
+		$product_max_id = absint( $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(id) FROM %i', $product_table ) ) );
+		$product_last_id = 0;
 		do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded export from SIDRENA-owned history table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-bounded export from SIDRENA-owned history table.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT product_id, variation_id, price, regular_price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
+					'SELECT id, product_id, variation_id, price, regular_price, recorded_at, source FROM %i WHERE id > %d AND id <= %d ORDER BY id ASC LIMIT %d',
 					$product_table,
-					1000,
-					$offset
+					$product_last_id,
+					$product_max_id,
+					1000
 				),
 				ARRAY_A
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				$item_id = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
+				$product_last_id = max( $product_last_id, absint( $row['id'] ) );
+				$item_id         = absint( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
 				if ( Sidrena_Utils::is_woocommerce_edition() ) {
 					$product = Sidrena_Utils::is_woocommerce_active() ? wc_get_product( $item_id ) : false;
 					$code    = $product ? Sidrena_Utils::get_product_code( $product ) : '';
@@ -2231,34 +2235,36 @@ final class Sidrena_Admin {
 					';'
 				);
 			}
-			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+			$row_count = is_array( $rows ) ? count( $rows ) : 0;
+		} while ( 1000 === $row_count );
 
 		$service_table = $wpdb->prefix . 'sidrena_service_price_history';
-		$offset        = 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Snapshot boundary for a stable bounded export from the plugin-owned service history table.
+		$service_max_id = absint( $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(id) FROM %i', $service_table ) ) );
+		$service_last_id = 0;
 		do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded export from SIDRENA-owned service history table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-bounded export from SIDRENA-owned service history table.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT service_id, price, recorded_at, source FROM %i ORDER BY id ASC LIMIT %d OFFSET %d',
+					'SELECT id, service_id, price, recorded_at, source FROM %i WHERE id > %d AND id <= %d ORDER BY id ASC LIMIT %d',
 					$service_table,
-					1000,
-					$offset
+					$service_last_id,
+					$service_max_id,
+					1000
 				),
 				ARRAY_A
 			);
 			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-				$service_id = absint( $row['service_id'] );
+				$service_last_id = max( $service_last_id, absint( $row['id'] ) );
+				$service_id      = absint( $row['service_id'] );
 				$this->safe_fputcsv(
 					$out,
 					array( 'usluga', $row['recorded_at'], '', '', $service_id, '', get_the_title( $service_id ), $row['price'], '', get_post_meta( $service_id, '_sidrena_service_anchor_price', true ), $row['source'] ),
 					';'
 				);
 			}
-			$count   = is_array( $rows ) ? count( $rows ) : 0;
-			$offset += 1000;
-		} while ( 1000 === $count );
+			$row_count = is_array( $rows ) ? count( $rows ) : 0;
+		} while ( 1000 === $row_count );
 
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
