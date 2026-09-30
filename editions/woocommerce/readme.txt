@@ -145,7 +145,7 @@ No. It is completely optional. The plugin can be installed and configured indepe
 * Provides item-level first-publication exceptions for genuinely new products or variations without turning custom dates into a global rule.
 * Includes multiple locations, unit prices, WooCommerce CSV integration, public HTML price lists, CSV/XML machine-readable output, REST access and public archives.
 * Keeps unlimited product, variation and location price-change history with bounded reads for large catalogues.
-* Calculates the 30-day minimum from the complete indexed history window without row truncation and exports large history tables through stable keyset batches.
+* Calculates the 30-day minimum from the complete indexed history window, isolates parent/simple history from variation rows, infers sale starts without a fixed row cutoff, and exports large history tables through stable keyset batches.
 * Separates the stable current price list from controlled archive publication, with SHA-256 duplicate detection, atomic writes, file locking, rollback and last-valid-publication recovery.
 * Supports internal WP-Cron or external server cron/WP-CLI publication, Site Health monitoring and publication alerts.
 * Keeps dashboard and price-list scheduler status mode-aware so external WP-CLI automation is not reported as a missing internal cron error.
