@@ -60,6 +60,9 @@ $blocked = array(
 	'https://shop.example.test/wp-content/uploads/sidrena/%252e%252e/private/secret.csv',
 	'https://shop.example.test/wp-content/uploads/sidrena/%25252e%25252e/private/secret.csv',
 	'https://shop.example.test/wp-content/uploads/sidrena/',
+	'https://shop.example.test/wp-content/uploads/sidrena/current/check.php',
+	'https://shop.example.test/wp-content/uploads/sidrena/current/cjenik.csv?probe=1',
+	'https://shop.example.test/wp-content/uploads/sidrena/current/cjenik.xml#fragment',
 );
 foreach ( $blocked as $url ) {
 	sidrena_http_policy_assert( false === $method->invoke( $admin, $url, $base ), 'Expected public self-check URL to be blocked: ' . $url );
