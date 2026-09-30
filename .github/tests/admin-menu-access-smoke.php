@@ -119,8 +119,15 @@ sidrena_menu_assert( 'SIDRENA' === $GLOBALS['sidrena_test_menu']['top']['page_ti
 sidrena_menu_assert( 'SIDRENA' === $GLOBALS['sidrena_test_menu']['top']['menu_title'], 'SIDRENA top-level menu label changed.' );
 sidrena_menu_assert( 'sidrena' === $GLOBALS['sidrena_test_menu']['top']['slug'], 'SIDRENA top-level menu slug is incorrect.' );
 sidrena_menu_assert( 'manage_options' === $GLOBALS['sidrena_test_menu']['top']['capability'], 'Sidrena menu must use administrator fallback capability when needed.' );
-sidrena_menu_assert( SIDRENA_URL . 'assets/images/menu-anchor.svg' === $GLOBALS['sidrena_test_menu']['top']['icon'], 'Sidrena top-level menu must use the local anchor icon.' );
+sidrena_menu_assert( 'dashicons-tag' === $GLOBALS['sidrena_test_menu']['top']['icon'], 'Sidrena top-level menu icon must use a native WordPress Dashicon so its color follows the active admin color scheme.' );
 sidrena_menu_assert( ! empty( $GLOBALS['sidrena_test_menu']['sub'] ), 'Sidrena submenus were not registered.' );
+
+$brand_css = file_get_contents( dirname( __DIR__, 2 ) . '/admin/css/brand.css' );
+sidrena_menu_assert( false !== $brand_css, 'Unable to read Sidrena admin brand stylesheet.' );
+sidrena_menu_assert( false === strpos( $brand_css, 'body.toplevel_page_sidrena #adminmenu' ), 'Sidrena pages must not recolor the WordPress admin menu.' );
+sidrena_menu_assert( false === strpos( $brand_css, '.sidrena-admin-screen #adminmenuback' ), 'Sidrena pages must not recolor the WordPress sidebar background.' );
+sidrena_menu_assert( false === strpos( $brand_css, '.toplevel_page_sidrena>a.menu-top' ), 'Sidrena pages must not override the active WordPress menu item color.' );
+sidrena_menu_assert( false === strpos( $brand_css, '.wp-menu-image img' ), 'Sidrena pages must not filter/recolor a custom menu image.' );
 
 $registered_slugs  = array( 'sidrena', 'sidrena-catalog', 'sidrena-files', 'sidrena-locations', 'sidrena-settings', 'sidrena-support' );
 $registered_labels = array( 'Pregled', 'Katalog', 'Cjenici', 'Lokacije', 'Postavke', 'Pomoć' );
