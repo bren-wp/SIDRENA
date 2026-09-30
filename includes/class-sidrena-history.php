@@ -278,39 +278,51 @@ final class Sidrena_History {
 		$key          = $variation_id ? 'variation_id' : 'product_id';
 		$id           = $variation_id ? $variation_id : absint( $product->get_id() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded inference from SIDRENA-owned audit history.
-		$rows = $wpdb->get_results(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact latest-row lookup from SIDRENA-owned indexed audit history.
+		$latest = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT price, recorded_at FROM %i WHERE %i = %d ORDER BY id DESC LIMIT 500',
+				'SELECT id, price FROM %i WHERE %i = %d AND price IS NOT NULL ORDER BY id DESC LIMIT 1',
 				$table,
 				$key,
 				$id
 			),
 			ARRAY_A
 		);
-
-		$start          = 0;
-		$matched        = false;
-		$previous_found = false;
-		foreach ( (array) $rows as $row ) {
-			if ( null === $row['price'] || '' === $row['price'] ) {
-				continue;
-			}
-			if ( abs( (float) $row['price'] - (float) $sale_price ) < 0.000001 ) {
-				$matched = true;
-				$parsed  = strtotime( (string) $row['recorded_at'] );
-				if ( $parsed ) {
-					$start = $parsed;
-				}
-				continue;
-			}
-			if ( $matched ) {
-				$previous_found = true;
-				break;
-			}
+		if ( ! is_array( $latest ) || ! isset( $latest['id'], $latest['price'] ) || abs( (float) $latest['price'] - (float) $sale_price ) >= 0.000001 ) {
+			return 0;
 		}
 
-		return $matched && $previous_found ? $start : 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact boundary lookup avoids a fixed history-row cap.
+		$previous_id = absint(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT id FROM %i WHERE %i = %d AND id < %d AND price IS NOT NULL AND ABS(price - %f) >= 0.000001 ORDER BY id DESC LIMIT 1',
+					$table,
+					$key,
+					$id,
+					absint( $latest['id'] ),
+					(float) $sale_price
+				)
+			)
+		);
+		if ( ! $previous_id ) {
+			return 0;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Exact start lookup for the current contiguous sale-price run.
+		$recorded_at = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT recorded_at FROM %i WHERE %i = %d AND id > %d AND id <= %d AND price IS NOT NULL AND ABS(price - %f) < 0.000001 ORDER BY id ASC LIMIT 1',
+				$table,
+				$key,
+				$id,
+				$previous_id,
+				absint( $latest['id'] ),
+				(float) $sale_price
+			)
+		);
+		$start = $recorded_at ? strtotime( (string) $recorded_at ) : 0;
+		return $start ? $start : 0;
 	}
 
 
