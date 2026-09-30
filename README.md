@@ -31,6 +31,8 @@ Support: sidrena@brendigo.com
   <img src="assets/images/menu-anchor.svg" alt="SIDRENA wp-admin ikona" width="68">
   &nbsp;&nbsp;
   <img src="assets/images/logo-mark.svg" alt="SIDRENA znak" width="76">
+  &nbsp;&nbsp;
+  <img src="assets/images/favicon.svg" alt="SIDRENA favicon" width="62">
 </p>
 
 ---
@@ -98,6 +100,16 @@ Isti SIDRENA sustav nad stvarnim WooCommerce katalogom.
 <td width="33%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-4.png" alt="SIDRENA lokacije" width="100%"><br><strong>Lokacije</strong></td>
 <td width="33%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-5.png" alt="SIDRENA postavke" width="100%"><br><strong>Postavke</strong></td>
 <td width="33%"><img src="wporg-assets/sidrena-wordpress/assets/screenshot-6.png" alt="SIDRENA pomoć i alati" width="100%"><br><strong>Pomoć i alati</strong></td>
+</tr>
+</table>
+
+### WooCommerce izdanje — lokacije, postavke i pomoć
+
+<table>
+<tr>
+<td width="33%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-4.png" alt="SIDRENA WooCommerce lokacije" width="100%"><br><strong>Lokacije</strong></td>
+<td width="33%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-5.png" alt="SIDRENA WooCommerce postavke" width="100%"><br><strong>Postavke</strong></td>
+<td width="33%"><img src="wporg-assets/sidrena-woocommerce/assets/screenshot-6.png" alt="SIDRENA WooCommerce pomoć i alati" width="100%"><br><strong>Pomoć i alati</strong></td>
 </tr>
 </table>
 
