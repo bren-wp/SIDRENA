@@ -1119,7 +1119,7 @@ else :
 		}
 
 		rewind( $resource );
-		$head = fgetcsv( $resource, 0, $delimiter );
+		$head = Sidrena_Utils::csv_read_row( $resource, $delimiter );
 		if ( ! is_array( $head ) ) {
 			fclose( $resource ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			return new WP_Error( 'csv_header' );
@@ -1142,7 +1142,7 @@ else :
 
 		$count = 0;
 		while ( true ) {
-			$values = fgetcsv( $resource, 0, $delimiter );
+			$values = Sidrena_Utils::csv_read_row( $resource, $delimiter );
 			if ( false === $values ) {
 				break;
 			}
@@ -1160,13 +1160,13 @@ else :
 		}
 
 		rewind( $resource );
-		fgetcsv( $resource, 0, $delimiter );
+		Sidrena_Utils::csv_read_row( $resource, $delimiter );
 		return array( $resource, $delimiter, $head, $count );
 	}
 
 	private function iterate_csv_import_rows( $stream, $delimiter, $head ) {
 		while ( is_resource( $stream ) ) {
-			$values = fgetcsv( $stream, 0, $delimiter );
+			$values = Sidrena_Utils::csv_read_row( $stream, $delimiter );
 			if ( false === $values ) {
 				break;
 			}
