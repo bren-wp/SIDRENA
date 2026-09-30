@@ -481,56 +481,64 @@ final class Sidrena_History {
 
 	private function catalog_item_ids() {
 		if ( Sidrena_Utils::is_wordpress_edition() ) {
-			$page = 1;
-			do {
-				$query = new WP_Query(
-					array(
-						'post_type'      => Sidrena_Standalone::POST_TYPE,
-						'post_status'    => 'publish',
-						'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded audit-history batch.
-						'paged'          => $page,
-						'fields'         => 'ids',
-						'orderby'        => 'ID',
-						'order'          => 'ASC',
-						'no_found_rows'  => true,
-					)
-				);
-				foreach ( $query->posts as $item_id ) {
-					yield absint( $item_id );
-				}
-				$count = count( $query->posts );
-				++$page;
-			} while ( 250 === $count );
+			foreach ( $this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 ) as $item_id ) {
+				yield $item_id;
+			}
 			return;
 		}
 
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
 			return;
 		}
-		$page = 1;
+
+		foreach ( $this->catalog_parent_ids_keyset( 'product', 100 ) as $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product ) {
+				continue;
+			}
+			if ( $product->is_type( 'variable' ) ) {
+				foreach ( $product->get_children() as $variation_id ) {
+					yield absint( $variation_id );
+				}
+			} else {
+				yield absint( $product->get_id() );
+			}
+		}
+	}
+
+	private function catalog_parent_ids_keyset( $post_type, $batch_size ) {
+		global $wpdb;
+
+		$post_type  = sanitize_key( (string) $post_type );
+		$batch_size = min( 500, max( 25, absint( $batch_size ) ) );
+		if ( '' === $post_type ) {
+			return;
+		}
+
+		$last_id = 0;
 		do {
-			$query    = new WC_Product_Query(
-				array(
-					'limit'   => 100,
-					'page'    => $page,
-					'status'  => array( 'publish' ),
-					'return'  => 'objects',
-					'orderby' => 'ID',
-					'order'   => 'ASC',
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated bounded read avoids progressively expensive OFFSET scans during daily history snapshots.
+			$ids   = $wpdb->get_col(
+				$wpdb->prepare(
+					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND ID > %d ORDER BY ID ASC LIMIT %d',
+					$wpdb->posts,
+					$post_type,
+					'publish',
+					$last_id,
+					$batch_size
 				)
 			);
-			$products = $query->get_products();
-			foreach ( $products as $product ) {
-				if ( $product->is_type( 'variable' ) ) {
-					foreach ( $product->get_children() as $variation_id ) {
-						yield absint( $variation_id );
-					}
-				} else {
-					yield absint( $product->get_id() );
+			$ids   = is_array( $ids ) ? $ids : array();
+			$count = count( $ids );
+
+			foreach ( $ids as $item_id ) {
+				$item_id = absint( $item_id );
+				if ( ! $item_id ) {
+					continue;
 				}
+				$last_id = $item_id;
+				yield $item_id;
 			}
-			$count = count( $products );
-			++$page;
-		} while ( 100 === $count );
+		} while ( $count === $batch_size );
 	}
 }
