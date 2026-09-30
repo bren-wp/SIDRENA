@@ -28,7 +28,7 @@ Support: sidrena@brendigo.com
 <p align="center">
   <img src="assets/images/app-icon.svg" alt="SIDRENA aplikacijska ikona" width="76">
   &nbsp;&nbsp;
-  <img src="assets/images/menu-anchor.svg" alt="SIDRENA wp-admin ikona" width="68">
+  <img src="assets/images/menu-anchor.svg" alt="SIDRENA sidro — branding asset" width="68">
   &nbsp;&nbsp;
   <img src="assets/images/logo-mark.svg" alt="SIDRENA znak" width="76">
   &nbsp;&nbsp;
@@ -47,6 +47,7 @@ Izdanje **1.0.2** fokusirano je na stabilnost i rad s velikim katalozima bez pro
 - dnevni history snapshoti proizvoda i usluga koriste ID keyset iteraciju umjesto page/OFFSET upita
 - produkcijska generacija WooCommerce proizvoda i usluga za CSV/XML koristi isti bounded keyset iterator
 - zajednički iterator je centraliziran kako bi se uklonio duplicirani kod i smanjio rizik regresija
+- WordPress sidebar, aktivni SIDRENA meni i top-level ikona ostaju u standardnim WordPress admin bojama; SIDRENA brending počinje tek unutar sadržaja plugin stranice
 - javni format, visibility pravila, redoslijed variation zapisa i postojeća baza ostaju kompatibilni
 
 ## Cijene nisu samo broj. SIDRENA čuva kontekst.
