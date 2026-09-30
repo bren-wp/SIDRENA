@@ -10,6 +10,7 @@ Sidrena changelog
 * WooCommerce izdanje deklarira provjerenu kompatibilnost s High-Performance Order Storage (HPOS) značajkom `custom_order_tables` preko službenog WooCommerce FeaturesUtil API-ja.
 * Dodan je regression guard koji sprječava WooCommerce deklaraciju u standalone WordPress izdanju i sprječava neprovjerene deklaracije za druge WooCommerce značajke.
 * Realni WooCommerce QA sada s aktivnom SIDRENA uključuje HPOS, potvrđuje da WooCommerce registrira dodatak kao kompatibilan te izvodi create/read/delete narudžbe preko WooCommerce CRUD API-ja.
+* HPOS provjera koristi stvarni WooCommerce order datastore i ne koristi `--ignore-plugin-compatibility`, pa kompatibilnost mora biti prihvaćena od WooCommerce prije uključivanja značajke.
 * Database schema marker ostaje 0.2.0; 1.0.3 ne uvodi migraciju podataka.
 
 = 1.0.2 =
