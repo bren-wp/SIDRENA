@@ -17,57 +17,62 @@ if ( ! defined( 'ABSPATH' ) ) {
  * state by default, while the public cjenik requires availability per location.
  */
 final class Sidrena_Location_Data {
-	private static $cache               = array();
-	private static $available_ids_cache = array();
+	private static $item_cache = array();
 
 	public static function table_name() {
 		global $wpdb;
 		return $wpdb->prefix . 'sidrena_location_products';
 	}
 
-	public static function get_for_location( $location_id ) {
-		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
-		if ( isset( self::$cache[ $location_id ] ) ) {
-			return self::$cache[ $location_id ];
-		}
-
-		global $wpdb;
-		$table = self::table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned per-location price/availability table requires direct bounded CRUD.
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT product_id, variation_id, price, anchor_price, availability, updated_at FROM %i WHERE location_id = %s',
-				$table,
-				$location_id
-			),
-			ARRAY_A
-		);
-
-		$data = array();
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$item_id = ! empty( $row['variation_id'] ) ? absint( $row['variation_id'] ) : absint( $row['product_id'] );
-			if ( ! $item_id ) {
-				continue;
-			}
-			$data[ $item_id ] = array(
-				'price'        => null === $row['price'] ? '' : Sidrena_Utils::decimal( $row['price'] ),
-				'anchor_price' => null === $row['anchor_price'] ? '' : Sidrena_Utils::decimal( $row['anchor_price'] ),
-				'availability' => in_array( $row['availability'], array( 'dostupno', 'nedostupno' ), true ) ? $row['availability'] : '',
-				'updated_at'   => sanitize_text_field( $row['updated_at'] ),
-			);
-		}
-
-		self::$cache[ $location_id ] = $data;
-		return $data;
-	}
-
 	public static function get_for_product( $location_id, $product ) {
 		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
 			return array();
 		}
-		$all = self::get_for_location( $location_id );
-		$id  = absint( $product->get_id() );
-		return isset( $all[ $id ] ) ? $all[ $id ] : array();
+
+		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
+		$item_id     = absint( $product->get_id() );
+		if ( ! $location_id || ! $item_id ) {
+			return array();
+		}
+		if ( isset( self::$item_cache[ $location_id ] ) && array_key_exists( $item_id, self::$item_cache[ $location_id ] ) ) {
+			return self::$item_cache[ $location_id ][ $item_id ];
+		}
+
+		$is_variation = is_callable( array( $product, 'is_type' ) ) && $product->is_type( 'variation' );
+		$product_id   = $is_variation && is_callable( array( $product, 'get_parent_id' ) ) ? absint( $product->get_parent_id() ) : $item_id;
+		$variation_id = $is_variation ? $item_id : 0;
+		if ( ! $product_id ) {
+			return array();
+		}
+
+		global $wpdb;
+		$table = self::table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Unique indexed lookup for one location/product row; request-local cache prevents repeated reads.
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT price, anchor_price, availability, updated_at FROM %i WHERE location_id = %s AND product_id = %d AND variation_id = %d LIMIT 1',
+				$table,
+				$location_id,
+				$product_id,
+				$variation_id
+			),
+			ARRAY_A
+		);
+
+		$data = is_array( $row )
+			? array(
+				'price'        => null === $row['price'] ? '' : Sidrena_Utils::decimal( $row['price'] ),
+				'anchor_price' => null === $row['anchor_price'] ? '' : Sidrena_Utils::decimal( $row['anchor_price'] ),
+				'availability' => in_array( $row['availability'], array( 'dostupno', 'nedostupno' ), true ) ? $row['availability'] : '',
+				'updated_at'   => sanitize_text_field( $row['updated_at'] ),
+			)
+			: array();
+
+		if ( ! isset( self::$item_cache[ $location_id ] ) ) {
+			self::$item_cache[ $location_id ] = array();
+		}
+		self::$item_cache[ $location_id ][ $item_id ] = $data;
+		return $data;
 	}
 
 	/**
@@ -75,79 +80,99 @@ final class Sidrena_Location_Data {
 	 * state for a physical location. Variable products preserve WooCommerce's
 	 * configured child order without loading the whole WooCommerce catalog first.
 	 */
-	public static function available_item_ids_for_location( $location_id ) {
+	public static function iterate_available_item_ids_for_location( $location_id, $batch_size = 250 ) {
 		$location_id = Sidrena_Utils::sanitize_location_id( $location_id );
-		if ( isset( self::$available_ids_cache[ $location_id ] ) ) {
-			return self::$available_ids_cache[ $location_id ];
+		$batch_size  = min( 500, max( 25, absint( $batch_size ) ) );
+		if ( ! $location_id ) {
+			return;
 		}
 
 		global $wpdb;
-		$table = self::table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned indexed location table is the bounded source for explicit availability candidates.
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT product_id, variation_id FROM %i WHERE location_id = %s AND availability IN ('dostupno','nedostupno') ORDER BY product_id ASC, variation_id ASC",
-				$table,
-				$location_id
-			),
-			ARRAY_A
-		);
+		$table          = self::table_name();
+		$last_product   = 0;
+		$last_variation = -1;
+		$current_id     = 0;
+		$current_simple = false;
+		$current_vars   = array();
 
-		$groups = array();
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			$product_id   = absint( $row['product_id'] ?? 0 );
-			$variation_id = absint( $row['variation_id'] ?? 0 );
-			if ( ! $product_id ) {
-				continue;
+		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated read from the plugin-owned indexed location table keeps memory bounded.
+			$rows      = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT product_id, variation_id FROM %i WHERE location_id = %s AND product_id > 0 AND availability IN ('dostupno','nedostupno') AND (product_id > %d OR (product_id = %d AND variation_id > %d)) ORDER BY product_id ASC, variation_id ASC LIMIT %d",
+					$table,
+					$location_id,
+					$last_product,
+					$last_product,
+					$last_variation,
+					$batch_size
+				),
+				ARRAY_A
+			);
+			$rows      = is_array( $rows ) ? $rows : array();
+			$row_count = count( $rows );
+
+			foreach ( $rows as $row ) {
+				$product_id   = absint( $row['product_id'] ?? 0 );
+				$variation_id = absint( $row['variation_id'] ?? 0 );
+				if ( ! $product_id ) {
+					continue;
+				}
+
+				if ( $current_id && $product_id !== $current_id ) {
+					foreach ( self::ordered_location_group_ids( $current_id, $current_simple, $current_vars ) as $item_id ) {
+						yield $item_id;
+					}
+					$current_simple = false;
+					$current_vars   = array();
+				}
+				$current_id = $product_id;
+				if ( $variation_id ) {
+					$current_vars[ $variation_id ] = $variation_id;
+				} else {
+					$current_simple = true;
+				}
+				$last_product   = $product_id;
+				$last_variation = $variation_id;
 			}
+		} while ( $row_count === $batch_size );
 
-			if ( ! isset( $groups[ $product_id ] ) ) {
-				$groups[ $product_id ] = array(
-					'simple'     => false,
-					'variations' => array(),
-				);
-			}
-
-			if ( $variation_id ) {
-				$groups[ $product_id ]['variations'][ $variation_id ] = $variation_id;
-			} else {
-				$groups[ $product_id ]['simple'] = true;
+		if ( $current_id ) {
+			foreach ( self::ordered_location_group_ids( $current_id, $current_simple, $current_vars ) as $item_id ) {
+				yield $item_id;
 			}
 		}
+	}
 
+	private static function ordered_location_group_ids( $product_id, $has_simple, $variation_ids ) {
 		$ids = array();
-		foreach ( $groups as $product_id => $group ) {
-			if ( ! empty( $group['simple'] ) ) {
-				$ids[ $product_id ] = $product_id;
-			}
+		if ( $has_simple ) {
+			$ids[] = absint( $product_id );
+		}
 
-			$variation_ids = $group['variations'];
-			if ( empty( $variation_ids ) ) {
-				continue;
-			}
+		$variation_ids = is_array( $variation_ids ) ? $variation_ids : array();
+		if ( empty( $variation_ids ) ) {
+			return $ids;
+		}
 
-			$parent   = function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
-			$children = $parent && is_callable( array( $parent, 'get_children' ) ) ? $parent->get_children() : array();
-			foreach ( is_array( $children ) ? $children : array() as $child_id ) {
-				$child_id = absint( $child_id );
-				if ( isset( $variation_ids[ $child_id ] ) ) {
-					$ids[ $child_id ] = $child_id;
-					unset( $variation_ids[ $child_id ] );
-				}
-			}
-
-			// Keep orphaned/legacy location rows deterministic when Woo cannot
-			// resolve the parent order, without changing valid Woo child order.
-			if ( $variation_ids ) {
-				ksort( $variation_ids, SORT_NUMERIC );
-				foreach ( $variation_ids as $variation_id ) {
-					$ids[ $variation_id ] = $variation_id;
-				}
+		$parent   = function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+		$children = $parent && is_callable( array( $parent, 'get_children' ) ) ? $parent->get_children() : array();
+		foreach ( is_array( $children ) ? $children : array() as $child_id ) {
+			$child_id = absint( $child_id );
+			if ( isset( $variation_ids[ $child_id ] ) ) {
+				$ids[] = $child_id;
+				unset( $variation_ids[ $child_id ] );
 			}
 		}
 
-		self::$available_ids_cache[ $location_id ] = array_values( $ids );
-		return self::$available_ids_cache[ $location_id ];
+		if ( $variation_ids ) {
+			ksort( $variation_ids, SORT_NUMERIC );
+			foreach ( $variation_ids as $variation_id ) {
+				$ids[] = $variation_id;
+			}
+		}
+
+		return $ids;
 	}
 
 	public static function upsert( $location_id, $product_id, $variation_id, $price, $availability, $anchor_price = '' ) {
@@ -183,7 +208,8 @@ final class Sidrena_Location_Data {
 			)
 		);
 
-		unset( self::$cache[ $location_id ], self::$available_ids_cache[ $location_id ] );
+		$item_id = $variation_id ? $variation_id : $product_id;
+		unset( self::$item_cache[ $location_id ][ $item_id ] );
 		if ( false !== $result && class_exists( 'Sidrena_Location_History' ) ) {
 			Sidrena_Location_History::capture( $location_id, $product_id, $variation_id, $price, $anchor_price, $availability, 'import' );
 		}
@@ -196,7 +222,7 @@ final class Sidrena_Location_Data {
 		$table       = self::table_name();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Explicit deletion from the plugin-owned per-location table.
 		$wpdb->delete( $table, array( 'location_id' => $location_id ), array( '%s' ) );
-		unset( self::$cache[ $location_id ], self::$available_ids_cache[ $location_id ] );
+		unset( self::$item_cache[ $location_id ] );
 	}
 
 	public static function coverage( $location_id ) {
