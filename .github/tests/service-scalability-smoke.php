@@ -10,6 +10,7 @@
 
 
 $services      = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-services.php' );
+$utils         = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-utils.php' );
 $history       = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-service-history.php' );
 $price_history = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-history.php' );
 $admin          = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
@@ -37,14 +38,14 @@ sidrena_service_scale_assert( false !== strpos( $services, "add_action( 'wp_afte
 sidrena_service_scale_assert( false !== strpos( $services, 'private function snapshot_newly_published' ), 'Service first-publication anchor snapshot helper is missing.' );
 sidrena_service_scale_assert( false !== strpos( $history, "\$wpdb->prepare( 'SELECT COUNT(*) FROM %i', \$table )" ), 'Service history count query must prepare the custom table identifier.' );
 sidrena_service_scale_assert( false === strpos( $history, 'SELECT COUNT(*) FROM {$table}' ), 'Service history count query must not interpolate the custom table identifier.' );
-sidrena_service_scale_assert( false !== strpos( $history, 'private function published_service_ids_keyset( $batch_size = 250 )' ), 'Service daily history snapshot needs a bounded keyset iterator.' );
-sidrena_service_scale_assert( false !== strpos( $history, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Service daily history snapshot must advance by ID keyset.' );
-sidrena_service_scale_assert( false !== strpos( $history, '$this->published_service_ids_keyset( 250 )' ), 'Service daily history snapshot must use bounded 250-item keyset batches.' );
+sidrena_service_scale_assert( false !== strpos( $utils, 'public static function iterate_published_post_ids( $post_type, $batch_size = 250 )' ), 'Shared bounded published-post keyset iterator is missing.' );
+sidrena_service_scale_assert( false !== strpos( $utils, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Shared published-post iterator must advance by ID keyset.' );
+sidrena_service_scale_assert( false !== strpos( $history, "Sidrena_Utils::iterate_published_post_ids( 'sidrena_service', 250 )" ), 'Service daily history snapshot must use the shared 250-item keyset iterator.' );
+sidrena_service_scale_assert( false === strpos( $history, 'private function published_service_ids_keyset(' ), 'Service history must not duplicate the shared keyset iterator.' );
 sidrena_service_scale_assert( false === strpos( $history, "'paged'          => \$page" ), 'Service daily history snapshot must not restore page/OFFSET pagination.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, 'private function catalog_parent_ids_keyset( $post_type, $batch_size )' ), 'Daily price-history snapshot needs a shared keyset catalog iterator.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, 'AND ID > %d ORDER BY ID ASC LIMIT %d' ), 'Daily price-history catalog scan must advance by ID keyset.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, '$this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 )' ), 'WordPress history snapshot must use bounded 250-item keyset batches.' );
-sidrena_service_scale_assert( false !== strpos( $price_history, '$this->catalog_parent_ids_keyset( \'product\', 100 )' ), 'WooCommerce history snapshot must use bounded 100-product keyset batches.' );
+sidrena_service_scale_assert( false !== strpos( $price_history, 'Sidrena_Utils::iterate_published_post_ids( Sidrena_Standalone::POST_TYPE, 250 )' ), 'WordPress history snapshot must use the shared 250-item keyset iterator.' );
+sidrena_service_scale_assert( false !== strpos( $price_history, "Sidrena_Utils::iterate_published_post_ids( 'product', 100 )" ), 'WooCommerce history snapshot must use the shared 100-product keyset iterator.' );
+sidrena_service_scale_assert( false === strpos( $price_history, 'private function catalog_parent_ids_keyset(' ), 'Price history must not duplicate the shared keyset iterator.' );
 sidrena_service_scale_assert( false === strpos( $price_history, "'paged'          => \$page" ), 'Daily WordPress history snapshot must not restore page/OFFSET pagination.' );
 sidrena_service_scale_assert( false === strpos( $price_history, "'page'    => \$page" ), 'Daily WooCommerce history snapshot must not restore page/OFFSET pagination.' );
 

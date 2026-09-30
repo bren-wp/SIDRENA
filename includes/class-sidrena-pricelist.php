@@ -919,47 +919,30 @@ final class Sidrena_Pricelist {
 			return;
 		}
 
-		$page = 1;
-		do {
-			$query    = new WC_Product_Query(
-				array(
-					'limit'   => 100,
-					'page'    => $page,
-					'status'  => array( 'publish' ),
-					'return'  => 'objects',
-					'orderby' => 'ID',
-					'order'   => 'ASC',
-				)
-			);
-			$products = $query->get_products();
-
-			foreach ( $products as $product ) {
-				if ( ! Sidrena_Utils::is_public_wc_product( $product ) ) {
-					continue;
-				}
-				$cjenik_visibility = sanitize_key( (string) get_post_meta( $product->get_id(), '_sidrena_cjenik_visibility', true ) );
-				if ( 'exclude' === $cjenik_visibility ) {
-					continue;
-				}
-				if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
-					continue;
-				}
-				if ( $product->is_type( 'variable' ) ) {
-					foreach ( $product->get_children() as $variation_id ) {
-						$variation = wc_get_product( $variation_id );
-						if ( $variation && Sidrena_Utils::is_public_wc_product( $variation ) ) {
-							yield $this->product_row( $variation, $location );
-						}
-					}
-					continue;
-				}
-				yield $this->product_row( $product, $location );
+		foreach ( Sidrena_Utils::iterate_published_post_ids( 'product', 100 ) as $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product || ! Sidrena_Utils::is_public_wc_product( $product ) ) {
+				continue;
 			}
-			$product_count = count( $products );
-			++$page;
-		} while ( 100 === $product_count );
+			$cjenik_visibility = sanitize_key( (string) get_post_meta( $product->get_id(), '_sidrena_cjenik_visibility', true ) );
+			if ( 'exclude' === $cjenik_visibility ) {
+				continue;
+			}
+			if ( is_callable( array( $product, 'get_catalog_visibility' ) ) && 'hidden' === $product->get_catalog_visibility() && 'include' !== $cjenik_visibility ) {
+				continue;
+			}
+			if ( $product->is_type( 'variable' ) ) {
+				foreach ( $product->get_children() as $variation_id ) {
+					$variation = wc_get_product( $variation_id );
+					if ( $variation && Sidrena_Utils::is_public_wc_product( $variation ) ) {
+						yield $this->product_row( $variation, $location );
+					}
+				}
+				continue;
+			}
+			yield $this->product_row( $product, $location );
+		}
 	}
-
 	private function product_row( $product, $location ) {
 		$location_id = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
 		$override    = Sidrena_Location_Data::get_for_product( $location_id, $product );
@@ -1033,58 +1016,44 @@ final class Sidrena_Pricelist {
 	}
 
 	private function service_rows( $location ) {
-		$page = 1;
-		do {
-			$query = new WP_Query(
-				array(
-					'post_type'      => 'sidrena_service',
-					'post_status'    => 'publish',
-					'posts_per_page' => 250, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- Bounded service-export batch; pagination prevents full-catalog loading.
-					'paged'          => $page,
-					'orderby'        => 'ID',
-					'order'          => 'ASC',
-					'no_found_rows'  => true,
-				)
-			);
-
-			foreach ( $query->posts as $service ) {
-				$current         = get_post_meta( $service->ID, '_sidrena_service_current_price', true );
-				$location_prices = get_post_meta( $service->ID, '_sidrena_service_location_prices', true );
-				$location_prices = is_array( $location_prices ) ? $location_prices : array();
-				$location_id     = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
-				if ( isset( $location_prices[ $location_id ] ) && '' !== $location_prices[ $location_id ] ) {
-					$current = Sidrena_Utils::decimal( $location_prices[ $location_id ] );
-				}
-				$anchor_prices = get_post_meta( $service->ID, '_sidrena_service_location_anchor_prices', true );
-				$anchor_prices = is_array( $anchor_prices ) ? $anchor_prices : array();
-				$anchor        = isset( $anchor_prices[ $location_id ] ) && '' !== $anchor_prices[ $location_id ]
-					? Sidrena_Utils::decimal( $anchor_prices[ $location_id ] )
-					: get_post_meta( $service->ID, '_sidrena_service_anchor_price', true );
-				$date          = Sidrena_Utils::service_reference_date( $service->ID );
-
-				$current = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
-				$sale    = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
-
-				yield array(
-					'_sidrena_item_id'              => $service->ID,
-					'naziv_usluge'                  => get_the_title( $service ),
-					'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
-					'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
-					'pripadajuci_troskovi'          => get_post_meta( $service->ID, '_sidrena_service_costs', true ),
-					'ugradbena_zamjenska_roba'      => get_post_meta( $service->ID, '_sidrena_service_goods', true ),
-					'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
-					'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
-					'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
-					'sidrena_cijena'                => Sidrena_Utils::money( $anchor ),
-					'datum_sidrene_cijene'          => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
-				);
+		foreach ( Sidrena_Utils::iterate_published_post_ids( 'sidrena_service', 250 ) as $service_id ) {
+			$service = get_post( $service_id );
+			if ( ! $service ) {
+				continue;
 			}
-			$count = count( $query->posts );
-			++$page;
-		} while ( 250 === $count );
-		wp_reset_postdata();
-	}
 
+			$current         = get_post_meta( $service->ID, '_sidrena_service_current_price', true );
+			$location_prices = get_post_meta( $service->ID, '_sidrena_service_location_prices', true );
+			$location_prices = is_array( $location_prices ) ? $location_prices : array();
+			$location_id     = Sidrena_Utils::sanitize_location_id( $location['id'] ?? '' );
+			if ( isset( $location_prices[ $location_id ] ) && '' !== $location_prices[ $location_id ] ) {
+				$current = Sidrena_Utils::decimal( $location_prices[ $location_id ] );
+			}
+			$anchor_prices = get_post_meta( $service->ID, '_sidrena_service_location_anchor_prices', true );
+			$anchor_prices = is_array( $anchor_prices ) ? $anchor_prices : array();
+			$anchor        = isset( $anchor_prices[ $location_id ] ) && '' !== $anchor_prices[ $location_id ]
+				? Sidrena_Utils::decimal( $anchor_prices[ $location_id ] )
+				: get_post_meta( $service->ID, '_sidrena_service_anchor_price', true );
+			$date          = Sidrena_Utils::service_reference_date( $service->ID );
+
+			$current = apply_filters( 'sidrena_service_retail_price', $current, $service, $location );
+			$sale    = 'yes' === get_post_meta( $service->ID, '_sidrena_service_sale', true );
+
+			yield array(
+				'_sidrena_item_id'              => $service->ID,
+				'naziv_usluge'                  => get_the_title( $service ),
+				'vrsta_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_type', true ),
+				'opseg_usluge'                  => get_post_meta( $service->ID, '_sidrena_service_scope', true ),
+				'pripadajuci_troskovi'          => get_post_meta( $service->ID, '_sidrena_service_costs', true ),
+				'ugradbena_zamjenska_roba'      => get_post_meta( $service->ID, '_sidrena_service_goods', true ),
+				'maloprodajna_cijena'           => Sidrena_Utils::money( $current ),
+				'posebni_oblik_prodaje'         => $sale ? 'da' : 'ne',
+				'naziv_posebnog_oblika_prodaje' => $sale ? get_post_meta( $service->ID, '_sidrena_service_sale_name', true ) : '',
+				'sidrena_cijena'                => Sidrena_Utils::money( $anchor ),
+				'datum_sidrene_cijene'          => '' === $anchor ? '' : Sidrena_Utils::date_display( $date ),
+			);
+		}
+	}
 	private function write_csv( $filepath, $headers, $rows ) {
 		$settings  = Sidrena_Utils::settings();
 		$delimiter = isset( $settings['csv_delimiter'] ) && in_array( $settings['csv_delimiter'], array( ';', ',', '\t' ), true ) ? $settings['csv_delimiter'] : ';';

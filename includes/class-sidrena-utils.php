@@ -959,6 +959,49 @@ final class Sidrena_Utils {
 		return $fallback;
 	}
 
+	/**
+	 * Iterate published post IDs with bounded keyset pagination.
+	 *
+	 * @param string $post_type  Post type to scan.
+	 * @param int    $batch_size Maximum IDs per database read.
+	 * @return Generator<int>
+	 */
+	public static function iterate_published_post_ids( $post_type, $batch_size = 250 ) {
+		global $wpdb;
+
+		$post_type  = sanitize_key( (string) $post_type );
+		$batch_size = min( 500, max( 25, absint( $batch_size ) ) );
+		if ( '' === $post_type ) {
+			return;
+		}
+
+		$last_id = 0;
+		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Shared keyset-paginated bounded read avoids progressively expensive OFFSET scans in internal catalog/history jobs.
+			$ids   = $wpdb->get_col(
+				$wpdb->prepare(
+					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND ID > %d ORDER BY ID ASC LIMIT %d',
+					$wpdb->posts,
+					$post_type,
+					'publish',
+					$last_id,
+					$batch_size
+				)
+			);
+			$ids   = is_array( $ids ) ? $ids : array();
+			$count = count( $ids );
+
+			foreach ( $ids as $post_id ) {
+				$post_id = absint( $post_id );
+				if ( ! $post_id ) {
+					continue;
+				}
+				$last_id = $post_id;
+				yield $post_id;
+			}
+		} while ( $count === $batch_size );
+	}
+
 	public static function get_product_code( $product ) {
 		if ( ! $product || ! is_callable( array( $product, 'get_id' ) ) ) {
 			return '';

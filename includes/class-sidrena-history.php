@@ -481,7 +481,7 @@ final class Sidrena_History {
 
 	private function catalog_item_ids() {
 		if ( Sidrena_Utils::is_wordpress_edition() ) {
-			foreach ( $this->catalog_parent_ids_keyset( Sidrena_Standalone::POST_TYPE, 250 ) as $item_id ) {
+			foreach ( Sidrena_Utils::iterate_published_post_ids( Sidrena_Standalone::POST_TYPE, 250 ) as $item_id ) {
 				yield $item_id;
 			}
 			return;
@@ -491,7 +491,7 @@ final class Sidrena_History {
 			return;
 		}
 
-		foreach ( $this->catalog_parent_ids_keyset( 'product', 100 ) as $product_id ) {
+		foreach ( Sidrena_Utils::iterate_published_post_ids( 'product', 100 ) as $product_id ) {
 			$product = wc_get_product( $product_id );
 			if ( ! $product ) {
 				continue;
@@ -506,39 +506,5 @@ final class Sidrena_History {
 		}
 	}
 
-	private function catalog_parent_ids_keyset( $post_type, $batch_size ) {
-		global $wpdb;
 
-		$post_type  = sanitize_key( (string) $post_type );
-		$batch_size = min( 500, max( 25, absint( $batch_size ) ) );
-		if ( '' === $post_type ) {
-			return;
-		}
-
-		$last_id = 0;
-		do {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Keyset-paginated bounded read avoids progressively expensive OFFSET scans during daily history snapshots.
-			$ids   = $wpdb->get_col(
-				$wpdb->prepare(
-					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND ID > %d ORDER BY ID ASC LIMIT %d',
-					$wpdb->posts,
-					$post_type,
-					'publish',
-					$last_id,
-					$batch_size
-				)
-			);
-			$ids   = is_array( $ids ) ? $ids : array();
-			$count = count( $ids );
-
-			foreach ( $ids as $item_id ) {
-				$item_id = absint( $item_id );
-				if ( ! $item_id ) {
-					continue;
-				}
-				$last_id = $item_id;
-				yield $item_id;
-			}
-		} while ( $count === $batch_size );
-	}
 }

@@ -38,5 +38,9 @@ sidrena_stream_assert( false !== strpos( $pricelist, 'if ( $public_enabled ) {' 
 sidrena_stream_assert( false !== strpos( $pricelist, 'if ( is_wp_error( $snapshot_cleanup ) ) {' ), 'Snapshot cleanup failures must be surfaced into the generation warning flow.' );
 sidrena_stream_assert( false !== strpos( $pricelist, '$removed = unlink( $file )' ), 'Snapshot cleanup must verify physical file deletion.' );
 sidrena_stream_assert( false !== strpos( $pricelist, "'public_snapshot_cleanup'" ), 'Snapshot cleanup failures must be audit logged.' );
+sidrena_stream_assert( false !== strpos( $pricelist, "Sidrena_Utils::iterate_published_post_ids( 'product', 100 )" ), 'Woo product export must use shared keyset catalog iteration.' );
+sidrena_stream_assert( false !== strpos( $pricelist, "Sidrena_Utils::iterate_published_post_ids( 'sidrena_service', 250 )" ), 'Service export must use shared keyset catalog iteration.' );
+sidrena_stream_assert( false === strpos( $pricelist, "'page'    => \$page" ), 'Woo product export must not restore page/OFFSET pagination.' );
+sidrena_stream_assert( false === strpos( $pricelist, "'paged'          => \$page" ), 'Service export must not restore page/OFFSET pagination.' );
 
 fwrite( STDOUT, "Sidrena streaming public snapshot smoke test passed.\n" );
