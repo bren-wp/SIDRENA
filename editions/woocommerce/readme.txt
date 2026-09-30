@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,13 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Aligns the installable WooCommerce package main file with the public WordPress.org slug: `brendigo-sidrena-cijena.php`.
+* Keeps the public plugin name `SIDRENA`, the slug-matching text domain and `Requires Plugins: woocommerce` dependency header unchanged.
+* Updates real wp-admin asset capture, HPOS compatibility verification, release, distribution and Plugin Check workflows so production ZIP validation uses the same slug-named package entrypoint.
+* Keeps HPOS support, existing SIDRENA schema marker and runtime data backward compatible with 1.0.3.
 
 = 1.0.3 =
 

@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,13 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Aligns the installable WordPress package main file with the public WordPress.org slug: `brendigo-sidrene-cijene-digitalni-cjenici.php`.
+* Keeps the public plugin name `SIDRENA` and the slug-matching text domain unchanged.
+* Updates release, distribution, Plugin Check and WordPress.org asset workflows so the production ZIP, release gate and real wp-admin screenshots validate the same slug-named package entrypoint.
+* Keeps the existing SIDRENA schema marker and runtime data backward compatible with 1.0.3.
 
 = 1.0.3 =
 

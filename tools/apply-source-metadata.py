@@ -92,6 +92,38 @@ def has_metadata(text: str) -> bool:
     return bool(author_present) and PLUGIN_URI in head and AUTHOR_URI in head
 
 
+def current_plugin_version() -> str:
+    entrypoint = ROOT / "editions/wordpress/sidrena-wordpress.php"
+    text = entrypoint.read_text(encoding="utf-8")
+    match = re.search(r"(?m)^ \* Version: ([0-9]+[.][0-9]+[.][0-9]+)$", text)
+    if not match:
+        raise RuntimeError("Unable to read SIDRENA plugin version from WordPress entrypoint.")
+    return match.group(1)
+
+
+def normalize_pot_project_id() -> bool:
+    pot = ROOT / "languages/sidrena.pot"
+    if not pot.exists():
+        return False
+
+    version = current_plugin_version()
+    text = pot.read_text(encoding="utf-8")
+    replacement = f'"Project-Id-Version: Sidrena {version}\\n"'
+    lines = text.splitlines(keepends=True)
+    updated = None
+    for index, line in enumerate(lines):
+        if line.startswith('"Project-Id-Version: Sidrena '):
+            lines[index] = replacement + "\n"
+            updated = "".join(lines)
+            break
+    if updated is None and 'msgstr ""\n' in text:
+        updated = text.replace('msgstr ""\n', 'msgstr ""\n' + replacement + "\n", 1)
+    if updated is not None and updated != text:
+        pot.write_text(updated, encoding="utf-8")
+        return True
+    return False
+
+
 def apply_entrypoint(text: str, author: str = AUTHOR) -> str:
     replacements = {
         r"(?m)^ \\* Author:.*$": f" * Author: {author}",
@@ -168,6 +200,8 @@ def apply_metadata(path: pathlib.Path, text: str) -> str:
 def scan(check: bool) -> int:
     changed = []
     missing = []
+
+    normalize_pot_project_id()
 
     for path in sorted(ROOT.rglob("*")):
         if not path.is_file() or not should_process(path):
