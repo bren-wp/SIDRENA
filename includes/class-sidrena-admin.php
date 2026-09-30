@@ -1098,8 +1098,11 @@ final class Sidrena_Admin {
 		$current_ts       = ! empty( $current_refresh['generated_at'] ) ? strtotime( (string) $current_refresh['generated_at'] ) : 0;
 		$last_success     = $last_ts && empty( $last['errors'] ) && absint( $last['files'] ?? 0 ) > 0;
 		$is_stale         = $last_ts && ( time() - $last_ts ) > ( 26 * HOUR_IN_SECONDS );
+		$automation_mode   = sanitize_key( (string) ( $settings['automation_mode'] ?? 'wp_cron' ) );
+		$external_scheduler = 'external' === $automation_mode;
 		$wp_cron_disabled = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
 		$next_cron        = wp_next_scheduled( 'sidrena_daily_generation' );
+		$schedule_warning = ! $external_scheduler && ( $wp_cron_disabled || ! $next_cron );
 		$rest_enabled     = 'yes' === $settings['enable_rest_index'];
 		$html_enabled     = 'yes' === $settings['enable_public_html'];
 		$current_files_caption = sprintf(
@@ -1188,15 +1191,18 @@ final class Sidrena_Admin {
 				</section>
 			</div>
 
-			<section class="sid-card sid-note <?php echo $is_stale || $wp_cron_disabled || ! $next_cron ? 'sid-note-warning' : ''; ?>">
-				<div class="sid-note-icon"><span class="dashicons <?php echo $is_stale || $wp_cron_disabled || ! $next_cron ? 'dashicons-warning' : 'dashicons-clock'; ?>"></span></div>
+			<section class="sid-card sid-note <?php echo $is_stale || $schedule_warning ? 'sid-note-warning' : ''; ?>">
+				<div class="sid-note-icon"><span class="dashicons <?php echo $is_stale || $schedule_warning ? 'dashicons-warning' : 'dashicons-clock'; ?>"></span></div>
 				<div>
 					<?php if ( $is_stale ) : ?>
 						<h2><?php esc_html_e( 'Zadnji uspješni cjenik stariji je od 26 sati', 'sidrena' ); ?></h2>
-						<p><?php esc_html_e( 'Provjerite WP-Cron, server cron i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p>
+						<p><?php esc_html_e( 'Provjerite odabrani scheduler i Dnevnik. Zadnja valjana datoteka ostaje javno dostupna dok nova objava ne prođe provjeru.', 'sidrena' ); ?></p>
+					<?php elseif ( $external_scheduler ) : ?>
+						<h2><?php esc_html_e( 'Vanjski server cron / WP-CLI način je aktivan', 'sidrena' ); ?></h2>
+						<p><?php esc_html_e( 'Interni dnevni WP-Cron namjerno nije zakazan. Server treba pokrenuti “wp sidrena publish” prema rasporedu; watchdog ostaje aktivan.', 'sidrena' ); ?></p>
 					<?php elseif ( $wp_cron_disabled ) : ?>
 						<h2><?php esc_html_e( 'WordPress WP-Cron je isključen', 'sidrena' ); ?></h2>
-						<p><?php esc_html_e( 'Automatsko dnevno generiranje tada ovisi o vašem server cron zadatku ili WP-CLI automatizaciji.', 'sidrena' ); ?></p>
+						<p><?php esc_html_e( 'Odaberite vanjski server cron / WP-CLI način ili omogućite WordPress cron izvršavanje.', 'sidrena' ); ?></p>
 					<?php elseif ( ! $next_cron ) : ?>
 						<h2><?php esc_html_e( 'Dnevno generiranje nije zakazano', 'sidrena' ); ?></h2>
 						<p><?php esc_html_e( 'Ponovno spremite Postavke ili provjerite cron konfiguraciju poslužitelja.', 'sidrena' ); ?></p>
