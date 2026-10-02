@@ -128,6 +128,8 @@ def apply_entrypoint(text: str, author: str = AUTHOR) -> str:
     replacements = {
         r"(?m)^ \\* Author:.*$": f" * Author: {author}",
         r"(?m)^ \* Author URI:.*$": " * Author URI: https://brendigo.com/",
+        r"(?m)^ \* Developer:.*$": f" * Developer: {author}",
+        r"(?m)^ \* Developer URI:.*$": " * Developer URI: https://brendigo.com/",
         r"(?m)^ \* Plugin URI:.*$": " * Plugin URI: https://brendigo.com/sidrene-cijene/",
     }
     for pattern, value in replacements.items():
@@ -152,8 +154,7 @@ def add_after_shebang(text: str, header: str) -> str:
 def apply_metadata(path: pathlib.Path, text: str) -> str:
     rel = relative(path)
     if rel in ENTRYPOINTS:
-        entrypoint_author = "Brendigo" if rel == pathlib.Path("editions/woocommerce/sidrena-woocommerce.php") else AUTHOR
-        return apply_entrypoint(text, entrypoint_author)
+        return apply_entrypoint(text, AUTHOR)
     if has_metadata(text):
         return text
 
