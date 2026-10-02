@@ -9,9 +9,9 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 8.0
  * WC tested up to: 11.1.2
- * Author: Brendigo
+ * Author: brendigo
  * Author URI: https://brendigo.com/
- * Developer: Brendigo
+ * Developer: brendigo
  * Developer URI: https://brendigo.com/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html

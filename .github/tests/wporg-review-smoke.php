@@ -51,8 +51,8 @@ sidrena_wporg_assert(
 
 sidrena_wporg_assert(
 	false !== strpos( $wp_main, 'Author: brendigo' )
-	&& false !== strpos( $woo_main, 'Author: Brendigo' )
-	&& false !== strpos( $woo_main, 'Developer: Brendigo' )
+	&& false !== strpos( $woo_main, 'Author: brendigo' )
+	&& false !== strpos( $woo_main, 'Developer: brendigo' )
 	&& false !== strpos( $woo_main, 'Developer URI: https://brendigo.com/' ),
 	'Edition ownership/developer metadata is inconsistent.'
 );

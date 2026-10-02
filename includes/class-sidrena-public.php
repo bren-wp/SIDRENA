@@ -869,7 +869,7 @@ final class Sidrena_Public {
 				}
 				$html .= $this->public_file_integrity_html( $entry );
 				$html .= '</div>';
-				$html .= $url ? '<a href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>' : '<span>' . esc_html__( 'Datoteka nije dostupna', 'sidrena' ) . '</span>';
+				$html .= $url ? $this->public_file_actions_html( $url ) : '<span>' . esc_html__( 'Datoteka nije dostupna', 'sidrena' ) . '</span>';
 				$html .= '</li>';
 			}
 			$html .= '</ul>';
@@ -892,13 +892,29 @@ final class Sidrena_Public {
 				$format    = strtoupper( sanitize_key( (string) ( $entry['format'] ?? pathinfo( $filename, PATHINFO_EXTENSION ) ) ) );
 				$file_meta = $this->public_file_meta( $entry );
 				$html     .= '<tr><th scope="row">' . esc_html( $filename ) . $this->public_file_integrity_html( $entry ) . '</th><td>' . esc_html( $catalog ) . '</td><td>' . esc_html( $location ? $location : '—' ) . '</td><td>' . esc_html( $generated ? $generated : '—' ) . '</td><td>' . esc_html( $file_meta['rows'] > 0 ? (string) $file_meta['rows'] : '—' ) . '</td><td>' . esc_html( $file_meta['size'] ? $file_meta['size'] : '—' ) . '</td><td>' . esc_html( $format ? $format : '—' ) . '</td><td>';
-				$html     .= $url ? '<a href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>' : esc_html__( 'Nije dostupno', 'sidrena' );
+				$html     .= $url ? $this->public_file_actions_html( $url ) : esc_html__( 'Nije dostupno', 'sidrena' );
 				$html     .= '</td></tr>';
 			}
 			$html .= '</tbody></table></div>';
 		}
 
 		return (string) apply_filters( 'sidrena_public_files_html', $html, $entries, $view, sanitize_key( $context ) );
+	}
+
+	private function public_file_actions_html( $url, $context = 'inline' ) {
+		$url = esc_url( (string) $url );
+		if ( ! $url ) {
+			return '';
+		}
+
+		$is_card       = 'card' === $context;
+		$wrapper_class = $is_card ? 'sidrena-download-card__actions' : 'sidrena-downloads__actions';
+		$button_class  = $is_card ? 'sidrena-download-card__button' : 'sidrena-downloads__action';
+
+		return '<span class="' . $wrapper_class . '">'
+			. '<a class="' . $button_class . ' is-secondary" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html__( 'Otvori', 'sidrena' ) . '</a>'
+			. '<a class="' . $button_class . '" href="' . esc_url( $url ) . '" download rel="noopener">' . esc_html__( 'Preuzmi', 'sidrena' ) . '</a>'
+			. '</span>';
 	}
 
 	private function download_card( $entry ) {
@@ -939,7 +955,7 @@ final class Sidrena_Public {
 			</div>
 			<?php echo $this->public_file_integrity_html( $entry ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal helper escapes all dynamic values. ?>
 			<?php if ( $url ) : ?>
-				<a class="sidrena-download-card__button" href="<?php echo esc_url( $url ); ?>" download rel="noopener"><?php esc_html_e( 'Preuzmi', 'sidrena' ); ?></a>
+				<?php echo $this->public_file_actions_html( $url, 'card' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal helper escapes the URL and all labels. ?>
 			<?php else : ?>
 				<span class="sidrena-download-card__button is-disabled"><?php esc_html_e( 'Datoteka nije dostupna', 'sidrena' ); ?></span>
 			<?php endif; ?>

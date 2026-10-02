@@ -3,7 +3,7 @@
  * Sidrena source file.
  *
  * @package Sidrena
- * @author Brendigo
+ * @author brendigo
  * @link https://brendigo.com/sidrene-cijene/
  * @see https://brendigo.com/
  */
@@ -144,6 +144,10 @@ foreach ( array( 'kartice', 'popis', 'tablica' ) as $view ) {
 	sidrena_archive_assert( false !== strpos( $rendered, '42' ), 'Public ' . $view . ' file view must expose the stored row count.' );
 	sidrena_archive_assert( false !== strpos( $rendered, '2 KB' ), 'Public ' . $view . ' file view must expose the stored file size.' );
 	sidrena_archive_assert( false !== strpos( $rendered, str_repeat( 'a', 64 ) ), 'Public ' . $view . ' file view must expose the stored SHA-256 checksum.' );
+	sidrena_archive_assert( false !== strpos( $rendered, '>Otvori</a>' ), 'Public ' . $view . ' file view must expose a non-download open action.' );
+	sidrena_archive_assert( false !== strpos( $rendered, 'target="_blank" rel="noopener">Otvori</a>' ), 'Public ' . $view . ' open action must use a safe new-tab link.' );
+	sidrena_archive_assert( false !== strpos( $rendered, ' download rel="noopener">Preuzmi</a>' ), 'Public ' . $view . ' file view must retain an explicit download action.' );
+	sidrena_archive_assert( 2 === substr_count( $rendered, 'href="https://example.test/current.csv"' ), 'Public ' . $view . ' file view must render separate open and download URLs.' );
 }
 $invalid_checksum = $current_entry;
 $invalid_checksum['sha256'] = '<invalid>';
@@ -159,7 +163,9 @@ sidrena_archive_assert( false !== strpos( $source, 'if ( null === $location_id )
 sidrena_archive_assert( false !== strpos( $source, 'status_header( 404 );' ), 'Dedicated public routes must return HTTP 404 for an explicit unknown or disabled location.' );
 sidrena_archive_assert( false !== strpos( $source, "'' === \$location_raw ? '' : Sidrena_Utils::sanitize_location_id( \$location_raw )" ), 'An explicitly empty location query parameter must remain empty instead of becoming the sanitizer fallback ID.' );
 sidrena_archive_assert( false !== strpos( $source, 'render_archive_groups( $groups, $view )' ), 'View-aware grouped archive renderer is missing.' );
-sidrena_archive_assert( false !== strpos( $source, "esc_html_e( 'Preuzmi', 'sidrena' )" ), 'Archive download action is missing.' );
+sidrena_archive_assert( false !== strpos( $source, "esc_html__( 'Otvori', 'sidrena' )" ), 'Archive open action is missing.' );
+sidrena_archive_assert( false !== strpos( $source, "esc_html__( 'Preuzmi', 'sidrena' )" ), 'Archive download action is missing.' );
+sidrena_archive_assert( false !== strpos( $source, 'private function public_file_actions_html' ), 'Public file actions must share one renderer to avoid markup drift.' );
 sidrena_archive_assert( false !== strpos( $source, "add_shortcode( 'sidrena_cjenik_url'" ), 'Premium current-file URL shortcode is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'prikaz'   => 'kartice'" ), 'Premium public file layout attribute is missing.' );
 sidrena_archive_assert( false !== strpos( $source, "'arhiva'   => 'da'" ), 'Premium archive visibility attribute is missing.' );
@@ -185,6 +191,8 @@ sidrena_archive_assert( false === strpos( $source, 'sidrena-public-archive__list
 sidrena_archive_assert( false === strpos( $css, '.sidrena-public-archive__list' ), 'Legacy flat archive CSS must be removed.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__day>summary:focus-visible' ), 'Grouped archive summary needs a visible keyboard focus state.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__list-item' ), 'Premium list layout styles are missing.' );
+sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__actions' ), 'Public open/download action group styles are missing.' );
+sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__action.is-secondary' ), 'Public open action needs a distinct secondary style.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-downloads__table-wrap' ), 'Premium table layout styles are missing.' );
 sidrena_archive_assert( false !== strpos( $css, '.sidrena-download-integrity>summary:focus-visible' ), 'Public checksum disclosure needs a visible keyboard focus state.' );
 
