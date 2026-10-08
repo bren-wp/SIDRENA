@@ -6,6 +6,13 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.7 =
+* Ispravljena primjena novih Odluka NN 101/2026 od 17.11.2026. (NN 110/2026, 1309 i 1310).
+* Zaključani referentni datumi 10.09.2026. i 02.05.2025. ostaju nepromijenjeni.
+* Sidrena cijena označava potvrđenu povijesnu cijenu, a ne popust, sniženje ili izračun uštede.
+* WooCommerce varijacije s različitim pravnim datumima prikazuju zasebne raspone; neprovjereni custom datum ne prikazuje se kao zakonski valjana referenca.
+* Ažurirane poveznice Narodnih novina, administracija, dokumentacija i sigurnosni regresijski testovi.
+
 = 1.0.6 =
 * Svaki novi WordPress uvoz postojećih proizvoda dobiva vlastiti identifikator; zastarjeli WP-Cron batch ne može izmijeniti drugi uvoz.
 * Blokirane duplicirane i izvanredne serije prema ID-u uvoza, očekivanoj stranici, tipu sadržaja, ključu cijene i statusu.
