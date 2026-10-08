@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,14 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.9 =
+
+* Prevents mixed current CSV/XML revisions if an individual format or public snapshot fails during publication.
+* Builds and validates all current formats before publishing, preserving exact prior valid data through rollback copies.
+* Synchronizes user-selected custom WordPress source-price metadata keys even when they do not contain 'price' or 'cijena', including late changes and deletions.
+* Historical Sidrena reference prices are not overwritten; legal reference dates, machine-readable public price lists and archive retention remain unchanged.
+
 
 = 1.0.8 =
 
