@@ -121,4 +121,46 @@ $GLOBALS['sidrena_meta'][100]['special_price'] = '31.50';
 Sidrena_Standalone::instance()->sync_linked_source_on_save( 100, $source, true );
 sidrena_sync_assert( '31.5' === get_post_meta( 200, '_sidrena_standalone_current_price', true ), 'Custom source price key was not used.' );
 
+
+// A queued import from a previous request must not overwrite a newer run.
+$GLOBALS['sidrena_sync_options'] = array(
+    'sidrena_standalone_sync_state' => array(
+        'run_id'    => 'run-new',
+        'status'    => 'queued',
+        'post_type' => 'catalog_item',
+        'price_key' => '_price',
+        'page'      => 1,
+        'created'   => 0,
+        'updated'   => 0,
+        'skipped'   => 0,
+    ),
+);
+function post_type_exists( $type ) { return 'catalog_item' === $type; }
+function get_option( $key, $default = false ) { return $GLOBALS['sidrena_sync_options'][ $key ] ?? $default; }
+function update_option( $key, $value, $autoload = null ) {
+    unset( $autoload );
+    $GLOBALS['sidrena_sync_options'][ $key ] = $value;
+    return true;
+}
+function current_time( $type ) { unset( $type ); return '2026-10-08 18:00:00'; }
+class Sidrena_Audit {
+    public static function log( $event, $status, $message, $data = array() ) {
+        unset( $event, $status, $message, $data );
+    }
+}
+$standalone     = Sidrena_Standalone::instance();
+$original_state = get_option( 'sidrena_standalone_sync_state' );
+$standalone->sync_source_batch( 'catalog_item', 1, '_price', 'run-old' );
+sidrena_sync_assert( $original_state === get_option( 'sidrena_standalone_sync_state' ), 'Old import must not mutate a newer import.' );
+$standalone->sync_source_batch( 'catalog_item', 2, '_price', 'run-new' );
+sidrena_sync_assert( $original_state === get_option( 'sidrena_standalone_sync_state' ), 'Out-of-order batch must not mutate progress.' );
+$standalone->sync_source_batch( 'catalog_item', 1, '_price' );
+sidrena_sync_assert( $original_state === get_option( 'sidrena_standalone_sync_state' ), 'Legacy job cannot corrupt current state.' );
+$standalone->sync_source_batch( 'catalog_item', 1, '_price', 'run-new' );
+$current_state = get_option( 'sidrena_standalone_sync_state' );
+sidrena_sync_assert( 'complete' === $current_state['status'], 'Current import must complete on an empty final page.' );
+sidrena_sync_assert( 'run-new' === $current_state['run_id'], 'Import token must remain unchanged.' );
+$standalone->sync_source_batch( 'catalog_item', 1, '_price', 'run-new' );
+sidrena_sync_assert( $current_state === get_option( 'sidrena_standalone_sync_state' ), 'Completed batch must be idempotent.' );
+
 fwrite( STDOUT, "Sidrena WordPress linked-source price smoke test passed.\\n" );
