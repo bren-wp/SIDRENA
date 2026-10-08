@@ -18,9 +18,10 @@ Zbog toga oznake u administraciji predstavljaju **tehničku spremnost/pokrivenos
 
 ## Službeni izvori
 
-- **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; primjena od **1.10.2026.**
-- **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; primjena od **1.10.2026.**
-- **Ministarstvo gospodarstva, 22.09.2026.** — službena pojašnjenja za dodatnu cijenu i objavu cjenika od 1. listopada.
+- **NN 101/2026, 1212** — Odluka o isticanju dodatne cijene; datum početka primjene izmijenjen je odlukom **NN 110/2026, 1309** na **17.11.2026.**
+- **NN 101/2026, 1213** — Odluka o objavi cjenika proizvoda i usluga; datum početka primjene izmijenjen je odlukom **NN 110/2026, 1310** na **17.11.2026.**
+- **NN 110/2026, 1309 i 1310** — dvije službene odgode početka primjene; izmjene su stupile na snagu 30.09.2026. i **nisu mijenjale referentne datume**, niti su ukinule postojeće obveze iz ranijih propisa.
+- **Ministarstvo gospodarstva, 22.09.2026.** — izvorna operativna pojašnjenja, objavljena **prije** izmjena rokova iz NN 110/2026; stari datum u naslovu nije današnji rok.
 - **NN 59/2026, 728** — izmjene Zakona o zaštiti potrošača: najniža cijena u prethodnih 30 dana kod posebnih oblika prodaje te budući sloj bazne cijene; izmijenjeni članak 7. stavci 1.–9. počinju se primjenjivati **17.11.2026.**.
 - **NN 105/2026, 1270** — Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda; objavljen 18.09.2026., stupa na snagu **26.09.2026.**
 
@@ -39,13 +40,15 @@ Sidrena razlikuje izvore po ulozi:
 
 Sidrena ih namjerno ne spaja:
 
-1. **Dodatna / sidrena cijena** — sloj iz NN 101/2026 s referentnim datumom 10.09.2026. odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije.
+1. **Dodatna / sidrena cijena** — sloj iz NN 101/2026 i NN 110/2026 s referentnim datumom 10.09.2026. odnosno 02.05.2025. za ranije obuhvaćene FMCG kategorije. **Nije popust, sniženje, 30-dnevna najniža cijena, prekrižena stara cijena niti obećana ušteda.**
 2. **Najniža cijena u prethodnih 30 dana** — referentna cijena za posebni oblik prodaje prema Zakonu o zaštiti potrošača; vodi se iz povijesti cijena ili provjerene ručne evidencije, uz propisane iznimke.
 3. **Bazna cijena** — zaseban pojam iz izmijenjenog članka 7. Zakona. Relevantni stavci počinju se primjenjivati 17.11.2026., ali konkretan dan u prethodnom razdoblju, proizvodi i način isticanja ovise o provedbenom pravilniku. Dok taj provedbeni sloj nije određen i implementiran, Sidrena ga ne izjednačava sa sidrenom cijenom niti automatski popunjava vrijednost.
 
 ## Dodatna / sidrena cijena
 
-Za novobuhvaćene proizvode i usluge Odluka koristi referentni datum **10.09.2026.** Za ranije obuhvaćene FMCG kategorije ostaje **02.05.2025.** Dodatna cijena prikazuje se uz aktualnu cijenu.
+Za novobuhvaćene proizvode i usluge Odluka koristi referentni datum **10.09.2026.** Za ranije obuhvaćene FMCG kategorije ostaje **02.05.2025.** **Novi početak primjene obiju odluka je 17.11.2026.** prema NN 110/2026. Dodatna cijena prikazuje se uz aktualnu cijenu i ne predstavlja posebni oblik prodaje. Ne prikazivati izračun uštede, automatski popust ili prekriženi iznos samo zato što se aktualna i sidrena cijena razlikuju. Za proizvod na posebnoj prodaji dodatna cijena ne smije preuzeti privremenu akcijsku cijenu s referentnog datuma.
+
+Za varijacije koje imaju različite pravne referentne datume treba prikazati odvojene grupe cijena s pripadajućim datumima; njihovo objedinjavanje pod datum 10.09.2026. bilo bi pogrešno.
 
 Službeno pojašnjenje Ministarstva dodatno obrađuje proizvode/usluge prvi put uvedene nakon referentnog datuma, promjene naziva ili šifre, proizvode bez zalihe te odnos aktualne cijene, najniže cijene prije sniženja i dodatne cijene.
 
