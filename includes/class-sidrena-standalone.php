@@ -1703,10 +1703,12 @@ else :
 			$reference_group   = Sidrena_Utils::sanitize_reference_group( get_post_meta( $id, '_sidrena_standalone_reference_group', true ) );
 			$saved_anchor_date = 'custom' === $reference_group ? Sidrena_Utils::verified_custom_reference_date_for_post( $id, get_post_meta( $id, '_sidrena_standalone_anchor_date', true ) ) : '';
 			$date              = Sidrena_Utils::resolved_reference_date( $reference_group, $saved_anchor_date );
-			$tooltip           = Sidrena_Utils::anchor_tooltip();
-			$tooltip_id        = 'sidrena-anchor-tip-s' . absint( $id );
+			if ( '' !== $date ) {
+				$tooltip           = Sidrena_Utils::anchor_tooltip();
+				$tooltip_id        = 'sidrena-anchor-tip-s' . absint( $id );
 			$tip_html          = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
-			$out              .= '<span class="sidrena-anchor' . ( $tooltip ? ' sidrena-anchor--has-tooltip' : '' ) . '"' . ( $tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '' ) . '><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span>' . $tip_html . '</span>';
+				$out              .= '<span class="sidrena-anchor' . ( $tooltip ? ' sidrena-anchor--has-tooltip' : '' ) . '"' . ( $tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '' ) . '><span class="sidrena-anchor__label">' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . ':</span> <span class="sidrena-anchor__value">' . esc_html( Sidrena_Utils::money( $anchor ) . ' ' . $currency ) . '</span>' . $tip_html . '</span>';
+			}
 		}
 		$out .= '</span>';
 		return $out;
