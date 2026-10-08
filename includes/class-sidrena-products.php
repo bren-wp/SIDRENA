@@ -784,48 +784,54 @@ final class Sidrena_Products {
 	}
 
 	private function variable_anchor_html( $product ) {
-		$values = array();
-		$dates  = array();
+		$values_by_date = array();
 		foreach ( $product->get_children() as $variation_id ) {
 			$variation = wc_get_product( $variation_id );
 			if ( ! $variation || ! $variation->exists() ) {
 				continue;
 			}
 			$anchor = Sidrena_Utils::product_anchor_price( $variation_id );
-			if ( '' === $anchor ) {
+			$date   = Sidrena_Utils::current_reference_date( $variation_id );
+			// An unverified new-item date must never be presented as the
+			// standard or FMCG reference date on the parent product.
+			if ( '' === $anchor || '' === $date ) {
 				continue;
 			}
-			$display  = function_exists( 'wc_get_price_to_display' )
+			$display = function_exists( 'wc_get_price_to_display' )
 				? wc_get_price_to_display( $variation, array( 'price' => (float) $anchor ) )
 				: (float) $anchor;
-			$display  = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
-			$display  = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
-			$values[] = (float) $display;
-			$dates[]  = Sidrena_Utils::current_reference_date( $variation_id );
+			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
+			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+			$values_by_date[ $date ][] = (float) $display;
 		}
 
-		if ( empty( $values ) ) {
+		if ( empty( $values_by_date ) ) {
 			return '';
 		}
 
-		$min          = min( $values );
-		$max          = max( $values );
-		$date         = count( array_unique( $dates ) ) === 1 ? reset( $dates ) : Sidrena_Utils::standard_reference_date();
-		$label        = Sidrena_Utils::anchor_label( $date );
-		$amount       = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
-		$tooltip      = Sidrena_Utils::anchor_tooltip();
-		$tooltip_id   = 'sidrena-anchor-tip-' . absint( $product->get_id() );
-		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+		ksort( $values_by_date );
+		$lines   = array();
+		$tooltip = Sidrena_Utils::anchor_tooltip();
+		foreach ( $values_by_date as $date => $values ) {
+			$min          = min( $values );
+			$max          = max( $values );
+			$label        = Sidrena_Utils::anchor_label( $date );
+			$amount       = abs( $min - $max ) < 0.00001 ? wc_price( $min ) : wc_format_price_range( $min, $max );
+			$tooltip_id   = 'sidrena-anchor-tip-' . absint( $product->get_id() ) . '-' . str_replace( '-', '', $date );
+			$tooltip_html = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
 
-		$line = sprintf(
-			'<span class="sidrena-anchor sidrena-anchor--variable%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
-			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
-			$tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '',
-			esc_html( $label ),
-			wp_kses_post( $amount ),
-			$tooltip_html
-		);
-		return apply_filters( 'sidrena_anchor_html', $line, $product, array( $min, $max ), $date );
+			$line = sprintf(
+				'<span class="sidrena-anchor sidrena-anchor--variable%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
+				$tooltip ? ' sidrena-anchor--has-tooltip' : '',
+				$tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '',
+				esc_html( $label ),
+				wp_kses_post( $amount ),
+				$tooltip_html
+			);
+			// Preserve the existing extension point, once per real reference date.
+			$lines[] = apply_filters( 'sidrena_anchor_html', $line, $product, array( $min, $max ), $date );
+		}
+		return implode( '', $lines );
 	}
 
 	public function frontend_assets() {
