@@ -55,6 +55,8 @@ jobs:
           grep -Fq "dataset.sidrenaSubmitting" admin/js/admin.js
           php .github/tests/admin-menu-access-smoke.php
           php .github/tests/admin-form-ux-smoke.php
+          node --check admin/js/admin.js
+          node .github/tests/admin-js-runtime-smoke.js
           php .github/tests/reference-admin-ui-smoke.php
           grep -Fq "assertFormRuntime" tools/capture-wporg-assets.mjs
           grep -Fq "page.on('pageerror'" tools/capture-wporg-assets.mjs
