@@ -199,6 +199,11 @@ final class Sidrena_Admin {
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'Web trgovina', 'sidrena' ) : __( 'Samostalni katalog', 'sidrena' );
 		$brand_logo   = SIDRENA_URL . 'assets/images/' . ( $is_woo ? 'logo-woocommerce-light.svg' : 'logo-wordpress-light.svg' );
+		$brand_alt    = sprintf(
+			/* translators: %s is the installed SIDRENA edition name. */
+			__( 'SIDRENA — %s', 'sidrena' ),
+			$edition_name
+		);
 		$nav_icons    = array(
 			'sidrena'                             => 'dashicons-dashboard',
 			'sidrena-catalog'                     => 'dashicons-products',
@@ -213,7 +218,7 @@ final class Sidrena_Admin {
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( sprintf( __( 'SIDRENA — %s', 'sidrena' ), $edition_name ) ); ?>">
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( $brand_alt ); ?>">
 					<span class="sidrena-brandbar__edition"><span class="dashicons <?php echo $is_woo ? 'dashicons-cart' : 'dashicons-wordpress'; ?>"></span><?php echo esc_html( $edition_name ); ?></span>
 				</div>
 				<div class="sidrena-brandbar__copy">
@@ -248,8 +253,9 @@ final class Sidrena_Admin {
 							? admin_url( $nav_slug )
 							: admin_url( 'admin.php?page=' . $nav_slug );
 						$nav_active = $page === $nav_slug;
+						$nav_class  = $nav_active ? 'sidrena-quicknav__item is-active' : 'sidrena-quicknav__item';
 						?>
-						<a class="sidrena-quicknav__item<?php echo $nav_active ? ' is-active' : ''; ?>" href="<?php echo esc_url( $nav_url ); ?>"<?php echo $nav_active ? ' aria-current="page"' : ''; ?>>
+						<a class="<?php echo esc_attr( $nav_class ); ?>" href="<?php echo esc_url( $nav_url ); ?>"<?php if ( $nav_active ) : ?> aria-current="page"<?php endif; ?>>
 							<span class="dashicons <?php echo esc_attr( $nav_icons[ $nav_slug ] ?? 'dashicons-admin-links' ); ?>" aria-hidden="true"></span>
 							<span><?php echo esc_html( $nav_item[1] ); ?></span>
 						</a>
