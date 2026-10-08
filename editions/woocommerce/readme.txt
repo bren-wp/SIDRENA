@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,13 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.6 =
+
+* Keeps WooCommerce canonical products and existing published CSV/XML and archive behavior unchanged.
+* Shares release validation, artifact integrity, legal ruleset and fixed-reference-date controls with the WordPress edition.
+* WordPress standalone catalogue import session isolation is improved; no WooCommerce database migration.
+
 
 = 1.0.5 =
 

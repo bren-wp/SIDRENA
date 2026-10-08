@@ -6,6 +6,12 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.6 =
+* Svaki novi WordPress uvoz postojećih proizvoda dobiva vlastiti identifikator; zastarjeli WP-Cron batch ne može izmijeniti drugi uvoz.
+* Blokirane duplicirane i izvanredne serije prema ID-u uvoza, očekivanoj stranici, tipu sadržaja, ključu cijene i statusu.
+* Sidrena cijena, ručno vođena aktualna cijena i prethodno objavljeni CSV/XML cjenici ostaju sačuvani.
+* Nema migracije baze ni promjene pravnih referentnih datuma; oba paketa prolaze zajedničke provjere.
+
 = 1.0.5 =
 * WordPress izdanje povlači postojeće proizvode/cijene i nudi automatsku ili ručnu sinkronizaciju bez WooCommercea.
 * Ručno postavljena trenutna cijena nije prepisana sljedećom sinkronizacijom; ne izmišlja se sidrena cijena.
