@@ -155,4 +155,46 @@ sidrena_form_ux_assert(
 	'Every admin data table must retain a screen-reader caption, scoped headers and contextual action labels.'
 );
 
+
+sidrena_form_ux_assert(
+	false !== strpos( $admin, 'class="sidrena-quicknav"' )
+	&& false !== strpos( $admin, 'aria-current="page"' )
+	&& false !== strpos( $admin, 'Sidrena_Admin_Menu::items() as $nav_item' )
+	&& false !== strpos( $admin, 'Sidrena_Admin_UX::SERVICE_MENU_SLUG === $nav_slug' ),
+	'Primary Sidrena nav must reuse the registered menu, preserve services route and expose the active page.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $admin, "'logo-wordpress-light.svg'" )
+	&& false !== strpos( $admin, "'logo-woocommerce-light.svg'" )
+	&& false !== strpos( $admin, 'width="560" height="112"' ),
+	'Both editions must display the matching, dimensionally accurate brand logo.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $style, '.sidrena-admin-screen .sidrena-quicknav__scroll' )
+	&& false !== strpos( $style, 'overflow-x:auto;' )
+	&& false !== strpos( $style, '.sidrena-admin-screen .sidrena-quicknav__item:focus-visible' )
+	&& false !== strpos( $style, '.sidrena-admin-screen .sidrena-quicknav__item[aria-current="page"]' ),
+	'Quick navigation must be horizontally scrollable and keyboard accessible on mobile.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $style, '.sidrena-admin-screen .sidrena-app .sid-toggle-card:has(input:checked)' )
+	&& false !== strpos( $style, '.sidrena-admin-screen .sid-switch input:focus-visible+span::before' )
+	&& false !== strpos( $editor, '.sid-service-location-fields input:focus-visible' ),
+	'Edition toggle controls and Woo/service editor fields must retain visible interactive states.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $script, 'function syncFieldValidity(field)' )
+	&& false !== strpos( $script, 'if (!syncFieldValidity(target))' )
+	&& false !== strpos( $script, 'if (!syncFieldValidity(event.target))' )
+	&& false !== strpos( $script, "status.setAttribute('role', isError ? 'alert' : 'status')" )
+	&& false !== strpos( $script, "message('unsavedChanges'" )
+	&& false !== strpos( $admin, "'unsavedChanges'" ),
+	'Client-side validation must preserve errors after file changes, announce invalid fields and signal unsaved edits.'
+);
+sidrena_form_ux_assert(
+	false !== strpos( $style, '.sidrena-admin-screen .sidrena-app .sid-form-status.is-error:not(:empty)' )
+	&& false !== strpos( $style, '.sidrena-admin-screen .sidrena-app input[aria-invalid="true"]' ),
+	'Validation messages and invalid fields must keep their distinct accessible visual states.'
+);
+
 fwrite( STDOUT, "Sidrena admin form UX smoke test passed.\n" );

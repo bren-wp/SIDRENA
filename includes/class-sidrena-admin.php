@@ -83,6 +83,7 @@ final class Sidrena_Admin {
 					'removeUnsavedProduct' => __( 'Ukloniti ovaj nespremljeni proizvod?', 'sidrena' ),
 					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
 					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
+					'unsavedChanges'       => __( 'Promjene nisu spremljene. Spremite obrazac kako bi postale aktivne.', 'sidrena' ),
 					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
 					'fileTooLarge'          => __( 'Datoteka je prevelika. Najveća dopuštena veličina je 5 MB.', 'sidrena' ),
 					'invalidFileType'       => __( 'Odaberite podržanu CSV ili XML datoteku.', 'sidrena' ),
@@ -197,13 +198,27 @@ final class Sidrena_Admin {
 		$is_woo       = Sidrena_Utils::is_woocommerce_edition();
 		$edition_slug = $is_woo ? 'woocommerce' : 'wordpress';
 		$edition_name = $is_woo ? __( 'Web trgovina', 'sidrena' ) : __( 'Samostalni katalog', 'sidrena' );
-		$brand_logo   = SIDRENA_URL . 'assets/images/logo-horizontal-light.svg';
+		$brand_logo   = SIDRENA_URL . 'assets/images/' . ( $is_woo ? 'logo-woocommerce-light.svg' : 'logo-wordpress-light.svg' );
+		$brand_alt    = sprintf(
+			/* translators: %s is the installed SIDRENA edition name. */
+			__( 'SIDRENA — %s', 'sidrena' ),
+			$edition_name
+		);
+		$nav_icons    = array(
+			'sidrena'                             => 'dashicons-dashboard',
+			'sidrena-catalog'                     => 'dashicons-products',
+			Sidrena_Admin_UX::SERVICE_MENU_SLUG => 'dashicons-clipboard',
+			'sidrena-files'                       => 'dashicons-media-spreadsheet',
+			'sidrena-locations'                   => 'dashicons-location',
+			'sidrena-settings'                    => 'dashicons-admin-generic',
+			'sidrena-support'                     => 'dashicons-editor-help',
+		);
 		$official_url = 'https://brendigo.com/sidrene-cijene/';
 		?>
 		<div class="wrap sidrena-app sidrena-edition-<?php echo esc_attr( $edition_slug ); ?>">
 			<header class="sidrena-brandbar">
 				<div class="sidrena-brandbar__identity">
-					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="620" height="120" loading="eager" decoding="async" alt="<?php esc_attr_e( 'SIDRENA — sidrene cijene i digitalni cjenici', 'sidrena' ); ?>">
+					<img class="sidrena-brandbar__logo" src="<?php echo esc_url( $brand_logo ); ?>" width="560" height="112" loading="eager" decoding="async" alt="<?php echo esc_attr( $brand_alt ); ?>">
 					<span class="sidrena-brandbar__edition"><span class="dashicons <?php echo $is_woo ? 'dashicons-cart' : 'dashicons-wordpress'; ?>"></span><?php echo esc_html( $edition_name ); ?></span>
 				</div>
 				<div class="sidrena-brandbar__copy">
@@ -218,7 +233,7 @@ final class Sidrena_Admin {
 
 			<div class="sidrena-contextbar">
 				<div class="sidrena-contextbar__left">
-					<span class="sid-context-chip"><?php esc_html_e( 'Produkcijsko okruženje', 'sidrena' ); ?></span>
+					<span class="sid-context-chip"><?php esc_html_e( 'Upravljanje cijenama', 'sidrena' ); ?></span>
 					<?php /* translators: printf placeholders are replaced with runtime values shown to the administrator or visitor. */ ?>
 					<span class="sid-context-chip sid-context-chip--edition"><?php echo esc_html( sprintf( __( 'SIDRENA · %s', 'sidrena' ), $edition_name ) ); ?></span>
 					<span class="sid-badge">v<?php echo esc_html( SIDRENA_VERSION ); ?></span>
@@ -228,6 +243,25 @@ final class Sidrena_Admin {
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=help' ) ); ?>"><?php esc_html_e( 'Dokumentacija', 'sidrena' ); ?></a>
 				</div>
 			</div>
+
+			<nav class="sidrena-quicknav" aria-label="<?php esc_attr_e( 'Glavna navigacija SIDRENA', 'sidrena' ); ?>">
+				<div class="sidrena-quicknav__scroll">
+					<?php foreach ( Sidrena_Admin_Menu::items() as $nav_item ) : ?>
+						<?php
+						$nav_slug   = $nav_item[0];
+						$nav_url    = Sidrena_Admin_UX::SERVICE_MENU_SLUG === $nav_slug
+							? admin_url( $nav_slug )
+							: admin_url( 'admin.php?page=' . $nav_slug );
+						$nav_active = $page === $nav_slug;
+						$nav_class  = $nav_active ? 'sidrena-quicknav__item is-active' : 'sidrena-quicknav__item';
+						?>
+						<a class="<?php echo esc_attr( $nav_class ); ?>" href="<?php echo esc_url( $nav_url ); ?>"<?php if ( $nav_active ) : ?> aria-current="page"<?php endif; ?>>
+							<span class="dashicons <?php echo esc_attr( $nav_icons[ $nav_slug ] ?? 'dashicons-admin-links' ); ?>" aria-hidden="true"></span>
+							<span><?php echo esc_html( $nav_item[1] ); ?></span>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			</nav>
 
 			<?php $this->render_notice(); ?>
 
