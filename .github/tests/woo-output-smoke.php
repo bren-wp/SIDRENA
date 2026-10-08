@@ -13,10 +13,18 @@ define( 'SIDRENA_EDITION', 'woocommerce' );
 
 class WC_Product {
 	private $id;
-	public function __construct( $id ) { $this->id = $id; }
+	private $type;
+	private $children;
+	public function __construct( $id, $type = 'simple', $children = array() ) {
+		$this->id       = $id;
+		$this->type     = $type;
+		$this->children = $children;
+	}
 	public function get_id() { return $this->id; }
-	public function is_type( $type ) { return false; }
+	public function is_type( $type ) { return $type === $this->type; }
 	public function is_on_sale() { return false; }
+	public function get_children() { return $this->children; }
+	public function exists() { return true; }
 }
 
 $GLOBALS['sidrena_meta'] = array(
@@ -48,6 +56,8 @@ function __( $text, $domain = null ) { unset( $domain ); return $text; }
 function apply_filters( $tag, $value ) { unset( $tag ); return $value; }
 function is_admin() { return false; }
 function wp_doing_ajax() { return false; }
+function wc_get_product( $id ) { return new WC_Product( $id, 'variation' ); }
+function wc_format_price_range( $min, $max ) { return wc_price( $min ) . ' – ' . wc_price( $max ); }
 function wc_price( $price ) { return number_format( (float) $price, 2, ',', '' ) . ' €'; }
 function esc_html( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
@@ -90,6 +100,23 @@ sidrena_woo_output_assert( false !== strpos( $compat_js, 'removeMarkup(existing)
 $again = Sidrena_Products::instance()->append_reference_prices( $html, $product );
 sidrena_woo_output_assert( $again === $html, 'Repeated Woo price filtering must not duplicate Sidrena markup.' );
 sidrena_woo_output_assert( 1 === substr_count( $again, 'sidrena-reference-prices' ), 'Sidrena wrapper must appear exactly once.' );
+
+// Mixed legal reference dates on WooCommerce variations must never be
+// presented under a fabricated single standard reference date.
+$GLOBALS['sidrena_meta'][101] = array( '_sidrena_anchor_price' => '10', '_sidrena_reference_group' => 'fmcg' );
+$GLOBALS['sidrena_meta'][102] = array( '_sidrena_anchor_price' => '20', '_sidrena_reference_group' => 'standard' );
+$GLOBALS['sidrena_meta'][103] = array( '_sidrena_anchor_price' => '30', '_sidrena_reference_group' => 'standard' );
+$variable = new WC_Product( 80, 'variable', array( 101, 102, 103 ) );
+$reflect  = new ReflectionMethod( Sidrena_Products::class, 'variable_anchor_html' );
+$reflect->setAccessible( true );
+$mixed_html = $reflect->invoke( Sidrena_Products::instance(), $variable );
+sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'Sidrena cijena na 02.05.2025.' ), 'FMCG anchor must retain its 2025 reference date.' );
+sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'Sidrena cijena na 10.09.2026.' ), 'Standard anchors must retain their 2026 reference date.' );
+sidrena_woo_output_assert( false !== strpos( $mixed_html, '10,00 €' ), 'The FMCG reference price must be displayed.' );
+sidrena_woo_output_assert( false !== strpos( $mixed_html, '20,00 € – 30,00 €' ), 'Standard-date reference prices must stay in their own range.' );
+sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'id="sidrena-anchor-tip-80-20250502"' ), 'FMCG tooltip must have a unique id.' );
+sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'id="sidrena-anchor-tip-80-20260910"' ), 'Standard tooltip must have a unique id.' );
+sidrena_woo_output_assert( false === strpos( $mixed_html, '<del>' ) && false === strpos( $mixed_html, '<ins>' ), 'An anchor price must not be rendered as a discount.' );
 
 $product = null;
 sidrena_woo_output_assert( '' === Sidrena_Products::instance()->shortcode( array( 'id' => 's123' ) ), 'Woo shortcode must reject standalone IDs without loading a missing class.' );
