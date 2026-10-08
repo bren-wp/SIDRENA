@@ -194,6 +194,8 @@ sidrena_schema_assert( array() === $validate_product->invoke( $instance, $base_p
 $missing_barcode = $base_product;
 $missing_barcode['barkod'] = '';
 sidrena_schema_assert( ! empty( $validate_product->invoke( $instance, $missing_barcode, 'objekt' ) ), 'Product without the barcode required by NN 101/2026 must fail public CSV/XML preflight.' );
+$bulk_source = file_get_contents( $root . '/includes/class-sidrena-bulk.php' );
+sidrena_schema_assert( false !== strpos( $bulk_source, "Sidrena_Utils::get_barcode( \$product )" ) && false !== strpos( $bulk_source, "\$missing[] = __( 'barkod robe', 'sidrena' );" ), 'WooCommerce user must see missing barcode in the product checklist before publishing.' );
 
 
 $missing_sale_name = $base_product;
