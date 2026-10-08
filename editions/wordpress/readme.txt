@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,15 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.8 =
+
+* Premium responsive administrative header with the correct WordPress/WooCommerce edition logo, consistent icons, spacing and badges.
+* Fast one-click task navigation for overview, catalog/products, services, public price lists, locations, settings and help, with keyboard focus and accessible current-page state.
+* Refined forms, file uploads, buttons, switches and editor fields for WooCommerce products and WordPress services, including accessible errors and mobile controls.
+* Better client-side CSV/XML validation and unsaved-form feedback with a dedicated JavaScript event-level regression test.
+* Preserves all anchor-price legal rules, existing published price lists and strict generation safeguards.
+
 
 = 1.0.7 =
 
