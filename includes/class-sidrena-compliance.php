@@ -47,13 +47,23 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-11',
 				'note'  => 'Objava važećih cjenika proizvoda i usluga na mrežnim stranicama trgovca odnosno pružatelja usluge.',
 			),
+			'nn_110_2026_anchor_deferral'      => array(
+				'label' => 'NN 110/2026-1309, izmjena datuma stupanja na snagu Odluke o dodatnoj/sidrenoj cijeni',
+				'date'  => '2026-09-29',
+				'note'  => 'Obveza po NN 101/2026-1212 stupa na snagu 17.11.2026.; referentni datumi 10.09.2026. i 02.05.2025. ostaju nepromijenjeni.',
+			),
+			'nn_110_2026_pricelist_deferral'   => array(
+				'label' => 'NN 110/2026-1310, izmjena datuma stupanja na snagu Odluke o javnom cjeniku',
+				'date'  => '2026-09-29',
+				'note'  => 'Obveza objave cjenika po NN 101/2026-1213 stupa na snagu 17.11.2026. Postojeće obveze do tada nisu ukinute.',
+			),
 			'nn_105_2026_retail_unit_price'   => array(
 				'label' => 'NN 105/2026, Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere proizvoda',
 				'date'  => '2026-09-18',
 				'note'  => 'Maloprodajna cijena i cijena za jedinicu mjere moraju biti istaknute jasno, vidljivo, čitljivo i lako uočljivo.',
 			),
 			'mingo_2026_09_22_clarifications' => array(
-				'label' => 'Ministarstvo gospodarstva, službena pojašnjenja za primjenu dodatne cijene i objavu cjenika od 1. listopada (objavljeno 22.09.2026.)',
+				'label' => 'Ministarstvo gospodarstva, pojašnjenja od 22.09.2026. (prije odgode iz NN 110/2026 na 17.11.2026.)',
 				'date'  => '2026-09-22',
 				'note'  => 'Operativna pojašnjenja za dodatnu cijenu i digitalnu objavu cjenika.',
 			),
