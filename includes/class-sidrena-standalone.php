@@ -31,6 +31,10 @@ final class Sidrena_Standalone {
 		add_action( 'admin_post_sidrena_standalone_sync_source', array( $this, 'start_source_sync' ) );
 		add_action( 'sidrena_standalone_sync_batch', array( $this, 'sync_source_batch' ), 10, 3 );
 		add_action( 'save_post', array( $this, 'sync_linked_source_on_save' ), 30, 3 );
+		// Other catalog plugins often save the product price after save_post.
+		foreach ( array( 'added_post_meta', 'updated_post_meta', 'deleted_post_meta' ) as $hook ) {
+			add_action( $hook, array( $this, 'sync_linked_source_price_on_meta' ), 30, 4 );
+		}
 		add_filter( 'the_content', array( $this, 'append_reference_to_linked_content' ), 25 );
 		if ( ! Sidrena_Utils::is_woocommerce_active() ) {
 			add_shortcode( 'sidrena_cijena', array( $this, 'price_shortcode' ) );
@@ -279,7 +283,9 @@ final class Sidrena_Standalone {
 		if ( $preferred_key ) {
 			$keys[] = $preferred_key;
 		}
-		$keys = array_merge( $keys, array( '_price', 'price', 'cijena', 'product_price', '_regular_price', 'regular_price' ) );
+		if ( ! $preferred_key ) {
+			$keys = array_merge( $keys, array( '_price', 'price', 'cijena', 'product_price', '_regular_price', 'regular_price' ) );
+		}
 		$keys = array_values( array_unique( $keys ) );
 		foreach ( $keys as $key ) {
 			$value = Sidrena_Utils::decimal( get_post_meta( $source_post_id, $key, true ) );
@@ -379,10 +385,13 @@ final class Sidrena_Standalone {
 			$lookup_key = $price_key ? $price_key : $stored_key;
 			$price      = $this->source_price( $source_id, $lookup_key );
 			$current    = $item_id ? Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) ) : '';
-			if ( '' !== $price['price'] ) {
-				$current = $price['price'];
-			} elseif ( $lookup_key ) {
-				$current = '';
+			$price_mode = $item_id ? sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_sync', true ) ) : 'auto';
+			if ( 'manual' !== $price_mode ) {
+				if ( '' !== $price['price'] ) {
+					$current = $price['price'];
+				} elseif ( $lookup_key ) {
+					$current = '';
+				}
 			}
 			$post_status = $title && '' !== $current ? 'publish' : 'draft';
 
@@ -421,10 +430,12 @@ final class Sidrena_Standalone {
 			if ( $price['key'] ) {
 				update_post_meta( $item_id, '_sidrena_standalone_source_price_key', $price['key'] );
 			}
-			if ( '' !== $current ) {
-				update_post_meta( $item_id, '_sidrena_standalone_current_price', $current );
-			} elseif ( $lookup_key ) {
-				delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
+			if ( 'manual' !== $price_mode ) {
+				if ( '' !== $current ) {
+					update_post_meta( $item_id, '_sidrena_standalone_current_price', $current );
+				} elseif ( $lookup_key ) {
+					delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
+				}
 			}
 			if ( '' === get_post_meta( $item_id, '_sidrena_standalone_availability', true ) ) {
 				update_post_meta( $item_id, '_sidrena_standalone_availability', 'dostupno' );
@@ -479,18 +490,21 @@ final class Sidrena_Standalone {
 		if ( ! $item_id ) {
 			return;
 		}
-		$price_key = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
-		$price     = $this->source_price( $post_id, $price_key );
-		$changed   = false;
-		$old       = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
-		if ( '' !== $price['price'] ) {
-			if ( $price['price'] !== $old ) {
-				update_post_meta( $item_id, '_sidrena_standalone_current_price', $price['price'] );
+		$price_mode = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_sync', true ) );
+		$price_key  = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
+		$price      = $this->source_price( $post_id, $price_key );
+		$changed    = false;
+		$old        = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
+		if ( 'manual' !== $price_mode ) {
+			if ( '' !== $price['price'] ) {
+				if ( $price['price'] !== $old ) {
+					update_post_meta( $item_id, '_sidrena_standalone_current_price', $price['price'] );
+					$changed = true;
+				}
+			} elseif ( $price_key && '' !== $old ) {
+				delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
 				$changed = true;
 			}
-		} elseif ( $price_key && '' !== $old ) {
-			delete_post_meta( $item_id, '_sidrena_standalone_current_price' );
-			$changed = true;
 		}
 		$title = sanitize_text_field( get_the_title( $post_id ) );
 		if ( $title && get_the_title( $item_id ) !== $title ) {
@@ -516,6 +530,29 @@ final class Sidrena_Standalone {
 		if ( $changed ) {
 			Sidrena_Pricelist::queue_regeneration();
 		}
+	}
+
+	/**
+	 * Track price changes made by third-party product meta boxes after save_post.
+	 * Only price-like keys are observed to keep routine post-meta edits cheap.
+	 *
+	 * @param mixed  $meta_id Metadata entry ID or list of deleted IDs.
+	 * @param int    $post_id Source post.
+	 * @param string $meta_key Updated field name.
+	 * @param mixed  $value New or old value.
+	 */
+	public function sync_linked_source_price_on_meta( $meta_id, $post_id, $meta_key, $value ) {
+		unset( $meta_id, $value );
+		$meta_key = (string) $meta_key;
+		if ( ! preg_match( '/(?:price|cijena)/i', $meta_key ) || 0 === strpos( $meta_key, '_sidrena_' ) ) {
+			return;
+		}
+		$post_id = absint( $post_id );
+		$post    = $post_id ? get_post( $post_id ) : null;
+		if ( ! $post instanceof WP_Post || in_array( $post->post_type, array( self::POST_TYPE, 'sidrena_service' ), true ) ) {
+			return;
+		}
+		$this->sync_linked_source_on_save( $post_id, $post, true );
 	}
 
 	public function append_reference_to_linked_content( $content ) {
@@ -607,7 +644,7 @@ final class Sidrena_Standalone {
 		?>
 		<section class="sid-card sid-source-sync">
 			<div class="sid-section-head">
-				<div><span class="sid-kicker"><?php esc_html_e( 'Automatsko povezivanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Povuci postojeće proizvode / sadržaj', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Odaberite postojeći tip sadržaja. Sidrena će povući nazive, povezati zapise i pokušati prepoznati postojeće polje cijene. Nakon toga u pravilu trebate dopuniti samo sidrenu cijenu i ostale obvezne podatke koji nedostaju.', 'sidrena' ); ?></p></div>
+				<div><span class="sid-kicker"><?php esc_html_e( 'Automatsko povezivanje', 'sidrena' ); ?></span><h2><?php esc_html_e( 'Povuci postojeće proizvode / sadržaj', 'sidrena' ); ?></h2><p><?php esc_html_e( 'Odaberite postojeći tip sadržaja: SIDRENA će povezati nazive i postojeće cijene bez dupliciranja pri ponovnoj sinkronizaciji. Sidrena cijena unosi se zasebno prema dokumentiranoj cijeni na propisani datum — ne preuzima se proizvoljna današnja cijena kao povijesna.', 'sidrena' ); ?></p></div>
 				<?php
 				if ( $sync_label ) :
 					?>
@@ -621,13 +658,15 @@ final class Sidrena_Standalone {
 				foreach ( $source_types as $source_name => $source_label ) :
 					?>
 					<option value="<?php echo esc_attr( $source_name ); ?>"><?php echo esc_html( $source_label . ' (' . $source_name . ')' ); ?></option><?php endforeach; ?></select></label>
-				<label><span><?php esc_html_e( 'Meta ključ postojeće cijene', 'sidrena' ); ?></span><input type="text" name="source_price_key" placeholder="_price / price / cijena"><small><?php esc_html_e( 'Ostavite prazno za automatsko prepoznavanje.', 'sidrena' ); ?></small></label>
+				<label><span><?php esc_html_e( 'Meta ključ postojeće cijene', 'sidrena' ); ?></span><input type="text" name="source_price_key" placeholder="_price / price / cijena"><small><?php esc_html_e( 'Prazno = automatsko prepoznavanje. Kada navedete ključ, koristi se isključivo to polje kako druga cijena ne bi zamijenila odabranu.', 'sidrena' ); ?></small></label>
 				<button type="submit" class="button sid-secondary"><span class="dashicons dashicons-update"></span><?php esc_html_e( 'Pokreni sinkronizaciju', 'sidrena' ); ?></button>
 			</form>
 			<?php
 			if ( $sync_summary ) :
 				?>
 				<p class="description"><?php echo esc_html( $sync_summary ); ?></p><?php endif; ?>
+			<p class="description"><?php esc_html_e( 'Nakon povezivanja dopunite sidrenu cijenu, šifru, marku, jediničnu cijenu i dostupnost po poslovnici. U retku možete odlučiti hoće li se aktualna cijena dalje sinkronizirati ili ćete je uređivati ručno.', 'sidrena' ); ?></p>
+			<p><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><span class="dashicons dashicons-media-spreadsheet" aria-hidden="true"></span><?php esc_html_e( 'Otvori objavu cjenika i arhivu', 'sidrena' ); ?></a></p>
 		</section>
 		<form class="sid-card sid-form sid-standalone-import" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="sidrena_standalone_import">
@@ -700,6 +739,7 @@ final class Sidrena_Standalone {
 		};
 		$status_raw               = $meta( '_sidrena_standalone_unit_status' );
 		$status                   = $status_raw ? $status_raw : 'review';
+		$price_sync_mode          = 'manual' === sanitize_key( $meta( '_sidrena_standalone_source_price_sync' ) ) ? 'manual' : 'auto';
 		$availability_raw         = $meta( '_sidrena_standalone_availability' );
 		$availability             = $availability_raw ? $availability_raw : 'dostupno';
 		$current                  = $meta( '_sidrena_standalone_current_price' );
@@ -768,6 +808,15 @@ final class Sidrena_Standalone {
 				<details class="sid-row-details" <?php echo $row_ready ? '' : 'open'; ?>>
 					<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Podaci za objavu cjenika', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'Potvrdite marku, primjenjivost jedinične cijene i raspoloživost u fizičkim lokacijama.', 'sidrena' ); ?></span></summary>
 					<div class="sid-row-details__grid sid-row-details__grid--wordpress">
+						<?php if ( $id && absint( $meta( '_sidrena_standalone_source_post_id' ) ) ) : ?>
+							<label><span><?php esc_html_e( 'Trenutna cijena — način ažuriranja', 'sidrena' ); ?></span>
+								<select name="items[<?php echo esc_attr( $key ); ?>][source_price_sync]">
+									<option value="auto" <?php selected( $price_sync_mode, 'auto' ); ?>><?php esc_html_e( 'Automatski s povezanim proizvodom', 'sidrena' ); ?></option>
+									<option value="manual" <?php selected( $price_sync_mode, 'manual' ); ?>><?php esc_html_e( 'Ručno u SIDRENI', 'sidrena' ); ?></option>
+								</select>
+								<small><?php esc_html_e( 'Ručno čuva ovdje unesenu aktualnu cijenu pri sljedećoj sinkronizaciji. Sidrena cijena se nikada ne prepisuje iz aktualne cijene.', 'sidrena' ); ?></small>
+							</label>
+						<?php endif; ?>
 						<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][brand]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_brand' ) ); ?>"></label>
 						<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][barcode]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_barcode' ) ); ?>"></label>
 						<label><span><?php esc_html_e( 'Status jedinične cijene', 'sidrena' ); ?></span><select name="items[<?php echo esc_attr( $key ); ?>][unit_status]"><option value="review" <?php selected( $status, 'review' ); ?>><?php esc_html_e( 'Provjeriti', 'sidrena' ); ?></option><option value="required" <?php selected( $status, 'required' ); ?>><?php esc_html_e( 'Obvezna', 'sidrena' ); ?></option><option value="not_required" <?php selected( $status, 'not_required' ); ?>><?php esc_html_e( 'Nije primjenjiva', 'sidrena' ); ?></option><option value="exception" <?php selected( $status, 'exception' ); ?>><?php esc_html_e( 'Iznimka', 'sidrena' ); ?></option></select></label>
@@ -899,6 +948,11 @@ else :
 			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_brand', sanitize_text_field( $row['brand'] ?? '' ) );
 			$this->set_meta( $saved_id, '_sidrena_standalone_current_price', $current );
+			// Keep existing sync behavior if this row is not linked to a source.
+			if ( absint( get_post_meta( $saved_id, '_sidrena_standalone_source_post_id', true ) ) ) {
+				$sync_mode = sanitize_key( $row['source_price_sync'] ?? 'auto' );
+				$this->set_meta( $saved_id, '_sidrena_standalone_source_price_sync', 'manual' === $sync_mode ? 'manual' : 'auto' );
+			}
 			$this->set_meta( $saved_id, '_sidrena_standalone_anchor_price', $anchor );
 			$reference_group = Sidrena_Utils::sanitize_reference_group( $row['reference_group'] ?? 'standard' );
 			$custom_date     = '';
