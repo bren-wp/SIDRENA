@@ -771,11 +771,11 @@ final class Sidrena_Products {
 			// An unverified custom date must never appear as a dated anchor.
 			return '';
 		}
-		$label         = Sidrena_Utils::anchor_label( $date );
-		$tooltip       = Sidrena_Utils::anchor_tooltip();
-		$tooltip_id    = 'sidrena-anchor-tip-' . absint( $id );
-		$tooltip_html  = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
-		$line          = sprintf(
+		$label        = Sidrena_Utils::anchor_label( $date );
+		$tooltip      = Sidrena_Utils::anchor_tooltip();
+		$tooltip_id   = 'sidrena-anchor-tip-' . absint( $id );
+		$tooltip_html = $tooltip ? '<span class="sidrena-anchor__info" aria-hidden="true">i</span><span id="' . esc_attr( $tooltip_id ) . '" class="sidrena-anchor__tooltip" role="tooltip">' . esc_html( $tooltip ) . '</span>' : '';
+		$line         = sprintf(
 			'<span class="sidrena-anchor%1$s"%2$s><span class="sidrena-anchor__label">%3$s:</span> <span class="sidrena-anchor__value">%4$s</span>%5$s</span>',
 			$tooltip ? ' sidrena-anchor--has-tooltip' : '',
 			$tooltip ? ' tabindex="0" aria-describedby="' . esc_attr( $tooltip_id ) . '"' : '',
@@ -806,6 +806,7 @@ final class Sidrena_Products {
 				: (float) $anchor;
 			$display = apply_filters( 'sidrena_anchor_price_to_display', $display, $variation, $anchor );
 			$display = apply_filters( 'sidrena_cijena_price_to_display', $display, $variation, $anchor );
+
 			$values_by_date[ $date ][] = (float) $display;
 		}
 
