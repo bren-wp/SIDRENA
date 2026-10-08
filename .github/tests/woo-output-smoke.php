@@ -52,6 +52,7 @@ function sanitize_text_field( $value ) { return trim( strip_tags( (string) $valu
 function get_post_meta( $id, $key, $single = true ) { unset( $single ); return $GLOBALS['sidrena_meta'][ (int) $id ][ $key ] ?? ''; }
 function wp_get_post_parent_id( $id ) { unset( $id ); return 0; }
 function wp_timezone() { return new DateTimeZone( 'Europe/Zagreb' ); }
+function get_post_datetime( $id ) { unset( $id ); return false; }
 function __( $text, $domain = null ) { unset( $domain ); return $text; }
 function apply_filters( $tag, $value ) { unset( $tag ); return $value; }
 function is_admin() { return false; }
@@ -117,6 +118,16 @@ sidrena_woo_output_assert( false !== strpos( $mixed_html, '20,00 € – 30,00 �
 sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'id="sidrena-anchor-tip-80-20250502"' ), 'FMCG tooltip must have a unique id.' );
 sidrena_woo_output_assert( 1 === substr_count( $mixed_html, 'id="sidrena-anchor-tip-80-20260910"' ), 'Standard tooltip must have a unique id.' );
 sidrena_woo_output_assert( false === strpos( $mixed_html, '<del>' ) && false === strpos( $mixed_html, '<ins>' ), 'An anchor price must not be rendered as a discount.' );
+
+// An unverifiable first-publication date must fail closed instead of
+// rendering a price with an empty legal-reference label.
+$GLOBALS['sidrena_meta'][120] = array(
+	'_sidrena_anchor_price'   => '15',
+	'_sidrena_reference_group' => 'custom',
+	'_sidrena_anchor_date'    => '2026-09-12',
+);
+$invalid_html = Sidrena_Products::instance()->append_reference_prices( '<span class="price">12 €</span>', new WC_Product( 120 ) );
+sidrena_woo_output_assert( false === strpos( $invalid_html, 'sidrena-anchor' ), 'An unverifiable custom date must suppress Woo anchor output.' );
 
 $product = null;
 sidrena_woo_output_assert( '' === Sidrena_Products::instance()->shortcode( array( 'id' => 's123' ) ), 'Woo shortcode must reject standalone IDs without loading a missing class.' );
