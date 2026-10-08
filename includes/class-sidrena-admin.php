@@ -296,8 +296,10 @@ final class Sidrena_Admin {
 		$notice = sanitize_key( wp_unslash( $_GET['sid_notice'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$messages = array(
 			'saved'                    => array( 'success', __( 'Promjene su spremljene.', 'sidrena' ) ),
-			'generated'                => array( 'success', __( 'Novi cjenici su generirani i dodani u javnu arhivu.', 'sidrena' ) ),
-			'generated_with_errors'    => array( 'warning', __( 'Generiranje je završeno s upozorenjima. Posljednje ispravne datoteke zadržane su kao aktualne tamo gdje nova datoteka nije mogla nastati.', 'sidrena' ) ),
+			'generated'                => array( 'success', __( 'Aktualni javni cjenik je uspješno osvježen.', 'sidrena' ) ),
+			'archive_generated'       => array( 'success', __( 'Dnevni cjenici su generirani i objavljeni u arhivi.', 'sidrena' ) ),
+			'generated_with_errors'    => array( 'warning', __( 'Osvježavanje nije potpuno uspjelo. Pogledajte razloge i ispravite podatke; posljednje valjane datoteke ostaju dostupne.', 'sidrena' ) ),
+			'archive_with_errors'      => array( 'warning', __( 'Objava dnevne arhive nije potpuno uspjela. Detalji su navedeni u nastavku.', 'sidrena' ) ),
 			'imported'                 => array( 'success', __( 'Uvoz sidrenih cijena je dovršen.', 'sidrena' ) ),
 			'location_imported'        => array( 'success', __( 'Podaci po lokacijama su uvezeni. Cjenici će koristiti unesenu raspoloživost i, gdje postoji, cijenu po lokaciji.', 'sidrena' ) ),
 			'import_failed'            => array( 'error', __( 'CSV nije moguće uvesti. Provjerite format, veličinu, zaglavlja i podatke.', 'sidrena' ) ),
@@ -323,9 +325,34 @@ final class Sidrena_Admin {
 		}
 		$type = $messages[ $notice ][0];
 		$text = $messages[ $notice ][1];
-		echo '<div class="notice notice-' . esc_attr( $type ) . ' is-dismissible"><p>' . esc_html( $text ) . '</p></div>';
+		echo '<div class="notice notice-' . esc_attr( $type ) . ' is-dismissible"><p>' . esc_html( $text ) . '</p>';
+		if ( 'generated_with_errors' === $notice || 'archive_with_errors' === $notice ) {
+			$option = 'archive_with_errors' === $notice ? 'sidrena_last_run' : 'sidrena_last_current_refresh';
+			$this->render_publication_errors( get_option( $option, array() ) );
+		}
+		echo '</div>';
 	}
 
+	/** Display safe, actionable warnings from the last publication attempt. */
+	private function render_publication_errors( $last ) {
+		if ( ! is_array( $last ) || empty( $last['errors'] ) || ! is_array( $last['errors'] ) ) {
+			return;
+		}
+		$errors = array_values( array_filter( array_map( 'strval', $last['errors'] ) ) );
+		if ( ! $errors ) {
+			return;
+		}
+		echo '<p><strong>' . esc_html__( 'Razlozi neuspjeha — ispravite podatke i pokušajte ponovno:', 'sidrena' ) . '</strong></p><ul class="ul-disc">';
+		foreach ( array_slice( $errors, 0, 8 ) as $error ) {
+			echo '<li>' . esc_html( $error ) . '</li>';
+		}
+		echo '</ul>';
+		if ( count( $errors ) > 8 ) {
+			/* translators: %d: remaining publication errors. */
+			echo '<p>' . esc_html( sprintf( __( 'Još %d upozorenja potražite u Dnevniku.', 'sidrena' ), count( $errors ) - 8 ) ) . '</p>';
+		}
+		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=sidrena-catalog' ) ) . '">' . esc_html__( 'Provjeri katalog', 'sidrena' ) . '</a> · <a href="' . esc_url( admin_url( 'admin.php?page=sidrena-support&sidrena_section=log' ) ) . '">' . esc_html__( 'Otvori Dnevnik', 'sidrena' ) . '</a></p>';
+	}
 
 	private function support_tab() {
 		$pdf_url         = Sidrena_Utils::support_pdf_url();
@@ -1151,6 +1178,18 @@ final class Sidrena_Admin {
 				</div>
 			</div>
 
+			<?php
+			// Keep detailed diagnostics on the cjenici screen if the notice was dismissed.
+			$current_attempt_ts = is_array( $current_refresh ) ? strtotime( (string) ( $current_refresh['generated_at'] ?? '' ) ) : 0;
+			$archive_attempt_ts = is_array( $last ) ? strtotime( (string) ( $last['generated_at'] ?? '' ) ) : 0;
+			$last_attempt = $current_attempt_ts >= $archive_attempt_ts ? $current_refresh : $last;
+			if ( is_array( $last_attempt ) && ! empty( $last_attempt['errors'] ) ) :
+				?>
+				<section class="sid-card sid-note sid-note-warning" role="status">
+					<div class="sid-note-icon"><span class="dashicons dashicons-warning" aria-hidden="true"></span></div>
+					<div><h3><?php esc_html_e( 'Otklonite probleme prije sljedeće objave', 'sidrena' ); ?></h3><?php $this->render_publication_errors( $last_attempt ); ?></div>
+				</section>
+			<?php endif; ?>
 			<div class="sid-reference-metrics sid-reference-files-metrics">
 				<?php $this->dashboard_metric( __( 'Dnevna arhiva', 'sidrena' ), $last_ts ? wp_date( 'd.m.Y. H:i', $last_ts ) : '—', $last_success ? 'dashicons-yes-alt' : 'dashicons-warning', $last_success ? __( 'zadnja uspješna objava', 'sidrena' ) : ( $last_ts ? __( 'zadnji pokušaj s upozorenjima', 'sidrena' ) : __( 'još nema objave', 'sidrena' ) ), $last_success && ! $is_stale ? 'ok' : 'warn' ); ?>
 				<?php $this->dashboard_metric( __( 'Aktualni cjenik', 'sidrena' ), $current_ts ? wp_date( 'd.m.Y. H:i', $current_ts ) : '—', 'dashicons-update', $current_ts ? __( 'zadnje osvježavanje bez nove arhive', 'sidrena' ) : __( 'još nije zasebno osvježen', 'sidrena' ), $current_ts ? 'ok' : 'blue' ); ?>
@@ -1783,7 +1822,7 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		$success = Sidrena_Pricelist::instance()->publish_daily_archive();
-		$this->redirect( 'files', $success ? 'generated' : 'generated_with_errors' );
+		$this->redirect( 'files', $success ? 'archive_generated' : 'archive_with_errors' );
 	}
 
 	public function create_public_page() {

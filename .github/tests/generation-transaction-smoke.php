@@ -47,3 +47,11 @@ sidrena_generation_transaction_assert( false !== strpos( $source, '$archive[] = 
 sidrena_generation_transaction_assert( false !== strpos( $source, "'archive_retention_cleanup'" ), 'Retention deletion failures must be recorded in the Sidrena audit log.' );
 
 fwrite( STDOUT, "Sidrena transactional generation smoke test passed.\n" );
+
+$admin = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-admin.php' );
+$standalone = file_get_contents( dirname( __DIR__, 2 ) . '/includes/class-sidrena-standalone.php' );
+sidrena_generation_transaction_assert( false !== strpos( $admin, 'render_publication_errors(' ), 'Publication errors must be shown to the admin.' );
+sidrena_generation_transaction_assert( false !== strpos( $admin, "'archive_with_errors'" ), 'Archive errors need their own source-specific notice.' );
+sidrena_generation_transaction_assert( false !== strpos( $source, 'record_current_failure(' ), 'Early current-generation errors must persist.' );
+sidrena_generation_transaction_assert( false !== strpos( $source, 'record_archive_failure(' ), 'Early archive-generation errors must persist.' );
+sidrena_generation_transaction_assert( false !== strpos( $standalone, "'open';" ), 'Incomplete standalone rows must expand mandatory fields.' );
