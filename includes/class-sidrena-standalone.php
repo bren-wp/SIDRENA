@@ -722,11 +722,13 @@ final class Sidrena_Standalone {
 			}
 		}
 		$row_ready = $id
+			&& '' !== trim( (string) get_the_title( $id ) )
 			&& '' !== Sidrena_Utils::decimal( $current )
 			&& '' !== Sidrena_Utils::decimal( $anchor )
 			&& '' !== trim( (string) $meta( '_sidrena_standalone_code' ) )
 			&& '' !== trim( (string) $meta( '_sidrena_standalone_brand' ) )
-			&& 'review' !== $status
+			&& in_array( $status, array( 'required', 'not_required', 'exception' ), true )
+			&& ( 'required' !== $status || ( '' !== trim( (string) $meta( '_sidrena_standalone_unit' ) ) && '' !== Sidrena_Utils::decimal( $meta( '_sidrena_standalone_unit_price' ) ) ) )
 			&& $physical_locations_ready
 			&& ( 'custom' !== $reference_group || '' !== $anchor_date );
 		?>
@@ -763,8 +765,8 @@ final class Sidrena_Standalone {
 		</tr>
 		<tr class="sid-standalone-details-row" data-sidrena-details-for="<?php echo esc_attr( $key ); ?>">
 			<td colspan="6">
-				<details class="sid-row-details">
-					<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'marka, barkod, jedinična cijena, posebna prodaja i dostupnost po lokaciji', 'sidrena' ); ?></span></summary>
+				<details class="sid-row-details" <?php echo $row_ready ? '' : 'open'; ?>>
+					<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Podaci za objavu cjenika', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'Potvrdite marku, primjenjivost jedinične cijene i raspoloživost u fizičkim lokacijama.', 'sidrena' ); ?></span></summary>
 					<div class="sid-row-details__grid sid-row-details__grid--wordpress">
 						<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][brand]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_brand' ) ); ?>"></label>
 						<label><span><?php esc_html_e( 'Barkod', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $key ); ?>][barcode]" value="<?php echo esc_attr( $meta( '_sidrena_standalone_barcode' ) ); ?>"></label>
