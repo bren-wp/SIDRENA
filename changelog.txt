@@ -10,6 +10,7 @@ Sidrena changelog
 * Transakcijska objava trenutnih CSV/XML cjenika s provjerom sadržaja i povratom prethodnog valjanog stanja pri padu jednog od formata ili snimke.
 * Sinkronizacija odabranih polja cijena postojećih WordPress proizvoda bez ograničenja na nazive price/cijena, uključujući zakašnjele promjene i brisanje cijene.
 * Regresije na stvarnom datotečnom sustavu za rollback, zajedničku objavu, nedostajući staging, ažuriranje i brisanje korisničkog polja cijene.
+* Javna objava proizvoda zahtijeva barkod robe kako propisuje NN 101/2026; nepotpun proizvod dobiva jasnu poruku prije objave.
 * Sidrena cijena nije popust; čuvaju se fiksni zakonski referentni datumi, javni cjenici i najmanje 30-dnevna arhiva.
 
 = 1.0.8 =
