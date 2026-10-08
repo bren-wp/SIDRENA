@@ -83,6 +83,7 @@ final class Sidrena_Admin {
 					'removeUnsavedProduct' => __( 'Ukloniti ovaj nespremljeni proizvod?', 'sidrena' ),
 					'deleteProduct'        => __( 'Označiti ovaj proizvod za brisanje nakon spremanja?', 'sidrena' ),
 					'savingForm'           => __( 'Spremanje…', 'sidrena' ),
+					'unsavedChanges'       => __( 'Promjene nisu spremljene. Spremite obrazac kako bi postale aktivne.', 'sidrena' ),
 					'invalidField'          => __( 'Provjerite označeno polje i pokušajte ponovno.', 'sidrena' ),
 					'fileTooLarge'          => __( 'Datoteka je prevelika. Najveća dopuštena veličina je 5 MB.', 'sidrena' ),
 					'invalidFileType'       => __( 'Odaberite podržanu CSV ili XML datoteku.', 'sidrena' ),
