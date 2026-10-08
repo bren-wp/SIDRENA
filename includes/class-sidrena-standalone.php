@@ -492,9 +492,9 @@ final class Sidrena_Standalone {
 		}
 		$price_mode = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_sync', true ) );
 		$price_key  = sanitize_key( get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
-		$price     = $this->source_price( $post_id, $price_key );
-		$changed   = false;
-		$old       = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
+		$price      = $this->source_price( $post_id, $price_key );
+		$changed    = false;
+		$old        = Sidrena_Utils::decimal( get_post_meta( $item_id, '_sidrena_standalone_current_price', true ) );
 		if ( 'manual' !== $price_mode ) {
 			if ( '' !== $price['price'] ) {
 				if ( $price['price'] !== $old ) {
