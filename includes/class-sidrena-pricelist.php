@@ -350,6 +350,7 @@ final class Sidrena_Pricelist {
 				$location_entries  = array();
 				$snapshot_catalogs = array();
 				$location_failed   = false;
+				$staged_files      = array();
 
 				foreach ( $catalog_types as $catalog_type ) {
 					foreach ( $formats as $format ) {
@@ -357,9 +358,10 @@ final class Sidrena_Pricelist {
 						$expected[ $key ] = true;
 						$filename         = $this->build_current_filename( $location, $catalog_type, $format );
 						$filepath         = $paths['current_dir'] . $filename;
+						$staging_path     = $filepath . '.sidrena-stage-' . wp_generate_uuid4();
 						$result           = 'products' === $catalog_type
-							? $this->write_products( $filepath, $format, $location )
-							: $this->write_services( $filepath, $format, $location );
+							? $this->write_products( $staging_path, $format, $location )
+							: $this->write_services( $staging_path, $format, $location );
 
 						if ( is_wp_error( $result ) ) {
 							$errors[]        = $result->get_error_message();
@@ -367,9 +369,10 @@ final class Sidrena_Pricelist {
 							break;
 						}
 
-						$hash               = is_file( $filepath ) ? hash_file( 'sha256', $filepath ) : '';
-						$bytes              = is_file( $filepath ) ? filesize( $filepath ) : 0;
-						$location_entries[] = array(
+						$staged_files[ $filepath ] = $staging_path;
+						$hash                      = is_file( $staging_path ) ? hash_file( 'sha256', $staging_path ) : '';
+						$bytes                     = is_file( $staging_path ) ? filesize( $staging_path ) : 0;
+						$location_entries[]        = array(
 							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['location_id'] ?? '' ),
 							'location_code' => sanitize_text_field( $location['code'] ?? '' ),
 							'kind'          => sanitize_key( $location['kind'] ?? 'objekt' ),
@@ -391,15 +394,21 @@ final class Sidrena_Pricelist {
 					$snapshot_catalogs[] = $catalog_type;
 				}
 
-				if ( ! $location_failed && 'yes' === $settings['enable_public_html'] && $snapshot_catalogs ) {
-					$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
-					if ( is_wp_error( $snapshot ) ) {
-						$errors[]        = $snapshot->get_error_message();
+				if ( ! $location_failed ) {
+					$published = $this->publish_current_bundle(
+						$staged_files,
+						$location,
+						$snapshot_catalogs,
+						$timestamp,
+						'yes' === $settings['enable_public_html']
+					);
+					if ( is_wp_error( $published ) ) {
+						$errors[]        = $published->get_error_message();
 						$location_failed = true;
 					}
 				}
-
 				if ( $location_failed ) {
+					$this->discard_generated_files( array_values( $staged_files ) );
 					continue;
 				}
 				$index      = array_merge( $index, $location_entries );
@@ -439,6 +448,75 @@ final class Sidrena_Pricelist {
 		} finally {
 			$this->release_generation_lock( $lock );
 		}
+	}
+
+	/**
+	 * Publish a complete current CSV/XML bundle only after every format passed
+	 * validation and the staged output is on disk. Keep rollback copies until
+	 * the public snapshot has also been successfully refreshed.
+	 *
+	 * @param array $staged_files Destination path => validated staging path.
+	 * @param array $location Location being published.
+	 * @param array $snapshot_catalogs Catalogs present in this bundle.
+	 * @param int   $timestamp Generation timestamp.
+	 * @param bool  $publish_snapshot Whether public JSONL is enabled.
+	 * @return bool|WP_Error
+	 */
+	private function publish_current_bundle( $staged_files, $location, $snapshot_catalogs, $timestamp, $publish_snapshot ) {
+		$backups   = array();
+		$published = array();
+		$failure   = null;
+
+		foreach ( $staged_files as $destination => $staging_path ) {
+			if ( ! is_file( $staging_path ) ) {
+				$failure = new WP_Error( 'sidrena_bundle_staging', __( 'Pripremljena datoteka cjenika nije dostupna. Prethodni cjenik ostaje nepromijenjen.', 'sidrena' ) );
+				break;
+			}
+			$backup = '';
+			if ( is_file( $destination ) ) {
+				$backup = $destination . '.sidrena-backup-' . wp_generate_uuid4();
+				if ( ! copy( $destination, $backup ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_copy -- A byte-exact recovery copy is needed for transactional publication.
+					$failure = new WP_Error( 'sidrena_bundle_backup', __( 'Nije moguće zaštititi prethodni cjenik. Novi cjenik nije objavljen.', 'sidrena' ) );
+					break;
+				}
+			}
+			$backups[ $destination ] = $backup;
+		}
+		if ( ! $failure ) {
+			foreach ( $staged_files as $destination => $staging_path ) {
+				if ( ! rename( $staging_path, $destination ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- Atomic replacement on the same filesystem.
+					$failure = new WP_Error( 'sidrena_bundle_commit', __( 'Nije moguće objaviti sve formate cjenika. Vraćaju se prethodne valjane datoteke.', 'sidrena' ) );
+					break;
+				}
+				$published[] = $destination;
+			}
+		}
+		if ( ! $failure && $publish_snapshot && ! empty( $snapshot_catalogs ) ) {
+			$snapshot = $this->write_public_snapshot( $location, $snapshot_catalogs, $timestamp );
+			if ( is_wp_error( $snapshot ) ) {
+				$failure = $snapshot;
+			}
+		}
+		if ( $failure ) {
+			$restoration_failed = false;
+			foreach ( $published as $destination ) {
+				$backup = $backups[ $destination ] ?? '';
+				if ( $backup ) {
+					if ( ! rename( $backup, $destination ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- Restore exact previous published content.
+						$restoration_failed = true;
+					}
+				} elseif ( is_file( $destination ) && ! unlink( $destination ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Only a file newly added by this failed publication is removed.
+					$restoration_failed = true;
+				}
+			}
+			$this->discard_generated_files( array_values( $staged_files ) );
+			if ( $restoration_failed ) {
+				// Keep the recovery copies on disk if an administrator needs them.
+				return new WP_Error( 'sidrena_bundle_restore', __( 'Objava nije uspjela i nije moguće automatski vratiti sve datoteke. Sačuvane su sigurnosne kopije; odmah provjerite cjenike.', 'sidrena' ) );
+			}
+		}
+		$this->discard_generated_files( array_filter( array_values( $backups ) ) );
+		return $failure ? $failure : true;
 	}
 
 	private function publication_alert_recipient() {
@@ -658,6 +736,7 @@ final class Sidrena_Pricelist {
 			'marka'               => __( 'marka', 'sidrena' ),
 			'maloprodajna_cijena' => __( 'maloprodajna cijena', 'sidrena' ),
 			'sidrena_cijena'      => __( 'sidrena cijena', 'sidrena' ),
+			'barkod'              => __( 'barkod robe', 'sidrena' ),
 			'dostupnost'          => __( 'dostupnost', 'sidrena' ),
 		);
 		if ( '' === $name ) {

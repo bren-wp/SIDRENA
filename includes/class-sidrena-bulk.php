@@ -140,6 +140,9 @@ final class Sidrena_Bulk {
 						if ( '' === trim( (string) Sidrena_Utils::get_brand( $product ) ) ) {
 							$missing[] = __( 'marka', 'sidrena' );
 						}
+						if ( '' === trim( (string) Sidrena_Utils::get_barcode( $product ) ) ) {
+							$missing[] = __( 'barkod robe', 'sidrena' );
+						}
 						if ( 'review' === $unit_status || '' === $unit_status ) {
 							$missing[] = __( 'odluka o jediničnoj cijeni', 'sidrena' );
 						} elseif ( 'required' === $unit_status && ( '' === trim( (string) get_post_meta( $id, '_sidrena_unit', true ) ) || '' === Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_unit_price', true ) ) ) ) {

@@ -122,6 +122,22 @@ $GLOBALS['sidrena_meta'][100]['special_price'] = '31.50';
 Sidrena_Standalone::instance()->sync_linked_source_on_save( 100, $source, true );
 sidrena_sync_assert( '31.5' === get_post_meta( 200, '_sidrena_standalone_current_price', true ), 'Custom source price key was not used.' );
 
+ // Third-party integrations can write a configured key without "price" or
+ // "cijena" after the main save_post hook has already fired.
+ $GLOBALS['sidrena_meta'][200]['_sidrena_standalone_source_price_key'] = '_retail_amount';
+ $GLOBALS['sidrena_meta'][100]['_retail_amount'] = '42.75';
+ Sidrena_Standalone::instance()->sync_linked_source_price_on_meta( 1, 100, '_retail_amount', '42.75' );
+ sidrena_sync_assert( '42.75' === get_post_meta( 200, '_sidrena_standalone_current_price', true ), 'Late custom metadata key without price/cijena must synchronize.' );
+ sidrena_sync_assert( '9.99' === get_post_meta( 200, '_sidrena_standalone_anchor_price', true ), 'Custom metadata sync must preserve verified historical anchor.' );
+ $GLOBALS['sidrena_meta'][100]['_retail_amount'] = '39.00';
+ Sidrena_Standalone::instance()->sync_linked_source_price_on_meta( 2, 100, '_retail_amount', '39.00' );
+ sidrena_sync_assert( '39' === get_post_meta( 200, '_sidrena_standalone_current_price', true ), 'Updated custom source price was not applied.' );
+ unset( $GLOBALS['sidrena_meta'][100]['_retail_amount'] );
+ Sidrena_Standalone::instance()->sync_linked_source_price_on_meta( 3, 100, '_retail_amount', '' );
+ sidrena_sync_assert( ! isset( $GLOBALS['sidrena_meta'][200]['_sidrena_standalone_current_price'] ), 'Deleted selected source metadata must clear the stale live price.' );
+ sidrena_sync_assert( 'draft' === get_post_status( 200 ), 'Missing current price must not remain publishable.' );
+
+
 
 // A queued import from a previous request must not overwrite a newer run.
 $GLOBALS['sidrena_sync_options'] = array(

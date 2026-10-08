@@ -189,6 +189,9 @@ jobs:
       - name: Current/archive separation smoke test
         run: php .github/tests/current-archive-separation-smoke.php
 
+      - name: Transactional current CSV and XML bundle runtime smoke test
+        run: php .github/tests/current-bundle-runtime-smoke.php
+
       - name: Streaming public snapshot smoke test
         run: php .github/tests/public-snapshot-stream-smoke.php
 
