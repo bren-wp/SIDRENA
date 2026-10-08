@@ -767,6 +767,10 @@ final class Sidrena_Products {
 		$display_price = apply_filters( 'sidrena_anchor_price_to_display', $display_price, $product, $anchor );
 		$display_price = apply_filters( 'sidrena_cijena_price_to_display', $display_price, $product, $anchor );
 		$date          = Sidrena_Utils::current_reference_date( $id );
+		if ( '' === $date ) {
+			// An unverified custom date must never appear as a dated anchor.
+			return '';
+		}
 		$label         = Sidrena_Utils::anchor_label( $date );
 		$tooltip       = Sidrena_Utils::anchor_tooltip();
 		$tooltip_id    = 'sidrena-anchor-tip-' . absint( $id );
