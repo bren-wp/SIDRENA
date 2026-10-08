@@ -180,6 +180,7 @@ $base_product = array(
 	'_sidrena_location_explicit'    => 'yes',
 	'naziv'                         => 'Test proizvod',
 	'sifra'                         => 'TEST-1',
+	'barkod'                        => '3851234567890',
 	'marka'                         => 'Test',
 	'maloprodajna_cijena'           => '10.00',
 	'sidrena_cijena'                => '12.00',
@@ -189,6 +190,11 @@ $base_product = array(
 	'naziv_posebnog_oblika_prodaje' => 'Akcija',
 );
 sidrena_schema_assert( array() === $validate_product->invoke( $instance, $base_product, 'objekt' ), 'Product with Sidrena price/date and named special sale must pass strict publication preflight without a 30-day sale-price reference.' );
+
+$missing_barcode = $base_product;
+$missing_barcode['barkod'] = '';
+sidrena_schema_assert( ! empty( $validate_product->invoke( $instance, $missing_barcode, 'objekt' ) ), 'Product without the barcode required by NN 101/2026 must fail public CSV/XML preflight.' );
+
 
 $missing_sale_name = $base_product;
 $missing_sale_name['naziv_posebnog_oblika_prodaje'] = '';
