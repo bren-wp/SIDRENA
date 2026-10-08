@@ -171,9 +171,7 @@ final class Sidrena_Pricelist {
 			if ( empty( $formats ) ) {
 				return $this->record_archive_failure( __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format u Postavkama.', 'sidrena' ) );
 			}
-			if ( ! array_filter( $locations, static function ( $location ) {
-				return 'yes' === ( $location['enabled'] ?? '' );
-			} ) ) {
+			if ( ! $this->has_enabled_location( $locations ) ) {
 				return $this->record_archive_failure( __( 'Nema aktivne lokacije za dnevni cjenik. Aktivirajte lokaciju s adresom.', 'sidrena' ) );
 			}
 
@@ -339,9 +337,7 @@ final class Sidrena_Pricelist {
 			if ( empty( $formats ) ) {
 				return $this->record_current_failure( __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format u Postavkama.', 'sidrena' ) );
 			}
-			if ( ! array_filter( $locations, static function ( $location ) {
-				return 'yes' === ( $location['enabled'] ?? '' );
-			} ) ) {
+			if ( ! $this->has_enabled_location( $locations ) ) {
 				return $this->record_current_failure( __( 'Nema aktivne lokacije. Aktivirajte barem jednu lokaciju s valjanom adresom.', 'sidrena' ) );
 			}
 
@@ -514,6 +510,16 @@ final class Sidrena_Pricelist {
 			);
 		}
 		return (bool) $sent;
+	}
+
+	/** Find a configured location without buffering or filtering catalog data. */
+	private function has_enabled_location( $locations ) {
+		foreach ( (array) $locations as $location ) {
+			if ( is_array( $location ) && 'yes' === ( $location['enabled'] ?? '' ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Persist early archival errors before returning false. */
