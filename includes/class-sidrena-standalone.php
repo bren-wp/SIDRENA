@@ -29,7 +29,7 @@ final class Sidrena_Standalone {
 		add_action( 'admin_post_sidrena_standalone_save', array( $this, 'save' ) );
 		add_action( 'admin_post_sidrena_standalone_import', array( $this, 'import' ) );
 		add_action( 'admin_post_sidrena_standalone_sync_source', array( $this, 'start_source_sync' ) );
-		add_action( 'sidrena_standalone_sync_batch', array( $this, 'sync_source_batch' ), 10, 3 );
+		add_action( 'sidrena_standalone_sync_batch', array( $this, 'sync_source_batch' ), 10, 4 );
 		add_action( 'save_post', array( $this, 'sync_linked_source_on_save' ), 30, 3 );
 		// Other catalog plugins often save the product price after save_post.
 		foreach ( array( 'added_post_meta', 'updated_post_meta', 'deleted_post_meta' ) as $hook ) {
@@ -309,6 +309,7 @@ final class Sidrena_Standalone {
 		$post_type = isset( $_POST['source_post_type'] ) ? sanitize_key( wp_unslash( $_POST['source_post_type'] ) ) : '';
 		$price_key = isset( $_POST['source_price_key'] ) ? sanitize_key( wp_unslash( $_POST['source_price_key'] ) ) : '';
 		$types     = $this->source_post_types();
+		$run_id    = wp_generate_uuid4();
 		if ( ! $post_type || ! isset( $types[ $post_type ] ) ) {
 			wp_safe_redirect( admin_url( 'admin.php?page=sidrena-catalog&sid_notice=standalone_sync_failed' ) );
 			exit;
@@ -320,6 +321,7 @@ final class Sidrena_Standalone {
 				'post_type'  => $post_type,
 				'price_key'  => $price_key,
 				'status'     => 'queued',
+				'run_id'     => $run_id,
 				'page'       => 1,
 				'created'    => 0,
 				'updated'    => 0,
@@ -328,12 +330,13 @@ final class Sidrena_Standalone {
 			),
 			false
 		);
-		$scheduled = wp_schedule_single_event( time() + 2, 'sidrena_standalone_sync_batch', array( $post_type, 1, $price_key ) );
+		$scheduled = wp_schedule_single_event( time() + 2, 'sidrena_standalone_sync_batch', array( $post_type, 1, $price_key, $run_id ) );
 		if ( false === $scheduled || is_wp_error( $scheduled ) ) {
 			update_option(
 				'sidrena_standalone_sync_state',
 				array(
 					'post_type' => $post_type,
+					'run_id'    => $run_id,
 					'status'    => 'error',
 				),
 				false
@@ -345,11 +348,22 @@ final class Sidrena_Standalone {
 		exit;
 	}
 
-	public function sync_source_batch( $post_type, $page = 1, $price_key = '' ) {
+	public function sync_source_batch( $post_type, $page = 1, $price_key = '', $run_id = '' ) {
 		$post_type = sanitize_key( (string) $post_type );
 		$page      = max( 1, absint( $page ) );
 		$price_key = sanitize_key( (string) $price_key );
-		if ( ! post_type_exists( $post_type ) || in_array( $post_type, array( 'attachment', self::POST_TYPE, 'sidrena_service' ), true ) ) {
+		$run_id    = sanitize_text_field( (string) $run_id );
+		$state     = get_option( 'sidrena_standalone_sync_state', array() );
+		// Old queued events must never overwrite a newly started catalog import.
+		if ( ! is_array( $state )
+			|| ! $run_id
+			|| ! hash_equals( (string) ( $state['run_id'] ?? '' ), $run_id )
+			|| $post_type !== ( $state['post_type'] ?? '' )
+			|| $price_key !== ( $state['price_key'] ?? '' )
+			|| $page !== absint( $state['page'] ?? 0 )
+			|| ! in_array( $state['status'] ?? '', array( 'queued', 'running' ), true )
+			|| ! post_type_exists( $post_type )
+			|| in_array( $post_type, array( 'attachment', self::POST_TYPE, 'sidrena_service' ), true ) ) {
 			return;
 		}
 
@@ -368,7 +382,6 @@ final class Sidrena_Standalone {
 			)
 		);
 
-		$state   = get_option( 'sidrena_standalone_sync_state', array() );
 		$created = absint( $state['created'] ?? 0 );
 		$updated = absint( $state['updated'] ?? 0 );
 		$skipped = absint( $state['skipped'] ?? 0 );
@@ -446,7 +459,8 @@ final class Sidrena_Standalone {
 			'post_type'  => $post_type,
 			'price_key'  => $price_key,
 			'status'     => count( $source_ids ) === 100 ? 'running' : 'complete',
-			'page'       => $page,
+			'run_id'     => $run_id,
+			'page'       => count( $source_ids ) === 100 ? $page + 1 : $page,
 			'created'    => $created,
 			'updated'    => $updated,
 			'skipped'    => $skipped,
@@ -455,7 +469,7 @@ final class Sidrena_Standalone {
 		update_option( 'sidrena_standalone_sync_state', $state, false );
 
 		if ( count( $source_ids ) === 100 ) {
-			$scheduled = wp_schedule_single_event( time() + 3, 'sidrena_standalone_sync_batch', array( $post_type, $page + 1, $price_key ) );
+			$scheduled = wp_schedule_single_event( time() + 3, 'sidrena_standalone_sync_batch', array( $post_type, $page + 1, $price_key, $run_id ) );
 			if ( false === $scheduled || is_wp_error( $scheduled ) ) {
 				$state['status']     = 'error';
 				$state['updated_at'] = current_time( 'mysql' );
