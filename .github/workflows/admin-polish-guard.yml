@@ -42,7 +42,10 @@ jobs:
           test -s admin/css/brand.css
           test -s branding/BRAND-GUIDE.md
           grep -Fq "'dashicons-tag'" includes/class-sidrena-admin-menu.php
-          grep -Fq "SIDRENA_URL . 'assets/images/logo-horizontal-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "'logo-wordpress-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq "'logo-woocommerce-light.svg'" includes/class-sidrena-admin.php
+          grep -Fq 'class="sidrena-quicknav"' includes/class-sidrena-admin.php
+          grep -Fq 'aria-current="page"' includes/class-sidrena-admin.php
           grep -Fq "sidrena-brandbar__edition" includes/class-sidrena-admin.php
           grep -Fq "admin/css/brand.css" includes/class-sidrena-admin.php
           grep -Fq "sidrena-edition-body-' . \$edition" includes/class-sidrena-admin.php
@@ -57,7 +60,7 @@ jobs:
           grep -Fq "page.on('pageerror'" tools/capture-wporg-assets.mjs
           grep -Fq "admin_print_styles" includes/class-sidrena-admin.php
           grep -Fq "plugins_url( 'admin/css/brand.css', SIDRENA_FILE )" includes/class-sidrena-admin.php
-          grep -Fq "width=\"620\" height=\"120\"" includes/class-sidrena-admin.php
+          grep -Fq 'width="560" height="112"' includes/class-sidrena-admin.php
 
           if grep -q '\.sidrena-wrap' admin/css/admin.css; then
             echo "Legacy .sidrena-wrap CSS must not return to the editor-only stylesheet."
