@@ -10,7 +10,7 @@ Support: sidrena@brendigo.com
   <img src="assets/images/logo-horizontal.svg" alt="SIDRENA" width="520">
 </p>
 
-<h1 align="center">SIDRENA 1.0.7</h1>
+<h1 align="center">SIDRENA 1.0.8</h1>
 
 <p align="center">
   <strong>Sidrena cijena, povijest cijena i digitalni cjenici — ozbiljno riješeni za WordPress.</strong><br>
@@ -18,7 +18,7 @@ Support: sidrena@brendigo.com
 </p>
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.7"><strong>Preuzmi 1.0.7</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/tag/v1.0.8"><strong>Preuzmi 1.0.8</strong></a>
   ·
   <a href="https://brendigo.com/sidrene-cijene/"><strong>Službena stranica</strong></a>
   ·
@@ -36,6 +36,16 @@ Support: sidrena@brendigo.com
 </p>
 
 ---
+
+## Novo u 1.0.8
+
+Oba izdanja SIDRENA koriste jedno ujednačeno, responzivno administracijsko sučelje. Izdanje **1.0.8** donosi premium UI/UX dorade bez mijenjanja poslovne logike sidrenih cijena ili cjenika.
+
+- **Header i logotip:** ispravan postojeći SVG logotip za WordPress ili WooCommerce, prilagodljive proporcije i badge bez preklapanja.
+- **Brza navigacija:** Pregled, Proizvodi/Katalog, Usluge, Cjenici, Lokacije, Postavke i Pomoć u jednom kliku; fokus tipkovnice i `aria-current`.
+- **Obrasci i kontrole:** veća input polja, precizne oznake, jasno stanje prekidača, responzivne kartice, pregledniji uvoz CSV/XML.
+- **Validacija:** pogrešna datoteka zadržava oznaku pogreške, poruke se čitaju čitačima zaslona, a izmjene su jasno označene kao nespremljene.
+- **Kvaliteta:** namjenski JavaScript runtime regresijski test za datoteke, dvostruko slanje i povratak na obrazac.
 
 ## Novo u 1.0.7
 
@@ -368,7 +378,7 @@ WordPress.org odobrenje uvijek uključuje i ručni pregled Plugin Review tima; p
 - **PHP:** 7.4+
 - **WooCommerce izdanje:** WooCommerce 8.0+
 - **WC tested up to:** 11.1.2
-- **SIDRENA:** 1.0.7
+- **SIDRENA:** 1.0.8
 
 ---
 
@@ -407,13 +417,13 @@ Instalacijski paketi uključuju i edition-specific PDF upute generirane i vizual
 ## Build
 
 ~~~bash
-./tools/build-editions.sh 1.0.7 /tmp/sidrena-build
+./tools/build-editions.sh 1.0.8 /tmp/sidrena-build
 ~~~
 
 Dobivaju se dva čista instalacijska paketa:
 
-- <code>sidrena-wordpress-1.0.7.zip</code>
-- <code>sidrena-woocommerce-1.0.7.zip</code>
+- <code>sidrena-wordpress-1.0.8.zip</code>
+- <code>sidrena-woocommerce-1.0.8.zip</code>
 
 i pripadajuće <code>.sha256</code> kontrolne datoteke.
 
@@ -424,9 +434,9 @@ Production ZIP ne uključuje razvojne workflowe, source-only branding materijal,
 ## Preuzimanje
 
 <p align="center">
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.7/sidrena-wordpress-1.0.7.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.8/sidrena-wordpress-1.0.8.zip"><strong>⬇ SIDRENA — WordPress izdanje</strong></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.7/sidrena-woocommerce-1.0.7.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
+  <a href="https://github.com/bren-wp/SIDRENA/releases/download/v1.0.8/sidrena-woocommerce-1.0.8.zip"><strong>⬇ SIDRENA — WooCommerce izdanje</strong></a>
 </p>
 
 <p align="center">
