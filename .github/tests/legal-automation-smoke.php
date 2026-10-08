@@ -41,10 +41,10 @@ sidrena_legal_assert( false !== strpos( $compliance_source, 'return false !== $w
 sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Legal_Automation::normalize_settings' ), 'Compliance repair must reuse centralized legal setting normalization.' );
 sidrena_legal_assert( false !== strpos( $services_source, 'Sidrena_Pricelist::queue_regeneration();' ), 'Service price changes must queue cjenik regeneration.' );
 
-foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
+foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_110_2026_anchor_deferral', 'nn_110_2026_pricelist_deferral', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $source_key ), 'Legal source marker missing: ' . $source_key );
 }
-foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'enable_public_html', 'enable_rest_index', 'publish_manifest', 'strict_publication', 'publication_watch', 'daily_generation', 'Sidrena automatizacija treba održavati i CSV i XML izlaz' ) as $profile_key ) {
+foreach ( array( '2026-09-10', '2025-05-02', '2026-11-17', 'generate_csv', 'generate_xml', 'enable_public_html', 'enable_rest_index', 'publish_manifest', 'strict_publication', 'publication_watch', 'daily_generation', 'Sidrena automatizacija treba održavati i CSV i XML izlaz' ) as $profile_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $profile_key ), 'Automation profile marker missing: ' . $profile_key );
 }
 
