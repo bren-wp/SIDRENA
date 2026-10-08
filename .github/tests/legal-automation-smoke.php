@@ -41,7 +41,7 @@ sidrena_legal_assert( false !== strpos( $compliance_source, 'return false !== $w
 sidrena_legal_assert( false !== strpos( $compliance_source, 'Sidrena_Legal_Automation::normalize_settings' ), 'Compliance repair must reuse centralized legal setting normalization.' );
 sidrena_legal_assert( false !== strpos( $services_source, 'Sidrena_Pricelist::queue_regeneration();' ), 'Service price changes must queue cjenik regeneration.' );
 
-foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
+foreach ( array( 'nn_101_2026_anchor_price', 'nn_101_2026_public_pricelist', 'nn_110_2026_anchor_deferral', 'nn_110_2026_pricelist_deferral', 'nn_105_2026_retail_unit_price', 'mingo_2026_09_22_clarifications' ) as $source_key ) {
 	sidrena_legal_assert( false !== strpos( $compliance_source, $source_key ), 'Legal source marker missing: ' . $source_key );
 }
 foreach ( array( '2026-09-10', '2025-05-02', 'generate_csv', 'generate_xml', 'enable_public_html', 'enable_rest_index', 'publish_manifest', 'strict_publication', 'publication_watch', 'daily_generation', 'Sidrena automatizacija treba održavati i CSV i XML izlaz' ) as $profile_key ) {
@@ -55,6 +55,7 @@ foreach ( array( 'MAX_MESSAGE_BYTES', 'MAX_CONTEXT_BYTES', 'MAX_ROWS', 'table_ex
 	sidrena_legal_assert( false !== strpos( $audit_source, $marker ), 'Audit hardening marker missing: ' . $marker );
 }
 
+sidrena_legal_assert( false !== strpos( $utils_source, "'effective_date'          => defined( 'SIDRENA_RULES_EFFECTIVE' ) ? SIDRENA_RULES_EFFECTIVE : '2026-11-17'" ), 'NN 110/2026 effective date is missing from the legal ruleset.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "const STANDARD_REFERENCE_DATE = '2026-09-10';" ), 'Standard reference date is not locked in the legal ruleset.' );
 sidrena_legal_assert( false !== strpos( $utils_source, "const FMCG_REFERENCE_DATE     = '2025-05-02';" ), 'FMCG reference date is not locked in the legal ruleset.' );
 sidrena_legal_assert(

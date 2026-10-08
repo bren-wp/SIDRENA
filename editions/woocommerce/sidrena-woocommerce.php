@@ -35,8 +35,8 @@ unset( $sidrena_entry_file, $sidrena_guard_root );
 
 define( 'SIDRENA_VERSION', '1.0.6' );
 define( 'SIDRENA_EDITION', 'woocommerce' );
-define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 105/2026 · NN 59/2026 · MINGO 22.09.2026' );
-define( 'SIDRENA_RULES_EFFECTIVE', '2026-10-01' );
+define( 'SIDRENA_RULESET', 'NN 101/2026 · NN 110/2026 · NN 105/2026 · NN 59/2026 · MINGO 22.09.2026' );
+define( 'SIDRENA_RULES_EFFECTIVE', '2026-11-17' );
 define( 'SIDRENA_FILE', __FILE__ );
 define( 'SIDRENA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIDRENA_URL', plugin_dir_url( __FILE__ ) );

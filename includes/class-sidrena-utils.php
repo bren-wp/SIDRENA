@@ -15,21 +15,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Sidrena_Utils {
 	const STANDARD_REFERENCE_DATE = '2026-09-10';
 	const FMCG_REFERENCE_DATE     = '2025-05-02';
-	const LEGAL_VERIFIED_DATE     = '2026-09-29';
+	const LEGAL_VERIFIED_DATE     = '2026-10-08';
 	const ANCHOR_SOURCE_URL       = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html';
 	const PRICELIST_SOURCE_URL    = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html';
 	const LEGAL_CLARIFICATION_URL = 'https://mingo.gov.hr/print.aspx?id=10440&url=print';
+	const ANCHOR_AMENDMENT_URL    = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html';
+	const PRICELIST_AMENDMENT_URL = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1310.html';
 
 	public static function legal_ruleset() {
 		return array(
 			'id'                      => defined( 'SIDRENA_RULESET' ) ? SIDRENA_RULESET : 'SIDRENA legal ruleset',
 			'standard_reference_date' => self::STANDARD_REFERENCE_DATE,
 			'fmcg_reference_date'     => self::FMCG_REFERENCE_DATE,
+			'effective_date'          => defined( 'SIDRENA_RULES_EFFECTIVE' ) ? SIDRENA_RULES_EFFECTIVE : '2026-11-17',
 			'verified_date'           => self::LEGAL_VERIFIED_DATE,
 			'anchor_source'           => 'NN 101/2026-1212 · isticanje dodatne/sidrene cijene',
 			'anchor_source_url'       => self::ANCHOR_SOURCE_URL,
 			'pricelist_source'        => 'NN 101/2026-1213 · objava cjenika proizvoda i usluga',
 			'pricelist_source_url'    => self::PRICELIST_SOURCE_URL,
+			'anchor_amendment'        => 'NN 110/2026-1309 · odgoda primjene na 17.11.2026.',
+			'anchor_amendment_url'    => self::ANCHOR_AMENDMENT_URL,
+			'pricelist_amendment'     => 'NN 110/2026-1310 · odgoda primjene na 17.11.2026.',
+			'pricelist_amendment_url' => self::PRICELIST_AMENDMENT_URL,
 			'clarification_source'    => 'Ministarstvo gospodarstva · 22.09.2026.',
 			'clarification_url'       => self::LEGAL_CLARIFICATION_URL,
 		);
@@ -467,7 +474,7 @@ final class Sidrena_Utils {
 	}
 
 	public static function anchor_tooltip() {
-		return __( 'Sidrena cijena je dodatna cijena prema važećem SIDRENA rulesetu: cijena koja nije cijena u posebnom obliku prodaje i koja je bila primjenjiva na mjerodavni referentni datum. Za stvarno novouvedenu stavku koristi se dokazivi datum prvog uvrštenja.', 'sidrena' );
+		return __( 'Sidrena (dodatna) cijena nije popust, sniženje, ušteda ni najniža cijena u 30 dana. To je redovna cijena koja je vrijedila na propisani referentni datum, bez posebnih oblika prodaje. Za stvarno novouvedenu stavku koristi se dokazivi datum prvog uvrštenja.', 'sidrena' );
 	}
 
 	public static function upload_paths() {

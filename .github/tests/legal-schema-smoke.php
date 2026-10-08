@@ -108,7 +108,7 @@ sidrena_schema_assert( false !== strpos( $admin_source, 'Hrana i hrana za život
 sidrena_schema_assert( false !== strpos( $admin_source, 'Pakiranja ispod 50 g ili 50 ml' ), 'Unit-price exceptions guide is missing threshold exceptions.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'ne automatska pravna odluka' ), 'Unit-price guide must preserve human legal classification.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Ministarstvo gospodarstva · 22.09.2026.' ), 'Official MINGO clarification date must remain 22.09.2026.' );
-sidrena_schema_assert( false !== strpos( $utils_source, "const LEGAL_VERIFIED_DATE     = '2026-09-29';" ), 'Legal ruleset verification date must match the current review.' );
+sidrena_schema_assert( false !== strpos( $utils_source, "const LEGAL_VERIFIED_DATE     = '2026-10-08';" ), 'Legal ruleset verification date must match the current review.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const ANCHOR_SOURCE_URL       = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html';" ), 'SIDRENA anchor-price ruleset must link to the dedicated NN 101/2026-1212 decision.' );
 sidrena_schema_assert( false !== strpos( $utils_source, "const PRICELIST_SOURCE_URL    = 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html';" ), 'Digital-pricelist ruleset must link to the separate NN 101/2026-1213 decision.' );
 sidrena_schema_assert( false !== strpos( $admin_source, 'Izvor SIDRENA cijene' ) && false !== strpos( $admin_source, 'Izvor digitalnog cjenika' ), 'Settings must display the anchor-price and digital-pricelist legal sources separately.' );

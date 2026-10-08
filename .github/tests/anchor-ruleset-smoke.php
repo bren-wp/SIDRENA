@@ -61,6 +61,11 @@ function sidrena_ruleset_assert( $condition, $message ) {
 	}
 }
 
+$legal_ruleset = Sidrena_Utils::legal_ruleset();
+sidrena_ruleset_assert( '2026-11-17' === $legal_ruleset['effective_date'], 'The amended NN 110/2026 effective date must be 17.11.2026.' );
+sidrena_ruleset_assert( 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html' === $legal_ruleset['anchor_amendment_url'], 'Anchor legal amendment must link to official NN 110/2026.' );
+sidrena_ruleset_assert( 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1310.html' === $legal_ruleset['pricelist_amendment_url'], 'Pricelist legal amendment must link to official NN 110/2026.' );
+
 $settings = Sidrena_Utils::settings();
 sidrena_ruleset_assert( ! array_key_exists( 'default_ref_date', $settings ), 'Standard legal reference date must not exist in runtime settings.' );
 sidrena_ruleset_assert( ! array_key_exists( 'fmcg_ref_date', $settings ), 'FMCG legal reference date must not exist in runtime settings.' );

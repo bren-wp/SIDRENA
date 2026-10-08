@@ -433,10 +433,10 @@ final class Sidrena_Services {
 			}
 			$out         .= '</th>';
 			$current_text = '' === $current ? '—' : Sidrena_Utils::money( $current ) . ' €';
-			$anchor_text  = '' === $anchor ? '—' : Sidrena_Utils::money( $anchor ) . ' €';
+			$anchor_text  = '' === $anchor || '' === $date ? '—' : Sidrena_Utils::money( $anchor ) . ' €';
 			$out         .= '<td data-label="' . esc_attr__( 'Aktualna cijena', 'sidrena' ) . '">' . esc_html( $current_text ) . '</td>';
 			$out         .= '<td data-label="' . esc_attr__( 'Sidrena cijena', 'sidrena' ) . '">' . esc_html( $anchor_text );
-			if ( '' !== $anchor ) {
+			if ( '' !== $anchor && '' !== $date ) {
 				$out .= '<small>' . esc_html( Sidrena_Utils::anchor_label( $date ) ) . '</small>';
 			}
 			$out .= '</td>';
