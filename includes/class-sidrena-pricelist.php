@@ -332,19 +332,22 @@ final class Sidrena_Pricelist {
 		$errors    = array();
 		$generated = 0;
 
-		wp_mkdir_p( $paths['current_dir'] );
-		wp_mkdir_p( $paths['snapshot_dir'] );
+		if ( ! wp_mkdir_p( $paths['current_dir'] ) || ! wp_mkdir_p( $paths['snapshot_dir'] ) ) {
+			return $this->record_current_failure( __( 'Nije moguće stvoriti mapu za objavu. Provjerite dozvole wp-content/uploads/sidrena.', 'sidrena' ) );
+		}
 		$lock = $this->acquire_generation_lock( $paths );
 		if ( is_wp_error( $lock ) ) {
-			Sidrena_Audit::log( 'pricelist_current_refresh', 'warning', $lock->get_error_message(), array( 'code' => $lock->get_error_code() ) );
-			return false;
+			return $this->record_current_failure( $lock->get_error_message() );
 		}
 
 		try {
 			$timestamp = time();
 			$formats   = $this->formats( $settings );
 			if ( empty( $formats ) ) {
-				return false;
+				return $this->record_current_failure( __( 'CSV i XML izlaz su isključeni. Uključite barem jedan format u Postavkama.', 'sidrena' ) );
+			}
+			if ( ! array_filter( $locations, static function ( $location ) { return 'yes' === ( $location['enabled'] ?? '' ); } ) ) {
+				return $this->record_current_failure( __( 'Nema aktivne lokacije. Aktivirajte barem jednu lokaciju s valjanom adresom.', 'sidrena' ) );
 			}
 
 			foreach ( $locations as $location ) {
@@ -516,6 +519,22 @@ final class Sidrena_Pricelist {
 			);
 		}
 		return (bool) $sent;
+	}
+
+	/** Record early failures so the admin can see the real cause after redirect. */
+	private function record_current_failure( $message ) {
+		$message = sanitize_text_field( (string) $message );
+		update_option(
+			'sidrena_last_current_refresh',
+			array(
+				'generated_at' => wp_date( DATE_ATOM ),
+				'files'        => 0,
+				'errors'       => array( $message ),
+			),
+			false
+		);
+		Sidrena_Audit::log( 'pricelist_current_refresh', 'warning', $message, array( 'errors' => array( $message ) ) );
+		return false;
 	}
 
 	private function acquire_generation_lock( $paths ) {
