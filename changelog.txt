@@ -6,6 +6,13 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.8 =
+* Premium responzivni header, odgovarajući logotip za WordPress/WooCommerce i stabilne ikone u administraciji.
+* Jednim klikom dostupni Pregled, Katalog/Proizvodi, Usluge, Cjenici, Lokacije, Postavke i Pomoć; aktivna stranica i fokus tipkovnice.
+* Bolje poravnanje kartica, polja, prekidača, tipki, CSV/XML uvoza i urednika proizvoda/usluga u oba izdanja.
+* Ispravljen JS prikaz pogreške nevaljane datoteke, lokalizirane obavijesti o nespremljenim izmjenama i zaštita od dvostrukog slanja.
+* Prošireni UI regresijski testovi; sidrene cijene nisu akcijske cijene i pravni datumi ostaju nepromijenjeni.
+
 = 1.0.7 =
 * Ispravljena primjena novih Odluka NN 101/2026 od 17.11.2026. (NN 110/2026, 1309 i 1310).
 * Zaključani referentni datumi 10.09.2026. i 02.05.2025. ostaju nepromijenjeni.
