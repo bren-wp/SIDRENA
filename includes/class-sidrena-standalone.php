@@ -558,12 +558,23 @@ final class Sidrena_Standalone {
 	public function sync_linked_source_price_on_meta( $meta_id, $post_id, $meta_key, $value ) {
 		unset( $meta_id, $value );
 		$meta_key = (string) $meta_key;
-		if ( ! preg_match( '/(?:price|cijena)/i', $meta_key ) || 0 === strpos( $meta_key, '_sidrena_' ) ) {
+		if ( '' === $meta_key || 0 === strpos( $meta_key, '_sidrena_' ) ) {
 			return;
 		}
 		$post_id = absint( $post_id );
 		$post    = $post_id ? get_post( $post_id ) : null;
 		if ( ! $post instanceof WP_Post || in_array( $post->post_type, array( self::POST_TYPE, 'sidrena_service' ), true ) ) {
+			return;
+		}
+		$item_id = $this->linked_item_id( $post_id );
+		if ( ! $item_id ) {
+			return;
+		}
+		$tracked_key = sanitize_key( (string) get_post_meta( $item_id, '_sidrena_standalone_source_price_key', true ) );
+		// Third-party catalogs use arbitrary names (e.g. retail_amount).
+		// A linked item's configured source field is authoritative even if it
+		// does not contain the words "price" or "cijena".
+		if ( $meta_key !== $tracked_key && ! preg_match( '/(?:price|cijena)/i', $meta_key ) ) {
 			return;
 		}
 		$this->sync_linked_source_on_save( $post_id, $post, true );
