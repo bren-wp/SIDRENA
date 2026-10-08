@@ -36,10 +36,13 @@
 		return status;
 	}
 
-	function setFormStatus(form, text) {
+	function setFormStatus(form, text, isError) {
 		var status = ensureFormStatus(form);
 		if (status) {
 			status.textContent = text || '';
+			status.classList.toggle('is-error', !!isError);
+			status.setAttribute('role', isError ? 'alert' : 'status');
+			status.setAttribute('aria-live', isError ? 'assertive' : 'polite');
 		}
 	}
 
@@ -63,6 +66,23 @@
 		}
 		field.classList.remove('is-invalid');
 		field.removeAttribute('aria-invalid');
+	}
+
+	function syncFieldValidity(field) {
+		if (!field || !field.validity) {
+			return true;
+		}
+		if (field.validity.valid) {
+			clearInvalidState(field);
+			return true;
+		}
+		field.classList.add('is-invalid');
+		field.setAttribute('aria-invalid', 'true');
+		var form = field.form;
+		if (form && form.matches && form.matches(managedFormSelector)) {
+			setFormStatus(form, field.validationMessage || message('invalidField', 'Provjerite označeno polje i pokušajte ponovno.'), true);
+		}
+		return false;
 	}
 
 	function validateFileField(field) {
@@ -342,10 +362,12 @@
 			return;
 		}
 		validateFileField(target);
-		clearInvalidState(target);
+		if (!syncFieldValidity(target)) {
+			return;
+		}
 		var changedForm = target.form;
 		if (changedForm && changedForm.matches && changedForm.matches(managedFormSelector)) {
-			setFormStatus(changedForm, '');
+			setFormStatus(changedForm, message('unsavedChanges', 'Promjene nisu spremljene. Spremite obrazac kako bi postale aktivne.'));
 		}
 		if (target.matches && target.matches('.sid-location-enabled')) {
 			setLocationState(closest(target, '.sid-location'));
@@ -390,7 +412,7 @@
 		}
 		field.classList.add('is-invalid');
 		field.setAttribute('aria-invalid', 'true');
-		setFormStatus(form, field.validationMessage || message('invalidField', 'Provjerite označeno polje i pokušajte ponovno.'));
+		setFormStatus(form, field.validationMessage || message('invalidField', 'Provjerite označeno polje i pokušajte ponovno.'), true);
 	}, true);
 
 	document.addEventListener('input', function (event) {
@@ -398,10 +420,12 @@
 			event.target.classList.remove('is-suggested');
 		}
 		validateFileField(event.target);
-		clearInvalidState(event.target);
+		if (!syncFieldValidity(event.target)) {
+			return;
+		}
 		var form = event.target && event.target.form;
 		if (form && form.matches && form.matches(managedFormSelector)) {
-			setFormStatus(form, '');
+			setFormStatus(form, message('unsavedChanges', 'Promjene nisu spremljene. Spremite obrazac kako bi postale aktivne.'));
 		}
 	});
 
