@@ -358,9 +358,9 @@ final class Sidrena_Standalone {
 		if ( ! is_array( $state )
 			|| ! $run_id
 			|| ! hash_equals( (string) ( $state['run_id'] ?? '' ), $run_id )
-			|| $post_type !== ( $state['post_type'] ?? '' )
-			|| $price_key !== ( $state['price_key'] ?? '' )
-			|| $page !== absint( $state['page'] ?? 0 )
+			|| ( $state['post_type'] ?? '' ) !== $post_type
+			|| ( $state['price_key'] ?? '' ) !== $price_key
+			|| absint( $state['page'] ?? 0 ) !== $page
 			|| ! in_array( $state['status'] ?? '', array( 'queued', 'running' ), true )
 			|| ! post_type_exists( $post_type )
 			|| in_array( $post_type, array( 'attachment', self::POST_TYPE, 'sidrena_service' ), true ) ) {
