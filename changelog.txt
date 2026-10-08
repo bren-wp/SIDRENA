@@ -6,6 +6,13 @@ Support: sidrena@brendigo.com
 
 Sidrena changelog
 
+= 1.0.5 =
+* WordPress izdanje povlači postojeće proizvode/cijene i nudi automatsku ili ručnu sinkronizaciju bez WooCommercea.
+* Ručno postavljena trenutna cijena nije prepisana sljedećom sinkronizacijom; ne izmišlja se sidrena cijena.
+* WooCommerce koristi postojeće proizvode bez dupliciranja, uz pregled nedostajućih polja za objavu.
+* Generiranje cjenika prikazuje razlog neuspjeha i čuva zadnje valjane javne datoteke.
+* Zadržani zaključani referentni datumi, testirani PHP 7.4/8.3/8.4, WPCS/PHPStan i Plugin Check oba izdanja.
+
 = 1.0.4 =
 * Instalacijski WordPress paket sada koristi glavni PHP file usklađen s javnim slugom: brendigo-sidrene-cijene-digitalni-cjenici.php.
 * Instalacijski WooCommerce paket sada koristi glavni PHP file usklađen s javnim slugom: brendigo-sidrena-cijena.php.

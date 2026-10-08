@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,14 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.5 =
+
+* Existing WooCommerce products remain the canonical price and product source, without duplication.
+* Catalogue provides per-product missing-field guidance and links to publication/archive actions.
+* Current CSV/XML and archives show actionable publication errors and preserve previous valid files.
+* SIDRENA anchors remain separate from the current WooCommerce prices.
+
 
 = 1.0.4 =
 
