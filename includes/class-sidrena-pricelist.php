@@ -370,9 +370,9 @@ final class Sidrena_Pricelist {
 						}
 
 						$staged_files[ $filepath ] = $staging_path;
-						$hash               = is_file( $staging_path ) ? hash_file( 'sha256', $staging_path ) : '';
-						$bytes              = is_file( $staging_path ) ? filesize( $staging_path ) : 0;
-						$location_entries[] = array(
+						$hash                      = is_file( $staging_path ) ? hash_file( 'sha256', $staging_path ) : '';
+						$bytes                     = is_file( $staging_path ) ? filesize( $staging_path ) : 0;
+						$location_entries[]        = array(
 							'location_id'   => Sidrena_Utils::sanitize_location_id( $location['id'] ?? $location['location_id'] ?? '' ),
 							'location_code' => sanitize_text_field( $location['code'] ?? '' ),
 							'kind'          => sanitize_key( $location['kind'] ?? 'objekt' ),
