@@ -4,7 +4,7 @@ Tags: woocommerce, prices, price-list, croatia, csv
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,14 @@ No. It is completely optional. The plugin can be installed and configured indepe
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.7 =
+
+* Fixes the effective date of the two NN 101/2026 regulations to 17 November 2026 under NN 110/2026; 10 September 2026 and 2 May 2025 remain the fixed reference-price dates.
+* The anchor (additional/reference) price is not a discount, a saving, or the lowest 30-day promotional price.
+* WooCommerce variable products show historical reference-price ranges separately for each actual reference date; invalid first-listing dates are never displayed as valid historical references.
+* Legal sources, admin labels, product and service output, and regression tests are aligned with official amendments.
+
 
 = 1.0.6 =
 
