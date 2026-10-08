@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.6 =
+
+* Prevents stale scheduled WP-Cron import batches from an old WordPress source catalog sync corrupting the current sync.
+* Every import has a unique session token and enforces the expected content type, price key, page and active state.
+* Duplicate batches and jobs from completed runs are safely ignored without modifying products or their verified anchor prices.
+* Both editions retain the same CSV/XML publication rules and unchanged price data schema.
+
 
 = 1.0.5 =
 
