@@ -4,7 +4,7 @@ Tags: prices, price-list, croatia, csv, xml
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,14 @@ No. It is a completely optional service. The plugin can be installed and configu
 6. Support, documentation, and optional services.
 
 == Changelog ==
+
+= 1.0.5 =
+
+* Existing WordPress content can be linked to the standalone catalogue with automatic or manual live-price synchronization.
+* Explicit price meta keys are respected; price updates saved after save_post are tracked.
+* Anchor prices remain independent of live prices and reference dates are never inferred.
+* Current CSV/XML and archives show actionable publication errors and preserve previous valid files.
+
 
 = 1.0.4 =
 
