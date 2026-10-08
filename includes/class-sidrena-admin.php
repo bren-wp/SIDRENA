@@ -296,7 +296,8 @@ final class Sidrena_Admin {
 		$notice = sanitize_key( wp_unslash( $_GET['sid_notice'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$messages = array(
 			'saved'                    => array( 'success', __( 'Promjene su spremljene.', 'sidrena' ) ),
-			'generated'                => array( 'success', __( 'Novi cjenici su generirani i dodani u javnu arhivu.', 'sidrena' ) ),
+			'generated'                => array( 'success', __( 'Aktualni javni cjenik je uspješno osvježen.', 'sidrena' ) ),
+			'archive_generated'       => array( 'success', __( 'Dnevni cjenici su generirani i objavljeni u arhivi.', 'sidrena' ) ),
 			'generated_with_errors'    => array( 'warning', __( 'Osvježavanje nije potpuno uspjelo. Pogledajte razloge i ispravite podatke; posljednje valjane datoteke ostaju dostupne.', 'sidrena' ) ),
 			'archive_with_errors'      => array( 'warning', __( 'Objava dnevne arhive nije potpuno uspjela. Detalji su navedeni u nastavku.', 'sidrena' ) ),
 			'imported'                 => array( 'success', __( 'Uvoz sidrenih cijena je dovršen.', 'sidrena' ) ),
@@ -1179,7 +1180,9 @@ final class Sidrena_Admin {
 
 			<?php
 			// Keep detailed diagnostics on the cjenici screen if the notice was dismissed.
-			$last_attempt = is_array( $current_refresh ) && ! empty( $current_refresh['errors'] ) ? $current_refresh : $last;
+			$current_attempt_ts = is_array( $current_refresh ) ? strtotime( (string) ( $current_refresh['generated_at'] ?? '' ) ) : 0;
+			$archive_attempt_ts = is_array( $last ) ? strtotime( (string) ( $last['generated_at'] ?? '' ) ) : 0;
+			$last_attempt = $current_attempt_ts >= $archive_attempt_ts ? $current_refresh : $last;
 			if ( is_array( $last_attempt ) && ! empty( $last_attempt['errors'] ) ) :
 				?>
 				<section class="sid-card sid-note sid-note-warning" role="status">
@@ -1819,7 +1822,7 @@ final class Sidrena_Admin {
 			wp_die( esc_html__( 'Nedopušten zahtjev.', 'sidrena' ) );
 		}
 		$success = Sidrena_Pricelist::instance()->publish_daily_archive();
-		$this->redirect( 'files', $success ? 'generated' : 'archive_with_errors' );
+		$this->redirect( 'files', $success ? 'archive_generated' : 'archive_with_errors' );
 	}
 
 	public function create_public_page() {
