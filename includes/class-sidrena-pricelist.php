@@ -736,6 +736,7 @@ final class Sidrena_Pricelist {
 			'marka'               => __( 'marka', 'sidrena' ),
 			'maloprodajna_cijena' => __( 'maloprodajna cijena', 'sidrena' ),
 			'sidrena_cijena'      => __( 'sidrena cijena', 'sidrena' ),
+			'barkod'              => __( 'barkod robe', 'sidrena' ),
 			'dostupnost'          => __( 'dostupnost', 'sidrena' ),
 		);
 		if ( '' === $name ) {
