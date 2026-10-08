@@ -47,12 +47,12 @@ final class Sidrena_Compliance {
 				'date'  => '2026-09-11',
 				'note'  => 'Objava važećih cjenika proizvoda i usluga na mrežnim stranicama trgovca odnosno pružatelja usluge.',
 			),
-			'nn_110_2026_anchor_deferral'      => array(
+			'nn_110_2026_anchor_deferral'     => array(
 				'label' => 'NN 110/2026-1309, izmjena datuma stupanja na snagu Odluke o dodatnoj/sidrenoj cijeni',
 				'date'  => '2026-09-29',
 				'note'  => 'Obveza po NN 101/2026-1212 stupa na snagu 17.11.2026.; referentni datumi 10.09.2026. i 02.05.2025. ostaju nepromijenjeni.',
 			),
-			'nn_110_2026_pricelist_deferral'   => array(
+			'nn_110_2026_pricelist_deferral'  => array(
 				'label' => 'NN 110/2026-1310, izmjena datuma stupanja na snagu Odluke o javnom cjeniku',
 				'date'  => '2026-09-29',
 				'note'  => 'Obveza objave cjenika po NN 101/2026-1213 stupa na snagu 17.11.2026. Postojeće obveze do tada nisu ukinute.',
