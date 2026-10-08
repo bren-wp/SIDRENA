@@ -38,6 +38,7 @@ $GLOBALS['sidrena_titles'] = array( 100 => 'Existing product', 200 => 'Existing 
 $GLOBALS['sidrena_status'] = array( 100 => 'publish', 200 => 'publish' );
 $GLOBALS['sidrena_regen'] = 0;
 
+function __( $text, $domain = 'sidrena' ) { unset( $domain ); return $text; }
 function absint( $value ) { return abs( (int) $value ); }
 function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $value ) ); }
 function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
