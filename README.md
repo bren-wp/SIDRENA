@@ -43,6 +43,7 @@ Izdanje **1.0.9** dodatno štiti korisničke javne cjenike i sinkronizaciju cije
 
 - **Pouzdana objava:** prije objave aktualnog cjenika pripremaju se CSV i XML, provjeravaju podaci i čuvaju prethodne valjane datoteke dok cijela objava ne uspije.
 - **Povrat pri pogrešci:** ako drugi format ili javna snimka ne uspije, prethodni objavljeni CSV/XML vraćaju se bez djelomičnog objavljivanja.
+- **Obvezni podaci proizvoda:** nepotpuni proizvodi bez barkoda robe ne objavljuju se u CSV/XML cjenicima; korisnik dobiva upozorenje s poljem koje treba popuniti.
 - **Postojeći proizvodi:** sinkroniziraju se odabrana korisnička metapolja cijena, i kada ne sadrže riječi `price` ili `cijena`; uklanjanje izvornog iznosa uklanja zastarjelu aktualnu cijenu.
 - **Sidrena cijena ostaje odvojena:** izvorni današnji iznos ne može promijeniti povijesnu sidrenu cijenu niti se sidrena cijena predstavlja kao sniženje.
 - **QA:** PHP 7.4/8.3/8.4, statička analiza, Plugin Check i regresijski testovi stvarnog CSV/XML roll-backa.
