@@ -150,7 +150,17 @@ final class Sidrena_Bulk {
 							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product_type_label ); ?></span></td>
 							<td><code><?php echo esc_html( $sku ? $sku : '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
-							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"><?php if ( $missing ) : ?><small class="sid-cell-sub"><?php echo esc_html( sprintf( /* translators: %s: list of missing fields. */ __( 'Provjeriti: %s', 'sidrena' ), implode( ', ', $missing ) ) ); ?></small><?php endif; ?></td>
+							<td>
+								<input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>">
+								<?php if ( $missing ) : ?>
+									<small class="sid-cell-sub">
+									<?php
+									/* translators: %s: list of missing fields. */
+									echo esc_html( sprintf( __( 'Provjeriti: %s', 'sidrena' ), implode( ', ', $missing ) ) );
+									?>
+									</small>
+								<?php endif; ?>
+							</td>
 							<td><strong><?php echo esc_html( Sidrena_Utils::date_display( $anchor_date ) ); ?></strong><small class="sid-cell-sub"><?php esc_html_e( 'Zaključano SIDRENA pravilima', 'sidrena' ); ?></small></td>
 							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span>
 							<?php
