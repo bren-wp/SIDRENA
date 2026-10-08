@@ -161,7 +161,7 @@ final class Sidrena_Bulk {
 						<tr class="sid-woo-product-details-row">
 							<td colspan="6">
 								<details class="sid-row-details">
-									<summary><span class="dashicons dashicons-admin-generic"></span><?php echo $missing ? esc_html__( 'Dopuni podatke za objavu', 'sidrena' ) : esc_html__( 'Dodatni podaci i postavke', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'Šifra, marka, jedinična cijena i pravila javnog cjenika', 'sidrena' ); ?></span></summary>
+									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'Šifra, marka, jedinična cijena i pravila javnog cjenika', 'sidrena' ); ?></span></summary>
 									<div class="sid-row-details__grid">
 										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
