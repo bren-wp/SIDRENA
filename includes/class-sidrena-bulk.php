@@ -75,9 +75,9 @@ final class Sidrena_Bulk {
 			<div>
 				<span class="sid-kicker"><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></span>
 				<h2><?php esc_html_e( 'Proizvodi web trgovine', 'sidrena' ); ?></h2>
-				<p><?php esc_html_e( 'SIDRENA koristi postojeći katalog web trgovine kao izvor podataka. Nema dupliciranja proizvoda; ovdje uređujete samo SIDRENA podatke potrebne za cjenik i prikaz cijena.', 'sidrena' ); ?></p>
+				<p><?php esc_html_e( 'Postojeći WooCommerce proizvodi i njihove aktualne cijene automatski se koriste bez uvoza i dupliciranja. Ovdje unesite stvarnu sidrenu cijenu na zaključani referentni datum te dopunite obvezna polja prije objave.', 'sidrena' ); ?></p>
 			</div>
-			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori proizvode trgovine', 'sidrena' ); ?></a></div>
+			<div class="sid-head-inline-actions"><span class="sid-status-pill <?php echo $total > 0 ? 'is-ok' : 'is-warn'; ?>"><?php echo esc_html( $product_count_caption ); ?></span><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Otvori proizvode trgovine', 'sidrena' ); ?></a><a class="button sid-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=sidrena-files' ) ); ?>"><span class="dashicons dashicons-media-spreadsheet" aria-hidden="true"></span><?php esc_html_e( 'Objava cjenika i arhiva', 'sidrena' ); ?></a></div>
 		</div>
 
 		<section class="sid-card sid-reference-panel sid-woo-catalog-summary">
@@ -127,12 +127,30 @@ final class Sidrena_Bulk {
 						$group              = get_post_meta( $id, '_sidrena_reference_group', true );
 						$unit_status_raw    = get_post_meta( $id, '_sidrena_unit_price_status', true );
 						$unit_status        = $unit_status_raw ? $unit_status_raw : 'review';
+						$missing            = array();
+						if ( '' === Sidrena_Utils::decimal( $anchor ) ) {
+							$missing[] = __( 'sidrena cijena', 'sidrena' );
+						}
+						if ( '' === Sidrena_Utils::decimal( $price ) ) {
+							$missing[] = __( 'trenutna cijena', 'sidrena' );
+						}
+						if ( '' === trim( (string) Sidrena_Utils::get_product_code( $product ) ) ) {
+							$missing[] = __( 'šifra', 'sidrena' );
+						}
+						if ( '' === trim( (string) Sidrena_Utils::get_brand( $product ) ) ) {
+							$missing[] = __( 'marka', 'sidrena' );
+						}
+						if ( 'review' === $unit_status || '' === $unit_status ) {
+							$missing[] = __( 'odluka o jediničnoj cijeni', 'sidrena' );
+						} elseif ( 'required' === $unit_status && ( '' === trim( (string) get_post_meta( $id, '_sidrena_unit', true ) ) || '' === Sidrena_Utils::decimal( get_post_meta( $id, '_sidrena_unit_price', true ) ) ) ) {
+							$missing[] = __( 'iznos i jedinica jedinične cijene', 'sidrena' );
+						}
 						?>
 						<tr class="sid-woo-product-row">
 							<td><strong><?php echo esc_html( $product->get_name() ); ?></strong><span class="sid-bulk-meta">#<?php echo esc_html( $id ); ?> · <?php echo esc_html( $product_type_label ); ?></span></td>
 							<td><code><?php echo esc_html( $sku ? $sku : '—' ); ?></code></td>
 							<td><strong class="sid-woo-current-price"><?php echo '' !== $price ? wp_kses_post( wc_price( (float) $price ) ) : '—'; ?></strong></td>
-							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"></td>
+							<td><input aria-label="<?php esc_attr_e( 'Sidrena cijena', 'sidrena' ); ?>" type="number" min="0" step="0.01" name="items[<?php echo esc_attr( $id ); ?>][anchor]" value="<?php echo esc_attr( $anchor ); ?>"><?php if ( $missing ) : ?><small class="sid-cell-sub"><?php echo esc_html( sprintf( /* translators: %s: list of missing fields. */ __( 'Provjeriti: %s', 'sidrena' ), implode( ', ', $missing ) ) ); ?></small><?php endif; ?></td>
 							<td><strong><?php echo esc_html( Sidrena_Utils::date_display( $anchor_date ) ); ?></strong><small class="sid-cell-sub"><?php esc_html_e( 'Zaključano SIDRENA pravilima', 'sidrena' ); ?></small></td>
 							<td><span class="sid-status-pill <?php echo $public_included ? 'is-ok' : 'is-warn'; ?>"><?php echo $public_included ? esc_html__( 'Uključen', 'sidrena' ) : esc_html__( 'Isključen', 'sidrena' ); ?></span>
 							<?php
@@ -143,7 +161,7 @@ final class Sidrena_Bulk {
 						<tr class="sid-woo-product-details-row">
 							<td colspan="6">
 								<details class="sid-row-details">
-									<summary><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Napredna SIDRENA polja', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'šifra, marka, barkod, jedinice i pravilo javnog cjenika', 'sidrena' ); ?></span></summary>
+									<summary><span class="dashicons dashicons-admin-generic"></span><?php echo $missing ? esc_html__( 'Dopuni podatke za objavu', 'sidrena' ) : esc_html__( 'Dodatni podaci i postavke', 'sidrena' ); ?><span class="sid-row-details__hint"><?php esc_html_e( 'Šifra, marka, jedinična cijena i pravila javnog cjenika', 'sidrena' ); ?></span></summary>
 									<div class="sid-row-details__grid">
 										<label><span><?php esc_html_e( 'Šifra', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][code]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_code', true ) ); ?>" placeholder="<?php echo esc_attr( $sku ); ?>" data-sidrena-safe-fill="code" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['code'] ?? '' ); ?>"></label>
 										<label><span><?php esc_html_e( 'Marka', 'sidrena' ); ?></span><input type="text" name="items[<?php echo esc_attr( $id ); ?>][brand]" value="<?php echo esc_attr( get_post_meta( $id, '_sidrena_brand', true ) ); ?>" data-sidrena-safe-fill="brand" data-sidrena-suggest="<?php echo esc_attr( $safe_suggestions['brand'] ?? '' ); ?>"></label>
