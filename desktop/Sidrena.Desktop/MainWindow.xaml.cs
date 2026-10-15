@@ -33,6 +33,29 @@ public partial class MainWindow : Window
         _prices=new PriceStore(_databasePath);
         _workspace=new WorkspaceStore(_databasePath);
         Navigate("Pregled");
+        if(Environment.GetEnvironmentVariable("SIDRENA_UI_SMOKE")=="1")
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                string marker=Path.Combine(Path.GetDirectoryName(_databasePath)!, "ui-smoke.ok");
+                try
+                {
+                    foreach(var page in new[]{"Pregled","Artikli","Usluge","Povijest cijena","Cjenici",
+                        "Lokacije","Sinkronizacija","Arhiva","Postavke","Pomoć"})
+                    {
+                        Navigate(page);
+                        PageHost.UpdateLayout();
+                    }
+                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed.");
+                    Application.Current.Shutdown(0);
+                }
+                catch(Exception ex)
+                {
+                    File.WriteAllText(marker,"UI smoke failure: "+ex);
+                    Application.Current.Shutdown(1);
+                }
+            }),System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
     }
 
     private void OnNavigate(object sender,RoutedEventArgs e)
