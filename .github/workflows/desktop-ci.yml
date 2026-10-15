@@ -57,11 +57,15 @@ jobs:
           $exe = (Resolve-Path 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe').Path
           $process = Start-Process -FilePath $exe -PassThru
           try {
-            Start-Sleep -Seconds 5
-            $process.Refresh()
-            if ($process.HasExited) { throw "SIDRENA exited during startup (exit code $($process.ExitCode))." }
             $db = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/sidrena.db'
-            if (!(Test-Path $db)) { throw 'SIDRENA did not initialize the local catalogue.' }
+            $initialized = $false
+            for ($attempt = 1; $attempt -le 35; $attempt++) {
+              $process.Refresh()
+              if ($process.HasExited) { throw "SIDRENA exited during startup (exit code $($process.ExitCode))." }
+              if (Test-Path $db) { $initialized = $true; break }
+              Start-Sleep -Seconds 1
+            }
+            if (!$initialized) { throw "SIDRENA stayed open but did not initialize the local catalogue within 35 seconds ($db)." }
           } finally {
             if (!$process.HasExited) { Stop-Process -Id $process.Id -Force }
           }
