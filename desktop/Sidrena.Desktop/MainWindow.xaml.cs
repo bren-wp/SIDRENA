@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -174,12 +175,15 @@ public partial class MainWindow : Window
     private UIElement BuildCatalog(string kind)
     {
         var outer=U.Vertical();
+        Expander? newItemExpander=null;
         var filter=U.Horizontal();
         var search=U.Box("Pretražite naziv, šifru ili barkod",325);
+        var anchorFilter=U.Choice("Sve stavke","Potvrđena sidrena","Sidrena nije potvrđena");
+        filter.Children.Add(U.Field("Referentna cijena",anchorFilter));
         filter.Children.Add(U.Field("Pretraživanje",search));
         filter.Children.Add(U.Action("+  "+(kind=="Proizvod"?"Novi artikl":"Nova usluga"),
-            ()=>{ PageScroll.ScrollToBottom(); },true));
-        filter.Children.Add(U.Action("Uvoz CSV",()=>ShowUpcoming("CSV uvoz s provjerom sukoba")));
+            ()=>{if(newItemExpander!=null)newItemExpander.IsExpanded=true;PageScroll.ScrollToBottom();},true));
+        filter.Children.Add(U.Action("Uvoz CSV",()=>ImportCatalogCsv(Reload)));
         outer.Children.Add(U.Card(kind=="Proizvod"?"Katalog artikala":"Katalog usluga",filter));
         var grid=U.Grid(("Naziv","Name",0),("Šifra","Sku",100),("Barkod","Barcode",130),
             ("Aktualna","Current",100),("Sidrena","Anchor",119),("Referentni datum","AnchorDate",137));
@@ -190,9 +194,11 @@ public partial class MainWindow : Window
                 (x.Name.Contains(pattern,StringComparison.CurrentCultureIgnoreCase)
                 || x.Sku.Contains(pattern,StringComparison.OrdinalIgnoreCase)
                 || x.Barcode.Contains(pattern,StringComparison.OrdinalIgnoreCase)))
+                .Where(x=>anchorFilter.SelectedIndex switch {1=>x.AnchorCents.HasValue,2=>!x.AnchorCents.HasValue,_=>true})
                 .Select(AsItemRow).ToList();
         }
         search.TextChanged+=(_,_)=>Reload();
+        anchorFilter.SelectionChanged+=(_,_)=>Reload();
         Reload();
 
         var current=U.Box("Aktualna cijena",110);
@@ -239,8 +245,82 @@ public partial class MainWindow : Window
                 Reload();Status("Stavka je spremljena u lokalni katalog.");
             }catch(Exception ex)when(ex is ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
-        outer.Children.Add(U.Split(left,U.Card("Nova stavka — detalji i cijene",rightFields)));
+        // Reference detail drawer: edit only descriptive fields. Current/anchor prices use their own audited workflows.
+        var chosen=U.Text("Odaberite redak u tablici za uređivanje podataka.",13,true);
+        var eName=U.Box("Naziv odabrane stavke",260);
+        var eSku=U.Box("Šifra",145);
+        var eBarcode=U.Box("Barkod",165);
+        var eUnit=U.Box("Jedinica",115);
+        var eReason=U.Box("Razlog izmjene metapodataka",260);
+        var locked=U.Muted("Sidrena cijena i aktualna cijena mogu se mijenjati samo kroz odgovarajuće postupke.");
+        var editor=U.Vertical();
+        editor.Children.Add(chosen);
+        editor.Children.Add(U.Field("Naziv",eName));
+        var editLine=U.Horizontal();
+        editLine.Children.Add(U.Field("Šifra",eSku));
+        editLine.Children.Add(U.Field("Barkod",eBarcode));
+        editor.Children.Add(editLine);
+        editor.Children.Add(U.Field("Jedinica mjere",eUnit));
+        editor.Children.Add(locked);
+        editor.Children.Add(U.Field("Razlog izmjene *",eReason));
+        editor.Children.Add(U.Action("Spremi podatke odabrane stavke",()=>{
+            if(grid.SelectedItem is not ItemRow selected){Status("Odaberite stavku u tablici.");return;}
+            try
+            {
+                _prices.UpdateItemDetails(selected.Id,eName.Text,eSku.Text,eBarcode.Text,eUnit.Text,eReason.Text);
+                Reload();eReason.Clear();
+                Status("Podaci su spremljeni, a audit izmjene ostaje zabilježen. Cijene i sidrene reference nisu promijenjene.");
+            }
+            catch(Exception ex)when(ex is ArgumentException or KeyNotFoundException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
+        },true));
+        grid.SelectionChanged+=(_,_)=>{
+            if(grid.SelectedItem is not ItemRow selected)return;
+            var item=_prices.ListItems().FirstOrDefault(x=>x.Id==selected.Id);
+            if(item is null)return;
+            chosen.Text=item.Name+"  ·  "+item.Kind;
+            eName.Text=item.Name;eSku.Text=item.Sku;eBarcode.Text=item.Barcode;eUnit.Text=item.Unit;
+            eReason.Clear();
+            locked.Text=$"Aktualna: {Euro(item.CurrentCents)} · Sidrena: "+
+                (item.AnchorCents.HasValue?Euro(item.AnchorCents.Value):"nije potvrđena")+
+                $" · Datum: {DateText(item.AnchorDate)}\nPovijesni iznos i datum nisu uređivi u ovom obrascu.";
+        };
+        var right=U.Vertical();
+        right.Children.Add(U.Card("Odabrana stavka — detalji",editor));
+        newItemExpander=new Expander {
+            Header="✚  Unos novog artikla ili usluge",IsExpanded=false,
+            Foreground=Brush("TextBrush"),Background=Brush("SurfaceBrush"),
+            Padding=new Thickness(6),Margin=new Thickness(0,0,0,15),
+            Content=U.Card("Nova stavka — detalji i cijene",rightFields)
+        };
+        right.Children.Add(newItemExpander);
+        outer.Children.Add(U.Split(left,right));
         return outer;
+    }
+
+    private void ImportCatalogCsv(Action refresh)
+    {
+        var dialog=new OpenFileDialog { Title="Uvezi radni SIDRENA CSV katalog",Filter="Radni CSV (*.csv)|*.csv",
+            CheckFileExists=true,Multiselect=false };
+        if(dialog.ShowDialog(this)!=true)return;
+        try
+        {
+            var rows=CatalogCsv.ReadPreview(dialog.FileName);
+            var review=_prices.ReviewImportRows(rows);
+            var answer=MessageBox.Show(this,
+                $"Provjereni CSV: {review.Total} stavki.\nProizvodi: {review.Products}, usluge: {review.Services}.\n"+
+                "Postojeći proizvodi, cijene i povijest neće biti promijenjeni.\n"+
+                "Uvoz dodaje isključivo nove šifre. Nastaviti?",
+                "SIDRENA — potvrda uvoza",MessageBoxButton.YesNo,MessageBoxImage.Question);
+            if(answer!=MessageBoxResult.Yes)return;
+            int imported=_prices.ImportNewRows(rows);
+            refresh();
+            Status($"Uvezeno {imported} novih stavki. Postojeće cijene i sidrene reference nisu izmijenjene.");
+        }
+        catch(Exception ex)when(ex is ArgumentException or IOException or UnauthorizedAccessException or
+            DecoderFallbackException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            Error(ex);
+        }
     }
 
     private UIElement BuildHistory()
