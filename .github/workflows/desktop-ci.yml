@@ -1,0 +1,73 @@
+# Sidrena source file.
+# Author: brendigo
+# Author URI: https://brendigo.com/
+# Plugin URI: https://brendigo.com/sidrene-cijene/
+# Support: sidrena@brendigo.com
+
+name: SIDRENA Desktop build and smoke test
+
+on:
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-build:
+    name: Windows build, local-data smoke, portable package
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore Windows app
+        run: dotnet restore desktop/Sidrena.Desktop/Sidrena.Desktop.csproj
+      - name: Build Windows app
+        run: dotnet build desktop/Sidrena.Desktop/Sidrena.Desktop.csproj -c Release --no-restore
+      - name: Run independent local catalogue smoke tests
+        run: dotnet run --project desktop/Sidrena.Tests/Sidrena.Tests.csproj -c Release
+      - name: Publish portable Windows x64 app
+        run: >
+          dotnet publish desktop/Sidrena.Desktop/Sidrena.Desktop.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -o artifacts/sidrena-desktop-win-x64
+      - name: Verify portable executable
+        shell: pwsh
+        run: |
+          $exe = 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe'
+          if (!(Test-Path $exe)) { throw "Missing $exe" }
+          if ((Get-Item $exe).Length -lt 100000) { throw 'Portable executable unexpectedly small' }
+      - name: Portable executable startup smoke test
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe').Path
+          $process = Start-Process -FilePath $exe -PassThru
+          try {
+            Start-Sleep -Seconds 5
+            $process.Refresh()
+            if ($process.HasExited) { throw "SIDRENA exited during startup (exit code $($process.ExitCode))." }
+            $db = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/sidrena.db'
+            if (!(Test-Path $db)) { throw 'SIDRENA did not initialize the local catalogue.' }
+          } finally {
+            if (!$process.HasExited) { Stop-Process -Id $process.Id -Force }
+          }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SIDRENA-Desktop-win-x64-portable
+          path: artifacts/sidrena-desktop-win-x64/
+          if-no-files-found: error
+          retention-days: 14
