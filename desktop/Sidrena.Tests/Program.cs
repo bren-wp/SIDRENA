@@ -1,5 +1,6 @@
 using Sidrena.Core;
 
+int passed = 0;
 var folder = Path.Combine(Path.GetTempPath(), "sidrena-tests-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(folder);
 try
@@ -58,15 +59,71 @@ try
         Expect(reopened.ListItems().Count == 2, "Durable database");
         Expect(reopened.ListChanges(id).Count == 1, "Durable audit trail");
     }
-    Console.WriteLine("SIDRENA Desktop: 22 provjere uspješno.");
+    // Catalog editing must never alter the historical reference or current price.
+    using (var editable = new PriceStore(file))
+    {
+        editable.UpdateItemDetails(id, "Mlijeko punomasno", "SKU-EDIT", "3851234567890", "l", "Ispravak naziva");
+        var edited = editable.ListItems().Single(x => x.Id == id);
+        Expect(edited.Name == "Mlijeko punomasno" && edited.Sku == "SKU-EDIT", "Metadata changes persisted");
+        Expect(edited.CurrentCents == 249 && edited.AnchorCents == 210, "Edit preserves price and anchor");
+        Expect(editable.ListMetadataChanges(id).Count == 1, "Metadata has its own audit");
+        editable.UpdateItemDetails(id, "Mlijeko punomasno", "SKU-EDIT", "3851234567890", "l", "Bez promjene");
+        Expect(editable.ListMetadataChanges(id).Count == 1, "Unchanged metadata does not create audit");
+        MustThrow(() => editable.UpdateItemDetails(id, "", "sku", "", "", "Invalid name"));
+        Expect(editable.ListItems().Single(x => x.Id == id).Name == "Mlijeko punomasno", "Invalid edit rolled back");
+        editable.AddItem("Drugi proizvod", "Proizvod", "OTHER", "", "kom", 1m, null, null, null);
+        MustThrow(() => editable.UpdateItemDetails(id, "Mlijeko", "other", "", "l", "Sukob"));
+        Expect(editable.ListItems().Single(x => x.Id == id).Sku == "SKU-EDIT", "Duplicate SKU cannot overwrite");
+    }
+    // Import preview must preserve quoted delimiters and be all-or-nothing.
+    using (var source = new PriceStore(Path.Combine(folder, "source.db")))
+    {
+        source.AddItem("Kruh; \"tost\"", "Proizvod", "BREAD-10", "", "kom",
+            2.49m, 1.99m, "2026-09-10", "Fiskalni račun");
+        source.AddItem("Šišanje", "Usluga", "SERVICE-1", "", "kom", 15m, null, null, null);
+        var sourceCsv = Path.Combine(folder, "source.csv");
+        DraftExport.Csv(source.ListItems(), sourceCsv);
+        var preview = CatalogCsv.ReadPreview(sourceCsv);
+        Expect(preview.Count == 2, "Preview count");
+        Expect(preview.Any(x => x.Name == "Kruh; \"tost\""), "CSV preview quoted delimiters");
+        Expect(preview.Single(x => x.Sku == "BREAD-10").AnchorPrice == 1.99m, "Read anchor without fabrication");
+        using var destination = new PriceStore(Path.Combine(folder, "destination.db"));
+        Expect(destination.ImportNewRows(preview) == 2, "Transactional import inserted both rows");
+        Expect(destination.ListItems().Count == 2, "Imported catalogue count");
+        MustThrow(() => destination.ImportNewRows(preview));
+        Expect(destination.ListItems().Count == 2, "Duplicate import leaves catalogue untouched");
+        var two = new List<CatalogImportRow>{
+            new("Usluga","Dodatna usluga","TEMP-1","","kom",12m,null,null,null),
+            new("Proizvod","Sukob", "BREAD-10", "", "kom",2m,null,null,null)
+        };
+        MustThrow(() => destination.ImportNewRows(two));
+        Expect(destination.ListItems().Count == 2, "Batch collision rolls back all");
+        var invalid = new List<CatalogImportRow>{
+            new("Proizvod","Nova", "TEST-1", "", "kom",2m,null,null,null),
+            new("Proizvod","Lažni povijesni datum", "TEST-2", "", "kom",2m,1m,"2025-10-15","Nepoznato")
+        };
+        MustThrow(() => destination.ImportNewRows(invalid));
+        Expect(destination.ListItems().Count == 2, "Invalid anchor rolls back entire batch");
+        File.WriteAllText(Path.Combine(folder, "invalid.csv"), "VRSTA;NAZIV;SIFRA\nProizvod;Mlijeko;SKU");
+        MustThrow(() => CatalogCsv.ReadPreview(Path.Combine(folder, "invalid.csv")));
+        File.WriteAllText(Path.Combine(folder, "broken.csv"),
+            CatalogCsv.Header+"\n\"Proizvod;Unclosed;SKU\n");
+        MustThrow(() => CatalogCsv.ReadPreview(Path.Combine(folder, "broken.csv")));
+    }
+    Console.WriteLine($"SIDRENA Desktop: {passed} provjera uspješno.");
 }
 finally
 {
     try { Directory.Delete(folder, true); } catch (IOException) { }
 }
-static void Expect(bool ok, string message) { if (!ok) throw new Exception(message); }
-static void MustThrow(Action action)
+void Expect(bool ok, string message)
 {
-    try { action(); } catch (ArgumentException) { return; }
+    if (!ok) throw new Exception(message);
+    passed++;
+}
+void MustThrow(Action action)
+{
+    try { action(); }
+    catch (ArgumentException) { passed++; return; }
     throw new Exception("Missing validation");
 }
