@@ -1,3 +1,11 @@
+<!--
+Sidrena source file.
+Author: brendigo
+Author URI: https://brendigo.com/
+Plugin URI: https://brendigo.com/sidrene-cijene/
+Support: sidrena@brendigo.com
+-->
+
 # SIDRENA Desktop — lokalno upravljanje cijenama
 
 SIDRENA Desktop je **izdvojeni Windows 10/11 modul** unutar postojećeg SIDRENA projekta.
