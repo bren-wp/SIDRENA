@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        ConfigureNavigationIcons();
         _databasePath=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Brendigo","SIDRENA","sidrena.db");
         _prices=new PriceStore(_databasePath);
@@ -91,6 +92,7 @@ public partial class MainWindow : Window
             nav.Foreground=active?Brush("AccentBrush"):Brush("TextBrush");
             nav.FontWeight=active?FontWeights.Bold:FontWeights.Normal;
         }
+        UpdateNavigationGlyphs(page);
         PageHost.Content=page switch{
             "Pregled"=>BuildDashboard(),
             "Artikli"=>BuildCatalog("Proizvod"),
