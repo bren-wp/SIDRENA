@@ -41,6 +41,10 @@ try
         workspace.SetLocationActive(loc, false);
         Expect(!workspace.ListLocations()[0].IsActive, "Toggle location status");
         Expect(workspace.ListRecentChanges().Count == 1, "Joined price audit history");
+        var historyPath=Path.Combine(folder,"povijest.csv");
+        DraftExport.HistoryCsv(workspace.ListRecentChanges(),historyPath);
+        Expect(File.ReadAllText(historyPath).Contains("DATUM_I_VRIJEME") &&
+               File.ReadAllText(historyPath).Contains("Novi cjenik"),"Real audit CSV export");
         var csv = Path.Combine(folder, "RADNI.csv");
         workspace.RecordDraftExport(csv, "CSV", 2);
         var drafts = workspace.ListDraftExports();

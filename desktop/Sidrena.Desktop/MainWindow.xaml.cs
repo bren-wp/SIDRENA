@@ -325,16 +325,51 @@ public partial class MainWindow : Window
 
     private UIElement BuildHistory()
     {
-        var outer=U.Vertical();var search=U.Box("Pretražite artikl, uslugu ili razlog",360);
-        var table=U.Grid(("Datum i vrijeme","Time",175),("Artikl / usluga","Name",0),("Prethodna","Previous",128),
-            ("Aktualna","Current",128),("Promjena","Change",110),("Razlog promjene","Reason",0));
-        void Reload() {
-            var pattern=search.Text.Trim();
-            table.ItemsSource=_workspace.ListRecentChanges(10000).Where(x=>x.ItemName.Contains(pattern,StringComparison.OrdinalIgnoreCase)||
-                x.Reason.Contains(pattern,StringComparison.OrdinalIgnoreCase)).Select(AsAuditRow).ToList();
+        var outer=U.Vertical();
+        var search=U.Box("Pretražite artikl, uslugu ili razlog",360);
+        var kindFilter=U.Choice("Sve vrste","Proizvodi","Usluge");
+        var from=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short };
+        var to=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short };
+        var table=U.Grid(("Datum i vrijeme","Time",175),("Artikl / usluga","Name",0),
+            ("Prethodna","Previous",128),("Aktualna","Current",128),
+            ("Promjena","Change",110),("Razlog promjene","Reason",0));
+        IReadOnlyList<PriceAuditView> Filtered()
+        {
+            var phrase=search.Text.Trim();
+            return _workspace.ListRecentChanges(10000).Where(x=>
+                    (x.ItemName.Contains(phrase,StringComparison.OrdinalIgnoreCase)||
+                     x.Reason.Contains(phrase,StringComparison.OrdinalIgnoreCase)) &&
+                    (kindFilter.SelectedIndex switch
+                     {1=>x.ItemKind=="Proizvod",2=>x.ItemKind=="Usluga",_=>true}) &&
+                    (!from.SelectedDate.HasValue||x.ChangedUtc.ToLocalTime().Date>=from.SelectedDate.Value.Date) &&
+                    (!to.SelectedDate.HasValue||x.ChangedUtc.ToLocalTime().Date<=to.SelectedDate.Value.Date))
+                .ToList();
         }
-        search.TextChanged+=(_,_)=>Reload();Reload();
-        outer.Children.Add(U.Card("Pretraživanje povijesti",U.Field("Naziv ili razlog promjene",search)));
+        void Reload()=>table.ItemsSource=Filtered().Select(AsAuditRow).ToList();
+        search.TextChanged+=(_,_)=>Reload();
+        kindFilter.SelectionChanged+=(_,_)=>Reload();
+        from.SelectedDateChanged+=(_,_)=>Reload();
+        to.SelectedDateChanged+=(_,_)=>Reload();
+        var filters=U.Horizontal();
+        filters.Children.Add(U.Field("Vrsta zapisa",kindFilter));
+        filters.Children.Add(U.Field("Od datuma",from));
+        filters.Children.Add(U.Field("Do datuma",to));
+        filters.Children.Add(U.Action("Očisti filtre",()=>{
+            search.Clear();kindFilter.SelectedIndex=0;from.SelectedDate=null;to.SelectedDate=null;Reload();
+        }));
+        filters.Children.Add(U.Action("Izvezi povijest (CSV)",()=>{
+            var rows=Filtered();
+            if(rows.Count==0){Status("Nema zapisa za odabrane filtre.");return;}
+            var dialog=new SaveFileDialog { Title="Izvoz lokalne povijesti cijena",FileName=
+                "SIDRENA_POVIJEST_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+".csv",
+                Filter="CSV (*.csv)|*.csv",AddExtension=true };
+            if(dialog.ShowDialog(this)!=true)return;
+            try{DraftExport.HistoryCsv(rows,dialog.FileName);
+                Status($"Izvezeno {rows.Count} stvarnih promjena cijena. Izvoz nije propisani javni cjenik.");}
+            catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException){Error(ex);}
+        },true));
+        Reload();
+        outer.Children.Add(U.Card("Filtriranje povijesti cijena",U.Field("Naziv ili razlog promjene",search),filters));
         var detail=U.Vertical();
         detail.Children.Add(U.Muted("Odaberite promjenu da biste vidjeli prethodni i aktualni iznos."));
         var selected=U.Text("Nema odabrane promjene",16,true);

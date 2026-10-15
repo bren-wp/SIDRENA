@@ -34,6 +34,28 @@ public static class DraftExport
         });
     }
 
+    /// <summary>Non-statutory local audit report, restricted to real saved price changes.</summary>
+    public static void HistoryCsv(IEnumerable<PriceAuditView> changes,string destination)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(destination);
+        var rows=new List<string> { "DATUM_I_VRIJEME;VRSTA;NAZIV;PRETHODNA_EUR;AKTUALNA_EUR;PROMJENA_EUR;RAZLOG" };
+        foreach(var h in changes)
+        {
+            rows.Add(string.Join(";",new[]{
+                Cell(h.ChangedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss",System.Globalization.CultureInfo.InvariantCulture)),
+                Cell(h.ItemKind),Cell(h.ItemName),
+                Cell(PriceStore.FormatEur(h.PreviousCents)),
+                Cell(PriceStore.FormatEur(h.CurrentCents)),
+                Cell(PriceStore.FormatEur(h.CurrentCents-h.PreviousCents)),
+                Cell(h.Reason)
+            }));
+        }
+        WriteAtomically(destination,stream=>{
+            using var writer=new StreamWriter(stream,new UTF8Encoding(true),leaveOpen:true);
+            foreach(var row in rows)writer.WriteLine(row);
+        });
+    }
+
     public static void Xml(IEnumerable<PriceItem> items, string destination)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(destination);
