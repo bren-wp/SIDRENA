@@ -193,7 +193,14 @@ public sealed class PriceStore : IDisposable
             lookup.CommandText="SELECT kind,sku FROM price_items WHERE trim(sku)<>''";
             using var reader=lookup.ExecuteReader();
             while(reader.Read())
-                known.Add(reader.GetString(0)+"\u001f"+reader.GetString(1).Trim());
+                known.Add("S\u001f"+reader.GetString(0)+"\u001f"+reader.GetString(1).Trim());
+        }
+        using(var unnamed=_connection.CreateCommand())
+        {
+            unnamed.Transaction=transaction;
+            unnamed.CommandText="SELECT kind,name FROM price_items WHERE trim(sku)=''";
+            using var reader=unnamed.ExecuteReader();
+            while(reader.Read())known.Add("N\u001f"+reader.GetString(0)+"\u001f"+reader.GetString(1).Trim());
         }
         int products=0,services=0;
         foreach(var row in rows)
@@ -203,8 +210,10 @@ public sealed class PriceStore : IDisposable
             ToCents(row.CurrentPrice);
             if(row.AnchorPrice.HasValue)ToCents(row.AnchorPrice.Value);
             if(row.Kind=="Proizvod")products++;else services++;
-            if(!string.IsNullOrWhiteSpace(row.Sku)&&!known.Add(row.Kind+"\u001f"+row.Sku.Trim()))
+            if(!string.IsNullOrWhiteSpace(row.Sku)&&!known.Add("S\u001f"+row.Kind+"\u001f"+row.Sku.Trim()))
                 throw new ArgumentException($"Sukob šifre {row.Sku}: ništa nije uvezeno.");
+            if(string.IsNullOrWhiteSpace(row.Sku)&&!known.Add("N\u001f"+row.Kind+"\u001f"+row.Name.Trim()))
+                throw new ArgumentException($"Ponavlja se naziv bez šifre: {row.Name}. Uvoz je zaustavljen.");
         }
         return new CatalogImportReview(rows.Count,products,services);
     }

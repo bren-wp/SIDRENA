@@ -30,9 +30,12 @@ public static class CatalogCsv
             {
                 decimal current=MoneyParser.Parse(fields[5]);
                 decimal? anchor=string.IsNullOrWhiteSpace(fields[6])?null:MoneyParser.Parse(fields[6]);
-                rows.Add(new CatalogImportRow(fields[0],fields[1],fields[2],fields[3],fields[4],
-                    current,anchor,string.IsNullOrWhiteSpace(fields[7])?null:fields[7],
-                    string.IsNullOrWhiteSpace(fields[8])?null:fields[8]));
+                rows.Add(new CatalogImportRow(
+                    CsvCellSecurity.Restore(fields[0]),CsvCellSecurity.Restore(fields[1]),
+                    CsvCellSecurity.Restore(fields[2]),CsvCellSecurity.Restore(fields[3]),
+                    CsvCellSecurity.Restore(fields[4]),current,anchor,
+                    string.IsNullOrWhiteSpace(fields[7])?null:CsvCellSecurity.Restore(fields[7]),
+                    string.IsNullOrWhiteSpace(fields[8])?null:CsvCellSecurity.Restore(fields[8])));
             }
             catch(ArgumentException ex){throw new ArgumentException($"Redak {i+1}: {ex.Message}",ex);}
         }
@@ -85,5 +88,29 @@ public static class CatalogCsv
         if(quoted)throw new ArgumentException("CSV sadrži nezatvorene navodnike.");
         if(field.Length>0||record.Count>0||afterQuote)CompleteRecord();
         return records;
+    }
+}
+
+/// <summary>
+/// Guard spreadsheet CSV cells against formula execution while preserving exact re-import.
+/// Every original leading apostrophe is doubled; formula-like fields get an apostrophe prefix.
+/// </summary>
+public static class CsvCellSecurity
+{
+    private static bool LooksFormulaLike(string text)
+    {
+        var trimmed=text.TrimStart(' ','\t','\r','\n');
+        return trimmed.Length>0 && trimmed[0] is '=' or '+' or '-' or '@';
+    }
+    public static string Protect(string? text)
+    {
+        var value=text??"";
+        return value.StartsWith('\'')||LooksFormulaLike(value) ? "'"+value : value;
+    }
+    public static string Restore(string value)
+    {
+        if(value.StartsWith("''",StringComparison.Ordinal))return value[1..];
+        if(value.StartsWith("'",StringComparison.Ordinal)&&LooksFormulaLike(value[1..]))return value[1..];
+        return value;
     }
 }

@@ -109,6 +109,20 @@ try
         File.WriteAllText(Path.Combine(folder, "broken.csv"),
             CatalogCsv.Header+"\n\"Proizvod;Unclosed;SKU\n");
         MustThrow(() => CatalogCsv.ReadPreview(Path.Combine(folder, "broken.csv")));
+        source.AddItem("=CMD", "Proizvod", "+RISK", "", "kom", 1m, null, null, null);
+        source.AddItem("'Legitimno", "Proizvod", "ESCAPED", "", "kom", 1m, null, null, null);
+        DraftExport.Csv(source.ListItems(), sourceCsv);
+        var protectedCsv=File.ReadAllText(sourceCsv);
+        Expect(protectedCsv.Contains("\"'=CMD\""), "CSV guards spreadsheet formula execution");
+        Expect(protectedCsv.Contains("\"'+RISK\""), "CSV protects formula-like SKU");
+        var protectedRows=CatalogCsv.ReadPreview(sourceCsv);
+        Expect(protectedRows.Any(x=>x.Name=="=CMD" && x.Sku=="+RISK"), "Guarded CSV round-trips risky text");
+        Expect(protectedRows.Any(x=>x.Name=="'Legitimno"), "Original apostrophe preserved");
+        MustThrow(() => destination.ImportNewRows(new[]{
+            new CatalogImportRow("Usluga","Bez šifre","","","kom",1m,null,null,null),
+            new CatalogImportRow("Usluga","bez ŠIFRE","","","kom",2m,null,null,null)
+        }));
+        Expect(destination.ListItems().Count==2,"Duplicate empty SKU names rejected transactionally");
     }
     Console.WriteLine($"SIDRENA Desktop: {passed} provjera uspješno.");
 }

@@ -10,7 +10,7 @@ namespace Sidrena.Core;
 public static class DraftExport
 {
     private static string Cell(string? value)
-        => "\"" + (value ?? "").Replace("\"", "\"\"") + "\"";
+        => "\"" + CsvCellSecurity.Protect(value).Replace("\"", "\"\"") + "\"";
 
     public static void Csv(IEnumerable<PriceItem> items, string destination)
     {
