@@ -5,7 +5,7 @@ namespace Sidrena.Core;
 
 public sealed record BusinessLocation(long Id, string Name, string Address, string City, bool IsActive);
 public sealed record DraftPublication(long Id, string FilePath, string Format, int ItemCount, string Sha256, DateTimeOffset CreatedUtc);
-public sealed record PriceAuditView(long Id, string ItemName, string ItemKind, long PreviousCents, long CurrentCents, string Reason, DateTimeOffset ChangedUtc);
+public sealed record PriceAuditView(long Id, long ItemId, string ItemName, string ItemKind, long PreviousCents, long CurrentCents, string Reason, DateTimeOffset ChangedUtc);
 
 /// <summary>
 /// Locally persisted workspace metadata. Recorded exports are drafts, never asserted as public publications.
@@ -113,14 +113,14 @@ public sealed class WorkspaceStore : IDisposable
         if(maxRows is < 1 or > 10000) throw new ArgumentOutOfRangeException(nameof(maxRows));
         using var c = _connection.CreateCommand();
         c.CommandText = """
-            SELECT c.id,i.name,i.kind,c.previous_cents,c.current_cents,c.reason,c.changed_utc
+            SELECT c.id,c.item_id,i.name,i.kind,c.previous_cents,c.current_cents,c.reason,c.changed_utc
             FROM price_changes c JOIN price_items i ON i.id=c.item_id ORDER BY c.id DESC LIMIT $max
             """;
         c.Parameters.AddWithValue("$max",maxRows);
         using var r = c.ExecuteReader();
         var result = new List<PriceAuditView>();
-        while(r.Read()) result.Add(new PriceAuditView(r.GetInt64(0),r.GetString(1),r.GetString(2),r.GetInt64(3),
-            r.GetInt64(4),r.GetString(5),DateTimeOffset.Parse(r.GetString(6),CultureInfo.InvariantCulture)));
+        while(r.Read()) result.Add(new PriceAuditView(r.GetInt64(0),r.GetInt64(1),r.GetString(2),r.GetString(3),r.GetInt64(4),
+            r.GetInt64(5),r.GetString(6),DateTimeOffset.Parse(r.GetString(7),CultureInfo.InvariantCulture)));
         return result;
     }
 

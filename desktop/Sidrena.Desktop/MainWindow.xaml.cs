@@ -21,7 +21,7 @@ public partial class MainWindow : Window
     private const string DraftWarning = "RADNI IZVOZ — nije propisani javni cjenik. Prije objave potrebna je validacija konačnih pravila.";
     private static readonly CultureInfo Hr = CultureInfo.GetCultureInfo("hr-HR");
     private sealed record ItemRow(long Id,string Name,string Kind,string Sku,string Barcode,string Unit,string Current,string Anchor,string AnchorDate);
-    private sealed record AuditRow(long Id,string Name,string Kind,string Previous,string Current,string Change,string Reason,string Time);
+    private sealed record AuditRow(long Id,long ItemId,string Name,string Kind,string Previous,string Current,string Change,string Reason,string Time);
     private sealed record LocationRow(long Id,string Name,string Address,string City,string Status);
     private sealed record ArchiveRow(long Id,string Name,string Format,string Count,string Date,string Status,string Path);
 
@@ -156,7 +156,7 @@ public partial class MainWindow : Window
 
     private static ItemRow AsItemRow(PriceItem item)=>new(item.Id,item.Name,item.Kind,item.Sku,item.Barcode,item.Unit,
         Euro(item.CurrentCents),item.AnchorCents.HasValue?Euro(item.AnchorCents.Value):"Nije potvrđena",DateText(item.AnchorDate));
-    private static AuditRow AsAuditRow(PriceAuditView x)=>new(x.Id,x.ItemName,x.ItemKind,
+    private static AuditRow AsAuditRow(PriceAuditView x)=>new(x.Id,x.ItemId,x.ItemName,x.ItemKind,
         Euro(x.PreviousCents),Euro(x.CurrentCents),ValueChange(x.PreviousCents,x.CurrentCents),x.Reason,
         x.ChangedUtc.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr));
 
@@ -248,9 +248,19 @@ public partial class MainWindow : Window
         detail.Children.Add(U.Muted("Odaberite promjenu da biste vidjeli prethodni i aktualni iznos."));
         var selected=U.Text("Nema odabrane promjene",16,true);
         detail.Children.Add(selected);
+        var chartHost=new ContentControl{Margin=new Thickness(0,18,0,12)};
+        detail.Children.Add(chartHost);
         table.SelectionChanged+=(_,_)=>{
             if(table.SelectedItem is AuditRow x)
+            {
                 selected.Text=$"{x.Name}\n{x.Previous}  →  {x.Current}\nPromjena: {x.Change}\n{x.Time}\nRazlog: {x.Reason}";
+                var history=_workspace.ListRecentChanges(10000).Where(h=>h.ItemId==x.ItemId)
+                    .OrderBy(h=>h.ChangedUtc).ToList();
+                var values=history.Count==0?new List<long>{0}:
+                    new List<long>{history[0].PreviousCents};
+                values.AddRange(history.Select(h=>h.CurrentCents));
+                chartHost.Content=U.PriceChart(values);
+            }
         };
         detail.Children.Add(U.Notice("Povijest je zapis transakcijskih promjena; ne zamjenjuje dokaz o zakonskoj referentnoj cijeni."));
         outer.Children.Add(U.Split(U.Card("Povijest cijena",table),U.Card("Detalji promjene cijene",detail)));
