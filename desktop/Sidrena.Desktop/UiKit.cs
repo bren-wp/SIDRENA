@@ -89,7 +89,7 @@ internal static class UiKit
         var g=new Grid();
         g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(ratio,GridUnitType.Star),MinWidth=400});
         g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star),MinWidth=325});
-        Grid.SetColumn(left,0);Grid.SetColumn(right,1);
+        System.Windows.Controls.Grid.SetColumn(left,0);System.Windows.Controls.Grid.SetColumn(right,1);
         if(left is FrameworkElement l) l.Margin=new Thickness(0,0,15,0);
         g.Children.Add(left);g.Children.Add(right);
         return g;
