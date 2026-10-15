@@ -124,15 +124,14 @@ public partial class MainWindow : Window
     {
         var outer=U.Vertical();
         var rows=_prices.ListItems(); var changes=_workspace.ListRecentChanges(6);
-        var stats=U.Horizontal();
-        stats.Children.Add(U.Stat("Artikala i usluga",rows.Count.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"));
-        stats.Children.Add(U.Stat("Potvrđenih sidrenih",rows.Count(x=>x.AnchorCents.HasValue).ToString(Hr),
-            "Nepotvrđene vrijednosti ostaju prazne","⚓"));
-        stats.Children.Add(U.Stat("Promjena cijena",_workspace.ListRecentChanges(10000).Count.ToString(Hr),
-            "Zabilježene lokalne izmjene","↗"));
-        stats.Children.Add(U.Stat("Radnih cjenika",_workspace.ListDraftExports().Count.ToString(Hr),
-            "Neobjavljeni CSV/XML izvozi","▤"));
-        outer.Children.Add(stats);
+        outer.Children.Add(U.Metrics(
+            U.Stat("Artikala i usluga",rows.Count.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
+            U.Stat("Potvrđenih sidrenih",rows.Count(x=>x.AnchorCents.HasValue).ToString(Hr),
+                "Nepotvrđene vrijednosti ostaju prazne","⚓"),
+            U.Stat("Promjena cijena",_workspace.ListRecentChanges(10000).Count.ToString(Hr),
+                "Zabilježene lokalne izmjene","↗"),
+            U.Stat("Radnih cjenika",_workspace.ListDraftExports().Count.ToString(Hr),
+                "Neobjavljeni CSV/XML izvozi","▤")));
         var quick=U.Horizontal();
         quick.Children.Add(U.Action("+  Novi artikl",()=>Navigate("Artikli"),true));
         quick.Children.Add(U.Action("⚒  Nova usluga",()=>Navigate("Usluge")));

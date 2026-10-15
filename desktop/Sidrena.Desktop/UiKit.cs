@@ -35,6 +35,22 @@ internal static class UiKit
         return new Border { Background=Brush("SurfaceBrush"), BorderBrush=Brush("BorderBrush"),BorderThickness=new Thickness(1),
             CornerRadius=new CornerRadius(10), Padding=new Thickness(18), Margin=new Thickness(0,0,0,13),Child=content };
     }
+
+    public static Grid Metrics(params Border[] cards)
+    {
+        var grid=new Grid{Margin=new Thickness(0,0,0,4)};
+        for(int i=0;i<cards.Length;i++)
+        {
+            grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star),MinWidth=150});
+            var card=cards[i];
+            card.Width=double.NaN;
+            card.MinWidth=145;
+            card.Margin=new Thickness(0,0,i==cards.Length-1?0:11,10);
+            System.Windows.Controls.Grid.SetColumn(card,i);
+            grid.Children.Add(card);
+        }
+        return grid;
+    }
     public static Border Stat(string title,string value,string extra,string icon)
     {
         var col=new StackPanel();
