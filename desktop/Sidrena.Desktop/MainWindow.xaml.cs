@@ -11,7 +11,6 @@ namespace Sidrena.Desktop;
 public partial class MainWindow : Window
 {
     private readonly PriceStore _store;
-    private static readonly CultureInfo Hr = CultureInfo.GetCultureInfo("hr-HR");
     private sealed record DisplayItem(long Id, string Name, string Kind, string Sku, string Current, string Anchor, string AnchorDate);
 
     public MainWindow()
@@ -24,14 +23,7 @@ public partial class MainWindow : Window
         RefreshItems();
     }
 
-    private static decimal ParsePrice(string input)
-    {
-        if (!decimal.TryParse(input.Trim(), NumberStyles.Number, Hr, out var result) &&
-            !decimal.TryParse(input.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out result))
-            throw new ArgumentException("Upišite valjanu cijenu, npr. 12,50.");
-        PriceStore.ToCents(result);
-        return result;
-    }
+    private static decimal ParsePrice(string input) => MoneyParser.Parse(input);
 
     private void RefreshItems()
     {

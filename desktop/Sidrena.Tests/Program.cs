@@ -22,6 +22,10 @@ try
         MustThrow(() => store.AddItem("Bez izvora", "Proizvod", "", "", "", 1m, 1m, "2026-09-10", null));
         MustThrow(() => store.AddItem("Pogrešan datum", "Proizvod", "", "", "", 1m, 1m, "2026-09-11", "Izvor"));
         MustThrow(() => store.AddItem("Preciznost", "Usluga", "", "", "", 1.123m, null, null, null));
+        Expect(MoneyParser.Parse("12,50") == 12.50m, "Croatian decimal comma");
+        Expect(MoneyParser.Parse("12.50") == 12.50m, "Invariant decimal dot");
+        MustThrow(() => MoneyParser.Parse("1,234.56"));
+        MustThrow(() => MoneyParser.Parse("12.500"));
         var csv = Path.Combine(folder, "RADNI.csv");
         var xml = Path.Combine(folder, "RADNI.xml");
         DraftExport.Csv(store.ListItems(), csv);
@@ -34,7 +38,7 @@ try
         Expect(reopened.ListItems().Count == 2, "Durable database");
         Expect(reopened.ListChanges(id).Count == 1, "Durable audit trail");
     }
-    Console.WriteLine("SIDRENA Desktop: 10 provjera uspješno.");
+    Console.WriteLine("SIDRENA Desktop: 14 provjera uspješno.");
 }
 finally
 {
