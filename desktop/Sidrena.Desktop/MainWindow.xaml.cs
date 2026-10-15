@@ -175,6 +175,8 @@ public partial class MainWindow : Window
     private UIElement BuildCatalog(string kind)
     {
         var outer=U.Vertical();
+        var grid=U.Grid(("Naziv","Name",0),("Šifra","Sku",100),("Barkod","Barcode",130),
+            ("Aktualna","Current",100),("Sidrena","Anchor",119),("Referentni datum","AnchorDate",137));
         Expander? newItemExpander=null;
         var filter=U.Horizontal();
         var search=U.Box("Pretražite naziv, šifru ili barkod",325);
@@ -185,8 +187,6 @@ public partial class MainWindow : Window
             ()=>{if(newItemExpander!=null)newItemExpander.IsExpanded=true;PageScroll.ScrollToBottom();},true));
         filter.Children.Add(U.Action("Uvoz CSV",()=>ImportCatalogCsv(Reload)));
         outer.Children.Add(U.Card(kind=="Proizvod"?"Katalog artikala":"Katalog usluga",filter));
-        var grid=U.Grid(("Naziv","Name",0),("Šifra","Sku",100),("Barkod","Barcode",130),
-            ("Aktualna","Current",100),("Sidrena","Anchor",119),("Referentni datum","AnchorDate",137));
         void Reload()
         {
             var pattern=search.Text.Trim();
