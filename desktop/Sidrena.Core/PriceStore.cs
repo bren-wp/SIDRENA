@@ -266,6 +266,8 @@ public sealed class PriceStore : IDisposable
                 throw new ArgumentException("Sidrena cijena zahtijeva dopušten referentni datum.");
             if(string.IsNullOrWhiteSpace(source))
                 throw new ArgumentException("Za sidrenu cijenu potreban je dokumentirani izvor.");
+            if(source.Trim().Length>500||source.Any(c=>char.IsControl(c)&&c!='\t'))
+                throw new ArgumentException("Izvor sidrene cijene sadrži nedopuštene znakove ili je predug.");
         }
         else if(date is not null || !string.IsNullOrWhiteSpace(source))
             throw new ArgumentException("Datum i izvor bez sidrene cijene nisu dopušteni.");

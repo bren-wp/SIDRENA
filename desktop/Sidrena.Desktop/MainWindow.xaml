@@ -34,7 +34,7 @@
                         <TextBlock Text="●  Lokalni podaci" Foreground="#53D0A0" FontWeight="SemiBold" FontSize="13"/>
                         <TextBlock Text="Vaši podaci ostaju na ovom računalu." FontSize="11"
                                    Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                        <TextBlock x:Name="EditionLabel" Text="SIDRENA Desktop 0.2 · razvojna verzija"
+                        <TextBlock x:Name="EditionLabel" Text="SIDRENA Desktop 0.3 · razvojna verzija"
                                    FontSize="10" Foreground="#90A5C0" Margin="0,8,0,0" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>

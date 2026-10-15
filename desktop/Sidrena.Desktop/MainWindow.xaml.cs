@@ -306,10 +306,14 @@ public partial class MainWindow : Window
         {
             var rows=CatalogCsv.ReadPreview(dialog.FileName);
             var review=_prices.ReviewImportRows(rows);
+            var preview=string.Join("\n",rows.Take(5).Select(row=>
+                $"• {row.Kind}: {row.Name} — {row.CurrentPrice.ToString("N2",Hr)} €"));
+            var remaining=rows.Count>5?$"\n... i još {rows.Count-5} stavki.":"";
             var answer=MessageBox.Show(this,
-                $"Provjereni CSV: {review.Total} stavki.\nProizvodi: {review.Products}, usluge: {review.Services}.\n"+
+                $"Provjereni CSV: {review.Total} stavki.\nProizvodi: {review.Products}, usluge: {review.Services}.\n\n"+
+                preview+remaining+"\n\n"+
                 "Postojeći proizvodi, cijene i povijest neće biti promijenjeni.\n"+
-                "Uvoz dodaje isključivo nove šifre. Nastaviti?",
+                "Uvoz dodaje isključivo nove stavke bez sukoba šifri ili naziva. Nastaviti?",
                 "SIDRENA — potvrda uvoza",MessageBoxButton.YesNo,MessageBoxImage.Question);
             if(answer!=MessageBoxResult.Yes)return;
             int imported=_prices.ImportNewRows(rows);
@@ -328,8 +332,10 @@ public partial class MainWindow : Window
         var outer=U.Vertical();
         var search=U.Box("Pretražite artikl, uslugu ili razlog",360);
         var kindFilter=U.Choice("Sve vrste","Proizvodi","Usluge");
-        var from=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short };
-        var to=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short };
+        var from=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short,
+            Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
+        var to=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short,
+            Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
         var table=U.Grid(("Datum i vrijeme","Time",175),("Artikl / usluga","Name",0),
             ("Prethodna","Previous",128),("Aktualna","Current",128),
             ("Promjena","Change",110),("Razlog promjene","Reason",0));
