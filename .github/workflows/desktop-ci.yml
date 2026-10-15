@@ -86,6 +86,23 @@ jobs:
             $app.Refresh()
             if (!$app.HasExited) { Stop-Process -Id $app.Id -Force }
           }
+      - name: Verify all ten real Windows reference captures
+        shell: pwsh
+        run: |
+          $folder = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/ui-captures'
+          $screens = @(Get-ChildItem -Path $folder -Filter 'screen-*.png' -File)
+          if ($screens.Count -ne 10) { throw "Expected 10 real WPF screenshots, got $($screens.Count)." }
+          foreach ($s in $screens) {
+            if ($s.Length -lt 1000) { throw "UI capture $($s.Name) is unexpectedly small." }
+          }
+          New-Item -ItemType Directory -Force -Path artifacts/sidrena-ui-captures | Out-Null
+          Copy-Item -Path (Join-Path $folder '*.png') -Destination artifacts/sidrena-ui-captures/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SIDRENA-Desktop-real-ui-captures
+          path: artifacts/sidrena-ui-captures/
+          if-no-files-found: error
+          retention-days: 14
       - uses: actions/upload-artifact@v7
         with:
           name: SIDRENA-Desktop-win-x64-portable

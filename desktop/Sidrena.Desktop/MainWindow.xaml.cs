@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Sidrena.Core;
 using U=Sidrena.Desktop.UiKit;
@@ -41,11 +42,22 @@ public partial class MainWindow : Window
                 string marker=Path.Combine(Path.GetDirectoryName(_databasePath)!, "ui-smoke.ok");
                 try
                 {
-                    foreach(var page in new[]{"Pregled","Artikli","Usluge","Povijest cijena","Cjenici",
-                        "Lokacije","Sinkronizacija","Arhiva","Postavke","Pomoć"})
+                    var pages=new[]{"Pregled","Artikli","Usluge","Povijest cijena","Cjenici",
+                        "Lokacije","Sinkronizacija","Arhiva","Postavke","Pomoć"};
+                    var captureFolder=Path.Combine(Path.GetDirectoryName(_databasePath)!,"ui-captures");
+                    Directory.CreateDirectory(captureFolder);
+                    for(int i=0;i<pages.Length;i++)
                     {
-                        Navigate(page);
+                        Navigate(pages[i]);
                         PageHost.UpdateLayout();
+                        UpdateLayout();
+                        var bitmap=new RenderTargetBitmap((int)Math.Ceiling(ActualWidth),
+                            (int)Math.Ceiling(ActualHeight),96,96,PixelFormats.Pbgra32);
+                        bitmap.Render(this);
+                        var png=new PngBitmapEncoder();
+                        png.Frames.Add(BitmapFrame.Create(bitmap));
+                        using var output=File.Create(Path.Combine(captureFolder,$"screen-{i+1:00}.png"));
+                        png.Save(output);
                     }
                     File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed.");
                     Application.Current.Shutdown(0);
