@@ -11,6 +11,7 @@ public sealed record PriceItem(
 public sealed record PriceChange(long Id, long ItemId, long PreviousCents, long CurrentCents, string Reason, DateTimeOffset ChangedUtc);
 
 
+public sealed record CatalogImportReview(int Total,int Products,int Services);
 public sealed record ItemDetailsSnapshot(string Name,string Sku,string Barcode,string Unit);
 public sealed record ItemMetadataChange(long Id,long ItemId,string BeforeJson,string AfterJson,string Reason,DateTimeOffset ChangedUtc);
 
@@ -176,25 +177,43 @@ public sealed class PriceStore : IDisposable
         transaction.Commit();
     }
 
-    /// <summary>All-or-nothing CSV import. Rejects duplicate SKUs rather than overwriting existing prices.</summary>
-    public int ImportNewRows(IReadOnlyList<CatalogImportRow> rows)
+    /// <summary>Validate and preview a batch without inserting or changing prices.</summary>
+    public CatalogImportReview ReviewImportRows(IReadOnlyList<CatalogImportRow> rows)
+        => InspectImportRows(rows,null);
+
+    private CatalogImportReview InspectImportRows(IReadOnlyList<CatalogImportRow> rows,SqliteTransaction? transaction)
     {
         ArgumentNullException.ThrowIfNull(rows);
         if(rows.Count==0)throw new ArgumentException("Datoteka nema stavki za uvoz.",nameof(rows));
         if(rows.Count>5000)throw new ArgumentException("Najviše 5000 stavki po uvozu.",nameof(rows));
         var known=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach(var item in ListItems())
-            if(!string.IsNullOrWhiteSpace(item.Sku))known.Add(item.Kind+"\u001f"+item.Sku.Trim());
+        using(var lookup=_connection.CreateCommand())
+        {
+            lookup.Transaction=transaction;
+            lookup.CommandText="SELECT kind,sku FROM price_items WHERE trim(sku)<>''";
+            using var reader=lookup.ExecuteReader();
+            while(reader.Read())
+                known.Add(reader.GetString(0)+"\u001f"+reader.GetString(1).Trim());
+        }
+        int products=0,services=0;
         foreach(var row in rows)
         {
             ValidateDetails(row.Name,row.Sku,row.Barcode,row.Unit);
             ValidateAnchor(row.Kind,row.AnchorPrice,row.AnchorDate,row.AnchorSource);
             ToCents(row.CurrentPrice);
             if(row.AnchorPrice.HasValue)ToCents(row.AnchorPrice.Value);
+            if(row.Kind=="Proizvod")products++;else services++;
             if(!string.IsNullOrWhiteSpace(row.Sku)&&!known.Add(row.Kind+"\u001f"+row.Sku.Trim()))
                 throw new ArgumentException($"Sukob šifre {row.Sku}: ništa nije uvezeno.");
         }
+        return new CatalogImportReview(rows.Count,products,services);
+    }
+
+    /// <summary>All-or-nothing CSV import. Reject collisions while holding the write transaction.</summary>
+    public int ImportNewRows(IReadOnlyList<CatalogImportRow> rows)
+    {
         using var transaction=_connection.BeginTransaction();
+        InspectImportRows(rows,transaction);
         foreach(var row in rows)
         {
             using var command=_connection.CreateCommand();
