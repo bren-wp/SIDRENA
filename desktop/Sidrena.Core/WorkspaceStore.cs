@@ -136,7 +136,7 @@ public sealed class WorkspaceStore : IDisposable
         try
         {
             using(var backup = new SqliteConnection(new SqliteConnectionStringBuilder {
-                DataSource=temp,Mode=SqliteOpenMode.ReadWriteCreate }.ToString()))
+                DataSource=temp,Mode=SqliteOpenMode.ReadWriteCreate,Pooling=false }.ToString()))
             {
                 backup.Open();
                 _connection.BackupDatabase(backup);
