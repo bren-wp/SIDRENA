@@ -10,6 +10,10 @@ public sealed record PriceItem(
 
 public sealed record PriceChange(long Id, long ItemId, long PreviousCents, long CurrentCents, string Reason, DateTimeOffset ChangedUtc);
 
+
+public sealed record ItemDetailsSnapshot(string Name,string Sku,string Barcode,string Unit);
+public sealed record ItemMetadataChange(long Id,long ItemId,string BeforeJson,string AfterJson,string Reason,DateTimeOffset ChangedUtc);
+
 /// <summary>Local-first catalogue. Historical anchor prices are never inferred from current prices.</summary>
 public sealed class PriceStore : IDisposable
 {
@@ -61,22 +65,24 @@ public sealed class PriceStore : IDisposable
             )
             """);
         Execute("CREATE INDEX IF NOT EXISTS idx_changes_item_time ON price_changes(item_id, id DESC)");
+        Execute("""
+            CREATE TABLE IF NOT EXISTS item_metadata_changes(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                item_id INTEGER NOT NULL REFERENCES price_items(id) ON DELETE RESTRICT,
+                before_json TEXT NOT NULL,
+                after_json TEXT NOT NULL,
+                reason TEXT NOT NULL CHECK(length(trim(reason)) > 0),
+                changed_utc TEXT NOT NULL
+            )
+            """);
+        Execute("CREATE INDEX IF NOT EXISTS idx_item_metadata_changes ON item_metadata_changes(item_id,id DESC)");
     }
 
     public long AddItem(string name, string kind, string sku, string barcode, string unit,
         decimal currentPrice, decimal? anchorPrice, string? anchorDate, string? anchorSource)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Naziv je obvezan.", nameof(name));
-        if (kind is not ("Proizvod" or "Usluga")) throw new ArgumentException("Nepoznata vrsta stavke.", nameof(kind));
-        if (anchorPrice.HasValue)
-        {
-            if (anchorDate is null || !PermittedAnchorDates.Contains(anchorDate))
-                throw new ArgumentException("Odaberite propisani datum i provjerite njegovu primjenjivost.", nameof(anchorDate));
-            if (string.IsNullOrWhiteSpace(anchorSource))
-                throw new ArgumentException("Zapišite izvor povijesne sidrene cijene.", nameof(anchorSource));
-        }
-        else if (anchorDate is not null || !string.IsNullOrWhiteSpace(anchorSource))
-            throw new ArgumentException("Sidreni datum i izvor zahtijevaju potvrđen povijesni iznos.");
+        ValidateDetails(name,sku,barcode,unit);
+        ValidateAnchor(kind,anchorPrice,anchorDate,anchorSource);
 
         using var cmd = _connection.CreateCommand();
         cmd.CommandText = """
@@ -95,6 +101,146 @@ public sealed class PriceStore : IDisposable
         cmd.Parameters.AddWithValue("$source", (object?)anchorSource?.Trim() ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$created", DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture));
         return (long)(cmd.ExecuteScalar() ?? throw new InvalidOperationException("Unos nije uspio."));
+    }
+
+
+    public IReadOnlyList<ItemMetadataChange> ListMetadataChanges(long itemId)
+    {
+        using var command = _connection.CreateCommand();
+        command.CommandText = """
+            SELECT id,item_id,before_json,after_json,reason,changed_utc
+            FROM item_metadata_changes WHERE item_id=$id ORDER BY id DESC
+            """;
+        command.Parameters.AddWithValue("$id",itemId);
+        using var reader=command.ExecuteReader();
+        var history=new List<ItemMetadataChange>();
+        while(reader.Read())
+            history.Add(new ItemMetadataChange(reader.GetInt64(0),reader.GetInt64(1),
+                reader.GetString(2),reader.GetString(3),reader.GetString(4),
+                DateTimeOffset.Parse(reader.GetString(5),CultureInfo.InvariantCulture)));
+        return history;
+    }
+
+    /// <summary>Edit descriptive metadata only; historical anchors and current prices cannot be overwritten here.</summary>
+    public void UpdateItemDetails(long id, string name, string sku, string barcode, string unit, string reason)
+    {
+        ValidateDetails(name,sku,barcode,unit);
+        if(string.IsNullOrWhiteSpace(reason))throw new ArgumentException("Razlog izmjene je obvezan.",nameof(reason));
+        using var transaction=_connection.BeginTransaction();
+        using var read=_connection.CreateCommand();
+        read.Transaction=transaction;
+        read.CommandText="SELECT name,kind,sku,barcode,unit FROM price_items WHERE id=$id";
+        read.Parameters.AddWithValue("$id",id);
+        string kind,oldName,oldSku,oldBarcode,oldUnit;
+        using(var reader=read.ExecuteReader())
+        {
+            if(!reader.Read())throw new KeyNotFoundException("Stavka nije pronađena.");
+            oldName=reader.GetString(0);kind=reader.GetString(1);oldSku=reader.GetString(2);
+            oldBarcode=reader.GetString(3);oldUnit=reader.GetString(4);
+        }
+        var next=new ItemDetailsSnapshot(name.Trim(),sku.Trim(),barcode.Trim(),unit.Trim());
+        var previous=new ItemDetailsSnapshot(oldName,oldSku,oldBarcode,oldUnit);
+        if(previous==next){transaction.Commit();return;}
+        if(!string.IsNullOrWhiteSpace(next.Sku))
+        {
+            using var collision=_connection.CreateCommand();
+            collision.Transaction=transaction;
+            collision.CommandText="SELECT count(*) FROM price_items WHERE id<>$id AND kind=$kind AND sku=$sku COLLATE NOCASE";
+            collision.Parameters.AddWithValue("$id",id);
+            collision.Parameters.AddWithValue("$kind",kind);
+            collision.Parameters.AddWithValue("$sku",next.Sku);
+            if((long)(collision.ExecuteScalar()??0L)>0)
+                throw new ArgumentException("Šifra već postoji za istu vrstu stavke.",nameof(sku));
+        }
+        using var update=_connection.CreateCommand();
+        update.Transaction=transaction;
+        update.CommandText="UPDATE price_items SET name=$name,sku=$sku,barcode=$barcode,unit=$unit WHERE id=$id";
+        update.Parameters.AddWithValue("$id",id);
+        update.Parameters.AddWithValue("$name",next.Name);
+        update.Parameters.AddWithValue("$sku",next.Sku);
+        update.Parameters.AddWithValue("$barcode",next.Barcode);
+        update.Parameters.AddWithValue("$unit",next.Unit);
+        if(update.ExecuteNonQuery()!=1)throw new InvalidOperationException("Stavka nije ažurirana.");
+        using var audit=_connection.CreateCommand();
+        audit.Transaction=transaction;
+        audit.CommandText="""
+            INSERT INTO item_metadata_changes(item_id,before_json,after_json,reason,changed_utc)
+            VALUES($id,$before,$after,$reason,$time)
+            """;
+        audit.Parameters.AddWithValue("$id",id);
+        audit.Parameters.AddWithValue("$before",System.Text.Json.JsonSerializer.Serialize(previous));
+        audit.Parameters.AddWithValue("$after",System.Text.Json.JsonSerializer.Serialize(next));
+        audit.Parameters.AddWithValue("$reason",reason.Trim());
+        audit.Parameters.AddWithValue("$time",DateTimeOffset.UtcNow.ToString("O",CultureInfo.InvariantCulture));
+        audit.ExecuteNonQuery();
+        transaction.Commit();
+    }
+
+    /// <summary>All-or-nothing CSV import. Rejects duplicate SKUs rather than overwriting existing prices.</summary>
+    public int ImportNewRows(IReadOnlyList<CatalogImportRow> rows)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        if(rows.Count==0)throw new ArgumentException("Datoteka nema stavki za uvoz.",nameof(rows));
+        if(rows.Count>5000)throw new ArgumentException("Najviše 5000 stavki po uvozu.",nameof(rows));
+        var known=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach(var item in ListItems())
+            if(!string.IsNullOrWhiteSpace(item.Sku))known.Add(item.Kind+"\u001f"+item.Sku.Trim());
+        foreach(var row in rows)
+        {
+            ValidateDetails(row.Name,row.Sku,row.Barcode,row.Unit);
+            ValidateAnchor(row.Kind,row.AnchorPrice,row.AnchorDate,row.AnchorSource);
+            ToCents(row.CurrentPrice);
+            if(row.AnchorPrice.HasValue)ToCents(row.AnchorPrice.Value);
+            if(!string.IsNullOrWhiteSpace(row.Sku)&&!known.Add(row.Kind+"\u001f"+row.Sku.Trim()))
+                throw new ArgumentException($"Sukob šifre {row.Sku}: ništa nije uvezeno.");
+        }
+        using var transaction=_connection.BeginTransaction();
+        foreach(var row in rows)
+        {
+            using var command=_connection.CreateCommand();
+            command.Transaction=transaction;
+            command.CommandText="""
+                INSERT INTO price_items(name,kind,sku,barcode,unit,current_cents,anchor_cents,anchor_date,anchor_source,created_utc)
+                VALUES($name,$kind,$sku,$barcode,$unit,$current,$anchor,$date,$source,$created)
+                """;
+            command.Parameters.AddWithValue("$name",row.Name.Trim());
+            command.Parameters.AddWithValue("$kind",row.Kind);
+            command.Parameters.AddWithValue("$sku",row.Sku.Trim());
+            command.Parameters.AddWithValue("$barcode",row.Barcode.Trim());
+            command.Parameters.AddWithValue("$unit",row.Unit.Trim());
+            command.Parameters.AddWithValue("$current",ToCents(row.CurrentPrice));
+            command.Parameters.AddWithValue("$anchor",row.AnchorPrice.HasValue?ToCents(row.AnchorPrice.Value):DBNull.Value);
+            command.Parameters.AddWithValue("$date",(object?)row.AnchorDate??DBNull.Value);
+            command.Parameters.AddWithValue("$source",(object?)row.AnchorSource?.Trim()??DBNull.Value);
+            command.Parameters.AddWithValue("$created",DateTimeOffset.UtcNow.ToString("O",CultureInfo.InvariantCulture));
+            command.ExecuteNonQuery();
+        }
+        transaction.Commit();
+        return rows.Count;
+    }
+
+    private static void ValidateDetails(string name,string sku,string barcode,string unit)
+    {
+        if(string.IsNullOrWhiteSpace(name)||name.Trim().Length>240)
+            throw new ArgumentException("Naziv mora sadržavati 1 do 240 znakova.",nameof(name));
+        if(sku is null || sku.Length>100 || barcode is null || barcode.Length>100 || unit is null || unit.Length>64)
+            throw new ArgumentException("Šifra, barkod ili jedinica mjere su predugi.");
+        if(name.Any(c=>char.IsControl(c))||sku.Any(c=>char.IsControl(c))||
+           barcode.Any(c=>char.IsControl(c))||unit.Any(c=>char.IsControl(c)))
+            throw new ArgumentException("Kontrolni znakovi nisu dopušteni.");
+    }
+    private static void ValidateAnchor(string kind,decimal? price,string? date,string? source)
+    {
+        if(kind is not ("Proizvod" or "Usluga"))throw new ArgumentException("Nepoznata vrsta stavke.");
+        if(price.HasValue)
+        {
+            if(date is null || !PermittedAnchorDates.Contains(date))
+                throw new ArgumentException("Sidrena cijena zahtijeva dopušten referentni datum.");
+            if(string.IsNullOrWhiteSpace(source))
+                throw new ArgumentException("Za sidrenu cijenu potreban je dokumentirani izvor.");
+        }
+        else if(date is not null || !string.IsNullOrWhiteSpace(source))
+            throw new ArgumentException("Datum i izvor bez sidrene cijene nisu dopušteni.");
     }
 
     public void UpdateCurrentPrice(long id, decimal newPrice, string reason)
