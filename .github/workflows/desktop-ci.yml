@@ -65,6 +65,27 @@ jobs:
           } finally {
             if (!$process.HasExited) { Stop-Process -Id $process.Id -Force }
           }
+      - name: Navigate through all ten reference screens
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe').Path
+          $marker = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/ui-smoke.ok'
+          if (Test-Path $marker) { Remove-Item $marker -Force }
+          $env:SIDRENA_UI_SMOKE = '1'
+          $app = Start-Process -FilePath $exe -PassThru
+          try {
+            $app | Wait-Process -Timeout 45 -ErrorAction Stop
+            $app.Refresh()
+            if ($app.ExitCode -ne 0) { throw "UI navigation failed with exit code $($app.ExitCode)." }
+            if (!(Test-Path $marker)) { throw 'Missing ten-screen navigation marker' }
+            $result = Get-Content $marker -Raw
+            if (!$result.Contains('10/10 passed')) { throw $result }
+            Write-Output $result
+          } finally {
+            Remove-Item Env:SIDRENA_UI_SMOKE -ErrorAction SilentlyContinue
+            $app.Refresh()
+            if (!$app.HasExited) { Stop-Process -Id $app.Id -Force }
+          }
       - uses: actions/upload-artifact@v7
         with:
           name: SIDRENA-Desktop-win-x64-portable
