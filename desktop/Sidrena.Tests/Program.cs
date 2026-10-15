@@ -45,6 +45,9 @@ try
         workspace.RecordDraftExport(csv, "CSV", 2);
         var drafts = workspace.ListDraftExports();
         Expect(drafts.Count == 1 && drafts[0].Sha256.Length == 64, "SHA256 draft record");
+        Expect(workspace.VerifyDraftExport(drafts[0].Id), "Original archive passes integrity check");
+        File.AppendAllText(csv, "\n");
+        Expect(!workspace.VerifyDraftExport(drafts[0].Id), "Changed export detected by checksum");
         MustThrow(() => workspace.RecordDraftExport(csv, "PDF", 2));
         var backup = Path.Combine(folder, "backup.db");
         workspace.BackupTo(backup);

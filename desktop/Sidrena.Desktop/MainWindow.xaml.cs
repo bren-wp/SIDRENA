@@ -458,7 +458,20 @@ public partial class MainWindow : Window
         detail.Children.Add(U.Action("Otvori odabranu datoteku",()=>{
             if(grid.SelectedItem is not ArchiveRow x){Status("Odaberite datoteku.");return;}
             if(!File.Exists(x.Path)){Status("Datoteka više nije na zabilježenoj lokaciji.");return;}
-            OpenLocal(x.Path);
+            try
+            {
+                if(!_workspace.VerifyDraftExport(x.Id))
+                {
+                    var decision=MessageBox.Show(this,
+                        "Lokalna datoteka se promijenila nakon evidentiranja. Želite li je ipak otvoriti?"+
+                        "\nIzvorna SHA-256 provjera više ne odgovara.",
+                        "SIDRENA — datoteka je izmijenjena",MessageBoxButton.YesNo,MessageBoxImage.Warning);
+                    if(decision!=MessageBoxResult.Yes)return;
+                }
+                OpenLocal(x.Path);
+            }
+            catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or KeyNotFoundException)
+            {Error(ex);}
         },true));
         detail.Children.Add(U.Notice("Otvori pokreće lokalnu datoteku u pridruženoj aplikaciji; ne preuzima je ponovno. Samo radni izvozi, bez izmišljene javne arhive."));
         outer.Children.Add(U.Split(U.Card("Arhiva radnih izvoza",grid),U.Card("Pregled datoteke",detail)));
