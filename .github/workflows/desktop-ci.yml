@@ -57,14 +57,56 @@ jobs:
           $exe = (Resolve-Path 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe').Path
           $process = Start-Process -FilePath $exe -PassThru
           try {
-            Start-Sleep -Seconds 5
-            $process.Refresh()
-            if ($process.HasExited) { throw "SIDRENA exited during startup (exit code $($process.ExitCode))." }
             $db = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/sidrena.db'
-            if (!(Test-Path $db)) { throw 'SIDRENA did not initialize the local catalogue.' }
+            $initialized = $false
+            for ($attempt = 1; $attempt -le 35; $attempt++) {
+              $process.Refresh()
+              if ($process.HasExited) { throw "SIDRENA exited during startup (exit code $($process.ExitCode))." }
+              if (Test-Path $db) { $initialized = $true; break }
+              Start-Sleep -Seconds 1
+            }
+            if (!$initialized) { throw "SIDRENA stayed open but did not initialize the local catalogue within 35 seconds ($db)." }
           } finally {
             if (!$process.HasExited) { Stop-Process -Id $process.Id -Force }
           }
+      - name: Navigate through all ten reference screens
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe').Path
+          $marker = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/ui-smoke.ok'
+          if (Test-Path $marker) { Remove-Item $marker -Force }
+          $env:SIDRENA_UI_SMOKE = '1'
+          $app = Start-Process -FilePath $exe -PassThru
+          try {
+            $app | Wait-Process -Timeout 45 -ErrorAction Stop
+            $app.Refresh()
+            if ($app.ExitCode -ne 0) { throw "UI navigation failed with exit code $($app.ExitCode)." }
+            if (!(Test-Path $marker)) { throw 'Missing ten-screen navigation marker' }
+            $result = Get-Content $marker -Raw
+            if (!$result.Contains('10/10 passed')) { throw $result }
+            Write-Output $result
+          } finally {
+            Remove-Item Env:SIDRENA_UI_SMOKE -ErrorAction SilentlyContinue
+            $app.Refresh()
+            if (!$app.HasExited) { Stop-Process -Id $app.Id -Force }
+          }
+      - name: Verify all ten real Windows reference captures
+        shell: pwsh
+        run: |
+          $folder = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/ui-captures'
+          $screens = @(Get-ChildItem -Path $folder -Filter 'screen-*.png' -File)
+          if ($screens.Count -ne 10) { throw "Expected 10 real WPF screenshots, got $($screens.Count)." }
+          foreach ($s in $screens) {
+            if ($s.Length -lt 1000) { throw "UI capture $($s.Name) is unexpectedly small." }
+          }
+          New-Item -ItemType Directory -Force -Path artifacts/sidrena-ui-captures | Out-Null
+          Copy-Item -Path (Join-Path $folder '*.png') -Destination artifacts/sidrena-ui-captures/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SIDRENA-Desktop-real-ui-captures
+          path: artifacts/sidrena-ui-captures/
+          if-no-files-found: error
+          retention-days: 14
       - uses: actions/upload-artifact@v7
         with:
           name: SIDRENA-Desktop-win-x64-portable

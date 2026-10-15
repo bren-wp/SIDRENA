@@ -6,51 +6,47 @@ Plugin URI: https://brendigo.com/sidrene-cijene/
 Support: sidrena@brendigo.com
 -->
 
-# SIDRENA Desktop — lokalno upravljanje cijenama
+# SIDRENA Desktop — lokalne cijene i digitalni cjenici
 
-SIDRENA Desktop je **izdvojeni Windows 10/11 modul** unutar postojećeg SIDRENA projekta.
-Namjerno ne zamjenjuje WordPress dodatke niti mijenja njihove baze podataka.
+SIDRENA Desktop razvija se kao Windows aplikacija uz postojeće WordPress
+i WooCommerce dodatke. Povezana je vizualnim identitetom, ali ne mijenja
+postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Što radi početna verzija 0.1
+## Razvojna verzija 0.2
 
-- Izrađuje lokalni katalog proizvoda i usluga u SQLite bazi u \`%LOCALAPPDATA%\Brendigo\SIDRENA\sidrena.db\`.
-- Sprema aktualne iznose u cijelim centima, bez pogrešaka binarnog zaokruživanja.
-- Čuva odvojeni povijesni sidreni iznos, datum i izvor. Ne izmišlja sidrenu cijenu iz današnje cijene.
-- Zaključava dva poznata referentna datuma na \`2026-09-10\` i \`2025-05-02\`, ali odabir pravnog režima ostaje odgovornost korisnika.
-- Svaku stvarnu promjenu aktualne cijene upisuje u lokalni, postojani zapis s razlogom i vremenom.
-- Izvozi **RADNI** CSV i XML u atomic-save načinu rada; ti izvozi nisu zakonski javni cjenik.
-- Ne zahtijeva račun, licencu, internet ni telemetriju.
+U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
+Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
+Postavke i Pomoć. Zajednička tema je tamnoplava s narančastim akcentima,
+vektorskom navigacijom i stvarnim lokalnim stanjem.
 
-## Izgradnja
+Završene lokalne funkcije uključuju katalog i promjene aktualnih cijena,
+zasebno verificiranu sidrenu cijenu, povijesni audit i graf, pretraživanje,
+lokacije, radni CSV/XML izvoz, lokalnu evidenciju datoteka i sigurnosnu kopiju
+SQLite baze koja uključuje WAL promjene. Nije potrebna registracija ni
+telemetrija za lokalni rad.
 
-Na Windows računalu s .NET 8 SDK-om:
+PDF, službeni zakonski CSV/XML serializer, javna objava, sinkronizacija
+s WordPressom/WooCommerceom i serverima, siguran unos pristupnih podataka,
+restore, instalacija i digitalni potpis NISU još završeni. Ne postoji
+lažni status uspješne objave.
 
-\`\`\`powershell
-dotnet run --project desktop/Sidrena.Tests/Sidrena.Tests.csproj -c Release
-dotnet run --project desktop/Sidrena.Desktop/Sidrena.Desktop.csproj -c Release
-\`\`\`
+## Pokretanje i provjere
 
-GitHub Actions \`desktop-ci.yml\` izrađuje portable Windows x64 artefakt. Potpisani Setup, službeni PDF cjenik, WordPress API sinkronizacija, rasporedi slanja i dokumentirana kompatibilnost zakonskog izvoza **nisu dio ove početne verzije**.
+Na Windows 10/11 sa .NET 8 SDK-om pokrenuti:
+- dotnet run --project desktop/Sidrena.Tests/Sidrena.Tests.csproj -c Release
+- dotnet run --project desktop/Sidrena.Desktop/Sidrena.Desktop.csproj -c Release
 
-## Veza sa službenim WordPress.org dodatkom
+GitHub workflow desktop-ci.yml provjerava Release build, smoke testove,
+portable Windows x64 EXE, otvaranje svih 10 ekrana i izrađuje stvarne
+snimke aplikacije kao zaseban QA artefakt s rokom čuvanja 14 dana.
 
-Vlasnikov postojeći službeni dodatak je:
+Baza: %LOCALAPPDATA%\Brendigo\SIDRENA\sidrena.db
+
+## Daljnje poliranje
+
+Kriteriji vizualnog podudaranja i otvorene razlike opisani su u
+docs/DESKTOP-UI-PARITY.md. Snimke stvarnog UI-ja nisu dokaz 1:1 same
+po sebi: potreban je ručni vizualni pregled i nastavak dorade.
+
+Službeni WordPress dodatak:
 https://wordpress.org/plugins/brendigo-sidrena-cijena/
-
-Njegov WordPress.org slug **ostaje** \`brendigo-sidrena-cijena\`, a postojeći SIDRENA repo izdaje dodatne WordPress/WooCommerce edicije. To nisu automatski iste baze ni isti ugovori API-ja.
-
-Sljedeća faza zahtijeva provjeru izvornog koda i konkretnih mogućnosti službenog dodatka te:
-1. Verzionarni, **read-only** adapter za katalog (ID/SKU i eventualni ID poslovnice).
-2. Mapiranje cijene, sidrenog datuma i izvora bez promjene WooCommerce primarnog kataloga.
-3. Izričitu administrativnu autorizaciju za svaku operaciju pisanja.
-4. TLS, WordPress application passwords ili odgovarajuću metodu s najmanjim potrebnim ovlastima, pohranjenu kroz Windows DPAPI/Credential Manager.
-5. ETag/version conflict detekciju, idempotentni prijenos i provjeru posljednje uspješne objave.
-6. Realne integracijske i migracijske testove prije uključivanja objave.
-
-**Nema direktne razmjene podataka, izmjena WordPress podataka ni javne objave u 0.1.**
-
-## Zakonska sigurnost
-
-Odluke NN 101/2026 i NN 110/2026 propisuju sadašnji okvir s početkom primjene 17. 11. 2026. Radni CSV/XML nisu zamišljeni kao zamjena za konkretni, konačno validirani objavni format, naziv datoteke, obvezna polja, povijesnu arhivu i raspored objave. Razvoj zakonskog serijalizatora zahtijeva provjeru konačnih pravilnika.
-
-Referentne sidrene cijene nisu akcijske cijene niti 30-dnevni minimum pri sniženju. Potonji su zaseban budući model.

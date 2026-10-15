@@ -3,43 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="BackgroundBrush" Color="#0C1120"/>
-        <SolidColorBrush x:Key="SurfaceBrush" Color="#151C2F"/>
-        <SolidColorBrush x:Key="InputBrush" Color="#202A41"/>
-        <SolidColorBrush x:Key="TextBrush" Color="#F1F5FC"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="#A2ADC3"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#FF9548"/>
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="CaretBrush" Value="{StaticResource TextBrush}"/>
-            <Setter Property="BorderBrush" Value="#34415D"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="Margin" Value="0,4,12,10"/>
-            <Setter Property="MinHeight" Value="38"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
-            <Setter Property="Foreground" Value="#101828"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="Margin" Value="0,4,12,10"/>
-            <Setter Property="MinHeight" Value="38"/>
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="17,10"/>
-            <Setter Property="Margin" Value="0,4,8,4"/>
-            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="MinHeight" Value="40"/>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
