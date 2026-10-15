@@ -33,12 +33,32 @@ try
         Expect(File.ReadAllText(csv).Contains("\"Mlijeko; \"\"punomasno\"\"\""), "CSV quoting");
         Expect(File.ReadAllText(xml).Contains("SidrenaRadniIzvoz"), "XML draft marker");
     }
+    using (var workspace = new WorkspaceStore(file))
+    {
+        var loc = workspace.AddLocation("Poslovnica Rijeka", "Korzo 1", "Rijeka");
+        Expect(workspace.ListLocations().Count == 1, "Persist local locations");
+        workspace.SetLocationActive(loc, false);
+        Expect(!workspace.ListLocations()[0].IsActive, "Toggle location status");
+        Expect(workspace.ListRecentChanges().Count == 1, "Joined price audit history");
+        var csv = Path.Combine(folder, "RADNI.csv");
+        workspace.RecordDraftExport(csv, "CSV", 2);
+        var drafts = workspace.ListDraftExports();
+        Expect(drafts.Count == 1 && drafts[0].Sha256.Length == 64, "SHA256 draft record");
+        MustThrow(() => workspace.RecordDraftExport(csv, "PDF", 2));
+        var backup = Path.Combine(folder, "backup.db");
+        workspace.BackupTo(backup);
+        using var backupPrices = new PriceStore(backup);
+        Expect(backupPrices.ListItems().Count == 2, "Online backup includes WAL data");
+        using var backupWorkspace = new WorkspaceStore(backup);
+        Expect(backupWorkspace.ListLocations().Count == 1, "Online backup includes workspace");
+        MustThrow(() => workspace.BackupTo(file));
+    }
     using (var reopened = new PriceStore(file))
     {
         Expect(reopened.ListItems().Count == 2, "Durable database");
         Expect(reopened.ListChanges(id).Count == 1, "Durable audit trail");
     }
-    Console.WriteLine("SIDRENA Desktop: 14 provjera uspješno.");
+    Console.WriteLine("SIDRENA Desktop: 22 provjere uspješno.");
 }
 finally
 {
