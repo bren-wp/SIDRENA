@@ -12,7 +12,7 @@ SIDRENA Desktop razvija se kao Windows aplikacija uz postojeće WordPress
 i WooCommerce dodatke. Povezana je vizualnim identitetom, ali ne mijenja
 postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Razvojna verzija 0.2
+## Razvojna verzija 0.3
 
 U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
 Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
@@ -22,7 +22,16 @@ vektorskom navigacijom i stvarnim lokalnim stanjem.
 Završene lokalne funkcije uključuju katalog i promjene aktualnih cijena,
 zasebno verificiranu sidrenu cijenu, povijesni audit i graf, pretraživanje,
 lokacije, radni CSV/XML izvoz, lokalnu evidenciju datoteka i sigurnosnu kopiju
-SQLite baze koja uključuje WAL promjene. Nije potrebna registracija ni
+SQLite baze koja uključuje WAL promjene. Novi lokalni CSV uvoz radi uz pregled
+i izričitu potvrdu, provjerava sukobe šifri/naziva i umeće sve stavke
+transakcijski ili ništa. Pregled detalja dopušta promjenu naziva, šifre,
+barkoda i jedinice, uz zaseban audit i bez izmjene aktualne ili sidrene
+cijene. Radni CSV štiti ćelije od spreadsheet formula i omogućuje
+povrat izvornog teksta. Arhiva provjerava SHA-256 integritet
+postojećih datoteka prije otvaranja; povijest nudi filtre datuma/vrste
+i zaseban radni CSV izvještaj.
+
+Nije potrebna registracija ni
 telemetrija za lokalni rad.
 
 PDF, službeni zakonski CSV/XML serializer, javna objava, sinkronizacija

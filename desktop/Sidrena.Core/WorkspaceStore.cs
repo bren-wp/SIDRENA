@@ -97,6 +97,22 @@ public sealed class WorkspaceStore : IDisposable
         c.ExecuteNonQuery();
     }
 
+    /// <summary>Confirm that a local draft still matches the bytes recorded at export time.</summary>
+    public bool VerifyDraftExport(long id)
+    {
+        using var command=_connection.CreateCommand();
+        command.CommandText="SELECT file_path,sha256 FROM desktop_draft_exports WHERE id=$id";
+        command.Parameters.AddWithValue("$id",id);
+        using var reader=command.ExecuteReader();
+        if(!reader.Read())throw new KeyNotFoundException("Izvoz nije pronađen u arhivi.");
+        var path=reader.GetString(0);
+        var expected=reader.GetString(1);
+        if(!File.Exists(path))return false;
+        using var file=File.OpenRead(path);
+        var actual=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(file));
+        return string.Equals(expected,actual,StringComparison.OrdinalIgnoreCase);
+    }
+
     public IReadOnlyList<DraftPublication> ListDraftExports()
     {
         using var c = _connection.CreateCommand();

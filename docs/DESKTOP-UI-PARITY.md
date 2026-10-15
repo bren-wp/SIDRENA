@@ -23,13 +23,13 @@ konzistentne tipke i statusi. Ciljana sistemska tipografija slična Interu.
 | Ekran | Implementirano | Preostale razlike |
 |---|---|---|
 | Pregled | Četiri KPI, brze radnje, stvarna povijest i radni izvozi | Foto-hero, potpuno podudaranje kartica javne objave i razmaka |
-| Artikli | Tablica, pretraga, unos, promjena cijene, izvor sidrene | Puni desni editor, uvoz, detaljni filtri i slike proizvoda |
-| Usluge | Odvojeni katalog, unos, izmjene, povijest | Kategorije, porez, svi detaljni tabovi |
-| Povijest cijena | Audit, pretraga, detalji, graf iz lokalnih zapisa | Napredni vremenski i lokacijski filtri |
+| Artikli | Tablica, pretraga, unos, promjena cijene, urednik metapodataka, sidreni filtar i sigurni radni CSV uvoz | Slike proizvoda, ostali filtri, dodatni tabovi |
+| Usluge | Odvojeni katalog, unos, audit metapodataka, uvoz i izmjene cijena | Kategorije, porez, svi detaljni tabovi |
+| Povijest cijena | Audit, pretraga, period i vrsta, CSV izvoz, graf iz lokalnih zapisa | Filtri po lokaciji i korisniku kada podaci postoje |
 | Cjenici | Radni CSV/XML, pregled podataka | Službena shema, PDF, javni HTML pregled i objava |
 | Lokacije | Lokalne poslovnice, adrese, aktivnost | Karta, veze cjenika, kontakt podaci |
 | Sinkronizacija | Popis kanala s istinitim nepovezanim statusima | Sigurni WP/Woo/SFTP/FTPS/WebDAV/API adapteri |
-| Arhiva | Evidencija radnih izvoza, otvaranje lokalne datoteke | Javni arhivski snapshotovi, pregled i verzije |
+| Arhiva | Evidencija radnih izvoza, SHA-256 provjera izmjena, otvaranje lokalne datoteke | Javni arhivski snapshotovi, pregled i verzije |
 | Postavke | Sigurnosna kopija, mapa baze, informacije | Restore, enkripcija, zakazivanje, ažuriranja |
 | Pomoć | Brzi početak, podrška, prečaci | Puni FAQ i dokumentacija |
 
