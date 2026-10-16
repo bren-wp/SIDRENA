@@ -48,6 +48,12 @@ jobs:
           }
       - name: Restore Windows app
         run: dotnet restore desktop/Sidrena.Desktop/Sidrena.Desktop.csproj
+      - name: Roslyn semantic unused-member audit (core)
+        shell: pwsh
+        run: >
+          dotnet format style desktop/Sidrena.Core/Sidrena.Core.csproj
+          --no-restore --verify-no-changes --severity warn
+          --diagnostics IDE0051 IDE0052
       - name: Build Windows app
         run: dotnet build desktop/Sidrena.Desktop/Sidrena.Desktop.csproj -c Release --no-restore
       - name: Run independent local catalogue smoke tests
