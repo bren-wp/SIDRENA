@@ -489,7 +489,7 @@ public partial class MainWindow : Window
                 chartHost.Content=U.PriceChart(values);
             }
         };
-        detail.Children.Add(U.Notice("Povijest je zapis transakcijskih promjena; ne zamjenjuje dokaz o zakonskoj referentnoj cijeni."));
+        detail.Children.Add(U.Notice("Povijest prikazuje zabilježene promjene cijena; za referentnu cijenu sačuvajte i izvorni dokaz."));
         outer.Children.Add(U.Split(U.Card("Povijest cijena",table),U.Card("Detalji promjene cijene",detail)));
         return outer;
     }
@@ -519,7 +519,7 @@ public partial class MainWindow : Window
             {
                 var folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "Brendigo","SIDRENA","pregledi");
-                var path=Path.Combine(folder,"SIDRENA_RADNI_PREGLED_"+
+                var path=Path.Combine(folder,"SIDRENA_PREGLED_"+
                     DateTime.Now.ToString("yyyyMMdd_HHmmss_fff",Hr)+".html");
                 var scope=kind.SelectedIndex switch
                 {1=>"artikli",2=>"usluge",_=>"artikli i usluge"};
@@ -547,7 +547,7 @@ public partial class MainWindow : Window
         if(items.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
         var dlg=new SaveFileDialog{
             Title="Spremi cjenik za pregled",
-            FileName="SIDRENA_RADNI_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
+            FileName="SIDRENA_NACRT_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
                 (format=="CSV"?".csv":".xml"),
             Filter=format=="CSV"?"CSV (*.csv)|*.csv":"XML (*.xml)|*.xml",
             AddExtension=true };
@@ -672,7 +672,7 @@ public partial class MainWindow : Window
             Status("Spremljena WordPress adresa je uklonjena.");
         }));
         controls.Children.Add(U.Action("Otvori javni cjenik",()=>{
-            if(verifiedCjenik is null){Status("Najprije provjerite javni API.");return;}
+            if(verifiedCjenik is null){Status("Najprije provjerite WordPress stranicu.");return;}
             OpenUrl(verifiedCjenik.AbsoluteUri);
         }));
         controls.Children.Add(U.Action("Otvori javnu arhivu",()=>{
@@ -808,7 +808,7 @@ public partial class MainWindow : Window
             U.Text("Tipkovnički prečaci",18,true),
             U.Muted("Ctrl + N — otvori artikle  ·  F1 — pomoć"),
             U.Text("Preuzimanje i ažuriranja",18,true),
-            U.Muted("Setup EXE instalira SIDRENA-u, portable EXE radi bez instalacije. Baza se pri ažuriranju čuva."),
+            U.Muted("Setup instalira aplikaciju, a prijenosna inačica radi bez instalacije. Vaši podaci ostaju sačuvani pri ažuriranju."),
             U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
             U.Text("Pravne informacije",18,true),
             U.Muted("Nositelj prava na Windows aplikaciju: Brendigo LTD."),
@@ -878,6 +878,7 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        _pendingWordPressRequest?.Cancel();
         _workspace.Dispose();
         _prices.Dispose();
         base.OnClosed(e);

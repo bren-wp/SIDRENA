@@ -78,7 +78,7 @@
                             Padding="15,10" VerticalAlignment="Center" MaxWidth="255">
                         <StackPanel>
                             <TextBlock Text="⚓  SIDRENA" FontSize="17" Foreground="{StaticResource AccentBrush}" FontWeight="Bold"/>
-                            <TextBlock Text="Lokalni katalog i radni cjenici" FontSize="11" Margin="0,4,0,0"/>
+                            <TextBlock Text="Pregled cijena i poslovanja" FontSize="11" Margin="0,4,0,0"/>
                             <TextBlock Text="Propisi: provjera prije javne objave" Foreground="{StaticResource MutedBrush}"
                                        FontSize="10" Margin="0,3,0,0"/>
                         </StackPanel>
@@ -98,7 +98,7 @@
             </ScrollViewer>
             <Border Grid.Row="2" Padding="9,8" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BorderBrush}">
                 <DockPanel>
-                    <TextBlock x:Name="StatusLabel" Text="Lokalna baza spremna. Radni izvozi nisu javno validirani cjenici."
+                    <TextBlock x:Name="StatusLabel" Text="SIDRENA je spremna za rad."
                                FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
                 </DockPanel>
             </Border>
