@@ -41,6 +41,13 @@ try
         workspace.SetLocationActive(loc, false);
         Expect(!workspace.ListLocations()[0].IsActive, "Toggle location status");
         Expect(workspace.ListRecentChanges().Count == 1, "Joined price audit history");
+        Expect(workspace.GetOfficialSite() is null,"No default web connection");
+        workspace.SaveOfficialSite("https://sidrena.example.hr");
+        Expect(workspace.GetOfficialSite()=="https://sidrena.example.hr","Only public site URL stored");
+        MustThrow(()=>workspace.SaveOfficialSite("http://insecure.example.hr"));
+        Expect(workspace.GetOfficialSite()=="https://sidrena.example.hr","Rejected URL doesn't overwrite saved site");
+        workspace.ClearOfficialSite();
+        Expect(workspace.GetOfficialSite() is null,"Official site can be forgotten");
         var historyPath=Path.Combine(folder,"povijest.csv");
         DraftExport.HistoryCsv(workspace.ListRecentChanges(),historyPath);
         Expect(File.ReadAllText(historyPath).Contains("DATUM_I_VRIJEME") &&

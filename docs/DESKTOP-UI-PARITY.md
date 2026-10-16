@@ -28,7 +28,7 @@ konzistentne tipke i statusi. Ciljana sistemska tipografija slična Interu.
 | Povijest cijena | Audit, pretraga, period i vrsta, CSV izvoz, graf iz lokalnih zapisa | Filtri po lokaciji i korisniku kada podaci postoje |
 | Cjenici | Radni CSV/XML, pregled podataka | Službena shema, PDF, javni HTML pregled i objava |
 | Lokacije | Lokalne poslovnice, adrese, aktivnost | Karta, veze cjenika, kontakt podaci |
-| Sinkronizacija | Popis kanala s istinitim nepovezanim statusima | Sigurni WP/Woo/SFTP/FTPS/WebDAV/API adapteri |
+| Sinkronizacija | HTTPS provjera službenog javnog WP REST API-ja, javni cjenik/arhiva/CSV/XML, lokalno pamćenje URL-a | Autorizirani sigurni WP/Woo/SFTP/FTPS/WebDAV adapteri za pisanje |
 | Arhiva | Evidencija radnih izvoza, SHA-256 provjera izmjena, otvaranje lokalne datoteke | Javni arhivski snapshotovi, pregled i verzije |
 | Postavke | Sigurnosna kopija, mapa baze, informacije | Restore, enkripcija, zakazivanje, ažuriranja |
 | Pomoć | Brzi početak, podrška, prečaci | Puni FAQ i dokumentacija |
@@ -43,7 +43,7 @@ konzistentne tipke i statusi. Ciljana sistemska tipografija slična Interu.
 - Navigacija i tipkovnica, čitači zaslona, kontrast i stanja pogrešaka moraju raditi.
 - Prije spajanja PR-a: Windows build, testovi baze, launch smoke, otvaranje svih 10 prikaza,
   snimanje svih deset stvarnih WPF ekrana u GitHub CI artefakte i ručna usporedba s referencama.
-- Postojeće WordPress edicije i službeni slug brendigo-sidrena-cijena ostaju nedirnuti.
+- Samo službeni WordPress.org dodatak brendigo-sidrena-cijena 1.5.0 i Windows desktop; stare zasebne WP/Woo edicije su uklonjene.
 - Nema javnog izdanja dok sigurnost, valjanost datoteka i svi relevantni QA uvjeti ne prođu.
 
 Stanje: vizualno podudaranje 1:1 još NIJE dokazano. CI snimke stvarnih

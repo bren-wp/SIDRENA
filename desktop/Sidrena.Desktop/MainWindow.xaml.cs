@@ -473,6 +473,7 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Kanali povezivanja",channels));
 
         var site=U.Box("https://primjer.hr/",420);
+        site.Text=_workspace.GetOfficialSite()??"";
         var connectionStatus=U.Text("Javni WordPress API još nije provjeren.",15,true);
         var published=U.Muted("Podaci nisu učitani.");
         var feeds=U.Vertical();
@@ -505,6 +506,22 @@ public partial class MainWindow : Window
                 Status("Provjera javnog WordPress REST API-ja nije uspjela.");
             }
         },true));
+        controls.Children.Add(U.Action("Spremi adresu",()=>{
+            try
+            {
+                _workspace.SaveOfficialSite(site.Text);
+                Status("Spremljena je samo HTTPS adresa WordPress stranice, bez vjerodajnica.");
+            }
+            catch(ArgumentException ex){Error(ex);}
+        }));
+        controls.Children.Add(U.Action("Zaboravi adresu",()=>{
+            _workspace.ClearOfficialSite();site.Clear();
+            verifiedCjenik=null;verifiedArchive=null;
+            connectionStatus.Text="Javna WordPress adresa uklonjena.";
+            published.Text="Podaci nisu učitani.";
+            feeds.Children.Clear();
+            Status("Spremljena WordPress adresa je uklonjena.");
+        }));
         controls.Children.Add(U.Action("Otvori javni cjenik",()=>{
             if(verifiedCjenik is null){Status("Najprije provjerite javni API.");return;}
             OpenUrl(verifiedCjenik.AbsoluteUri);
