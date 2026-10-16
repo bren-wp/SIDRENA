@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Windows;
+using Sidrena.Core;
 
 namespace Sidrena.Desktop;
 
@@ -25,6 +26,16 @@ public partial class App : Application
             return;
         }
         _ownsSingleInstance=true;
+        DispatcherUnhandledException+=(_,error)=>
+        {
+            // A failed UI operation must not leak a filesystem path, SQL query
+            // or API URL through Windows' default unhandled-exception dialog.
+            MessageBox.Show(UserFacingError.Describe(error.Exception),
+                "SIDRENA — problem u radu aplikacije",
+                MessageBoxButton.OK,MessageBoxImage.Error);
+            error.Handled=true;
+            Shutdown(1); // Do not continue with potentially inconsistent data.
+        };
         base.OnStartup(e);
     }
 

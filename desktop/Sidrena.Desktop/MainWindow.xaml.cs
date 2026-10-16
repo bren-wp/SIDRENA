@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     private readonly WorkspaceStore _workspace;
     private readonly string _databasePath;
     private string _activePage = "Pregled";
+    private CancellationTokenSource? _pendingWordPressRequest;
     private const string DraftWarning = "Cjenik je spreman za pregled i ispis. Prije javne objave provjerite podatke i primjenjive obveze.";
     private static readonly CultureInfo Hr = CultureInfo.GetCultureInfo("hr-HR");
     private sealed record ItemRow(long Id,string Name,string Kind,string Sku,string Barcode,string Unit,string Current,string Anchor,string AnchorDate);
@@ -157,6 +158,7 @@ public partial class MainWindow : Window
 
     private void Navigate(string page)
     {
+        if(page!="Sinkronizacija") _pendingWordPressRequest?.Cancel();
         _activePage=page;
         PageTitle.Text=page=="Pregled"?"Sidrene cijene i digitalni cjenici":page;
         PageSubtitle.Text=page switch{
@@ -196,7 +198,8 @@ public partial class MainWindow : Window
 
     private static Brush Brush(string key)=>(Brush)Application.Current.FindResource(key);
     private void Status(string message)=>StatusLabel.Text=message;
-    private void Error(Exception ex)=>MessageBox.Show(this,ex.Message,"SIDRENA",MessageBoxButton.OK,MessageBoxImage.Warning);
+    private void Error(Exception ex)=>MessageBox.Show(this,UserFacingError.Describe(ex),
+        "SIDRENA — obavijest",MessageBoxButton.OK,MessageBoxImage.Warning);
     private static string Euro(long cents)=>PriceStore.FormatEur(cents)+" €";
     private static string DateText(string? iso)
         => iso is not null && DateTime.TryParseExact(iso,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var date)
@@ -342,7 +345,7 @@ public partial class MainWindow : Window
         var eSku=U.Box("Šifra",145);
         var eBarcode=U.Box("Barkod",165);
         var eUnit=U.Box("Jedinica",115);
-        var eReason=U.Box("Razlog izmjene metapodataka",260);
+        var eReason=U.Box("Razlog izmjene podataka",260);
         var locked=U.Muted("Sidrena cijena i aktualna cijena mogu se mijenjati samo kroz odgovarajuće postupke.");
         var editor=U.Vertical();
         editor.Children.Add(chosen);
@@ -486,7 +489,7 @@ public partial class MainWindow : Window
                 chartHost.Content=U.PriceChart(values);
             }
         };
-        detail.Children.Add(U.Notice("Povijest je zapis transakcijskih promjena; ne zamjenjuje dokaz o zakonskoj referentnoj cijeni."));
+        detail.Children.Add(U.Notice("Povijest prikazuje zabilježene promjene cijena; za referentnu cijenu sačuvajte i izvorni dokaz."));
         outer.Children.Add(U.Split(U.Card("Povijest cijena",table),U.Card("Detalji promjene cijene",detail)));
         return outer;
     }
@@ -516,7 +519,7 @@ public partial class MainWindow : Window
             {
                 var folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "Brendigo","SIDRENA","pregledi");
-                var path=Path.Combine(folder,"SIDRENA_RADNI_PREGLED_"+
+                var path=Path.Combine(folder,"SIDRENA_PREGLED_"+
                     DateTime.Now.ToString("yyyyMMdd_HHmmss_fff",Hr)+".html");
                 var scope=kind.SelectedIndex switch
                 {1=>"artikli",2=>"usluge",_=>"artikli i usluge"};
@@ -544,7 +547,7 @@ public partial class MainWindow : Window
         if(items.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
         var dlg=new SaveFileDialog{
             Title="Spremi cjenik za pregled",
-            FileName="SIDRENA_RADNI_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
+            FileName="SIDRENA_NACRT_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
                 (format=="CSV"?".csv":".xml"),
             Filter=format=="CSV"?"CSV (*.csv)|*.csv":"XML (*.xml)|*.xml",
             AddExtension=true };
@@ -577,7 +580,7 @@ public partial class MainWindow : Window
             try{_workspace.SetLocationActive(x.Id,x.Status!="Aktivna");Reload();Status("Status poslovnice je promijenjen.");}
             catch(Exception ex)when(ex is KeyNotFoundException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         }));
-        form.Children.Add(U.Notice("Poslovnice su prikazane u vašoj evidenciji. Odabir poslovnice za pojedini cjenik još nije dostupan."));
+        form.Children.Add(U.Notice("Upravljajte poslovnicama i pregledajte njihove javne cjenike kroz povezanu WordPress stranicu."));
         outer.Children.Add(U.Split(U.Card("Lokacije i poslovnice",table),U.Card("Detalji lokacije",form)));
         return outer;
     }
@@ -598,13 +601,17 @@ public partial class MainWindow : Window
         Uri? verifiedArchive=null;
         var controls=U.Horizontal();
         controls.Children.Add(U.Action("Provjeri povezanost",async ()=>{
+            _pendingWordPressRequest?.Cancel();
+            using var requestLifetime=new CancellationTokenSource();
+            _pendingWordPressRequest=requestLifetime;
             verifiedCjenik=null;verifiedArchive=null;
-            connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
+            connectionStatus.Text="Provjeravam povezanost s web-stranicom…";
             published.Text="Provjeravam javno dostupne cjenike.";
             feeds.Children.Clear();
             try
             {
-                var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
+                var result=await OfficialPluginDiscovery.FetchAsync(site.Text,token:requestLifetime.Token);
+                if(requestLifetime.IsCancellationRequested || _activePage!="Sinkronizacija")return;
                 verifiedCjenik=result.PublicPricelist;
                 verifiedArchive=result.PublicArchive;
                 connectionStatus.Text="WordPress stranica je dostupna";
@@ -632,11 +639,19 @@ public partial class MainWindow : Window
                 Status("Javni cjenici uspješno su učitani. Nije izvršena objava ili promjena podataka na webu.");
             }
             catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
-                System.Text.Json.JsonException or TaskCanceledException)
+                System.Text.Json.JsonException or OperationCanceledException)
             {
-                connectionStatus.Text="Nije moguće provjeriti službeni API.";
-                published.Text=ex.Message;
-                Status("Povezivanje s WordPress stranicom nije uspjelo.");
+                if(!requestLifetime.IsCancellationRequested)
+                {
+                    connectionStatus.Text="Povezivanje nije uspjelo.";
+                    published.Text=UserFacingError.Describe(ex);
+                    Status("Povezivanje s WordPress stranicom nije uspjelo.");
+                }
+            }
+            finally
+            {
+                if(ReferenceEquals(_pendingWordPressRequest,requestLifetime))
+                    _pendingWordPressRequest=null;
             }
         },true));
         controls.Children.Add(U.Action("Spremi adresu",()=>{
@@ -648,6 +663,7 @@ public partial class MainWindow : Window
             catch(ArgumentException ex){Error(ex);}
         }));
         controls.Children.Add(U.Action("Zaboravi adresu",()=>{
+            _pendingWordPressRequest?.Cancel();
             _workspace.ClearOfficialSite();site.Clear();
             verifiedCjenik=null;verifiedArchive=null;
             connectionStatus.Text="Javna WordPress adresa uklonjena.";
@@ -656,11 +672,11 @@ public partial class MainWindow : Window
             Status("Spremljena WordPress adresa je uklonjena.");
         }));
         controls.Children.Add(U.Action("Otvori javni cjenik",()=>{
-            if(verifiedCjenik is null){Status("Najprije provjerite javni API.");return;}
+            if(verifiedCjenik is null){Status("Najprije provjerite WordPress stranicu.");return;}
             OpenUrl(verifiedCjenik.AbsoluteUri);
         }));
         controls.Children.Add(U.Action("Otvori javnu arhivu",()=>{
-            if(verifiedArchive is null){Status("Najprije provjerite javni API.");return;}
+            if(verifiedArchive is null){Status("Najprije provjerite WordPress stranicu.");return;}
             OpenUrl(verifiedArchive.AbsoluteUri);
         }));
         outer.Children.Add(U.Card("Povezivanje sa službenim WordPress dodatkom",
@@ -770,7 +786,7 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Izgled: Tamni · Jednostavno upravljanje"),
             U.Notice("Vaše poslovne podatke možete dodatno zaštititi izradom redovitih sigurnosnih kopija.")));
         outer.Children.Add(U.Card("Informacije o izdanju",
-            U.Text("SIDRENA Desktop 0.9.0",18,true),
+            U.Text("SIDRENA Desktop 0.10.0",18,true),
             U.Muted("Windows 10/11 · Brendigo LTD · Komercijalna licencija"),
             U.Notice("Povezani WordPress dodatak Brendigo Sidrena Cijena zadržava verziju 1.5.0."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
@@ -792,7 +808,7 @@ public partial class MainWindow : Window
             U.Text("Tipkovnički prečaci",18,true),
             U.Muted("Ctrl + N — otvori artikle  ·  F1 — pomoć"),
             U.Text("Preuzimanje i ažuriranja",18,true),
-            U.Muted("Setup EXE instalira SIDRENA-u, portable EXE radi bez instalacije. Baza se pri ažuriranju čuva."),
+            U.Muted("Setup instalira aplikaciju, a prijenosna inačica radi bez instalacije. Vaši podaci ostaju sačuvani pri ažuriranju."),
             U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
             U.Text("Pravne informacije",18,true),
             U.Muted("Nositelj prava na Windows aplikaciju: Brendigo LTD."),
@@ -838,17 +854,31 @@ public partial class MainWindow : Window
 
     private void OpenLocal(string path)
     {
-        try{Process.Start(new ProcessStartInfo{FileName=path,UseShellExecute=true});}
-        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or IOException or InvalidOperationException){Error(ex);}
+        try
+        {
+            var document=DocumentOpenPolicy.Validate(path);
+            Process.Start(new ProcessStartInfo{FileName=document,UseShellExecute=true});
+        }
+        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or IOException or
+            InvalidOperationException or ArgumentException or InvalidDataException){Error(ex);}
     }
     private void OpenUrl(string url)
     {
-        try{Process.Start(new ProcessStartInfo{FileName=url,UseShellExecute=true});}
-        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or InvalidOperationException){Error(ex);}
+        try
+        {
+            if(!Uri.TryCreate(url,UriKind.Absolute,out var destination) ||
+               (destination.Scheme!=Uri.UriSchemeHttps && destination.Scheme!="mailto") ||
+               !string.IsNullOrEmpty(destination.UserInfo))
+                throw new ArgumentException("Nepodržana internetska adresa.");
+            Process.Start(new ProcessStartInfo{FileName=destination.AbsoluteUri,UseShellExecute=true});
+        }
+        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or
+            InvalidOperationException or ArgumentException){Error(ex);}
     }
 
     protected override void OnClosed(EventArgs e)
     {
+        _pendingWordPressRequest?.Cancel();
         _workspace.Dispose();
         _prices.Dispose();
         base.OnClosed(e);

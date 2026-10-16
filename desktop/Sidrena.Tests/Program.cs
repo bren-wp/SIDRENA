@@ -311,6 +311,53 @@ try
         MustThrowType<System.Net.Http.HttpRequestException>(()=>{
             OfficialPluginDiscovery.FetchAsync("https://sidrena.example.hr",client).GetAwaiter().GetResult();
         });
+    // End-user error privacy: never expose a raw path, SQL statement, or remote URL.
+    var pathLeak=@"C:\Users\Alice\Private\sidrena.db";
+    Expect(!UserFacingError.Describe(new IOException("Access to "+pathLeak)).Contains(pathLeak),
+        "Raw user filesystem paths must not reach UI");
+    Expect(!UserFacingError.Describe(new Microsoft.Data.Sqlite.SqliteException(
+        "SELECT * FROM price_items WHERE secret='abc'",1)).Contains("secret"),
+        "Raw SQL queries and data must not reach UI");
+    Expect(!UserFacingError.Describe(new HttpRequestException(
+        "https://private.example.test/?token=123")).Contains("token"),
+        "No URLs or tokens shown in connection errors");
+    Expect(UserFacingError.Describe(new AggregateException(new Exception("backup")))
+        .Contains("sigurnosne kopije"),"Failed restore has helpful recoverability warning");
+    Expect(!UserFacingError.Describe(new InvalidOperationException("password=secret")).Contains("secret"),
+        "Unexpected provider details must never be displayed");
+    MustThrowType<ArgumentNullException>(()=>UserFacingError.Describe(null!));
+
+    // Only specific safe data documents may be launched through ShellExecute.
+    var allowedCsv=Path.Combine(folder,"open-safe.csv");
+    File.WriteAllText(allowedCsv,"sku;name");
+    Expect(DocumentOpenPolicy.Validate(allowedCsv)==Path.GetFullPath(allowedCsv),
+        "Archive CSV file open is permitted");
+    var allowedXml=Path.Combine(folder,"open-safe.xml");
+    File.WriteAllText(allowedXml,"<prices/>");
+    Expect(DocumentOpenPolicy.Validate(allowedXml).EndsWith(".xml",StringComparison.Ordinal),
+        "Archive XML file open is permitted");
+    var allowedHtml=Path.Combine(folder,"open-safe.html");
+    File.WriteAllText(allowedHtml,"<!doctype html><title>SIDRENA</title>");
+    Expect(DocumentOpenPolicy.Validate(allowedHtml).EndsWith(".html",StringComparison.Ordinal),
+        "Local printable document is permitted");
+    var malicious=Path.Combine(folder,"payload.exe");
+    File.WriteAllText(malicious,"MZ");
+    MustThrowType<InvalidDataException>(()=>DocumentOpenPolicy.Validate(malicious));
+    MustThrowType<InvalidDataException>(()=>DocumentOpenPolicy.Validate(allowedCsv+".cmd"));
+    MustThrowType<FileNotFoundException>(()=>DocumentOpenPolicy.Validate(
+        Path.Combine(folder,"missing.csv")));
+
+    // Real socket endpoints must be globally routable. Reject DNS rebinding to
+    // loopback, RFC1918, CGNAT, link-local, cloud metadata and IPv6 ULA.
+    foreach(var local in new[]{"127.0.0.1","10.2.3.4","172.16.1.1","172.31.255.254",
+        "192.168.1.1","169.254.169.254","100.64.3.3","198.18.0.1",
+        "::1","fe80::1","fd00::abcd","::ffff:192.168.1.100"})
+        Expect(!PublicNetworkAddress.IsPublic(System.Net.IPAddress.Parse(local)),
+            "Private or metadata address blocked: "+local);
+    foreach(var publicAddress in new[]{"8.8.8.8","1.1.1.1","2606:4700:4700::1111"})
+        Expect(PublicNetworkAddress.IsPublic(System.Net.IPAddress.Parse(publicAddress)),
+            "Routable endpoint accepted: "+publicAddress);
+
     // Pure-DIP desktop policy: window must not fill even a small work area.
     var largeWindow=ResponsiveLayoutPolicy.Initial(1920,1080);
     Expect(largeWindow.Width<=1320&&largeWindow.Height<=820&&

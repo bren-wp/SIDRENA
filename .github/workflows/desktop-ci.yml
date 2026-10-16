@@ -48,6 +48,12 @@ jobs:
           }
       - name: Restore Windows app
         run: dotnet restore desktop/Sidrena.Desktop/Sidrena.Desktop.csproj
+      - name: Roslyn semantic unused-member audit (core)
+        shell: pwsh
+        run: >
+          dotnet format style desktop/Sidrena.Core/Sidrena.Core.csproj
+          --no-restore --verify-no-changes --severity warn
+          --diagnostics IDE0051 IDE0052
       - name: Build Windows app
         run: dotnet build desktop/Sidrena.Desktop/Sidrena.Desktop.csproj -c Release --no-restore
       - name: Run independent local catalogue smoke tests
@@ -193,7 +199,7 @@ jobs:
           $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
-            desktop_version='0.9.0'
+            desktop_version='0.10.0'
             wordpress_plugin_version='1.5.0'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA

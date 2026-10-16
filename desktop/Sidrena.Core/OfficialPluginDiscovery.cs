@@ -38,8 +38,17 @@ public static class OfficialPluginDiscovery
         var endpoint=Endpoint(site);
         if(client is null)
         {
-            using var owned=new HttpClient(new HttpClientHandler {AllowAutoRedirect=false,AutomaticDecompression=
-                DecompressionMethods.GZip|DecompressionMethods.Deflate}){Timeout=TimeSpan.FromSeconds(12)};
+            // Validate the actual destination IP when the socket is opened, not
+            // only the URL hostname: prevents private-address DNS rebinding.
+            using var handler=new SocketsHttpHandler
+            {
+                AllowAutoRedirect=false,
+                UseProxy=false,
+                AutomaticDecompression=DecompressionMethods.GZip|DecompressionMethods.Deflate,
+                ConnectTimeout=TimeSpan.FromSeconds(6),
+                ConnectCallback=PublicNetworkAddress.ConnectAsync
+            };
+            using var owned=new HttpClient(handler){Timeout=TimeSpan.FromSeconds(12)};
             return await FetchAsync(endpoint,owned,token).ConfigureAwait(false);
         }
         return await FetchAsync(endpoint,client,token).ConfigureAwait(false);
