@@ -333,7 +333,7 @@ public partial class MainWindow : Window
                     historical.HasValue?source.Text:null);
                 name.Clear();sku.Clear();barcode.Clear();actual.Clear();anchor.Clear();source.Clear();
                 Reload(refresh:true,selectId:created);
-                Status("Stavka je spremljena u lokalni katalog.");
+                Status("Stavka je uspješno spremljena.");
             }catch(Exception ex)when(ex is ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
         // Reference detail drawer: edit only descriptive fields. Current/anchor prices use their own audited workflows.
@@ -390,7 +390,7 @@ public partial class MainWindow : Window
 
     private void ImportCatalogCsv(Action refresh)
     {
-        var dialog=new OpenFileDialog { Title="Uvezi radni SIDRENA CSV katalog",Filter="Radni CSV (*.csv)|*.csv",
+        var dialog=new OpenFileDialog { Title="Uvezi artikle i usluge iz CSV datoteke",Filter="CSV datoteke (*.csv)|*.csv",
             CheckFileExists=true,Multiselect=false };
         if(dialog.ShowDialog(this)!=true)return;
         try
@@ -458,7 +458,7 @@ public partial class MainWindow : Window
         filters.Children.Add(U.Action("Izvezi povijest (CSV)",()=>{
             var rows=Filtered();
             if(rows.Count==0){Status("Nema zapisa za odabrane filtre.");return;}
-            var dialog=new SaveFileDialog { Title="Izvoz lokalne povijesti cijena",FileName=
+            var dialog=new SaveFileDialog { Title="Izvoz povijesti cijena",FileName=
                 "SIDRENA_POVIJEST_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+".csv",
                 Filter="CSV (*.csv)|*.csv",AddExtension=true };
             if(dialog.ShowDialog(this)!=true)return;
@@ -507,8 +507,8 @@ public partial class MainWindow : Window
         Refresh();
         var options=U.Horizontal();
         options.Children.Add(U.Field("Obuhvat cjenika",kind));
-        options.Children.Add(U.Action("Izradi radni CSV",()=>Export("CSV",SelectedItems()),true));
-        options.Children.Add(U.Action("Izradi radni XML",()=>Export("XML",SelectedItems())));
+        options.Children.Add(U.Action("Izradi CSV",()=>Export("CSV",SelectedItems()),true));
+        options.Children.Add(U.Action("Izradi XML",()=>Export("XML",SelectedItems())));
         options.Children.Add(U.Action("Pregled i ispis (HTML)",()=>{
             var selected=SelectedItems();
             if(selected.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
@@ -520,21 +520,21 @@ public partial class MainWindow : Window
                     DateTime.Now.ToString("yyyyMMdd_HHmmss_fff",Hr)+".html");
                 var scope=kind.SelectedIndex switch
                 {1=>"artikli",2=>"usluge",_=>"artikli i usluge"};
-                LocalPricelistPreview.Write(selected,path,"SIDRENA — radni pregled: "+scope);
+                LocalPricelistPreview.Write(selected,path,"SIDRENA — pregled cjenika: "+scope);
                 OpenLocal(path);
-                Status("Otvoren lokalni pregled za ispis ili spremanje u PDF putem preglednika. Nije službeni cjenik.");
+                Status("Cjenik je otvoren za pregled i ispis. Prije javne objave provjerite njegovu usklađenost.");
             }
             catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException){Error(ex);}
         }));
         options.Children.Add(U.Action("Otvori arhivu",()=>Navigate("Arhiva")));
-        outer.Children.Add(U.Card("Generiranje radnih cjenika",U.Notice(DraftWarning),options));
+        outer.Children.Add(U.Card("Izrada cjenika",U.Notice(DraftWarning),options));
         preview.Children.Add(grid);
         var state=U.Vertical();
         var exports=_workspace.ListDraftExports().Take(7).ToList();
-        if(exports.Count==0)state.Children.Add(U.Muted("Nema spremljenih radnih izvoza."));
+        if(exports.Count==0)state.Children.Add(U.Muted("Još nema izrađenih cjenika."));
         foreach(var p in exports)state.Children.Add(U.Muted($"{p.Format}  · {Path.GetFileName(p.FilePath)}"));
-        state.Children.Add(U.Notice("PDF preko preglednika i službena javna objava nisu isto. Javni zakonski serializer još nije aktiviran."));
-        outer.Children.Add(U.Split(U.Card("Radni pregled cijena",preview),U.Card("Izlazne datoteke",state)));
+        state.Children.Add(U.Notice("Ovdje možete ispisati cjenik ili spremiti PDF. Za javnu objavu provjerite sve primjenjive zahtjeve."));
+        outer.Children.Add(U.Split(U.Card("Pregled cijena",preview),U.Card("Izlazne datoteke",state)));
         return outer;
     }
 
@@ -543,7 +543,7 @@ public partial class MainWindow : Window
         var items=selection ?? _prices.ListItems();
         if(items.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
         var dlg=new SaveFileDialog{
-            Title="Spremi RADNI izvoz (nije javni cjenik)",
+            Title="Spremi cjenik za pregled",
             FileName="SIDRENA_RADNI_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
                 (format=="CSV"?".csv":".xml"),
             Filter=format=="CSV"?"CSV (*.csv)|*.csv":"XML (*.xml)|*.xml",
@@ -552,7 +552,7 @@ public partial class MainWindow : Window
         try{
             if(format=="CSV") DraftExport.Csv(items,dlg.FileName); else DraftExport.Xml(items,dlg.FileName);
             _workspace.RecordDraftExport(dlg.FileName,format,items.Count);
-            Status($"Spremljen radni {format} s {items.Count} stavki. Datoteka nije službeni javni cjenik.");
+            Status($"Spremljen {format} s {items.Count} stavki. Prije javne objave provjerite dokument.");
             if(_activePage=="Cjenici"||_activePage=="Arhiva") Navigate(_activePage);
         }catch(Exception ex)when(ex is ArgumentException or IOException or UnauthorizedAccessException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
     }
@@ -577,7 +577,7 @@ public partial class MainWindow : Window
             try{_workspace.SetLocationActive(x.Id,x.Status!="Aktivna");Reload();Status("Status poslovnice je promijenjen.");}
             catch(Exception ex)when(ex is KeyNotFoundException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         }));
-        form.Children.Add(U.Notice("Lokacije su lokalni zapisi. Povezivanje pojedinog cjenika s poslovnicom još nije omogućeno."));
+        form.Children.Add(U.Notice("Poslovnice su prikazane u vašoj evidenciji. Odabir poslovnice za pojedini cjenik još nije dostupan."));
         outer.Children.Add(U.Split(U.Card("Lokacije i poslovnice",table),U.Card("Detalji lokacije",form)));
         return outer;
     }
@@ -600,7 +600,7 @@ public partial class MainWindow : Window
         controls.Children.Add(U.Action("Provjeri povezanost",async ()=>{
             verifiedCjenik=null;verifiedArchive=null;
             connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
-            published.Text="Učitavanje bez prijenosa lokalnih cijena i bez prijave.";
+            published.Text="Provjeravam javno dostupne cjenike.";
             feeds.Children.Clear();
             try
             {
@@ -629,14 +629,14 @@ public partial class MainWindow : Window
                                 feed.Format.ToUpperInvariant(),()=>OpenUrl(feed.Url.AbsoluteUri)));
                     }
                 }
-                Status("Javni REST metapodaci dostupni (samo čitanje); Windows aplikacija nije ovlaštena za objavu.");
+                Status("Javni cjenici uspješno su učitani. Nije izvršena objava ili promjena podataka na webu.");
             }
             catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
                 System.Text.Json.JsonException or TaskCanceledException)
             {
                 connectionStatus.Text="Nije moguće provjeriti službeni API.";
                 published.Text=ex.Message;
-                Status("Provjera javnog WordPress REST API-ja nije uspjela.");
+                Status("Povezivanje s WordPress stranicom nije uspjelo.");
             }
         },true));
         controls.Children.Add(U.Action("Spremi adresu",()=>{
@@ -678,13 +678,13 @@ public partial class MainWindow : Window
     private UIElement BuildArchive()
     {
         var outer=U.Vertical();
-        var grid=U.Grid(("Radna datoteka","Name",0),("Format","Format",85),
+        var grid=U.Grid(("Datoteka","Name",0),("Format","Format",85),
             ("Stavki","Count",85),("Izrađeno","Date",165),("Stanje","Status",130));
         var records=_workspace.ListDraftExports();
         grid.ItemsSource=records.Select(x=>new ArchiveRow(x.Id,Path.GetFileName(x.FilePath),x.Format,
             x.ItemCount.ToString(Hr),x.CreatedUtc.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr),
-            File.Exists(x.FilePath)?"Lokalno dostupno":"Datoteka nedostaje",x.FilePath)).ToList();
-        var detail=U.Vertical();var info=U.Muted("Odaberite radnu datoteku za pregled i otvaranje.");
+            File.Exists(x.FilePath)?"Dostupno":"Datoteka nedostaje",x.FilePath)).ToList();
+        var detail=U.Vertical();var info=U.Muted("Odaberite datoteku koju želite otvoriti.");
         detail.Children.Add(info);
         grid.SelectionChanged+=(_,_)=>{
             if(grid.SelectedItem is ArchiveRow x)
@@ -698,7 +698,7 @@ public partial class MainWindow : Window
                 if(!_workspace.VerifyDraftExport(x.Id))
                 {
                     var decision=MessageBox.Show(this,
-                        "Lokalna datoteka se promijenila nakon evidentiranja. Želite li je ipak otvoriti?"+
+                        "Datoteka je izmijenjena nakon spremanja. Želite li je ipak otvoriti?"+
                         "\nIzvorna SHA-256 provjera više ne odgovara.",
                         "SIDRENA — datoteka je izmijenjena",MessageBoxButton.YesNo,MessageBoxImage.Warning);
                     if(decision!=MessageBoxResult.Yes)return;
@@ -708,8 +708,8 @@ public partial class MainWindow : Window
             catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or KeyNotFoundException)
             {Error(ex);}
         },true));
-        detail.Children.Add(U.Notice("Otvori pokreće lokalnu datoteku u pridruženoj aplikaciji; ne preuzima je ponovno. Samo radni izvozi, bez izmišljene javne arhive."));
-        outer.Children.Add(U.Split(U.Card("Arhiva radnih izvoza",grid),U.Card("Pregled datoteke",detail)));
+        detail.Children.Add(U.Notice("Datoteke možete otvoriti u odgovarajućem programu. Prije objave provjerite njihov sadržaj."));
+        outer.Children.Add(U.Split(U.Card("Arhiva cjenika",grid),U.Card("Pregled datoteke",detail)));
         return outer;
     }
 
