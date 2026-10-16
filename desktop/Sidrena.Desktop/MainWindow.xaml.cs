@@ -405,6 +405,19 @@ public partial class MainWindow : Window
         var outer=U.Vertical();var options=U.Horizontal();
         options.Children.Add(U.Action("Izradi radni CSV",()=>Export("CSV"),true));
         options.Children.Add(U.Action("Izradi radni XML",()=>Export("XML")));
+        options.Children.Add(U.Action("Pregled i ispis (HTML)",()=>{
+            try
+            {
+                var folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Brendigo","SIDRENA","pregledi");
+                var path=Path.Combine(folder,"SIDRENA_RADNI_PREGLED_"+
+                    DateTime.Now.ToString("yyyyMMdd_HHmmss",Hr)+".html");
+                LocalPricelistPreview.Write(_prices.ListItems(),path);
+                OpenLocal(path);
+                Status("Otvoren lokalni pregled za ispis ili spremanje u PDF putem preglednika. Nije službeni cjenik.");
+            }
+            catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException){Error(ex);}
+        }));
         options.Children.Add(U.Action("Otvori arhivu",()=>Navigate("Arhiva")));
         outer.Children.Add(U.Card("Generiranje radnih cjenika",U.Notice(DraftWarning),options));
         var preview=U.Vertical();preview.Children.Add(U.Text("Pregled kataloga",16,true));
