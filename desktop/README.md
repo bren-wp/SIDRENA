@@ -8,11 +8,10 @@ Support: sidrena@brendigo.com
 
 # SIDRENA Desktop — lokalne cijene i digitalni cjenici
 
-SIDRENA Desktop razvija se kao Windows aplikacija uz postojeće WordPress
-i WooCommerce dodatke. Povezana je vizualnim identitetom, ali ne mijenja
+SIDRENA Desktop razvija se uz jedan službeni WordPress dodatak Brendigo Sidrena Cijena 1.5.0. Povezana je vizualnim identitetom, ali ne mijenja
 postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Razvojna verzija 0.3
+## Razvojna verzija 0.4
 
 U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
 Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
@@ -34,7 +33,12 @@ i zaseban radni CSV izvještaj.
 Nije potrebna registracija ni
 telemetrija za lokalni rad.
 
-PDF, službeni zakonski CSV/XML serializer, javna objava, sinkronizacija
+Javna provjera službenog dodatka dostupna je preko HTTPS REST rute
+/wp-json/brendigo-sidrena/v1/cjenici. Učitava vrijeme objave, javni
+cjenik, arhivu i javne CSV/XML adrese, ali ništa ne zapisuje u WordPress.
+Može se lokalno zapamtiti samo adresa web-stranice bez lozinki.
+
+PDF, službeni zakonski CSV/XML serializer, javna objava, pisana sinkronizacija
 s WordPressom/WooCommerceom i serverima, siguran unos pristupnih podataka,
 restore, instalacija i digitalni potpis NISU još završeni. Ne postoji
 lažni status uspješne objave.

@@ -1,0 +1,40 @@
+name: Official Brendigo Sidrena Cijena checks
+on:
+  pull_request:
+    paths:
+      - 'wordpress/brendigo-sidrena-cijena/**'
+      - '.github/workflows/official-plugin-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'wordpress/brendigo-sidrena-cijena/**'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - name: Only official plugin and desktop may remain
+        run: |
+          test -f wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
+          test -d desktop/Sidrena.Desktop
+          ! test -d editions
+          ! test -d wporg-assets
+          ! test -d includes
+          ! test -d admin
+          grep -q 'Text Domain: brendigo-sidrena-cijena' wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
+      - name: Verify package bytes match owner-provided official 1.5.0
+        run: |
+          python3 - <<'PY'
+          import hashlib,pathlib
+          root=pathlib.Path('wordpress/brendigo-sidrena-cijena')
+          items={p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*') if p.is_file()}
+          digest=hashlib.sha256(''.join(f'{p} {items[p]}\n' for p in sorted(items)).encode()).hexdigest()
+          assert len(items)==128
+          assert digest=='44b6ff17478f7769d9bda8157020269247f9dad2c186d92b82ddfbd21e996387'
+          print('Official owner source is intact')
+          PY
+      - name: Lint PHP files
+        run: |
+          find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 | xargs -0 -n 1 php -l > /tmp/sidrena-php-lint.txt
+          tail -n 4 /tmp/sidrena-php-lint.txt

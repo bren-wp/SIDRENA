@@ -44,6 +44,40 @@ public sealed class WorkspaceStore : IDisposable
             )
             """);
         Execute("CREATE INDEX IF NOT EXISTS idx_desktop_exports_date ON desktop_draft_exports(id DESC)");
+        Execute("""
+            CREATE TABLE IF NOT EXISTS desktop_preferences(
+                setting_key TEXT PRIMARY KEY,
+                setting_value TEXT NOT NULL
+            )
+            """);
+    }
+
+    /// <summary>Remember public site URL only; no passwords, tokens or catalog data are transmitted.</summary>
+    public void SaveOfficialSite(string url)
+    {
+        OfficialPluginDiscovery.Endpoint(url);
+        using var command=_connection.CreateCommand();
+        command.CommandText="""
+            INSERT INTO desktop_preferences(setting_key,setting_value)
+            VALUES('official_wp_site',$value)
+            ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value
+            """;
+        command.Parameters.AddWithValue("$value",url.Trim());
+        command.ExecuteNonQuery();
+    }
+
+    public string? GetOfficialSite()
+    {
+        using var command=_connection.CreateCommand();
+        command.CommandText="SELECT setting_value FROM desktop_preferences WHERE setting_key='official_wp_site'";
+        return command.ExecuteScalar() as string;
+    }
+
+    public void ClearOfficialSite()
+    {
+        using var command=_connection.CreateCommand();
+        command.CommandText="DELETE FROM desktop_preferences WHERE setting_key='official_wp_site'";
+        command.ExecuteNonQuery();
     }
 
     public long AddLocation(string name, string address, string city)

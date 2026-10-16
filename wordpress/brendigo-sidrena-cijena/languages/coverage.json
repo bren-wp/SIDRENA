@@ -1,0 +1,199 @@
+{
+  "version": "1.5.0",
+  "source_locale": "hr_HR",
+  "original_strings": 576,
+  "wordpress_org_approval": "not submitted",
+  "new_locale_translations": 0,
+  "translation_counts": [
+    {
+      "locale": "ar",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "bg_BG",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "bs_BA",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "requires_native_proofreading",
+      "missing_entries": 0
+    },
+    {
+      "locale": "cs_CZ",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "de_DE",
+      "translated_entries": 269,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 307
+    },
+    {
+      "locale": "en_AU",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "english_populated",
+      "missing_entries": 0
+    },
+    {
+      "locale": "en_CA",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "english_populated",
+      "missing_entries": 0
+    },
+    {
+      "locale": "en_GB",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "english_populated",
+      "missing_entries": 0
+    },
+    {
+      "locale": "en_US",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "english_populated",
+      "missing_entries": 0
+    },
+    {
+      "locale": "es_ES",
+      "translated_entries": 269,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 307
+    },
+    {
+      "locale": "fr_FR",
+      "translated_entries": 269,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 307
+    },
+    {
+      "locale": "hu_HU",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "it_IT",
+      "translated_entries": 269,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 307
+    },
+    {
+      "locale": "ja",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "nl_NL",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "pl_PL",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "pt_BR",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "pt_PT",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "ro_RO",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "ru_RU",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "sk_SK",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "sl_SI",
+      "translated_entries": 269,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 307
+    },
+    {
+      "locale": "sr_RS",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "requires_native_proofreading",
+      "missing_entries": 0
+    },
+    {
+      "locale": "sr_RS_latin",
+      "translated_entries": 576,
+      "total_entries": 576,
+      "status": "requires_native_proofreading",
+      "missing_entries": 0
+    },
+    {
+      "locale": "tr_TR",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "uk",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    },
+    {
+      "locale": "zh_CN",
+      "translated_entries": 261,
+      "total_entries": 576,
+      "status": "partial",
+      "missing_entries": 315
+    }
+  ],
+  "maintenance_note": "SIDRENA 1.5.0 includes WordPress.org filename, metadata, i18n loader and branding corrections; translation coverage unchanged."
+}

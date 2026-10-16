@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -465,19 +466,79 @@ public partial class MainWindow : Window
 
     private UIElement BuildSync()
     {
-        var outer=U.Vertical();var channels=U.Horizontal();
-        foreach(string channel in new[]{"WordPress","WooCommerce","SFTP","FTPS","WebDAV","HTTPS API"})
-        {
-            var name=channel;
-            channels.Children.Add(U.Stat(name,"Nije povezano","Integracija se priprema","↗"));
-        }
+        var outer=U.Vertical();
+        var channels=U.Horizontal();
+        foreach(var name in new[]{"WordPress","WooCommerce","SFTP","FTPS","WebDAV","HTTPS API"})
+            channels.Children.Add(U.Stat(name,"Nije povezano","Puni prijenos nije uključen","↗"));
         outer.Children.Add(U.Card("Kanali povezivanja",channels));
-        outer.Children.Add(U.Card("Postavke povezivanja",
-            U.Notice("Zbog zaštite korisničkih podataka aplikacija neće slati cijene niti čuvati pristupne podatke prije dovršetka sigurnog adaptera i provjere sukladnosti."),
-            U.Action("Pogledaj službeni WordPress dodatak",()=>{
-                OpenUrl("https://wordpress.org/plugins/brendigo-sidrena-cijena/");
-            }),
-            U.Action("Provjeri plan integracije",()=>Navigate("Pomoć"))));
+
+        var site=U.Box("https://primjer.hr/",420);
+        site.Text=_workspace.GetOfficialSite()??"";
+        var connectionStatus=U.Text("Javni WordPress API još nije provjeren.",15,true);
+        var published=U.Muted("Podaci nisu učitani.");
+        var feeds=U.Vertical();
+        Uri? verifiedCjenik=null;
+        Uri? verifiedArchive=null;
+        var controls=U.Horizontal();
+        controls.Children.Add(U.Action("Provjeri službeni javni API",async ()=>{
+            verifiedCjenik=null;verifiedArchive=null;
+            connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
+            published.Text="Učitavanje bez prijenosa lokalnih cijena i bez prijave.";
+            feeds.Children.Clear();
+            try
+            {
+                var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
+                verifiedCjenik=result.PublicPricelist;
+                verifiedArchive=result.PublicArchive;
+                connectionStatus.Text="✓ Službeni Brendigo REST API dostupan (samo čitanje)";
+                published.Text="Zadnja javna objava: "+(result.PublishedAt.HasValue?
+                    result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
+                    "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica.";
+                foreach(var item in result.Feeds)
+                    feeds.Children.Add(U.Muted($"{item.Kind} · {item.Format.ToUpperInvariant()}: {item.Url}"));
+                Status("Provjerena javna veza; ništa nije zapisano na WordPress ni poslano s računala.");
+            }
+            catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
+                System.Text.Json.JsonException or TaskCanceledException)
+            {
+                connectionStatus.Text="Nije moguće provjeriti službeni API.";
+                published.Text=ex.Message;
+                Status("Provjera javnog WordPress REST API-ja nije uspjela.");
+            }
+        },true));
+        controls.Children.Add(U.Action("Spremi adresu",()=>{
+            try
+            {
+                _workspace.SaveOfficialSite(site.Text);
+                Status("Spremljena je samo HTTPS adresa WordPress stranice, bez vjerodajnica.");
+            }
+            catch(ArgumentException ex){Error(ex);}
+        }));
+        controls.Children.Add(U.Action("Zaboravi adresu",()=>{
+            _workspace.ClearOfficialSite();site.Clear();
+            verifiedCjenik=null;verifiedArchive=null;
+            connectionStatus.Text="Javna WordPress adresa uklonjena.";
+            published.Text="Podaci nisu učitani.";
+            feeds.Children.Clear();
+            Status("Spremljena WordPress adresa je uklonjena.");
+        }));
+        controls.Children.Add(U.Action("Otvori javni cjenik",()=>{
+            if(verifiedCjenik is null){Status("Najprije provjerite javni API.");return;}
+            OpenUrl(verifiedCjenik.AbsoluteUri);
+        }));
+        controls.Children.Add(U.Action("Otvori javnu arhivu",()=>{
+            if(verifiedArchive is null){Status("Najprije provjerite javni API.");return;}
+            OpenUrl(verifiedArchive.AbsoluteUri);
+        }));
+        outer.Children.Add(U.Card("Službeni Brendigo Sidrena Cijena — javni REST API",
+            U.Notice("Javna provjera preko HTTPS čita isključivo službeni endpoint /wp-json/brendigo-sidrena/v1/cjenici. Ne traži lozinku, ne šalje lokalne cijene i ne mijenja WordPress."),
+            U.Field("Adresa web-stranice sa službenim dodatkom",site),
+            controls,connectionStatus,published,
+            U.Muted("Pronađeni javni CSV/XML izvori:"),feeds));
+        outer.Children.Add(U.Card("Automatska objava i sinkronizacija",
+            U.Notice("Pisana sinkronizacija, raspored prijenosa i prijava na poslužitelje još nisu omogućeni. Status provjere javnog API-ja nije dokaz ovlaštenja za objavu."),
+            U.Action("Službeni WordPress dodatak",()=>
+                OpenUrl("https://wordpress.org/plugins/brendigo-sidrena-cijena/"))));
         return outer;
     }
 

@@ -41,6 +41,13 @@ try
         workspace.SetLocationActive(loc, false);
         Expect(!workspace.ListLocations()[0].IsActive, "Toggle location status");
         Expect(workspace.ListRecentChanges().Count == 1, "Joined price audit history");
+        Expect(workspace.GetOfficialSite() is null,"No default web connection");
+        workspace.SaveOfficialSite("https://sidrena.example.hr");
+        Expect(workspace.GetOfficialSite()=="https://sidrena.example.hr","Only public site URL stored");
+        MustThrow(()=>workspace.SaveOfficialSite("http://insecure.example.hr"));
+        Expect(workspace.GetOfficialSite()=="https://sidrena.example.hr","Rejected URL doesn't overwrite saved site");
+        workspace.ClearOfficialSite();
+        Expect(workspace.GetOfficialSite() is null,"Official site can be forgotten");
         var historyPath=Path.Combine(folder,"povijest.csv");
         DraftExport.HistoryCsv(workspace.ListRecentChanges(),historyPath);
         Expect(File.ReadAllText(historyPath).Contains("DATUM_I_VRIJEME") &&
@@ -131,6 +138,52 @@ try
         }));
         Expect(destination.ListItems().Count==2,"Duplicate empty SKU names rejected transactionally");
     }
+    // Public read-only integration with the exact WordPress.org 1.5.0 API contract.
+    var endpoint=OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr/trgovina");
+    Expect(endpoint.AbsoluteUri=="https://sidrena.example.hr/trgovina/wp-json/brendigo-sidrena/v1/cjenici",
+        "Nested WordPress installation REST endpoint");
+    MustThrow(()=>OfficialPluginDiscovery.Endpoint("http://sidrena.example.hr"));
+    MustThrow(()=>OfficialPluginDiscovery.Endpoint("https://name:secret@sidrena.example.hr"));
+    MustThrow(()=>OfficialPluginDiscovery.Endpoint("https://localhost"));
+    const string restJson="""
+    {
+      "published_at":"2026-10-16T16:22:00+00:00",
+      "cjenik":"https://sidrena.example.hr/javni-cjenik",
+      "archive":"https://sidrena.example.hr/arhiva",
+      "feeds":{
+        "proizvodi":{
+          "csv":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv",
+          "xml":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/xml"
+        },
+        "usluge":{
+          "csv":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/usluge/csv",
+          "xml":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/usluge/xml"
+        }
+      },
+      "outlets":[{"name":"Rijeka","code":"RJK"}]
+    }
+    """;
+    var snapshot=OfficialPluginDiscovery.Parse(System.Text.Encoding.UTF8.GetBytes(restJson),
+        OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr"));
+    Expect(snapshot.Feeds.Count==4 && snapshot.OutletCount==1,"Official REST v1 structure");
+    Expect(snapshot.PublishedAt?.Year==2026,"Published time is parsed");
+    Expect(snapshot.PublicPricelist.Host=="sidrena.example.hr","Same-origin public links");
+    var hostile=restJson.Replace("https://sidrena.example.hr/javni-cjenik","https://hostile.example.com/collection");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(hostile),endpoint));
+    using(var handler=new OfficialRestTestHandler(restJson))
+    using(var client=new System.Net.Http.HttpClient(handler))
+    {
+        var fetched=OfficialPluginDiscovery.FetchAsync("https://sidrena.example.hr",client).GetAwaiter().GetResult();
+        Expect(fetched.Feeds.Count==4 && handler.Requested?.AbsolutePath.EndsWith("/wp-json/brendigo-sidrena/v1/cjenici")==true,
+            "HTTP request reads official public endpoint only");
+        Expect(handler.Method==System.Net.Http.HttpMethod.Get,"Public API must use GET");
+    }
+    using(var handler=new OfficialRestTestHandler(restJson,System.Net.HttpStatusCode.Redirect))
+    using(var client=new System.Net.Http.HttpClient(handler))
+        MustThrowType<System.Net.Http.HttpRequestException>(()=>{
+            OfficialPluginDiscovery.FetchAsync("https://sidrena.example.hr",client).GetAwaiter().GetResult();
+        });
     Console.WriteLine($"SIDRENA Desktop: {passed} provjera uspješno.");
 }
 finally
@@ -147,4 +200,31 @@ void MustThrow(Action action)
     try { action(); }
     catch (ArgumentException) { passed++; return; }
     throw new Exception("Missing validation");
+}
+
+void MustThrowType<T>(Action action) where T:Exception
+{
+    try { action(); }
+    catch(T) {passed++;return;}
+    throw new Exception("Expected "+typeof(T).Name);
+}
+
+sealed class OfficialRestTestHandler : System.Net.Http.HttpMessageHandler
+{
+    private readonly string _body;
+    private readonly System.Net.HttpStatusCode _status;
+    public Uri? Requested {get;private set;}
+    public System.Net.Http.HttpMethod? Method {get;private set;}
+    public OfficialRestTestHandler(string body,System.Net.HttpStatusCode status=System.Net.HttpStatusCode.OK)
+    {
+        _body=body;_status=status;
+    }
+    protected override Task<System.Net.Http.HttpResponseMessage> SendAsync(
+        System.Net.Http.HttpRequestMessage request,CancellationToken cancellationToken)
+    {
+        Requested=request.RequestUri;Method=request.Method;
+        return Task.FromResult(new System.Net.Http.HttpResponseMessage(_status) {
+            Content=new System.Net.Http.StringContent(_body,System.Text.Encoding.UTF8,"application/json")
+        });
+    }
 }
