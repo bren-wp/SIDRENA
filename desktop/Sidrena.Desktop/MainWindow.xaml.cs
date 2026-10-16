@@ -21,7 +21,7 @@ public partial class MainWindow : Window
     private readonly WorkspaceStore _workspace;
     private readonly string _databasePath;
     private string _activePage = "Pregled";
-    private const string DraftWarning = "RADNI IZVOZ — nije propisani javni cjenik. Prije objave potrebna je validacija konačnih pravila.";
+    private const string DraftWarning = "Cjenik je spreman za pregled i ispis. Prije javne objave provjerite podatke i primjenjive obveze.";
     private static readonly CultureInfo Hr = CultureInfo.GetCultureInfo("hr-HR");
     private sealed record ItemRow(long Id,string Name,string Kind,string Sku,string Barcode,string Unit,string Current,string Anchor,string AnchorDate);
     private sealed record AuditRow(long Id,long ItemId,string Name,string Kind,string Previous,string Current,string Change,string Reason,string Time);
@@ -166,7 +166,7 @@ public partial class MainWindow : Window
             "Povijest cijena"=>"Sve zabilježene izmjene cijena artikala i usluga kroz vrijeme.",
             "Cjenici"=>"Izvoz radnih CSV i XML datoteka. Zakonska objava još nije aktivna.",
             "Lokacije"=>"Upravljajte svojim poslovnicama i prodajnim mjestima.",
-            "Sinkronizacija"=>"Priprema integracija za WordPress, WooCommerce i siguran prijenos.",
+            "Sinkronizacija"=>"Povežite svoj WordPress i otvorite javno dostupne cjenike.",
             "Arhiva"=>"Pregled prethodno izrađenih radnih datoteka.",
             "Postavke"=>"Sigurnosne kopije i osnovne postavke lokalnog rada.",
             _=>"Upute, najčešća pitanja i podrška"
@@ -212,13 +212,13 @@ public partial class MainWindow : Window
         var totals=_prices.GetCatalogueTotals();
         var changes=_workspace.ListRecentChanges(6);
         outer.Children.Add(U.Metrics(
-            U.Stat("Artikala i usluga",totals.Total.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
+            U.Stat("Artikala i usluga",totals.Total.ToString(Hr),"Ukupno u evidenciji","⬡"),
             U.Stat("Potvrđenih sidrenih",totals.ConfirmedAnchors.ToString(Hr),
                 "Nepotvrđene vrijednosti ostaju prazne","⚓"),
             U.Stat("Promjena cijena",_workspace.CountPriceChanges().ToString(Hr),
-                "Zabilježene lokalne izmjene","↗"),
-            U.Stat("Radnih cjenika",_workspace.CountDraftExports().ToString(Hr),
-                "Neobjavljeni CSV/XML izvozi","▤")));
+                "Evidencija promjena","↗"),
+            U.Stat("Izrađenih cjenika",_workspace.CountDraftExports().ToString(Hr),
+                "CSV i XML datoteke","▤")));
         var quick=U.Horizontal();
         quick.Children.Add(U.Action("+  Novi artikl",()=>Navigate("Artikli"),true));
         quick.Children.Add(U.Action("⚒  Nova usluga",()=>Navigate("Usluge")));
@@ -231,7 +231,7 @@ public partial class MainWindow : Window
         var history=U.Card("Nedavne promjene cijena",table,U.Action("Sve promjene →",()=>Navigate("Povijest cijena")));
         var exports=U.Vertical();
         var newest=_workspace.ListDraftExports().Take(4).ToList();
-        if(newest.Count==0)exports.Children.Add(U.Notice("Još nema radnih cjenika. Izradite prvi CSV ili XML."));
+        if(newest.Count==0)exports.Children.Add(U.Notice("Još niste izradili cjenik. Odaberite Izradi cjenik za početak."));
         foreach(var file in newest)
             exports.Children.Add(U.Muted($"{file.CreatedUtc.ToLocalTime():dd. MM. yyyy. HH:mm}  · {file.Format}  · {Path.GetFileName(file.FilePath)}"));
         exports.Children.Add(U.Action("Otvori arhivu →",()=>Navigate("Arhiva")));
@@ -259,7 +259,7 @@ public partial class MainWindow : Window
         filter.Children.Add(U.Field("Pretraživanje",search));
         filter.Children.Add(U.Action("+  "+(kind=="Proizvod"?"Novi artikl":"Nova usluga"),
             ()=>{if(newItemExpander!=null)newItemExpander.IsExpanded=true;PageScroll.ScrollToBottom();},true));
-        var count=U.Muted("Učitavanje lokalnog kataloga.");
+        var count=U.Muted("Učitavanje artikala…");
         var cachedItems=_prices.ListItems();
         var searchDelay=new System.Windows.Threading.DispatcherTimer {
             Interval=TimeSpan.FromMilliseconds(180)
@@ -587,20 +587,19 @@ public partial class MainWindow : Window
     private UIElement BuildSync()
     {
         var outer=U.Vertical();
-        var channels=U.Horizontal();
-        foreach(var name in new[]{"WordPress","WooCommerce","SFTP","FTPS","WebDAV","HTTPS API"})
-            channels.Children.Add(U.Stat(name,"Nije povezano","Puni prijenos nije uključen","↗"));
-        outer.Children.Add(U.Card("Kanali povezivanja",channels));
+        outer.Children.Add(U.Card("WordPress i vaše poslovnice",
+            U.Text("Brendigo Sidrena Cijena 1.5.0",18,true),
+            U.Muted("Učitajte javne cjenike i povijest objava povezane web-stranice.")));
 
         var site=U.Box("https://primjer.hr/",420);
         site.Text=_workspace.GetOfficialSite()??"";
-        var connectionStatus=U.Text("Javni WordPress API još nije provjeren.",15,true);
+        var connectionStatus=U.Text("Povežite svoju WordPress stranicu.",15,true);
         var published=U.Muted("Podaci nisu učitani.");
         var feeds=U.Vertical();
         Uri? verifiedCjenik=null;
         Uri? verifiedArchive=null;
         var controls=U.Horizontal();
-        controls.Children.Add(U.Action("Provjeri službeni javni API",async ()=>{
+        controls.Children.Add(U.Action("Provjeri povezanost",async ()=>{
             verifiedCjenik=null;verifiedArchive=null;
             connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
             published.Text="Učitavanje bez prijenosa lokalnih cijena i bez prijave.";
@@ -610,8 +609,8 @@ public partial class MainWindow : Window
                 var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
                 verifiedCjenik=result.PublicPricelist;
                 verifiedArchive=result.PublicArchive;
-                connectionStatus.Text="Javni REST API službenog dodatka dostupan (samo čitanje)";
-                published.Text="Posljednja evidentirana javna objava: "+(result.PublishedAt.HasValue?
+                connectionStatus.Text="WordPress stranica je dostupna";
+                published.Text="Posljednja objava: "+(result.PublishedAt.HasValue?
                     result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
                     "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica.";
                 foreach(var item in result.Feeds)
@@ -620,7 +619,7 @@ public partial class MainWindow : Window
                 if(result.CombinedFeed is not null)
                     feeds.Children.Add(U.Action("Objedinjeni javni izvor",()=>OpenUrl(result.CombinedFeed.AbsoluteUri)));
                 if(result.ArchiveApi is not null)
-                    feeds.Children.Add(U.Action("Javni REST arhivski indeks",()=>OpenUrl(result.ArchiveApi.AbsoluteUri)));
+                    feeds.Children.Add(U.Action("Pregled arhive",()=>OpenUrl(result.ArchiveApi.AbsoluteUri)));
                 if(result.Outlets.Count>0)
                 {
                     feeds.Children.Add(U.Text("Javni izvori po poslovnici",15,true));
@@ -646,7 +645,7 @@ public partial class MainWindow : Window
             try
             {
                 _workspace.SaveOfficialSite(site.Text);
-                Status("Spremljena je samo HTTPS adresa WordPress stranice, bez vjerodajnica.");
+                Status("Web-stranica je spremljena.");
             }
             catch(ArgumentException ex){Error(ex);}
         }));
@@ -666,13 +665,13 @@ public partial class MainWindow : Window
             if(verifiedArchive is null){Status("Najprije provjerite javni API.");return;}
             OpenUrl(verifiedArchive.AbsoluteUri);
         }));
-        outer.Children.Add(U.Card("Službeni Brendigo Sidrena Cijena — javni REST API",
-            U.Notice("Javna provjera preko HTTPS čita isključivo službeni endpoint /wp-json/brendigo-sidrena/v1/cjenici. Ne traži lozinku, ne šalje lokalne cijene i ne mijenja WordPress."),
+        outer.Children.Add(U.Card("Povezivanje sa službenim WordPress dodatkom",
+            U.Notice("Sigurno provjerite javno objavljene cjenike, arhivu i poslovnice svojeg WordPress dodatka. Za provjeru nije potrebna lozinka."),
             U.Field("Adresa web-stranice sa službenim dodatkom",site),
             controls,connectionStatus,published,
-            U.Muted("Pronađeni javni CSV/XML izvori:"),feeds));
+            U.Muted("Dostupni cjenici:"),feeds));
         outer.Children.Add(U.Card("Automatska objava i sinkronizacija",
-            U.Notice("Pisana sinkronizacija, raspored prijenosa i prijava na poslužitelje još nisu omogućeni. Status provjere javnog API-ja nije dokaz ovlaštenja za objavu."),
+            U.Notice("Pregled javnih sadržaja ne mijenja podatke na vašoj web-stranici. Automatsko objavljivanje nije dostupno u ovoj verziji."),
             U.Action("Službeni WordPress dodatak",()=>
                 OpenUrl("https://wordpress.org/plugins/brendigo-sidrena-cijena/"))));
         return outer;
@@ -719,18 +718,18 @@ public partial class MainWindow : Window
     private UIElement BuildSettings()
     {
         var outer=U.Vertical();
-        var data=U.Vertical();data.Children.Add(U.Muted("SQLite katalog nalazi se na korisničkom računalu."));
-        data.Children.Add(U.Text(_databasePath,12));
+        var data=U.Vertical();
+        data.Children.Add(U.Muted("Zaštitite svoju evidenciju sigurnosnom kopijom. Podatke možete vratiti kada god zatreba."));
         var actions=U.Horizontal();
         actions.Children.Add(U.Action("Izradi sigurnosnu kopiju",()=>{
-            var dlg=new SaveFileDialog{Filter="SQLite baza (*.db)|*.db",FileName="SIDRENA_backup_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+".db"};
+            var dlg=new SaveFileDialog{Filter="Sigurnosna kopija SIDRENA (*.db)|*.db",FileName="SIDRENA_backup_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+".db"};
             if(dlg.ShowDialog(this)!=true)return;
-            try{_workspace.BackupTo(dlg.FileName);Status("Sigurnosna kopija baze uspješno je izrađena.");}
+            try{_workspace.BackupTo(dlg.FileName);Status("Sigurnosna kopija uspješno je izrađena.");}
             catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
         actions.Children.Add(U.Action("Provjeri i vrati sigurnosnu kopiju",()=>{
             var dlg=new OpenFileDialog{Title="Odaberi prethodno spremljenu SIDRENA sigurnosnu kopiju",
-                Filter="SQLite baza (*.db)|*.db",CheckFileExists=true,Multiselect=false};
+                Filter="Sigurnosna kopija SIDRENA (*.db)|*.db",CheckFileExists=true,Multiselect=false};
             if(dlg.ShowDialog(this)!=true)return;
             try
             {
@@ -739,10 +738,10 @@ public partial class MainWindow : Window
                 var question=$"Kopija: {Path.GetFileName(source)}\n"+
                     $"Proizvodi: {inspection.Products}, usluge: {inspection.Services}\n"+
                     $"Promjene cijena: {inspection.PriceChanges}, poslovnice: {inspection.Locations}\n\n"+
-                    "POZOR: Zamijenit će se trenutni lokalni podaci.\n"+
+                    "Postojeći podaci bit će zamijenjeni odabranom kopijom.\n"+
                     "Prije povrata automatski će se izraditi zasebna zaštitna kopija postojećih podataka.\n"+
                     "Želite li nastaviti?";
-                if(MessageBox.Show(this,question,"SIDRENA — potvrdi povrat baze",
+                if(MessageBox.Show(this,question,"SIDRENA — potvrda vraćanja podataka",
                     MessageBoxButton.YesNo,MessageBoxImage.Warning)!=MessageBoxResult.Yes)return;
                 var recoveryDir=Path.Combine(Path.GetDirectoryName(_databasePath)!,"backups");
                 var recovery=Path.Combine(recoveryDir,
@@ -760,26 +759,26 @@ public partial class MainWindow : Window
                     _prices=new PriceStore(_databasePath);
                     Navigate("Pregled");
                 }
-                Status("Povrat podataka je dovršen. Zaštitna kopija prethodnog stanja: "+recovery);
-                MessageBox.Show(this,"Podaci su vraćeni. Sigurnosna kopija prethodnog stanja ostaje spremljena na:\n"+
-                    recovery,"SIDRENA — povrat dovršen",MessageBoxButton.OK,MessageBoxImage.Information);
+                Status("Podaci su uspješno vraćeni. Prethodno stanje sigurno je spremljeno.");
+                MessageBox.Show(this,"Podaci su uspješno vraćeni. Sačuvana je i sigurnosna kopija prethodnog stanja.","SIDRENA — povrat dovršen",MessageBoxButton.OK,MessageBoxImage.Information);
             }
             catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException or
                 InvalidDataException or InvalidOperationException or AggregateException or Microsoft.Data.Sqlite.SqliteException)
             {Error(ex);}
         }));
-        actions.Children.Add(U.Action("Otvori mapu podataka",()=>OpenLocal(Path.GetDirectoryName(_databasePath)!)));
+
         data.Children.Add(actions);
-        outer.Children.Add(U.Card("Lokalna baza i sigurnost",data));
-        outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Tema: Tamna · Rad bez korisničkog računa"),
-            U.Notice("Šifriranje baze i automatski rasporedi još nisu aktivni. Ručni povrat i zasebna zaštitna kopija dostupni su. Ne postoji skrivena sinkronizacija ni telemetrija.")));
+        outer.Children.Add(U.Card("Sigurnost i zaštitne kopije",data));
+        outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Izgled: Tamni · Jednostavno upravljanje"),
+            U.Notice("Vaše poslovne podatke možete dodatno zaštititi izradom redovitih sigurnosnih kopija.")));
         outer.Children.Add(U.Card("Informacije o izdanju",
-            U.Text("SIDRENA Desktop 0.8.0",18,true),
-            U.Muted("Windows 10/11 x64 · Lokalni podaci · Portable EXE i Setup EXE"),
-            U.Notice("WordPress dodatak Brendigo Sidrena Cijena uvijek ostaje verzija 1.5.0. Windows ima zasebnu oznaku verzije."),
+            U.Text("SIDRENA Desktop 0.9.0",18,true),
+            U.Muted("Windows 10/11 · Brendigo LTD · Komercijalna licencija"),
+            U.Notice("Povezani WordPress dodatak Brendigo Sidrena Cijena zadržava verziju 1.5.0."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
                 OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0"),true),
-            U.Action("Izvorni kod",()=>OpenUrl("https://github.com/bren-wp/SIDRENA"))));
+            U.Action("Uvjeti komercijalne licence",ShowCommercialLicense),
+            U.Action("Informacije o programu",()=>OpenUrl("https://brendigo.com/"))));
         return outer;
     }
 
@@ -797,8 +796,46 @@ public partial class MainWindow : Window
             U.Text("Preuzimanje i ažuriranja",18,true),
             U.Muted("Setup EXE instalira SIDRENA-u, portable EXE radi bez instalacije. Baza se pri ažuriranju čuva."),
             U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
+            U.Text("Pravne informacije",18,true),
+            U.Muted("Nositelj prava na Windows aplikaciju: Brendigo LTD."),
+            U.Action("Pročitaj licencu",ShowCommercialLicense),
             U.Text("Podrška",18,true),
             U.Action("Pošalji e-poštu podršci",()=>OpenUrl("mailto:sidrena@brendigo.com")));
+    }
+
+    private void ShowCommercialLicense()
+    {
+        const string resource="Sidrena.Desktop.Licensing.EULA-HR.txt";
+        using var stream=typeof(MainWindow).Assembly.GetManifestResourceStream(resource);
+        if(stream is null)
+        {
+            MessageBox.Show(this,"Uvjeti licence trenutačno nisu dostupni. Obratite se podršci.",
+                "SIDRENA — licencija",MessageBoxButton.OK,MessageBoxImage.Warning);
+            return;
+        }
+        using var reader=new StreamReader(stream,Encoding.UTF8);
+        var window=new Window
+        {
+            Title="SIDRENA — komercijalna licencija",Owner=this,
+            WindowStartupLocation=WindowStartupLocation.CenterOwner,
+            Width=Math.Min(800,SystemParameters.WorkArea.Width*0.86),
+            Height=Math.Min(670,SystemParameters.WorkArea.Height*0.86),
+            MinWidth=420,MinHeight=300,ShowInTaskbar=false,
+            Background=Brush("BackgroundBrush"),FontFamily=FontFamily
+        };
+        var root=new DockPanel{Margin=new Thickness(22)};
+        var close=U.Action("Zatvori",()=>window.Close(),true);
+        DockPanel.SetDock(close,Dock.Bottom);
+        root.Children.Add(close);
+        root.Children.Add(new TextBox{
+            Text=reader.ReadToEnd(),IsReadOnly=true,AcceptsReturn=true,
+            TextWrapping=TextWrapping.Wrap,
+            VerticalScrollBarVisibility=ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,
+            Padding=new Thickness(18),Margin=new Thickness(0,0,0,16)
+        });
+        window.Content=root;
+        window.ShowDialog();
     }
 
     private void OpenLocal(string path)
