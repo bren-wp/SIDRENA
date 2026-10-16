@@ -31,6 +31,21 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Audit unused private desktop methods
+        shell: pwsh
+        run: python tools/audit_desktop.py
+      - name: Generate commercial Windows icon and branded installer visuals
+        shell: pwsh
+        run: |
+          python desktop/branding/build_assets.py
+          $files = @(
+            'desktop/branding/generated/SIDRENA.ico',
+            'desktop/branding/generated/WizardLarge.bmp',
+            'desktop/branding/generated/WizardSmall.bmp'
+          )
+          foreach ($file in $files) {
+            if (!(Test-Path $file) -or (Get-Item $file).Length -lt 100) { throw "Invalid branded asset: $file" }
+          }
       - name: Restore Windows app
         run: dotnet restore desktop/Sidrena.Desktop/Sidrena.Desktop.csproj
       - name: Build Windows app
@@ -128,11 +143,18 @@ jobs:
         shell: pwsh
         run: |
           $setup=(Resolve-Path 'artifacts/desktop-release/SIDRENA-Desktop-win-x64-Setup.exe').Path
+          # Silent setup is an internal CI smoke only. Commercial interactive installation
+          # must show the license acceptance page before continuing.
           $result=Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-') -PassThru -Wait
           if ($result.ExitCode -ne 0) { throw "Silent setup failed: $($result.ExitCode)" }
           $dir=Join-Path $env:LOCALAPPDATA 'Programs\Brendigo\SIDRENA'
           $installed=Join-Path $dir 'SIDRENA.exe'
           if (!(Test-Path $installed)) { throw 'Setup did not install SIDRENA.exe' }
+          $installedLicense = Join-Path $dir 'SIDRENA-Licenca.txt'
+          if (!(Test-Path $installedLicense)) { throw 'Setup omitted accepted commercial EULA' }
+          if (!(Select-String -Path $installedLicense -Pattern 'Brendigo LTD' -Quiet)) {
+            throw 'Setup EULA publisher mismatch'
+          }
           $app=Start-Process -FilePath $installed -PassThru
           try {
             Start-Sleep -Seconds 5
@@ -171,7 +193,7 @@ jobs:
           $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
-            desktop_version='0.8.0'
+            desktop_version='0.9.0'
             wordpress_plugin_version='1.5.0'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
