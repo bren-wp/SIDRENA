@@ -11,7 +11,7 @@ Support: sidrena@brendigo.com
 SIDRENA Desktop razvija se uz jedan službeni WordPress dodatak Brendigo Sidrena Cijena 1.5.0. Povezana je vizualnim identitetom, ali ne mijenja
 postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Razvojna verzija 0.4
+## Razvojna verzija 0.5
 
 U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
 Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
@@ -21,7 +21,11 @@ vektorskom navigacijom i stvarnim lokalnim stanjem.
 Završene lokalne funkcije uključuju katalog i promjene aktualnih cijena,
 zasebno verificiranu sidrenu cijenu, povijesni audit i graf, pretraživanje,
 lokacije, radni CSV/XML izvoz, lokalnu evidenciju datoteka i sigurnosnu kopiju
-SQLite baze koja uključuje WAL promjene. Novi lokalni CSV uvoz radi uz pregled
+SQLite baze koja uključuje WAL promjene. Postavke omogućuju
+pregled i potvrđeni povrat sigurnosne kopije nakon SQLite integrity_check
+i provjere obveznih tablica. Prije bilo kakvog povrata lokalno se izrađuje
+zasebna zaštitna kopija prethodnog stanja; postojeći podaci mogu se
+vratiti nakon neuspješnog pokušaja. Ovaj postupak ne prenosi ništa na internet. Novi lokalni CSV uvoz radi uz pregled
 i izričitu potvrdu, provjerava sukobe šifri/naziva i umeće sve stavke
 transakcijski ili ništa. Pregled detalja dopušta promjenu naziva, šifre,
 barkoda i jedinice, uz zaseban audit i bez izmjene aktualne ili sidrene
@@ -43,7 +47,7 @@ Može se lokalno zapamtiti samo adresa web-stranice bez lozinki.
 
 PDF, službeni zakonski CSV/XML serializer, javna objava, pisana sinkronizacija
 s WordPressom/WooCommerceom i serverima, siguran unos pristupnih podataka,
-restore, instalacija i digitalni potpis NISU još završeni. Ne postoji
+instalacija i digitalni potpis NISU još završeni. Ne postoji
 lažni status uspješne objave.
 
 ## Pokretanje i provjere

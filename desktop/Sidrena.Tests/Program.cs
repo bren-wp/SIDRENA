@@ -68,6 +68,62 @@ try
         Expect(backupWorkspace.ListLocations().Count == 1, "Online backup includes workspace");
         MustThrow(() => workspace.BackupTo(file));
     }
+    // Restore a WAL-consistent snapshot. Invalid backup must never overwrite active data.
+    var recoveryDb=Path.Combine(folder,"restore-verify.db");
+    var snapshot=Path.Combine(folder,"restore-snapshot.db");
+    var safety=Path.Combine(folder,"restore-safety.db");
+    using(var verifyPrices=new PriceStore(recoveryDb))
+    {
+        var item=verifyPrices.AddItem("Stara cijena", "Proizvod", "REC-1", "", "kom",
+            7.25m,6.95m,"2026-09-10","Račun 123");
+        using(var verifyWorkspace=new WorkspaceStore(recoveryDb))
+        {
+            verifyWorkspace.AddLocation("Trgovina","Korzo 15","Rijeka");
+            verifyWorkspace.BackupTo(snapshot);
+            var inspection=WorkspaceStore.InspectBackup(snapshot);
+            Expect(inspection.Products==1&&inspection.Locations==1,"Read-only backup preview");
+            Expect(inspection.PriceChanges==0,"Backup preview keeps original audit");
+        }
+        verifyPrices.UpdateCurrentPrice(item,8.50m,"Promjena nakon kopije");
+    }
+    File.WriteAllText(Path.Combine(folder,"not-sqlite.db"),"invalid data");
+    using(var restoreWorkspace=new WorkspaceStore(recoveryDb))
+    {
+        MustThrowType<InvalidDataException>(()=>
+            WorkspaceStore.InspectBackup(Path.Combine(folder,"not-sqlite.db")));
+        using(var nonSidrena=new Microsoft.Data.Sqlite.SqliteConnection(
+            new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder{
+                DataSource=Path.Combine(folder,"other.db"),Pooling=false}.ToString()))
+        {
+            nonSidrena.Open();
+            using var sql=nonSidrena.CreateCommand();
+            sql.CommandText="CREATE TABLE other_data(id INTEGER)";
+            sql.ExecuteNonQuery();
+        }
+        MustThrowType<InvalidDataException>(()=>
+            WorkspaceStore.InspectBackup(Path.Combine(folder,"other.db")));
+        Expect(WorkspaceStore.InspectBackup(snapshot).Products==1,"Original backup stays unchanged");
+        MustThrowType<InvalidDataException>(()=>
+            restoreWorkspace.RestoreFrom(Path.Combine(folder,"not-sqlite.db"),safety));
+        Expect(!File.Exists(safety),"Invalid restore never creates safety copy or touches live database");
+        var protectedPath=restoreWorkspace.RestoreFrom(snapshot,safety);
+        Expect(protectedPath==safety&&File.Exists(safety),"Restore creates recoverable pre-restore snapshot");
+        Expect(WorkspaceStore.InspectBackup(safety).PriceChanges==1,"Recovery snapshot includes later WAL transaction");
+        Expect(restoreWorkspace.ListLocations().Count==1,"Restored workspace locations");
+    }
+    using(var restored=new PriceStore(recoveryDb))
+    {
+        Expect(restored.ListItems().Single().CurrentCents==725,"Restore brings back original actual price");
+        Expect(restored.ListItems().Single().AnchorCents==695&&
+               restored.ListItems().Single().AnchorDate=="2026-09-10","Restore retains original anchor");
+        Expect(restored.ListChanges(restored.ListItems().Single().Id).Count==0,"Restore preserves earlier audit history");
+    }
+    using(var safetyPrices=new PriceStore(safety))
+    {
+        Expect(safetyPrices.ListItems().Single().CurrentCents==850,"Safety copy preserves pre-restore price");
+        Expect(safetyPrices.ListChanges(safetyPrices.ListItems().Single().Id).Count==1,"Safety copy preserves WAL audit");
+    }
+
     using (var reopened = new PriceStore(file))
     {
         Expect(reopened.ListItems().Count == 2, "Durable database");
