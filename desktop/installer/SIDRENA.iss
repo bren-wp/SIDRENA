@@ -33,7 +33,6 @@ VersionInfoCompany=Brendigo
 VersionInfoProductName=SIDRENA Desktop
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "croatian"; MessagesFile: "compiler:Languages\Croatian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "Stvori prečac na radnoj površini"; GroupDescription: "Dodatni prečaci:"; Flags: unchecked
 [Files]

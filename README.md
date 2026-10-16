@@ -19,11 +19,12 @@ Na GitHubu se čuva **jedan Release 1.5.0 i jedan tag 1.5.0**:
 
 https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0
 
-Službeno izdanje sadrži samo brendigo-sidrena-cijena-1.5.0.zip i pripadnu
-SHA-256 datoteku. Stari releaseovi i tagovi v1.0.3–v1.0.9 uklonjeni su.
-Ne otvarati nova izdanja ili tagove za internu desktop razvojnu verziju.
-Daljnji desktop razvoj radi se kroz Git grane, PR-ove, CI i privremene
-workflow artefakte, bez stvaranja novih GitHub releaseova.
+Izdanje trajno sadrži službeni WordPress ZIP 1.5.0 i njegov SHA-256, uz
+**uvijek najnovije Windows datoteke**: SIDRENA-Desktop-win-x64-Portable.exe,
+SIDRENA-Desktop-win-x64-Setup.exe, SHA256SUMS.txt i release-info.json.
+WordPress paket i tag 1.5.0 ostaju nepromijenjeni; svaki uspješan Windows
+build na main zamjenjuje samo Windows artefakte. Desktop verzija neovisna
+je o verziji WordPress dodatka. Nema drugih GitHub izdanja ni tagova.
 
 ## Windows aplikacija
 
