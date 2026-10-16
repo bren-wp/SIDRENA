@@ -198,8 +198,6 @@ public partial class MainWindow : Window
     private void Status(string message)=>StatusLabel.Text=message;
     private void Error(Exception ex)=>MessageBox.Show(this,ex.Message,"SIDRENA",MessageBoxButton.OK,MessageBoxImage.Warning);
     private static string Euro(long cents)=>PriceStore.FormatEur(cents)+" €";
-    private static string Selected(ComboBox combo)
-        => (combo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
     private static string DateText(string? iso)
         => iso is not null && DateTime.TryParseExact(iso,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var date)
             ? date.ToString("dd. MM. yyyy.",Hr):"—";
