@@ -121,16 +121,16 @@ internal static class UiKit
                 grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
                 grid.RowDefinitions.Add(new RowDefinition{Height=GridLength.Auto});
                 grid.RowDefinitions.Add(new RowDefinition{Height=GridLength.Auto});
-                Grid.SetColumn(left,0); Grid.SetRow(left,0);
-                Grid.SetColumn(right,0); Grid.SetRow(right,1);
+                System.Windows.Controls.Grid.SetColumn(left,0); System.Windows.Controls.Grid.SetRow(left,0);
+                System.Windows.Controls.Grid.SetColumn(right,0); System.Windows.Controls.Grid.SetRow(right,1);
                 if(left is FrameworkElement l) l.Margin=new Thickness(0,0,0,12);
             }
             else
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(ratio,GridUnitType.Star)});
                 grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
-                Grid.SetColumn(left,0); Grid.SetRow(left,0);
-                Grid.SetColumn(right,1); Grid.SetRow(right,0);
+                System.Windows.Controls.Grid.SetColumn(left,0); System.Windows.Controls.Grid.SetRow(left,0);
+                System.Windows.Controls.Grid.SetColumn(right,1); System.Windows.Controls.Grid.SetRow(right,0);
                 if(left is FrameworkElement l) l.Margin=new Thickness(0,0,14,0);
             }
         }
