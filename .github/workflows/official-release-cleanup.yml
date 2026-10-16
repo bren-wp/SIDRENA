@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 20
     env:
       GH_REPO: bren-wp/SIDRENA
-      GH_TOKEN: \${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
         with:
