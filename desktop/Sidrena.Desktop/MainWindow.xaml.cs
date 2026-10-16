@@ -774,7 +774,7 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Tema: Tamna · Rad bez korisničkog računa"),
             U.Notice("Šifriranje baze i automatski rasporedi još nisu aktivni. Ručni povrat i zasebna zaštitna kopija dostupni su. Ne postoji skrivena sinkronizacija ni telemetrija.")));
         outer.Children.Add(U.Card("Informacije o izdanju",
-            U.Text("SIDRENA Desktop 0.7.0",18,true),
+            U.Text("SIDRENA Desktop 0.8.0",18,true),
             U.Muted("Windows 10/11 x64 · Lokalni podaci · Portable EXE i Setup EXE"),
             U.Notice("WordPress dodatak Brendigo Sidrena Cijena uvijek ostaje verzija 1.5.0. Windows ima zasebnu oznaku verzije."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>

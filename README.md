@@ -39,3 +39,5 @@ autorizirana sinkronizacija i propisani serializer još su u razvoju.
 Dizajn i QA kriteriji: [docs/DESKTOP-UI-PARITY.md](docs/DESKTOP-UI-PARITY.md)
 
 **Radni izvozi nisu zamjena za propisani i verificirani javni cjenik.**
+
+Windows Desktop 0.8.0: optimizacija kataloga (filtri u memoriji, debounce pretrage, očuvanje odabira nakon uređivanja). Paket se ažurira unutar jedinog izdanja 1.5.0, bez zasebnih tagova.
