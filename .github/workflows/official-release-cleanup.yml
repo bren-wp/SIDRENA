@@ -55,8 +55,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          existing_releases=$(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[].tag_name' || true)
-          existing_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq '.[].ref | sub("^refs/tags/"; "")' 2>/dev/null || true)
+          existing_releases=$(gh release list --limit 100 --json tagName --jq '.[].tagName')
+          existing_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq 'if type == "array" then .[] | .ref | sub("^refs/tags/"; "") else empty end' 2>/dev/null || true)
           for tag in $existing_releases $existing_tags; do
             case "$tag" in
               1.5.0|v1.0.3|v1.0.4|v1.0.5|v1.0.6|v1.0.7|v1.0.8|v1.0.9) ;;
@@ -98,7 +98,7 @@ jobs:
         run: |
           set -euo pipefail
           actual_releases=$(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[].tag_name' | LC_ALL=C sort)
-          actual_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq '.[].ref | sub("^refs/tags/"; "")' | LC_ALL=C sort)
+          actual_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq 'if type == "array" then .[] | .ref | sub("^refs/tags/"; "") else empty end' | LC_ALL=C sort)
           [[ "$actual_releases" == "1.5.0" ]] || { echo "Unexpected releases: $actual_releases"; exit 1; }
           [[ "$actual_tags" == "1.5.0" ]] || { echo "Unexpected tags: $actual_tags"; exit 1; }
           actual_assets=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[].name' | LC_ALL=C sort)
