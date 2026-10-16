@@ -690,13 +690,6 @@ public partial class MainWindow : Window
             "SIDRENA — u razvoju",MessageBoxButton.OK,MessageBoxImage.Information);
     }
 
-    protected override void OnClosed(EventArgs e)
-    {
-        _prices.Dispose();
-        _workspace.Dispose();
-        base.OnClosed(e);
-    }
-
     private void OpenLocal(string path)
     {
         try{Process.Start(new ProcessStartInfo{FileName=path,UseShellExecute=true});}
