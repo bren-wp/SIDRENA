@@ -67,20 +67,40 @@ public partial class MainWindow : Window
                         using var output=File.Create(Path.Combine(captureFolder,$"screen-{i+1:00}.png"));
                         png.Save(output);
                     }
-                    // Verify compact/medium windows without maximizing or cutting off the main viewport.
-                    foreach(var size in new[]{(width:760d,height:560d),(width:1060d,height:690d)})
+                    // Exercise all ten pages at two adaptive sizes, not just the catalogue.
+                    var responsiveFolder=Path.Combine(Path.GetDirectoryName(_databasePath)!,"ui-captures-responsive");
+                    Directory.CreateDirectory(responsiveFolder);
+                    int adaptiveCount=0;
+                    foreach(var size in new[]{(width:760d,height:560d,name:"compact"),
+                                              (width:1060d,height:690d,name:"medium")})
                     {
                         Width=Math.Min(size.width,SystemParameters.WorkArea.Width*0.9);
                         Height=Math.Min(size.height,SystemParameters.WorkArea.Height*0.9);
                         UpdateResponsiveLayout();
-                        Navigate("Artikli");
-                        UpdateLayout();
-                        if(WindowState!=WindowState.Normal ||
-                           SidebarColumn.ActualWidth>ResponsiveLayoutPolicy.ForWidth(ActualWidth).SidebarWidth+2 ||
-                           PageScroll.ViewportWidth<=0)
-                            throw new InvalidOperationException("Adaptive window layout failed at "+size.width);
+                        for(int j=0;j<pages.Length;j++)
+                        {
+                            Navigate(pages[j]);
+                            PageHost.UpdateLayout();
+                            UpdateLayout();
+                            if(WindowState!=WindowState.Normal ||
+                               Math.Abs(SidebarColumn.ActualWidth-
+                                   ResponsiveLayoutPolicy.ForWidth(ActualWidth).SidebarWidth)>2 ||
+                               PageScroll.ViewportWidth<=0 || PageHost.ActualWidth<=0)
+                                throw new InvalidOperationException("Adaptive layout failed: "+size.name+"/"+pages[j]);
+                            var resized=new RenderTargetBitmap((int)Math.Ceiling(ActualWidth),
+                                (int)Math.Ceiling(ActualHeight),96,96,PixelFormats.Pbgra32);
+                            resized.Render(this);
+                            var capture=new PngBitmapEncoder();
+                            capture.Frames.Add(BitmapFrame.Create(resized));
+                            using var file=File.Create(Path.Combine(responsiveFolder,
+                                size.name+"-screen-"+(j+1).ToString("00",CultureInfo.InvariantCulture)+".png"));
+                            capture.Save(file);
+                            adaptiveCount++;
+                        }
                     }
-                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed; adaptive widths verified.");
+                    if(adaptiveCount!=20)
+                        throw new InvalidOperationException("Responsive screen coverage incomplete.");
+                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed; responsive 20/20 passed.");
                     Application.Current.Shutdown(0);
                 }
                 catch(Exception ex)
