@@ -259,20 +259,37 @@ public partial class MainWindow : Window
         filter.Children.Add(U.Field("Pretraživanje",search));
         filter.Children.Add(U.Action("+  "+(kind=="Proizvod"?"Novi artikl":"Nova usluga"),
             ()=>{if(newItemExpander!=null)newItemExpander.IsExpanded=true;PageScroll.ScrollToBottom();},true));
-        filter.Children.Add(U.Action("Uvoz CSV",()=>ImportCatalogCsv(Reload)));
-        outer.Children.Add(U.Card(kind=="Proizvod"?"Katalog artikala":"Katalog usluga",filter));
-        void Reload()
+        var count=U.Muted("Učitavanje lokalnog kataloga.");
+        var cachedItems=_prices.ListItems();
+        var searchDelay=new System.Windows.Threading.DispatcherTimer {
+            Interval=TimeSpan.FromMilliseconds(180)
+        };
+        void Reload(bool refresh=false,long? selectId=null)
         {
-            var pattern=search.Text.Trim();
-            grid.ItemsSource=_prices.ListItems().Where(x=>x.Kind==kind &&
-                (x.Name.Contains(pattern,StringComparison.CurrentCultureIgnoreCase)
-                || x.Sku.Contains(pattern,StringComparison.OrdinalIgnoreCase)
-                || x.Barcode.Contains(pattern,StringComparison.OrdinalIgnoreCase)))
-                .Where(x=>anchorFilter.SelectedIndex switch {1=>x.AnchorCents.HasValue,2=>!x.AnchorCents.HasValue,_=>true})
+            if(refresh) cachedItems=_prices.ListItems();
+            var keepId=selectId??(grid.SelectedItem as ItemRow)?.Id;
+            var visible=CatalogViewFilter.Apply(cachedItems,kind,search.Text,anchorFilter.SelectedIndex)
                 .Select(AsItemRow).ToList();
+            grid.ItemsSource=visible;
+            if(keepId.HasValue)
+            {
+                var match=visible.FirstOrDefault(x=>x.Id==keepId.Value);
+                if(match is not null) grid.SelectedItem=match;
+            }
+            count.Text=visible.Count.ToString(Hr)+" od "+
+                cachedItems.Count(x=>x.Kind==kind).ToString(Hr)+" stavki";
         }
-        search.TextChanged+=(_,_)=>Reload();
-        anchorFilter.SelectionChanged+=(_,_)=>Reload();
+        search.MaxLength=256;
+        searchDelay.Tick+=(_,_)=>{searchDelay.Stop();Reload();};
+        search.TextChanged+=(_,_)=>{searchDelay.Stop();searchDelay.Start();};
+        anchorFilter.SelectionChanged+=(_,_)=>{searchDelay.Stop();Reload();};
+        outer.Unloaded+=(_,_)=>searchDelay.Stop();
+        filter.Children.Add(U.Action("Očisti filtre",()=>{
+            searchDelay.Stop();search.Clear();anchorFilter.SelectedIndex=0;Reload();
+        }));
+        filter.Children.Add(U.Action("Uvoz CSV",()=>ImportCatalogCsv(()=>Reload(refresh:true))));
+        filter.Children.Add(count);
+        outer.Children.Add(U.Card(kind=="Proizvod"?"Katalog artikala":"Katalog usluga",filter));
         Reload();
 
         var current=U.Box("Aktualna cijena",110);
@@ -285,7 +302,8 @@ public partial class MainWindow : Window
             {Status("Odaberite artikl ili uslugu u tablici.");return;}
             try{
                 _prices.UpdateCurrentPrice(selected.Id,MoneyParser.Parse(current.Text),reason.Text);
-                Reload();Status("Promjena aktualne cijene trajno je zabilježena u povijesti.");
+                Reload(refresh:true,selectId:selected.Id);
+                Status("Promjena aktualne cijene trajno je zabilježena u povijesti.");
                 current.Clear();reason.Clear();
             }catch(Exception ex) when(ex is ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
@@ -312,11 +330,12 @@ public partial class MainWindow : Window
         rightFields.Children.Add(U.Action("Spremi novu stavku",()=>{
             try{
                 var historical=string.IsNullOrWhiteSpace(anchor.Text)?(decimal?)null:MoneyParser.Parse(anchor.Text);
-                _prices.AddItem(name.Text,kind,sku.Text,barcode.Text,unit.Text,MoneyParser.Parse(actual.Text),
+                var created=_prices.AddItem(name.Text,kind,sku.Text,barcode.Text,unit.Text,MoneyParser.Parse(actual.Text),
                     historical,historical.HasValue?(date.SelectedIndex==0?"2026-09-10":"2025-05-02"):null,
                     historical.HasValue?source.Text:null);
                 name.Clear();sku.Clear();barcode.Clear();actual.Clear();anchor.Clear();source.Clear();
-                Reload();Status("Stavka je spremljena u lokalni katalog.");
+                Reload(refresh:true,selectId:created);
+                Status("Stavka je spremljena u lokalni katalog.");
             }catch(Exception ex)when(ex is ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
         // Reference detail drawer: edit only descriptive fields. Current/anchor prices use their own audited workflows.
@@ -342,14 +361,14 @@ public partial class MainWindow : Window
             try
             {
                 _prices.UpdateItemDetails(selected.Id,eName.Text,eSku.Text,eBarcode.Text,eUnit.Text,eReason.Text);
-                Reload();eReason.Clear();
+                Reload(refresh:true,selectId:selected.Id);eReason.Clear();
                 Status("Podaci su spremljeni, a audit izmjene ostaje zabilježen. Cijene i sidrene reference nisu promijenjene.");
             }
             catch(Exception ex)when(ex is ArgumentException or KeyNotFoundException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
         grid.SelectionChanged+=(_,_)=>{
             if(grid.SelectedItem is not ItemRow selected)return;
-            var item=_prices.ListItems().FirstOrDefault(x=>x.Id==selected.Id);
+            var item=cachedItems.FirstOrDefault(x=>x.Id==selected.Id);
             if(item is null)return;
             chosen.Text=item.Name+"  ·  "+item.Kind;
             eName.Text=item.Name;eSku.Text=item.Sku;eBarcode.Text=item.Barcode;eUnit.Text=item.Unit;
