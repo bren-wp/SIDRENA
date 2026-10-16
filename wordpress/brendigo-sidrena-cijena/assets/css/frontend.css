@@ -1,0 +1,190 @@
+.sidrena-cijena {
+	--brsc-accent: #d89a2b;
+	--brsc-tooltip-bg: #0b1525;
+	--brsc-tooltip-text: #f8fafc;
+	position: relative;
+	display: block;
+	width: fit-content;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin-top: 0.45em;
+	padding: 0.45em 0.68em;
+	border: 1px solid rgba(100, 116, 139, 0.22);
+	border-radius: 0.62em;
+	background: rgba(148, 163, 184, 0.08);
+	color: inherit;
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.45;
+}
+
+p.price .sidrena-cijena,
+.price .sidrena-cijena,
+span.price .sidrena-cijena,
+.elementor-widget-woocommerce-product-price .sidrena-cijena,
+.et_pb_wc_price .sidrena-cijena,
+.brxe-product-price .sidrena-cijena,
+.oxy-product-price .sidrena-cijena,
+.wd-single-price .sidrena-cijena,
+.fusion-tb-woo-price .sidrena-cijena,
+.jet-single-price .sidrena-cijena,
+.wc-block-components-product-price .sidrena-cijena {
+	display: block;
+	margin-top: 0.45em;
+}
+
+.price .lowest_price,
+p.price .lowest_price,
+span.price .lowest_price {
+	display: block;
+	margin-top: 0.4em;
+}
+
+.sidrena-cijena + br,
+.sidrena-cijena + .lowest_price {
+	margin-top: 0.4em;
+}
+
+.sidrena-cijena__text,
+.sidrena-cijena__prefix,
+.sidrena-cijena__sep,
+.sidrena-cijena__amount {
+	display: inline;
+}
+
+.sidrena-cijena__prefix {
+	font-weight: 600 !important;
+}
+
+.sidrena-cijena,
+.sidrena-cijena .sidrena-cijena__text,
+.sidrena-cijena .sidrena-cijena__prefix,
+.sidrena-cijena .sidrena-cijena__amount,
+.sidrena-cijena .woocommerce-Price-amount,
+.sidrena-cijena .amount,
+.sidrena-cijena bdi,
+p.price .sidrena-cijena .woocommerce-Price-amount.amount,
+.elementor-widget-woocommerce-product-price .sidrena-cijena .woocommerce-Price-amount {
+	font-size: 0.875rem !important;
+}
+
+.sidrena-cijena__amount,
+.sidrena-cijena .woocommerce-Price-amount,
+.sidrena-cijena .amount,
+.sidrena-cijena bdi {
+	font-weight: 650 !important;
+}
+
+.sidrena-cijena--has-tooltip {
+	cursor: help;
+}
+
+.sidrena-cijena--has-tooltip .sidrena-cijena__prefix {
+	text-decoration-line: underline;
+	text-decoration-style: dotted;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+}
+
+
+.sidrena-cijena__tooltip {
+	position: absolute;
+	left: 0;
+	bottom: calc(100% + 10px);
+	z-index: 999;
+	width: min(320px, 78vw);
+	box-sizing: border-box;
+	padding: 0.75em 0.9em;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 10px;
+	background: var(--brsc-tooltip-bg);
+	color: var(--brsc-tooltip-text);
+	font-size: 0.82rem;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: left;
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+	transform: translateY(4px);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+}
+
+.sidrena-cijena__tooltip::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 1.3em;
+	border: 6px solid transparent;
+	border-top-color: var(--brsc-tooltip-bg);
+}
+
+.sidrena-cijena:hover .sidrena-cijena__tooltip,
+.sidrena-cijena:focus .sidrena-cijena__tooltip,
+.sidrena-cijena:focus-within .sidrena-cijena__tooltip {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.sidrena-cijena:focus {
+	outline: none;
+}
+
+.sidrena-cijena:focus-visible {
+	outline: 2px solid var(--brsc-accent);
+	outline-offset: 3px;
+}
+
+.sidrena-cijena-item {
+	display: inline-block;
+	max-width: 100%;
+}
+
+.sidrena-cijena-item__price {
+	display: block;
+	font-size: 1em;
+	line-height: 1.45;
+}
+
+.sidrena-cijena-item__price del {
+	margin-right: 0.35em;
+	opacity: 0.68;
+}
+
+.sidrena-cijena-item__price ins {
+	text-decoration: none;
+}
+
+@media (max-width: 767px) {
+	.sidrena-cijena,
+	.sidrena-cijena .sidrena-cijena__text,
+	.sidrena-cijena .sidrena-cijena__prefix,
+	.sidrena-cijena .sidrena-cijena__amount,
+	.sidrena-cijena .woocommerce-Price-amount,
+	.sidrena-cijena .amount,
+	.sidrena-cijena bdi {
+		font-size: 0.8rem !important;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidrena-cijena__tooltip {
+		transition: none;
+	}
+}
+
+/* Lightweight standalone item; no dependence on WooCommerce markup. */
+.sidrena-standalone-item{display:grid;gap:.35rem;margin:1rem 0;padding:1rem;border:1px solid currentColor;border-color:color-mix(in srgb,currentColor 18%,transparent);border-radius:8px}
+.sidrena-standalone-item__kind{font-size:.8em;opacity:.75}
+.sidrena-standalone-item__name{font-size:1.08em}
+.sidrena-standalone-item__prices{display:block}
+
+/* Accessible history chart (also works without JavaScript and WooCommerce). */
+.sidrena-price-chart{max-width:680px;margin:1.5em 0;padding:1em;border:1px solid currentColor;border-radius:12px}
+.sidrena-price-chart svg{display:block;width:100%;height:auto;max-height:220px;margin-top:.75em}
+.sidrena-price-chart__axis{stroke:currentColor;stroke-width:1;opacity:.5;fill:none}
+.sidrena-price-chart__line{fill:none;stroke:#218b8d;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.sidrena-price-chart__note{font-size:.875em;opacity:.85}
+.sidrena-price-chart table{width:100%;border-collapse:collapse}.sidrena-price-chart th,.sidrena-price-chart td{padding:.35em;border-bottom:1px solid #9996;text-align:left}

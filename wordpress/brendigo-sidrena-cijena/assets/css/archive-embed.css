@@ -1,0 +1,19 @@
+.sidrena-arhiva {
+	--brsc-line: rgba(127, 127, 127, 0.24);
+	--brsc-soft: rgba(127, 127, 127, 0.07);
+	margin: 0;
+	padding: 7px 15px;
+	list-style: none;
+	border: 1px solid var(--brsc-line);
+	border-radius: 12px;
+	background: var(--brsc-soft);
+	font: inherit;
+	color: inherit;
+}
+.sidrena-arhiva li { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--brsc-line); }
+.sidrena-arhiva li:last-child { border-bottom: 0; }
+.sidrena-arhiva a { overflow-wrap: anywhere; word-break: break-word; }
+.sidrena-arhiva a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.sidrena-arhiva span { flex: 0 0 auto; opacity: .7; font-size: .9em; }
+.sidrena-arhiva-empty { margin: 0; padding: 16px; border: 1px dashed var(--brsc-line); border-radius: 12px; background: var(--brsc-soft); color: inherit; }
+@media (max-width: 560px) { .sidrena-arhiva li { align-items: flex-start; flex-direction: column; gap: 3px; } }

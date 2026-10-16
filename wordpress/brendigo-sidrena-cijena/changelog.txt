@@ -1,0 +1,216 @@
+= 1.5.0 – 2026-10-09 =
+* Matched the plugin name and readme heading exactly for WordPress.org Plugin Check.
+* Renamed the Serbian Latin locale to sr_RS_latin, with matching compiled PO/MO catalogs.
+* Removed the discouraged manual textdomain loader and added the SIDRENA visual identity.
+* Prepared standalone WordPress.org SVN assets, not distributed in the plugin ZIP.
+* Added 1,500 manually written locale translations (75 messages per each of 20 partially translated languages).
+* Refined import, export, UI controls, publish flow, outlet administration, and unsaved-changes confirmation messages.
+* Croatian source remains unchanged. Translated coverage: 269/576 in 5 locales and 261/576 in 15 locales.
+* English at 576/576; Bosnian and Serbian fields all populated, with proofreading still pending.
+* No price logic, reference dates, database schema, public URLs, shortcode IDs or data format keys changed.
+* Locale files were recompiled, validated and archived. WordPress.org Polyglots availability must be separately approved.
+* Remaining untranslated messages are not falsely marked as translated. No migration.
+
+= 1.4.7 – 2026-10-09 =
+* Translated 77 additional strings into each of the 20 partially localized languages (1,540 new locale translations).
+* Concentrated on price references, archive, public publication controls and error messages in data imports.
+* Corrected three capitalization-only gettext variants per language using the matching localized strings.
+* Kept Croatian source texts, fixed legal dates, price handling, data schema and URLs unchanged.
+* English language catalogs: 576/576 populated. Bosnian and Serbian catalogs: 576/576 populated, pending independent native-speaker review.
+* Partial languages: 186 or 194 of 576 translated. These MUST NOT be presented as fully translated.
+* No database migration.
+
+= 1.4.6 – 2026-10-09 =
+* Added 70 genuine UI and data-validation translations to each of 20 partially translated locales (1,400 new translated entries).
+* Increased partial locale coverage to 109–117 of 576 strings, with no false claims of complete translations.
+* Kept four English region variants, Bosnian and Serbian translation catalogs unchanged from 1.4.5.
+* Preserved original Croatian source language, date rules, export field names and APIs.
+* Added updated QA report and per-locale coverage. No database migration.
+
+= 1.4.5 – 2026-10-09 =
+* Completed English interface catalogs for en_US, en_GB, en_AU and en_CA, all 576 strings.
+* Filled the Bosnian and Serbian Latin/Cyrillic catalogs with linguistically adapted Croatian source texts (native-speaker QA still recommended).
+* Preserved all official codes, shortcode names, file paths and printf tokens.
+* Remaining 20 locale catalogs are partial; see languages/README.md for coverage and honest limitations.
+* No change to pricing logic, database schema, privacy model or locked dates.
+
+= 1.4.4 – 2026-10-09 =
+* Add a translation template and 27 explicitly partial locale packs for frequently used interface strings.
+* Register bundled gettext catalogs at init (WordPress.org packs take precedence).
+* Fix the default anchor-price prefix to use Sidrena cijena rather than Cijena.
+* Use the site locale for source-language resolution and the request locale for display on single-language WordPress installations.
+* Localize the sales-form placeholder used by the admin JavaScript.
+* Retain all legal reference dates, public links, prices, file format fields and existing settings.
+
+= 1.4.3 =
+* Sigurnije spremanje poslovnica i ručnih usluga; zaštita od gubitka podataka kod neispravnog JSON-a i neuspješnog upisa.
+* Stabilni identifikatori poslovnica i usluga nakon brisanja; dodatni regresijski testovi.
+* Uvoz zahtijeva valjanu poslužiteljsku predprovjeru istog mapiranja i poslovnice.
+* Optimizirano izdvajanje poslovnica sa stavkama, bez višestrukog prolaska cijelog kataloga.
+* Uklonjen duplicirani alias pri automatskom mapiranju uvoza.
+
+= 1.4.2 =
+* Dodane integrirane upute za početnike u administraciji: WordPress bez WooCommercea i WordPress s WooCommerceom.
+* Objašnjeni prvi cjenik, dnevna objava, javni prikaz, poslovnice, uvoz i često postavljena pitanja.
+* Brze poveznice na upute dodane su u zaglavlje, Pregled i izbornik dodataka.
+* Bez promjene postojećih cjenika, metapodataka i zakonskih referentnih datuma.
+
+= 1.4.0 =
+* Optional XLSX input and downloadable XLSX template (requires PHP ZIP and SimpleXML).
+* Read-only, bounded pre-import mapping/price/duplicate checks and user confirmation before writes.
+* Accessible PHP/SVG selling-price history chart for WordPress manual and WooCommerce items.
+* Improved conditional front-end stylesheet loading for price-history shortcodes.
+* Security: XLSX archive-size caps, formula/external-link rejection, admin-only token-bound staging.
+* No replacement of fixed historical reference dates or existing pricing data.
+
+= 1.3.3 =
+* Added local administrator-only audit log for manual and plugin-managed WooCommerce reference price changes.
+* Added explicit pre-discount 30-day price calculation without mixing current discount prices into the result.
+* Kept independent WordPress and WooCommerce operation, with conservative incomplete-history labeling.
+* Improved archive retention to avoid deleting files from the last 31 days when more than 30 snapshots are present.
+* Prevented incorrect cache/audit updates when product metadata or standalone catalog storage fails.
+* Integrated audit tracing for WooCommerce CSV import after successful save, and barcode updates in the plugin import.
+
+= 1.3.2 =
+* Ispravljeno spremanje i izvoz barkoda samostalnih proizvoda/usluga (vodeće nule).
+* Barkod je dodan mapiranju CSV/XML uvoza i WooCommerce proizvodima.
+* Samostalni način rada ima čiste, WooCommerce-neovisne nazive i WordPress postavke.
+* WooCommerce listeneri ne registriraju se kada WooCommerce nije aktivan.
+* Zadržani postojeći kratki kodovi, pohranjeni podaci i javne adrese.
+
+= 1.3.1 =
+* Samostalan WordPress rad bez WooCommercea: praćenje stvarnih promjena cijena proizvoda/usluga i novi [sidrena_stavka] prikaz pojedinačne stavke.
+* Sigurnost: neispravni/skraćeni JSON više ne može obrisati katalog; stroga validacija identifikatora; bez ponovnog korištenja automatskih ID-jeva obrisanih stavki.
+* Privatnost: prilikom izričitog administratorskog brisanja SVIH podataka uklanja se i tablica povijesti; obična deinstalacija i dalje zadržava evidenciju radi dokazivosti.
+* Performanse: brza pretraga ručnih stavki prema ID-u i prikupljanje početnog stanja cijena u manjim serijama; redovito održavanje evidencije bez WooCommercea.
+* Nove instalacije više ne uključuju automatsko popunjavanje sidrene cijene trenutačnom cijenom; postojeće postavke se ne mijenjaju.
+* Bez promjene zaključenih datuma, postojećih URL-ova i shortcodeova.
+
+= 1.3.0 =
+* Dodana evidencija zabilježenih WooCommerce prodajnih cijena (od aktivacije), najniža zabilježena cijena u 30 dana uz oznaku nepotpune povijesti.
+* Uvedeni zasebni javni proizvodi/usluge cjenici u XML i CSV formatima, uz očuvanje postojećih zajedničkih feedova i arhive.
+* Novi javni REST discovery endpoint i read-only feed redirecti.
+* E-mail upozorenja za pogreške objave i propuštenu dnevnu objavu, s ograničenjem učestalosti.
+* WooCommerce Cart/Checkout Blocks Store API i JS prikaz sidrene cijene u stavci.
+* Rezervna objava kod posjeta ako je WP-Cron isključen, uz podršku za vanjski cron/WP-CLI.
+* Svi postojeći podaci, URL-ovi, migracije i funkcionalnosti iz 1.2.16 ostaju.
+
+Brendigo Sidrena Cijena - Changelog
+===================================
+
+1.2.16
+------
+* Fixed WordPress i18n translator-comment placement in the settings preview, product reference-date help and snapshot confirmation string.
+* Fixed malformed numbered sprintf placeholders that could render internal `idrena_*` fragments in publication status, pending-change status and WooCommerce pagination text.
+* Re-audited placeholder-bearing translation calls and updated release metadata.
+
+1.2.15
+------
+* Added a deterministic class-map autoloader and removed manual dependency-loading branches so normal requests parse fewer plugin files.
+* Removed unused JavaScript localization values and the no-longer-consumed frontend compatibility flag.
+* Centralized the locked general/FMCG reference dates across admin guidance and import-template fallbacks instead of repeating date literals.
+* Reduced unnecessary frontend price-style loading, deferred the compatibility script, and eliminated repeated document-wide legacy-tooltip cleanup during each price injection.
+* Removed current tooltip icon markup/CSS while retaining accessible focus/tooltip behavior and compatibility cleanup for cached older markup.
+* Refined the admin switch visuals and fixed a reduced-motion rule that could re-enable a loading animation.
+* Sanitized and length-limited exception messages before forwarding them to logging integrations.
+* Updated version metadata and release documentation.
+
+1.2.14
+------
+* Centralized plugin-owned file access through one WordPress Filesystem adapter and removed duplicated filesystem bootstrap code.
+* Lazy-loaded dashboard/import/editor classes so normal storefront requests do less PHP bootstrap work.
+* Removed admin forwarding methods that duplicated save, AJAX and WooCommerce field callbacks.
+* Merged identical manual catalog / price-on-request JSON, outlet-code and numeric-id helpers into one shared trait.
+* Consolidated repeated standalone public-page HTML shell and back-link output into shared helpers, including site language/direction attributes.
+* Removed the obsolete eval-file WP-CLI fallback and empty package directories; the registered `wp sidrena-cijena fill` command remains supported.
+* Removed confirmed unused CSS custom properties and obsolete release-version comments while retaining intentional responsive/cascade rules.
+* Shortened the WordPress.org readme and moved older release history to this file.
+* Updated version metadata and package documentation.
+
+= 1.2.13 =
+* Added SHA-256 fingerprints to successful public feed and HTML publication metadata. Hourly maintenance now verifies both byte size and content hash, catching same-size corruption that a size-only check could miss.
+* Reworked publication integrity checks to use the WordPress filesystem abstraction instead of direct PHP file existence/size calls in the automation health path.
+* Added automatic cleanup of stale plugin-owned `.tmp` and `.bak` publication files left behind if a PHP request or server process terminates during an atomic publish.
+* Added WooCommerce bulk-editor protection against accidentally leaving the page with unsaved changes.
+* Added a one-click reset for unsaved WooCommerce changes on the current page and disabled save/reset controls when there is nothing to write.
+* Removed a redundant bulk-editor filter pass and tightened change-state handling so bulk actions, reset, filtering and submit all share the same dirty-state source.
+* Publication history now shows generation duration for successful runs, making slow scheduled jobs easier to identify.
+* Updated version metadata and release documentation.
+
+= 1.2.12 =
+* Centralized scheduled, queued, manual and WP-CLI publishing into one publication pipeline so generation, archiving, retry handling and diagnostics cannot drift between entry points.
+* Added a bounded non-autoloaded publication journal with the latest 12 attempts, including source, status, format, row count, duration and safe error code.
+* Added an admin “Recent publications” panel showing the six newest attempts, making missed or failed automation visible without opening logs.
+* Background daily/queued publication retains bounded retry behavior; manual and CLI publication still return errors immediately.
+* WP-CLI health now reports the latest publication status and source.
+* Publication-history data is removed by full plugin data purge/uninstall while normal deactivation keeps it intact.
+* Removed duplicated regenerate-then-archive logic from the admin, cron and WP-CLI paths.
+* Updated version metadata and release documentation.
+
+= 1.2.11 =
+* Added persistent pending-publication tracking so administrators can see when saved catalog changes have not yet reached the public pricelist.
+* Scheduled-only mode now behaves consistently: catalog, manual-row, outlet, WooCommerce bulk, CSV/XML import, snapshot and CLI-fill changes wait for the configured daily slot when instant refresh is disabled.
+* Fixed automatic maintenance so a missed daily publication, missing public file or incomplete publication can be recovered even when instant refresh after product changes is disabled.
+* Successful full publication clears the pending marker; repeated WooCommerce hooks are coalesced into one pending-state database write per request.
+* Added a clear admin status message showing whether changes are queued for immediate rebuild or waiting for the next scheduled publication.
+* Refined the admin switches to a conventional high-contrast track and light thumb, added native switch semantics, and removed the CSS `:has()` dependency for broader admin-browser compatibility.
+* Retained immediate manual publication, while schedule-only setting changes no longer trigger unnecessary full catalog rebuilds; format changes still publish immediately because the public file URL changes.
+* Avoided redundant rebuilds when non-feed display settings or unchanged outlet settings are saved.
+* Updated version metadata and release documentation.
+
+= 1.2.10 =
+* Public HTML and XML/CSV files are now staged together before publication, with rollback to the previous pair if a later file replacement fails.
+* Publication metadata now records HTML snapshot bytes as well as feed bytes for lightweight integrity checks.
+* Automatic maintenance detects a missing HTML pricelist, missing outlet HTML snapshot, or generated file whose size no longer matches the successful publication metadata and queues one repair build.
+* Public HTML snapshot reads now use the WordPress filesystem abstraction.
+* WooCommerce variable-product variations are hydrated in one batched product query instead of repeated per-variation product lookups.
+* Added a WooCommerce catalog filter for all products, products missing a reference price, and products with a reference price.
+* Bulk date/current-price helpers now affect only rows currently visible after filtering, matching what the administrator sees.
+* Added a live visible-row count and small layout refinements for the bulk catalog toolbar.
+* Removed the now-unused standalone HTML writer and its obsolete single-file atomic helper after moving publication to the coordinated bundle writer.
+* Normalized remaining translatable placeholder strings so translator comments sit directly above the translation call.
+* Updated version metadata and release documentation.
+
+= 1.2.9 =
+* Rebuilt admin switches into one accessible, non-glowing control with a larger hit target, clearer off/on contrast, keyboard focus and disabled states.
+* Removed two obsolete switch style generations and merged duplicate adjacent CSS rules.
+* Replaced the overview screen's two slow `meta_query` scans with a small cached prepared aggregate that is invalidated when reference-price meta or product status changes.
+* Added an explicit Plugin Check suppression for the `exclude` select option false positive; it is not a query parameter.
+* Removed verified unused PHP helpers, stale CSS selectors, duplicate switch generations and an unused CJM parameter while retaining registered legacy shortcodes and public compatibility routes.
+* Shortened the 1.2.8 upgrade notice to stay within the WordPress.org 300-character limit.
+* Updated version metadata and package documentation.
+
+= 1.2.8 =
+* Added a paginated WooCommerce catalog editor that reads products directly from WooCommerce without duplicating them into the plugin's manual catalog.
+* Added central editing for reference price, reference date, barcode and public-pricelist visibility, including product variations.
+* Added bulk helpers for empty reference-date fields and a live unsaved-change indicator.
+* Large WooCommerce forms now submit only changed rows in a compact JSON payload, avoiding common `max_input_vars` truncation on variation-heavy catalogs.
+* WooCommerce bulk saves suppress per-field rebuild triggers and queue one public-pricelist refresh after the batch completes.
+* New installations now default to a 07:00 daily publication time in the WordPress site timezone.
+* Scheduled publication explicitly updates the public HTML pricelist, XML/CSV output and archive from the same generation run.
+* Manual publication now reports an error when archiving fails instead of showing a false-success notice.
+* Reworked generated-file writes to use the WordPress filesystem abstraction and temporary-file replacement.
+* Reworked CSV parsing to avoid deprecated stream usage while retaining quoted delimiters and multiline records.
+* Hardened request sanitization and public-route handling.
+* Registered the public pricelist JavaScript through the WordPress script API instead of printing a script tag directly.
+* Added missing translator comments for placeholder strings and clarified third-party WPML hook suppressions.
+* Removed the manual plugin text-domain load call that is no longer required by current WordPress versions.
+* Reworked the overview queries through WordPress query APIs and documented unavoidable prepared maintenance/migration database operations.
+* Removed obsolete explanatory copy from the administration interface and shortened the default reference-price tooltip.
+* Fixed a duplicated method declaration discovered during the code audit.
+* Updated version metadata and package documentation.
+
+= 1.2.7 =
+* Added configurable daily publication time with timezone-aware scheduling and recovery of missed publication slots.
+
+= 1.2.6 =
+* Added automatic refresh after relevant WooCommerce changes, maintenance checks, retry handling and WP-CLI generation/health commands.
+
+= 1.2.5 =
+* Improved large import safety, server-side import progress and duplicate-write avoidance.
+
+= 1.2.4 =
+* Improved CSV import compatibility, batch performance and error recovery.
+
+= 1.2.3 =
+* Improved admin contrast, responsive layout, accessibility and table behavior.

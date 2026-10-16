@@ -1,0 +1,43 @@
+.sidrena-cjenik {
+	--brsc-line: rgba(127, 127, 127, 0.24);
+	--brsc-soft: rgba(127, 127, 127, 0.07);
+	--brsc-accent: #b7791f;
+	font: inherit;
+	color: inherit;
+}
+.sidrena-cjenik * { box-sizing: border-box; }
+.sidrena-cjenik .cjenik-toolbar { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+.sidrena-cjenik .cjenik-search { flex: 1 1 360px; }
+.sidrena-cjenik .cjenik-search input { width: min(100%, 460px); min-height: 42px; padding: 0 13px; border: 1px solid var(--brsc-line); border-radius: 9px; background: transparent; color: inherit; font: inherit; }
+.sidrena-cjenik .cjenik-search input:focus { outline: 2px solid var(--brsc-accent); outline-offset: 2px; }
+.sidrena-cjenik .cjenik-pager { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 14px 0 0; }
+.sidrena-cjenik .cjenik-pager[hidden] { display: none !important; }
+.sidrena-cjenik .cjenik-page { min-width: 38px; min-height: 36px; padding: 0 11px; border: 1px solid var(--brsc-line); border-radius: 8px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.sidrena-cjenik .cjenik-page:hover, .sidrena-cjenik .cjenik-page.is-current { border-color: var(--brsc-accent); background: var(--brsc-soft); }
+.sidrena-cjenik .cjenik-page.is-current { color: var(--brsc-accent); font-weight: 700; }
+.sidrena-cjenik .cjenik-page:focus-visible { outline: 2px solid var(--brsc-accent); outline-offset: 2px; }
+.sidrena-cjenik .cjenik-page-gap { opacity: .65; }
+.sidrena-cjenik .cjenik-table tr[hidden], .sidrena-cjenik .cjenik-upit tr[hidden] { display: none !important; }
+.sidrena-cjenik .cjenik-table-wrap { overflow: auto; border: 1px solid var(--brsc-line); border-radius: 12px; }
+.sidrena-cjenik .cjenik-table, .sidrena-cjenik .cjenik-upit { width: 100%; border-collapse: collapse; font: inherit; font-size: .94em; }
+.sidrena-cjenik .cjenik-table th, .sidrena-cjenik .cjenik-table td, .sidrena-cjenik .cjenik-upit th, .sidrena-cjenik .cjenik-upit td { padding: 11px 13px; border-bottom: 1px solid var(--brsc-line); text-align: left; }
+.sidrena-cjenik .cjenik-table th, .sidrena-cjenik .cjenik-upit th { background: var(--brsc-soft); font-size: .76em; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.sidrena-cjenik .cjenik-table tbody tr:last-child td, .sidrena-cjenik .cjenik-upit tbody tr:last-child td { border-bottom: 0; }
+.sidrena-cjenik .cjenik-table td:nth-child(n + 3), .sidrena-cjenik .cjenik-upit td:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sidrena-cjenik .cjenik-upit-title { margin: 26px 0 10px; font: inherit; font-size: 1.2em; font-weight: 700; }
+.sidrena-cjenik .cjenik-upit { border: 1px solid var(--brsc-line); border-radius: 12px; overflow: hidden; }
+.sidrena-cjenik .cjenik-stock { font-weight: 650; }
+.sidrena-cjenik .cjenik-stock.is-dostupno { color: #15803d; }
+.sidrena-cjenik .cjenik-stock.is-nedostupno { color: #b91c1c; }
+.sidrena-cjenik .empty, .sidrena-cjenik .cjenik-empty-filter { padding: 18px; border: 1px dashed var(--brsc-line); border-radius: 10px; background: var(--brsc-soft); }
+.sidrena-cjenik .screen-reader-text { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 720px) {
+	.sidrena-cjenik .cjenik-toolbar { align-items: stretch; flex-direction: column; }
+	.sidrena-cjenik .cjenik-search input { width: 100%; max-width: none; }
+	.sidrena-cjenik .cjenik-table thead, .sidrena-cjenik .cjenik-upit thead { display: none; }
+	.sidrena-cjenik .cjenik-table, .sidrena-cjenik .cjenik-table tbody, .sidrena-cjenik .cjenik-table tr, .sidrena-cjenik .cjenik-table td,
+	.sidrena-cjenik .cjenik-upit, .sidrena-cjenik .cjenik-upit tbody, .sidrena-cjenik .cjenik-upit tr, .sidrena-cjenik .cjenik-upit td { display: block; width: 100%; }
+	.sidrena-cjenik .cjenik-table tr, .sidrena-cjenik .cjenik-upit tr { padding: 11px 13px; border-bottom: 1px solid var(--brsc-line); }
+	.sidrena-cjenik .cjenik-table td, .sidrena-cjenik .cjenik-upit td { padding: 5px 0; border: 0; white-space: normal; }
+	.sidrena-cjenik .cjenik-table td::before, .sidrena-cjenik .cjenik-upit td::before { content: attr(data-label); display: block; margin-bottom: 2px; opacity: .62; font-size: .7em; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+}
