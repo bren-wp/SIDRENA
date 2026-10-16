@@ -17,7 +17,7 @@ namespace Sidrena.Desktop;
 
 public partial class MainWindow : Window
 {
-    private readonly PriceStore _prices;
+    private PriceStore _prices;
     private readonly WorkspaceStore _workspace;
     private readonly string _databasePath;
     private string _activePage = "Pregled";
@@ -619,12 +619,52 @@ public partial class MainWindow : Window
             try{_workspace.BackupTo(dlg.FileName);Status("Sigurnosna kopija baze uspješno je izrađena.");}
             catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         },true));
+        actions.Children.Add(U.Action("Provjeri i vrati sigurnosnu kopiju",()=>{
+            var dlg=new OpenFileDialog{Title="Odaberi prethodno spremljenu SIDRENA sigurnosnu kopiju",
+                Filter="SQLite baza (*.db)|*.db",CheckFileExists=true,Multiselect=false};
+            if(dlg.ShowDialog(this)!=true)return;
+            try
+            {
+                var source=Path.GetFullPath(dlg.FileName);
+                var inspection=WorkspaceStore.InspectBackup(source);
+                var question=$"Kopija: {Path.GetFileName(source)}\n"+
+                    $"Proizvodi: {inspection.Products}, usluge: {inspection.Services}\n"+
+                    $"Promjene cijena: {inspection.PriceChanges}, poslovnice: {inspection.Locations}\n\n"+
+                    "POZOR: Zamijenit će se trenutni lokalni podaci.\n"+
+                    "Prije povrata automatski će se izraditi zasebna zaštitna kopija postojećih podataka.\n"+
+                    "Želite li nastaviti?";
+                if(MessageBox.Show(this,question,"SIDRENA — potvrdi povrat baze",
+                    MessageBoxButton.YesNo,MessageBoxImage.Warning)!=MessageBoxResult.Yes)return;
+                var recoveryDir=Path.Combine(Path.GetDirectoryName(_databasePath)!,"backups");
+                var recovery=Path.Combine(recoveryDir,
+                    "SIDRENA_prije_povrata_"+DateTime.Now.ToString("yyyyMMdd_HHmmss",Hr)+
+                    "_"+Guid.NewGuid().ToString("N")[..8]+".db");
+                // The other open SQLite connection must not hold locks during online restore.
+                _prices.Dispose();
+                try
+                {
+                    _workspace.RestoreFrom(source,recovery);
+                }
+                finally
+                {
+                    // Reopen and rebind all view models to the actual restored database.
+                    _prices=new PriceStore(_databasePath);
+                    Navigate("Pregled");
+                }
+                Status("Povrat podataka je dovršen. Zaštitna kopija prethodnog stanja: "+recovery);
+                MessageBox.Show(this,"Podaci su vraćeni. Sigurnosna kopija prethodnog stanja ostaje spremljena na:\n"+
+                    recovery,"SIDRENA — povrat dovršen",MessageBoxButton.OK,MessageBoxImage.Information);
+            }
+            catch(Exception ex)when(ex is IOException or UnauthorizedAccessException or ArgumentException or
+                InvalidDataException or InvalidOperationException or AggregateException or Microsoft.Data.Sqlite.SqliteException)
+            {Error(ex);}
+        }));
         actions.Children.Add(U.Action("Otvori mapu podataka",()=>OpenLocal(Path.GetDirectoryName(_databasePath)!)));
         data.Children.Add(actions);
         outer.Children.Add(U.Card("Lokalna baza i sigurnost",data));
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Tema: Tamna · Rad bez korisničkog računa"),
-            U.Notice("Šifriranje baze, automatske kopije i rasporedi još se ne predstavljaju kao aktivni. Ne postoji skrivena sinkronizacija ni telemetrija.")));
-        outer.Children.Add(U.Card("Informacije o izdanju",U.Muted("SIDRENA Desktop 0.2 — razvojna verzija"),
+            U.Notice("Šifriranje baze i automatski rasporedi još nisu aktivni. Ručni povrat i zasebna zaštitna kopija dostupni su. Ne postoji skrivena sinkronizacija ni telemetrija.")));
+        outer.Children.Add(U.Card("Informacije o izdanju",U.Muted("SIDRENA Desktop 0.5 — razvojna verzija"),
             U.Action("Pogledaj izvorni kod",()=>OpenUrl("https://github.com/bren-wp/SIDRENA"))));
         return outer;
     }

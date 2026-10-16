@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 namespace Sidrena.Core;
 
 public sealed record BusinessLocation(long Id, string Name, string Address, string City, bool IsActive);
+public sealed record BackupInspection(long Bytes,long Products,long Services,long PriceChanges,long Locations);
 public sealed record DraftPublication(long Id, string FilePath, string Format, int ItemCount, string Sha256, DateTimeOffset CreatedUtc);
 public sealed record PriceAuditView(long Id, long ItemId, string ItemName, string ItemKind, long PreviousCents, long CurrentCents, string Reason, DateTimeOffset ChangedUtc);
 
@@ -194,6 +195,120 @@ public sealed class WorkspaceStore : IDisposable
             File.Move(temp,path,true);
         }
         finally { if(File.Exists(temp)) File.Delete(temp); }
+    }
+
+    /// <summary>
+    /// Read-only validation of a local SIDRENA database. It never opens an untrusted backup
+    /// in ReadWriteCreate mode, and never initializes missing schema on the backup.
+    /// </summary>
+    public static BackupInspection InspectBackup(string source)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+        string file=Path.GetFullPath(source);
+        var info=new FileInfo(file);
+        if(!info.Exists || info.Length<512 || info.Length>2_000_000_000L)
+            throw new InvalidDataException("Odabrana kopija ne postoji ili nije prihvatljiva SQLite baza (najviše 2 GB).");
+        try
+        {
+            using var backup=new SqliteConnection(new SqliteConnectionStringBuilder{
+                DataSource=file,Mode=SqliteOpenMode.ReadOnly,Pooling=false,Cache=SqliteCacheMode.Private
+            }.ToString());
+            backup.Open();
+            long Count(string query)
+            {
+                using var cmd=backup.CreateCommand();
+                cmd.CommandText=query;
+                return Convert.ToInt64(cmd.ExecuteScalar(),CultureInfo.InvariantCulture);
+            }
+            using(var check=backup.CreateCommand())
+            {
+                check.CommandText="PRAGMA integrity_check";
+                using var rows=check.ExecuteReader();
+                if(!rows.Read() || rows.GetString(0)!="ok" || rows.Read())
+                    throw new InvalidDataException("SQLite kopija nije ispravna (integrity_check).");
+            }
+            using(var check=backup.CreateCommand())
+            {
+                check.CommandText="PRAGMA foreign_key_check";
+                using var rows=check.ExecuteReader();
+                if(rows.Read())throw new InvalidDataException("Kopija sadrži prekinute relacije.");
+            }
+            using(var schema=backup.CreateCommand())
+            {
+                schema.CommandText="SELECT name FROM sqlite_master WHERE type='table' AND name IN "+
+                    "('price_items','price_changes','item_metadata_changes','desktop_locations','desktop_draft_exports')";
+                using var r=schema.ExecuteReader();
+                var names=new HashSet<string>(StringComparer.Ordinal);
+                while(r.Read())names.Add(r.GetString(0));
+                if(!new[]{"price_items","price_changes","item_metadata_changes",
+                          "desktop_locations","desktop_draft_exports"}.All(names.Contains))
+                    throw new InvalidDataException("Datoteka nema očekivanu strukturu SIDRENA baze.");
+            }
+            var products=Count("SELECT COUNT(*) FROM price_items WHERE kind='Proizvod'");
+            var services=Count("SELECT COUNT(*) FROM price_items WHERE kind='Usluga'");
+            var changes=Count("SELECT COUNT(*) FROM price_changes");
+            var locations=Count("SELECT COUNT(*) FROM desktop_locations");
+            return new BackupInspection(info.Length,products,services,changes,locations);
+        }
+        catch(SqliteException ex)
+        {
+            throw new InvalidDataException("Neispravna ili nečitljiva SQLite sigurnosna kopija.",ex);
+        }
+    }
+
+    /// <summary>
+    /// Restore committed SQLite snapshot into the existing workspace connection.
+    /// Caller MUST first close all other connections to the live database.
+    /// Makes and validates a separate pre-restore safety copy, and attempts
+    /// recovery from that copy if applying the requested snapshot fails.
+    /// </summary>
+    public string RestoreFrom(string source,string safetyCopyPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(safetyCopyPath);
+        var live=Path.GetFullPath(_connection.DataSource);
+        var backup=Path.GetFullPath(source);
+        var safety=Path.GetFullPath(safetyCopyPath);
+        if(string.Equals(live,backup,StringComparison.OrdinalIgnoreCase)||
+           string.Equals(live,safety,StringComparison.OrdinalIgnoreCase)||
+           string.Equals(backup,safety,StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Izvor, aktivna baza i zaštitna kopija moraju biti različite datoteke.");
+        InspectBackup(backup);  // No mutation until input passes integrity and schema checks.
+        BackupTo(safety);
+        InspectBackup(safety);
+        void Apply(string path)
+        {
+            using var original=new SqliteConnection(new SqliteConnectionStringBuilder{
+                DataSource=path,Mode=SqliteOpenMode.ReadOnly,Pooling=false,Cache=SqliteCacheMode.Private
+            }.ToString());
+            original.Open();
+            original.BackupDatabase(_connection);
+        }
+        try
+        {
+            Apply(backup);
+            // PRAGMA integrity_check includes committed data copied from the snapshot.
+            using var check=_connection.CreateCommand();
+            check.CommandText="PRAGMA integrity_check";
+            if(!string.Equals(check.ExecuteScalar() as string,"ok",StringComparison.Ordinal))
+                throw new InvalidDataException("Vraćena baza nije prošla provjeru integriteta.");
+        }
+        catch(Exception restoreError)
+        {
+            try
+            {
+                Apply(safety);
+            }
+            catch(Exception recoveryError)
+            {
+                throw new AggregateException(
+                    "Povrat nije uspio i automatsko vraćanje prethodne baze također nije uspjelo. "+
+                    "Sačuvana zaštitna kopija: "+safety,restoreError,recoveryError);
+            }
+            throw new InvalidOperationException(
+                "Povrat nije uspio. Prethodni podaci vraćeni su iz zaštitne kopije: "+safety,restoreError);
+        }
+        return safety;
     }
 
     private void Execute(string sql)

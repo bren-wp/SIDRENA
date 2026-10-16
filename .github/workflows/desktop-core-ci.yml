@@ -1,0 +1,30 @@
+name: SIDRENA cross-platform core regression tests
+
+on:
+  pull_request:
+    paths:
+      - 'desktop/Sidrena.Core/**'
+      - 'desktop/Sidrena.Tests/**'
+      - '.github/workflows/desktop-core-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/Sidrena.Core/**'
+      - 'desktop/Sidrena.Tests/**'
+      - '.github/workflows/desktop-core-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    name: SQLite / backup / import regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run local data and security regression tests
+        run: dotnet run --project desktop/Sidrena.Tests/Sidrena.Tests.csproj --configuration Release
