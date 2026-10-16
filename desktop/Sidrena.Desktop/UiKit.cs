@@ -10,15 +10,17 @@ namespace Sidrena.Desktop;
 internal static class UiKit
 {
     private static Brush Brush(string key) => (Brush)Application.Current.FindResource(key);
-    public static StackPanel Vertical(double gap=12) => new() { Orientation=Orientation.Vertical, Margin=new Thickness(0), };
-    public static WrapPanel Horizontal(double gap=9) => new() { Orientation=Orientation.Horizontal, ItemHeight=double.NaN };
+    public static StackPanel Vertical() => new() { Orientation=Orientation.Vertical };
+    public static WrapPanel Horizontal() => new() { Orientation=Orientation.Horizontal };
     public static TextBlock Text(string text, int size=13, bool bold=false, string color="TextBrush")
         => new() { Text=text, FontSize=size, FontWeight=bold?FontWeights.SemiBold:FontWeights.Normal,
             Foreground=Brush(color), TextWrapping=TextWrapping.Wrap, VerticalAlignment=VerticalAlignment.Center };
     public static TextBlock Muted(string text) => Text(text,12,false,"MutedBrush");
     public static Button Action(string text, System.Action click, bool primary=false)
     {
-        var b=new Button { Content=text, Margin=new Thickness(0,0,9,8), HorizontalAlignment=HorizontalAlignment.Left };
+        var b=new Button { Content=text, ToolTip=text, Margin=new Thickness(0,0,9,8),
+            HorizontalAlignment=HorizontalAlignment.Left, MinHeight=40 };
+        System.Windows.Automation.AutomationProperties.SetName(b,text);
         if(primary) b.Style=(Style)Application.Current.FindResource("PrimaryButton");
         b.Click+=(_,_)=>click();
         return b;
@@ -36,20 +38,19 @@ internal static class UiKit
             CornerRadius=new CornerRadius(10), Padding=new Thickness(18), Margin=new Thickness(0,0,0,13),Child=content };
     }
 
-    public static Grid Metrics(params Border[] cards)
+    public static WrapPanel Metrics(params Border[] cards)
     {
-        var grid=new Grid{Margin=new Thickness(0,0,0,4)};
-        for(int i=0;i<cards.Length;i++)
+        // A WrapPanel adapts from four to two to one column without forcing
+        // horizontal scrolling when the window is narrow or DPI increases.
+        var panel=new WrapPanel{Orientation=Orientation.Horizontal,Margin=new Thickness(0,0,0,4)};
+        foreach(var card in cards)
         {
-            grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star),MinWidth=150});
-            var card=cards[i];
-            card.Width=double.NaN;
-            card.MinWidth=145;
-            card.Margin=new Thickness(0,0,i==cards.Length-1?0:11,10);
-            System.Windows.Controls.Grid.SetColumn(card,i);
-            grid.Children.Add(card);
+            card.Width=218;
+            card.MinWidth=0;
+            card.Margin=new Thickness(0,0,12,12);
+            panel.Children.Add(card);
         }
-        return grid;
+        return panel;
     }
     public static Border Stat(string title,string value,string extra,string icon)
     {
@@ -59,7 +60,7 @@ internal static class UiKit
         col.Children.Add(Muted(extra));
         return new Border { Background=Brush("SurfaceBrush"),BorderBrush=Brush("BorderBrush"),
             BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(9),Padding=new Thickness(16),
-            MinWidth=178,Width=226,Margin=new Thickness(0,0,12,12),Child=col };
+            MinWidth=0,Width=218,Margin=new Thickness(0,0,12,12),Child=col };
     }
     public static StackPanel Field(string name, Control input)
     {
@@ -71,7 +72,7 @@ internal static class UiKit
     }
     public static TextBox Box(string hint="",double width=0)
     {
-        var control=new TextBox {ToolTip=hint};
+        var control=new TextBox {ToolTip=hint,MaxLength=4096};
         if(width>0) control.Width=width;
         return control;
     }
@@ -85,7 +86,9 @@ internal static class UiKit
     public static DataGrid Grid(params (string title,string binding,double width)[] columns)
     {
         var grid=new DataGrid{ MinHeight=150,MaxHeight=600, Margin=new Thickness(0,9,0,12),
-            HeadersVisibility=DataGridHeadersVisibility.Column,IsReadOnly=true,AutoGenerateColumns=false,CanUserResizeColumns=true };
+            HeadersVisibility=DataGridHeadersVisibility.Column,IsReadOnly=true,AutoGenerateColumns=false,
+            CanUserResizeColumns=true,EnableRowVirtualization=true,EnableColumnVirtualization=true,
+            HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,VerticalScrollBarVisibility=ScrollBarVisibility.Auto };
         foreach(var col in columns)
         {
             grid.Columns.Add(new DataGridTextColumn {
@@ -103,13 +106,40 @@ internal static class UiKit
     }
     public static Grid Split(UIElement left, UIElement right, double ratio=1.8)
     {
-        var g=new Grid();
-        g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(ratio,GridUnitType.Star),MinWidth=400});
-        g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star),MinWidth=325});
-        System.Windows.Controls.Grid.SetColumn(left,0);System.Windows.Controls.Grid.SetColumn(right,1);
-        if(left is FrameworkElement l) l.Margin=new Thickness(0,0,15,0);
-        g.Children.Add(left);g.Children.Add(right);
-        return g;
+        var grid=new Grid { HorizontalAlignment=HorizontalAlignment.Stretch };
+        bool stacked=false;
+        void Arrange(bool vertical)
+        {
+            if(stacked==vertical && grid.ColumnDefinitions.Count>0) return;
+            stacked=vertical;
+            grid.ColumnDefinitions.Clear();
+            grid.RowDefinitions.Clear();
+            if(vertical)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
+                grid.RowDefinitions.Add(new RowDefinition{Height=GridLength.Auto});
+                grid.RowDefinitions.Add(new RowDefinition{Height=GridLength.Auto});
+                Grid.SetColumn(left,0); Grid.SetRow(left,0);
+                Grid.SetColumn(right,0); Grid.SetRow(right,1);
+                if(left is FrameworkElement l) l.Margin=new Thickness(0,0,0,12);
+            }
+            else
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(ratio,GridUnitType.Star)});
+                grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)});
+                Grid.SetColumn(left,0); Grid.SetRow(left,0);
+                Grid.SetColumn(right,1); Grid.SetRow(right,0);
+                if(left is FrameworkElement l) l.Margin=new Thickness(0,0,14,0);
+            }
+        }
+        Arrange(false);
+        grid.Children.Add(left);
+        grid.Children.Add(right);
+        grid.SizeChanged+=(_,_)=>{
+            // No fixed 400+325 DIP column minimums; long forms stack on narrow windows.
+            Arrange(Sidrena.Core.ResponsiveLayoutPolicy.StackDetails(grid.ActualWidth));
+        };
+        return grid;
     }
 
     /// <summary>Value graph uses only committed local audit amounts, not fabricated demo data.</summary>
