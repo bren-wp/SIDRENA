@@ -402,17 +402,34 @@ public partial class MainWindow : Window
 
     private UIElement BuildPricelists()
     {
-        var outer=U.Vertical();var options=U.Horizontal();
-        options.Children.Add(U.Action("Izradi radni CSV",()=>Export("CSV"),true));
-        options.Children.Add(U.Action("Izradi radni XML",()=>Export("XML")));
+        var outer=U.Vertical();
+        var preview=U.Vertical();
+        preview.Children.Add(U.Text("Pregled kataloga",16,true));
+        var grid=U.Grid(("Naziv","Name",0),("Vrsta","Kind",100),("Aktualna cijena","Current",145),
+            ("Sidrena cijena","Anchor",145));
+        var kind=U.Choice("Svi artikli i usluge","Samo artikli","Samo usluge");
+        List<PriceItem> SelectedItems()=>
+            _prices.ListItems().Where(x=>kind.SelectedIndex switch
+                {1=>x.Kind=="Proizvod",2=>x.Kind=="Usluga",_=>true}).ToList();
+        void Refresh()=>grid.ItemsSource=SelectedItems().Select(AsItemRow).ToList();
+        kind.SelectionChanged+=(_,_)=>Refresh();
+        Refresh();
+        var options=U.Horizontal();
+        options.Children.Add(U.Field("Obuhvat cjenika",kind));
+        options.Children.Add(U.Action("Izradi radni CSV",()=>Export("CSV",SelectedItems()),true));
+        options.Children.Add(U.Action("Izradi radni XML",()=>Export("XML",SelectedItems())));
         options.Children.Add(U.Action("Pregled i ispis (HTML)",()=>{
+            var selected=SelectedItems();
+            if(selected.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
             try
             {
                 var folder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "Brendigo","SIDRENA","pregledi");
                 var path=Path.Combine(folder,"SIDRENA_RADNI_PREGLED_"+
-                    DateTime.Now.ToString("yyyyMMdd_HHmmss",Hr)+".html");
-                LocalPricelistPreview.Write(_prices.ListItems(),path);
+                    DateTime.Now.ToString("yyyyMMdd_HHmmss_fff",Hr)+".html");
+                var scope=kind.SelectedIndex switch
+                {1=>"artikli",2=>"usluge",_=>"artikli i usluge"};
+                LocalPricelistPreview.Write(selected,path,"SIDRENA — radni pregled: "+scope);
                 OpenLocal(path);
                 Status("Otvoren lokalni pregled za ispis ili spremanje u PDF putem preglednika. Nije službeni cjenik.");
             }
@@ -420,22 +437,20 @@ public partial class MainWindow : Window
         }));
         options.Children.Add(U.Action("Otvori arhivu",()=>Navigate("Arhiva")));
         outer.Children.Add(U.Card("Generiranje radnih cjenika",U.Notice(DraftWarning),options));
-        var preview=U.Vertical();preview.Children.Add(U.Text("Pregled kataloga",16,true));
-        var grid=U.Grid(("Naziv","Name",0),("Vrsta","Kind",100),("Aktualna cijena","Current",145),
-            ("Sidrena cijena","Anchor",145));
-        grid.ItemsSource=_prices.ListItems().Select(AsItemRow).ToList();
         preview.Children.Add(grid);
         var state=U.Vertical();
         var exports=_workspace.ListDraftExports().Take(7).ToList();
         if(exports.Count==0)state.Children.Add(U.Muted("Nema spremljenih radnih izvoza."));
         foreach(var p in exports)state.Children.Add(U.Muted($"{p.Format}  · {Path.GetFileName(p.FilePath)}"));
-        state.Children.Add(U.Notice("PDF i službena javna objava bit će aktivni tek nakon provjere propisanog formata, arhive i rasporeda."));
+        state.Children.Add(U.Notice("PDF preko preglednika i službena javna objava nisu isto. Javni zakonski serializer još nije aktiviran."));
         outer.Children.Add(U.Split(U.Card("Radni pregled cijena",preview),U.Card("Izlazne datoteke",state)));
         return outer;
     }
 
-    private void Export(string format)
+    private void Export(string format,IReadOnlyList<PriceItem>? selection=null)
     {
+        var items=selection ?? _prices.ListItems();
+        if(items.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
         var dlg=new SaveFileDialog{
             Title="Spremi RADNI izvoz (nije javni cjenik)",
             FileName="SIDRENA_RADNI_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+
@@ -444,7 +459,6 @@ public partial class MainWindow : Window
             AddExtension=true };
         if(dlg.ShowDialog(this)!=true)return;
         try{
-            var items=_prices.ListItems();
             if(format=="CSV") DraftExport.Csv(items,dlg.FileName); else DraftExport.Xml(items,dlg.FileName);
             _workspace.RecordDraftExport(dlg.FileName,format,items.Count);
             Status($"Spremljen radni {format} s {items.Count} stavki. Datoteka nije službeni javni cjenik.");
