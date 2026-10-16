@@ -48,8 +48,11 @@ public static class PublicNetworkAddress
     {
         var host=context.DnsEndPoint.Host;
         IPAddress[] resolved=await Dns.GetHostAddressesAsync(host,token).ConfigureAwait(false);
+        Exception? lastSocketFailure=null;
+        bool foundPublic=false;
         foreach(var ip in resolved.Where(IsPublic))
         {
+            foundPublic=true;
             var socket=new Socket(ip.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
             try
             {
@@ -57,12 +60,19 @@ public static class PublicNetworkAddress
                     .ConfigureAwait(false);
                 return new NetworkStream(socket,ownsSocket:true);
             }
+            catch(SocketException ex)
+            {
+                socket.Dispose();
+                lastSocketFailure=ex; // Try another public IPv4/IPv6 address.
+            }
             catch
             {
                 socket.Dispose();
                 throw;
             }
         }
-        throw new HttpRequestException("WordPress adresa ne upućuje na dopušteno javno mrežno odredište.");
+        if(!foundPublic)
+            throw new HttpRequestException("WordPress adresa ne upućuje na dopušteno javno mrežno odredište.");
+        throw new HttpRequestException("Vezu nije moguće uspostaviti ni s jednom javnom adresom.",lastSocketFailure);
     }
 }
