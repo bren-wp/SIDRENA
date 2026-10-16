@@ -664,8 +664,13 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Lokalna baza i sigurnost",data));
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Tema: Tamna · Rad bez korisničkog računa"),
             U.Notice("Šifriranje baze i automatski rasporedi još nisu aktivni. Ručni povrat i zasebna zaštitna kopija dostupni su. Ne postoji skrivena sinkronizacija ni telemetrija.")));
-        outer.Children.Add(U.Card("Informacije o izdanju",U.Muted("SIDRENA Desktop 0.5 — razvojna verzija"),
-            U.Action("Pogledaj izvorni kod",()=>OpenUrl("https://github.com/bren-wp/SIDRENA"))));
+        outer.Children.Add(U.Card("Informacije o izdanju",
+            U.Text("SIDRENA Desktop 0.6.0",18,true),
+            U.Muted("Windows 10/11 x64 · Lokalni podaci · Portable EXE i Setup EXE"),
+            U.Notice("WordPress dodatak Brendigo Sidrena Cijena uvijek ostaje verzija 1.5.0. Windows ima zasebnu oznaku verzije."),
+            U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
+                OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0"),true),
+            U.Action("Izvorni kod",()=>OpenUrl("https://github.com/bren-wp/SIDRENA"))));
         return outer;
     }
 
@@ -680,6 +685,9 @@ public partial class MainWindow : Window
             U.Notice("Radni izvoz ne znači automatsku usklađenost sa zakonom niti se samostalno objavljuje na web."),
             U.Text("Tipkovnički prečaci",18,true),
             U.Muted("Ctrl + N — otvori artikle  ·  F1 — pomoć"),
+            U.Text("Preuzimanje i ažuriranja",18,true),
+            U.Muted("Setup EXE instalira SIDRENA-u, portable EXE radi bez instalacije. Baza se pri ažuriranju čuva."),
+            U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
             U.Text("Podrška",18,true),
             U.Action("Pošalji e-poštu podršci",()=>OpenUrl("mailto:sidrena@brendigo.com")));
     }

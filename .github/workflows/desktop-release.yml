@@ -1,0 +1,125 @@
+# Publish only tested Windows binaries to the EXISTING GitHub Release 1.5.0.
+# Never move/create a tag, touch the WordPress 1.5.0 ZIP, or publish PR artifacts.
+name: Publish SIDRENA Desktop Windows assets to 1.5.0
+
+on:
+  workflow_run:
+    workflows: ["SIDRENA Desktop build and smoke test"]
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: sidrena-rolling-windows-assets
+  cancel-in-progress: false
+
+jobs:
+  release-desktop:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: bren-wp/SIDRENA
+      CI_SHA: ${{ github.event.workflow_run.head_sha }}
+      CI_RUN_ID: ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Verify successful build is still current main and release is 1.5.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
+          if [[ "$current" != "$CI_SHA" ]]; then
+            echo "Build $CI_SHA is no longer current main ($current); skip obsolete release."
+            exit 0
+          fi
+          tag=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.tag_name')
+          [[ "$tag" == '1.5.0' ]] || { echo 'Official 1.5.0 release missing'; exit 1; }
+          release_tags=$(gh release list --limit 100 --json tagName --jq '.[].tagName')
+          [[ "$release_tags" == '1.5.0' ]] || { echo 'Unexpected extra GitHub releases'; exit 1; }
+          plugin=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip") | .id')
+          plugin_sha=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip.sha256") | .id')
+          [[ -n "$plugin" && -n "$plugin_sha" ]] || { echo 'Cannot find immutable WordPress assets'; exit 1; }
+          echo "PLUGIN_ASSET_ID=$plugin" >> "$GITHUB_ENV"
+          echo "PLUGIN_HASH_ASSET_ID=$plugin_sha" >> "$GITHUB_ENV"
+          echo "READY_TO_UPLOAD=1" >> "$GITHUB_ENV"
+      - name: Fetch actual EXE assets from the successful Windows CI
+        if: env.READY_TO_UPLOAD == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          gh run download "$CI_RUN_ID" --repo "$GH_REPO" \
+            --name 'SIDRENA-Desktop-release-binaries' --dir release
+          ls -lh release
+      - name: Validate source hash, version and both binary SHA-256 checksums
+        if: env.READY_TO_UPLOAD == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s release/SIDRENA-Desktop-win-x64-Portable.exe
+          test -s release/SIDRENA-Desktop-win-x64-Setup.exe
+          test -s release/SIDRENA-Desktop-release-info.json
+          test -s release/SIDRENA-Desktop-win-x64-SHA256SUMS.txt
+          actual_sha=$(python3 -c "import json;print(json.load(open('release/SIDRENA-Desktop-release-info.json'))['source_commit'])")
+          [[ "$actual_sha" == "$CI_SHA" ]] || { echo 'Binary provenance mismatches the CI source commit'; exit 1; }
+          actual_wp=$(python3 -c "import json;print(json.load(open('release/SIDRENA-Desktop-release-info.json'))['wordpress_plugin_version'])")
+          [[ "$actual_wp" == '1.5.0' ]] || { echo 'WordPress version guard failed'; exit 1; }
+          (
+            cd release
+            sha256sum -c SIDRENA-Desktop-win-x64-SHA256SUMS.txt
+          )
+      - name: Refresh only Windows assets in existing GitHub 1.5.0 release
+        if: env.READY_TO_UPLOAD == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
+          [[ "$current" == "$CI_SHA" ]] || { echo 'New main commit appeared; do not publish stale build'; exit 1; }
+          gh release upload '1.5.0' --repo "$GH_REPO" --clobber \
+            release/SIDRENA-Desktop-win-x64-Portable.exe \
+            release/SIDRENA-Desktop-win-x64-Setup.exe \
+            release/SIDRENA-Desktop-win-x64-SHA256SUMS.txt \
+            release/SIDRENA-Desktop-release-info.json
+          version=$(python3 -c "import json;print(json.load(open('release/SIDRENA-Desktop-release-info.json'))['desktop_version'])")
+          cat > release-notes.md <<EOF
+          ## Službeni WordPress dodatak — 1.5.0
+          **Brendigo Sidrena Cijena 1.5.0** jedini je podržani WordPress dodatak. Njegov ZIP i SHA-256 datoteka ostaju neizmijenjeni.
+
+          ## SIDRENA Desktop za Windows — $version
+          - **SIDRENA-Desktop-win-x64-Portable.exe:** prijenosna aplikacija, bez instalacije.
+          - **SIDRENA-Desktop-win-x64-Setup.exe:** stvarni instalacijski program za Windows 10/11 x64, s deinstalacijom.
+          - **SIDRENA-Desktop-win-x64-SHA256SUMS.txt:** provjera integriteta obaju EXE-a.
+          - **SIDRENA-Desktop-release-info.json:** Windows verzija i izvorni Git SHA.
+
+          Izvor Windows koda: https://github.com/$GH_REPO/commit/$CI_SHA
+
+          Windows binarne datoteke nisu digitalno potpisane. SmartScreen može upozoriti na nepoznatog izdavača. Lokalni podaci ostaju u %LOCALAPPDATA%\Brendigo\SIDRENA; deinstalacija ih ne briše.
+
+          **Napomena:** Radni cjenici ne predstavljaju automatski potvrđenu zakonski usklađenu javnu objavu. Git tag ostaje **1.5.0**; Windows izvršne datoteke obnavljaju se nakon uspješnih testova.
+          EOF
+          gh release edit '1.5.0' --repo "$GH_REPO" \
+            --title "SIDRENA — WordPress 1.5.0 i Windows Desktop $version" \
+            --notes-file release-notes.md --latest
+      - name: Verify WordPress archives unchanged and exactly four desktop assets exist
+        if: env.READY_TO_UPLOAD == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          plugin=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip") | .id')
+          plugin_sha=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip.sha256") | .id')
+          [[ "$plugin" == "$PLUGIN_ASSET_ID" && "$plugin_sha" == "$PLUGIN_HASH_ASSET_ID" ]] || {
+            echo 'Official WordPress release artifacts unexpectedly changed'; exit 1;
+          }
+          names=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[].name' | LC_ALL=C sort)
+          expected=$(printf '%s\n' \
+            brendigo-sidrena-cijena-1.5.0.zip \
+            brendigo-sidrena-cijena-1.5.0.zip.sha256 \
+            SIDRENA-Desktop-win-x64-Portable.exe \
+            SIDRENA-Desktop-win-x64-Setup.exe \
+            SIDRENA-Desktop-win-x64-SHA256SUMS.txt \
+            SIDRENA-Desktop-release-info.json | LC_ALL=C sort)
+          [[ "$names" == "$expected" ]] || { printf 'Unexpected release assets:\n%s\n' "$names"; exit 1; }
+          echo "SUCCESS: rolling Windows installer + portable uploaded to the ONLY 1.5.0 GitHub release."

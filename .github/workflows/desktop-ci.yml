@@ -25,7 +25,7 @@ jobs:
   windows-build:
     name: Windows build, local-data smoke, portable package
     runs-on: windows-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v4
@@ -44,6 +44,7 @@ jobs:
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
           -p:EnableCompressionInSingleFile=true
+          -p:DebugType=None -p:DebugSymbols=false
           -o artifacts/sidrena-desktop-win-x64
       - name: Verify portable executable
         shell: pwsh
@@ -101,6 +102,85 @@ jobs:
           }
           New-Item -ItemType Directory -Force -Path artifacts/sidrena-ui-captures | Out-Null
           Copy-Item -Path (Join-Path $folder '*.png') -Destination artifacts/sidrena-ui-captures/
+      - name: Install Inno Setup compiler
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress --yes
+          $compiler = Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Inno Setup 6\ISCC.exe'
+          if (!(Test-Path $compiler)) { throw "Missing Inno Setup compiler: $compiler" }
+          "ISCC=$compiler" >> $env:GITHUB_ENV
+      - name: Compile actual Windows Setup EXE
+        shell: pwsh
+        run: |
+          & $env:ISCC desktop/installer/SIDRENA.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup compilation failed ($LASTEXITCODE)" }
+          $exe='artifacts/desktop-release/SIDRENA-Desktop-win-x64-Setup.exe'
+          if (!(Test-Path $exe) -or (Get-Item $exe).Length -lt 100000) { throw "Setup executable missing or too small" }
+      - name: Test silent setup, installed application and user data preservation
+        shell: pwsh
+        run: |
+          $setup=(Resolve-Path 'artifacts/desktop-release/SIDRENA-Desktop-win-x64-Setup.exe').Path
+          $result=Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-') -PassThru -Wait
+          if ($result.ExitCode -ne 0) { throw "Silent setup failed: $($result.ExitCode)" }
+          $dir=Join-Path $env:LOCALAPPDATA 'Programs\Brendigo\SIDRENA'
+          $installed=Join-Path $dir 'SIDRENA.exe'
+          if (!(Test-Path $installed)) { throw 'Setup did not install SIDRENA.exe' }
+          $app=Start-Process -FilePath $installed -PassThru
+          try {
+            Start-Sleep -Seconds 5
+            $app.Refresh()
+            if ($app.HasExited) { throw 'Installed application exited unexpectedly' }
+          } finally {
+            if (!$app.HasExited) { Stop-Process -Id $app.Id -Force }
+          }
+          $uninstaller=Join-Path $dir 'unins000.exe'
+          if (!(Test-Path $uninstaller)) { throw 'Installer did not register an uninstaller' }
+          $done=Start-Process -FilePath $uninstaller -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART') -PassThru -Wait
+          if ($done.ExitCode -ne 0) { throw "Uninstall failed ($($done.ExitCode))" }
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA 'Brendigo\SIDRENA\sidrena.db'))) {
+            throw 'Uninstaller removed the user SQLite database'
+          }
+      - name: Stage portable EXE, setup EXE and SHA-256 manifests
+        shell: pwsh
+        run: |
+          $folder='artifacts/desktop-release'
+          New-Item -ItemType Directory -Force -Path $folder | Out-Null
+          $portable=Join-Path $folder 'SIDRENA-Desktop-win-x64-Portable.exe'
+          Copy-Item 'artifacts/sidrena-desktop-win-x64/SIDRENA.exe' -Destination $portable
+          $setup=Join-Path $folder 'SIDRENA-Desktop-win-x64-Setup.exe'
+          $files=@($portable,$setup)
+          $checks=@()
+          $manifestFiles=@()
+          foreach($p in $files) {
+            $hash=(Get-FileHash $p -Algorithm SHA256).Hash.ToLowerInvariant()
+            $checks+= "$hash  $(Split-Path $p -Leaf)"
+            $manifestFiles+= [pscustomobject]@{
+              filename=(Split-Path $p -Leaf)
+              size=(Get-Item $p).Length
+              sha256=$hash
+            }
+          }
+          $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
+          $manifest=[ordered]@{
+            product='SIDRENA Desktop'
+            desktop_version='0.6.0'
+            wordpress_plugin_version='1.5.0'
+            platform='Windows x64'
+            source_commit=$env:GITHUB_SHA
+            digitally_signed=$false
+            files=$manifestFiles
+          }
+          $manifest | ConvertTo-Json -Depth 8 |
+            Set-Content (Join-Path $folder 'SIDRENA-Desktop-release-info.json') -Encoding utf8
+          foreach($p in $files) {
+            if((Get-Item $p).Length -lt 100000) { throw "Binary too small: $p" }
+          }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SIDRENA-Desktop-release-binaries
+          path: artifacts/desktop-release/
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@v7
         with:
           name: SIDRENA-Desktop-real-ui-captures
