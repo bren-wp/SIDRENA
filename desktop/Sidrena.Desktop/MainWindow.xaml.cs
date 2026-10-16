@@ -569,13 +569,29 @@ public partial class MainWindow : Window
                 var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
                 verifiedCjenik=result.PublicPricelist;
                 verifiedArchive=result.PublicArchive;
-                connectionStatus.Text="✓ Službeni Brendigo REST API dostupan (samo čitanje)";
-                published.Text="Zadnja javna objava: "+(result.PublishedAt.HasValue?
+                connectionStatus.Text="Javni REST API službenog dodatka dostupan (samo čitanje)";
+                published.Text="Posljednja evidentirana javna objava: "+(result.PublishedAt.HasValue?
                     result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
                     "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica.";
                 foreach(var item in result.Feeds)
-                    feeds.Children.Add(U.Muted($"{item.Kind} · {item.Format.ToUpperInvariant()}: {item.Url}"));
-                Status("Provjerena javna veza; ništa nije zapisano na WordPress ni poslano s računala.");
+                    feeds.Children.Add(U.Action("Otvori javni "+item.Kind+" "+item.Format.ToUpperInvariant(),
+                        ()=>OpenUrl(item.Url.AbsoluteUri)));
+                if(result.CombinedFeed is not null)
+                    feeds.Children.Add(U.Action("Objedinjeni javni izvor",()=>OpenUrl(result.CombinedFeed.AbsoluteUri)));
+                if(result.ArchiveApi is not null)
+                    feeds.Children.Add(U.Action("Javni REST arhivski indeks",()=>OpenUrl(result.ArchiveApi.AbsoluteUri)));
+                if(result.Outlets.Count>0)
+                {
+                    feeds.Children.Add(U.Text("Javni izvori po poslovnici",15,true));
+                    foreach(var outlet in result.Outlets)
+                    {
+                        feeds.Children.Add(U.Muted(outlet.Name+"  ·  oznaka "+outlet.Code));
+                        foreach(var feed in outlet.Feeds)
+                            feeds.Children.Add(U.Action("Otvori "+outlet.Code+" · "+feed.Kind+" "+
+                                feed.Format.ToUpperInvariant(),()=>OpenUrl(feed.Url.AbsoluteUri)));
+                    }
+                }
+                Status("Javni REST metapodaci dostupni (samo čitanje); Windows aplikacija nije ovlaštena za objavu.");
             }
             catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
                 System.Text.Json.JsonException or TaskCanceledException)
