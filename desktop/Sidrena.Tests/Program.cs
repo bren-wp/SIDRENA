@@ -17,6 +17,19 @@ try
         store.UpdateCurrentPrice(id, 2.49m, "Novi cjenik");
         store.UpdateCurrentPrice(id, 2.49m, "Bez promjene");
         Expect(store.ListChanges(id).Count == 1, "Idempotent price log");
+        var searchable=store.ListItems();
+        Expect(CatalogViewFilter.Apply(searchable,"Proizvod","MLIJEKO",0).Count==1,
+            "Case-insensitive local product search");
+        Expect(CatalogViewFilter.Apply(searchable,"Proizvod","3851234567890",1).Count==1,
+            "Barcode plus confirmed reference filter");
+        Expect(CatalogViewFilter.Apply(searchable,"Usluga","",2).Count==1,
+            "Service-only unconfirmed reference filter");
+        Expect(CatalogViewFilter.Apply(searchable,"Proizvod","UNKNOWN",0).Count==0,
+            "Unknown phrase does not return unrelated items");
+        MustThrow(()=>CatalogViewFilter.Apply(searchable,"other","",0));
+        MustThrowType<ArgumentOutOfRangeException>(()=>
+            CatalogViewFilter.Apply(searchable,"Proizvod","",3));
+        MustThrow(()=>CatalogViewFilter.Apply(searchable,"Proizvod",new string('X',257),0));
         var product = store.ListItems().Single(p => p.Id == id);
         Expect(product.CurrentCents == 249, "Current price updated");
         Expect(product.AnchorCents == 210 && product.AnchorDate == "2026-09-10", "Anchor unchanged");

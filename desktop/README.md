@@ -11,7 +11,7 @@ Support: sidrena@brendigo.com
 SIDRENA Desktop razvija se uz jedan službeni WordPress dodatak Brendigo Sidrena Cijena 1.5.0. Povezana je vizualnim identitetom, ali ne mijenja
 postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Windows verzija 0.7
+## Windows verzija 0.8
 
 U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
 Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
@@ -80,3 +80,14 @@ Svaki uspješan Windows CI nakon spajanja u main izrađuje portable EXE i pravi 
 Prozor se pokreće kao običan prozor dimenzija manjih od radne površine monitora. Na užim ekranima sidebar prelazi na navigacijske ikone, kartice se prelamaju, a detaljni paneli slažu okomito. WPF skrolanje omogućuje korištenje malih rezolucija bez automatskog fullscreen načina. U postavkama Windows skaliranja prikaz ostaje u neovisnim DIP jedinicama.
 
 Sinkronizacija čita službeni WordPress REST endpoint /wp-json/brendigo-sidrena/v1/cjenici: javni cjenik, arhivu, tipizirane CSV/XML izvore, objedinjeni javni izvor, arhivski API i tipizirane izvore po poslovnici. Ne šalje lokalne cijene niti tvrdi da je ovlaštena objava omogućena. Kriteriji audita i granice kompatibilnosti zapisani su u [docs/DESKTOP-07-AUDIT.md](../docs/DESKTOP-07-AUDIT.md).
+
+
+## SIDRENA Desktop 0.8.0 — upravljanje katalozima
+
+- Brzo filtriranje lokalnih artikala/usluga prema nazivu, šifri ili barkodu uz 180 ms odgodu tipkanja. Nema stalnog otvaranja novih SQLite upita pri svakom znaku.
+- Prikaz broja pronađenih stavki, gumb za čišćenje pretrage i filtra sidrenih cijena.
+- Pamćenje odabrane stavke pri izmjeni aktualne cijene i metapodataka, uz osvježavanje SQLite kataloga tek nakon upisa ili uvoza.
+- Točan prikaz nakon unosa nove stavke, s automatskim odabirom ako je vidljiva kroz aktivni filtar.
+- Novi regresijski testovi za vrstu kataloga, pretragu, barkod, sidreni filtar i neispravne ulazne vrijednosti.
+
+**Izdavanje:** Na GitHubu se i dalje održava samo release/tag `1.5.0`. Nakon prolaska Windows CI-ja na main, aktualni `Portable.exe`, `Setup.exe`, SHA-256 i JSON metapodaci zamjenjuju prethodne Windows privitke; službeni WordPress ZIP i njegov kontrolni zbroj ne smiju se mijenjati.
