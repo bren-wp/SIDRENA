@@ -32,6 +32,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         ConfigureNavigationIcons();
+        var workArea=SystemParameters.WorkArea;
+        var initialSize=ResponsiveLayoutPolicy.Initial(workArea.Width,workArea.Height);
+        Width=initialSize.Width;
+        Height=initialSize.Height;
+        WindowState=WindowState.Normal;
+        Loaded+=(_,_)=>UpdateResponsiveLayout();
         _databasePath=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Brendigo","SIDRENA","sidrena.db");
         _prices=new PriceStore(_databasePath);
@@ -61,7 +67,20 @@ public partial class MainWindow : Window
                         using var output=File.Create(Path.Combine(captureFolder,$"screen-{i+1:00}.png"));
                         png.Save(output);
                     }
-                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed.");
+                    // Verify compact/medium windows without maximizing or cutting off the main viewport.
+                    foreach(var size in new[]{(width:760d,height:560d),(width:1060d,height:690d)})
+                    {
+                        Width=Math.Min(size.width,SystemParameters.WorkArea.Width*0.9);
+                        Height=Math.Min(size.height,SystemParameters.WorkArea.Height*0.9);
+                        UpdateResponsiveLayout();
+                        Navigate("Artikli");
+                        UpdateLayout();
+                        if(WindowState!=WindowState.Normal ||
+                           SidebarColumn.ActualWidth>ResponsiveLayoutPolicy.ForWidth(ActualWidth).SidebarWidth+2 ||
+                           PageScroll.ViewportWidth<=0)
+                            throw new InvalidOperationException("Adaptive window layout failed at "+size.width);
+                    }
+                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed; adaptive widths verified.");
                     Application.Current.Shutdown(0);
                 }
                 catch(Exception ex)
@@ -70,6 +89,39 @@ public partial class MainWindow : Window
                     Application.Current.Shutdown(1);
                 }
             }),System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+    }
+
+    private void OnWindowSizeChanged(object sender,SizeChangedEventArgs e)
+    {
+        if(IsLoaded) UpdateResponsiveLayout();
+    }
+
+    private void UpdateResponsiveLayout()
+    {
+        var mode=ResponsiveLayoutPolicy.ForWidth(ActualWidth>0?ActualWidth:Width);
+        SidebarColumn.Width=new GridLength(mode.SidebarWidth);
+        BrandText.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+        SidebarFooter.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+        BrandMark.Width=mode.CompactNavigation?46:62;
+        BrandMark.Height=mode.CompactNavigation?46:62;
+        BrandPanel.Margin=mode.CompactNavigation?new Thickness(1,0,0,15):new Thickness(6,0,0,27);
+        ContentFrame.Margin=mode.CompactNavigation?new Thickness(12,12,12,9):new Thickness(19,17,19,11);
+        HeroBadge.Visibility=mode.ShowHeroBadge?Visibility.Visible:Visibility.Collapsed;
+        HeroPanel.Height=mode.CompactContent?124:146;
+        PageTitle.FontSize=mode.HeaderFontSize;
+        PageSubtitle.FontSize=mode.CompactContent?12:14;
+        foreach(var button in NavPanel.Children.OfType<Button>())
+        {
+            button.ToolTip=button.Tag as string;
+            button.Padding=mode.CompactNavigation?new Thickness(8,11,8,11):new Thickness(16,12,16,12);
+            if(button.Content is StackPanel panel)
+            {
+                foreach(var caption in panel.Children.OfType<TextBlock>())
+                    caption.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+                foreach(var icon in panel.Children.OfType<System.Windows.Shapes.Path>())
+                    icon.Margin=mode.CompactNavigation?new Thickness(4,0,0,0):new Thickness(0,0,13,0);
+            }
         }
     }
 
