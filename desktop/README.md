@@ -28,7 +28,10 @@ barkoda i jedinice, uz zaseban audit i bez izmjene aktualne ili sidrene
 cijene. Radni CSV štiti ćelije od spreadsheet formula i omogućuje
 povrat izvornog teksta. Arhiva provjerava SHA-256 integritet
 postojećih datoteka prije otvaranja; povijest nudi filtre datuma/vrste
-i zaseban radni CSV izvještaj.
+i zaseban radni CSV izvještaj. U Cjenicima je dodatno dostupan lokalni
+HTML pregled za ispis ili spremanje u PDF preko preglednika: ne uključuje
+skripte ni mrežne resurse, označen je kao radni i ne predstavlja službeni
+zakonski cjenik.
 
 Nije potrebna registracija ni
 telemetrija za lokalni rad.

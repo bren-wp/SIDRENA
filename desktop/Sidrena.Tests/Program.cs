@@ -137,6 +137,16 @@ try
             new CatalogImportRow("Usluga","bez ŠIFRE","","","kom",2m,null,null,null)
         }));
         Expect(destination.ListItems().Count==2,"Duplicate empty SKU names rejected transactionally");
+        var htmlPath=Path.Combine(folder,"radni-pregled.html");
+        var unsafeRow=new CatalogImportRow("Proizvod","<script>alert(1)</script>","CODE-HTML","","kom",2m,null,null,null);
+        var previewData=new PriceItem(9000,unsafeRow.Name,unsafeRow.Kind,unsafeRow.Sku,"","kom",
+            200,null,null,null,DateTimeOffset.UtcNow);
+        LocalPricelistPreview.Write(new[]{previewData},htmlPath);
+        var markup=File.ReadAllText(htmlPath);
+        Expect(markup.Contains("&lt;script&gt;alert(1)&lt;/script&gt;"),"HTML preview escapes product text");
+        Expect(!markup.Contains("<script>"),"HTML preview never emits database markup as executable script");
+        Expect(markup.Contains("default-src 'none'"),"HTML preview remains offline-only with CSP");
+        Expect(markup.Contains("NIJE SLUŽBENI JAVNI CJENIK"),"Print preview explicitly marked non-statutory");
     }
     // Public read-only integration with the exact WordPress.org 1.5.0 API contract.
     var endpoint=OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr/trgovina");
