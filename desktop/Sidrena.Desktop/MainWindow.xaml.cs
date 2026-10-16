@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     private readonly WorkspaceStore _workspace;
     private readonly string _databasePath;
     private string _activePage = "Pregled";
+    private CancellationTokenSource? _pendingWordPressRequest;
     private const string DraftWarning = "Cjenik je spreman za pregled i ispis. Prije javne objave provjerite podatke i primjenjive obveze.";
     private static readonly CultureInfo Hr = CultureInfo.GetCultureInfo("hr-HR");
     private sealed record ItemRow(long Id,string Name,string Kind,string Sku,string Barcode,string Unit,string Current,string Anchor,string AnchorDate);
@@ -157,6 +158,7 @@ public partial class MainWindow : Window
 
     private void Navigate(string page)
     {
+        if(page!="Sinkronizacija") _pendingWordPressRequest?.Cancel();
         _activePage=page;
         PageTitle.Text=page=="Pregled"?"Sidrene cijene i digitalni cjenici":page;
         PageSubtitle.Text=page switch{
@@ -599,13 +601,17 @@ public partial class MainWindow : Window
         Uri? verifiedArchive=null;
         var controls=U.Horizontal();
         controls.Children.Add(U.Action("Provjeri povezanost",async ()=>{
+            _pendingWordPressRequest?.Cancel();
+            using var requestLifetime=new CancellationTokenSource();
+            _pendingWordPressRequest=requestLifetime;
             verifiedCjenik=null;verifiedArchive=null;
             connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
             published.Text="Provjeravam javno dostupne cjenike.";
             feeds.Children.Clear();
             try
             {
-                var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
+                var result=await OfficialPluginDiscovery.FetchAsync(site.Text,token:requestLifetime.Token);
+                if(requestLifetime.IsCancellationRequested || _activePage!="Sinkronizacija")return;
                 verifiedCjenik=result.PublicPricelist;
                 verifiedArchive=result.PublicArchive;
                 connectionStatus.Text="WordPress stranica je dostupna";
@@ -633,11 +639,19 @@ public partial class MainWindow : Window
                 Status("Javni cjenici uspješno su učitani. Nije izvršena objava ili promjena podataka na webu.");
             }
             catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
-                System.Text.Json.JsonException or TaskCanceledException)
+                System.Text.Json.JsonException or OperationCanceledException)
             {
-                connectionStatus.Text="Nije moguće provjeriti službeni API.";
-                published.Text=UserFacingError.Describe(ex);
-                Status("Povezivanje s WordPress stranicom nije uspjelo.");
+                if(!requestLifetime.IsCancellationRequested)
+                {
+                    connectionStatus.Text="Povezivanje nije uspjelo.";
+                    published.Text=UserFacingError.Describe(ex);
+                    Status("Povezivanje s WordPress stranicom nije uspjelo.");
+                }
+            }
+            finally
+            {
+                if(ReferenceEquals(_pendingWordPressRequest,requestLifetime))
+                    _pendingWordPressRequest=null;
             }
         },true));
         controls.Children.Add(U.Action("Spremi adresu",()=>{
@@ -649,6 +663,7 @@ public partial class MainWindow : Window
             catch(ArgumentException ex){Error(ex);}
         }));
         controls.Children.Add(U.Action("Zaboravi adresu",()=>{
+            _pendingWordPressRequest?.Cancel();
             _workspace.ClearOfficialSite();site.Clear();
             verifiedCjenik=null;verifiedArchive=null;
             connectionStatus.Text="Javna WordPress adresa uklonjena.";
