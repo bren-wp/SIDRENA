@@ -148,6 +148,20 @@ public sealed class WorkspaceStore : IDisposable
         return string.Equals(expected,actual,StringComparison.OrdinalIgnoreCase);
     }
 
+    public long CountPriceChanges()
+    {
+        using var cmd=_connection.CreateCommand();
+        cmd.CommandText="SELECT COUNT(*) FROM price_changes";
+        return (long)(cmd.ExecuteScalar()??0L);
+    }
+
+    public long CountDraftExports()
+    {
+        using var cmd=_connection.CreateCommand();
+        cmd.CommandText="SELECT COUNT(*) FROM desktop_draft_exports";
+        return (long)(cmd.ExecuteScalar()??0L);
+    }
+
     public IReadOnlyList<DraftPublication> ListDraftExports()
     {
         using var c = _connection.CreateCommand();

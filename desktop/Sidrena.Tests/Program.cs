@@ -68,6 +68,20 @@ try
         Expect(backupWorkspace.ListLocations().Count == 1, "Online backup includes workspace");
         MustThrow(() => workspace.BackupTo(file));
     }
+    // Dashboard counters are SQL aggregates, not full-catalogue scans.
+    using (var counts=new PriceStore(Path.Combine(folder,"counter.db")))
+    {
+        var empty=counts.GetCatalogueTotals();
+        Expect(empty.Total==0&&empty.ConfirmedAnchors==0,"Empty catalogue counts");
+        counts.AddItem("A","Proizvod","A1","","kom",2m,1.50m,"2026-09-10","Račun A");
+        counts.AddItem("B","Usluga","B1","","kom",5m,null,null,null);
+        var totals=counts.GetCatalogueTotals();
+        Expect(totals.Total==2&&totals.ConfirmedAnchors==1,"SQL reference totals");
+        using var countedWorkspace=new WorkspaceStore(Path.Combine(folder,"counter.db"));
+        Expect(countedWorkspace.CountPriceChanges()==0&&countedWorkspace.CountDraftExports()==0,
+            "Empty audits and draft counters");
+    }
+
     // Restore a WAL-consistent snapshotPath. Invalid backup must never overwrite active data.
     var recoveryDb=Path.Combine(folder,"restore-verify.db");
     var snapshotPath=Path.Combine(folder,"restore-snapshotPath.db");
@@ -216,6 +230,8 @@ try
       "published_at":"2026-10-16T16:22:00+00:00",
       "cjenik":"https://sidrena.example.hr/javni-cjenik",
       "archive":"https://sidrena.example.hr/arhiva",
+      "type_archive":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/arhiva",
+      "combined":"https://sidrena.example.hr/sidrena-cijena.xml",
       "feeds":{
         "proizvodi":{
           "csv":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv",
@@ -226,7 +242,19 @@ try
           "xml":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/usluge/xml"
         }
       },
-      "outlets":[{"name":"Rijeka","code":"RJK"}]
+      "outlets":[{
+        "name":"Rijeka Centar","code":"RJK",
+        "feeds":{
+          "proizvodi":{
+            "csv":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv?oznaka=RJK",
+            "xml":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/xml?oznaka=RJK"
+          },
+          "usluge":{
+            "csv":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/usluge/csv?oznaka=RJK",
+            "xml":"https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/usluge/xml?oznaka=RJK"
+          }
+        }
+      }]
     }
     """;
     var snapshot=OfficialPluginDiscovery.Parse(System.Text.Encoding.UTF8.GetBytes(restJson),
@@ -234,6 +262,26 @@ try
     Expect(snapshot.Feeds.Count==4 && snapshot.OutletCount==1,"Official REST v1 structure");
     Expect(snapshot.PublishedAt?.Year==2026,"Published time is parsed");
     Expect(snapshot.PublicPricelist.Host=="sidrena.example.hr","Same-origin public links");
+    Expect(snapshot.ArchiveApi?.AbsolutePath.EndsWith("/wp-json/brendigo-sidrena/v1/arhiva")==true,
+        "Official 1.5.0 exposes separate public archive REST API");
+    Expect(snapshot.CombinedFeed?.AbsolutePath=="/sidrena-cijena.xml",
+        "Official 1.5.0 combined public XML is recognized");
+    Expect(snapshot.Outlets.Count==1 && snapshot.Outlets[0].Code=="RJK" &&
+        snapshot.Outlets[0].Name=="Rijeka Centar" && snapshot.Outlets[0].Feeds.Count==4,
+        "Official outlet feed metadata is mapped exactly");
+    Expect(snapshot.Outlets[0].Feeds[0].Url.Query=="?oznaka=RJK",
+        "Per-outlet public feed selection is preserved");
+    var wrongOutlet=restJson.Replace("oznaka=RJK","oznaka=RJK%26x%3Devil");
+    // Extra query parameters must not become unaudited write actions. These are only opened after confirmation.
+    Expect(OfficialPluginDiscovery.Parse(System.Text.Encoding.UTF8.GetBytes(wrongOutlet),endpoint)
+        .Outlets[0].Feeds.Count==4,"Read-only data stays passive");
+    var unsafeOutlet=restJson.Replace("https://sidrena.example.hr/wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv?oznaka=RJK",
+        "https://other-site.example.net/exfiltrate");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(unsafeOutlet),endpoint));
+    var duplicateCode=restJson.Replace("\"code\":\"RJK\"","\"code\":\"../unsafe\"");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(duplicateCode),endpoint));
     var hostile=restJson.Replace("https://sidrena.example.hr/javni-cjenik","https://hostile.example.com/collection");
     MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
         System.Text.Encoding.UTF8.GetBytes(hostile),endpoint));
@@ -250,6 +298,23 @@ try
         MustThrowType<System.Net.Http.HttpRequestException>(()=>{
             OfficialPluginDiscovery.FetchAsync("https://sidrena.example.hr",client).GetAwaiter().GetResult();
         });
+    // Pure-DIP desktop policy: window must not fill even a small work area.
+    var largeWindow=ResponsiveLayoutPolicy.Initial(1920,1080);
+    Expect(largeWindow.Width<=1320&&largeWindow.Height<=820&&
+        largeWindow.Width<1920&&largeWindow.Height<1080,"Desktop starts windowed on full HD");
+    var smallWindow=ResponsiveLayoutPolicy.Initial(800,600);
+    Expect(smallWindow.Width<800&&smallWindow.Height<600&&smallWindow.Width>560,
+        "Desktop fits smaller screens without fullscreen");
+    var compact=ResponsiveLayoutPolicy.ForWidth(760);
+    var normal=ResponsiveLayoutPolicy.ForWidth(1400);
+    Expect(compact.CompactNavigation&&compact.SidebarWidth==75&&!compact.ShowHeroBadge,
+        "Compact icon navigation avoids wasting screen width");
+    Expect(!normal.CompactNavigation&&normal.ShowHeroBadge&&normal.SidebarWidth==246,
+        "Full desktop navigation matches reference design");
+    Expect(ResponsiveLayoutPolicy.StackDetails(640)&&
+        !ResponsiveLayoutPolicy.StackDetails(1050),"Detail columns stack at compact widths");
+    MustThrowType<ArgumentOutOfRangeException>(()=>ResponsiveLayoutPolicy.Initial(double.NaN,800));
+    MustThrowType<ArgumentOutOfRangeException>(()=>ResponsiveLayoutPolicy.ForWidth(0));
     Console.WriteLine($"SIDRENA Desktop: {passed} provjera uspješno.");
 }
 finally

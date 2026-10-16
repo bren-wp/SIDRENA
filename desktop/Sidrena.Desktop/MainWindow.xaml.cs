@@ -32,6 +32,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         ConfigureNavigationIcons();
+        var workArea=SystemParameters.WorkArea;
+        var initialSize=ResponsiveLayoutPolicy.Initial(workArea.Width,workArea.Height);
+        Width=initialSize.Width;
+        Height=initialSize.Height;
+        WindowState=WindowState.Normal;
+        Loaded+=(_,_)=>UpdateResponsiveLayout();
         _databasePath=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Brendigo","SIDRENA","sidrena.db");
         _prices=new PriceStore(_databasePath);
@@ -61,7 +67,40 @@ public partial class MainWindow : Window
                         using var output=File.Create(Path.Combine(captureFolder,$"screen-{i+1:00}.png"));
                         png.Save(output);
                     }
-                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed.");
+                    // Exercise all ten pages at two adaptive sizes, not just the catalogue.
+                    var responsiveFolder=Path.Combine(Path.GetDirectoryName(_databasePath)!,"ui-captures-responsive");
+                    Directory.CreateDirectory(responsiveFolder);
+                    int adaptiveCount=0;
+                    foreach(var size in new[]{(width:760d,height:560d,name:"compact"),
+                                              (width:1060d,height:690d,name:"medium")})
+                    {
+                        Width=Math.Min(size.width,SystemParameters.WorkArea.Width*0.9);
+                        Height=Math.Min(size.height,SystemParameters.WorkArea.Height*0.9);
+                        UpdateResponsiveLayout();
+                        for(int j=0;j<pages.Length;j++)
+                        {
+                            Navigate(pages[j]);
+                            PageHost.UpdateLayout();
+                            UpdateLayout();
+                            if(WindowState!=WindowState.Normal ||
+                               Math.Abs(SidebarColumn.ActualWidth-
+                                   ResponsiveLayoutPolicy.ForWidth(ActualWidth).SidebarWidth)>2 ||
+                               PageScroll.ViewportWidth<=0 || PageHost.ActualWidth<=0)
+                                throw new InvalidOperationException("Adaptive layout failed: "+size.name+"/"+pages[j]);
+                            var resized=new RenderTargetBitmap((int)Math.Ceiling(ActualWidth),
+                                (int)Math.Ceiling(ActualHeight),96,96,PixelFormats.Pbgra32);
+                            resized.Render(this);
+                            var capture=new PngBitmapEncoder();
+                            capture.Frames.Add(BitmapFrame.Create(resized));
+                            using var file=File.Create(Path.Combine(responsiveFolder,
+                                size.name+"-screen-"+(j+1).ToString("00",CultureInfo.InvariantCulture)+".png"));
+                            capture.Save(file);
+                            adaptiveCount++;
+                        }
+                    }
+                    if(adaptiveCount!=20)
+                        throw new InvalidOperationException("Responsive screen coverage incomplete.");
+                    File.WriteAllText(marker,"SIDRENA UI screens: 10/10 passed; responsive 20/20 passed.");
                     Application.Current.Shutdown(0);
                 }
                 catch(Exception ex)
@@ -70,6 +109,39 @@ public partial class MainWindow : Window
                     Application.Current.Shutdown(1);
                 }
             }),System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+    }
+
+    private void OnWindowSizeChanged(object sender,SizeChangedEventArgs e)
+    {
+        if(IsLoaded) UpdateResponsiveLayout();
+    }
+
+    private void UpdateResponsiveLayout()
+    {
+        var mode=ResponsiveLayoutPolicy.ForWidth(ActualWidth>0?ActualWidth:Width);
+        SidebarColumn.Width=new GridLength(mode.SidebarWidth);
+        BrandText.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+        SidebarFooter.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+        BrandMark.Width=mode.CompactNavigation?46:62;
+        BrandMark.Height=mode.CompactNavigation?46:62;
+        BrandPanel.Margin=mode.CompactNavigation?new Thickness(1,0,0,15):new Thickness(6,0,0,27);
+        ContentFrame.Margin=mode.CompactNavigation?new Thickness(12,12,12,9):new Thickness(19,17,19,11);
+        HeroBadge.Visibility=mode.ShowHeroBadge?Visibility.Visible:Visibility.Collapsed;
+        HeroPanel.Height=mode.CompactContent?124:146;
+        PageTitle.FontSize=mode.HeaderFontSize;
+        PageSubtitle.FontSize=mode.CompactContent?12:14;
+        foreach(var button in NavPanel.Children.OfType<Button>())
+        {
+            button.ToolTip=button.Tag as string;
+            button.Padding=mode.CompactNavigation?new Thickness(8,11,8,11):new Thickness(16,12,16,12);
+            if(button.Content is StackPanel panel)
+            {
+                foreach(var caption in panel.Children.OfType<TextBlock>())
+                    caption.Visibility=mode.CompactNavigation?Visibility.Collapsed:Visibility.Visible;
+                foreach(var icon in panel.Children.OfType<System.Windows.Shapes.Path>())
+                    icon.Margin=mode.CompactNavigation?new Thickness(4,0,0,0):new Thickness(0,0,13,0);
+            }
         }
     }
 
@@ -137,14 +209,15 @@ public partial class MainWindow : Window
     private UIElement BuildDashboard()
     {
         var outer=U.Vertical();
-        var rows=_prices.ListItems(); var changes=_workspace.ListRecentChanges(6);
+        var totals=_prices.GetCatalogueTotals();
+        var changes=_workspace.ListRecentChanges(6);
         outer.Children.Add(U.Metrics(
-            U.Stat("Artikala i usluga",rows.Count.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
-            U.Stat("Potvrđenih sidrenih",rows.Count(x=>x.AnchorCents.HasValue).ToString(Hr),
+            U.Stat("Artikala i usluga",totals.Total.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
+            U.Stat("Potvrđenih sidrenih",totals.ConfirmedAnchors.ToString(Hr),
                 "Nepotvrđene vrijednosti ostaju prazne","⚓"),
-            U.Stat("Promjena cijena",_workspace.ListRecentChanges(10000).Count.ToString(Hr),
+            U.Stat("Promjena cijena",_workspace.CountPriceChanges().ToString(Hr),
                 "Zabilježene lokalne izmjene","↗"),
-            U.Stat("Radnih cjenika",_workspace.ListDraftExports().Count.ToString(Hr),
+            U.Stat("Radnih cjenika",_workspace.CountDraftExports().ToString(Hr),
                 "Neobjavljeni CSV/XML izvozi","▤")));
         var quick=U.Horizontal();
         quick.Children.Add(U.Action("+  Novi artikl",()=>Navigate("Artikli"),true));
@@ -337,13 +410,14 @@ public partial class MainWindow : Window
             Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
         var to=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short,
             Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
+        var historySnapshot=_workspace.ListRecentChanges(10000);
         var table=U.Grid(("Datum i vrijeme","Time",175),("Artikl / usluga","Name",0),
             ("Prethodna","Previous",128),("Aktualna","Current",128),
             ("Promjena","Change",110),("Razlog promjene","Reason",0));
         IReadOnlyList<PriceAuditView> Filtered()
         {
             var phrase=search.Text.Trim();
-            return _workspace.ListRecentChanges(10000).Where(x=>
+            return historySnapshot.Where(x=>
                     (x.ItemName.Contains(phrase,StringComparison.OrdinalIgnoreCase)||
                      x.Reason.Contains(phrase,StringComparison.OrdinalIgnoreCase)) &&
                     (kindFilter.SelectedIndex switch
@@ -387,7 +461,7 @@ public partial class MainWindow : Window
             if(table.SelectedItem is AuditRow x)
             {
                 selected.Text=$"{x.Name}\n{x.Previous}  →  {x.Current}\nPromjena: {x.Change}\n{x.Time}\nRazlog: {x.Reason}";
-                var history=_workspace.ListRecentChanges(10000).Where(h=>h.ItemId==x.ItemId)
+                var history=historySnapshot.Where(h=>h.ItemId==x.ItemId)
                     .OrderBy(h=>h.ChangedUtc).ToList();
                 var values=history.Count==0?new List<long>{0}:
                     new List<long>{history[0].PreviousCents};
@@ -517,13 +591,29 @@ public partial class MainWindow : Window
                 var result=await OfficialPluginDiscovery.FetchAsync(site.Text);
                 verifiedCjenik=result.PublicPricelist;
                 verifiedArchive=result.PublicArchive;
-                connectionStatus.Text="✓ Službeni Brendigo REST API dostupan (samo čitanje)";
-                published.Text="Zadnja javna objava: "+(result.PublishedAt.HasValue?
+                connectionStatus.Text="Javni REST API službenog dodatka dostupan (samo čitanje)";
+                published.Text="Posljednja evidentirana javna objava: "+(result.PublishedAt.HasValue?
                     result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
                     "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica.";
                 foreach(var item in result.Feeds)
-                    feeds.Children.Add(U.Muted($"{item.Kind} · {item.Format.ToUpperInvariant()}: {item.Url}"));
-                Status("Provjerena javna veza; ništa nije zapisano na WordPress ni poslano s računala.");
+                    feeds.Children.Add(U.Action("Otvori javni "+item.Kind+" "+item.Format.ToUpperInvariant(),
+                        ()=>OpenUrl(item.Url.AbsoluteUri)));
+                if(result.CombinedFeed is not null)
+                    feeds.Children.Add(U.Action("Objedinjeni javni izvor",()=>OpenUrl(result.CombinedFeed.AbsoluteUri)));
+                if(result.ArchiveApi is not null)
+                    feeds.Children.Add(U.Action("Javni REST arhivski indeks",()=>OpenUrl(result.ArchiveApi.AbsoluteUri)));
+                if(result.Outlets.Count>0)
+                {
+                    feeds.Children.Add(U.Text("Javni izvori po poslovnici",15,true));
+                    foreach(var outlet in result.Outlets)
+                    {
+                        feeds.Children.Add(U.Muted(outlet.Name+"  ·  oznaka "+outlet.Code));
+                        foreach(var feed in outlet.Feeds)
+                            feeds.Children.Add(U.Action("Otvori "+outlet.Code+" · "+feed.Kind+" "+
+                                feed.Format.ToUpperInvariant(),()=>OpenUrl(feed.Url.AbsoluteUri)));
+                    }
+                }
+                Status("Javni REST metapodaci dostupni (samo čitanje); Windows aplikacija nije ovlaštena za objavu.");
             }
             catch(Exception ex)when(ex is ArgumentException or HttpRequestException or InvalidDataException or
                 System.Text.Json.JsonException or TaskCanceledException)
@@ -665,7 +755,7 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Tema: Tamna · Rad bez korisničkog računa"),
             U.Notice("Šifriranje baze i automatski rasporedi još nisu aktivni. Ručni povrat i zasebna zaštitna kopija dostupni su. Ne postoji skrivena sinkronizacija ni telemetrija.")));
         outer.Children.Add(U.Card("Informacije o izdanju",
-            U.Text("SIDRENA Desktop 0.6.0",18,true),
+            U.Text("SIDRENA Desktop 0.7.0",18,true),
             U.Muted("Windows 10/11 x64 · Lokalni podaci · Portable EXE i Setup EXE"),
             U.Notice("WordPress dodatak Brendigo Sidrena Cijena uvijek ostaje verzija 1.5.0. Windows ima zasebnu oznaku verzije."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
@@ -690,12 +780,6 @@ public partial class MainWindow : Window
             U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
             U.Text("Podrška",18,true),
             U.Action("Pošalji e-poštu podršci",()=>OpenUrl("mailto:sidrena@brendigo.com")));
-    }
-
-    private void ShowUpcoming(string feature)
-    {
-        MessageBox.Show(this,$"Opcija „{feature}” bit će omogućena nakon implementacije validacije i testiranja. Postojeći podaci neće se mijenjati.",
-            "SIDRENA — u razvoju",MessageBoxButton.OK,MessageBoxImage.Information);
     }
 
     private void OpenLocal(string path)

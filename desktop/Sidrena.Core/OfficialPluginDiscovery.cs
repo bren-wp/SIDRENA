@@ -6,8 +6,14 @@ using System.Text.Json;
 namespace Sidrena.Core;
 
 public sealed record OfficialFeed(string Kind,string Format,Uri Url);
+public sealed record OfficialOutlet(string Name,string Code,IReadOnlyList<OfficialFeed> Feeds);
 public sealed record OfficialPluginSnapshot(DateTimeOffset? PublishedAt,Uri PublicPricelist,Uri PublicArchive,
-    IReadOnlyList<OfficialFeed> Feeds,int OutletCount);
+    IReadOnlyList<OfficialFeed> Feeds,int OutletCount)
+{
+    public Uri? ArchiveApi { get; init; }
+    public Uri? CombinedFeed { get; init; }
+    public IReadOnlyList<OfficialOutlet> Outlets { get; init; }=Array.Empty<OfficialOutlet>();
+}
 
 /// <summary>Read-only official plugin API. Does not send prices, credentials or local database contents.</summary>
 public static class OfficialPluginDiscovery
@@ -79,8 +85,19 @@ public static class OfficialPluginDiscovery
                 throw new InvalidDataException("Nedostaje javni WordPress podatak: "+field);
             return SecureUrl(value.GetString(),endpoint);
         }
+        Uri? OptionalUrl(string field)
+        {
+            if(!root.TryGetProperty(field,out var value) || value.ValueKind==JsonValueKind.Null)
+                return null;
+            if(value.ValueKind!=JsonValueKind.String)
+                throw new InvalidDataException("Neispravan URL u WordPress odgovoru: "+field);
+            var text=value.GetString();
+            return string.IsNullOrWhiteSpace(text)?null:SecureUrl(text,endpoint);
+        }
         var cjenik=Url("cjenik");
         var archive=Url("archive");
+        var archiveApi=OptionalUrl("type_archive");
+        var combined=OptionalUrl("combined");
         DateTimeOffset? published=null;
         if(root.TryGetProperty("published_at",out var p) && p.ValueKind==JsonValueKind.String)
         {
@@ -100,15 +117,56 @@ public static class OfficialPluginDiscovery
                 list.Add(new OfficialFeed(kind,format,SecureUrl(value.GetString(),endpoint)));
             }
         }
-        int outlets=0;
+        var outlets=new List<OfficialOutlet>();
         if(root.TryGetProperty("outlets",out var branch))
         {
             if(branch.ValueKind!=JsonValueKind.Array)
                 throw new InvalidDataException("Popis poslovnica nije valjan.");
-            outlets=branch.GetArrayLength();
-            if(outlets>500)throw new InvalidDataException("Neočekivano velik broj poslovnica.");
+            if(branch.GetArrayLength()>500)
+                throw new InvalidDataException("Neočekivano velik broj poslovnica.");
+            var codes=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach(var outlet in branch.EnumerateArray())
+            {
+                if(outlet.ValueKind!=JsonValueKind.Object ||
+                   !outlet.TryGetProperty("code",out var codeField) ||
+                   codeField.ValueKind!=JsonValueKind.String)
+                    throw new InvalidDataException("Nedostaje oznaka poslovnice.");
+                var code=codeField.GetString()??"";
+                if(code.Length is <1 or >64 || code.Any(c=>!char.IsAsciiLetterOrDigit(c)&&c!='-') ||
+                   !codes.Add(code))
+                    throw new InvalidDataException("Nevaljana ili ponovljena oznaka poslovnice.");
+                if(!outlet.TryGetProperty("name",out var nameField)||
+                   nameField.ValueKind!=JsonValueKind.String)
+                    throw new InvalidDataException("Nedostaje naziv poslovnice.");
+                var name=nameField.GetString()??"";
+                if(string.IsNullOrWhiteSpace(name)||name.Length>240)
+                    throw new InvalidDataException("Naziv poslovnice nije valjan.");
+                var outletFeeds=new List<OfficialFeed>();
+                if(outlet.TryGetProperty("feeds",out var outletSources))
+                {
+                    if(outletSources.ValueKind!=JsonValueKind.Object)
+                        throw new InvalidDataException("Popis izvora poslovnice nije valjan.");
+                    foreach(var kind in new[]{"proizvodi","usluge"})
+                    {
+                        if(!outletSources.TryGetProperty(kind,out var sources) ||
+                           sources.ValueKind!=JsonValueKind.Object)
+                            throw new InvalidDataException("Nedostaju izvori poslovnice za "+kind);
+                        foreach(var format in new[]{"csv","xml"})
+                        {
+                            if(!sources.TryGetProperty(format,out var link) ||
+                               link.ValueKind!=JsonValueKind.String)
+                                throw new InvalidDataException("Nedostaje format poslovnice: "+kind+"/"+format);
+                            outletFeeds.Add(new OfficialFeed(kind,format,SecureUrl(link.GetString(),endpoint)));
+                        }
+                    }
+                }
+                outlets.Add(new OfficialOutlet(name,code,outletFeeds));
+            }
         }
-        return new OfficialPluginSnapshot(published,cjenik,archive,list,outlets);
+        return new OfficialPluginSnapshot(published,cjenik,archive,list,outlets.Count)
+        {
+            ArchiveApi=archiveApi,CombinedFeed=combined,Outlets=outlets
+        };
     }
 
     private static Uri SecureUrl(string? value,Uri origin)

@@ -11,7 +11,7 @@ Support: sidrena@brendigo.com
 SIDRENA Desktop razvija se uz jedan službeni WordPress dodatak Brendigo Sidrena Cijena 1.5.0. Povezana je vizualnim identitetom, ali ne mijenja
 postojeće WordPress podatke niti tvrdi da je sinkronizacija aktivna.
 
-## Windows verzija 0.6
+## Windows verzija 0.7
 
 U aplikaciji se otvara deset funkcionalnih prikaza: Pregled, Artikli,
 Usluge, Povijest cijena, Cjenici, Lokacije, Sinkronizacija, Arhiva,
@@ -74,3 +74,9 @@ https://wordpress.org/plugins/brendigo-sidrena-cijena/
 ## Windows paketi i izdavanje
 
 Svaki uspješan Windows CI nakon spajanja u main izrađuje portable EXE i pravi Inno Setup instalacijski EXE; SHA-256 kontrolni zbrojevi omogućuju provjeru preuzimanja. Ažuriraju se samo Windows datoteke u jedinom GitHub Releaseu `1.5.0`. WordPress dodatak 1.5.0 ne mijenja se. Upute: [installer/README.md](installer/README.md).
+
+## Prilagodljivost i WordPress 1.5.0 kompatibilnost
+
+Prozor se pokreće kao običan prozor dimenzija manjih od radne površine monitora. Na užim ekranima sidebar prelazi na navigacijske ikone, kartice se prelamaju, a detaljni paneli slažu okomito. WPF skrolanje omogućuje korištenje malih rezolucija bez automatskog fullscreen načina. U postavkama Windows skaliranja prikaz ostaje u neovisnim DIP jedinicama.
+
+Sinkronizacija čita službeni WordPress REST endpoint /wp-json/brendigo-sidrena/v1/cjenici: javni cjenik, arhivu, tipizirane CSV/XML izvore, objedinjeni javni izvor, arhivski API i tipizirane izvore po poslovnici. Ne šalje lokalne cijene niti tvrdi da je ovlaštena objava omogućena. Kriteriji audita i granice kompatibilnosti zapisani su u [docs/DESKTOP-07-AUDIT.md](../docs/DESKTOP-07-AUDIT.md).

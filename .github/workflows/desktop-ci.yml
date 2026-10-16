@@ -79,7 +79,7 @@ jobs:
           $env:SIDRENA_UI_SMOKE = '1'
           $app = Start-Process -FilePath $exe -PassThru
           try {
-            $app | Wait-Process -Timeout 45 -ErrorAction Stop
+            $app | Wait-Process -Timeout 90 -ErrorAction Stop
             $app.Refresh()
             if ($app.ExitCode -ne 0) { throw "UI navigation failed with exit code $($app.ExitCode)." }
             if (!(Test-Path $marker)) { throw 'Missing ten-screen navigation marker' }
@@ -102,6 +102,14 @@ jobs:
           }
           New-Item -ItemType Directory -Force -Path artifacts/sidrena-ui-captures | Out-Null
           Copy-Item -Path (Join-Path $folder '*.png') -Destination artifacts/sidrena-ui-captures/
+          $responsive = Join-Path $env:LOCALAPPDATA 'Brendigo/SIDRENA/ui-captures-responsive'
+          $adapted = @(Get-ChildItem -Path $responsive -Filter '*-screen-*.png' -File)
+          if ($adapted.Count -ne 20) { throw "Expected 20 responsive WPF screenshots, got $($adapted.Count)." }
+          foreach($file in $adapted) {
+            if ($file.Length -lt 1000) { throw "Responsive capture $($file.Name) is unexpectedly small." }
+          }
+          New-Item -ItemType Directory -Force -Path artifacts/sidrena-ui-captures/responsive | Out-Null
+          Copy-Item -Path (Join-Path $responsive '*.png') -Destination artifacts/sidrena-ui-captures/responsive/
       - name: Install Inno Setup compiler
         shell: pwsh
         run: |
@@ -163,7 +171,7 @@ jobs:
           $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
-            desktop_version='0.6.0'
+            desktop_version='0.7.0'
             wordpress_plugin_version='1.5.0'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
