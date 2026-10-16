@@ -196,7 +196,8 @@ public partial class MainWindow : Window
 
     private static Brush Brush(string key)=>(Brush)Application.Current.FindResource(key);
     private void Status(string message)=>StatusLabel.Text=message;
-    private void Error(Exception ex)=>MessageBox.Show(this,ex.Message,"SIDRENA",MessageBoxButton.OK,MessageBoxImage.Warning);
+    private void Error(Exception ex)=>MessageBox.Show(this,UserFacingError.Describe(ex),
+        "SIDRENA — obavijest",MessageBoxButton.OK,MessageBoxImage.Warning);
     private static string Euro(long cents)=>PriceStore.FormatEur(cents)+" €";
     private static string DateText(string? iso)
         => iso is not null && DateTime.TryParseExact(iso,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var date)
@@ -635,7 +636,7 @@ public partial class MainWindow : Window
                 System.Text.Json.JsonException or TaskCanceledException)
             {
                 connectionStatus.Text="Nije moguće provjeriti službeni API.";
-                published.Text=ex.Message;
+                published.Text=UserFacingError.Describe(ex);
                 Status("Povezivanje s WordPress stranicom nije uspjelo.");
             }
         },true));
@@ -838,13 +839,26 @@ public partial class MainWindow : Window
 
     private void OpenLocal(string path)
     {
-        try{Process.Start(new ProcessStartInfo{FileName=path,UseShellExecute=true});}
-        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or IOException or InvalidOperationException){Error(ex);}
+        try
+        {
+            var document=DocumentOpenPolicy.Validate(path);
+            Process.Start(new ProcessStartInfo{FileName=document,UseShellExecute=true});
+        }
+        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or IOException or
+            InvalidOperationException or ArgumentException or InvalidDataException){Error(ex);}
     }
     private void OpenUrl(string url)
     {
-        try{Process.Start(new ProcessStartInfo{FileName=url,UseShellExecute=true});}
-        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or InvalidOperationException){Error(ex);}
+        try
+        {
+            if(!Uri.TryCreate(url,UriKind.Absolute,out var destination) ||
+               (destination.Scheme!=Uri.UriSchemeHttps && destination.Scheme!="mailto") ||
+               !string.IsNullOrEmpty(destination.UserInfo))
+                throw new ArgumentException("Nepodržana internetska adresa.");
+            Process.Start(new ProcessStartInfo{FileName=destination.AbsoluteUri,UseShellExecute=true});
+        }
+        catch(Exception ex)when(ex is System.ComponentModel.Win32Exception or
+            InvalidOperationException or ArgumentException){Error(ex);}
     }
 
     protected override void OnClosed(EventArgs e)
