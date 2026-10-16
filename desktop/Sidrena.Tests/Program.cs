@@ -68,9 +68,9 @@ try
         Expect(backupWorkspace.ListLocations().Count == 1, "Online backup includes workspace");
         MustThrow(() => workspace.BackupTo(file));
     }
-    // Restore a WAL-consistent snapshot. Invalid backup must never overwrite active data.
+    // Restore a WAL-consistent snapshotPath. Invalid backup must never overwrite active data.
     var recoveryDb=Path.Combine(folder,"restore-verify.db");
-    var snapshot=Path.Combine(folder,"restore-snapshot.db");
+    var snapshotPath=Path.Combine(folder,"restore-snapshotPath.db");
     var safety=Path.Combine(folder,"restore-safety.db");
     using(var verifyPrices=new PriceStore(recoveryDb))
     {
@@ -79,8 +79,8 @@ try
         using(var verifyWorkspace=new WorkspaceStore(recoveryDb))
         {
             verifyWorkspace.AddLocation("Trgovina","Korzo 15","Rijeka");
-            verifyWorkspace.BackupTo(snapshot);
-            var inspection=WorkspaceStore.InspectBackup(snapshot);
+            verifyWorkspace.BackupTo(snapshotPath);
+            var inspection=WorkspaceStore.InspectBackup(snapshotPath);
             Expect(inspection.Products==1&&inspection.Locations==1,"Read-only backup preview");
             Expect(inspection.PriceChanges==0,"Backup preview keeps original audit");
         }
@@ -102,13 +102,13 @@ try
         }
         MustThrowType<InvalidDataException>(()=>
             WorkspaceStore.InspectBackup(Path.Combine(folder,"other.db")));
-        Expect(WorkspaceStore.InspectBackup(snapshot).Products==1,"Original backup stays unchanged");
+        Expect(WorkspaceStore.InspectBackup(snapshotPath).Products==1,"Original backup stays unchanged");
         MustThrowType<InvalidDataException>(()=>
             restoreWorkspace.RestoreFrom(Path.Combine(folder,"not-sqlite.db"),safety));
         Expect(!File.Exists(safety),"Invalid restore never creates safety copy or touches live database");
-        var protectedPath=restoreWorkspace.RestoreFrom(snapshot,safety);
-        Expect(protectedPath==safety&&File.Exists(safety),"Restore creates recoverable pre-restore snapshot");
-        Expect(WorkspaceStore.InspectBackup(safety).PriceChanges==1,"Recovery snapshot includes later WAL transaction");
+        var protectedPath=restoreWorkspace.RestoreFrom(snapshotPath,safety);
+        Expect(protectedPath==safety&&File.Exists(safety),"Restore creates recoverable pre-restore snapshotPath");
+        Expect(WorkspaceStore.InspectBackup(safety).PriceChanges==1,"Recovery snapshotPath includes later WAL transaction");
         Expect(restoreWorkspace.ListLocations().Count==1,"Restored workspace locations");
     }
     using(var restored=new PriceStore(recoveryDb))
