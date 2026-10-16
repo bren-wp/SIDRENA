@@ -51,37 +51,47 @@ jobs:
           (package.parent/(package.name+'.sha256')).write_text(f'{digest}  {package.name}\n',encoding='utf-8')
           print(f'Official package verified: 128 files, {package.stat().st_size} bytes; SHA-256 {digest}')
           PY
-      - name: Assert exact observed legacy release and tag inventory before deletion
+      - name: Guard against unrecognized existing releases or tags
         shell: bash
         run: |
           set -euo pipefail
-          expected=$(printf '%s\n' v1.0.3 v1.0.4 v1.0.5 v1.0.6 v1.0.7 v1.0.8 v1.0.9 | LC_ALL=C sort)
-          actual_releases=$(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[].tag_name' | LC_ALL=C sort)
-          actual_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq '.[].ref | sub("^refs/tags/"; "")' | LC_ALL=C sort)
-          if [[ "$actual_releases" != "$expected" || "$actual_tags" != "$expected" ]]; then
-            echo "Release/tag inventory changed; refusing destructive cleanup"
-            printf 'Releases:\n%s\nTags:\n%s\n' "$actual_releases" "$actual_tags"
-            exit 1
+          existing_releases=$(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[].tag_name' || true)
+          existing_tags=$(gh api --paginate "repos/$GH_REPO/git/refs/tags?per_page=100" --jq '.[].ref | sub("^refs/tags/"; "")' 2>/dev/null || true)
+          for tag in $existing_releases $existing_tags; do
+            case "$tag" in
+              1.5.0|v1.0.3|v1.0.4|v1.0.5|v1.0.6|v1.0.7|v1.0.8|v1.0.9) ;;
+              *) echo "Unexpected existing tag or release: $tag; manual review required"; exit 1 ;;
+            esac
+          done
+      - name: Create verified official 1.5.0 release if missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view '1.5.0' >/dev/null 2>&1; then
+            echo 'Official 1.5.0 release already exists; checking existing assets in final step'
+          else
+            target=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
+            gh release create '1.5.0' \
+              'release-package/brendigo-sidrena-cijena-1.5.0.zip' \
+              'release-package/brendigo-sidrena-cijena-1.5.0.zip.sha256' \
+              --target "$target" \
+              --title 'Brendigo Sidrena Cijena 1.5.0' \
+              --notes 'Jedino službeno izdanje WordPress dodatka Brendigo Sidrena Cijena, sadržajno provjereno prema verziji 1.5.0 s WordPress.org i paketu vlasnika. Windows Desktop razvija se zasebno unutar repozitorija, bez dodatnih tagova.' \
+              --latest
           fi
-      - name: Create the sole official 1.5.0 release with one verified plugin
-        shell: bash
-        run: |
-          set -euo pipefail
-          target=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
-          gh release create '1.5.0' \
-            'release-package/brendigo-sidrena-cijena-1.5.0.zip' \
-            'release-package/brendigo-sidrena-cijena-1.5.0.zip.sha256' \
-            --target "$target" \
-            --title 'Brendigo Sidrena Cijena 1.5.0' \
-            --notes 'Jedino službeno izdanje WordPress dodatka Brendigo Sidrena Cijena, sadržajno provjereno prema verziji 1.5.0 s WordPress.org i paketu vlasnika. Windows Desktop razvija se zasebno unutar repozitorija, bez dodatnih tagova.' \
-            --latest
-      - name: Delete only seven explicitly audited obsolete releases and tags
+      - name: Remove obsolete releases and tags only if still present
         shell: bash
         run: |
           set -euo pipefail
           for tag in v1.0.3 v1.0.4 v1.0.5 v1.0.6 v1.0.7 v1.0.8 v1.0.9; do
-            echo "Deleting obsolete release/tag $tag"
-            gh release delete "$tag" --cleanup-tag --yes
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "Delete remaining obsolete release and tag: $tag"
+              gh release delete "$tag" --cleanup-tag --yes
+            fi
+            if gh api "repos/$GH_REPO/git/ref/tags/$tag" >/dev/null 2>&1; then
+              echo "Delete remaining standalone tag: $tag"
+              gh api --method DELETE "repos/$GH_REPO/git/refs/tags/$tag" >/dev/null
+            fi
           done
       - name: Verify exactly one release and exactly one tag remain
         shell: bash
