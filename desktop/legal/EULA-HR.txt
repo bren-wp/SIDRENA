@@ -1,0 +1,103 @@
+SIDRENA DESKTOP — UGOVOR O LICENCIJI ZA KRAJNJEG KORISNIKA (EULA)
+Komercijalna softverska licencija · Hrvatska verzija · Revizija 1.0 · 16. listopada 2026.
+
+VAŽNO: PROČITAJTE PRIJE INSTALACIJE ILI UPORABE. Ovaj Ugovor uređuje korištenje aplikacije SIDRENA Desktop za Windows. Instalater zahtijeva izričito prihvaćanje prikazanih uvjeta. Ako se ne slažete, odaberite odbijanje i nemojte instalirati program. Ovaj dokument ne zamjenjuje prodajni ugovor niti ograničava prava koja vam pripadaju prema prisilnim propisima.
+
+1. UGOVORNE STRANE I DEFINICIJE
+1.1. Davatelj licencije i nositelj prava na vlastite komponente aplikacije jest Brendigo LTD (u nastavku: „Brendigo” ili „Davatelj”). Registrirano sjedište, registracijski broj, nadležna država i podaci o trgovačkom registru moraju se potvrditi u odgovarajućoj ponudi, računu ili posebnom identifikacijskom dokumentu Društva prije komercijalne distribucije. Sama oznaka „LTD” ne utvrđuje jurisdikciju.
+1.2. „Korisnik” je fizička ili pravna osoba kojoj je omogućeno zakonito korištenje Aplikacije; kada je primjenjivo, „Potrošač” je osoba koja djeluje izvan svoje trgovačke, poslovne, obrtničke ili profesionalne djelatnosti.
+1.3. „Aplikacija” znači SIDRENA Desktop za Windows, pripadajuće izvršne i instalacijske datoteke, dokumentaciju, ažuriranja i vlastite komponente koje Brendigo stavlja na raspolaganje.
+1.4. „WordPress dodatak” znači zaseban proizvod „Brendigo Sidrena Cijena”, objavljen na WordPress.org pod pripadajućom licencijom GPLv2 ili novijom. WordPress dodatak nije predmet prijenosa u komercijalnu licenciju Aplikacije.
+1.5. „Licencijski ključ”, „Pretplata” ili „Naknada” imaju značenje samo ako su posebno navedeni i potvrđeni pri kupnji. Ova licencija ne tvrdi da je u aktualnoj Aplikaciji implementirana automatska provjera aktivacije.
+
+2. PRIHVAT I ODNOS UGOVORNIH DOKUMENATA
+2.1. Instalacijom uz izričit odabir „Prihvaćam ugovor” ili početkom uporabe nakon što su uvjeti bili dostupni i zakonito prihvaćeni, Korisnik prihvaća ovaj Ugovor, u mjeri dopuštenoj mjerodavnim propisima.
+2.2. Nabava, cijena, trajanje pretplate, broj odobrenih korisnika ili uređaja, podrška i razina usluge definiraju se pojedinačnom ponudom ili drugim valjanim prodajnim ugovorom. Kad postoji nesklad, posebno ugovoreni uvjeti imaju prednost u dijelu koji je izričito uređen, osim kada to nije dopušteno obveznim pravom.
+2.3. Nijedna odredba ovoga Ugovora ne isključuje zakonska prava potrošača niti prava koja proizlaze iz obveznih propisa države čija se zaštita mora primijeniti.
+
+3. PRAVO KORIŠTENJA I OPSEG LICENCIJE
+3.1. Pod uvjetom zakonitog stjecanja prava, Brendigo Korisniku daje ograničenu, neisključivu, neprenosivu licenciju za instalaciju i uporabu Aplikacije u vlastite dopuštene svrhe, za razdoblje i opseg naveden u kupoprodajnom dokumentu.
+3.2. Ako broj instalacija nije posebno ugovoren, nije dopušteno pretpostaviti neograničenu komercijalnu višekorisničku ili masovnu distribuciju. Korisnik prije takve uporabe treba zatražiti pisanu potvrdu opsega licence.
+3.3. Dopušteno je napraviti kopije neophodne za sigurnosnu pohranu i zakonitu uporabu, u opsegu koji dopuštaju primjenjivi propisi i valjano ugovoreni uvjeti.
+3.4. Pristup javno dostupnom izvornom kodu ne znači automatski prijenos vlasništva, žigova ili komercijalnih prava mimo primjenjive izričite licencije. Postojeće valjane otvorene licence i ranije dodijeljena prava ne ukidaju se retroaktivno.
+
+4. ZABRANJENE RADNJE I ZAKONSKE IZNIMKE
+4.1. Osim kada je to izričito dopušteno obveznim propisima ili zasebnim pisanim ovlaštenjem, nije dopušteno neovlašteno komercijalno redistribuirati izvršne datoteke, prodavati podlicencije, uklanjati oznake autorskih prava, lažno prikazivati podrijetlo programa ili zaobilaziti sigurnosne mehanizme.
+4.2. Ovaj Ugovor ne zabranjuje radnje dopuštene prisilnim propisima o interoperabilnosti, promatranju, proučavanju, testiranju ili dekompilaciji u zakonom propisanim granicama, niti ograničava prava koja proizlaze iz licenci komponenti trećih strana.
+
+5. INTELEKTUALNO VLASNIŠTVO I ŽIGOVI
+5.1. Brendigo zadržava svoja autorska i druga prava na vlastitim komponentama Aplikacije, grafici, dizajnu, dokumentaciji i nazivima, u mjeri u kojoj ih zakonito posjeduje. Licencija nije prodaja izvornoga koda ni prijenos intelektualnog vlasništva.
+5.2. Nazivi „SIDRENA” i „Brendigo” i njihova grafička obilježja mogu biti zaštićeni odgovarajućim pravilima, neovisno o statusu registriranog žiga. Ovaj Ugovor ne jamči postojanje registracije žiga.
+5.3. Autorskopravne obavijesti i oznake stvarnih trećih autora ili vlasnika ne smiju se uklanjati protivno pravima nositelja.
+
+6. KOMPONENTE TREĆIH STRANA I WORDPRESS
+6.1. Aplikacija može koristiti Microsoft .NET, SQLite, otvorene biblioteke i druge komponente trećih strana. Na takve komponente primjenjuju se njihove vlastite licence. Potrebne obavijesti i licence moraju biti dostupne u dokumentaciji/izdanju i imaju prednost nad ovim Ugovorom za te komponente.
+6.2. WordPress dodatak „Brendigo Sidrena Cijena” zasebno se distribuira pod GPLv2 ili novijom. Brendigo ne pokušava ovom EULA licencijom ograničiti slobode koje korisnicima toga dodatka daje GPL, niti oduzeti prava na prethodno valjano licencirane primjerke.
+6.3. Korisnik koji zasebno preuzima WordPress dodatak prihvaća relevantne uvjete te njegove distribucije. Eventualne interoperabilne funkcije Aplikacije ne prenose autorska prava iz jednog proizvoda na drugi.
+
+7. VLASNIŠTVO NAD PODACIMA I POVJERLJIVOST
+7.1. Korisnik zadržava prava na vlastite poslovne podatke, kataloge, evidencije, cjenike i sigurnosne kopije koje unese ili izradi u programu.
+7.2. Aplikacija u svojem trenutačnom načinu rada pohranjuje korisničke podatke na uređaju Korisnika. Niti jedna odredba ne jamči da su svi uređaji, diskovi, antivirusni alati, sustavne kopije ili vanjske usluge uvijek izvan dohvata drugih subjekata.
+7.3. Korisnik odgovara za primjerene mjere zaštite svojeg uređaja, pristupnih prava, sigurnosnih kopija i zakonitosti podataka koje obrađuje.
+7.4. Kada se eventualno uvedu dodatne obrade osobnih podataka u oblaku ili podršci, trebaju se pružiti zasebne transparentne informacije i, kada je potrebno, odgovarajući ugovori o obradi podataka. Ovaj Ugovor sam po sebi nije zamjena za GDPR obavijest o privatnosti ni ugovor izvršitelja obrade.
+
+8. ZAKONITOST CJENIKA, SIDRENE CIJENE I IZVOZA
+8.1. Aplikacija služi kao alat za organizaciju, provjeru i izvoz poslovnih podataka. Sama izrada datoteke ili upotreba programa ne znači da je određeni cjenik pravno valjan, potpun ili zakonito objavljen.
+8.2. Korisnik odgovara za točnost stvarnih i povijesnih cijena, opravdavajuću dokumentaciju, primjenu relevantnih datumskih razdoblja, pravilan porezni tretman, objavu i čuvanje izvornog dokaza kad je to potrebno.
+8.3. Prije javne uporabe, Korisnik treba provjeriti mjerodavne propise i aktualne tehničke specifikacije. Davatelj ne daje individualno pravno, računovodstveno ili porezno mišljenje kroz samo korištenje Aplikacije.
+
+9. INSTALACIJA, AŽURIRANJA I KOMPATIBILNOST
+9.1. Preporučena platforma je podržani Windows 10/11 x64 u skladu s objavljenim tehničkim zahtjevima. Korisnik treba provjeriti autentičnost izvora i integritet preuzetih datoteka.
+9.2. Instalacijska i prijenosna inačica mogu dijeliti iste podatke na uređaju. Korisnik ne smije pokušati paralelno mijenjati iste podatke nekompatibilnim procesima.
+9.3. Ažuriranja mogu uključivati ispravke, funkcije, sigurnosne promjene ili prilagodbe. Ovisno o ugovorenoj vrsti prava korištenja, pojedino ažuriranje može biti dostupno u okviru postojeće naknade ili prema zasebnim komercijalnim uvjetima koji se jasno priopćuju prije naplate.
+9.4. Instalacija i deinstalacija uobičajeno ne uklanjaju automatski korisničke poslovne podatke. Korisnik ipak mora osigurati svoju nezavisnu sigurnosnu kopiju prije velikih promjena sustava.
+
+10. DOSTUPNOST, PODRŠKA I PROMJENE
+10.1. Podrška, radno vrijeme, vrijeme odaziva, održavanje, nadogradnje i dostupnost određuju se posebnim ugovorom ili javno dostupnim opisom kupljene usluge. Ako razina podrške nije izričito ugovorena, ne pretpostavlja se zajamčeno vrijeme odaziva.
+10.2. Davatelj može objaviti sigurnosne i funkcionalne promjene uz primjerenu obavijest kada je potrebna. Eventualne promjene uvjeta ne primjenjuju se retroaktivno protivno obveznim pravima i ugovorenom razdoblju.
+10.3. Brendigo ne jamči funkcionalnost usluga trećih strana, mreža, tuđih WordPress instalacija ni vanjskih servisa na koje nema stvaran utjecaj.
+
+11. NAKNADE, RAČUNI I POVRATI
+11.1. Iznos naknade, valuta, porezi, model naplate i rok dospijeća moraju biti jasno navedeni prije sklapanja naplatnog ugovora.
+11.2. Neuspjeh ili nedostupnost načina plaćanja ne mijenja prava potrošača koja proizlaze iz zakona.
+11.3. Zakonsko pravo odustanka, prava na usklađenost digitalnog sadržaja i pravni lijekovi za nedostatke primjenjuju se u opsegu propisanom obveznim pravom. Ovaj Ugovor ne ukida ili smanjuje ta prava.
+
+12. ODGOVORNOST I OGRANIČENJA
+12.1. U mjeri dopuštenoj zakonom, Davatelj ne jamči neprekidan rad na neograničenim kombinacijama opreme i trećih aplikacija niti zakonitost podataka koje je Korisnik sam unio.
+12.2. Nijedna odredba ne ograničava odgovornost za namjeru, grubu nepažnju, prijevaru, tjelesne ozljede, niti druga prava ili odgovornosti čije je isključenje zabranjeno mjerodavnim pravom.
+12.3. Eventualna ugovorena ograničenja odgovornosti mogu se primijeniti samo ako su zakonita, jasna, pojedinačno primjerena vrsti ugovora i ne stvaraju nepoštenu neravnotežu prema potrošaču.
+12.4. Poslovni Korisnik treba održavati razuman režim provjere podataka, sigurnosnog kopiranja i kontinuiteta poslovanja.
+
+13. TRAJANJE I PRESTANAK
+13.1. Licencija vrijedi u trajanju koje je izričito ugovoreno uz nabavu, osim kada zakon dopušta ili zahtijeva drukčije.
+13.2. U slučaju bitne povrede uvjeta, Davatelj može ostvariti zakonom dopuštena prava uz odgovarajuću obavijest i mogućnost ispravka povrede kada je to primjereno i zakonski zahtijevano.
+13.3. Po valjanom prestanku prava Korisnik prestaje s korištenjem prema ugovornom opsegu, osim u dijelu koji dopuštaju obvezni propisi, pravo na povrat vlastitih podataka ili zasebne licence komponenti otvorenoga koda.
+13.4. Prestanak ne mijenja vlasništvo Korisnika nad njegovim poslovnim podacima niti ukida valjana zakonska potraživanja.
+
+14. SIGURNOST I PRIJAVA NEDOSTATAKA
+14.1. Korisnik treba razumno zaštititi pristup uređaju, korisničkim računima i sigurnosnim kopijama te ne unositi tajne podatke u javne izvještaje o pogreškama.
+14.2. Potencijalne ranjivosti prijavljuju se putem službene podrške ili sigurnosnog kanala naznačenog na stranici proizvoda. Davatelj će prijave ocjenjivati i postupati razmjerno ozbiljnosti, ugovorenim obvezama i zakonima.
+
+15. POVJERLJIVI POSLOVNI PODACI
+15.1. Strane će u skladu s okolnostima i posebnim dogovorima štititi povjerljive informacije druge strane koje su im zakonito povjerene.
+15.2. Povjerljivost ne obuhvaća informacije koje su zakonito javno dostupne, prethodno poznate, neovisno razvijene ili zakonito otkrivene prema obveznom zahtjevu nadležnog tijela.
+
+16. IZVOZ, SANKCIJE I ZAKONITA UPORABA
+16.1. Korisnik je odgovoran za poštovanje primjenjivih propisa o izvozu, sankcijama, poslovnim evidencijama i zabranjenoj uporabi, u mjeri primjenjivoj na njegovu djelatnost i jurisdikciju.
+
+17. MJERODAVNO PRAVO I RJEŠAVANJE SPOROVA
+17.1. Mjerodavno pravo, nadležni sud i eventualna alternativna rješavanja sporova utvrđuju se u zasebnoj komercijalnoj ponudi ili obveznim kolizijskim pravilima. Bez potvrđenog registriranog sjedišta Davatelja i tržišta distribucije ovdje se ne određuje proizvoljan isključivi sud.
+17.2. Kod Potrošača izbor prava ili suda ne smije uskratiti zaštitu koja mu pripada na temelju obveznih propisa, uključujući mjerodavne europske i nacionalne odredbe.
+
+18. DJELOMIČNA NEVALJANOST I CJELOVITOST
+18.1. Ako se pojedina odredba pokaže nevaljanom ili neprovedivom, ostatak ostaje na snazi u mjeri dopuštenoj zakonom i u mjeri u kojoj može funkcionirati bez takve odredbe.
+18.2. Ova EULA i valjani posebni kupoprodajni uvjeti čine ugovorni okvir za komercijalnu uporabu Aplikacije; ne nadjačavaju prava iz zakona, GPL-a ili valjanih ranijih licenci.
+
+19. OVLASTI I OBAVIJESTI
+19.1. Obavijesti o vlasniku, identitetu Davatelja, pravu korištenja i podršci trebaju biti dostupne putem službenih kanala Brendigo LTD i u dokumentaciji uz izdanje.
+19.2. Za podršku i upite možete koristiti službenu stranicu https://brendigo.com/ i podršku sidrena@brendigo.com, podložno provjeri da su to aktualni komunikacijski kanali Brendigo LTD.
+
+20. ZAVRŠNE NAPOMENE O PRAVNOJ PROVJERI
+Ovo je komercijalni nacrt ugovora namijenjen provjeri i usvajanju od strane Brendigo LTD. Prije stvarne prodaje treba potvrditi identitet i sjedište društva, jurisdikciju, modele licence, cijene i povrate, GDPR dokumentaciju, popis trećih licenci, odnos s ranijim GPL licencijama, nadležnost te nacionalne potrošačke propise. Samo dodavanje dokumenta instalateru ne dokazuje da su svi preduvjeti riješeni.
+
+© 2026 Brendigo LTD. Sva prava na vlastite komponente pridržana, uz izričito poštovanje prava trećih osoba i otvorenih licenci.
