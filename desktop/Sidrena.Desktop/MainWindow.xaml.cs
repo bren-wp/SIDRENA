@@ -160,15 +160,15 @@ public partial class MainWindow : Window
         _activePage=page;
         PageTitle.Text=page=="Pregled"?"Sidrene cijene i digitalni cjenici":page;
         PageSubtitle.Text=page switch{
-            "Pregled"=>"Upravljajte artiklima, cijenama i radnim cjenicima na jednom mjestu.",
+            "Pregled"=>"Sve vaše cijene, artikli i cjenici na jednom mjestu.",
             "Artikli"=>"Upravljanje proizvodima, cijenama i osnovnim podacima.",
             "Usluge"=>"Pregled usluga, njihove cijene i povijest promjena.",
             "Povijest cijena"=>"Sve zabilježene izmjene cijena artikala i usluga kroz vrijeme.",
-            "Cjenici"=>"Izvoz radnih CSV i XML datoteka. Zakonska objava još nije aktivna.",
+            "Cjenici"=>"Pripremite cjenike za pregled, ispis i daljnju uporabu.",
             "Lokacije"=>"Upravljajte svojim poslovnicama i prodajnim mjestima.",
             "Sinkronizacija"=>"Povežite svoj WordPress i otvorite javno dostupne cjenike.",
-            "Arhiva"=>"Pregled prethodno izrađenih radnih datoteka.",
-            "Postavke"=>"Sigurnosne kopije i osnovne postavke lokalnog rada.",
+            "Arhiva"=>"Vaši spremljeni cjenici i raniji izvozi.",
+            "Postavke"=>"Prilagodite aplikaciju i zaštitite svoje podatke.",
             _=>"Upute, najčešća pitanja i podrška"
         };
         foreach(var nav in NavPanel.Children.OfType<Button>())
@@ -235,7 +235,7 @@ public partial class MainWindow : Window
         foreach(var file in newest)
             exports.Children.Add(U.Muted($"{file.CreatedUtc.ToLocalTime():dd. MM. yyyy. HH:mm}  · {file.Format}  · {Path.GetFileName(file.FilePath)}"));
         exports.Children.Add(U.Action("Otvori arhivu →",()=>Navigate("Arhiva")));
-        exports.Children.Add(U.Notice("Sidrena cijena povijesna je referenca, a ne popust ili automatski 30-dnevni minimum."));
+        exports.Children.Add(U.Notice("Sidrena cijena predstavlja dokumentirani povijesni podatak, a ne automatski izračunati popust."));
         outer.Children.Add(U.Split(history,U.Card("Status izvoza",exports)));
         return outer;
     }
@@ -789,8 +789,8 @@ public partial class MainWindow : Window
             U.Muted("1. Otvorite Artikli ili Usluge i unesite aktualnu cijenu."),
             U.Muted("2. Sidrenu cijenu unesite samo kad imate provjerljiv povijesni izvor."),
             U.Muted("3. Promjenu cijene zabilježite razlogom; povijest je trajno dostupna."),
-            U.Muted("4. U Cjenicima izradite radni CSV ili XML i pregledajte ga u Arhivi."),
-            U.Notice("Radni izvoz ne znači automatsku usklađenost sa zakonom niti se samostalno objavljuje na web."),
+            U.Muted("4. Izradite cjenik u odabranom formatu i otvorite ga u Arhivi."),
+            U.Notice("Prije objave cjenika provjerite točnost podataka i ispunjavanje propisanih uvjeta."),
             U.Text("Tipkovnički prečaci",18,true),
             U.Muted("Ctrl + N — otvori artikle  ·  F1 — pomoć"),
             U.Text("Preuzimanje i ažuriranja",18,true),
