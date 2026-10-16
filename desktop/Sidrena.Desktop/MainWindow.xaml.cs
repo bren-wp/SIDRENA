@@ -760,12 +760,6 @@ public partial class MainWindow : Window
             U.Action("Pošalji e-poštu podršci",()=>OpenUrl("mailto:sidrena@brendigo.com")));
     }
 
-    private void ShowUpcoming(string feature)
-    {
-        MessageBox.Show(this,$"Opcija „{feature}” bit će omogućena nakon implementacije validacije i testiranja. Postojeći podaci neće se mijenjati.",
-            "SIDRENA — u razvoju",MessageBoxButton.OK,MessageBoxImage.Information);
-    }
-
     private void OpenLocal(string path)
     {
         try{Process.Start(new ProcessStartInfo{FileName=path,UseShellExecute=true});}

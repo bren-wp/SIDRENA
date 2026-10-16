@@ -65,7 +65,9 @@ internal static class UiKit
     public static StackPanel Field(string name, Control input)
     {
         var stack=new StackPanel{Margin=new Thickness(0,0,12,9)};
-        stack.Children.Add(Text(name,12,false,"MutedBrush"));
+        var caption=Text(name,12,false,"MutedBrush");
+        stack.Children.Add(caption);
+        System.Windows.Automation.AutomationProperties.SetLabeledBy(input,caption);
         input.Margin=new Thickness(0,6,0,0);
         stack.Children.Add(input);
         return stack;
