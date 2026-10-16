@@ -189,14 +189,15 @@ public partial class MainWindow : Window
     private UIElement BuildDashboard()
     {
         var outer=U.Vertical();
-        var rows=_prices.ListItems(); var changes=_workspace.ListRecentChanges(6);
+        var totals=_prices.GetCatalogueTotals();
+        var changes=_workspace.ListRecentChanges(6);
         outer.Children.Add(U.Metrics(
-            U.Stat("Artikala i usluga",rows.Count.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
-            U.Stat("Potvrđenih sidrenih",rows.Count(x=>x.AnchorCents.HasValue).ToString(Hr),
+            U.Stat("Artikala i usluga",totals.Total.ToString(Hr),"Stvarni broj lokalnih zapisa","⬡"),
+            U.Stat("Potvrđenih sidrenih",totals.ConfirmedAnchors.ToString(Hr),
                 "Nepotvrđene vrijednosti ostaju prazne","⚓"),
-            U.Stat("Promjena cijena",_workspace.ListRecentChanges(10000).Count.ToString(Hr),
+            U.Stat("Promjena cijena",_workspace.CountPriceChanges().ToString(Hr),
                 "Zabilježene lokalne izmjene","↗"),
-            U.Stat("Radnih cjenika",_workspace.ListDraftExports().Count.ToString(Hr),
+            U.Stat("Radnih cjenika",_workspace.CountDraftExports().ToString(Hr),
                 "Neobjavljeni CSV/XML izvozi","▤")));
         var quick=U.Horizontal();
         quick.Children.Add(U.Action("+  Novi artikl",()=>Navigate("Artikli"),true));
@@ -389,13 +390,14 @@ public partial class MainWindow : Window
             Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
         var to=new DatePicker { Width=152, SelectedDateFormat=DatePickerFormat.Short,
             Background=Brush("InputBrush"),Foreground=Brush("TextBrush"),BorderBrush=Brush("BorderBrush") };
+        var historySnapshot=_workspace.ListRecentChanges(10000);
         var table=U.Grid(("Datum i vrijeme","Time",175),("Artikl / usluga","Name",0),
             ("Prethodna","Previous",128),("Aktualna","Current",128),
             ("Promjena","Change",110),("Razlog promjene","Reason",0));
         IReadOnlyList<PriceAuditView> Filtered()
         {
             var phrase=search.Text.Trim();
-            return _workspace.ListRecentChanges(10000).Where(x=>
+            return historySnapshot.Where(x=>
                     (x.ItemName.Contains(phrase,StringComparison.OrdinalIgnoreCase)||
                      x.Reason.Contains(phrase,StringComparison.OrdinalIgnoreCase)) &&
                     (kindFilter.SelectedIndex switch
@@ -439,7 +441,7 @@ public partial class MainWindow : Window
             if(table.SelectedItem is AuditRow x)
             {
                 selected.Text=$"{x.Name}\n{x.Previous}  →  {x.Current}\nPromjena: {x.Change}\n{x.Time}\nRazlog: {x.Reason}";
-                var history=_workspace.ListRecentChanges(10000).Where(h=>h.ItemId==x.ItemId)
+                var history=historySnapshot.Where(h=>h.ItemId==x.ItemId)
                     .OrderBy(h=>h.ChangedUtc).ToList();
                 var values=history.Count==0?new List<long>{0}:
                     new List<long>{history[0].PreviousCents};

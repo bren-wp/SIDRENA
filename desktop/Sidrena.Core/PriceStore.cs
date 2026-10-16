@@ -309,6 +309,15 @@ public sealed class PriceStore : IDisposable
         tx.Commit();
     }
 
+    public (long Total,long ConfirmedAnchors) GetCatalogueTotals()
+    {
+        using var cmd=_connection.CreateCommand();
+        cmd.CommandText="SELECT COUNT(*),COUNT(anchor_cents) FROM price_items";
+        using var r=cmd.ExecuteReader();
+        if(!r.Read())return (0,0);
+        return (r.GetInt64(0),r.GetInt64(1));
+    }
+
     public IReadOnlyList<PriceItem> ListItems()
     {
         using var cmd = _connection.CreateCommand();

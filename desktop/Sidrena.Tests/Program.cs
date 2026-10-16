@@ -68,6 +68,20 @@ try
         Expect(backupWorkspace.ListLocations().Count == 1, "Online backup includes workspace");
         MustThrow(() => workspace.BackupTo(file));
     }
+    // Dashboard counters are SQL aggregates, not full-catalogue scans.
+    using (var counts=new PriceStore(Path.Combine(folder,"counter.db")))
+    {
+        var empty=counts.GetCatalogueTotals();
+        Expect(empty.Total==0&&empty.ConfirmedAnchors==0,"Empty catalogue counts");
+        counts.AddItem("A","Proizvod","A1","","kom",2m,1.50m,"2026-09-10","Račun A");
+        counts.AddItem("B","Usluga","B1","","kom",5m,null,null,null);
+        var totals=counts.GetCatalogueTotals();
+        Expect(totals.Total==2&&totals.ConfirmedAnchors==1,"SQL reference totals");
+        using var countedWorkspace=new WorkspaceStore(Path.Combine(folder,"counter.db"));
+        Expect(countedWorkspace.CountPriceChanges()==0&&countedWorkspace.CountDraftExports()==0,
+            "Empty audits and draft counters");
+    }
+
     // Restore a WAL-consistent snapshotPath. Invalid backup must never overwrite active data.
     var recoveryDb=Path.Combine(folder,"restore-verify.db");
     var snapshotPath=Path.Combine(folder,"restore-snapshotPath.db");
