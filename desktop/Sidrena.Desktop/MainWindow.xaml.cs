@@ -345,7 +345,7 @@ public partial class MainWindow : Window
         var eSku=U.Box("Šifra",145);
         var eBarcode=U.Box("Barkod",165);
         var eUnit=U.Box("Jedinica",115);
-        var eReason=U.Box("Razlog izmjene metapodataka",260);
+        var eReason=U.Box("Razlog izmjene podataka",260);
         var locked=U.Muted("Sidrena cijena i aktualna cijena mogu se mijenjati samo kroz odgovarajuće postupke.");
         var editor=U.Vertical();
         editor.Children.Add(chosen);
@@ -580,7 +580,7 @@ public partial class MainWindow : Window
             try{_workspace.SetLocationActive(x.Id,x.Status!="Aktivna");Reload();Status("Status poslovnice je promijenjen.");}
             catch(Exception ex)when(ex is KeyNotFoundException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
         }));
-        form.Children.Add(U.Notice("Poslovnice su prikazane u vašoj evidenciji. Odabir poslovnice za pojedini cjenik još nije dostupan."));
+        form.Children.Add(U.Notice("Upravljajte poslovnicama i pregledajte njihove javne cjenike kroz povezanu WordPress stranicu."));
         outer.Children.Add(U.Split(U.Card("Lokacije i poslovnice",table),U.Card("Detalji lokacije",form)));
         return outer;
     }
@@ -605,7 +605,7 @@ public partial class MainWindow : Window
             using var requestLifetime=new CancellationTokenSource();
             _pendingWordPressRequest=requestLifetime;
             verifiedCjenik=null;verifiedArchive=null;
-            connectionStatus.Text="Provjeravam javno dostupne metapodatke…";
+            connectionStatus.Text="Provjeravam povezanost s web-stranicom…";
             published.Text="Provjeravam javno dostupne cjenike.";
             feeds.Children.Clear();
             try
@@ -676,7 +676,7 @@ public partial class MainWindow : Window
             OpenUrl(verifiedCjenik.AbsoluteUri);
         }));
         controls.Children.Add(U.Action("Otvori javnu arhivu",()=>{
-            if(verifiedArchive is null){Status("Najprije provjerite javni API.");return;}
+            if(verifiedArchive is null){Status("Najprije provjerite WordPress stranicu.");return;}
             OpenUrl(verifiedArchive.AbsoluteUri);
         }));
         outer.Children.Add(U.Card("Povezivanje sa službenim WordPress dodatkom",
