@@ -49,7 +49,7 @@ installer_text = (root / "desktop/installer/SIDRENA.iss").read_text(encoding="ut
 desktop_ci = (root / ".github/workflows/desktop-ci.yml").read_text(encoding="utf-8")
 release_ci = (root / ".github/workflows/desktop-release.yml").read_text(encoding="utf-8")
 android_gradle = (root / "android/app/build.gradle.kts").read_text(encoding="utf-8")
-android_version_match = re.search(r'versionName\\s*=\\s*"([^"]+)"', android_gradle)
+android_version_match = re.search(r'versionName\s*=\s*"([^"]+)"', android_gradle)
 android_version = android_version_match.group(1) if android_version_match else None
 if not desktop_version:
     issues.append("Missing Windows project version")
