@@ -24,6 +24,10 @@ try
             "Barcode plus confirmed reference filter");
         Expect(CatalogViewFilter.Apply(searchable,"Usluga","",2).Count==1,
             "Service-only unconfirmed reference filter");
+        Expect(CatalogViewFilter.Apply(searchable,"Proizvod","mlijeko SKU-1",0).Count==1,
+            "Multiple search terms match across item name and SKU");
+        Expect(CatalogViewFilter.Apply(searchable,"Proizvod","mlijeko unknown",0).Count==0,
+            "Every search term must match");
         Expect(CatalogViewFilter.Apply(searchable,"Proizvod","UNKNOWN",0).Count==0,
             "Unknown phrase does not return unrelated items");
         MustThrow(()=>CatalogViewFilter.Apply(searchable,"other","",0));

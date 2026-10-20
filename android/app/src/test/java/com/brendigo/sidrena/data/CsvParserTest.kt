@@ -20,6 +20,10 @@ class CsvParserTest {
         assertThrows(IllegalArgumentException::class.java) { CsvParser.parse("naziv;sku\n\"nezatvoreno") }
     }
 
+    @Test fun rejectsFormulaLikeMalformedHeaders() {
+        assertThrows(IllegalArgumentException::class.java) { CsvParser.items("name;price\nX;2") }
+    }
+
     @Test fun parsesSidrenaColumnsByName() {
         val items = CsvParser.items("id;vrsta;naziv;maloprodajna_cijena;sidrena_cijena;sidrena_datum\r\nd7;usluga;Dostava;4,50;5,00;2026-10-09\r\n")
         assertEquals("Dostava", items.single().name)

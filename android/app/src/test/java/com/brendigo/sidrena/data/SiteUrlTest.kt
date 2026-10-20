@@ -14,7 +14,7 @@ class SiteUrlTest {
     @Test fun rejectsPlainHttpAndLocalHosts() {
         for (url in listOf("http://primjer.hr", "https://localhost", "https://127.0.0.1",
             "https://admin:lozinka@primjer.hr", "https://primjer.hr/a/../wp")) {
-            assertThrows(url) { SiteUrl.parse(url) }
+            assertThrows(IllegalArgumentException::class.java) { SiteUrl.parse(url) }
         }
     }
 
@@ -24,9 +24,5 @@ class SiteUrlTest {
             site.approved("https://nepoznato.hr/wp-content/uploads/feed.csv")
         }
         assertEquals(null, site.publicLink("http://primjer.hr/cjenik"))
-    }
-
-    private fun assertThrows(url: String, block: () -> Unit) {
-        assertThrows(IllegalArgumentException::class.java) { block() }
     }
 }

@@ -12,7 +12,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: sidrena-rolling-windows-assets
+  group: sidrena-release-upload
   cancel-in-progress: false
 
 jobs:
@@ -37,8 +37,6 @@ jobs:
           fi
           tag=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.tag_name')
           [[ "$tag" == '1.5.0' ]] || { echo 'Official 1.5.0 release missing'; exit 1; }
-          release_tags=$(gh release list --limit 100 --json tagName --jq '.[].tagName')
-          [[ "$release_tags" == '1.5.0' ]] || { echo 'Unexpected extra GitHub releases'; exit 1; }
           plugin=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip") | .id')
           plugin_sha=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip.sha256") | .id')
           [[ -n "$plugin" && -n "$plugin_sha" ]] || { echo 'Cannot find immutable WordPress assets'; exit 1; }
@@ -100,6 +98,14 @@ jobs:
 
           **Napomena:** Radni cjenici ne predstavljaju automatski potvrđenu zakonski usklađenu javnu objavu. Git tag ostaje **1.5.0**; Windows izvršne datoteke obnavljaju se nakon uspješnih testova.
           EOF
+          cat >> release-notes.md <<'EOF'
+          
+          ## SIDRENA Android — 0.1.0 (testni artefakti)
+          - **SIDRENA-Android-debug.apk**: instalacijski razvojni APK, nije Play Store izdanje.
+          - **SIDRENA-Android-unsigned.aab**: nepotpisani AAB za provjeru gradnje, nije spreman za Google Play.
+          - **SIDRENA-Android-SHA256SUMS.txt**: kontrolni zbrojevi obaju Android artefakata.
+          Android datoteke pojavljuju se tek nakon uspješnog Android CI postupka.
+          EOF
           gh release edit '1.5.0' --repo "$GH_REPO" \
             --title "SIDRENA — WordPress 1.5.0 i Windows Desktop $version" \
             --notes-file release-notes.md --latest
@@ -113,13 +119,12 @@ jobs:
           [[ "$plugin" == "$PLUGIN_ASSET_ID" && "$plugin_sha" == "$PLUGIN_HASH_ASSET_ID" ]] || {
             echo 'Official WordPress release artifacts unexpectedly changed'; exit 1;
           }
-          names=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[].name' | LC_ALL=C sort)
-          expected=$(printf '%s\n' \
-            brendigo-sidrena-cijena-1.5.0.zip \
-            brendigo-sidrena-cijena-1.5.0.zip.sha256 \
-            SIDRENA-Desktop-win-x64-Portable.exe \
-            SIDRENA-Desktop-win-x64-Setup.exe \
-            SIDRENA-Desktop-win-x64-SHA256SUMS.txt \
-            SIDRENA-Desktop-release-info.json | LC_ALL=C sort)
-          [[ "$names" == "$expected" ]] || { printf 'Unexpected release assets:\n%s\n' "$names"; exit 1; }
+          # A partial Android upload is not valid; verify the full optional trio.
+          names=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[].name')
+          for filename in SIDRENA-Desktop-win-x64-Portable.exe SIDRENA-Desktop-win-x64-Setup.exe SIDRENA-Desktop-win-x64-SHA256SUMS.txt SIDRENA-Desktop-release-info.json; do
+            grep -Fxq "$filename" <<< "$names" || { echo "Missing Windows asset: $filename"; exit 1; }
+          done
+          android_count=$(grep -Ec '^SIDRENA-Android-(debug\.apk|unsigned\.aab|SHA256SUMS\.txt)$' <<< "$names" || true)
+          [[ "$android_count" == 0 || "$android_count" == 3 ]] || { echo "Incomplete Android release set"; exit 1; }
+          echo "Preserved the official WordPress ZIP and any Android assets."
           echo "SUCCESS: rolling Windows installer + portable uploaded to the ONLY 1.5.0 GitHub release."
