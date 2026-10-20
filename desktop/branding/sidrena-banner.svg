@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="260" viewBox="0 0 1000 260">
- <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d32"/><stop offset="1" stop-color="#18334e"/></linearGradient><linearGradient id="glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb45b"/><stop offset="1" stop-color="#f06b2c"/></linearGradient></defs>
+ <defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07182D"/><stop offset="1" stop-color="#123457"/></linearGradient>
+  <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFAA55"/><stop offset="1" stop-color="#FF852C"/></linearGradient>
+ </defs>
  <rect width="1000" height="260" rx="26" fill="url(#bg)"/>
- <circle cx="128" cy="128" r="93" fill="#233c59" stroke="#39516f" stroke-width="2"/>
- <circle cx="128" cy="74" r="12" fill="none" stroke="url(#glow)" stroke-width="9"/>
- <path d="M128 86 V190 M101 112 H155" stroke="url(#glow)" stroke-width="12" stroke-linecap="round"/>
- <path d="M56 151 Q128 237 200 151 M56 151 L56 181 M200 151 L200 181" stroke="url(#glow)" stroke-width="13" stroke-linecap="round" fill="none"/>
- <path d="M51 166 L83 173 M205 166 L173 173" stroke="url(#glow)" stroke-width="12" stroke-linecap="round"/>
+ <circle cx="128" cy="128" r="91" fill="#19304A" stroke="#28455F" stroke-width="2"/>
+ <path fill="url(#orange)" d="M72 76 Q80 61 102 61 H181 Q193 61 193 76 V89 H107 Q98 89 100 98 Q101 105 118 112 L158 128 Q193 140 193 164 Q193 195 155 195 H69 V172 H151 Q169 172 168 160 Q168 149 152 143 L106 125 Q69 111 69 91 Q69 82 72 76 Z"/>
  <text x="260" y="122" font-family="Segoe UI,Arial,sans-serif" font-size="66" font-weight="800" letter-spacing="5" fill="#ffffff">SIDRENA</text>
- <text x="265" y="169" font-family="Segoe UI,Arial,sans-serif" font-size="25" fill="#e0e9f2">Cijene pod kontrolom. Poslovanje s povjerenjem.</text>
- <text x="265" y="213" font-family="Segoe UI,Arial,sans-serif" font-size="16" letter-spacing="3" fill="#ff9a44">B R E N D I G O  L T D</text>
+ <text x="265" y="169" font-family="Segoe UI,Arial,sans-serif" font-size="25" fill="#E0E9F2">Cijene pod kontrolom. Poslovanje s povjerenjem.</text>
+ <text x="265" y="213" font-family="Segoe UI,Arial,sans-serif" font-size="18" letter-spacing="2" fill="#FF852C">by Brendigo</text>
 </svg>
