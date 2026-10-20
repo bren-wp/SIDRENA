@@ -72,7 +72,7 @@ class CatalogRepository {
                     val item = list.optJSONObject(i) ?: continue
                     val outlet = item.optString("outlet")
                     if (selectedOutlet.isNotEmpty() && outlet != selectedOutlet) continue
-                    if (selectedOutlet.isEmpty() && outlet != "webshop") continue
+                    if (selectedOutlet.isEmpty() && outlet.isNotBlank() && outlet != "webshop") continue
                     val url = site.publicLink(item.optString("url")) ?: continue
                     val format = item.optString("format")
                     if (format !in setOf("csv", "xml")) continue

@@ -169,7 +169,7 @@ private fun CatalogItemCard(item: PriceItem, service: Boolean, onClick: () -> Un
 
 fun formatPrice(raw: String): String {
     if (raw.isBlank()) return "—"
-    return raw.trim() + " €"
+    return com.brendigo.sidrena.data.PriceDisplay.euro(raw)
 }
 
 @Composable

@@ -143,7 +143,10 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
                     error = state.error,
                     canCancel = snapshot != null,
                     onInput = model::setSiteInput,
-                    onConnect = model::connect,
+                    onConnect = { value ->
+                        navigate("home")
+                        model.connect(value)
+                    },
                     onCancel = model::cancelEdit,
                 )
             } else {
