@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.brendigo.sidrena.SidrenaViewModel
 import com.brendigo.sidrena.data.CatalogSnapshot
@@ -171,7 +172,7 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
                     "search" -> SearchPage(data = snapshot, onDetails = {
                         selectedItem = it
                         navigate("detail")
-                    }, onBack = { navigate("products") })
+                    }, onBack = { navigate("products") }, onArchive = { navigate("archive") })
                     "detail" -> DetailPage(
                         item = selectedItem,
                         data = snapshot,

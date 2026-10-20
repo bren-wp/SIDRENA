@@ -1,36 +1,33 @@
 # SIDRENA Desktop za Windows
 
-![Brendigo SIDRENA identitet](branding/sidrena-banner.svg)
+![SIDRENA](branding/sidrena-banner.svg)
 
 **Vaše cijene. Vaša evidencija. Vaša kontrola.**
 
-SIDRENA Desktop je Windows aplikacija Brendigo LTD za upravljanje artiklima, uslugama, povijesnim i aktualnim cijenama te pripremu cjenika. Moderan tamni dizajn s toplim narančastim detaljima podržava različite veličine zaslona.
+SIDRENA Desktop **0.10.2** je Windows aplikacija Brendigo LTD za upravljanje proizvodima, uslugama, trenutačnim i sidrenim cijenama. Tamnoplavi izgled s narančastim detaljima prilagođava se većim i manjim prozorima.
 
-## Sve potrebno za svakodnevni rad
+## Funkcionalnosti
 
-- Brza pretraga i jednostavno uređivanje artikala i usluga.
-- Evidencija promjena cijena s razlogom i povijesnim pregledom.
-- Upravljanje potvrđenim povijesnim referentnim cijenama.
-- Priprema CSV/XML datoteka i cjenika za pregled i ispis.
-- Poslovnice, arhiva i sigurnosne kopije.
-- Siguran uvid u javno objavljene cjenike službenog WordPress dodatka.
+- Upravljanje lokalnim katalozima i uslugama uz brzu pretragu.
+- Promjene cijena s evidencijom vremena i razloga.
+- Sidrene cijene s dokumentiranim datumom i izvorom.
+- Priprema i pregled CSV/XML cjenika.
+- Poslovnice, arhiva, izvještaji i sigurnosne kopije.
+- Pregled javnih WordPress cjenika putem HTTPS-a.
+- Oporavak lokalnih podataka uz sigurnosne provjere.
 
-## Preuzimanje za Windows 10/11 x64
+## Preuzimanje
 
-[**SIDRENA Setup EXE**](https://github.com/bren-wp/SIDRENA/releases/download/1.5.0/SIDRENA-Desktop-win-x64-Setup.exe) · [**SIDRENA Portable EXE**](https://github.com/bren-wp/SIDRENA/releases/download/1.5.0/SIDRENA-Desktop-win-x64-Portable.exe)
+[**Windows Setup.exe**](https://github.com/bren-wp/SIDRENA/releases) · [**Windows Portable.exe**](https://github.com/bren-wp/SIDRENA/releases)
 
-Setup uključuje prikaz komercijalne licence, prilagođeni grafički identitet, opciju prečaca i deinstalaciju koja čuva vaše poslovne podatke.
+Obje verzije koriste isti direktorij korisničkih podataka u sustavu Windows. Pri ažuriranju ili deinstalaciji lokalna evidencija ne briše se automatski.
 
-## Brendigo LTD
+## WordPress povezivanje
 
-© 2026 Brendigo LTD. Windows aplikacija distribuira se uz [komercijalne uvjete](legal/EULA-HR.txt), uz potrebnu provjeru ranijih prava i obveza licenci trećih strana. WordPress dodatak 1.5.0 zadržava GPLv2 ili noviju. [Opseg licenci](../LICENSE-SCOPE.md).
+Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Cijena 1.5.0**. Lokalni Windows katalog ne objavljuje se automatski na WordPressu.
 
-## WordPress poveznica
+## Upute i dokumentacija
 
-[Brendigo Sidrena Cijena 1.5.0](https://wordpress.org/plugins/brendigo-sidrena-cijena/) jedini je službeni WordPress dodatak. Windows aplikacija omogućuje pregled njegovih javnih cjenika, arhive i izvora po poslovnicama; autorizirana dvosmjerna sinkronizacija i automatsko objavljivanje još nisu omogućeni. Prije javne objave potrebno je provjeriti cjenike i primjenjive propise.
+[Izdanja](https://github.com/bren-wp/SIDRENA/releases) · [Instalacija](installer/README.md) · [Pomoć](mailto:sidrena@brendigo.com) · [Licencija](legal/EULA-HR.txt)
 
-## Stvarni prikazi
-
-Windows CI provjerava deset ekrana pri tri veličine prozora i [sprema stvarne WPF snimke](https://github.com/bren-wp/SIDRENA/actions/workflows/desktop-ci.yml). Grafika na vrhu je brending, a ne stvarni screenshot.
-
-**Windows izdanje 0.10.1:** poboljšano pretraživanje više pojmova unutar istoga kataloga; izraz poput `mlijeko SKU-1` pronalazi stavku prema nazivu i SKU-u. Dodani su regresijski testovi.\n\n**Ažuriranja:** jedino izdanje i tag 1.5.0. Pri uspješnoj Windows izgradnji osvježavaju se Portable/Setup datoteke i kontrolni zbrojevi, bez izmjene službenog WordPress paketa.
+**SIDRENA by Brendigo**

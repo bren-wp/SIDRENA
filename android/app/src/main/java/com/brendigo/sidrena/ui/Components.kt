@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun BrandHeader(onNotifications: () -> Unit = {}) {
@@ -58,7 +59,7 @@ fun BrandHeader(onNotifications: () -> Unit = {}) {
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Text("SIDRENA", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold,
-                letterSpacing = androidx.compose.ui.unit.TextUnit(0.4f, androidx.compose.ui.unit.TextUnitType.Sp))
+                letterSpacing = 0.4.sp)
             Text("by Brendigo", style = MaterialTheme.typography.labelSmall, color = TextMuted)
         }
         Icon(

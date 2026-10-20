@@ -8,7 +8,7 @@
     <SolidColorBrush x:Key="BorderBrush" Color="#28455F"/>
     <SolidColorBrush x:Key="TextBrush" Color="#F8FAFC"/>
     <SolidColorBrush x:Key="MutedBrush" Color="#A9BAD1"/>
-    <SolidColorBrush x:Key="AccentBrush" Color="#FF741B"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF852C"/>
     <SolidColorBrush x:Key="GreenBrush" Color="#22C55E"/>
     <SolidColorBrush x:Key="BlueBrush" Color="#3B82F6"/>
     <FontFamily x:Key="AppFont">Segoe UI</FontFamily>

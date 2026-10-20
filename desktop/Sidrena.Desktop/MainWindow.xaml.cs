@@ -32,6 +32,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        EditionLabel.Text="SIDRENA Desktop "+GetDesktopVersion()+" · Brendigo LTD";
         ConfigureNavigationIcons();
         var workArea=SystemParameters.WorkArea;
         var initialSize=ResponsiveLayoutPolicy.Initial(workArea.Width,workArea.Height);
@@ -729,6 +730,8 @@ public partial class MainWindow : Window
         return outer;
     }
 
+    private static string GetDesktopVersion()=>typeof(MainWindow).Assembly.GetName().Version?.ToString(3)??"0.10.2";
+
     private UIElement BuildSettings()
     {
         var outer=U.Vertical();
@@ -786,11 +789,11 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Opće postavke",U.Muted("Jezik: Hrvatski · Izgled: Tamni · Jednostavno upravljanje"),
             U.Notice("Vaše poslovne podatke možete dodatno zaštititi izradom redovitih sigurnosnih kopija.")));
         outer.Children.Add(U.Card("Informacije o izdanju",
-            U.Text("SIDRENA Desktop 0.10.0",18,true),
+            U.Text("SIDRENA Desktop "+GetDesktopVersion(),18,true),
             U.Muted("Windows 10/11 · Brendigo LTD · Komercijalna licencija"),
             U.Notice("Povezani WordPress dodatak Brendigo Sidrena Cijena zadržava verziju 1.5.0."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
-                OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0"),true),
+                OpenUrl("https://github.com/bren-wp/SIDRENA/releases"),true),
             U.Action("Uvjeti komercijalne licence",ShowCommercialLicense),
             U.Action("Informacije o programu",()=>OpenUrl("https://brendigo.com/"))));
         return outer;
@@ -809,7 +812,7 @@ public partial class MainWindow : Window
             U.Muted("Ctrl + N — otvori artikle  ·  F1 — pomoć"),
             U.Text("Preuzimanje i ažuriranja",18,true),
             U.Muted("Setup instalira aplikaciju, a prijenosna inačica radi bez instalacije. Vaši podaci ostaju sačuvani pri ažuriranju."),
-            U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases/tag/1.5.0")),
+            U.Action("Otvori Windows preuzimanja",()=>OpenUrl("https://github.com/bren-wp/SIDRENA/releases")),
             U.Text("Pravne informacije",18,true),
             U.Muted("Nositelj prava na Windows aplikaciju: Brendigo LTD."),
             U.Action("Pročitaj licencu",ShowCommercialLicense),
