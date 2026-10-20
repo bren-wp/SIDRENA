@@ -1,8 +1,8 @@
 namespace Sidrena.Core;
 
 /// <summary>
-/// In-memory view filter for the local catalogue. No repeated SQLite reads
-/// on every keystroke; callers refresh their snapshot after each mutation.
+/// Fast in-memory search against a single catalogue snapshot. Every whitespace-
+/// separated term must match either the name, SKU, or barcode, in any order.
 /// </summary>
 public static class CatalogViewFilter
 {
@@ -17,12 +17,13 @@ public static class CatalogViewFilter
         var phrase=(query??string.Empty).Trim();
         if(phrase.Length>256)
             throw new ArgumentException("Pretraživanje mora imati najviše 256 znakova.",nameof(query));
+        var terms=phrase.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
         return items.Where(item=>
             item.Kind==kind &&
-            (phrase.Length==0 ||
-             item.Name.Contains(phrase,StringComparison.CurrentCultureIgnoreCase) ||
-             item.Sku.Contains(phrase,StringComparison.OrdinalIgnoreCase) ||
-             item.Barcode.Contains(phrase,StringComparison.OrdinalIgnoreCase)) &&
+            terms.All(term=>
+                item.Name.Contains(term,StringComparison.CurrentCultureIgnoreCase) ||
+                item.Sku.Contains(term,StringComparison.OrdinalIgnoreCase) ||
+                item.Barcode.Contains(term,StringComparison.OrdinalIgnoreCase)) &&
             (anchorMode switch
             {
                 1 => item.AnchorCents.HasValue,

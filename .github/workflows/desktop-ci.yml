@@ -10,6 +10,7 @@ on:
   pull_request:
     paths:
       - 'desktop/**'
+      - 'tools/audit_desktop.py'
       - '.github/workflows/desktop-ci.yml'
   push:
     branches: [main]
@@ -199,7 +200,7 @@ jobs:
           $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
-            desktop_version='0.10.0'
+            desktop_version='0.10.1'
             wordpress_plugin_version='1.5.0'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA

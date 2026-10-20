@@ -1,0 +1,30 @@
+name: SIDRENA all-platform source audit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check official WordPress package fingerprint, duplicates, binaries
+        run: python3 tools/audit_repository.py
+      - name: PHP syntax validation across the official plugin
+        shell: bash
+        run: |
+          set -euo pipefail
+          find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 |
+            xargs -0 -n 1 php -l >/tmp/sidrena-php-audit.log
+          tail -n 4 /tmp/sidrena-php-audit.log
+      - name: Desktop source and obvious dead-code audit
+        run: python3 tools/audit_desktop.py
+      - name: Android source and obvious dead-code audit
+        run: python3 tools/audit_android.py

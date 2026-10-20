@@ -11,7 +11,7 @@
 
 ![Platform](https://img.shields.io/badge/Windows-10%20%2F%2011-1a3551?style=flat-square)
 ![Plugin](https://img.shields.io/badge/WordPress-1.5.0-f07837?style=flat-square)
-![Desktop](https://img.shields.io/badge/Desktop-0.10.0-1a3551?style=flat-square)
+![Desktop](https://img.shields.io/badge/Desktop-0.10.1-1a3551?style=flat-square)
 ![Publisher](https://img.shields.io/badge/Brendigo-LTD-f07837?style=flat-square)
 </div>
 
@@ -76,7 +76,7 @@ Službeni WordPress dodatak ostaje pod GPLv2 ili novijom. Nova EULA ne može ret
 
 ## Jedno službeno izdanje
 
-Samo **jedan GitHub Release i tag: 1.5.0**. Službeni WordPress ZIP i njegova SHA-256 datoteka ostaju netaknuti, dok uspješan Windows build na main zamjenjuje samo Windows Portable.exe, Setup.exe i njihove kontrolne datoteke. Windows ima zasebnu internu verziju (Windows **0.10.0**).
+Samo **jedan GitHub Release i tag: 1.5.0**. Službeni WordPress ZIP i njegova SHA-256 datoteka ostaju netaknuti, dok uspješan Windows build na main zamjenjuje samo Windows Portable.exe, Setup.exe i njihove kontrolne datoteke. Windows ima zasebnu internu verziju (Windows **0.10.1**).
 
 [Windows dokumentacija](desktop/README.md) · [Instalacija](desktop/installer/README.md) · [UI audit](docs/DESKTOP-07-AUDIT.md)
 

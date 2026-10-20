@@ -33,4 +33,4 @@ Setup uključuje prikaz komercijalne licence, prilagođeni grafički identitet, 
 
 Windows CI provjerava deset ekrana pri tri veličine prozora i [sprema stvarne WPF snimke](https://github.com/bren-wp/SIDRENA/actions/workflows/desktop-ci.yml). Grafika na vrhu je brending, a ne stvarni screenshot.
 
-**Ažuriranja:** jedino izdanje i tag 1.5.0. Pri uspješnoj Windows izgradnji osvježavaju se Portable/Setup datoteke i kontrolni zbrojevi, bez izmjene službenog WordPress paketa.
+**Windows izdanje 0.10.1:** poboljšano pretraživanje više pojmova unutar istoga kataloga; izraz poput `mlijeko SKU-1` pronalazi stavku prema nazivu i SKU-u. Dodani su regresijski testovi.\n\n**Ažuriranja:** jedino izdanje i tag 1.5.0. Pri uspješnoj Windows izgradnji osvježavaju se Portable/Setup datoteke i kontrolni zbrojevi, bez izmjene službenog WordPress paketa.

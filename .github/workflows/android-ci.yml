@@ -1,0 +1,98 @@
+name: SIDRENA Android build, tests and audited artifacts
+
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'tools/audit_android.py'
+      - '.github/workflows/android-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'tools/audit_android.py'
+      - '.github/workflows/android-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android Kotlin compile, tests, lint, APK and AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK 36 from hosted runner command-line tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          manager=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)
+          test -x "$manager"
+          yes | "$manager" --licenses >/dev/null || true
+          "$manager" --install "platforms;android-36" "build-tools;36.0.0"
+          test -d "$ANDROID_HOME/platforms/android-36"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Android source/dead-code and security scan
+        run: python3 ../tools/audit_android.py
+      - name: Unit tests, lint, installable debug APK, release AAB
+        run: gradle --no-daemon --stacktrace :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:bundleRelease
+      - name: Verify built artifacts and hash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          test -s app/build/outputs/bundle/release/app-release.aab
+          mkdir -p ../artifacts/android
+          cp app/build/outputs/apk/debug/app-debug.apk ../artifacts/android/SIDRENA-Android-debug.apk
+          cp app/build/outputs/bundle/release/app-release.aab ../artifacts/android/SIDRENA-Android-unsigned.aab
+          cd ../artifacts/android
+          sha256sum SIDRENA-Android-debug.apk SIDRENA-Android-unsigned.aab > SIDRENA-Android-SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SIDRENA-Android-unsigned-build
+          path: artifacts/android/
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Attach verified Android build to existing official release
+    needs: android
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    concurrency:
+      group: sidrena-release-upload
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: SIDRENA-Android-unsigned-build
+          path: release
+      - name: Verify main commit and upload Android test artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq .object.sha)
+          if [[ "$current" != "$GITHUB_SHA" ]]; then
+            echo "A newer main revision exists; skipping obsolete Android upload."
+            exit 0
+          fi
+          (cd release && sha256sum -c SIDRENA-Android-SHA256SUMS.txt)
+          gh release view 1.5.0 --repo "$GH_REPO" >/dev/null
+          gh release upload 1.5.0 --repo "$GH_REPO" --clobber             release/SIDRENA-Android-debug.apk             release/SIDRENA-Android-unsigned.aab             release/SIDRENA-Android-SHA256SUMS.txt
+          echo 'Uploaded debug APK and unsigned AAB; these are NOT signed Play Store deliverables.'
