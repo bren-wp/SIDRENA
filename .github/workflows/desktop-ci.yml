@@ -195,9 +195,20 @@ jobs:
             }
           }
           $checks | Set-Content (Join-Path $folder 'SIDRENA-Desktop-win-x64-SHA256SUMS.txt') -Encoding utf8
+          # Derive metadata from the compiled project, never from a copied version literal.
+          $desktopProject = [xml](Get-Content 'desktop/Sidrena.Desktop/Sidrena.Desktop.csproj' -Raw)
+          $desktopVersion = [string]$desktopProject.Project.PropertyGroup.Version
+          if ($desktopVersion -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Invalid desktop project version: $desktopVersion"
+          }
+          $installerDefinition = Get-Content 'desktop/installer/SIDRENA.iss' -Raw
+          $expectedInstallerVersion = '#define DesktopVersion "' + $desktopVersion + '"'
+          if (!$installerDefinition.Contains($expectedInstallerVersion)) {
+            throw "Installer version does not match project version $desktopVersion"
+          }
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
-            desktop_version='0.10.1'
+            desktop_version=$desktopVersion
             wordpress_plugin_version='1.5.0'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA

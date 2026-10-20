@@ -41,6 +41,30 @@ if source_digest != expected:
 if not (plugin / "brendigo-sidrena-cijena.php").exists():
     issues.append("Official WordPress plugin entrypoint missing")
 
+# Cross-platform release metadata must agree before expensive CI packaging.
+import xml.etree.ElementTree as ET
+csproj = root / "desktop/Sidrena.Desktop/Sidrena.Desktop.csproj"
+desktop_version = ET.parse(csproj).getroot().findtext("./PropertyGroup/Version")
+installer_text = (root / "desktop/installer/SIDRENA.iss").read_text(encoding="utf-8")
+desktop_ci = (root / ".github/workflows/desktop-ci.yml").read_text(encoding="utf-8")
+release_ci = (root / ".github/workflows/desktop-release.yml").read_text(encoding="utf-8")
+android_gradle = (root / "android/app/build.gradle.kts").read_text(encoding="utf-8")
+android_version_match = re.search(r'versionName\s*=\s*"([^"]+)"', android_gradle)
+android_version = android_version_match.group(1) if android_version_match else None
+if not desktop_version:
+    issues.append("Missing Windows project version")
+else:
+    if f'#define DesktopVersion "{desktop_version}"' not in installer_text:
+        issues.append("Windows installer version does not match project version")
+    if f"WINDOWS_VERSION: '{desktop_version}'" not in release_ci:
+        issues.append("Windows release version does not match project version")
+if not android_version or f"ANDROID_VERSION: '{android_version}'" not in release_ci:
+    issues.append("Android release version does not match Gradle versionName")
+if "desktop_version=$desktopVersion" not in desktop_ci or "$desktopProject.Project.PropertyGroup.Version" not in desktop_ci:
+    issues.append("Windows artifact manifest must derive version from desktop project")
+if "WORDPRESS_VERSION: '1.5.0'" not in release_ci:
+    issues.append("WordPress source must keep pinned version 1.5.0")
+
 # Surface candidate duplicated class names without modifying any code.
 for extension, roots, pattern in (
     (".cs", [desktop], r"\b(?:class|record|struct)\s+([A-Z]\w+)"),
