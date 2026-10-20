@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Archive
@@ -37,6 +38,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.brendigo.sidrena.R
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,23 +52,27 @@ fun BrandHeader(onNotifications: () -> Unit = {}) {
         modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier.size(44.dp).background(Accent, RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text("S", color = Background, style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Black)
-        }
+        Image(
+            painter = painterResource(R.drawable.ic_sidrena_mark),
+            contentDescription = null,
+            modifier = Modifier.size(44.dp),
+        )
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Text("SIDRENA", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 0.4.sp)
             Text("by Brendigo", style = MaterialTheme.typography.labelSmall, color = TextMuted)
         }
-        Icon(
-            Icons.Outlined.NotificationsNone, contentDescription = "Obavijesti",
-            modifier = Modifier.size(28.dp).clickable(onClick = onNotifications), tint = TextMuted,
-        )
+        Box(
+            modifier = Modifier.size(48.dp).clickable(onClick = onNotifications),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                Icons.Outlined.NotificationsNone,
+                contentDescription = "Informacije o zadnjoj objavi",
+                modifier = Modifier.size(26.dp), tint = TextMuted,
+            )
+        }
     }
 }
 

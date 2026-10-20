@@ -37,6 +37,7 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
     val context = LocalContext.current
     var page by rememberSaveable { mutableStateOf("home") }
     var selectedItem by remember { mutableStateOf<PriceItem?>(null) }
+    var detailReturnPage by rememberSaveable { mutableStateOf("products") }
     var alert by remember { mutableStateOf<String?>(null) }
     var askDisconnect by remember { mutableStateOf(false) }
 
@@ -70,7 +71,14 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
         }
     }
 
-    BackHandler(enabled = page != "home" && !state.isEditingSite) { navigate("home") }
+    BackHandler(enabled = page != "home" && !state.isEditingSite) {
+        navigate(when (page) {
+            "detail" -> detailReturnPage
+            "about" -> "settings"
+            "search" -> "products"
+            else -> "home"
+        })
+    }
 
     if (askDisconnect) {
         AlertDialog(
@@ -154,6 +162,7 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
                         isService = page == "services",
                         onDetails = {
                             selectedItem = it
+                            detailReturnPage = page
                             navigate("detail")
                         },
                         onSearch = { navigate("search") },
@@ -171,12 +180,13 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
                     )
                     "search" -> SearchPage(data = snapshot, onDetails = {
                         selectedItem = it
+                        detailReturnPage = "search"
                         navigate("detail")
                     }, onBack = { navigate("products") }, onArchive = { navigate("archive") })
                     "detail" -> DetailPage(
                         item = selectedItem,
                         data = snapshot,
-                        onBack = { navigate("products") },
+                        onBack = { navigate(detailReturnPage) },
                         onOpen = ::openPublic,
                     )
                     "settings" -> SettingsPage(

@@ -7,7 +7,7 @@ import org.junit.Test
 class SiteUrlTest {
     @Test fun supportsWordPressSubdirectories() {
         val site = SiteUrl.parse("https://primjer.hr/trgovina")
-        assertEquals("https://primjer.hr:443/trgovina/wp-json/brendigo-sidrena/v1/cjenici",
+        assertEquals("https://primjer.hr/trgovina/wp-json/brendigo-sidrena/v1/cjenici",
             site.endpoint("wp-json/brendigo-sidrena/v1/cjenici").toASCIIString())
     }
 

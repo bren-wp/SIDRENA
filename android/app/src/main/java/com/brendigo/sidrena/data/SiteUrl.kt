@@ -34,7 +34,7 @@ class SiteUrl private constructor(val base: URI) {
                 "Putanja web-stranice nije podržana."
             }
             val path = if (originalPath.isBlank()) "/" else originalPath.trimEnd('/') + "/"
-            val normalized = URI("https", null, host, 443, path, null, null)
+            val normalized = URI("https", null, host, -1, path, null, null)
             return SiteUrl(normalized)
         }
     }
