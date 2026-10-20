@@ -1,48 +1,47 @@
-# SIDRENA · Android
+# SIDRENA za Android
 
-**Status: prvi funkcionalni prototip za čitanje javnih cjenika.** Brendigo · `com.brendigo.sidrena` · hrvatski.
+**SIDRENA by Brendigo** · **0.2.0** · `com.brendigo.sidrena`
 
-## Što stvarno radi
+![SIDRENA](../desktop/branding/sidrena-banner.svg)
 
-- 100 % native Kotlin + Jetpack Compose + Material 3; bez WebViewa i bez računa treće strane.
-- Povezivanje korisnički odabrane HTTPS WordPress stranice sa SIDRENA 1.5.0 dodatkom.
-- Čitanje objavljenih proizvoda, usluga, referentnih cijena i datuma iz stvarnog javnog REST/CSV sučelja, odvojeno po poslovnici.
-- Pretraga po nazivu, SKU-u i ID-u, pregled objavljenih arhivskih zapisa i javnog cjenika.
-- Ručno osvježavanje; sprema se samo javna adresa stranice.
-- Nema oglasa, SDK-a za praćenje, lozinki, pristupa administratoru ili zahtjeva za nepotrebnim Android dozvolama.
+Pregledajte objavljene cjenike, proizvode, usluge i poslovnice sa svoje WordPress stranice, uz prepoznatljiv tamnoplavi izgled i narančaste kontrole.
 
-### Postojeći WordPress API (read-only)
+## Zasloni i mogućnosti
 
-`GET /wp-json/brendigo-sidrena/v1/cjenici`
+| Zaslon | Mogućnosti |
+|---|---|
+| Povezivanje | HTTPS adresa WordPress stranice |
+| Početna | Povezana stranica, pregled podataka, zadnja objava i brzi pristup |
+| Proizvodi | Popis, pretraga, filtri sidrenih cijena i dostupnost |
+| Usluge | Objavljene usluge i pripadajuće cijene |
+| Detalj stavke | SKU, trenutačna i sidrena cijena, datum i jedinica mjere |
+| Arhiva | CSV/XML zapisi, filtriranje i otvaranje datoteka |
+| Poslovnice | Pregled i odabir poslovnice ili webshopa |
+| Pretraživanje | Pretraga po nazivima, šiframa i ID-ovima |
+| Postavke | Povezivanje, osvježavanje, odspajanje i informacije o aplikaciji |
+| O aplikaciji | Verzija, kratke upute i kontakt podrške |
 
-`GET /wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv`
+Izgled je usklađen s [Android dizajnerskim standardom](../docs/ANDROID-UI-REFERENCE.md).
 
-`GET /wp-json/brendigo-sidrena/v1/cjenici/usluge/csv`
+## Povezivanje sa SIDRENA dodatkom
 
-`GET /wp-json/brendigo-sidrena/v1/arhiva`
+Aplikacija koristi javno dostupne rute postojećeg WordPress dodatka:
 
-Odgovor za pojedini CSV može biti HTTP 302 prema već objavljenoj datoteci. Klijent provjerava HTTPS i istu domenu prilikom preuzimanja i preusmjeravanja. Ako je WordPress konfiguriran tako da služi datoteke s druge CDN domene, pristup se **namjerno odbija** do uvođenja sigurnog upravljanja dopuštenim domenama.
+- `GET /wp-json/brendigo-sidrena/v1/cjenici`
+- `GET /wp-json/brendigo-sidrena/v1/cjenici/proizvodi/csv`
+- `GET /wp-json/brendigo-sidrena/v1/cjenici/usluge/csv`
+- `GET /wp-json/brendigo-sidrena/v1/arhiva`
 
-CSV datoteke koriste znak `;`, UTF-8 BOM i quoted field format. Android čita polja prema njihovim nazivima, ne prema rednom broju. Podaci se *ne modificiraju* niti se automatski koriste kao dokaz zakonske usklađenosti.
+Pojedinačni CSV može se preusmjeriti na objavljenu datoteku na istoj HTTPS domeni. Sadržaj poslovnica i arhive ovisi o stvarno objavljenim podacima na stranici. Aplikacija ne prikazuje izmišljene podatke kada javno sučelje ne nudi povijest promjena ili druge informacije.
 
-## Izrada
+**Uređivanje cijena ostaje u WordPressu ili Windows aplikaciji** dok ne postoji autorizirani REST API za mobilno uređivanje.
 
-Otvorite **samo `android/`** kao projekt u Android Studiju (JDK 17, Android SDK API 36), sinkronizirajte Gradle i pokrenite modul `app`. Ako nemate Gradle na računalu, generirajte standardni Gradle wrapper lokalno naredbom `gradle wrapper --gradle-version 8.13` pa koristite `./gradlew :app:assembleDebug :app:testDebugUnitTest`.
+## Instalacija
 
-Prototip ne uključuje Gradle wrapper JAR, provjereni APK/AAB ni automatski GitHub CI. Build i testovi **nisu izvršeni u ovom razvojnom okruženju**, stoga nije spreman za Play Store.
+[Otvorite GitHub izdanja](https://github.com/bren-wp/SIDRENA/releases) i odaberite Android APK. Za izdavanje u Google Playu potreban je odgovarajući potpisani AAB.
 
-## Sigurnosni i funkcionalni opseg
+## Tehnička dokumentacija
 
-- Jedina Android dozvola je INTERNET. Promet ide samo putem HTTPS-a.
-- Nisu dopuštene lokalne/IP adrese, HTTP veze, korisnički podaci u URL-u ili preusmjeravanja na drugu domenu.
-- Veličina REST/CSV odgovora je ograničena, a parsiranje je zaštićeno od neispravno zatvorenih CSV navodnika.
-- Nema automatske sinkronizacije u pozadini niti nepotrebne potrošnje baterije.
-- Android Backup/Device Transfer isključeni su; nema tajni u izvornom kodu.
-- Nema spremanja javnog kataloga izvan memorije i nema obećanja offline pristupa.
+Izvorni kod koristi Kotlin, Jetpack Compose i Material 3. Za izgradnju otvorite mapu `android/` u Android Studiju (JDK 17, Android SDK 36, Gradle 8.13). Provjere kompilacije, lint i JUnit nalaze se u GitHub Actions postupku.
 
-## Što još nije implementirano
-
-- **Autorizirano uređivanje i objavljivanje cijena**, dodavanje usluga, upravljanje poslovnicama te uvoz/izvoz s Androida: WordPress plugin ima samo javne read-only rute. Ne koristiti administratorsku lozinku kao prečac; za pisanje su potrebni novi, posebno projektirani sigurni API endpointi, odgovarajuće WP capability provjere, ograničena autentifikacija i audit log.
-- Room cache s označavanjem zastarjelih podataka, preuzimanje datoteka putem Android Storage Access Frameworka, potpuni a11y i tablet QA, automatizirani build, uređajni testovi, pravna provjera i Play Data Safety deklaracija.
-
-Komponente zadržavaju izvorne nazive poput SIDRENA/Brendigo, a WordPress i Windows kod izvan `android/` nisu izmijenjeni.
+[Izdanja](RELEASE.md) · [Audit](../docs/CODE-AUDIT-2026-10-21.md) · [Podrška](mailto:sidrena@brendigo.com)

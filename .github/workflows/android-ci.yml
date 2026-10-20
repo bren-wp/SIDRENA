@@ -8,10 +8,6 @@ on:
       - '.github/workflows/android-ci.yml'
   push:
     branches: [main]
-    paths:
-      - 'android/**'
-      - 'tools/audit_android.py'
-      - '.github/workflows/android-ci.yml'
   workflow_dispatch:
 
 permissions:
@@ -63,36 +59,3 @@ jobs:
           path: artifacts/android/
           if-no-files-found: error
           retention-days: 30
-
-  release:
-    name: Attach verified Android build to existing official release
-    needs: android
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    concurrency:
-      group: sidrena-release-upload
-      cancel-in-progress: false
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: SIDRENA-Android-unsigned-build
-          path: release
-      - name: Verify main commit and upload Android test artifacts
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq .object.sha)
-          if [[ "$current" != "$GITHUB_SHA" ]]; then
-            echo "A newer main revision exists; skipping obsolete Android upload."
-            exit 0
-          fi
-          (cd release && sha256sum -c SIDRENA-Android-SHA256SUMS.txt)
-          gh release view 1.5.0 --repo "$GH_REPO" >/dev/null
-          gh release upload 1.5.0 --repo "$GH_REPO" --clobber             release/SIDRENA-Android-debug.apk             release/SIDRENA-Android-unsigned.aab             release/SIDRENA-Android-SHA256SUMS.txt
-          echo 'Uploaded debug APK and unsigned AAB; these are NOT signed Play Store deliverables.'

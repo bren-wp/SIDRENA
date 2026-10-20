@@ -14,9 +14,6 @@ on:
       - '.github/workflows/desktop-ci.yml'
   push:
     branches: [main]
-    paths:
-      - 'desktop/**'
-      - '.github/workflows/desktop-ci.yml'
   workflow_dispatch:
 
 permissions:

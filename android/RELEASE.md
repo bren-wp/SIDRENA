@@ -1,19 +1,25 @@
-# SIDRENA Android izdavanje i QA
+# SIDRENA — verzije i izdavanja
 
-Android verzija 0.1.0 i WordPress verzija 1.5.0 **nisu ista verzija**. Windows verzija ostaje 0.10.0 dok se ne promijeni Windows kod i ne prođe release provjera.
+| Komponenta | Verzija |
+|---|---|
+| Android | **0.2.0** |
+| Windows Desktop | **0.10.2** |
+| WordPress dodatak | **1.5.0** |
 
-## CI za Android
-`.github/workflows/android-ci.yml` gradi kod na Ubuntu GitHub runneru s JDK 17, Android SDK 36 i Gradle 8.13:
-- Android dead-code/security preflight (konzervativna statička provjera)
-- Android JUnit testovi i Android lint
-- Instalacijski **debug APK** za interno testiranje
-- **Nepotpisani release AAB** za validaciju gradnje, ne za objavu na Google Playu
-- SHA-256 checksum za obje datoteke
+Verzije su **odvojene**. WordPress izvor i ZIP ostaju nepromijenjeni dok nema stvarnih promjena u dodatku.
 
-Ako prođe CI na `main`, može dodati te **testne** datoteke u postojeće izdanje `1.5.0`; ne mijenja WordPress ZIP. Niti jedan od tih artefakata **nije službeni potpisani Android release**. Stabilno Android potpisivanje zahtijeva trajni privatni upload ključ pohranjen u GitHub Actions secrets i odobren release postupak. Nikad ne committati keystore ili lozinke.
+## Provjere i artefakti
 
-## Windows i WordPress
-Windows desktop CI i dalje odvojeno testira WPF aplikaciju, SQL integritet, deset ekrana i Inno Setup instalaciju. Njegovo objavljivanje ne smije ukloniti Android datoteke. WordPress dodatak i ZIP ostaju 1.5.0 dok se `wordpress/` ne mijenja. Svaka promjena WordPress koda zahtijeva zasebno povećanje WordPress verzije i novi reproducibilni ZIP.
+Automatski GitHub Actions postupci izvode Android Kotlin/JUnit/lint provjere i grade APK i AAB, a Windows postupak pokreće .NET testove, WPF navigacijske provjere, izrađuje prijenosnu aplikaciju i Inno Setup instalaciju. Poseban audit pokriva WordPress PHP sintaksu i integritet službenog paketa, Windows i Android statičke provjere.
 
-## Još otvoreno
-Službena release verzija s potpisanim AAB/APK, test na stvarnom telefonu, Play Data Safety, uređivanje WordPress podataka uz autentifikaciju i interoperabilnost s WooCommerce/WP nisu verificirani. Ne označavati aplikaciju kao potpuno dovršenu ili kao produkcijski potpisanu prije tih provjera.
+Novo objedinjeno izdanje sadrži:
+- `SIDRENA-Android-debug.apk` — Android instalacijski APK za provjeru.
+- `SIDRENA-Android-unsigned.aab` — AAB bez produkcijskog potpisa.
+- `SIDRENA-Desktop-win-x64-Portable.exe` — Windows prijenosna aplikacija.
+- `SIDRENA-Desktop-win-x64-Setup.exe` — Windows instalacijski program.
+- `brendigo-sidrena-cijena-1.5.0.zip` — **neizmijenjeni** službeni WordPress paket.
+- Kontrolne SHA-256 datoteke i Windows izvještaj o porijeklu binarnih datoteka.
+
+Objava novog paketa moguća je tek kada oba CI postupka uspješno završe za isti commit, kontrolni zbrojevi odgovaraju i WordPress paket zadrži izvorni SHA-256. U nedostatku produkcijskog potpisnog ključa Android AAB ne treba predstavljati kao spreman za Google Play.
+
+[GitHub izdanja](https://github.com/bren-wp/SIDRENA/releases)

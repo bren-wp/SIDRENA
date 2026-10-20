@@ -18,8 +18,8 @@
                     <StackPanel Orientation="Horizontal">
                         <Viewbox x:Name="BrandMark" Width="62" Height="62">
                             <Canvas Width="128" Height="128">
-                                <Ellipse Canvas.Left="57" Canvas.Top="3" Width="14" Height="14" Fill="{StaticResource AccentBrush}"/>
-                                <Path Fill="{StaticResource AccentBrush}" Data="M60 19 H68 V91 H60 Z M52 38 H77 V46 H52 Z M12 78 L32 88 L42 71 L50 77 L37 99 Q51 114 64 113 Q82 112 93 99 L81 77 L89 71 L99 88 L119 78 L116 107 L103 97 Q87 123 64 124 Q40 123 25 97 L12 107 Z"/>
+                                <Path Fill="{StaticResource AccentBrush}" Data="M21 27 Q29 14 47 14 H107 V30 H50 Q43 30 45 38 Q45 43 61 47 L83 53 Q108 61 108 82 Q108 112 74 114 H19 V98 H72 Q90 98 90 85 Q90 75 73 70 L51 63 Q18 54 18 34 Q18 30 21 27 Z"/>
+                                
                             </Canvas>
                         </Viewbox>
                         <StackPanel x:Name="BrandText" Margin="12,12,0,0">
@@ -35,7 +35,7 @@
                         <TextBlock Text="●  SIDRENA PREMIUM" Foreground="#53D0A0" FontWeight="SemiBold" FontSize="13"/>
                         <TextBlock Text="Pametno upravljanje cijenama." FontSize="11"
                                    Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                        <TextBlock x:Name="EditionLabel" Text="SIDRENA Desktop 0.10 · Brendigo LTD"
+                        <TextBlock x:Name="EditionLabel" Text="SIDRENA Desktop · Brendigo LTD"
                                    FontSize="10" Foreground="#90A5C0" Margin="0,8,0,0" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -77,7 +77,7 @@
                     <Border x:Name="HeroBadge" DockPanel.Dock="Right" Background="#BD0C1D33" CornerRadius="9"
                             Padding="15,10" VerticalAlignment="Center" MaxWidth="255">
                         <StackPanel>
-                            <TextBlock Text="⚓  SIDRENA" FontSize="17" Foreground="{StaticResource AccentBrush}" FontWeight="Bold"/>
+                            <TextBlock Text="SIDRENA  ·  Brendigo" FontSize="17" Foreground="{StaticResource AccentBrush}" FontWeight="Bold"/>
                             <TextBlock Text="Pregled cijena i poslovanja" FontSize="11" Margin="0,4,0,0"/>
                             <TextBlock Text="Propisi: provjera prije javne objave" Foreground="{StaticResource MutedBrush}"
                                        FontSize="10" Margin="0,3,0,0"/>

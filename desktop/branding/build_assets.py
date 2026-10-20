@@ -16,13 +16,22 @@ OUT=ROOT/"branding"/"generated"
 OUT.mkdir(parents=True,exist_ok=True)
 NAVY=(17,32,52)
 NAVY_LIGHT=(32,57,83)
-ORANGE=(255,145,63)
-GOLD=(255,191,96)
+ORANGE=(255,133,44)
+GOLD=(255,166,79)
 
 def distance(x,y,x1,y1,x2,y2):
     vx=x2-x1;vy=y2-y1
     t=max(0.0,min(1.0,((x-x1)*vx+(y-y1)*vy)/(vx*vx+vy*vy))) if vx*vx+vy*vy else 0
     return math.hypot(x-(x1+vx*t),y-(y1+vy*t))
+
+def sidrena_mark(u,v):
+    """Shared stylized S geometry for the Windows icon and installer art."""
+    top=distance(u,v,.72,.26,.32,.26)<.068
+    bend_top=distance(u,v,.32,.26,.30,.42)<.064
+    middle=distance(u,v,.30,.42,.70,.59)<.070
+    bend_bottom=distance(u,v,.70,.59,.70,.74)<.064
+    bottom=distance(u,v,.70,.74,.29,.74)<.068
+    return top or bend_top or middle or bend_bottom or bottom
 
 def pixel(x,y,w,h,round_corners=True):
     u=(x+0.5)/w;v=(y+0.5)/h
@@ -31,18 +40,8 @@ def pixel(x,y,w,h,round_corners=True):
         dx=max(abs(u-.5)-(.5-r),0.0);dy=max(abs(v-.5)-(.5-r),0.0)
         if dx*dx+dy*dy>r*r:return (0,0,0,0)
     base=tuple(round(NAVY[i]+(NAVY_LIGHT[i]-NAVY[i])*(.3*u+.35*v)) for i in range(3))
-    # anchor head, central mast and crossbar
-    ring=abs(math.hypot((u-.5),v-.26)-.072)<.033
-    mast=distance(u,v,.5,.35,.5,.72)<.034
-    bar=distance(u,v,.35,.45,.65,.45)<.032
-    # curved flukes / lower bowl, stopped at x=.22 and .78
-    bowl=False
-    if .21<u<.79 and .64<v<.84:
-        bowl=abs(v-(.83-2.0*(u-.5)**2))<.034
-    left=distance(u,v,.22,.68,.22,.78)<.034
-    right=distance(u,v,.78,.68,.78,.78)<.034
-    if ring or mast or bar or bowl or left or right:
-        tint=.25+u*.5
+    if sidrena_mark(u,v):
+        tint=.12+u*.22
         return tuple(round(ORANGE[i]*(1-tint)+GOLD[i]*tint) for i in range(3))+(255,)
     return base+(255,)
 
@@ -75,20 +74,14 @@ def bmp(w,h,small=False):
     data=bytearray()
     for y in range(h-1,-1,-1):
         for x in range(w):
-            # Windows welcome panel: dark premium gradient and central orange anchor.
+            # Windows welcome panel uses the same SIDRENA S mark as the application.
             u=x/max(1,w-1);v=y/max(1,h-1)
             base=tuple(round(NAVY[i]+(NAVY_LIGHT[i]-NAVY[i])*(.2+.4*v)) for i in range(3))
             if small:
                 uu=(u-.06)/.88;vv=(v-.06)/.88
             else:
                 uu=u;vv=(v-.26)/.48
-            ring=abs(math.hypot(uu-.5,vv-.26)-.072)<.037
-            mast=distance(uu,vv,.5,.35,.5,.72)<.038
-            bar=distance(uu,vv,.35,.45,.65,.45)<.037
-            bowl=.21<uu<.79 and .64<vv<.84 and abs(vv-(.83-2*(uu-.5)**2))<.04
-            left=distance(uu,vv,.22,.68,.22,.78)<.037
-            right=distance(uu,vv,.78,.68,.78,.78)<.037
-            color=ORANGE if ring or mast or bar or bowl or left or right else base
+            color=ORANGE if sidrena_mark(uu,vv) else base
             data.extend(bytes((color[2],color[1],color[0])))
         data.extend(b"\0"*(rowlen-w*3))
     length=54+len(data)
