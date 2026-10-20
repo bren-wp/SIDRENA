@@ -45,10 +45,14 @@ class SidrenaViewModel(application: Application) : AndroidViewModel(application)
     fun cancelEdit() {
         requestId++
         val snapshot = state.snapshot ?: return
-        state = state.copy(
-            isEditingSite = false, isLoading = false,
-            siteInput = snapshot.site, error = null,
-        )
+        state = state.copy(isEditingSite = false, isLoading = false,
+            siteInput = snapshot.site, error = null)
+    }
+
+    fun disconnect() {
+        requestId++
+        preferences.edit().remove("site").apply()
+        state = SidrenaState()
     }
 
     fun connect(raw: String = state.siteInput) {
@@ -72,27 +76,21 @@ class SidrenaViewModel(application: Application) : AndroidViewModel(application)
 
     private fun load(site: String, outlet: String, newSite: Boolean) {
         val id = ++requestId
-        state = state.copy(
-            siteInput = site, isLoading = true, error = null,
-            isEditingSite = if (newSite) true else state.isEditingSite,
-        )
+        state = state.copy(siteInput = site, isLoading = true, error = null,
+            isEditingSite = if (newSite) true else state.isEditingSite)
         viewModelScope.launch {
             try {
                 val loaded = repository.load(site, outlet)
                 if (id != requestId) return@launch
                 preferences.edit().putString("site", loaded.site).apply()
-                state = state.copy(
-                    siteInput = loaded.site, snapshot = loaded, outlet = outlet,
-                    isEditingSite = false, isLoading = false, error = null,
-                )
+                state = state.copy(siteInput = loaded.site, snapshot = loaded,
+                    outlet = outlet, isEditingSite = false, isLoading = false, error = null)
             } catch (cancel: CancellationException) {
                 throw cancel
             } catch (_: Exception) {
                 if (id != requestId) return@launch
-                state = state.copy(
-                    isLoading = false,
-                    error = "Povezivanje nije uspjelo. Provjerite HTTPS adresu, mrežu i aktivaciju SIDRENA dodatka.",
-                )
+                state = state.copy(isLoading = false,
+                    error = "Povezivanje nije uspjelo. Provjerite adresu, mrežu i objavljene cjenike.")
             }
         }
     }
