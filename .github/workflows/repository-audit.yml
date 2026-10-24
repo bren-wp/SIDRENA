@@ -24,6 +24,10 @@ jobs:
           find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 |
             xargs -0 -n 1 php -l >/tmp/sidrena-php-audit.log
           tail -n 4 /tmp/sidrena-php-audit.log
+      - name: Verify shared legal contract and production package layout
+        run: |
+          php tools/test_legal_contract.php
+          python3 tools/audit_security.py
       - name: Desktop source and obvious dead-code audit
         run: python3 tools/audit_desktop.py
       - name: Android source and obvious dead-code audit

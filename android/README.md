@@ -1,6 +1,6 @@
 # SIDRENA za Android
 
-**SIDRENA by Brendigo** · **0.2.0** · `com.brendigo.sidrena`
+**SIDRENA by Brendigo** · **0.3.0** · `com.brendigo.sidrena`
 
 ![SIDRENA](../desktop/branding/sidrena-banner.svg)
 
@@ -45,3 +45,9 @@ Pojedinačni CSV može se preusmjeriti na objavljenu datoteku na istoj HTTPS dom
 Izvorni kod koristi Kotlin, Jetpack Compose i Material 3. Za izgradnju otvorite mapu `android/` u Android Studiju (JDK 17, Android SDK 36, Gradle 8.13). Provjere kompilacije, lint i JUnit nalaze se u GitHub Actions postupku.
 
 [Izdanja](RELEASE.md) · [Audit](../docs/CODE-AUDIT-2026-10-21.md) · [Podrška](mailto:sidrena@brendigo.com)
+
+## Pravni profil (NN 101/2026 i NN 110/2026)
+
+Aplikacija čita isti javni pravni profil kao Windows aplikacija iz WordPress plugina 1.5.1. Prikazuje datum početka proširenih obveza **17. 11. 2026.**, oba referentna datuma **2. 5. 2025.** i **10. 9. 2026.**, minimalnu arhivu 30 dana te vrijeme dnevne objave do 8:00. Ne mijenja i ne izmišlja povijesne cijene.
+
+[Pravni izvori i kontrolni popis](../docs/LEGAL-2026-INTEROPERABILITY.md) · [Sigurnosni audit](../docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)

@@ -1,5 +1,5 @@
 # Build a new cross-platform SIDRENA release from verified same-commit CI artifacts.
-# WordPress source, 1.5.0 version and the original release assets remain untouched.
+# WordPress version changes only with source changes; preserve the original 1.5.0 release.
 name: Publish SIDRENA Android Windows and WordPress package
 
 on:
@@ -25,10 +25,10 @@ jobs:
       GH_REPO: ${{ github.repository }}
       CI_SHA: ${{ github.event.workflow_run.head_sha }}
       ANDROID_RUN_ID: ${{ github.event.workflow_run.id }}
-      ANDROID_VERSION: '0.2.0'
-      WINDOWS_VERSION: '0.10.2'
-      WORDPRESS_VERSION: '1.5.0'
-      WORDPRESS_DIGEST: '58e9b44b8054ef0076a329aa7a8a3ec663947d33bfa375c4203bc109925409f8'
+      ANDROID_VERSION: '0.3.0'
+      WINDOWS_VERSION: '0.10.3'
+      WORDPRESS_VERSION: '1.5.1'
+      ORIGINAL_PLUGIN_SHA: '58e9b44b8054ef0076a329aa7a8a3ec663947d33bfa375c4203bc109925409f8'
     steps:
       - name: Verify target commit and original WordPress release
         shell: bash
@@ -37,12 +37,19 @@ jobs:
           current=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
           [[ "$current" == "$CI_SHA" ]] || { echo "Main has moved, skip obsolete release"; exit 1; }
           gh release view 1.5.0 --repo "$GH_REPO" >/dev/null
-          tag="sidrena-a${ANDROID_VERSION}-w${WINDOWS_VERSION}-${CI_SHA:0:7}"
+          original=$(gh api "repos/$GH_REPO/releases/tags/1.5.0" --jq '.assets[] | select(.name=="brendigo-sidrena-cijena-1.5.0.zip") | .digest')
+          [[ "$original" == "sha256:$ORIGINAL_PLUGIN_SHA" ]] || { echo "Original 1.5.0 asset digest changed"; exit 1; }
+          tag="sidrena-a${ANDROID_VERSION}-w${WINDOWS_VERSION}-p${WORDPRESS_VERSION}-${CI_SHA:0:7}"
           echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
           if gh release view "$tag" --repo "$GH_REPO" >/dev/null 2>&1; then
             echo "Release $tag already exists"
             echo "ALREADY_EXISTS=1" >> "$GITHUB_ENV"
           fi
+      - uses: actions/checkout@v4
+        if: env.ALREADY_EXISTS != '1'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
       - name: Wait for matching Windows tests and package
         if: env.ALREADY_EXISTS != '1'
         shell: bash
@@ -73,8 +80,18 @@ jobs:
             --name 'SIDRENA-Android-unsigned-build' --dir release
           gh run download "$WIN_RUN_ID" --repo "$GH_REPO" \
             --name 'SIDRENA-Desktop-release-binaries' --dir release
-          gh release download 1.5.0 --repo "$GH_REPO" \
-            --pattern 'brendigo-sidrena-cijena-1.5.0.zip*' --dir release
+          # New WordPress ZIP is packaged from this exact release commit.
+      - name: Package legal WordPress 1.5.1 from verified source
+        if: env.ALREADY_EXISTS != '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 |
+            xargs -0 -n 1 php -l > /tmp/sidrena-lint.log
+          php tools/test_legal_contract.php
+          python3 tools/audit_repository.py
+          python3 tools/package_plugin.py --version "$WORDPRESS_VERSION" --output "release/brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip"
+          (cd release && sha256sum -c "brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip.sha256")
       - name: Verify all platforms and SHA-256 hashes
         if: env.ALREADY_EXISTS != '1'
         shell: bash
@@ -85,13 +102,12 @@ jobs:
             SIDRENA-Android-SHA256SUMS.txt \
             SIDRENA-Desktop-win-x64-Portable.exe SIDRENA-Desktop-win-x64-Setup.exe \
             SIDRENA-Desktop-win-x64-SHA256SUMS.txt SIDRENA-Desktop-release-info.json \
-            brendigo-sidrena-cijena-1.5.0.zip brendigo-sidrena-cijena-1.5.0.zip.sha256; do
+            brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip.sha256; do
             test -s "release/$file" || { echo "Missing release/$file"; exit 1; }
           done
           (cd release && sha256sum -c SIDRENA-Android-SHA256SUMS.txt)
           (cd release && sha256sum -c SIDRENA-Desktop-win-x64-SHA256SUMS.txt)
-          wp_sha=$(sha256sum release/brendigo-sidrena-cijena-1.5.0.zip | awk '{print $1}')
-          [[ "$wp_sha" == "$WORDPRESS_DIGEST" ]] || { echo "Official WordPress digest changed"; exit 1; }
+          (cd release && sha256sum -c "brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip.sha256")
           src_sha=$(python3 -c 'import json;print(json.load(open("release/SIDRENA-Desktop-release-info.json"))["source_commit"])')
           [[ "$src_sha" == "$CI_SHA" ]] || { echo "Windows provenance mismatch"; exit 1; }
           win_version=$(python3 -c 'import json;print(json.load(open("release/SIDRENA-Desktop-release-info.json"))["desktop_version"])')
@@ -105,6 +121,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          wp_sha=$(sha256sum "release/brendigo-sidrena-cijena-$WORDPRESS_VERSION.zip" | cut -d' ' -f1)
           cat > notes.md <<EOF
           # SIDRENA — Android $ANDROID_VERSION · Windows $WINDOWS_VERSION · WordPress $WORDPRESS_VERSION
 
@@ -115,11 +132,15 @@ jobs:
           Portable.exe i Setup.exe iz uspješnog CI postupka za isti commit, s provjerenim SHA-256 zbrojevima. Poboljšan vizualni identitet, ujednačeno prikazivanje verzija i kontrole kvalitete.
 
           ## WordPress
-          **Brendigo Sidrena Cijena $WORDPRESS_VERSION** — izvorni službeni ZIP, bez izmjena. SHA-256: `$WORDPRESS_DIGEST`.
+          **Brendigo Sidrena Cijena $WORDPRESS_VERSION** — nova pravna verzija s javnim profilom NN 101/2026 i NN 110/2026. SHA-256: $wp_sha.
+
+          ## Hrvatska pravila
+          Proširene obveze počinju 17. studenoga 2026.; referentni datumi su 2. svibnja 2025. i 10. rujna 2026. (NN 101/2026 i NN 110/2026).
+          Nacrti pravilnika iz listopada nisu automatski konačni propisi.
 
           Izvor: https://github.com/$GH_REPO/commit/$CI_SHA
 
-          Android koristi javne WordPress podatke. Administratorsko uređivanje i potpuna povijest promjena nisu dostupni kroz postojeći javni API.
+          Android i Windows preuzimaju javni WordPress pravni profil. Administratorsko dvosmjerno uređivanje nije dostupno bez zaštićenog API-ja.
           EOF
           gh release create "$RELEASE_TAG" release/* \
             --repo "$GH_REPO" --target "$CI_SHA" \

@@ -3,38 +3,42 @@ on:
   pull_request:
     paths:
       - 'wordpress/brendigo-sidrena-cijena/**'
+      - 'tools/package_plugin.py'
+      - 'tools/test_legal_contract.php'
       - '.github/workflows/official-plugin-ci.yml'
   push:
     branches: [main]
     paths:
       - 'wordpress/brendigo-sidrena-cijena/**'
+      - 'tools/package_plugin.py'
+      - 'tools/test_legal_contract.php'
+permissions:
+  contents: read
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - name: Only official plugin and desktop may remain
+      - uses: actions/checkout@v4
+      - name: Validate WordPress version and legal contract
         run: |
           test -f wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
-          test -d desktop/Sidrena.Desktop
-          ! test -d editions
-          ! test -d wporg-assets
-          ! test -d includes
-          ! test -d admin
-          grep -q 'Text Domain: brendigo-sidrena-cijena' wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php
-      - name: Verify package bytes match owner-provided official 1.5.0
+          test -f wordpress/brendigo-sidrena-cijena/includes/class-legal.php
+          grep -q 'Stable tag: 1.5.1' wordpress/brendigo-sidrena-cijena/readme.txt
+      - name: Lint PHP
+        shell: bash
         run: |
-          python3 - <<'PY'
-          import hashlib,pathlib
-          root=pathlib.Path('wordpress/brendigo-sidrena-cijena')
-          items={p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*') if p.is_file()}
-          digest=hashlib.sha256(''.join(f'{p} {items[p]}\n' for p in sorted(items)).encode()).hexdigest()
-          assert len(items)==128
-          assert digest=='44b6ff17478f7769d9bda8157020269247f9dad2c186d92b82ddfbd21e996387'
-          print('Official owner source is intact')
-          PY
-      - name: Lint PHP files
+          set -euo pipefail
+          find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 |
+            xargs -0 -n 1 php -l > /tmp/sidrena-lint.log
+          tail -n 3 /tmp/sidrena-lint.log
+      - name: Test shared legal contract
+        run: php tools/test_legal_contract.php
+      - name: Package reproducibly and verify SHA-256
+        shell: bash
         run: |
-          find wordpress/brendigo-sidrena-cijena -name '*.php' -type f -print0 | xargs -0 -n 1 php -l > /tmp/sidrena-php-lint.txt
-          tail -n 4 /tmp/sidrena-php-lint.txt
+          set -euo pipefail
+          python3 tools/package_plugin.py --version 1.5.1 --output artifacts/brendigo-sidrena-cijena-1.5.1.zip
+          (cd artifacts && sha256sum -c brendigo-sidrena-cijena-1.5.1.zip.sha256)
+          python3 tools/package_plugin.py --version 1.5.1 --output /tmp/sidrena-check/brendigo-sidrena-cijena-1.5.1.zip
+          cmp artifacts/brendigo-sidrena-cijena-1.5.1.zip /tmp/sidrena-check/brendigo-sidrena-cijena-1.5.1.zip
