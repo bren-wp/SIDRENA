@@ -38,3 +38,9 @@ Android **0.3.0** i Windows **0.10.3** čitaju taj isti profil, parsiraju ga s p
 5. Pratite objavu konačnih pravilnika i izuzeća prije promjene poslovnih pravila.
 
 Ovaj dokument opisuje stanje na datum iz naslova i nije zamjena za pravni savjet.
+
+## Kontrolirani prijenos lokalnog Windows kataloga u WordPress
+
+Windows **0.10.3** nudi eksplicitnu mogućnost izvoza radnog CSV-a s 15 zaglavlja usklađenih s WordPress SIDRENA uvoznikom (`naziv;sku;vrsta;marka;url;cijena_redovna;cijena_akcijska;naziv_posebnog_oblika;jedinica_mjere;cijena_jedinice_mjere;sidrena_cijena;sidrena_datum;barkod;dostupnost;poslovnica`).
+
+Izvoze se samo stvarno spremljeni naziv, vrsta, SKU, barkod, jedinica, aktualna cijena te već potvrđeni referentna cijena i datum. Polja bez lokalnog izvora ostaju prazna. Slijedi **ručni pregled i potvrda** u WordPress administratorskom uvozu; datoteka nije samostalno zakonski ovjerena javna objava. Windows lokalni ID ne smije se automatski prenositi kao globalni WordPress ID.

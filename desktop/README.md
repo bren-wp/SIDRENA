@@ -37,3 +37,9 @@ Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Ci
 Windows 0.10.3 prepoznaje `plugin_version` i javni `legal` profil WordPress dodatka 1.5.1. Datumi primjene i arhiviranja preuzimaju se iz istog ugovora kao u Android aplikaciji. Lokalni katalog ostaje odvojena baza i ne mijenja WordPress bez izričite autorizirane integracije.
 
 [Pravni okvir i interoperabilnost](../docs/LEGAL-2026-INTEROPERABILITY.md) · [Security i dead-code audit](../docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)
+
+## Ručna razmjena cjenika s WordPressom
+
+U izborniku **Cjenici** opcija **CSV za uvoz u WordPress** izrađuje datoteku s 15 stupaca i nazivima koje prepoznaje službeni WordPress SIDRENA uvoznik. Uvoz se zatim izvodi samo u WordPress administraciji (**SIDRENA → Uvoz cjenika**), uz pregled mapiranja i izričitu potvrdu. Dodatna polja koja ne postoje u Windows lokalnoj bazi ostaju prazna; nijedna povijesna cijena, barkod ili dostupnost ne izmišljaju se.
+
+**Oprez:** pri potvrđivanju u WordPressu postojeće stavke mogu biti ažurirane prema SKU-u i pravilima uvoznika. Prije uvoza provjerite sigurnosnu kopiju, obuhvat i podatke. Ovo nije automatska sinkronizacija ili automatska javna objava.

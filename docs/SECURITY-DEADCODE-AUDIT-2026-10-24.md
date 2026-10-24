@@ -34,3 +34,7 @@ Provjere obuhvaćaju WordPress/PHP, Android/Kotlin, Windows/.NET, GitHub Actions
 PHP lint i ciljani standalone testovi, Kotlin/JUnit/Android lint/R8, .NET/Roslyn/unit/UI testovi, statička provjera tekstnih obrazaca, pretraživanje neupotrijebljenih metoda uz uvažavanje refleksije i WordPress hookova, konzistentnost verzija, pregled ovisnosti i potencijalnih tajni te provjera ZIP integriteta.
 
 **Preostala ograničenja**: automatski dead-code kandidati nisu dokaz mrtvog koda dok se ne provjeri pozivanje kroz WordPress hookove, XAML, refleksiju i aplikacijski životni ciklus. Ne briše se kod samo temeljem pretraživanja teksta.
+
+## Dodatni integracijski test
+
+Windows izvozni CSV sada koristi zaseban serializer sa službenim nazivima WordPress stupaca. Testovi provjeravaju redoslijed i nazive zaglavlja, citiranje polja s točkom-zarezom i navodnicima, mapiranje `proizvod/usluga`, neizmišljanje cijena i očuvanje provjerenog referentnog datuma. Oprez: sam WordPress administratorski uvoz nije pokrenut na produkcijskim podacima.

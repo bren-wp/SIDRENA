@@ -48,6 +48,18 @@ try
         var xml = Path.Combine(folder, "RADNI.xml");
         DraftExport.Csv(store.ListItems(), csv);
         DraftExport.Xml(store.ListItems(), xml);
+        var wordpressCsv = Path.Combine(folder,"wordpress-import.csv");
+        OfficialPluginImportCsv.Write(store.ListItems(),wordpressCsv);
+        var csvText=File.ReadAllText(wordpressCsv);
+        Expect(csvText.Contains(OfficialPluginImportCsv.Header),
+            "Official SIDRENA WordPress import header exactly matches canonical template");
+        Expect(csvText.Contains("proizvod") && csvText.Contains("usluga"),
+            "Windows goods and services map to WordPress expected kind values");
+        Expect(csvText.Contains("2026-09-10") && !csvText.Contains("SIDRENA_NACRT"),
+            "Verified historical reference date preserved in transfer");
+        Expect(csvText.Contains("Mlijeko; \"\"punomasno\"\""),
+            "WordPress compatible CSV escapes semicolons and quotations");
+
         Expect(File.ReadAllText(csv).Contains("\"Mlijeko; \"\"punomasno\"\"\""), "CSV quoting");
         Expect(File.ReadAllText(xml).Contains("SidrenaRadniIzvoz"), "XML draft marker");
     }

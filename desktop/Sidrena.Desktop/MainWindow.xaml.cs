@@ -513,6 +513,7 @@ public partial class MainWindow : Window
         options.Children.Add(U.Field("Obuhvat cjenika",kind));
         options.Children.Add(U.Action("Izradi CSV",()=>Export("CSV",SelectedItems()),true));
         options.Children.Add(U.Action("Izradi XML",()=>Export("XML",SelectedItems())));
+        options.Children.Add(U.Action("CSV za uvoz u WordPress",()=>ExportWordPressImport(SelectedItems())));
         options.Children.Add(U.Action("Pregled i ispis (HTML)",()=>{
             var selected=SelectedItems();
             if(selected.Count==0){Status("Odabrani obuhvat nema artikala ili usluga.");return;}
@@ -559,6 +560,26 @@ public partial class MainWindow : Window
             Status($"Spremljen {format} s {items.Count} stavki. Prije javne objave provjerite dokument.");
             if(_activePage=="Cjenici"||_activePage=="Arhiva") Navigate(_activePage);
         }catch(Exception ex)when(ex is ArgumentException or IOException or UnauthorizedAccessException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
+    }
+
+    /// <summary>Offline CSV handoff. Import always requires wp-admin confirmation.</summary>
+    private void ExportWordPressImport(IReadOnlyList<PriceItem> items)
+    {
+        if(items.Count==0){Status("Nema stavki za izvoz u WordPress.");return;}
+        var dlg=new SaveFileDialog{
+            Title="Spremi CSV za pregled u WordPress SIDRENA uvozu",
+            FileName="SIDRENA_ZA_WORDPRESS_UVOZ_"+DateTime.Now.ToString("yyyyMMdd_HHmm",Hr)+".csv",
+            Filter="CSV (*.csv)|*.csv", AddExtension=true};
+        if(dlg.ShowDialog(this)!=true)return;
+        try
+        {
+            OfficialPluginImportCsv.Write(items,dlg.FileName);
+            _workspace.RecordDraftExport(dlg.FileName,"CSV",items.Count);
+            Status("CSV je spremljen. U WordPressu otvorite SIDRENA > Uvoz cjenika, provjerite mapiranje i izričito potvrdite promjene.");
+            if(_activePage=="Cjenici"||_activePage=="Arhiva")Navigate(_activePage);
+        }
+        catch(Exception ex)when(ex is ArgumentException or IOException or UnauthorizedAccessException
+            or InvalidDataException or Microsoft.Data.Sqlite.SqliteException){Error(ex);}
     }
 
     private UIElement BuildLocations()
