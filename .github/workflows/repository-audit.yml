@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check official WordPress package fingerprint, duplicates, binaries
         run: python3 tools/audit_repository.py
-      - name: Regression: downloaded release binaries are not committed sources
+      - name: 'Regression: downloaded release binaries are not committed sources'
         shell: bash
         run: |
           set -euo pipefail
