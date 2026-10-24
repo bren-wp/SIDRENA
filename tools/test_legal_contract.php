@@ -20,5 +20,8 @@ sidrena_expect( '08:00' === $contract['product_publication_deadline'], 'Daily de
 sidrena_expect( '' === Brendigo_Sidrena_Cijena_Legal::reference_date( 'unknown' ), 'No inferred category' );
 sidrena_expect( '2025-05-02' === Brendigo_Sidrena_Cijena_Legal::reference_date( 'legacy_fmcg' ), 'Verified legacy date' );
 sidrena_expect( '2026-09-10' === Brendigo_Sidrena_Cijena_Legal::reference_date( 'general_goods_services' ), 'Verified new date' );
+sidrena_expect( 'NN-59-2026' === $contract['consumer_law_revision'], 'Consumer law revision' );
+sidrena_expect( 'NN-105-2026' === $contract['unit_price_rule_revision'], 'Unit price regulation' );
+sidrena_expect( in_array( 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html', $contract['source_urls'], true ), 'Published unit-price rule source' );
 sidrena_expect( ! empty( $contract['source_urls'] ), 'Legal sources' );
 fwrite( STDOUT, "PASS: SIDRENA legal contract\n" );

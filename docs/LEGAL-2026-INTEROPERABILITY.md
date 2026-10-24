@@ -8,6 +8,7 @@
 - NN 110/2026-1309: https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html
 - NN 110/2026-1310: https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1310.html
 - Zakon o zaštiti potrošača — izmjene NN 59/2026: https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html
+- Pravilnik o načinu isticanja maloprodajne cijene i cijene za jedinicu mjere, NN 105/2026: https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html
 
 Odluke NN 101/2026 izmijenjene su u NN 110/2026, tako da **17. studenoga 2026.** zamjenjuje prvotno planirani **1. listopada 2026.** za primjenu proširenih obveza. Referentni datumi nisu promijenjeni: **2. svibnja 2025.** za ranije obuhvaćene kategorije (hrana, piće, kozmetika, sredstva za čišćenje, toaletne potrepštine, proizvodi za kućanstvo) i **10. rujna 2026.** za ostalu robu i usluge.
 
@@ -17,9 +18,9 @@ Prema Odluci o objavi cjenika, trgovac s mrežnom stranicom objavljuje strojno �
 
 ## Sinkronizirani javni profil
 
-WordPress dodatak **1.5.1** dodaje informacijsko polje `legal` u postojeći javni `GET /wp-json/brendigo-sidrena/v1/cjenici` bez izmjena u starim `feeds`, `outlets` ili arhivskim rutama. Također vraća `plugin_version` i `api_version`. U `legal` se prenose pravna revizija, datumi, rokovi objave, trajanje arhive, formati, popisi traženih javnih polja i URL-ovi propisa.
+WordPress dodatak **1.5.2** dodaje informacijsko polje `legal` u postojeći javni `GET /wp-json/brendigo-sidrena/v1/cjenici` bez izmjena u starim `feeds`, `outlets` ili arhivskim rutama. Također vraća `plugin_version` i `api_version`. U `legal` se prenose pravna revizija, datumi, rokovi objave, trajanje arhive, formati, popisi traženih javnih polja i URL-ovi propisa.
 
-Android **0.3.0** i Windows **0.10.3** čitaju taj isti profil, parsiraju ga s provjerama tipova i prikazuju izvorne referentne datume. Za stariji plugin 1.5.0 ostaje moguć **samo javni pregled**, uz upozorenje da novi profil nije dostupan. Ne mijenjaju se već pohranjene sidrene cijene niti se pokušava rekonstruirati cijena za prošle datume.
+Android **0.3.1** i Windows **0.10.4** čitaju taj isti profil, parsiraju ga s provjerama tipova i prikazuju izvorne referentne datume. Za stariji plugin 1.5.0 ostaje moguć **samo javni pregled**, uz upozorenje da novi profil nije dostupan. Ne mijenjaju se već pohranjene sidrene cijene niti se pokušava rekonstruirati cijena za prošle datume.
 
 ### Granice povezivanja
 
@@ -41,6 +42,14 @@ Ovaj dokument opisuje stanje na datum iz naslova i nije zamjena za pravni savjet
 
 ## Kontrolirani prijenos lokalnog Windows kataloga u WordPress
 
-Windows **0.10.3** nudi eksplicitnu mogućnost izvoza radnog CSV-a s 15 zaglavlja usklađenih s WordPress SIDRENA uvoznikom (`naziv;sku;vrsta;marka;url;cijena_redovna;cijena_akcijska;naziv_posebnog_oblika;jedinica_mjere;cijena_jedinice_mjere;sidrena_cijena;sidrena_datum;barkod;dostupnost;poslovnica`).
+Windows **0.10.4** nudi eksplicitnu mogućnost izvoza radnog CSV-a s 15 zaglavlja usklađenih s WordPress SIDRENA uvoznikom (`naziv;sku;vrsta;marka;url;cijena_redovna;cijena_akcijska;naziv_posebnog_oblika;jedinica_mjere;cijena_jedinice_mjere;sidrena_cijena;sidrena_datum;barkod;dostupnost;poslovnica`).
 
 Izvoze se samo stvarno spremljeni naziv, vrsta, SKU, barkod, jedinica, aktualna cijena te već potvrđeni referentna cijena i datum. Polja bez lokalnog izvora ostaju prazna. Slijedi **ručni pregled i potvrda** u WordPress administratorskom uvozu; datoteka nije samostalno zakonski ovjerena javna objava. Windows lokalni ID ne smije se automatski prenositi kao globalni WordPress ID.
+
+## Dopuna 24. listopada 2026. — objavljeni propisi i prijelazni režim
+
+NN 105/2026 zaseban je, već objavljen pravilnik za maloprodajnu cijenu i cijenu po jedinici mjere, uključujući način njihovog prikaza, eursku valutu i isticanje cjenika usluga. **Nije isto što i budući pravilnik o baznoj cijeni ili pravilnik o sadržaju i načinu objave cjenika.** Potonji su najavljeni, a najava nije zamjena za objavljeni normativni tekst. Proširenje obveza prema NN 101/2026 izmijenjenim NN 110/2026 predviđeno je za 17. studenoga 2026.
+
+WordPress pravni profil u verziji 1.5.2 dodaje `consumer_law_revision` = `NN-59-2026` i `unit_price_rule_revision` = `NN-105-2026`, zadržavajući istu shemu API-ja i kompatibilnost klijenata. Windows i Android zadržavaju jednake oznake pravnih izvora i referentne datume, bez proizvoljnog određivanja kategorije robe ili generiranja povijesnih cijena. 
+
+**Ograničenje:** Ovo je proširenje pravne sljedivosti, a ne certificiranje stvarnog trgovca. Nema automatske dvosmjerne administrativne sinkronizacije: javni WordPress API je samo za čitanje, a prijenos Windows nacrta u WordPress ostaje kontrolirani CSV uvoz.

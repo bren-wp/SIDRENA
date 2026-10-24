@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>SIDRENA</AssemblyName>
-    <Version>0.10.3</Version>
+    <Version>0.10.4</Version>
     <Company>Brendigo LTD</Company>
     <Authors>Brendigo LTD</Authors>
     <Product>SIDRENA Desktop</Product>

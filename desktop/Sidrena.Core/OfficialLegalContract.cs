@@ -56,5 +56,7 @@ public static class SidrenaLegalContract
     public const string EffectiveFrom="2026-11-17";
     public const string LegacyReferenceDate="2025-05-02";
     public const string GeneralReferenceDate="2026-09-10";
+    public const string ConsumerLawRevision="NN-59-2026";
+    public const string UnitPriceRuleRevision="NN-105-2026";
     public static readonly string[] KnownReferenceDates={LegacyReferenceDate,GeneralReferenceDate};
 }

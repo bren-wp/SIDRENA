@@ -18,6 +18,8 @@ data class LegalContract(
         const val EFFECTIVE = "2026-11-17"
         const val LEGACY = "2025-05-02"
         const val GENERAL = "2026-09-10"
+        const val CONSUMER_LAW = "NN-59-2026"
+        const val UNIT_PRICE_RULE = "NN-105-2026"
 
         fun parseOptional(json: JSONObject?): LegalContract? {
             if (json == null) return null // Old WordPress API version.

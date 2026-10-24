@@ -47,7 +47,7 @@ source_digest = sha256(''.join(
 ).encode()).hexdigest()
 main_php = (plugin / 'brendigo-sidrena-cijena.php').read_text(encoding='utf-8')
 readme = (plugin / 'readme.txt').read_text(encoding='utf-8')
-plugin_version = '1.5.1'
+plugin_version = '1.5.2'
 if f' * Version: {plugin_version}\n' not in main_php or f'Stable tag: {plugin_version}\n' not in readme:
     issues.append('Plugin header and stable tag mismatch')
 if f"BRENDIGO_SIDRENA_CIJENA_VERSION', '{plugin_version}'" not in main_php:

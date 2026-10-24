@@ -3,21 +3,21 @@
 ## Opseg
 Provjere obuhvaćaju WordPress/PHP, Android/Kotlin, Windows/.NET, GitHub Actions, izdavanje ZIP/APK/AAB/EXE paketa i poznate mrežne granice. Automatske provjere ne dokazuju potpuno odsustvo svih ranjivosti i nepotrebnog koda; ručni penetracijski testovi, stvarne instalacije i produkcijski promet i dalje su potrebni.
 
-### WordPress 1.5.1
+### WordPress 1.5.2
 - Javni REST API izlaže samo objavljene podatke; ne vraća privatne ili administratorske zapise.
 - Novi pravni profil je **čisto informativan**, bez korisničkih podataka ili write callbacka.
 - Filtriranje poslovnica, sanitizacija i stroga HTTPS objava i dalje se provjeravaju. PHP lint, test pravnog ugovora i kontrolni pregled sumnjivih funkcija dio su CI-ja.
 - Potvrda pravne usklađenosti nije automatska, povijesne vrijednosti ne smiju se zaključivati iz trenutačne cijene.
 - Otvoreno: nezavisna dinamička analiza WordPress capability/nonce matrice, CSRF, XSS, SQL upita i autoriteta kod uvoza, kao i opterećenje velikog kataloga.
 
-### Android 0.3.0
+### Android 0.3.1
 - Kotlin/JVM unit testovi i Android lint.
 - TLS (HTTPS) uz isključeni cleartext HTTP, provjera iste domene pri preusmjeravanju, ograničene veličine odgovora i testiran CSV parser.
 - Android OkHttp koristi vlastiti DNS resolver za provjeru svih IP adresa u trenutku uspostave veze, bez sistemskog proxyja i bez automatskih preusmjeravanja. Time je uklonjen raniji interval između zasebne DNS provjere i naknadnog razrješavanja unutar URLConnectiona. Preostaje potreba za neovisnim mrežnim penetracijskim testom.
 - Nema administratorove lozinke, nije uključen write REST ni oglašivačka telemetrija.
 - Otvoreno: neovisno pen-testiranje, provjera Android Keystorea kada se uvede autentifikacija, testovi stvarnih uređaja i potpisani Google Play AAB.
 
-### Windows 0.10.3
+### Windows 0.10.4
 - Roslyn statička analiza potencijalno neupotrijebljenih članova, jedinični i UI smoke testovi, lokalni testovi baze i sigurnosne kopije.
 - Javni REST endpoint koristi HTTPS, ograničenja veličine, zabranu preusmjeravanja i provjeru stvarnog mrežnog odredišta kroz socket callback.
 - Lokalna Windows baza nije server-side WordPress katalog, pa nije dvosmjerno sinkronizirana.
@@ -38,3 +38,7 @@ PHP lint i ciljani standalone testovi, Kotlin/JUnit/Android lint/R8, .NET/Roslyn
 ## Dodatni integracijski test
 
 Windows izvozni CSV sada koristi zaseban serializer sa službenim nazivima WordPress stupaca. Testovi provjeravaju redoslijed i nazive zaglavlja, citiranje polja s točkom-zarezom i navodnicima, mapiranje `proizvod/usluga`, neizmišljanje cijena i očuvanje provjerenog referentnog datuma. Oprez: sam WordPress administratorski uvoz nije pokrenut na produkcijskim podacima.
+
+## Dopuna — revizija izvora NN 59/2026 i NN 105/2026
+
+Dodane su provjere zajedničkih pravnih identifikatora u PHP, Kotlin i C# kodu. Izvorni javni REST i dalje je ograničen na GET, a mrežni klijenti ne šalju WordPress administratorske zaporke. Heuristički audit kandidata za mrtav kod i automatski lint/testovi ne znače potpunu formalnu sigurnosnu provjeru, pentest ili automatsku dvosmjernu sinkronizaciju. Ne uklanjaju se javni WordPress hookovi bez potvrde stvarnih pozivatelja.
