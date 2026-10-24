@@ -81,7 +81,13 @@ for extension,folder,pattern in (
 ):
     sources=[p for p in folder.rglob("*") if p.suffix==extension and not any(x in p.parts for x in ("obj","bin","build"))]
     texts={p:p.read_text(encoding="utf-8-sig") for p in sources}
-    merged="\n".join(texts.values())
+    merged="\\n".join(texts.values())
+    # WPF event handlers are referenced through XAML attribute names rather
+    # than ordinary C# call sites; do not misclassify them as dead code.
+    if extension==".cs":
+        merged+="\\n"+"\\n".join(
+            p.read_text(encoding="utf-8-sig") for p in folder.rglob("*.xaml")
+        )
     count=Counter(re.findall(pattern,merged))
     for name,declared in count.items():
         if len(re.findall(r"\b"+re.escape(name)+r"\b",merged))<=declared:
