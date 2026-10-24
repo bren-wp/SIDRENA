@@ -20,7 +20,7 @@ Prema Odluci o objavi cjenika, trgovac s mrežnom stranicom objavljuje strojno �
 
 WordPress dodatak **1.5.2** dodaje informacijsko polje `legal` u postojeći javni `GET /wp-json/brendigo-sidrena/v1/cjenici` bez izmjena u starim `feeds`, `outlets` ili arhivskim rutama. Također vraća `plugin_version` i `api_version`. U `legal` se prenose pravna revizija, datumi, rokovi objave, trajanje arhive, formati, popisi traženih javnih polja i URL-ovi propisa.
 
-Android **0.3.1** i Windows **0.10.4** čitaju taj isti profil, parsiraju ga s provjerama tipova i prikazuju izvorne referentne datume. Za stariji plugin 1.5.0 ostaje moguć **samo javni pregled**, uz upozorenje da novi profil nije dostupan. Ne mijenjaju se već pohranjene sidrene cijene niti se pokušava rekonstruirati cijena za prošle datume.
+Android **0.3.2** i Windows **0.10.5** čitaju taj isti profil, parsiraju ga s provjerama tipova i prikazuju izvorne referentne datume. Za stariji plugin 1.5.0 ostaje moguć **samo javni pregled**, uz upozorenje da novi profil nije dostupan. Ne mijenjaju se već pohranjene sidrene cijene niti se pokušava rekonstruirati cijena za prošle datume.
 
 ### Granice povezivanja
 
@@ -42,7 +42,7 @@ Ovaj dokument opisuje stanje na datum iz naslova i nije zamjena za pravni savjet
 
 ## Kontrolirani prijenos lokalnog Windows kataloga u WordPress
 
-Windows **0.10.4** nudi eksplicitnu mogućnost izvoza radnog CSV-a s 15 zaglavlja usklađenih s WordPress SIDRENA uvoznikom (`naziv;sku;vrsta;marka;url;cijena_redovna;cijena_akcijska;naziv_posebnog_oblika;jedinica_mjere;cijena_jedinice_mjere;sidrena_cijena;sidrena_datum;barkod;dostupnost;poslovnica`).
+Windows **0.10.5** nudi eksplicitnu mogućnost izvoza radnog CSV-a s 15 zaglavlja usklađenih s WordPress SIDRENA uvoznikom (`naziv;sku;vrsta;marka;url;cijena_redovna;cijena_akcijska;naziv_posebnog_oblika;jedinica_mjere;cijena_jedinice_mjere;sidrena_cijena;sidrena_datum;barkod;dostupnost;poslovnica`).
 
 Izvoze se samo stvarno spremljeni naziv, vrsta, SKU, barkod, jedinica, aktualna cijena te već potvrđeni referentna cijena i datum. Polja bez lokalnog izvora ostaju prazna. Slijedi **ručni pregled i potvrda** u WordPress administratorskom uvozu; datoteka nije samostalno zakonski ovjerena javna objava. Windows lokalni ID ne smije se automatski prenositi kao globalni WordPress ID.
 
@@ -53,3 +53,10 @@ NN 105/2026 zaseban je, već objavljen pravilnik za maloprodajnu cijenu i cijenu
 WordPress pravni profil u verziji 1.5.2 dodaje `consumer_law_revision` = `NN-59-2026` i `unit_price_rule_revision` = `NN-105-2026`, zadržavajući istu shemu API-ja i kompatibilnost klijenata. Windows i Android zadržavaju jednake oznake pravnih izvora i referentne datume, bez proizvoljnog određivanja kategorije robe ili generiranja povijesnih cijena. 
 
 **Ograničenje:** Ovo je proširenje pravne sljedivosti, a ne certificiranje stvarnog trgovca. Nema automatske dvosmjerne administrativne sinkronizacije: javni WordPress API je samo za čitanje, a prijenos Windows nacrta u WordPress ostaje kontrolirani CSV uvoz.
+
+
+## Dodatna interoperabilnost — Android 0.3.2 / Windows 0.10.5
+
+Oba klijenta zahtijevaju `api_version: 1`, provjeravaju izvore javnih cjenika i odbijaju nepodržan odgovor. Android odsad provjerava sve poslovnice umjesto tihog skraćivanja popisa, odbija ponovljene oznake i neispravne HTTPS poveznice te koristi ista pravila kao Windows. Polja `consumer_law_revision` i `unit_price_rule_revision` prikazuju se samo ako su zaista objavljena u WordPress profilu.
+
+**WordPress 1.5.2 ostaje nepromijenjen.** Izvor istine i dalje su javno objavljeni podaci na WordPressu; mobilni klijent dohvaća podatke, a Windows lokalni nacrti ne upisuju se automatski u WordPress. Sinkronizirani podaci ne znače dvosmjerni administratorski pristup.

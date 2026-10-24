@@ -9,6 +9,9 @@ public sealed record OfficialLegalContract(
     string RulesRevision, DateOnly EffectiveFrom, DateOnly LegacyReferenceDate,
     DateOnly GeneralReferenceDate, int ArchiveMinDays, string PublicationDeadline)
 {
+    public string? ConsumerLawRevision { get; init; }
+    public string? UnitPriceRuleRevision { get; init; }
+
     public static OfficialLegalContract? ParseOptional(JsonElement root)
     {
         if(!root.TryGetProperty("legal",out var section)||section.ValueKind==JsonValueKind.Null)
@@ -46,7 +49,23 @@ public sealed record OfficialLegalContract(
         var deadline=Required(section,"product_publication_deadline");
         if(!TimeOnly.TryParseExact(deadline,"HH:mm",CultureInfo.InvariantCulture,DateTimeStyles.None,out _))
             throw new InvalidDataException("Nevaljano vrijeme objave.");
-        return new OfficialLegalContract(revision,effective,oldDate,newDate,days,deadline);
+        string? OptionalRevision(string field)
+        {
+            if(!section.TryGetProperty(field,out var prop)||prop.ValueKind==JsonValueKind.Null)
+                return null;
+            if(prop.ValueKind!=JsonValueKind.String)
+                throw new InvalidDataException("Pravni izvor nije valjan.");
+            var value=prop.GetString();
+            if(value is null || !System.Text.RegularExpressions.Regex.IsMatch(
+                value,@"^NN-[0-9]{1,3}-[0-9]{4}$"))
+                throw new InvalidDataException("Neispravna oznaka pravnog izvora.");
+            return value;
+        }
+        return new OfficialLegalContract(revision,effective,oldDate,newDate,days,deadline)
+        {
+            ConsumerLawRevision=OptionalRevision("consumer_law_revision"),
+            UnitPriceRuleRevision=OptionalRevision("unit_price_rule_revision")
+        };
     }
 }
 

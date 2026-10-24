@@ -2,8 +2,8 @@
 
 | Komponenta | Verzija |
 |---|---|
-| Android | **0.3.1** |
-| Windows Desktop | **0.10.4** |
+| Android | **0.3.2** |
+| Windows Desktop | **0.10.5** |
 | WordPress dodatak | **1.5.2** |
 
 Verzije su **odvojene**. WordPress izvor i ZIP ostaju nepromijenjeni dok nema stvarnih promjena u dodatku.

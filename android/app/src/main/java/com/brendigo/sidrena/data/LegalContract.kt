@@ -12,6 +12,8 @@ data class LegalContract(
     val generalReferenceDate: String,
     val archiveMinDays: Int,
     val dailyDeadline: String,
+    val consumerLawRevision: String? = null,
+    val unitPriceRuleRevision: String? = null,
 ) {
     companion object {
         const val REVISION = "NN-101-2026-NN-110-2026"
@@ -38,7 +40,19 @@ data class LegalContract(
             require(Regex("(?:[01][0-9]|2[0-3]):[0-5][0-9]").matches(deadline)) {
                 "Neispravno vrijeme objave."
             }
-            return LegalContract(revision,effective,legacy,general,days,deadline)
+            fun optionalRevision(field: String): String? {
+                if (!json.has(field) || json.isNull(field)) return null
+                val value = json.getString(field)
+                require(Regex("NN-[0-9]{1,3}-[0-9]{4}").matches(value)) {
+                    "Neispravna oznaka pravnog izvora."
+                }
+                return value
+            }
+            return LegalContract(
+                revision, effective, legacy, general, days, deadline,
+                optionalRevision("consumer_law_revision"),
+                optionalRevision("unit_price_rule_revision"),
+            )
         }
 
         private fun iso(value: String): String {

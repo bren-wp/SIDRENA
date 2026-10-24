@@ -641,12 +641,14 @@ public partial class MainWindow : Window
                     result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
                     "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica."+
                     (result.Legal is null?
-                        "\\nNema pravnog API profila. Ažurirajte WordPress SIDRENA dodatak na 1.5.1.":
+                        "\\nNema pravnog API profila. Ažurirajte WordPress SIDRENA dodatak na 1.5.2.":
                         "\\nPravni profil: "+result.Legal.RulesRevision+
                         " · početak primjene "+result.Legal.EffectiveFrom.ToString("dd. MM. yyyy.",Hr)+
                         " · referentni datumi "+result.Legal.LegacyReferenceDate.ToString("dd. MM. yyyy.",Hr)+
                         " / "+result.Legal.GeneralReferenceDate.ToString("dd. MM. yyyy.",Hr)+
-                        " · arhiva najmanje "+result.Legal.ArchiveMinDays+" dana.")+
+                        " · arhiva najmanje "+result.Legal.ArchiveMinDays+" dana."+
+                        (result.Legal.ConsumerLawRevision is null?"":" · zaštita potrošača "+result.Legal.ConsumerLawRevision)+
+                        (result.Legal.UnitPriceRuleRevision is null?"":" · cijena po jedinici mjere "+result.Legal.UnitPriceRuleRevision))+
                     "\\nSlužbena objava i pravna usklađenost zahtijevaju provjeru stvarnih podataka.";
                 foreach(var item in result.Feeds)
                     feeds.Children.Add(U.Action("Otvori javni "+item.Kind+" "+item.Format.ToUpperInvariant(),

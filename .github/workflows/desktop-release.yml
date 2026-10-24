@@ -25,8 +25,8 @@ jobs:
       GH_REPO: ${{ github.repository }}
       CI_SHA: ${{ github.event.workflow_run.head_sha }}
       ANDROID_RUN_ID: ${{ github.event.workflow_run.id }}
-      ANDROID_VERSION: '0.3.1'
-      WINDOWS_VERSION: '0.10.4'
+      ANDROID_VERSION: '0.3.2'
+      WINDOWS_VERSION: '0.10.5'
       WORDPRESS_VERSION: '1.5.2'
       ORIGINAL_PLUGIN_SHA: '58e9b44b8054ef0076a329aa7a8a3ec663947d33bfa375c4203bc109925409f8'
     steps:

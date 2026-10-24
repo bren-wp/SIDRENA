@@ -20,6 +20,8 @@ class LegalContractTest {
     @Test fun parseValidatedServerProfile() {
         val json=JSONObject("""{"schema":1,"jurisdiction":"HR",
           "rules_revision":"NN-101-2026-NN-110-2026",
+          "consumer_law_revision":"NN-59-2026",
+          "unit_price_rule_revision":"NN-105-2026",
           "effective_from":"2026-11-17",
           "reference_dates":{"legacy_fmcg":"2025-05-02",
              "general_goods_services":"2026-09-10"},
@@ -27,6 +29,10 @@ class LegalContractTest {
         val policy=LegalContract.parseOptional(json)
         assertEquals("2026-11-17", policy?.effectiveFrom)
         assertEquals(30, policy?.archiveMinDays)
+        assertEquals("NN-59-2026", policy?.consumerLawRevision)
+        assertEquals("NN-105-2026", policy?.unitPriceRuleRevision)
+        val invalidRevision = JSONObject(json.toString()).put("unit_price_rule_revision", "script:value")
+        assertThrows(IllegalArgumentException::class.java) { LegalContract.parseOptional(invalidRevision) }
         json.put("archive_min_days", 3)
         assertThrows(IllegalArgumentException::class.java) { LegalContract.parseOptional(json) }
     }

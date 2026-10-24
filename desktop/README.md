@@ -4,7 +4,7 @@
 
 **Vaše cijene. Vaša evidencija. Vaša kontrola.**
 
-SIDRENA Desktop **0.10.4** je Windows aplikacija Brendigo LTD za upravljanje proizvodima, uslugama, trenutačnim i sidrenim cijenama. Tamnoplavi izgled s narančastim detaljima prilagođava se većim i manjim prozorima.
+SIDRENA Desktop **0.10.5** je Windows aplikacija Brendigo LTD za upravljanje proizvodima, uslugama, trenutačnim i sidrenim cijenama. Tamnoplavi izgled s narančastim detaljima prilagođava se većim i manjim prozorima.
 
 ## Funkcionalnosti
 
@@ -34,7 +34,7 @@ Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Ci
 
 ## Sinkronizacija javnih pravnih pravila
 
-Windows 0.10.4 prepoznaje `plugin_version` i javni `legal` profil WordPress dodatka 1.5.2. Datumi primjene i arhiviranja preuzimaju se iz istog ugovora kao u Android aplikaciji. Lokalni katalog ostaje odvojena baza i ne mijenja WordPress bez izričite autorizirane integracije.
+Windows 0.10.5 prepoznaje `plugin_version` i javni `legal` profil WordPress dodatka 1.5.2. Datumi primjene i arhiviranja preuzimaju se iz istog ugovora kao u Android aplikaciji. Lokalni katalog ostaje odvojena baza i ne mijenja WordPress bez izričite autorizirane integracije.
 
 [Pravni okvir i interoperabilnost](../docs/LEGAL-2026-INTEROPERABILITY.md) · [Security i dead-code audit](../docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)
 
