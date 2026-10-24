@@ -203,6 +203,19 @@ fun HomePage(
         error?.let { Text(it, color = Color(0xFFFFBD9A)) }
         data.warnings.take(3).forEach { Text(it, color = Color(0xFFFFC997),
             style = MaterialTheme.typography.bodySmall) }
+        Panel {
+            Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                Text("Sidrene cijene — pravni okvir", fontWeight = FontWeight.Bold)
+                data.index.legal?.let { legal ->
+                    MetaText("Početak primjene: " + legal.effectiveFrom +
+                        " · NN 101/2026 i NN 110/2026")
+                    MetaText("2. 5. 2025. — postojeće kategorije  |  10. 9. 2026. — ostali proizvodi i usluge")
+                    MetaText("Arhiva najmanje " + legal.archiveMinDays +
+                        " dana · planirana objava do " + legal.dailyDeadline)
+                } ?: MetaText("Provjerite ažuriranje WordPress dodatka i primjenjive propise.")
+                MetaText("Točnost povijesnih cijena i zakonsku primjenu treba provjeriti prema izvornoj dokumentaciji.")
+            }
+        }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text("Brzi pristup", fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))

@@ -10,6 +10,8 @@ public sealed record OfficialOutlet(string Name,string Code,IReadOnlyList<Offici
 public sealed record OfficialPluginSnapshot(DateTimeOffset? PublishedAt,Uri PublicPricelist,Uri PublicArchive,
     IReadOnlyList<OfficialFeed> Feeds,int OutletCount)
 {
+    public string? PluginVersion { get; init; }
+    public OfficialLegalContract? Legal { get; init; }
     public Uri? ArchiveApi { get; init; }
     public Uri? CombinedFeed { get; init; }
     public IReadOnlyList<OfficialOutlet> Outlets { get; init; }=Array.Empty<OfficialOutlet>();
@@ -172,9 +174,14 @@ public static class OfficialPluginDiscovery
                 outlets.Add(new OfficialOutlet(name,code,outletFeeds));
             }
         }
+        var pluginVersion = root.TryGetProperty("plugin_version",out var v) && v.ValueKind==JsonValueKind.String
+            ? v.GetString() : null;
+        if(pluginVersion is {Length: >32})throw new InvalidDataException("Verzija WordPress dodatka nije valjana.");
+        var legal=OfficialLegalContract.ParseOptional(root);
         return new OfficialPluginSnapshot(published,cjenik,archive,list,outlets.Count)
         {
-            ArchiveApi=archiveApi,CombinedFeed=combined,Outlets=outlets
+            ArchiveApi=archiveApi,CombinedFeed=combined,Outlets=outlets,
+            PluginVersion=pluginVersion,Legal=legal
         };
     }
 
@@ -183,7 +190,8 @@ public static class OfficialPluginDiscovery
         if(!Uri.TryCreate(value,UriKind.Absolute,out var url) ||
            url.Scheme!=Uri.UriSchemeHttps ||
            !url.IdnHost.Equals(origin.IdnHost,StringComparison.OrdinalIgnoreCase) ||
-           url.Port!=origin.Port || !string.IsNullOrEmpty(url.UserInfo))
+           url.Port!=origin.Port || !string.IsNullOrEmpty(url.UserInfo) ||
+           !string.IsNullOrEmpty(url.Fragment))
             throw new InvalidDataException("API je vratio neprovjerenu ili nesigurnu vanjsku adresu.");
         return url;
     }

@@ -39,6 +39,8 @@ class CatalogRepository {
             productsCsv = csvFrom(mainFeeds, "proizvodi"),
             servicesCsv = csvFrom(mainFeeds, "usluge"),
             outlets = outlets,
+            pluginVersion = indexJson.optString("plugin_version").ifBlank { null },
+            legal = LegalContract.parseOptional(indexJson.optJSONObject("legal")),
         )
         val selected = outlets.firstOrNull { it.code == selectedOutlet }
         require(selectedOutlet.isEmpty() || selected != null) { "Odabrana poslovnica više ne postoji." }
@@ -46,6 +48,7 @@ class CatalogRepository {
         val serviceUrl = selected?.serviceCsv ?: index.servicesCsv
 
         val warnings = mutableListOf<String>()
+        if (index.legal == null) warnings.add("WordPress dodatak ne objavljuje pravni profil. Ažurirajte SIDRENA na 1.5.1.")
         fun safeItems(url: String, label: String): List<PriceItem> {
             if (url.isBlank()) {
                 warnings.add("Nema objavljenog CSV cjenika: " + label + ".")
@@ -90,6 +93,7 @@ class CatalogRepository {
     private fun read(site: SiteUrl, initial: URI, maxBytes: Int): String {
         var url = site.approved(initial.toASCIIString())
         repeat(4) { redirect ->
+            PublicNetworkGuard.verifyPublicDns(url.host)
             val connection = url.toURL().openConnection() as HttpURLConnection
             connection.instanceFollowRedirects = false
             connection.requestMethod = "GET"
@@ -97,7 +101,7 @@ class CatalogRepository {
             connection.readTimeout = 12_000
             connection.useCaches = false
             connection.setRequestProperty("Accept", "application/json, text/csv, */*")
-            connection.setRequestProperty("User-Agent", "SIDRENA-Android/0.1")
+            connection.setRequestProperty("User-Agent", "SIDRENA-Android/0.3.0")
             try {
                 val code = connection.responseCode
                 if (code in 300..399) {
