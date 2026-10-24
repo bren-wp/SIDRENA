@@ -9,6 +9,7 @@ from hashlib import sha256
 from pathlib import Path
 import re
 import sys
+import subprocess
 
 root = Path(__file__).resolve().parents[1]
 plugin = root / "wordpress/brendigo-sidrena-cijena"
@@ -18,13 +19,23 @@ issues = []
 for folder in (plugin, android, desktop):
     if not folder.is_dir():
         issues.append(f"Missing platform: {folder.relative_to(root)}")
-for path in root.rglob("*"):
-    if not path.is_file() or ".git" in path.parts:
+# Audit only files actually tracked by Git. Release jobs download already
+# verified APK/AAB/EXE bundles into an untracked release/ directory.
+# Including transient build outputs would mislabel legitimate artifacts as
+# accidentally committed executable binaries.
+tracked_files = subprocess.check_output(
+    ["git", "ls-files", "-z"], cwd=root
+).decode("utf-8").split("\0")
+for relative in tracked_files:
+    if not relative:
         continue
-    if path.name.endswith((".jks", ".keystore", ".p12")):
-        issues.append(f"Signing key in repository: {path.relative_to(root)}")
-    if path.name.endswith((".apk", ".aab", ".exe")) and "branding" not in path.parts:
-        issues.append(f"Build binary in source tree: {path.relative_to(root)}")
+    path = root / relative
+    if not path.is_file():
+        continue
+    if path.name.lower().endswith((".jks", ".keystore", ".p12")):
+        issues.append(f"Signing key tracked in source tree: {relative}")
+    if path.name.lower().endswith((".apk", ".aab", ".exe")) and "branding" not in path.parts:
+        issues.append(f"Build binary tracked in source tree: {relative}")
 
 # Validate the changed official plugin with consistent version fields.
 files = sorted(p for p in plugin.rglob('*') if p.is_file())
