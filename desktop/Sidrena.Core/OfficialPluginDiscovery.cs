@@ -105,6 +105,10 @@ public static class OfficialPluginDiscovery
             var text=value.GetString();
             return string.IsNullOrWhiteSpace(text)?null:SecureUrl(text,endpoint);
         }
+        if(!root.TryGetProperty("api_version",out var apiVersion) ||
+           apiVersion.ValueKind!=JsonValueKind.Number || !apiVersion.TryGetInt32(out var version) ||
+           version!=1)
+            throw new InvalidDataException("Nepodržana verzija SIDRENA javnog API-ja.");
         var cjenik=Url("cjenik");
         var archive=Url("archive");
         var archiveApi=OptionalUrl("type_archive");

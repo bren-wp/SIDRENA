@@ -54,6 +54,15 @@ if not all(token in android_network for token in (
     ".followRedirects(false)", ".proxy(Proxy.NO_PROXY)",
 )):
     errors.append("Android socket-bound DNS filtering, redirects or proxy policy missing")
+# Require identical versioned, read-only discovery checks on both clients.
+android_discovery=read("android/app/src/main/java/com/brendigo/sidrena/data/CatalogDiscovery.kt")
+if not all(token in android_discovery for token in (
+    'optInt("api_version", -1) == 1', "seen.add(code.lowercase())",
+    "rawOutlets.length() <= MAX_OUTLETS", "site.approved(csv)",
+)):
+    errors.append("Android official API contract version, outlet or same-origin checks missing")
+if 'root.TryGetProperty("api_version"' not in network or "version!=1" not in network:
+    errors.append("Windows official API v1 validation missing")
 if "ConnectCallback=PublicNetworkAddress.ConnectAsync" not in network:
     errors.append("Windows socket-level public IP validation missing")
 if "ORIGINAL_PLUGIN_SHA" not in release or "sha256sum -c" not in release:

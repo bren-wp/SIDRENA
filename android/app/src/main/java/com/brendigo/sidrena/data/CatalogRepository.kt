@@ -23,31 +23,8 @@ class CatalogRepository {
     suspend fun load(inputSite: String, selectedOutlet: String = ""): CatalogSnapshot = withContext(Dispatchers.IO) {
         val site = SiteUrl.parse(inputSite)
         val indexJson = JSONObject(read(site, site.endpoint("wp-json/brendigo-sidrena/v1/cjenici"), 256 * 1024))
-        val mainFeeds = indexJson.getJSONObject("feeds")
-        fun csvFrom(feeds: JSONObject, kind: String): String =
-            feeds.optJSONObject(kind)?.optString("csv").orEmpty()
-
-        val outlets = mutableListOf<Outlet>()
-        val inputOutlets = indexJson.optJSONArray("outlets") ?: JSONArray()
-        for (i in 0 until minOf(inputOutlets.length(), 200)) {
-            val item = inputOutlets.optJSONObject(i) ?: continue
-            val code = item.optString("code")
-            if (code.isBlank()) continue
-            val feeds = item.optJSONObject("feeds") ?: JSONObject()
-            outlets.add(Outlet(item.optString("name", code), code,
-                csvFrom(feeds, "proizvodi"), csvFrom(feeds, "usluge")))
-        }
-        val index = CatalogIndex(
-            publishedAt = indexJson.optString("published_at").ifBlank { null },
-            publicPage = site.publicLink(indexJson.optString("cjenik")),
-            archivePage = site.publicLink(indexJson.optString("archive")),
-            productsCsv = csvFrom(mainFeeds, "proizvodi"),
-            servicesCsv = csvFrom(mainFeeds, "usluge"),
-            outlets = outlets,
-            pluginVersion = indexJson.optString("plugin_version").ifBlank { null },
-            legal = LegalContract.parseOptional(indexJson.optJSONObject("legal")),
-        )
-        val selected = outlets.firstOrNull { it.code == selectedOutlet }
+        val index = CatalogDiscovery.parse(indexJson, site)
+        val selected = index.outlets.firstOrNull { it.code == selectedOutlet }
         require(selectedOutlet.isEmpty() || selected != null) { "Odabrana poslovnica više ne postoji." }
         val productUrl = selected?.productCsv ?: index.productsCsv
         val serviceUrl = selected?.serviceCsv ?: index.servicesCsv
@@ -120,7 +97,7 @@ class CatalogRepository {
                 .url(url.toASCIIString())
                 .get()
                 .header("Accept", "application/json, text/csv, */*")
-                .header("User-Agent", "SIDRENA-Android/0.3.1")
+                .header("User-Agent", "SIDRENA-Android/0.3.2")
                 .build()
             client.newCall(request).execute().use { response ->
                 val code = response.code

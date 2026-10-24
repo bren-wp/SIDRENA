@@ -256,9 +256,11 @@ try
     MustThrow(()=>OfficialPluginDiscovery.Endpoint("https://localhost"));
     const string restJson="""
     {
-      "plugin_version":"1.5.1",
+      "api_version":1,
+      "plugin_version":"1.5.2",
       "legal":{
         "schema":1,"jurisdiction":"HR","rules_revision":"NN-101-2026-NN-110-2026",
+         "consumer_law_revision":"NN-59-2026","unit_price_rule_revision":"NN-105-2026",
         "effective_from":"2026-11-17",
         "reference_dates":{"legacy_fmcg":"2025-05-02","general_goods_services":"2026-09-10"},
         "archive_min_days":30,"product_publication_deadline":"08:00"
@@ -296,7 +298,19 @@ try
     var snapshot=OfficialPluginDiscovery.Parse(System.Text.Encoding.UTF8.GetBytes(restJson),
         OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr"));
     Expect(snapshot.Feeds.Count==4 && snapshot.OutletCount==1,"Official REST v1 structure");
-    Expect(snapshot.PluginVersion=="1.5.1" && snapshot.Legal?.ArchiveMinDays==30,
+    Expect(snapshot.Legal?.ConsumerLawRevision=="NN-59-2026" &&
+           snapshot.Legal?.UnitPriceRuleRevision=="NN-105-2026",
+        "Published legal source revisions are synchronized with WordPress");
+    var unknownApi=restJson.Replace("\"api_version\":1", "\"api_version\":2");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(unknownApi),endpoint));
+    var missingApi=restJson.Replace("\"api_version\":1,", "");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(missingApi),endpoint));
+    var invalidRevision=restJson.Replace("NN-105-2026","invalid:value");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(invalidRevision),endpoint));
+    Expect(snapshot.PluginVersion=="1.5.2" && snapshot.Legal?.ArchiveMinDays==30,
         "Official WordPress legal contract is available across platforms");
     Expect(snapshot.Legal?.EffectiveFrom.ToString("yyyy-MM-dd")=="2026-11-17",
         "Published rules defer expanded obligations to November 17");

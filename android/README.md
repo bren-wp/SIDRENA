@@ -1,6 +1,6 @@
 # SIDRENA za Android
 
-**SIDRENA by Brendigo** · **0.3.1** · `com.brendigo.sidrena`
+**SIDRENA by Brendigo** · **0.3.2** · `com.brendigo.sidrena`
 
 ![SIDRENA](../desktop/branding/sidrena-banner.svg)
 

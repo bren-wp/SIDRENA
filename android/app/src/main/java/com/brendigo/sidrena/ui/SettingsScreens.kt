@@ -107,6 +107,8 @@ fun SettingsPage(
                     MetaText("Pravni profil: " + policy.rulesRevision)
                     MetaText("Referentni datumi: " + policy.legacyReferenceDate + " / " +
                         policy.generalReferenceDate)
+                    policy.consumerLawRevision?.let { MetaText("Zaštita potrošača: " + it) }
+                    policy.unitPriceRuleRevision?.let { MetaText("Cijene po jedinici mjere: " + it) }
                 } ?: MetaText("Noviji pravni profil nije dostupan.")
             }
         }
