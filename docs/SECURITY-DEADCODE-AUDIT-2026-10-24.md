@@ -13,7 +13,7 @@ Provjere obuhvaćaju WordPress/PHP, Android/Kotlin, Windows/.NET, GitHub Actions
 ### Android 0.3.0
 - Kotlin/JVM unit testovi i Android lint.
 - TLS (HTTPS) uz isključeni cleartext HTTP, provjera iste domene pri preusmjeravanju, ograničene veličine odgovora i testiran CSV parser.
-- DNS provjera javnih adresa prije URLConnection zahtjeva je defense-in-depth; **postoji mogućnost DNS-rebinding TOCTOU napada** dok se HTTP klijent ne poveže na prethodno verificirani IP.
+- Android OkHttp koristi vlastiti DNS resolver za provjeru svih IP adresa u trenutku uspostave veze, bez sistemskog proxyja i bez automatskih preusmjeravanja. Time je uklonjen raniji interval između zasebne DNS provjere i naknadnog razrješavanja unutar URLConnectiona. Preostaje potreba za neovisnim mrežnim penetracijskim testom.
 - Nema administratorove lozinke, nije uključen write REST ni oglašivačka telemetrija.
 - Otvoreno: neovisno pen-testiranje, provjera Android Keystorea kada se uvede autentifikacija, testovi stvarnih uređaja i potpisani Google Play AAB.
 

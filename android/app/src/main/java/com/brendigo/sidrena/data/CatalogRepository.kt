@@ -6,7 +6,12 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.net.HttpURLConnection
+import okhttp3.Dns
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.net.InetAddress
+import java.net.Proxy
+import java.util.concurrent.TimeUnit
 import java.net.URI
 import java.nio.charset.StandardCharsets
 
@@ -90,29 +95,45 @@ class CatalogRepository {
         CatalogSnapshot(site.display, index, products, services, archive, warnings)
     }
 
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .followRedirects(false)
+        .followSslRedirects(false)
+        .proxy(Proxy.NO_PROXY)
+        .dns(object : Dns {
+            override fun lookup(hostname: String): List<InetAddress> {
+                val addresses = Dns.SYSTEM.lookup(hostname)
+                require(addresses.isNotEmpty() && addresses.all(PublicNetworkGuard::isPublic)) {
+                    "Povezana stranica mora imati isključivo javne mrežne adrese."
+                }
+                return addresses
+            }
+        })
+        .connectTimeout(8, TimeUnit.SECONDS)
+        .readTimeout(12, TimeUnit.SECONDS)
+        .callTimeout(25, TimeUnit.SECONDS)
+        .build()
+
     private fun read(site: SiteUrl, initial: URI, maxBytes: Int): String {
         var url = site.approved(initial.toASCIIString())
         repeat(4) { redirect ->
-            PublicNetworkGuard.verifyPublicDns(url.host)
-            val connection = url.toURL().openConnection() as HttpURLConnection
-            connection.instanceFollowRedirects = false
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 8_000
-            connection.readTimeout = 12_000
-            connection.useCaches = false
-            connection.setRequestProperty("Accept", "application/json, text/csv, */*")
-            connection.setRequestProperty("User-Agent", "SIDRENA-Android/0.3.0")
-            try {
-                val code = connection.responseCode
+            val request = Request.Builder()
+                .url(url.toASCIIString())
+                .get()
+                .header("Accept", "application/json, text/csv, */*")
+                .header("User-Agent", "SIDRENA-Android/0.3.0")
+                .build()
+            client.newCall(request).execute().use { response ->
+                val code = response.code
                 if (code in 300..399) {
                     if (redirect >= 3) throw IOException("Previše preusmjeravanja.")
-                    val target = connection.getHeaderField("Location")
+                    val destination = response.header("Location")
                         ?: throw IOException("Preusmjeravanje nema odredište.")
-                    url = site.approved(url.resolve(target).toASCIIString())
+                    url = site.approved(url.resolve(destination).toASCIIString())
                 } else {
                     if (code !in 200..299) throw IOException("HTTP " + code)
                     val output = ByteArrayOutputStream()
-                    connection.inputStream.use { stream ->
+                    val body = response.body ?: throw IOException("Nedostaje sadržaj cjenika.")
+                    body.byteStream().use { stream ->
                         val buffer = ByteArray(8192)
                         while (true) {
                             val count = stream.read(buffer)
@@ -125,8 +146,6 @@ class CatalogRepository {
                     }
                     return output.toString(StandardCharsets.UTF_8.name())
                 }
-            } finally {
-                connection.disconnect()
             }
         }
         throw IOException("Previše preusmjeravanja.")

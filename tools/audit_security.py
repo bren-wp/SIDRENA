@@ -48,8 +48,12 @@ if "WP_REST_Server::CREATABLE" in api or "WP_REST_Server::EDITABLE" in api or "W
     errors.append("Unexpected writable endpoint in public REST API")
 if "usesCleartextTraffic=\"false\"" not in manifest or "allowBackup=\"false\"" not in manifest:
     errors.append("Android transport / backup policy not enforced")
-if "PublicNetworkGuard.verifyPublicDns(url.host)" not in read("android/app/src/main/java/com/brendigo/sidrena/data/CatalogRepository.kt"):
-    errors.append("Android network preflight missing")
+android_network=read("android/app/src/main/java/com/brendigo/sidrena/data/CatalogRepository.kt")
+if not all(token in android_network for token in (
+    "Dns.SYSTEM.lookup(hostname)", "PublicNetworkGuard::isPublic",
+    ".followRedirects(false)", ".proxy(Proxy.NO_PROXY)",
+)):
+    errors.append("Android socket-bound DNS filtering, redirects or proxy policy missing")
 if "ConnectCallback=PublicNetworkAddress.ConnectAsync" not in network:
     errors.append("Windows socket-level public IP validation missing")
 if "ORIGINAL_PLUGIN_SHA" not in release or "sha256sum -c" not in release:
