@@ -20,6 +20,8 @@ final class Brendigo_Sidrena_Cijena_Legal {
     const REFERENCE_GENERAL = '2026-09-10';
     const ARCHIVE_MIN_DAYS = 30;
     const PUBLICATION_DEADLINE = '08:00';
+    const CONSUMER_LAW_REVISION = 'NN-59-2026';
+    const UNIT_PRICE_RULE_REVISION = 'NN-105-2026';
 
     /**
      * Stable, public, versioned contract. No customer details or credentials.
@@ -31,6 +33,8 @@ final class Brendigo_Sidrena_Cijena_Legal {
             'schema' => 1,
             'jurisdiction' => 'HR',
             'rules_revision' => self::RULES_REVISION,
+            'consumer_law_revision' => self::CONSUMER_LAW_REVISION,
+            'unit_price_rule_revision' => self::UNIT_PRICE_RULE_REVISION,
             'effective_from' => self::EFFECTIVE_DATE,
             'reference_dates' => array(
                 'legacy_fmcg' => self::REFERENCE_FMCG,
@@ -61,6 +65,8 @@ final class Brendigo_Sidrena_Cijena_Legal {
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html',
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html',
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1310.html',
+                'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_06_59_728.html',
+                'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html',
             ),
         );
     }

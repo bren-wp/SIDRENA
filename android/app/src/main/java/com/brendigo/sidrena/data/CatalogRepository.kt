@@ -53,7 +53,7 @@ class CatalogRepository {
         val serviceUrl = selected?.serviceCsv ?: index.servicesCsv
 
         val warnings = mutableListOf<String>()
-        if (index.legal == null) warnings.add("WordPress dodatak ne objavljuje pravni profil. Ažurirajte SIDRENA na 1.5.1.")
+        if (index.legal == null) warnings.add("WordPress dodatak ne objavljuje pravni profil. Ažurirajte SIDRENA na 1.5.2.")
         fun safeItems(url: String, label: String): List<PriceItem> {
             if (url.isBlank()) {
                 warnings.add("Nema objavljenog CSV cjenika: " + label + ".")
@@ -120,7 +120,7 @@ class CatalogRepository {
                 .url(url.toASCIIString())
                 .get()
                 .header("Accept", "application/json, text/csv, */*")
-                .header("User-Agent", "SIDRENA-Android/0.3.0")
+                .header("User-Agent", "SIDRENA-Android/0.3.1")
                 .build()
             client.newCall(request).execute().use { response ->
                 val code = response.code
