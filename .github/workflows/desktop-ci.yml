@@ -209,7 +209,7 @@ jobs:
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
             desktop_version=$desktopVersion
-            wordpress_plugin_version='1.5.0'
+            wordpress_plugin_version='1.5.1'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
             digitally_signed=$false

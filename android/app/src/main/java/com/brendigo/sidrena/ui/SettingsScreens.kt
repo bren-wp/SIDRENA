@@ -99,6 +99,17 @@ fun SettingsPage(
                     "SIDRENA " + BuildConfig.VERSION_NAME, onAbout)
             }
         }
+        Panel {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("Usklađenost s WordPressom", fontWeight = FontWeight.Bold)
+                MetaText("WordPress dodatak: " + (data.index.pluginVersion ?: "Nepoznata verzija"))
+                data.index.legal?.let { policy ->
+                    MetaText("Pravni profil: " + policy.rulesRevision)
+                    MetaText("Referentni datumi: " + policy.legacyReferenceDate + " / " +
+                        policy.generalReferenceDate)
+                } ?: MetaText("Noviji pravni profil nije dostupan.")
+            }
+        }
         Spacer(Modifier.height(14.dp))
     }
 }

@@ -23,6 +23,7 @@ final class Brendigo_Sidrena_Cijena_Autoloader {
 		'Brendigo_Sidrena_Cijena_Price_History'   => 'includes/class-price-history.php',
 		'Brendigo_Sidrena_Cijena_Notifications'  => 'includes/class-notifications.php',
 		'Brendigo_Sidrena_Cijena_Public_API'     => 'includes/class-public-api.php',
+		'Brendigo_Sidrena_Cijena_Legal'          => 'includes/class-legal.php',
 		'Brendigo_Sidrena_Cijena_Woo_Blocks'     => 'includes/class-woo-blocks.php',
 		'Brendigo_Sidrena_Cijena_Settings'        => 'includes/class-settings.php',
 		'Brendigo_Sidrena_Cijena_I18n'            => 'includes/class-i18n.php',

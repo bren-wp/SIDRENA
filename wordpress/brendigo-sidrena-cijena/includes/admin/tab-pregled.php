@@ -101,6 +101,34 @@ if ( $sidrena_pending_since > 0 ) {
 	</div>
 </section>
 
+<section class="sidrena-cijena-card brendigo-dashboard-card" aria-labelledby="sidrena-legal-2026-title">
+    <div class="sidrena-cijena-card__head brendigo-card-title">
+        <span class="dashicons dashicons-shield-alt" aria-hidden="true"></span>
+        <div>
+            <h2 id="sidrena-legal-2026-title"><?php echo esc_html__( 'Propisi o sidrenim cijenama — 2026.', 'brendigo-sidrena-cijena' ); ?></h2>
+            <p><?php
+            /* translators: %s: effective date in Croatian locale. */
+            echo esc_html( sprintf(
+                __( 'Narodne novine 101/2026, izmjene 110/2026. Proširene obveze primjenjuju se od %s.', 'brendigo-sidrena-cijena' ),
+                wp_date( 'j. n. Y.', strtotime( Brendigo_Sidrena_Cijena_Legal::EFFECTIVE_DATE . ' 12:00:00 UTC' ) )
+            ) );
+        ?></p>
+        </div>
+    </div>
+    <p><?php
+        /* translators: 1: legacy FMCG reference date, 2: general reference date. */
+        echo esc_html( sprintf(
+            __( 'Za ranije obuhvaćenu robu provjerite stvarnu cijenu na dan %1$s, a za ostalu robu i usluge na dan %2$s. Sidrene cijene ne smiju se zaključivati iz sadašnje cijene.', 'brendigo-sidrena-cijena' ),
+            wp_date( 'j. n. Y.', strtotime( Brendigo_Sidrena_Cijena_Legal::REFERENCE_FMCG . ' 12:00:00 UTC' ) ),
+            wp_date( 'j. n. Y.', strtotime( Brendigo_Sidrena_Cijena_Legal::REFERENCE_GENERAL . ' 12:00:00 UTC' ) )
+        ) );
+    ?></p>
+    <p><?php echo esc_html__( 'Provjerite dnevnu objavu proizvoda najkasnije do 8:00, primjenjivi rok za objavu promjene cijene usluge, potpunost CSV/XML podataka po poslovnici i javnu arhivu najmanje 30 dana.', 'brendigo-sidrena-cijena' ); ?></p>
+    <p><?php echo esc_html__( 'Prijedlozi novih pravilnika iz listopada 2026. još nisu konačan propis. Za svaku stavku i djelatnost provjerite obveze te izvorne dokaze.', 'brendigo-sidrena-cijena' ); ?></p>
+    <p><a href="<?php echo esc_url( 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Odluka NN 101/2026', 'brendigo-sidrena-cijena' ); ?></a>
+    &nbsp;·&nbsp; <a href="<?php echo esc_url( 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Izmjena NN 110/2026', 'brendigo-sidrena-cijena' ); ?></a></p>
+</section>
+
 <section class="brendigo-kpi-grid" aria-label="<?php echo esc_attr__( 'Sažetak', 'brendigo-sidrena-cijena' ); ?>">
 	<article class="brendigo-kpi-card">
 		<span class="dashicons dashicons-products" aria-hidden="true"></span>

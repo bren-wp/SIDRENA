@@ -48,6 +48,18 @@ try
         var xml = Path.Combine(folder, "RADNI.xml");
         DraftExport.Csv(store.ListItems(), csv);
         DraftExport.Xml(store.ListItems(), xml);
+        var wordpressCsv = Path.Combine(folder,"wordpress-import.csv");
+        OfficialPluginImportCsv.Write(store.ListItems(),wordpressCsv);
+        var csvText=File.ReadAllText(wordpressCsv);
+        Expect(csvText.Contains(OfficialPluginImportCsv.Header),
+            "Official SIDRENA WordPress import header exactly matches canonical template");
+        Expect(csvText.Contains("proizvod") && csvText.Contains("usluga"),
+            "Windows goods and services map to WordPress expected kind values");
+        Expect(csvText.Contains("2026-09-10") && !csvText.Contains("SIDRENA_NACRT"),
+            "Verified historical reference date preserved in transfer");
+        Expect(csvText.Contains("Mlijeko; \"\"punomasno\"\""),
+            "WordPress compatible CSV escapes semicolons and quotations");
+
         Expect(File.ReadAllText(csv).Contains("\"Mlijeko; \"\"punomasno\"\"\""), "CSV quoting");
         Expect(File.ReadAllText(xml).Contains("SidrenaRadniIzvoz"), "XML draft marker");
     }
@@ -235,7 +247,7 @@ try
         Expect(markup.Contains("default-src 'none'"),"HTML preview remains offline-only with CSP");
         Expect(markup.Contains("NIJE SLUŽBENI JAVNI CJENIK"),"Print preview explicitly marked non-statutory");
     }
-    // Public read-only integration with the exact WordPress.org 1.5.0 API contract.
+    // Public read-only integration with backward compatible official REST v1.
     var endpoint=OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr/trgovina");
     Expect(endpoint.AbsoluteUri=="https://sidrena.example.hr/trgovina/wp-json/brendigo-sidrena/v1/cjenici",
         "Nested WordPress installation REST endpoint");
@@ -244,6 +256,13 @@ try
     MustThrow(()=>OfficialPluginDiscovery.Endpoint("https://localhost"));
     const string restJson="""
     {
+      "plugin_version":"1.5.1",
+      "legal":{
+        "schema":1,"jurisdiction":"HR","rules_revision":"NN-101-2026-NN-110-2026",
+        "effective_from":"2026-11-17",
+        "reference_dates":{"legacy_fmcg":"2025-05-02","general_goods_services":"2026-09-10"},
+        "archive_min_days":30,"product_publication_deadline":"08:00"
+      },
       "published_at":"2026-10-16T16:22:00+00:00",
       "cjenik":"https://sidrena.example.hr/javni-cjenik",
       "archive":"https://sidrena.example.hr/arhiva",
@@ -277,6 +296,21 @@ try
     var snapshot=OfficialPluginDiscovery.Parse(System.Text.Encoding.UTF8.GetBytes(restJson),
         OfficialPluginDiscovery.Endpoint("https://sidrena.example.hr"));
     Expect(snapshot.Feeds.Count==4 && snapshot.OutletCount==1,"Official REST v1 structure");
+    Expect(snapshot.PluginVersion=="1.5.1" && snapshot.Legal?.ArchiveMinDays==30,
+        "Official WordPress legal contract is available across platforms");
+    Expect(snapshot.Legal?.EffectiveFrom.ToString("yyyy-MM-dd")=="2026-11-17",
+        "Published rules defer expanded obligations to November 17");
+    Expect(snapshot.Legal?.LegacyReferenceDate.ToString("yyyy-MM-dd")=="2025-05-02" &&
+           snapshot.Legal?.GeneralReferenceDate.ToString("yyyy-MM-dd")=="2026-09-10",
+        "Both reference dates remain distinct; no fabricated historical prices");
+    var invalidLegal=restJson.Replace("\"archive_min_days\":30", "\"archive_min_days\":10");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(invalidLegal),endpoint));
+    var untrustedFragment=restJson.Replace("https://sidrena.example.hr/javni-cjenik",
+        "https://sidrena.example.hr/javni-cjenik#secret");
+    MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
+        System.Text.Encoding.UTF8.GetBytes(untrustedFragment),endpoint));
+
     Expect(snapshot.PublishedAt?.Year==2026,"Published time is parsed");
     Expect(snapshot.PublicPricelist.Host=="sidrena.example.hr","Same-origin public links");
     Expect(snapshot.ArchiveApi?.AbsolutePath.EndsWith("/wp-json/brendigo-sidrena/v1/arhiva")==true,

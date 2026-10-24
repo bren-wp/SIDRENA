@@ -42,6 +42,9 @@ final class Brendigo_Sidrena_Cijena_Public_API {
 		$export = Brendigo_Sidrena_Cijena_Export::instance();
 		$meta = $export->get_public_meta();
 		$out = array(
+			'api_version'  => 1,
+			'plugin_version' => BRENDIGO_SIDRENA_CIJENA_VERSION,
+			'legal' => Brendigo_Sidrena_Cijena_Legal::public_contract(),
 			'published_at' => isset( $meta['generated'] ) ? gmdate( 'c', (int) $meta['generated'] ) : null,
 			'cjenik'       => esc_url_raw( $export->get_cjenik_url() ),
 			'archive'      => esc_url_raw( $export->get_archive_url() ),

@@ -12,9 +12,9 @@
 
 | Platforma | Namjena | Izdanje |
 |---|---|---|
-| **Android** | Pregled javnih proizvoda, usluga, sidrenih cijena, poslovnica i arhive iz povezanog WordPressa | **0.2.0** |
-| **Windows** | Lokalno upravljanje katalozima, poviješću cijena, lokacijama, CSV/XML datotekama i sigurnosnim kopijama | **0.10.2** |
-| **WordPress** | Službeni dodatak za javne cjenike, sidrene cijene i arhivu | **1.5.0**, nepromijenjen |
+| **Android** | Pregled javnih proizvoda, usluga, sidrenih cijena, poslovnica i arhive iz povezanog WordPressa | **0.3.0** |
+| **Windows** | Lokalno upravljanje katalozima, poviješću cijena, lokacijama, CSV/XML datotekama i sigurnosnim kopijama | **0.10.3** |
+| **WordPress** | Službeni dodatak za javne cjenike, sidrene cijene i arhivu | **1.5.1**, nepromijenjen |
 
 ### SIDRENA Android
 
@@ -43,3 +43,9 @@ Android APK namijenjen je instalaciji i provjeri. Android AAB treba odgovarajuć
 **SIDRENA · by Brendigo**
 
 [brendigo.com](https://brendigo.com/) · [sidrena@brendigo.com](mailto:sidrena@brendigo.com)
+
+## Pravna revizija — listopad 2026.
+
+WordPress **1.5.1**, Android **0.3.0** i Windows **0.10.3** koriste zajednički javni profil propisa NN 101/2026 i izmjena NN 110/2026. Datum proširene primjene je **17. studenoga 2026.** Nacrt novih pravilnika još nije konačni propis. Povijesne sidrene cijene ne izračunavaju se automatski iz sadašnje cijene.
+
+[Pravni okvir](docs/LEGAL-2026-INTEROPERABILITY.md) · [Sigurnosni audit](docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)

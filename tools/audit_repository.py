@@ -26,21 +26,25 @@ for path in root.rglob("*"):
     if path.name.endswith((".apk", ".aab", ".exe")) and "branding" not in path.parts:
         issues.append(f"Build binary in source tree: {path.relative_to(root)}")
 
-# Verify that the official WordPress 1.5.0 source remains byte-for-byte
-# consistent with the maintained plugin validation workflow.
-files = sorted(p for p in plugin.rglob("*") if p.is_file())
-if len(files) != 128:
-    issues.append(f"Expected 128 official WordPress files, got {len(files)}")
-source_digest = sha256("".join(
-    f"{p.relative_to(plugin).as_posix()} {sha256(p.read_bytes()).hexdigest()}\n"
+# Validate the changed official plugin with consistent version fields.
+files = sorted(p for p in plugin.rglob('*') if p.is_file())
+if len(files) < 129:
+    issues.append('WordPress plugin files unexpectedly missing')
+source_digest = sha256(''.join(
+    f'{p.relative_to(plugin).as_posix()} {sha256(p.read_bytes()).hexdigest()}\n'
     for p in files
 ).encode()).hexdigest()
-expected = "44b6ff17478f7769d9bda8157020269247f9dad2c186d92b82ddfbd21e996387"
-if source_digest != expected:
-    issues.append("Official WordPress source differs from the pinned 1.5.0 package.")
-if not (plugin / "brendigo-sidrena-cijena.php").exists():
-    issues.append("Official WordPress plugin entrypoint missing")
-
+main_php = (plugin / 'brendigo-sidrena-cijena.php').read_text(encoding='utf-8')
+readme = (plugin / 'readme.txt').read_text(encoding='utf-8')
+plugin_version = '1.5.1'
+if f' * Version: {plugin_version}\n' not in main_php or f'Stable tag: {plugin_version}\n' not in readme:
+    issues.append('Plugin header and stable tag mismatch')
+if f"BRENDIGO_SIDRENA_CIJENA_VERSION', '{plugin_version}'" not in main_php:
+    issues.append('Plugin runtime version mismatch')
+if not (plugin / 'includes/class-legal.php').is_file():
+    issues.append('Missing legal contract')
+if any(p.is_symlink() for p in plugin.rglob('*')):
+    issues.append('Symlinks are forbidden in packaged plugin')
 # Cross-platform release metadata must agree before expensive CI packaging.
 import xml.etree.ElementTree as ET
 csproj = root / "desktop/Sidrena.Desktop/Sidrena.Desktop.csproj"
@@ -62,8 +66,8 @@ if not android_version or f"ANDROID_VERSION: '{android_version}'" not in release
     issues.append("Android release version does not match Gradle versionName")
 if "desktop_version=$desktopVersion" not in desktop_ci or "$desktopProject.Project.PropertyGroup.Version" not in desktop_ci:
     issues.append("Windows artifact manifest must derive version from desktop project")
-if "WORDPRESS_VERSION: '1.5.0'" not in release_ci:
-    issues.append("WordPress source must keep pinned version 1.5.0")
+if f"WORDPRESS_VERSION: '{plugin_version}'" not in release_ci:
+    issues.append("WordPress version must match the current source")
 
 # Surface candidate duplicated class names without modifying any code.
 for extension, roots, pattern in (

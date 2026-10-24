@@ -14,6 +14,8 @@ data class CatalogIndex(
     val productsCsv: String,
     val servicesCsv: String,
     val outlets: List<Outlet>,
+    val pluginVersion: String? = null,
+    val legal: LegalContract? = null,
 )
 
 data class PriceItem(

@@ -20,8 +20,8 @@ public sealed class PriceStore : IDisposable
 {
     private readonly SqliteConnection _connection;
     private bool _disposed;
-    private static readonly HashSet<string> PermittedAnchorDates = new(StringComparer.Ordinal)
-        { "2026-09-10", "2025-05-02" };
+    private static readonly HashSet<string> PermittedAnchorDates =
+        new(SidrenaLegalContract.KnownReferenceDates,StringComparer.Ordinal);
 
     public PriceStore(string databasePath)
     {
