@@ -27,3 +27,19 @@ WordPress je izvor javno objavljenih podataka; Android je klijent za čitanje; W
 Provjeriti stvarne dokumente cijena na oba povijesna datuma; klasifikaciju robe, usluga, iznimke i posebne propise; dostupnost cijene za jedinicu mjere; potpunost javnih datoteka; realnu pouzdanost CRON objava do 08:00 i arhive; integraciju WooCommercea; konačne pravilnike nakon savjetovanja; instalacijske i mobilne testove na stvarnim uređajima. Ugradnja pravnog profila ne izdaje potvrdu usklađenosti trgovca.
 
 Ovaj pregled služi informiranju i nije zamjena za pravni savjet.
+
+## Važna razlika: obveze već na snazi od 2025.
+
+NN 75/2025 (na snazi od **15. 5. 2025.**) ograničava obvezu mrežne objave cjenika iz te odluke na supermarkete, hipermarkete, diskontne prodavaonice i Cash&Carry, dok se obveza isticanja dodatne cijene od 2. 5. 2025. odnosi na sve trgovce na malo za navedenih šest skupina robe. To nije ista osobna i materijalna primjena. Od 17. 11. 2026. nove odluke NN 101/2026, izmijenjene NN 110/2026, zamjenjuju odgovarajuće dijelove režima NN 75/2025, ali zadržavaju referentnu cijenu iz svibnja 2025. za starije skupine. Izvor: https://narodne-novine.nn.hr/clanci/sluzbeni/2025_05_75_979.html i https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html
+
+## Drugi povezani propisi: najviše dopuštene cijene
+
+**Zakon o iznimnim mjerama kontrole cijena (NN 40/2025)** osnovni je pravni temelj vladinih odluka i izričito izuzima robu/usluge čiju kontrolu cijena uređuju posebni propisi: https://narodne-novine.nn.hr/clanci/sluzbeni/2025_03_40_540.html.
+
+**Odluka o najvišim cijenama NN 142/2025** propisuje maksimalne maloprodajne cijene za točno navedene proizvode i kategorije. To je **četvrti, zaseban regulatorni podatak** (gornja dopuštena granica), različit od sidrene cijene, aktualne cijene i najniže cijene prije sniženja: https://narodne-novine.nn.hr/clanci/sluzbeni/2025_11_142_2107.html. Za automatiziranu provjeru potreban je verzioniran popis naziva, pakiranja, jedinica, definicija kategorija, datuma početka/završetka i iznimaka; **u ovom PR-u nije dodano automatsko upozoravanje ili blokiranje prodaje** jer pouzdano preslikavanje svih proizvoda nije dokazano.
+
+## Detalji pravilnika NN 105/2026
+
+Pravila za jedinicu mjere ne mogu se tumačiti kao neuvjetovana obveza za baš svaki proizvod. Potrebna je provjera iznimaka i specifičnih kategorija iz članaka 4.–8. Cjenik usluga prema članku 9. treba navesti naziv, vrstu i opseg, a prema članku 10. cijena uključuje pripadajuće troškove. Ako je ugrađena ili zamjenska roba sastavni dio usluge, članak 11. zahtijeva njezinu cijenu uz uslugu. Izvor: https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_105_1270.html.
+
+Dok plugin stvarno ne provjeri pojedinačnu stavku prema relevantnim iznimkama, polje „cijena po jedinici mjere” ne smije se automatski popunjavati pretpostavljenom vrijednošću; za usluge treba provjeriti potpunost njihova opisa i troškova.
