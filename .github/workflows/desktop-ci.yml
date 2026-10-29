@@ -206,10 +206,29 @@ jobs:
           if (!$installerDefinition.Contains($expectedInstallerVersion)) {
             throw "Installer version does not match project version $desktopVersion"
           }
+          # Keep Windows release metadata synchronized with the official WordPress plugin.
+          $pluginVersionLine = Get-Content 'wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' |
+            Where-Object { $_.Trim().StartsWith('* Version:') } | Select-Object -First 1
+          if (!$pluginVersionLine) { throw 'WordPress plugin version header missing' }
+          $pluginVersion = ($pluginVersionLine -split ':', 2)[1].Trim()
+          if ($pluginVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') {
+            throw "Invalid WordPress plugin version: $pluginVersion"
+          }
+          $stableTagLine = Get-Content 'wordpress/brendigo-sidrena-cijena/readme.txt' |
+            Where-Object { $_.StartsWith('Stable tag:') } | Select-Object -First 1
+          if (!$stableTagLine) { throw 'WordPress stable tag missing' }
+          $stableTag = ($stableTagLine -split ':', 2)[1].Trim()
+          if ($stableTag -ne $pluginVersion) {
+            throw "WordPress stable tag $stableTag disagrees with version $pluginVersion"
+          }
+          $runtimeDefinition = "BRENDIGO_SIDRENA_CIJENA_VERSION', '$pluginVersion'"
+          if (!(Get-Content 'wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' -Raw).Contains($runtimeDefinition)) {
+            throw "WordPress runtime version differs from header $pluginVersion"
+          }
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
             desktop_version=$desktopVersion
-            wordpress_plugin_version='1.5.2'
+            wordpress_plugin_version=$pluginVersion
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
             digitally_signed=$false
