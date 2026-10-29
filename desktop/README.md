@@ -4,7 +4,7 @@
 
 **Vaše cijene. Vaša evidencija. Vaša kontrola.**
 
-SIDRENA Desktop **0.10.5** je Windows aplikacija Brendigo LTD za upravljanje proizvodima, uslugama, trenutačnim i sidrenim cijenama. Tamnoplavi izgled s narančastim detaljima prilagođava se većim i manjim prozorima.
+SIDRENA Desktop **0.10.6** je Windows aplikacija Brendigo LTD za upravljanje proizvodima, uslugama, trenutačnim i sidrenim cijenama. Tamnoplavi izgled s narančastim detaljima prilagođava se većim i manjim prozorima.
 
 ## Funkcionalnosti
 
@@ -24,7 +24,7 @@ Obje verzije koriste isti direktorij korisničkih podataka u sustavu Windows. Pr
 
 ## WordPress povezivanje
 
-Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Cijena 1.5.2**. Lokalni Windows katalog ne objavljuje se automatski na WordPressu.
+Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Cijena 1.5.3**. Lokalni Windows katalog ne objavljuje se automatski na WordPressu.
 
 ## Upute i dokumentacija
 
@@ -34,7 +34,7 @@ Windows pregled koristi **javne objave** WordPress dodatka **Brendigo Sidrena Ci
 
 ## Sinkronizacija javnih pravnih pravila
 
-Windows 0.10.5 prepoznaje `plugin_version` i javni `legal` profil WordPress dodatka 1.5.2. Datumi primjene i arhiviranja preuzimaju se iz istog ugovora kao u Android aplikaciji. Lokalni katalog ostaje odvojena baza i ne mijenja WordPress bez izričite autorizirane integracije.
+Windows 0.10.6 prepoznaje `plugin_version` i javni `legal` profil WordPress dodatka 1.5.3. Datumi primjene i arhiviranja preuzimaju se iz istog ugovora kao u Android aplikaciji. Lokalni katalog ostaje odvojena baza i ne mijenja WordPress bez izričite autorizirane integracije.
 
 [Pravni okvir i interoperabilnost](../docs/LEGAL-2026-INTEROPERABILITY.md) · [Security i dead-code audit](../docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)
 
@@ -43,3 +43,8 @@ Windows 0.10.5 prepoznaje `plugin_version` i javni `legal` profil WordPress doda
 U izborniku **Cjenici** opcija **CSV za uvoz u WordPress** izrađuje datoteku s 15 stupaca i nazivima koje prepoznaje službeni WordPress SIDRENA uvoznik. Uvoz se zatim izvodi samo u WordPress administraciji (**SIDRENA → Uvoz cjenika**), uz pregled mapiranja i izričitu potvrdu. Dodatna polja koja ne postoje u Windows lokalnoj bazi ostaju prazna; nijedna povijesna cijena, barkod ili dostupnost ne izmišljaju se.
 
 **Oprez:** pri potvrđivanju u WordPressu postojeće stavke mogu biti ažurirane prema SKU-u i pravilima uvoznika. Prije uvoza provjerite sigurnosnu kopiju, obuhvat i podatke. Ovo nije automatska sinkronizacija ili automatska javna objava.
+
+
+### Pravna dopuna 29. 10. 2026.
+
+Profil WordPress 1.5.3 razlikuje pravilo najniže cijene 30 dana prije sniženja od sidrene cijene; NN 105/2026 na snazi je od 26. 9. 2026. Windows samo čita javne podatke, dok lokalne nacrte prenosi na WordPress uz ručnu potvrdu, bez automatske administrativne sinkronizacije. Detalji u `docs/LEGAL-REVIEW-2026-10-29.md` u korijenu repozitorija.
