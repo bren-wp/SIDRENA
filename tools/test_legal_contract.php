@@ -16,6 +16,10 @@ sidrena_expect( '2026-11-17' === $contract['effective_from'], 'Amended effective
 sidrena_expect( '2025-05-02' === $contract['reference_dates']['legacy_fmcg'], 'Legacy date' );
 sidrena_expect( '2026-09-10' === $contract['reference_dates']['general_goods_services'], 'General date' );
 sidrena_expect( 30 === $contract['archive_min_days'], 'Archive minimum' );
+sidrena_expect( 30 === $contract['price_reduction_lookback_days'], 'Separate 30-day sale baseline' );
+sidrena_expect( false === $contract['discount_baseline_is_anchor_price'], 'Anchor is not sale baseline' );
+sidrena_expect( '2026-09-26' === $contract['unit_price_rule_effective_from'], 'NN105 effective date' );
+sidrena_expect( '2026-11-13' === $contract['draft_rulebooks_consultation_until'], 'Drafts pending' );
 sidrena_expect( '08:00' === $contract['product_publication_deadline'], 'Daily deadline' );
 sidrena_expect( '' === Brendigo_Sidrena_Cijena_Legal::reference_date( 'unknown' ), 'No inferred category' );
 sidrena_expect( '2025-05-02' === Brendigo_Sidrena_Cijena_Legal::reference_date( 'legacy_fmcg' ), 'Verified legacy date' );

@@ -1,6 +1,6 @@
 ; SIDRENA Windows Setup — packages a real, CI-tested .NET self-contained app.
 ; Never touch %LOCALAPPDATA%\Brendigo\SIDRENA\sidrena.db or its backups.
-#define DesktopVersion "0.10.5"
+#define DesktopVersion "0.10.6"
 [Setup]
 AppId={{9A25D162-6FB4-4B48-BD20-5EE4D4766BA3}
 AppName=SIDRENA
@@ -36,7 +36,7 @@ AppMutex=Local\Brendigo.SIDRENA.Desktop
 CloseApplications=yes
 RestartApplications=no
 SetupLogging=yes
-VersionInfoVersion=0.10.5.1
+VersionInfoVersion=0.10.6.1
 VersionInfoDescription=SIDRENA Desktop Installer
 VersionInfoCompany=Brendigo LTD
 VersionInfoProductName=SIDRENA Desktop

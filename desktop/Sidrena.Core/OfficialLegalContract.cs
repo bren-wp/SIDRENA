@@ -11,6 +11,9 @@ public sealed record OfficialLegalContract(
 {
     public string? ConsumerLawRevision { get; init; }
     public string? UnitPriceRuleRevision { get; init; }
+    public int? PriceReductionLookbackDays { get; init; }
+    public bool? DiscountBaselineIsAnchorPrice { get; init; }
+    public DateOnly? UnitPriceRuleEffectiveFrom { get; init; }
 
     public static OfficialLegalContract? ParseOptional(JsonElement root)
     {
@@ -61,10 +64,29 @@ public sealed record OfficialLegalContract(
                 throw new InvalidDataException("Neispravna oznaka pravnog izvora.");
             return value;
         }
+        int? reductionDays=null;
+        if(section.TryGetProperty("price_reduction_lookback_days",out var reduction))
+        {
+            if(reduction.ValueKind!=JsonValueKind.Number || !reduction.TryGetInt32(out var v) || v!=30)
+                throw new InvalidDataException("Neispravno 30-dnevno razdoblje za sniženja.");
+            reductionDays=v;
+        }
+        bool? discountAnchor=null;
+        if(section.TryGetProperty("discount_baseline_is_anchor_price",out var anchor))
+        {
+            if(anchor.ValueKind!=JsonValueKind.False)
+                throw new InvalidDataException("Sidrena cijena nije osnova za popust.");
+            discountAnchor=false;
+        }
+        DateOnly? unitEffective=section.TryGetProperty("unit_price_rule_effective_from",out var unitDate)
+            ? Iso(unitDate.ValueKind==JsonValueKind.String ? unitDate.GetString()??"" : "") : null;
         return new OfficialLegalContract(revision,effective,oldDate,newDate,days,deadline)
         {
             ConsumerLawRevision=OptionalRevision("consumer_law_revision"),
-            UnitPriceRuleRevision=OptionalRevision("unit_price_rule_revision")
+            UnitPriceRuleRevision=OptionalRevision("unit_price_rule_revision"),
+            PriceReductionLookbackDays=reductionDays,
+            DiscountBaselineIsAnchorPrice=discountAnchor,
+            UnitPriceRuleEffectiveFrom=unitEffective
         };
     }
 }
@@ -77,5 +99,7 @@ public static class SidrenaLegalContract
     public const string GeneralReferenceDate="2026-09-10";
     public const string ConsumerLawRevision="NN-59-2026";
     public const string UnitPriceRuleRevision="NN-105-2026";
+    public const string UnitPriceRuleEffectiveFrom="2026-09-26";
+    public const int PriceReductionLookbackDays=30;
     public static readonly string[] KnownReferenceDates={LegacyReferenceDate,GeneralReferenceDate};
 }

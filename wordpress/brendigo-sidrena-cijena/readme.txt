@@ -4,13 +4,18 @@ Tags: reference-prices, price-list, csv, croatia, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Manage reference prices and dates, publish a public HTML pricelist, and generate XML/CSV archives for WooCommerce or standalone catalogs.
 
 == Changelog ==
+
+= 1.5.3 =
+* Separate the 30-day sale baseline from documented historical reference prices in the public legal metadata.
+* Document the effective date of NN 105/2026 and pending 2026 rulebook consultation without changing existing public CSV/XML schemas or saved prices.
+
 
 = 1.5.2 =
 * Published machine-readable legal guidance for the 2026 reference-price dates, effective date and 30-day public archive requirement in the existing read-only REST catalog discovery endpoint.

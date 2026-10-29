@@ -2,9 +2,9 @@
 
 | Komponenta | Verzija |
 |---|---|
-| Android | **0.3.2** |
-| Windows Desktop | **0.10.5** |
-| WordPress dodatak | **1.5.2** |
+| Android | **0.3.3** |
+| Windows Desktop | **0.10.6** |
+| WordPress dodatak | **1.5.3** |
 
 Verzije su **odvojene**. WordPress izvor i ZIP ostaju nepromijenjeni dok nema stvarnih promjena u dodatku.
 
@@ -17,7 +17,7 @@ Novo objedinjeno izdanje sadrži:
 - `SIDRENA-Android-unsigned.aab` — AAB bez produkcijskog potpisa.
 - `SIDRENA-Desktop-win-x64-Portable.exe` — Windows prijenosna aplikacija.
 - `SIDRENA-Desktop-win-x64-Setup.exe` — Windows instalacijski program.
-- `brendigo-sidrena-cijena-1.5.2.zip` — **neizmijenjeni** službeni WordPress paket.
+- `brendigo-sidrena-cijena-1.5.3.zip` — ažurirani službeni WordPress paket.
 - Kontrolne SHA-256 datoteke i Windows izvještaj o porijeklu binarnih datoteka.
 
 Objava novog paketa moguća je tek kada oba CI postupka uspješno završe za isti commit, kontrolni zbrojevi odgovaraju i WordPress paket zadrži izvorni SHA-256. U nedostatku produkcijskog potpisnog ključa Android AAB ne treba predstavljati kao spreman za Google Play.

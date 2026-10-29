@@ -19,6 +19,8 @@ final class Brendigo_Sidrena_Cijena_Legal {
     const REFERENCE_FMCG = '2025-05-02';
     const REFERENCE_GENERAL = '2026-09-10';
     const ARCHIVE_MIN_DAYS = 30;
+    const PRICE_REDUCTION_LOOKBACK_DAYS = 30;
+    const UNIT_PRICE_RULE_EFFECTIVE_FROM = '2026-09-26';
     const PUBLICATION_DEADLINE = '08:00';
     const CONSUMER_LAW_REVISION = 'NN-59-2026';
     const UNIT_PRICE_RULE_REVISION = 'NN-105-2026';
@@ -31,10 +33,15 @@ final class Brendigo_Sidrena_Cijena_Legal {
     public static function public_contract() {
         return array(
             'schema' => 1,
+            'reviewed_on' => '2026-10-29',
             'jurisdiction' => 'HR',
             'rules_revision' => self::RULES_REVISION,
             'consumer_law_revision' => self::CONSUMER_LAW_REVISION,
             'unit_price_rule_revision' => self::UNIT_PRICE_RULE_REVISION,
+            'unit_price_rule_effective_from' => self::UNIT_PRICE_RULE_EFFECTIVE_FROM,
+            'price_reduction_lookback_days' => self::PRICE_REDUCTION_LOOKBACK_DAYS,
+            'discount_baseline_is_anchor_price' => false,
+            'draft_rulebooks_consultation_until' => '2026-11-13',
             'effective_from' => self::EFFECTIVE_DATE,
             'reference_dates' => array(
                 'legacy_fmcg' => self::REFERENCE_FMCG,
@@ -61,6 +68,7 @@ final class Brendigo_Sidrena_Cijena_Legal {
             'classification' => 'manual_verified',
             'historical_prices' => 'not_inferred',
             'source_urls' => array(
+                'https://narodne-novine.nn.hr/clanci/sluzbeni/2025_05_75_979.html',
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1212.html',
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_101_1213.html',
                 'https://narodne-novine.nn.hr/clanci/sluzbeni/2026_09_110_1309.html',

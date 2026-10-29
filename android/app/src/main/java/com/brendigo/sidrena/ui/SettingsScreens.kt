@@ -109,6 +109,9 @@ fun SettingsPage(
                         policy.generalReferenceDate)
                     policy.consumerLawRevision?.let { MetaText("Zaštita potrošača: " + it) }
                     policy.unitPriceRuleRevision?.let { MetaText("Cijene po jedinici mjere: " + it) }
+                    policy.unitPriceRuleEffectiveFrom?.let { MetaText("Pravilnik o cijeni po jedinici mjere od: " + it) }
+                    policy.priceReductionLookbackDays?.let { MetaText("Sniženja: najniža cijena u " + it + " dana prije sniženja.") }
+                    if (policy.discountBaselineIsAnchorPrice == false) MetaText("Sidrena cijena nije osnova za izračun popusta.")
                 } ?: MetaText("Noviji pravni profil nije dostupan.")
             }
         }
