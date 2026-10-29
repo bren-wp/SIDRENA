@@ -611,7 +611,7 @@ public partial class MainWindow : Window
     {
         var outer=U.Vertical();
         outer.Children.Add(U.Card("WordPress i vaše poslovnice",
-            U.Text("Brendigo Sidrena Cijena 1.5.1",18,true),
+            U.Text("Brendigo Sidrena Cijena 1.5.3",18,true),
             U.Muted("Učitajte javne cjenike i povijest objava povezane web-stranice.")));
 
         var site=U.Box("https://primjer.hr/",420);
@@ -641,14 +641,15 @@ public partial class MainWindow : Window
                     result.PublishedAt.Value.ToLocalTime().ToString("dd. MM. yyyy. HH:mm",Hr):
                     "nije evidentirana")+$"\nDostupna su {result.Feeds.Count} tipizirana izvora i {result.OutletCount} poslovnica."+
                     (result.Legal is null?
-                        "\\nNema pravnog API profila. Ažurirajte WordPress SIDRENA dodatak na 1.5.2.":
+                        "\\nNema pravnog API profila. Ažurirajte WordPress SIDRENA dodatak na 1.5.3.":
                         "\\nPravni profil: "+result.Legal.RulesRevision+
                         " · početak primjene "+result.Legal.EffectiveFrom.ToString("dd. MM. yyyy.",Hr)+
                         " · referentni datumi "+result.Legal.LegacyReferenceDate.ToString("dd. MM. yyyy.",Hr)+
                         " / "+result.Legal.GeneralReferenceDate.ToString("dd. MM. yyyy.",Hr)+
                         " · arhiva najmanje "+result.Legal.ArchiveMinDays+" dana."+
                         (result.Legal.ConsumerLawRevision is null?"":" · zaštita potrošača "+result.Legal.ConsumerLawRevision)+
-                        (result.Legal.UnitPriceRuleRevision is null?"":" · cijena po jedinici mjere "+result.Legal.UnitPriceRuleRevision))+
+                        (result.Legal.UnitPriceRuleRevision is null?"":" · cijena po jedinici mjere "+result.Legal.UnitPriceRuleRevision)+
+                        (result.Legal.PriceReductionLookbackDays is null?"":" · sniženja: najniža prethodna cijena "+result.Legal.PriceReductionLookbackDays+" dana (nije sidrena)"))+
                     "\\nSlužbena objava i pravna usklađenost zahtijevaju provjeru stvarnih podataka.";
                 foreach(var item in result.Feeds)
                     feeds.Children.Add(U.Action("Otvori javni "+item.Kind+" "+item.Format.ToUpperInvariant(),
@@ -822,7 +823,7 @@ public partial class MainWindow : Window
         outer.Children.Add(U.Card("Informacije o izdanju",
             U.Text("SIDRENA Desktop "+GetDesktopVersion(),18,true),
             U.Muted("Windows 10/11 · Brendigo LTD · Komercijalna licencija"),
-            U.Notice("WordPress dodatak SIDRENA 1.5.1 dijeli javni pravni profil s Androidom i Windowsom."),
+            U.Notice("WordPress dodatak SIDRENA 1.5.3 dijeli javni pravni profil s Androidom i Windowsom."),
             U.Action("Preuzmi najnoviju Windows aplikaciju",()=>
                 OpenUrl("https://github.com/bren-wp/SIDRENA/releases"),true),
             U.Action("Uvjeti komercijalne licence",ShowCommercialLicense),
