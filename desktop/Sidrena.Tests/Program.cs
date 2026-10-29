@@ -257,10 +257,12 @@ try
     const string restJson="""
     {
       "api_version":1,
-      "plugin_version":"1.5.2",
+      "plugin_version":"1.5.3",
       "legal":{
         "schema":1,"jurisdiction":"HR","rules_revision":"NN-101-2026-NN-110-2026",
          "consumer_law_revision":"NN-59-2026","unit_price_rule_revision":"NN-105-2026",
+         "price_reduction_lookback_days":30,"discount_baseline_is_anchor_price":false,
+         "unit_price_rule_effective_from":"2026-09-26",
         "effective_from":"2026-11-17",
         "reference_dates":{"legacy_fmcg":"2025-05-02","general_goods_services":"2026-09-10"},
         "archive_min_days":30,"product_publication_deadline":"08:00"
@@ -310,8 +312,11 @@ try
     var invalidRevision=restJson.Replace("NN-105-2026","invalid:value");
     MustThrowType<InvalidDataException>(()=>OfficialPluginDiscovery.Parse(
         System.Text.Encoding.UTF8.GetBytes(invalidRevision),endpoint));
-    Expect(snapshot.PluginVersion=="1.5.2" && snapshot.Legal?.ArchiveMinDays==30,
+    Expect(snapshot.PluginVersion=="1.5.3" && snapshot.Legal?.ArchiveMinDays==30,
         "Official WordPress legal contract is available across platforms");
+    Expect(snapshot.Legal?.PriceReductionLookbackDays==30 && snapshot.Legal?.DiscountBaselineIsAnchorPrice==false &&
+           snapshot.Legal?.UnitPriceRuleEffectiveFrom?.ToString("yyyy-MM-dd")=="2026-09-26",
+        "Sale baseline and historical anchor are separate; NN 105 date explicit");
     Expect(snapshot.Legal?.EffectiveFrom.ToString("yyyy-MM-dd")=="2026-11-17",
         "Published rules defer expanded obligations to November 17");
     Expect(snapshot.Legal?.LegacyReferenceDate.ToString("yyyy-MM-dd")=="2025-05-02" &&
