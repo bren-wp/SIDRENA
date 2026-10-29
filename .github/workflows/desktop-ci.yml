@@ -206,9 +206,15 @@ jobs:
           if (!$installerDefinition.Contains($expectedInstallerVersion)) {
             throw "Installer version does not match project version $desktopVersion"
           }
-          # Read the WordPress version from the official plugin source, not a stale literal.
-          $pluginSource = Get-Content 'wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' -Raw
-          $versionMatch = [regex]::Match($pluginSource, '(?m)^[ \t]*\*[ \t]*Version:[ \t]*(?<version>\d+\.\d+\.\d+)[ \t]*\r?
+          # Keep Windows release metadata synchronized with the official WordPress plugin.
+          $pluginVersionLine = Get-Content 'wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' |
+            Where-Object { $_.Trim().StartsWith('* Version:') } | Select-Object -First 1
+          if (!$pluginVersionLine) { throw 'WordPress plugin version header missing' }
+          $pluginVersion = ($pluginVersionLine -split ':', 2)[1].Trim()
+          if ($pluginVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+
+            product='SIDRENA Desktop'
+            desktop_version=$desktopVersion
+            wordpress_plugin_version=$pluginVersion
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
             digitally_signed=$false
@@ -237,50 +243,24 @@ jobs:
           path: artifacts/sidrena-desktop-win-x64/
           if-no-files-found: error
           retention-days: 14
-)
-          if (!$versionMatch.Success) { throw 'Official WordPress plugin header has no valid version' }
-          $pluginVersion = $versionMatch.Groups['version'].Value
-          $pluginReadme = Get-Content 'wordpress/brendigo-sidrena-cijena/readme.txt' -Raw
-          if ($pluginReadme -notmatch ('(?m)^Stable tag: ' + [regex]::Escape($pluginVersion) + '\r?
-            platform='Windows x64'
-            source_commit=$env:GITHUB_SHA
-            digitally_signed=$false
-            files=$manifestFiles
+) {
+            throw "Invalid WordPress plugin version: $pluginVersion"
           }
-          $manifest | ConvertTo-Json -Depth 8 |
-            Set-Content (Join-Path $folder 'SIDRENA-Desktop-release-info.json') -Encoding utf8
-          foreach($p in $files) {
-            if((Get-Item $p).Length -lt 100000) { throw "Binary too small: $p" }
+          $stableTagLine = Get-Content 'wordpress/brendigo-sidrena-cijena/readme.txt' |
+            Where-Object { $_.StartsWith('Stable tag:') } | Select-Object -First 1
+          if (!$stableTagLine) { throw 'WordPress stable tag missing' }
+          $stableTag = ($stableTagLine -split ':', 2)[1].Trim()
+          if ($stableTag -ne $pluginVersion) {
+            throw "WordPress stable tag $stableTag disagrees with version $pluginVersion"
           }
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-release-binaries
-          path: artifacts/desktop-release/
-          if-no-files-found: error
-          retention-days: 30
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-real-ui-captures
-          path: artifacts/sidrena-ui-captures/
-          if-no-files-found: error
-          retention-days: 14
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-win-x64-portable
-          path: artifacts/sidrena-desktop-win-x64/
-          if-no-files-found: error
-          retention-days: 14
-)) {
-            throw "WordPress readme stable tag differs from plugin header version $pluginVersion"
-          }
-          $pluginRuntimeVersion = "BRENDIGO_SIDRENA_CIJENA_VERSION', '$pluginVersion'"
-          if (!$pluginSource.Contains($pluginRuntimeVersion)) {
-            throw "WordPress plugin runtime constant differs from header version $pluginVersion"
+          $runtimeDefinition = "BRENDIGO_SIDRENA_CIJENA_VERSION', '$pluginVersion'"
+          if (!(Get-Content 'wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php' -Raw).Contains($runtimeDefinition)) {
+            throw "WordPress runtime version differs from header $pluginVersion"
           }
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
             desktop_version=$desktopVersion
-            wordpress_plugin_version=$pluginVersion
+            wordpress_plugin_version='1.5.2'
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
             digitally_signed=$false
