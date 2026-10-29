@@ -1,6 +1,6 @@
 # SIDRENA za Android
 
-**SIDRENA by Brendigo** · **0.3.2** · `com.brendigo.sidrena`
+**SIDRENA by Brendigo** · **0.3.3** · `com.brendigo.sidrena`
 
 ![SIDRENA](../desktop/branding/sidrena-banner.svg)
 
@@ -48,8 +48,13 @@ Izvorni kod koristi Kotlin, Jetpack Compose i Material 3. Za izgradnju otvorite 
 
 ## Pravni profil (NN 101/2026 i NN 110/2026)
 
-Aplikacija čita isti javni pravni profil kao Windows aplikacija iz WordPress plugina 1.5.2. Prikazuje datum početka proširenih obveza **17. 11. 2026.**, oba referentna datuma **2. 5. 2025.** i **10. 9. 2026.**, minimalnu arhivu 30 dana te vrijeme dnevne objave do 8:00. Ne mijenja i ne izmišlja povijesne cijene.
+Aplikacija čita isti javni pravni profil kao Windows aplikacija iz WordPress plugina 1.5.3. Prikazuje datum početka proširenih obveza **17. 11. 2026.**, oba referentna datuma **2. 5. 2025.** i **10. 9. 2026.**, minimalnu arhivu 30 dana te vrijeme dnevne objave do 8:00. Ne mijenja i ne izmišlja povijesne cijene.
 
 [Pravni izvori i kontrolni popis](../docs/LEGAL-2026-INTEROPERABILITY.md) · [Sigurnosni audit](../docs/SECURITY-DEADCODE-AUDIT-2026-10-24.md)
 
 Pravni profil dopunjen je informativnim identifikatorima NN 59/2026 i NN 105/2026; pravne obveze ne dokazuju se samim postojanjem profila.
+
+
+### Pravna dopuna 29. 10. 2026.
+
+Javni profil razlikuje sidrenu cijenu od najniže prethodne cijene za sniženja u pravilu 30 dana, bilježi pravila NN 105/2026 od 26. 9. 2026. i ostaje kompatibilan sa starijim WordPress profilima. Aplikacija je read-only i ne potvrđuje pravnu usklađenost trgovca.
