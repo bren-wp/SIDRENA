@@ -60,3 +60,8 @@ WordPress pravni profil u verziji 1.5.2 dodaje `consumer_law_revision` = `NN-59-
 Oba klijenta zahtijevaju `api_version: 1`, provjeravaju izvore javnih cjenika i odbijaju nepodržan odgovor. Android odsad provjerava sve poslovnice umjesto tihog skraćivanja popisa, odbija ponovljene oznake i neispravne HTTPS poveznice te koristi ista pravila kao Windows. Polja `consumer_law_revision` i `unit_price_rule_revision` prikazuju se samo ako su zaista objavljena u WordPress profilu.
 
 **WordPress 1.5.2 ostaje nepromijenjen.** Izvor istine i dalje su javno objavljeni podaci na WordPressu; mobilni klijent dohvaća podatke, a Windows lokalni nacrti ne upisuju se automatski u WordPress. Sinkronizirani podaci ne znače dvosmjerni administratorski pristup.
+
+
+## Dopuna 29. listopada 2026.
+
+WordPress 1.5.3, Android 0.3.3 i Windows 0.10.6 razdvajaju najnižu cijenu tijekom 30 dana prije sniženja od fiksne sidrene cijene i uključuju datum stupanja NN 105/2026 na snagu 26. 9. 2026. Javna JSON pravna shema ostaje kompatibilna (schema 1). Proširena pravila 2026/11/17 ostaju odvojena od ranijih pravila koja su već na snazi. Prijedlozi pravilnika na savjetovanju do 13. 11. 2026. nisu konačni tekstovi. Detalji u [pravnoj reviziji](LEGAL-REVIEW-2026-10-29.md).
