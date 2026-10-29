@@ -77,6 +77,13 @@ if not android_version or f"ANDROID_VERSION: '{android_version}'" not in release
     issues.append("Android release version does not match Gradle versionName")
 if "desktop_version=$desktopVersion" not in desktop_ci or "$desktopProject.Project.PropertyGroup.Version" not in desktop_ci:
     issues.append("Windows artifact manifest must derive version from desktop project")
+if ("wordpress_plugin_version=$pluginVersion" not in desktop_ci or
+        "wordpress/brendigo-sidrena-cijena/brendigo-sidrena-cijena.php" not in desktop_ci or
+        "wordpress/brendigo-sidrena-cijena/readme.txt" not in desktop_ci or
+        "Stable tag:" not in desktop_ci):
+    issues.append("Windows artifact WordPress metadata must derive from official plugin and verify stable tag")
+if "wordpress_plugin_version='1.5.2'" in desktop_ci:
+    issues.append("Stale hard-coded WordPress 1.5.2 in Windows release metadata")
 if f"WORDPRESS_VERSION: '{plugin_version}'" not in release_ci:
     issues.append("WordPress version must match the current source")
 
