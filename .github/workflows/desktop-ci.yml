@@ -211,39 +211,7 @@ jobs:
             Where-Object { $_.Trim().StartsWith('* Version:') } | Select-Object -First 1
           if (!$pluginVersionLine) { throw 'WordPress plugin version header missing' }
           $pluginVersion = ($pluginVersionLine -split ':', 2)[1].Trim()
-          if ($pluginVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+
-            product='SIDRENA Desktop'
-            desktop_version=$desktopVersion
-            wordpress_plugin_version=$pluginVersion
-            platform='Windows x64'
-            source_commit=$env:GITHUB_SHA
-            digitally_signed=$false
-            files=$manifestFiles
-          }
-          $manifest | ConvertTo-Json -Depth 8 |
-            Set-Content (Join-Path $folder 'SIDRENA-Desktop-release-info.json') -Encoding utf8
-          foreach($p in $files) {
-            if((Get-Item $p).Length -lt 100000) { throw "Binary too small: $p" }
-          }
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-release-binaries
-          path: artifacts/desktop-release/
-          if-no-files-found: error
-          retention-days: 30
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-real-ui-captures
-          path: artifacts/sidrena-ui-captures/
-          if-no-files-found: error
-          retention-days: 14
-      - uses: actions/upload-artifact@v7
-        with:
-          name: SIDRENA-Desktop-win-x64-portable
-          path: artifacts/sidrena-desktop-win-x64/
-          if-no-files-found: error
-          retention-days: 14
-) {
+          if ($pluginVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') {
             throw "Invalid WordPress plugin version: $pluginVersion"
           }
           $stableTagLine = Get-Content 'wordpress/brendigo-sidrena-cijena/readme.txt' |
@@ -260,7 +228,7 @@ jobs:
           $manifest=[ordered]@{
             product='SIDRENA Desktop'
             desktop_version=$desktopVersion
-            wordpress_plugin_version='1.5.2'
+            wordpress_plugin_version=$pluginVersion
             platform='Windows x64'
             source_commit=$env:GITHUB_SHA
             digitally_signed=$false
