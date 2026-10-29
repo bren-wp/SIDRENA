@@ -14,6 +14,9 @@ data class LegalContract(
     val dailyDeadline: String,
     val consumerLawRevision: String? = null,
     val unitPriceRuleRevision: String? = null,
+    val priceReductionLookbackDays: Int? = null,
+    val discountBaselineIsAnchorPrice: Boolean? = null,
+    val unitPriceRuleEffectiveFrom: String? = null,
 ) {
     companion object {
         const val REVISION = "NN-101-2026-NN-110-2026"
@@ -22,6 +25,7 @@ data class LegalContract(
         const val GENERAL = "2026-09-10"
         const val CONSUMER_LAW = "NN-59-2026"
         const val UNIT_PRICE_RULE = "NN-105-2026"
+        const val UNIT_PRICE_EFFECTIVE = "2026-09-26"
 
         fun parseOptional(json: JSONObject?): LegalContract? {
             if (json == null) return null // Old WordPress API version.
@@ -48,10 +52,24 @@ data class LegalContract(
                 }
                 return value
             }
+            val discountDays = if (json.has("price_reduction_lookback_days")) {
+                val v = json.get("price_reduction_lookback_days")
+                require(v is Int && v == 30) { "Neispravno razdoblje prije sniženja." }
+                v
+            } else null
+            val anchorBaseline = if (json.has("discount_baseline_is_anchor_price")) {
+                val v = json.get("discount_baseline_is_anchor_price")
+                require(v is Boolean && !v) { "Sidrena cijena nije osnova za popust." }
+                v
+            } else null
+            val unitEffective = if (json.has("unit_price_rule_effective_from")) {
+                iso(json.getString("unit_price_rule_effective_from"))
+            } else null
             return LegalContract(
                 revision, effective, legacy, general, days, deadline,
                 optionalRevision("consumer_law_revision"),
                 optionalRevision("unit_price_rule_revision"),
+                discountDays, anchorBaseline, unitEffective,
             )
         }
 
