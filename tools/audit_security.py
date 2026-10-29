@@ -31,13 +31,13 @@ network=read("desktop/Sidrena.Core/OfficialPluginDiscovery.cs")
 manifest=read("android/app/src/main/AndroidManifest.xml")
 release=read(".github/workflows/desktop-release.yml")
 
-for version in ("1.5.2",):
+for version in ("1.5.3",):
     if "Version: "+version not in main or "Stable tag: "+version not in readme:
         errors.append("Mismatch in official WordPress version")
 for token in ("2026-11-17","2025-05-02","2026-09-10"):
     if any(token not in source for source in (legal,android,win)):
         errors.append("Cross-platform legal date drift: "+token)
-for token in ("NN-101-2026-NN-110-2026", "NN-59-2026", "NN-105-2026"):
+for token in ("NN-101-2026-NN-110-2026", "NN-59-2026", "NN-105-2026", "2026-09-26"):
     if any(token not in source for source in (legal,android,win)):
         errors.append("Cross-platform rule revision drift")
 if "const ARCHIVE_MIN_DAYS = 30" not in legal:
