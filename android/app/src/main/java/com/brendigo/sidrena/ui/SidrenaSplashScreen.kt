@@ -199,7 +199,7 @@ internal fun SidrenaSplashContent(
 
 @Preview(name = "SIDRENA Splash - 393x852", widthDp = 393, heightDp = 852, showBackground = true)
 @Composable
-private fun SidrenaSplashPreview() {
+internal fun SidrenaSplashPreview() {
     SidrenaTheme {
         SidrenaSplashContent(progress = 0.46f)
     }
@@ -207,7 +207,7 @@ private fun SidrenaSplashPreview() {
 
 @Preview(name = "SIDRENA Splash - compact", widthDp = 360, heightDp = 640, showBackground = true)
 @Composable
-private fun SidrenaSplashCompactPreview() {
+internal fun SidrenaSplashCompactPreview() {
     SidrenaTheme {
         SidrenaSplashContent(progress = 0.46f)
     }
