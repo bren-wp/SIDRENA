@@ -1,5 +1,6 @@
 package com.brendigo.sidrena.ui
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -131,11 +132,10 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
             }
         },
     ) { insets ->
-        Column(Modifier.fillMaxSize().padding(insets).padding(horizontal = 16.dp)) {
-            BrandHeader(onNotifications = {
-                alert = if (snapshot == null) "Povežite stranicu za pregled objavljenih cjenika."
-                else "Posljednja objava: " + (snapshot.index.publishedAt ?: "Datum nije dostupan")
-            })
+        Column(
+            Modifier.fillMaxSize().padding(insets)
+                .padding(horizontal = if (state.isEditingSite || snapshot == null) 0.dp else 16.dp)
+        ) {
             if (state.isEditingSite || snapshot == null) {
                 ConnectionPage(
                     input = state.siteInput,
@@ -147,9 +147,16 @@ fun SidrenaApp(model: SidrenaViewModel = viewModel()) {
                         navigate("home")
                         model.connect(value)
                     },
-                    onCancel = model::cancelEdit,
+                    onCancel = {
+                        if (snapshot != null) model.cancelEdit()
+                        else (context as? Activity)?.finish()
+                    },
                 )
             } else {
+                BrandHeader(onNotifications = {
+                    alert = "Posljednja objava: " +
+                        (snapshot.index.publishedAt ?: "Datum nije dostupan")
+                })
                 when (page) {
                     "home" -> HomePage(
                         data = snapshot,

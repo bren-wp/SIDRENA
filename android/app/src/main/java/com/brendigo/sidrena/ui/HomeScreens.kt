@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material.icons.outlined.CloudDone
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Settings
@@ -31,7 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilterChip
@@ -42,76 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brendigo.sidrena.data.CatalogSnapshot
-
-@Composable
-fun ConnectionPage(
-    input: String,
-    busy: Boolean,
-    error: String?,
-    canCancel: Boolean,
-    onInput: (String) -> Unit,
-    onConnect: (String) -> Unit,
-    onCancel: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        PageHeading("Povežite svoju stranicu",
-            "SIDRENA prikazuje javne cjenike s vaše WordPress stranice na jednom mjestu.")
-        Panel {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("HTTPS adresa stranice", fontWeight = FontWeight.Bold)
-                OutlinedTextField(
-                    value = input,
-                    onValueChange = onInput,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { androidx.compose.material3.Icon(Icons.Outlined.Language, null) },
-                    placeholder = { Text("https://mojadomena.hr") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                    enabled = !busy,
-                )
-                MetaText("Unesite adresu WordPress stranice na kojoj je aktivirana SIDRENA.")
-            }
-        }
-        Panel {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Odabrana poslovnica", fontWeight = FontWeight.Bold)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppIcon(Icons.Outlined.LocationOn)
-                    Spacer(Modifier.width(10.dp))
-                    Text("Odabir nakon povezivanja", color = TextMuted)
-                }
-                MetaText("Nakon povezivanja možete odabrati poslovnicu ili webshop.")
-            }
-        }
-        AccentButton(
-            "Poveži i učitaj",
-            onClick = { onConnect(input) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !busy && input.isNotBlank(),
-        )
-        if (busy) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                Spacer(Modifier.width(10.dp))
-                Text("Učitavanje cjenika…", color = TextMuted)
-            }
-        }
-        if (!error.isNullOrBlank()) {
-            Panel { Text(error, color = Color(0xFFFFBD9A)) }
-        }
-        if (canCancel) {
-            OutlineAction("Povratak", onCancel, Modifier.fillMaxWidth())
-        }
-        Spacer(Modifier.height(12.dp))
-    }
-}
 
 @Composable
 private fun DashboardMetric(
