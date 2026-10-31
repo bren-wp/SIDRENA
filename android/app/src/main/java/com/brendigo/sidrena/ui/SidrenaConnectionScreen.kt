@@ -42,9 +42,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.tooling.preview.Preview
@@ -173,7 +174,7 @@ fun ConnectionPage(
                 onValueChange = { value ->
                     if (value.length <= 2048 && !value.contains('\n')) onInput(value)
                 },
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier.fillMaxWidth().height(64.dp)\n                    .semantics { contentDescription = "HTTPS adresa WordPress stranice" },
                 textStyle = TextStyle(
                     fontSize = 17.sp,
                     color = Color.White,
