@@ -174,7 +174,8 @@ fun ConnectionPage(
                 onValueChange = { value ->
                     if (value.length <= 2048 && !value.contains('\n')) onInput(value)
                 },
-                modifier = Modifier.fillMaxWidth().height(64.dp)\n                    .semantics { contentDescription = "HTTPS adresa WordPress stranice" },
+                modifier = Modifier.fillMaxWidth().height(64.dp)
+                    .semantics { contentDescription = "HTTPS adresa WordPress stranice" },
                 textStyle = TextStyle(
                     fontSize = 17.sp,
                     color = Color.White,
